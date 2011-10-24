@@ -1,0 +1,77 @@
+/*
+ *  OculonProto.h
+ *  OculonProto
+ *
+ *  Created by Ehsan on 11-10-16.
+ *  Copyright 2011 ewerx. All rights reserved.
+ *
+ */
+
+#ifndef __OCULONPROTOAPP_H__
+#define __OCULONPROTOAPP_H__
+
+#include "cinder/app/AppBasic.h"
+#include "cinder/audio/Input.h"
+#include "cinder/Camera.h"
+#include "cinder/params/Params.h"
+#include "AudioInput.h"
+#include "InfoPanel.h"
+#include <vector>
+
+// fwd decl
+class Scene;
+
+using namespace ci;
+using namespace ci::app;
+using std::vector;
+
+// main app
+//
+class OculonProtoApp : public AppBasic 
+{
+public: // cinder interface
+    void prepareSettings( Settings *settings );
+	void setup();
+	void update();
+    void resize( ResizeEvent event );
+    
+    void mouseMove( MouseEvent event );
+	void mouseDrag( MouseEvent event ) {};
+    void mouseDown( MouseEvent event );	
+    void mouseUp( MouseEvent event ) {};
+    void keyDown( KeyEvent event );
+
+	void draw();
+    
+public: // new
+    AudioInput& getAudioInput()         { return mAudioInput; }
+    const Vec2f& getMousePos()          { return mMousePos; }
+    InfoPanel& getInfoPanel()           { return mInfoPanel; }
+    
+protected: // new
+    
+    void setupScenes();
+    
+    void drawWaveform   ( audio::PcmBuffer32fRef pcmBufferRef );
+    void drawFft        ( std::shared_ptr<float> fftDataRef );
+    void drawInfoPanel();
+    
+private: // members
+    // input
+    AudioInput              mAudioInput;
+    Vec2f                   mMousePos;
+    
+    // render
+    double                  mLastElapsedSeconds;
+    CameraPersp				mCam;
+    
+    // temp
+    vector<Scene*>          mScenes;
+    
+    // debug
+    InfoPanel               mInfoPanel;
+    bool                    mRenderInfoPanel;
+    params::InterfaceGl		mParams;
+};
+
+#endif
