@@ -37,6 +37,8 @@ public:
     void draw();
     
 private:
+    void updateAudioResponse();
+    
     Vec3f           mLightDirection;
     
     vector<Body>    mBodies;

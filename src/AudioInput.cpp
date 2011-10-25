@@ -15,11 +15,13 @@
 #include <vector>
 
 using namespace ci;
-using namespace ci::app;
+//using namespace ci::app;
+using namespace ci::audio;
 
 // constructor
 //
 AudioInput::AudioInput()
+: mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
 {
 }
 
@@ -31,7 +33,7 @@ AudioInput::~AudioInput()
 
 // init
 //
-void AudioInput::Init(ci::app::AppBasic* mainApp)
+void AudioInput::init(ci::app::AppBasic* mainApp)
 {
     //iterate input devices and print their names to the console
 	const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
@@ -58,7 +60,6 @@ void AudioInput::update()
 		return;
 	}
     
-	uint16_t bandCount = 512;
 	//presently FFT only works on OS X, not iOS or Windows
-	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), bandCount );
+	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), mFftBandCount );
 }

@@ -14,6 +14,7 @@
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
+#include "cinder/MayaCamUI.h"
 #include "AudioInput.h"
 #include "InfoPanel.h"
 #include <vector>
@@ -36,7 +37,7 @@ public: // cinder interface
     void resize( ResizeEvent event );
     
     void mouseMove( MouseEvent event );
-	void mouseDrag( MouseEvent event ) {};
+	void mouseDrag( MouseEvent event );
     void mouseDown( MouseEvent event );	
     void mouseUp( MouseEvent event ) {};
     void keyDown( KeyEvent event );
@@ -64,6 +65,7 @@ private: // members
     // render
     double                  mLastElapsedSeconds;
     CameraPersp				mCam;
+    MayaCamUI               mMayaCam;
     
     // temp
     vector<Scene*>          mScenes;

@@ -26,7 +26,7 @@ class Body : public Entity<double>
 public:
     Body(const Vec3d& pos, 
          const Vec3d& vel, 
-         double radius, 
+         float radius, 
          double mass, 
          const ColorA& color);
     
@@ -40,14 +40,17 @@ public:
     const Vec3d& getVelocity() const { return mVelocity; }
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
+    void setRadiusMultiplier( float mult ) { mRadiusMultiplier = mult; }
+    
 private:
     Vec3d mVelocity;
     double mMass;
-    double mRadius;
+    float mRadius;
+    float mRadiusMultiplier;
     
     ColorA mColor;
     
-    PolyLine2f mMotionTrail;
+    PolyLine<Vec3f> mMotionTrail;
     
     TextEntity mLabel;
 };

@@ -8,12 +8,12 @@
  */
 
 //#include <boost/format.hpp>
-#include "cinder/app/App.h"
+#include "AudioInput.h" // compile errors if this is not before App.h
+#include "OculonProtoApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
 #include "Orbiter.h"
 
 using namespace ci;
-using namespace ci::app;
 
 GLfloat Orbiter::no_mat[]			= { 0.0, 0.0, 0.0, 1.0 };
 GLfloat Orbiter::mat_ambient[]		= { 0.6, 0.3, 0.4, 1.0 };
@@ -23,6 +23,9 @@ GLfloat Orbiter::mat_emission[]		= { 0.0, 0.1, 0.3, 0.0 };
 
 GLfloat Orbiter::mat_shininess[]	= { 128.0 };
 GLfloat Orbiter::no_shininess[]		= { 0.0 };
+
+//TEMP
+static unsigned int FFTBANDCOUNT = 4;
 
 //
 // Orbiter
@@ -88,18 +91,21 @@ void Orbiter::reset()
                            ColorA(0.1f, 0.8f, 0.3f)) );
     
     // random comets
-    int num_comets = 4;
+    int num_comets = 12;
+    //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
     
     for( int i = 0; i < num_comets; ++i )
     {
         mass = 1e9;
         radius = 10.0f;
-        double angle = Rand::randFloat(2*pi);
+        double angle = Rand::randFloat(2*M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000 ) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
+        //Vec3d orbitalPlaneNormal = pos.normalized();
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
         
         mBodies.push_back(Body(pos, 
+                               /*orbitalPlaneNormal * orbitalVel,*/
                                Vec3d(0.0f, orbitalVel, 0.0f),
                                radius, 
                                mass, 
@@ -118,6 +124,9 @@ void Orbiter::reset()
      mBodies[i].mVelocity = initVelDir * magnitude;
      }
      */
+    
+    AudioInput& audioInput = mApp->getAudioInput();
+    audioInput.setFftBandCount(mBodies.size());
 }
 
 void Orbiter::update(double dt)
@@ -159,22 +168,32 @@ void Orbiter::update(double dt)
             
             bodyIt->update(dt);
             
-            if( print )
-            {
-                console() << "Body " << i 
-                << " p: " << bodyIt->getPosition()
-                << " v: " << bodyIt->getVelocity()
-                << std::endl;
-            }
-            
             ++i;
         }
-        
-        if(print)
-            console() << std::endl << "----\n";
     }
     
+    updateAudioResponse();
+}
+
+void Orbiter::updateAudioResponse()
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
     
+    unsigned int bandCount = audioInput.getFftBandCount();
+    float* fftBuffer = fftDataRef.get();
+    
+    if( fftBuffer )
+    {
+        for( int i = 0; i < ( bandCount ); i++ ) 
+        {
+            if( i < mBodies.size() )
+            {
+                float multiplier = math<float>::clamp(0.5f, (fftBuffer[i] / bandCount) * (4.0f+i), (4.0f+i));
+                mBodies[i].setRadiusMultiplier( multiplier );
+            }
+        }
+    }
 }
 
 void Orbiter::draw()
@@ -224,7 +243,12 @@ void Orbiter::draw()
         Matrix44d matrix = Matrix44d::identity();
         matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
                             mDrawScale * getWindowHeight() / 2.0f,
-                           0.0f ));
+                            mDrawScale * getWindowHeight() / 4.0f));
         bodyIt->draw(matrix);
+        
+        //glPushMatrix();
+        //Vec3d pos = matrix * bodyIt->getPosition();
+        //glTranslated(pos.x, pos.y, pos.z);
+        //glPopMatrix();
     }
 }

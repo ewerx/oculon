@@ -38,7 +38,12 @@ void OculonProtoApp::setup()
     glDisable( GL_TEXTURE_2D );
     
     // setup our default camera, looking down the z-axis
-	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 100.0f ), Vec3f::zero() );
+	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
+    CameraPersp cam;
+    cam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
+	cam.setCenterOfInterestPoint( Vec3f::zero() );
+	cam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 5000.0f );
+    mMayaCam.setCurrentCam( cam );
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -50,13 +55,14 @@ void OculonProtoApp::setup()
     //mSphereShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_EARTH_FRAG ) );
     
     // audio input
-    mAudioInput.Init(this);
+    mAudioInput.init(this);
     
     // debug
     mRenderInfoPanel = false;
 	//glDisable( GL_TEXTURE_2D );
     
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 200, 400 ) );
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 300, 100 ) );
+    //mParams.setOptions("","position='200 10'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
 	//mParams.addParam( "Light Direction", &mLightDirection, "" );
@@ -98,10 +104,12 @@ void OculonProtoApp::setupScenes()
 
 void OculonProtoApp::resize( ResizeEvent event )
 {
-    //mCam.setAspectRatio( getWindowAspectRatio() );
-    mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
-	mCam.setPerspective( 60, getWindowAspectRatio(), 1, 1000 );
-	gl::setMatrices( mCam );
+    CameraPersp cam = mMayaCam.getCamera();
+    cam.setAspectRatio( getWindowAspectRatio() );
+    mMayaCam.setCurrentCam( cam );
+    //mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
+	//mCam.setPerspective( 60, getWindowAspectRatio(), 1, 1000 );
+	//gl::setMatrices( mCam );
 }
 
 void OculonProtoApp::mouseMove( MouseEvent event )
@@ -112,6 +120,14 @@ void OculonProtoApp::mouseMove( MouseEvent event )
 
 void OculonProtoApp::mouseDown( MouseEvent event )
 {
+    // let the camera handle the interaction
+	mMayaCam.mouseDown( event.getPos() );
+}
+
+void OculonProtoApp::mouseDrag( MouseEvent event )
+{
+    // let the camera handle the interaction
+	mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
 }
 
 void OculonProtoApp::keyDown( KeyEvent event )
@@ -176,27 +192,19 @@ void OculonProtoApp::update()
 
 void OculonProtoApp::draw()
 {
-    // 3D scene
+    gl::clear( Colorf(0.0f, 0.0f, 0.0f) );
+    
+    // 3D scenes
     glPushMatrix();
     {
-        
-        
-        //glLoadIdentity();
-        //glEnable( GL_TEXTURE_2D );
-        //glEnable( GL_LIGHTING );
-        //glEnable( GL_LIGHT0 );	
-        //GLfloat lightPosition[] = { -mLightDirection.x, -mLightDirection.y, -mLightDirection.z, 0.0f };
-        //glLightfv( GL_LIGHT0, GL_POSITION, lightPosition );
-        //glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
-        
-        /*
-        ColorA color( 0.25f, 0.5f, 1.0f, 1.0f );
-        gl::setMatrices( mCam );
-        //gl::rotate( mObjOrientation );
-        gl::color( mColor );
-        gl::drawCube( Vec3f::zero(), Vec3f( mObjSize, mObjSize, mObjSize ) );
-        */
+        // setup camera
+        gl::setMatrices( mMayaCam.getCamera() );
+        // enable depth buffer
+        // enable the depth buffer (after all, we are doing 3D)
+        gl::enableDepthRead();
+        gl::enableDepthWrite();
 
+        // render scenes
         for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
              ++sceneIt )
@@ -220,9 +228,9 @@ void OculonProtoApp::draw()
         // clear out the window with black
         //gl::clear( Color( 0, 0, 0 ) ); 
     
-        drawWaveform( mAudioInput.GetPcmBuffer() );
+        drawWaveform( mAudioInput.getPcmBuffer() );
         glTranslatef( 0.0f, 200.0f, 0.0f );
-        drawFft( mAudioInput.GetFftDataRef() );
+        drawFft( mAudioInput.getFftDataRef() );
     }
     glPopMatrix();
      

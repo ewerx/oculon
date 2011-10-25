@@ -39,8 +39,8 @@ public:
     void setActive(bool active)     { mIsActive = active; }
     void setVisible(bool visible)   { mIsVisible = visible; }
     
-private:
-    OculonProtoApp* mApp;
+protected:
+    OculonProtoApp* mApp;//TODO: fix this dependency
     
     bool mIsActive;
     bool mIsVisible;
