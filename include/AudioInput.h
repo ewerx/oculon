@@ -11,7 +11,6 @@
 #define __AUDIOINPUT_H__
 
 #include "cinder/Cinder.h"
-#include "cinder/app/AppBasic.h"
 #include "cinder/audio/Input.h"
 
 using namespace ci;
@@ -22,7 +21,7 @@ public:
     AudioInput();
     ~AudioInput();
     
-    void init(ci::app::AppBasic* mainApp);
+    void setup();
     void update();
     
     // accessors

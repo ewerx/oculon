@@ -42,7 +42,7 @@ void OculonProtoApp::setup()
     CameraPersp cam;
     cam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	cam.setCenterOfInterestPoint( Vec3f::zero() );
-	cam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 5000.0f );
+	cam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
     mMayaCam.setCurrentCam( cam );
     
     // load assets
@@ -55,7 +55,7 @@ void OculonProtoApp::setup()
     //mSphereShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_EARTH_FRAG ) );
     
     // audio input
-    mAudioInput.init(this);
+    mAudioInput.setup();
     
     // debug
     mRenderInfoPanel = false;
@@ -175,6 +175,7 @@ void OculonProtoApp::update()
     mLastElapsedSeconds = getElapsedSeconds();
     
     mAudioInput.update();
+    mMidiInput.update();
     
     for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();

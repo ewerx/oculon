@@ -8,14 +8,14 @@
  */
 
 #include "cinder/Cinder.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
 #include "cinder/audio/FftProcessor.h"
 #include "AudioInput.h"
 #include <iostream>
 #include <vector>
 
 using namespace ci;
-//using namespace ci::app;
+using namespace ci::app;
 using namespace ci::audio;
 
 // constructor
@@ -33,14 +33,14 @@ AudioInput::~AudioInput()
 
 // init
 //
-void AudioInput::init(ci::app::AppBasic* mainApp)
+void AudioInput::setup()
 {
     //iterate input devices and print their names to the console
 	const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); 
         iter != devices.end(); ++iter ) 
     {
-		mainApp->console() << (*iter)->getName() << std::endl;
+		console() << (*iter)->getName() << std::endl;
 	}
     
 	//initialize the audio Input, using the default input device

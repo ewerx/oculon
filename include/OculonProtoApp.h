@@ -16,6 +16,7 @@
 #include "cinder/params/Params.h"
 #include "cinder/MayaCamUI.h"
 #include "AudioInput.h"
+#include "MidiInput.h"
 #include "InfoPanel.h"
 #include <vector>
 
@@ -60,6 +61,7 @@ protected: // new
 private: // members
     // input
     AudioInput              mAudioInput;
+    MidiInput               mMidiInput;
     Vec2f                   mMousePos;
     
     // render

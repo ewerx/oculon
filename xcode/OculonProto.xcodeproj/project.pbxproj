@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,14 @@
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		53E3CDFC0E86099300238D2B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E3CDFB0E86099300238D2B /* Carbon.framework */; };
+		7C1C51EA1457A79D00053F9D /* MidiInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C51E91457A79D00053F9D /* MidiInput.cpp */; };
+		7C1C52021457A97E00053F9D /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C1C52011457A97E00053F9D /* CoreMIDI.framework */; };
+		7C1C520C1457A99B00053F9D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C1C520B1457A99B00053F9D /* CoreFoundation.framework */; };
+		7C1C52E51457AAF700053F9D /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C528E1457AAF700053F9D /* RtMidi.cpp */; };
+		7C1C52E61457AAF700053F9D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C52901457AAF700053F9D /* README */; };
+		7C1C530B1457AAF700053F9D /* MidiHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C52CC1457AAF700053F9D /* MidiHub.cpp */; };
+		7C1C530C1457AAF700053F9D /* MidiIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C52CD1457AAF700053F9D /* MidiIn.cpp */; };
+		7C1C530D1457AAF700053F9D /* MidiMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C52CE1457AAF700053F9D /* MidiMessage.cpp */; };
 		7CB2A23B144BE81C0010C54D /* InfoPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */; };
 		7CB2A28D144D007C0010C54D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A28C144D007C0010C54D /* Entity.cpp */; };
 		7CB2A292144D049B0010C54D /* Behavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A291144D049B0010C54D /* Behavior.cpp */; };
@@ -46,6 +54,22 @@
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		53E3CDFB0E86099300238D2B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		7C1C51E81457A79D00053F9D /* MidiInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiInput.h; path = ../src/MidiInput.h; sourceTree = SOURCE_ROOT; };
+		7C1C51E91457A79D00053F9D /* MidiInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MidiInput.cpp; path = ../src/MidiInput.cpp; sourceTree = SOURCE_ROOT; };
+		7C1C52011457A97E00053F9D /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
+		7C1C520B1457A99B00053F9D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		7C1C52871457AAF700053F9D /* MidiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiConstants.h; sourceTree = "<group>"; };
+		7C1C52881457AAF700053F9D /* MidiExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiExceptions.h; sourceTree = "<group>"; };
+		7C1C52891457AAF700053F9D /* MidiHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiHub.h; sourceTree = "<group>"; };
+		7C1C528A1457AAF700053F9D /* MidiIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiIn.h; sourceTree = "<group>"; };
+		7C1C528B1457AAF700053F9D /* MidiMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiMessage.h; sourceTree = "<group>"; };
+		7C1C528D1457AAF700053F9D /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtError.h; sourceTree = "<group>"; };
+		7C1C528E1457AAF700053F9D /* RtMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
+		7C1C528F1457AAF700053F9D /* RtMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtMidi.h; sourceTree = "<group>"; };
+		7C1C52901457AAF700053F9D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		7C1C52CC1457AAF700053F9D /* MidiHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiHub.cpp; sourceTree = "<group>"; };
+		7C1C52CD1457AAF700053F9D /* MidiIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiIn.cpp; sourceTree = "<group>"; };
+		7C1C52CE1457AAF700053F9D /* MidiMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiMessage.cpp; sourceTree = "<group>"; };
 		7CB2A239144BE80C0010C54D /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoPanel.h; path = ../include/InfoPanel.h; sourceTree = SOURCE_ROOT; };
 		7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InfoPanel.cpp; path = ../src/InfoPanel.cpp; sourceTree = SOURCE_ROOT; };
 		7CB2A28B144D007C0010C54D /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Entity.h; path = ../src/Entity.h; sourceTree = SOURCE_ROOT; };
@@ -82,6 +106,8 @@
 				00B784B40FF439BC000DE1D7 /* AudioToolbox.framework in Frameworks */,
 				00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */,
 				00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */,
+				7C1C52021457A97E00053F9D /* CoreMIDI.framework in Frameworks */,
+				7C1C520C1457A99B00053F9D /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +126,8 @@
 				7CB2A291144D049B0010C54D /* Behavior.cpp */,
 				7CB2A295144D062D0010C54D /* Scene.h */,
 				7CB2A296144D062D0010C54D /* Scene.cpp */,
+				7C1C51E81457A79D00053F9D /* MidiInput.h */,
+				7C1C51E91457A79D00053F9D /* MidiInput.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -107,6 +135,8 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7C1C520B1457A99B00053F9D /* CoreFoundation.framework */,
+				7C1C52011457A97E00053F9D /* CoreMIDI.framework */,
 				00B784AF0FF439BC000DE1D7 /* Accelerate.framework */,
 				00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */,
 				00B784B10FF439BC000DE1D7 /* AudioUnit.framework */,
@@ -142,6 +172,7 @@
 		29B97314FDCFA39411CA2CEA /* OculonProto */ = {
 			isa = PBXGroup;
 			children = (
+				7C1C52601457AAF700053F9D /* Cinder-MIDI */,
 				29B97315FDCFA39411CA2CEA /* Headers */,
 				080E96DDFE201D6D7F000001 /* Source */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -178,6 +209,50 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7C1C52601457AAF700053F9D /* Cinder-MIDI */ = {
+			isa = PBXGroup;
+			children = (
+				7C1C52861457AAF700053F9D /* include */,
+				7C1C528C1457AAF700053F9D /* libs */,
+				7C1C52901457AAF700053F9D /* README */,
+				7C1C52CB1457AAF700053F9D /* src */,
+			);
+			name = "Cinder-MIDI";
+			path = "../../cinder_master/blocks/Cinder-MIDI";
+			sourceTree = SOURCE_ROOT;
+		};
+		7C1C52861457AAF700053F9D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7C1C52871457AAF700053F9D /* MidiConstants.h */,
+				7C1C52881457AAF700053F9D /* MidiExceptions.h */,
+				7C1C52891457AAF700053F9D /* MidiHub.h */,
+				7C1C528A1457AAF700053F9D /* MidiIn.h */,
+				7C1C528B1457AAF700053F9D /* MidiMessage.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		7C1C528C1457AAF700053F9D /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				7C1C528D1457AAF700053F9D /* RtError.h */,
+				7C1C528E1457AAF700053F9D /* RtMidi.cpp */,
+				7C1C528F1457AAF700053F9D /* RtMidi.h */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		7C1C52CB1457AAF700053F9D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7C1C52CC1457AAF700053F9D /* MidiHub.cpp */,
+				7C1C52CD1457AAF700053F9D /* MidiIn.cpp */,
+				7C1C52CE1457AAF700053F9D /* MidiMessage.cpp */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		7CB2A28A144D00480010C54D /* Entity */ = {
@@ -228,8 +303,11 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = ewerx;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "OculonProto" */;
-			compatibilityVersion = "Xcode 3.0";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -253,6 +331,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00CCAF15116A9FEE008396D5 /* CinderApp.icns in Resources */,
+				7C1C52E61457AAF700053F9D /* README in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +351,11 @@
 				7CB2A418144FCB3F0010C54D /* Orbiter.cpp in Sources */,
 				7CD3D2AB14533D83007FB298 /* Body.cpp in Sources */,
 				7CD3D5BA14552B57007FB298 /* TextEntity.cpp in Sources */,
+				7C1C51EA1457A79D00053F9D /* MidiInput.cpp in Sources */,
+				7C1C52E51457AAF700053F9D /* RtMidi.cpp in Sources */,
+				7C1C530B1457AAF700053F9D /* MidiHub.cpp in Sources */,
+				7C1C530C1457AAF700053F9D /* MidiIn.cpp in Sources */,
+				7C1C530D1457AAF700053F9D /* MidiMessage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,8 +414,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx10.6;
 				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include";
 			};
 			name = Debug;
@@ -347,7 +432,7 @@
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx10.6;
 				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include";
 			};
 			name = Release;
