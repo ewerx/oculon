@@ -135,7 +135,7 @@ void OculonProtoApp::keyDown( KeyEvent event )
     switch( event.getChar() )
     {
         case ' ':
-            mScenes[0]->reset();//TODO: unsafe
+            mScenes[0]->reset();//TODO: active scene?
             break;
             
         // toggle pause-all

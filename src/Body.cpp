@@ -66,7 +66,7 @@ void Body::draw(const Matrix44d& transform)
     {
         if( mMotionTrail.size() > trailLength )
         {
-            mMotionTrail.getPoints().erase(mMotionTrail.begin());
+            //mMotionTrail.getPoints().erase(mMotionTrail.begin());
         }
         mMotionTrail.push_back( Vec3f(screen_coords.x, screen_coords.y, screen_coords.z) );
         gl::draw(mMotionTrail);

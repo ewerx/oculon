@@ -38,11 +38,13 @@ public:
     
 private:
     void updateAudioResponse();
+    void updateTimeDisplay();
     
     Vec3f           mLightDirection;
     
     vector<Body>    mBodies;
     
+    double          mElapsedTime;
     double          mTimeScale;
     double          mDrawScale;
     double          mGravityConstant;

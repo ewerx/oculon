@@ -24,8 +24,19 @@ GLfloat Orbiter::mat_emission[]		= { 0.0, 0.1, 0.3, 0.0 };
 GLfloat Orbiter::mat_shininess[]	= { 128.0 };
 GLfloat Orbiter::no_shininess[]		= { 0.0 };
 
-//TEMP
-static unsigned int FFTBANDCOUNT = 4;
+//TODO: read from data file
+#define PLANETS_TUPLE \
+PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,  47900 ) \
+PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024, 35000 ) \
+PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024, 29800 ) \
+PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023, 24100 ) \
+PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,  13100 ) \
+PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640 ) \
+PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810 ) \
+PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
+PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
+//end tuple
+
 
 //
 // Orbiter
@@ -61,13 +72,35 @@ void Orbiter::setupParams(params::InterfaceGl& params)
 
 void Orbiter::reset()
 {
+    mElapsedTime = 0.0f;
+    
+    const float radialEnhancement = 1000000.0f;
     mBodies.clear();
     double mass = 1.989E+030;
     float radius = 35.0f;
+    double orbitalRadius;
+    double orbitalVel;
     mBodies.push_back(Body(Vec3d::zero(), 
                            Vec3d::zero(),
                            radius, mass, 
                            ColorA(1.0f, 0.2f, 0.2f)) );
+    
+#define PLANETS_ENTRY(name,orad,brad,mss,ovel) \
+    mass = mss;\
+    orbitalRadius = orad;\
+    orbitalVel = ovel;\
+    radius = brad * mDrawScale * radialEnhancement;\
+    mBodies.push_back(Body(Vec3d(-orbitalRadius, 0.0f, 0.0f), \
+                           Vec3d(0.0f, orbitalVel, 0.0f),\
+                           radius, \
+                           mass, \
+                           ColorA(0.3f, 0.5f, 0.7f)) ); 
+    
+    PLANETS_TUPLE
+#undef PLANETS_ENTRY
+    
+    /*
+    
     
     // venus
     mass = 4.869E+024; 
@@ -89,9 +122,11 @@ void Orbiter::reset()
                            radius, 
                            mass, 
                            ColorA(0.1f, 0.8f, 0.3f)) );
+     
+     */
     
     // random comets
-    int num_comets = 12;
+    int num_comets = 4;
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
     
     for( int i = 0; i < num_comets; ++i )
@@ -132,6 +167,8 @@ void Orbiter::reset()
 void Orbiter::update(double dt)
 {
     dt *= mTimeScale;
+    mElapsedTime += dt;
+    
     bool simulate = true;
     bool symmetric = false;
     int i = 0;
@@ -173,6 +210,7 @@ void Orbiter::update(double dt)
     }
     
     updateAudioResponse();
+    //updateTimeDisplay();
 }
 
 void Orbiter::updateAudioResponse()
@@ -251,4 +289,12 @@ void Orbiter::draw()
         //glTranslated(pos.x, pos.y, pos.z);
         //glPopMatrix();
     }
+}
+
+void Orbiter::updateTimeDisplay()
+{
+
+    char buf[64];
+    snprintf(buf, 64, "%.0f", mElapsedTime / 3600.f);
+    mApp->getInfoPanel().addLine( buf, Color(0.5f, 0.5f, 0.5f) );
 }
