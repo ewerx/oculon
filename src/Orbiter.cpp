@@ -1,6 +1,6 @@
 /*
  *  Orbiter.cpp
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-19.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -9,7 +9,7 @@
 
 //#include <boost/format.hpp>
 #include "AudioInput.h" // compile errors if this is not before App.h
-#include "OculonProtoApp.h"//TODO: fix this dependency
+#include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
 #include "Orbiter.h"
 

@@ -1,14 +1,14 @@
 /*
- *  OculonProto.h
- *  OculonProto
+ *  Oculon.h
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-16.
  *  Copyright 2011 ewerx. All rights reserved.
  *
  */
 
-#ifndef __OCULONPROTOAPP_H__
-#define __OCULONPROTOAPP_H__
+#ifndef __OCULONAPP_H__
+#define __OCULONAPP_H__
 
 #include "cinder/app/AppBasic.h"
 #include "cinder/audio/Input.h"
@@ -29,7 +29,7 @@ using std::vector;
 
 // main app
 //
-class OculonProtoApp : public AppBasic 
+class OculonApp : public AppBasic 
 {
 public: // cinder interface
     void prepareSettings( Settings *settings );

@@ -1,6 +1,6 @@
 /*
  *  AudioInput.h
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-16.
  *  Copyright 2011 ewerx. All rights reserved.

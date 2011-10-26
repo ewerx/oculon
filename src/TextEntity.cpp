@@ -1,6 +1,6 @@
 /*
  *  TextEntity.cpp
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-24.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.

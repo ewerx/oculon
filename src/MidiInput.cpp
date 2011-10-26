@@ -1,6 +1,6 @@
 /*
  *  MidiInput.cpp
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-25.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -30,7 +30,12 @@ void MidiInput::update()
         int note = msg.byteOne;
         int val = msg.byteTwo;
         
-        // look up in map structure, update current value
+        switch (msg.status) 
+        {
+            case MIDI_CONTROL_CHANGE:
+                //TODO: look up in map structure, update current value
+                break;
+        }
         
         console() << "[midi] port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
         console() << " note: " << note << " val: " << val << std::endl;

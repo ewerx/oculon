@@ -1,6 +1,6 @@
 /*
- *  OculonProtoApp.h
- *  OculonProtoApp
+ *  OculonApp.h
+ *  OculonApp
  *
  *  Created by Ehsan on 11-10-16.
  *  Copyright 2011 ewerx. All rights reserved.
@@ -13,7 +13,7 @@
 #include "cinder/params/Params.h"
 #include <iostream>
 #include <vector>
-#include "OculonProtoApp.h"
+#include "OculonApp.h"
 #include "AudioInput.h"
 #include "InfoPanel.h"
 #include "Orbiter.h"
@@ -22,14 +22,14 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-void OculonProtoApp::prepareSettings( Settings *settings )
+void OculonApp::prepareSettings( Settings *settings )
 {
 	settings->setWindowSize( 800, 600 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
 }
 
-void OculonProtoApp::setup()
+void OculonApp::setup()
 {
     // render
     gl::enableDepthWrite();
@@ -79,7 +79,7 @@ void OculonProtoApp::setup()
     setupScenes();
 }
 
-void OculonProtoApp::setupScenes()
+void OculonApp::setupScenes()
 {
     mScenes.clear();
     
@@ -102,7 +102,7 @@ void OculonProtoApp::setupScenes()
     }
 }
 
-void OculonProtoApp::resize( ResizeEvent event )
+void OculonApp::resize( ResizeEvent event )
 {
     CameraPersp cam = mMayaCam.getCamera();
     cam.setAspectRatio( getWindowAspectRatio() );
@@ -112,25 +112,25 @@ void OculonProtoApp::resize( ResizeEvent event )
 	//gl::setMatrices( mCam );
 }
 
-void OculonProtoApp::mouseMove( MouseEvent event )
+void OculonApp::mouseMove( MouseEvent event )
 {
 	mMousePos.x = event.getX() - getWindowWidth() * 0.5f;
 	mMousePos.y = getWindowHeight() * 0.5f - event.getY();
 }
 
-void OculonProtoApp::mouseDown( MouseEvent event )
+void OculonApp::mouseDown( MouseEvent event )
 {
     // let the camera handle the interaction
 	mMayaCam.mouseDown( event.getPos() );
 }
 
-void OculonProtoApp::mouseDrag( MouseEvent event )
+void OculonApp::mouseDrag( MouseEvent event )
 {
     // let the camera handle the interaction
 	mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
 }
 
-void OculonProtoApp::keyDown( KeyEvent event )
+void OculonApp::keyDown( KeyEvent event )
 {
     switch( event.getChar() )
     {
@@ -165,7 +165,7 @@ void OculonProtoApp::keyDown( KeyEvent event )
     }
 }
 
-void OculonProtoApp::update()
+void OculonApp::update()
 {
     char buf[64];
     snprintf(buf, 64, "%.2ffps", getAverageFps());
@@ -191,7 +191,7 @@ void OculonProtoApp::update()
     mInfoPanel.update();
 }
 
-void OculonProtoApp::draw()
+void OculonApp::draw()
 {
     gl::clear( Colorf(0.0f, 0.0f, 0.0f) );
     
@@ -242,7 +242,7 @@ void OculonProtoApp::draw()
 }
 
 // new methods
-void OculonProtoApp::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
+void OculonApp::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 {
     if( ! pcmBufferRef ) 
     {
@@ -278,7 +278,7 @@ void OculonProtoApp::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     gl::draw( spectrum_left );
 }
 
-void OculonProtoApp::drawFft( std::shared_ptr<float> fftDataRef )
+void OculonApp::drawFft( std::shared_ptr<float> fftDataRef )
 {
     uint16_t bandCount = 512;
 	float ht = 1000.0f;
@@ -305,7 +305,7 @@ void OculonProtoApp::drawFft( std::shared_ptr<float> fftDataRef )
 	}
 }
 
-void OculonProtoApp::drawInfoPanel()
+void OculonApp::drawInfoPanel()
 {
 	glDisable( GL_LIGHTING );
 	glEnable( GL_TEXTURE_2D );
@@ -319,4 +319,4 @@ void OculonProtoApp::drawInfoPanel()
 	glDisable( GL_TEXTURE_2D );
 }
 
-CINDER_APP_BASIC( OculonProtoApp, RendererGl )
+CINDER_APP_BASIC( OculonApp, RendererGl )

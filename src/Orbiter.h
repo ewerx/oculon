@@ -1,6 +1,6 @@
 /*
  *  Orbiter.h
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-19.
  *  Copyright 2011 ewerx. All rights reserved.

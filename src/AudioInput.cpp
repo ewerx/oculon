@@ -1,6 +1,6 @@
 /*
  *  AudioInput.cpp
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-16.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.

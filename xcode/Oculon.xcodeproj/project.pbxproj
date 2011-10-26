@@ -13,7 +13,7 @@
 		00B784B40FF439BC000DE1D7 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */; };
 		00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B10FF439BC000DE1D7 /* AudioUnit.framework */; };
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
-		00BAE65A0E7ED9C10018A608 /* OculonProtoApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00BAE6590E7ED9C10018A608 /* OculonProtoApp.cpp */; };
+		00BAE65A0E7ED9C10018A608 /* OculonApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00BAE6590E7ED9C10018A608 /* OculonApp.cpp */; };
 		00CCAF15116A9FEE008396D5 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 00CCAF14116A9FEE008396D5 /* CinderApp.icns */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
@@ -44,13 +44,13 @@
 		00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		00B784B10FF439BC000DE1D7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		00B784B20FF439BC000DE1D7 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		00BAE6590E7ED9C10018A608 /* OculonProtoApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OculonProtoApp.cpp; path = ../src/OculonProtoApp.cpp; sourceTree = SOURCE_ROOT; };
+		00BAE6590E7ED9C10018A608 /* OculonApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OculonApp.cpp; path = ../src/OculonApp.cpp; sourceTree = SOURCE_ROOT; };
 		00CCAF14116A9FEE008396D5 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CinderApp.icns; path = ../resources/CinderApp.icns; sourceTree = SOURCE_ROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		32CA4F630368D1EE00C91783 /* OculonProto_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OculonProto_Prefix.pch; sourceTree = "<group>"; };
+		32CA4F630368D1EE00C91783 /* Oculon_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oculon_Prefix.pch; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		53E3CDFB0E86099300238D2B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -80,7 +80,7 @@
 		7CB2A296144D062D0010C54D /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = ../src/Scene.cpp; sourceTree = SOURCE_ROOT; };
 		7CB2A416144FCB3F0010C54D /* Orbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Orbiter.h; path = ../src/Orbiter.h; sourceTree = SOURCE_ROOT; };
 		7CB2A417144FCB3F0010C54D /* Orbiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Orbiter.cpp; path = ../src/Orbiter.cpp; sourceTree = SOURCE_ROOT; };
-		7CCA8F03144BA28500C5229F /* OculonProtoApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OculonProtoApp.h; path = ../include/OculonProtoApp.h; sourceTree = SOURCE_ROOT; };
+		7CCA8F03144BA28500C5229F /* OculonApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OculonApp.h; path = ../include/OculonApp.h; sourceTree = SOURCE_ROOT; };
 		7CCA8F3F144BAC0500C5229F /* AudioInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioInput.h; path = ../include/AudioInput.h; sourceTree = SOURCE_ROOT; };
 		7CCA8F40144BAEF500C5229F /* AudioInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioInput.cpp; path = ../src/AudioInput.cpp; sourceTree = SOURCE_ROOT; };
 		7CD3D2A914533D83007FB298 /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Body.h; path = ../src/Body.h; sourceTree = SOURCE_ROOT; };
@@ -88,7 +88,7 @@
 		7CD3D5B814552B57007FB298 /* TextEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextEntity.h; path = ../src/TextEntity.h; sourceTree = SOURCE_ROOT; };
 		7CD3D5B914552B57007FB298 /* TextEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextEntity.cpp; path = ../src/TextEntity.cpp; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* OculonProto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OculonProto.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,17 +117,15 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				7C1C53CF1457C5A800053F9D /* Input */,
 				7CD3D2A814533D70007FB298 /* Oribter */,
 				7CB2A28A144D00480010C54D /* Entity */,
 				7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */,
-				00BAE6590E7ED9C10018A608 /* OculonProtoApp.cpp */,
-				7CCA8F40144BAEF500C5229F /* AudioInput.cpp */,
+				00BAE6590E7ED9C10018A608 /* OculonApp.cpp */,
 				7CB2A290144D049B0010C54D /* Behavior.h */,
 				7CB2A291144D049B0010C54D /* Behavior.cpp */,
 				7CB2A295144D062D0010C54D /* Scene.h */,
 				7CB2A296144D062D0010C54D /* Scene.cpp */,
-				7C1C51E81457A79D00053F9D /* MidiInput.h */,
-				7C1C51E91457A79D00053F9D /* MidiInput.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -164,12 +162,12 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107320486CEB800E47090 /* OculonProto.app */,
+				8D1107320486CEB800E47090 /* Oculon.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		29B97314FDCFA39411CA2CEA /* OculonProto */ = {
+		29B97314FDCFA39411CA2CEA /* Oculon */ = {
 			isa = PBXGroup;
 			children = (
 				7C1C52601457AAF700053F9D /* Cinder-MIDI */,
@@ -179,16 +177,15 @@
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
-			name = OculonProto;
+			name = Oculon;
 			sourceTree = "<group>";
 		};
 		29B97315FDCFA39411CA2CEA /* Headers */ = {
 			isa = PBXGroup;
 			children = (
 				7CB2A239144BE80C0010C54D /* InfoPanel.h */,
-				7CCA8F03144BA28500C5229F /* OculonProtoApp.h */,
-				7CCA8F3F144BAC0500C5229F /* AudioInput.h */,
-				32CA4F630368D1EE00C91783 /* OculonProto_Prefix.pch */,
+				7CCA8F03144BA28500C5229F /* OculonApp.h */,
+				32CA4F630368D1EE00C91783 /* Oculon_Prefix.pch */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -255,6 +252,17 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		7C1C53CF1457C5A800053F9D /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				7CCA8F3F144BAC0500C5229F /* AudioInput.h */,
+				7CCA8F40144BAEF500C5229F /* AudioInput.cpp */,
+				7C1C51E81457A79D00053F9D /* MidiInput.h */,
+				7C1C51E91457A79D00053F9D /* MidiInput.cpp */,
+			);
+			name = Input;
+			sourceTree = "<group>";
+		};
 		7CB2A28A144D00480010C54D /* Entity */ = {
 			isa = PBXGroup;
 			children = (
@@ -280,9 +288,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* OculonProto */ = {
+		8D1107260486CEB800E47090 /* Oculon */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "OculonProto" */;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Oculon" */;
 			buildPhases = (
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
@@ -292,10 +300,10 @@
 			);
 			dependencies = (
 			);
-			name = OculonProto;
+			name = Oculon;
 			productInstallPath = "$(HOME)/Applications";
-			productName = OculonProto;
-			productReference = 8D1107320486CEB800E47090 /* OculonProto.app */;
+			productName = Oculon;
+			productReference = 8D1107320486CEB800E47090 /* Oculon.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -306,7 +314,7 @@
 			attributes = {
 				ORGANIZATIONNAME = ewerx;
 			};
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "OculonProto" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -316,11 +324,11 @@
 				French,
 				German,
 			);
-			mainGroup = 29B97314FDCFA39411CA2CEA /* OculonProto */;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* Oculon */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* OculonProto */,
+				8D1107260486CEB800E47090 /* Oculon */,
 			);
 		};
 /* End PBXProject section */
@@ -342,7 +350,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00BAE65A0E7ED9C10018A608 /* OculonProtoApp.cpp in Sources */,
+				00BAE65A0E7ED9C10018A608 /* OculonApp.cpp in Sources */,
 				7CCA8F41144BAEF500C5229F /* AudioInput.cpp in Sources */,
 				7CB2A23B144BE81C0010C54D /* InfoPanel.cpp in Sources */,
 				7CB2A28D144D007C0010C54D /* Entity.cpp in Sources */,
@@ -372,12 +380,12 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = OculonProto_Prefix.pch;
+				GCC_PREFIX_HEADER = Oculon_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "\"$(CINDER_PATH)/lib/libcinder_d.a\"";
-				PRODUCT_NAME = OculonProto;
+				PRODUCT_NAME = Oculon;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -393,12 +401,12 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = OculonProto_Prefix.pch;
+				GCC_PREFIX_HEADER = Oculon_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "\"$(CINDER_PATH)/lib/libcinder.a\"";
-				PRODUCT_NAME = OculonProto;
+				PRODUCT_NAME = Oculon;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};
@@ -440,7 +448,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "OculonProto" */ = {
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Oculon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
@@ -449,7 +457,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "OculonProto" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,

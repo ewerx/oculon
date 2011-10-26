@@ -1,6 +1,6 @@
 /*
  *  MidiInput.h
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-25.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.

@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>CinderApp.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.libcinder.OculonProto</string>
+	<string>org.libcinder.Oculon</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

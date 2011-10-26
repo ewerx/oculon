@@ -1,6 +1,6 @@
 /*
  *  Scene.h
- *  OculonProto
+ *  Oculon
  *
  *  Created by Ehsan on 11-10-17.
  *  Copyright 2011 ewerx. All rights reserved.
@@ -14,7 +14,7 @@
 #include "cinder/params/Params.h"
 
 // fwd decl
-class OculonProtoApp;
+class OculonApp;
 
 
 class Scene
@@ -23,7 +23,7 @@ public:
     Scene();
     virtual ~Scene();
     
-    void init(OculonProtoApp* app)  { mApp = app; }
+    void init(OculonApp* app)  { mApp = app; }
     
     virtual void setup() {}
     virtual void setupParams(ci::params::InterfaceGl& params) {}
@@ -31,7 +31,7 @@ public:
     virtual void update(double dt) {}
     virtual void draw() {}
     
-    OculonProtoApp* getApp();
+    OculonApp* getApp();
     
     bool isActive() const           { return mIsActive; }
     bool isVisible() const          { return mIsVisible; }
@@ -40,7 +40,7 @@ public:
     void setVisible(bool visible)   { mIsVisible = visible; }
     
 protected:
-    OculonProtoApp* mApp;//TODO: fix this dependency
+    OculonApp* mApp;//TODO: fix this dependency
     
     bool mIsActive;
     bool mIsVisible;
