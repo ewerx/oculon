@@ -47,6 +47,7 @@ public: // cinder interface
     
 public: // new
     AudioInput& getAudioInput()         { return mAudioInput; }
+    MidiInput& getMidiInput()           { return mMidiInput; }
     const Vec2f& getMousePos()          { return mMousePos; }
     InfoPanel& getInfoPanel()           { return mInfoPanel; }
     

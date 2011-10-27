@@ -16,6 +16,7 @@
 
 #include "Scene.h"
 #include "Body.h"
+#include "MidiMap.h"
 
 using namespace ci;
 using std::vector;
@@ -36,7 +37,12 @@ public:
     void update(double dt);
     void draw();
     
+    // midi callbacks
+    void handleGravityChange(MidiEvent midiEvent);
+    
 private:
+    void setupMidiMapping();
+    
     void updateAudioResponse();
     void updateTimeDisplay();
     
@@ -56,6 +62,8 @@ private:
     static GLfloat mat_emission[];
     static GLfloat mat_shininess[];
     static GLfloat no_shininess[];
+    
+    MidiMap mMidiMap;
     
 };
 

@@ -48,6 +48,7 @@ Orbiter::Orbiter()
 
 Orbiter::~Orbiter()
 {
+    // midi map will get destroyed
 }
 
 void Orbiter::setup()
@@ -59,7 +60,19 @@ void Orbiter::setup()
     mLightDirection = Vec3f( 0.025f, 0.25f, 1.0f );
 	mLightDirection.normalize();
     
+    mMidiMap.init(&mApp->getMidiInput());
+    setupMidiMapping();
+    
     reset();
+}
+
+void Orbiter::setupMidiMapping()
+{
+    // setup MIDI inputs for learning
+    mMidiMap.registerMidiEvent("gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
+    mMidiMap.beginLearning();
+    // ... or load a MIDI mapping
+    //mMidiInput.setMidiKey("gravity", channel, note);
 }
 
 void Orbiter::setupParams(params::InterfaceGl& params)
@@ -297,4 +310,10 @@ void Orbiter::updateTimeDisplay()
     char buf[64];
     snprintf(buf, 64, "%.0f", mElapsedTime / 3600.f);
     mApp->getInfoPanel().addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+}
+
+void Orbiter::handleGravityChange(MidiEvent midiEvent)
+{
+    double delta = (midiEvent.getValueRatio() * 2.0f - 1.0f) * 8.0e-11;
+    mGravityConstant = 6.6742e-11 + delta;
 }

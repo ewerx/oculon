@@ -13,6 +13,7 @@
 using namespace ci;
 using namespace ci::app;
 
+
 MidiInput::MidiInput()
 {
 }
@@ -27,8 +28,22 @@ void MidiInput::update()
     
     while (mMidiHub.getNextMessage(&msg))
     {
-        int note = msg.byteOne;
-        int val = msg.byteTwo;
+        if( DEBUG_MIDI )
+        {
+            console() << "[midi] port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
+            console() << " note: " << msg.byteOne << " val: " << msg.byteTwo << std::endl;
+        }
+        
+        mCallbacksMidi.call( MidiEvent(msg) );
+        /*
+        if( mLearnMode )
+        {
+            
+
+        }
+        else 
+        {
+            
         
         switch (msg.status) 
         {
@@ -36,8 +51,7 @@ void MidiInput::update()
                 //TODO: look up in map structure, update current value
                 break;
         }
-        
-        console() << "[midi] port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
-        console() << " note: " << note << " val: " << val << std::endl;
+        }
+        */
     }
 }
