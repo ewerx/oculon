@@ -39,6 +39,8 @@ public:
     void setActive(bool active)     { mIsActive = active; }
     void setVisible(bool visible)   { mIsVisible = visible; }
     
+    void toggleActiveVisible()      { mIsActive = !mIsActive; mIsVisible = !mIsVisible; }
+    
 protected:
     OculonApp* mApp;//TODO: fix this dependency
     

@@ -54,9 +54,6 @@ public: // new
 protected: // new
     
     void setupScenes();
-    
-    void drawWaveform   ( audio::PcmBuffer32fRef pcmBufferRef );
-    void drawFft        ( std::shared_ptr<float> fftDataRef );
     void drawInfoPanel();
     
 private: // members

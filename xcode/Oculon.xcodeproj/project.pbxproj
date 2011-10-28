@@ -27,6 +27,7 @@
 		7C1C530C1457AAF700053F9D /* MidiIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C52CD1457AAF700053F9D /* MidiIn.cpp */; };
 		7C1C530D1457AAF700053F9D /* MidiMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C52CE1457AAF700053F9D /* MidiMessage.cpp */; };
 		7C1C54B41458F48500053F9D /* MidiMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C54B31458F48500053F9D /* MidiMap.cpp */; };
+		7C566D4E145A4EE9006E0E32 /* AudioTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */; };
 		7CB2A23B144BE81C0010C54D /* InfoPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */; };
 		7CB2A28D144D007C0010C54D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A28C144D007C0010C54D /* Entity.cpp */; };
 		7CB2A292144D049B0010C54D /* Behavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A291144D049B0010C54D /* Behavior.cpp */; };
@@ -73,6 +74,8 @@
 		7C1C52CE1457AAF700053F9D /* MidiMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiMessage.cpp; sourceTree = "<group>"; };
 		7C1C54B21458F48500053F9D /* MidiMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiMap.h; path = ../src/MidiMap.h; sourceTree = SOURCE_ROOT; };
 		7C1C54B31458F48500053F9D /* MidiMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MidiMap.cpp; path = ../src/MidiMap.cpp; sourceTree = SOURCE_ROOT; };
+		7C566D4C145A4EE9006E0E32 /* AudioTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioTest.h; path = ../src/AudioTest.h; sourceTree = SOURCE_ROOT; };
+		7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioTest.cpp; path = ../src/AudioTest.cpp; sourceTree = SOURCE_ROOT; };
 		7CB2A239144BE80C0010C54D /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoPanel.h; path = ../include/InfoPanel.h; sourceTree = SOURCE_ROOT; };
 		7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InfoPanel.cpp; path = ../src/InfoPanel.cpp; sourceTree = SOURCE_ROOT; };
 		7CB2A28B144D007C0010C54D /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Entity.h; path = ../src/Entity.h; sourceTree = SOURCE_ROOT; };
@@ -120,8 +123,8 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				7C566D49145A4EB5006E0E32 /* Scenes */,
 				7C1C53CF1457C5A800053F9D /* Input */,
-				7CD3D2A814533D70007FB298 /* Oribter */,
 				7CB2A28A144D00480010C54D /* Entity */,
 				7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */,
 				00BAE6590E7ED9C10018A608 /* OculonApp.cpp */,
@@ -268,6 +271,24 @@
 			name = Input;
 			sourceTree = "<group>";
 		};
+		7C566D49145A4EB5006E0E32 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				7C566D4B145A4EC9006E0E32 /* AudioTest */,
+				7CD3D2A814533D70007FB298 /* Oribter */,
+			);
+			name = Scenes;
+			sourceTree = "<group>";
+		};
+		7C566D4B145A4EC9006E0E32 /* AudioTest */ = {
+			isa = PBXGroup;
+			children = (
+				7C566D4C145A4EE9006E0E32 /* AudioTest.h */,
+				7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */,
+			);
+			name = AudioTest;
+			sourceTree = "<group>";
+		};
 		7CB2A28A144D00480010C54D /* Entity */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,6 +391,7 @@
 				7C1C530C1457AAF700053F9D /* MidiIn.cpp in Sources */,
 				7C1C530D1457AAF700053F9D /* MidiMessage.cpp in Sources */,
 				7C1C54B41458F48500053F9D /* MidiMap.cpp in Sources */,
+				7C566D4E145A4EE9006E0E32 /* AudioTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
