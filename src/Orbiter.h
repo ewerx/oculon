@@ -46,6 +46,7 @@ private:
     void updateAudioResponse();
     void updateTimeDisplay();
     
+private:
     Vec3f           mLightDirection;
     
     vector<Body>    mBodies;
@@ -55,6 +56,8 @@ private:
     double          mDrawScale;
     double          mGravityConstant;
     
+    MidiMap         mMidiMap;
+    
     static GLfloat no_mat[];
     static GLfloat mat_ambient[];
     static GLfloat mat_diffuse[];
@@ -62,8 +65,6 @@ private:
     static GLfloat mat_emission[];
     static GLfloat mat_shininess[];
     static GLfloat no_shininess[];
-    
-    MidiMap mMidiMap;
     
 };
 

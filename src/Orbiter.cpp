@@ -249,6 +249,7 @@ void Orbiter::updateAudioResponse()
 
 void Orbiter::draw()
 {
+    glPushMatrix();
     glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
 	
@@ -302,6 +303,10 @@ void Orbiter::draw()
         //glTranslated(pos.x, pos.y, pos.z);
         //glPopMatrix();
     }
+    
+    glPopMatrix();
+    glDisable( GL_LIGHTING );
+	glDisable( GL_LIGHT0 );
 }
 
 void Orbiter::updateTimeDisplay()
