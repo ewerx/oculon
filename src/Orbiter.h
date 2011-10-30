@@ -39,7 +39,6 @@ public:
     
     // midi callbacks
     void handleGravityChange(MidiEvent midiEvent);
-    void handleTimeScaleChange(MidiEvent midiEvent);
     
 private:
     void setupMidiMapping();
@@ -67,8 +66,6 @@ private:
     static GLfloat mat_shininess[];
     static GLfloat no_shininess[];
     
-    static double sDefaultTimeScale;
-    static double sDefaultGravityConstant;
 };
 
 
