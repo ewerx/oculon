@@ -15,7 +15,7 @@ using namespace ci;
 
 
 InfoPanel::InfoPanel()
-: mState(true)
+: mIsVisible(true)
 , mOpacity(1.0f)
 , mTextureReady(false)
 {
@@ -70,11 +70,11 @@ void InfoPanel::update()
 {
     createTexture();
     
-	if( mState && mOpacity < 1.0f )
+	if( mIsVisible && mOpacity < 1.0f )
     {
 		mOpacity -= ( mOpacity - 1.0f ) * 0.1f;
 	} 
-    else if( !mState && mOpacity > 0.0f )
+    else if( !mIsVisible && mOpacity > 0.0f )
     {
 		mOpacity -= ( mOpacity - 0.0f ) * 0.1f;	
 	}
@@ -106,7 +106,7 @@ void InfoPanel::render( Vec2f aWindowDim )
 
 void InfoPanel::toggleState()
 {
-	mState = ! mState;
+	mIsVisible = ! mIsVisible;
     //mOpacity = 1.0f;
 }
 

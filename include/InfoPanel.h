@@ -33,6 +33,8 @@ public:
 	void update();
 	void render( ci::Vec2f aWindowDim );
 	void toggleState();// TODO: make this an event listener
+    void setVisible(bool visible)   { mIsVisible = visible; }
+    bool isVisible() const          { return mIsVisible; }
     
     void addLine( const string& line, const ci::Color& color );
     
@@ -41,7 +43,7 @@ protected:
 	
 private:
 	float				mOpacity;
-	bool				mState;
+	bool				mIsVisible;
 	ci::gl::Texture     mTexture;
     bool                mTextureReady;
     

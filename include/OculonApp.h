@@ -51,10 +51,13 @@ public: // new
     const Vec2f& getMousePos()          { return mMousePos; }
     InfoPanel& getInfoPanel()           { return mInfoPanel; }
     
+    bool isPresentationMode() const     { return mIsPresentationMode; }
+    
 protected: // new
     
     void setupScenes();
     void drawInfoPanel();
+    void setPresentationMode( bool enabled );
     
 private: // members
     // input
@@ -72,8 +75,9 @@ private: // members
     
     // debug
     InfoPanel               mInfoPanel;
-    bool                    mRenderInfoPanel;
     params::InterfaceGl		mParams;
+    
+    bool                    mIsPresentationMode;
 };
 
 #endif

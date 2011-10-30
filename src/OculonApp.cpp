@@ -32,6 +32,8 @@ void OculonApp::prepareSettings( Settings *settings )
 
 void OculonApp::setup()
 {
+    mIsPresentationMode = false;
+    
     // render
     gl::enableDepthWrite();
 	gl::enableDepthRead();
@@ -59,7 +61,6 @@ void OculonApp::setup()
     mAudioInput.setup();
     
     // debug
-    mRenderInfoPanel = false;
 	//glDisable( GL_TEXTURE_2D );
     
     mParams = params::InterfaceGl( "Parameters", Vec2i( 300, 100 ) );
@@ -161,6 +162,11 @@ void OculonApp::keyDown( KeyEvent event )
             }
             break;
         }
+            
+        case 'l':
+        case 'L':
+            setPresentationMode( !mIsPresentationMode );
+            break;
 
         case '/':
         case '?':
@@ -168,13 +174,13 @@ void OculonApp::keyDown( KeyEvent event )
             break;
             
         case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
         {
             char index = event.getChar() - '1';
             
@@ -244,8 +250,11 @@ void OculonApp::draw()
     glPopMatrix();     
     
     // debug
-    drawInfoPanel();
-	params::InterfaceGl::draw();
+    if( !mIsPresentationMode )
+    {
+        drawInfoPanel();
+        params::InterfaceGl::draw();
+    }
 }
 
 void OculonApp::drawInfoPanel()
@@ -260,6 +269,13 @@ void OculonApp::drawInfoPanel()
 	gl::popMatrices();
     
 	glDisable( GL_TEXTURE_2D );
+}
+
+void OculonApp::setPresentationMode( bool enabled )
+{
+    setFullScreen(enabled);
+    mInfoPanel.setVisible(!enabled);
+    mIsPresentationMode = enabled;
 }
 
 CINDER_APP_BASIC( OculonApp, RendererGl )
