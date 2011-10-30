@@ -37,6 +37,8 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
 PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //end tuple
 
+/*static*/ double Orbiter::sDefaultTimeScale = 60.f * 60.f * 24.f * 10.f; // 10 days
+/*static*/ double Orbiter::sDefaultGravityConstant = 6.6742e-11;
 
 //
 // Orbiter
@@ -53,9 +55,9 @@ Orbiter::~Orbiter()
 
 void Orbiter::setup()
 {
-    mTimeScale = 864000.f;
+    mTimeScale = sDefaultTimeScale;
     mDrawScale = 6e-12;
-    mGravityConstant = 6.6742e-11;
+    mGravityConstant = sDefaultGravityConstant;
     
     mLightDirection = Vec3f( 0.025f, 0.25f, 1.0f );
 	mLightDirection.normalize();
@@ -69,7 +71,8 @@ void Orbiter::setup()
 void Orbiter::setupMidiMapping()
 {
     // setup MIDI inputs for learning
-    mMidiMap.registerMidiEvent("gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
+    mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
+    mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
     mMidiMap.beginLearning();
     // ... or load a MIDI mapping
     //mMidiInput.setMidiKey("gravity", channel, note);
@@ -321,4 +324,9 @@ void Orbiter::handleGravityChange(MidiEvent midiEvent)
 {
     double delta = (midiEvent.getValueRatio() * 2.0f - 1.0f) * 8.0e-11;
     mGravityConstant = 6.6742e-11 + delta;
+}
+
+void Orbiter::handleTimeScaleChange(MidiEvent midiEvent)
+{
+    mTimeScale = sDefaultTimeScale * ( midiEvent.getValueRatio() * 100.f );
 }
