@@ -45,7 +45,7 @@ void Body::update(double dt)
 void Body::draw(const Matrix44d& transform)
 {
     static const int sphereDetail = 64;
-    static const int trailLength = 256;
+    static const int trailLength = 1024;
     Vec3d screen_coords = transform * mPosition;
     
     glPushMatrix();
@@ -54,8 +54,8 @@ void Body::draw(const Matrix44d& transform)
         
         glTranslatef(screen_coords.x, screen_coords.y, screen_coords.z);
         
-        //glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
-        glColor4f( mColor.r, mColor.g, mColor.b, mColor.a );
+        glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
+        //glColor4f( mColor.r, mColor.g, mColor.b, mColor.a );
         gl::drawSphere( Vec3d::zero(), mRadius*mRadiusMultiplier, sphereDetail );
         
         mLabel.draw();
@@ -66,7 +66,7 @@ void Body::draw(const Matrix44d& transform)
     {
         if( mMotionTrail.size() > trailLength )
         {
-            //mMotionTrail.getPoints().erase(mMotionTrail.begin());
+            mMotionTrail.getPoints().erase(mMotionTrail.begin());
         }
         mMotionTrail.push_back( Vec3f(screen_coords.x, screen_coords.y, screen_coords.z) );
         gl::draw(mMotionTrail);
