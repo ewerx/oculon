@@ -7,14 +7,37 @@
  *
  */
 
+#include "cinder/app/App.h"
 #include "MindWave.h"
 
+using namespace ci;
+using namespace ci::app;
+
+
 MindWave::MindWave()
-:TG_GetDV(NULL)
-,TG_GetNCId(NULL)
+:mConnectionId(-1)
+,mPortName("/dev/tty.MindWave")
+,mSignalQuality(0.0f)
+,mAttention(0.0f) // eSense attention
+,mMeditation(0.0f) // eSense meditation
+,mRaw(0.0f)
+,mDelta(0.0f)
+,mTheta(0.0f)
+,mAlpha1(0.0f)
+,mAlpha2(0.0f)
+,mBeta1(0.0f)
+,mBeta2(0.0f)
+,mGamma1(0.0f)
+,mGamma2(0.0f)
+,TG_GetDriverVersion(NULL)
+,TG_GetNewConnectionId(NULL)
 ,TG_Connect(NULL) 
+,TG_ReadPackets(NULL)
+,TG_GetValue(NULL)
+,TG_Disconnect(NULL)
+,TG_FreeConnection(NULL)
+,TG_SetDataLog(NULL)
 {
-    
     CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR("/Library/ThinkGear.bundle"),
                                                        kCFURLPOSIXPathStyle, true);
     
@@ -26,22 +49,95 @@ MindWave::MindWave()
     
     if( mThinkGearBundle )
     {
-        //TODO...
-        TG_GetDV    = ((void *)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetDriverVersion")));
-        TG_GetNCId  = (void *)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetNewConnectionId"));
-        TG_Connect  = (void *)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_Connect"));
-        //TG_Connect = (void *)CFBundleGetFunctionPointerForName(thinkGearBundle,CFSTR("TG_Connect"));
-        //TG_ReadPackets = (void *)CFBundleGetFunctionPointerForName(thinkGearBundle,CFSTR("TG_ReadPackets"));
-        //TG_GetValue = (void *)CFBundleGetFunctionPointerForName(thinkGearBundle,CFSTR("TG_GetValue"));
-        //TG_Disconnect = (void *)CFBundleGetFunctionPointerForName(thinkGearBundle,CFSTR("TG_Disconnect"));
-        //TG_FreeConnection = (void *)CFBundleGetFunctionPointerForName(thinkGearBundle,CFSTR("TG_FreeConnection"));
+        TG_GetDriverVersion    = (TGFunctionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetDriverVersion"));
+        TG_GetNewConnectionId  = (TGFunctionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetNewConnectionId"));
+        TG_Connect  = (TGConnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_Connect"));
+        TG_ReadPackets = (TGReadPacketsPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_ReadPackets"));
+        TG_GetValue = (TGGetValuePtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_GetValue"));
+        TG_Disconnect = (TGDisconnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_Disconnect"));
+        TG_FreeConnection = (TGFreeConnectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_FreeConnection"));
         
-        //TG_SetDataLog = (void *)CFBundleGetFunctionPointerForName(thinkGearBundle,CFSTR("TG_SetDataLog"));
+        TG_SetDataLog = (TGSetDataLogPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_SetDataLog"));
+        
+        assert( TG_GetDriverVersion && TG_GetNewConnectionId && TG_Connect && 
+               TG_ReadPackets && TG_GetValue && TG_Disconnect && TG_FreeConnection && TG_SetDataLog );
     }
-    
 }
 
 MindWave::~MindWave()
 {
+    endConnection();
     CFRelease(mThinkGearBundle);
+}
+
+void MindWave::setup()
+{
+    setupNewConnection();
+}
+
+void MindWave::update()
+{
+    if( mConnectionId != -1 )
+    {
+        getData();
+    }
+}
+
+int MindWave::setupNewConnection()
+{
+    int ret = -1;
+    mConnectionId = TG_GetNewConnectionId();
+    
+    ret = TG_SetDataLog( mConnectionId, "mw_datalog.txt" );
+    if( ret < 0 )
+    {
+        console() << "[mindwave] error setting data log path (" << ret << ")\n";
+        mConnectionId = -1;
+        return ret;
+    }
+    
+    console() << "[mindwave] connecting to " << mPortName << "... ";
+    
+    ret = TG_Connect(mConnectionId, mPortName, TG_BAUD_57600, TG_STREAM_PACKETS);// why was this 9600 in docs? 
+    
+    console() << ((ret == 0) ? "connected.\n" : "failed.\n");
+    
+    if( ret < 0 )
+    {
+        endConnection();
+    }
+    
+    return ret;
+}
+
+void MindWave::endConnection()
+{
+    TG_FreeConnection(mConnectionId);
+    mConnectionId = -1;
+    
+    console() << "[mindwave] disconnected.\n";
+}
+
+void MindWave::getData()
+{
+    int numPackets = TG_ReadPackets(mConnectionId, -1);
+    console() << "[mindwave] getData " << numPackets << " packets in stream.\n";
+    
+    if( numPackets > 0 )
+    {
+        mSignalQuality = TG_GetValue(mConnectionId, TG_DATA_POOR_SIGNAL);
+        mAttention = TG_GetValue(mConnectionId, TG_DATA_ATTENTION);
+        mMeditation = TG_GetValue(mConnectionId, TG_DATA_MEDITATION);
+        
+        mRaw = TG_GetValue(mConnectionId, TG_DATA_RAW);
+        mDelta = TG_GetValue(mConnectionId, TG_DATA_DELTA);
+        mTheta = TG_GetValue(mConnectionId, TG_DATA_THETA);
+        mAlpha1 = TG_GetValue(mConnectionId, TG_DATA_ALPHA1);
+        mAlpha2 = TG_GetValue(mConnectionId, TG_DATA_ALPHA2);
+        mBeta1 = TG_GetValue(mConnectionId, TG_DATA_BETA1);
+        mBeta2 = TG_GetValue(mConnectionId, TG_DATA_BETA2);
+        mGamma1 = TG_GetValue(mConnectionId, TG_DATA_GAMMA1);
+        mGamma2 = TG_GetValue(mConnectionId, TG_DATA_GAMMA2);
+    }
+    
 }

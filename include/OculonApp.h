@@ -17,6 +17,7 @@
 #include "cinder/MayaCamUI.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
+#include "MindWave.h"
 #include "InfoPanel.h"
 #include <vector>
 
@@ -48,6 +49,8 @@ public: // cinder interface
 public: // new
     AudioInput& getAudioInput()         { return mAudioInput; }
     MidiInput& getMidiInput()           { return mMidiInput; }
+    MindWave& getMindWave()             { return mMindWave; }
+    
     const Vec2f& getMousePos()          { return mMousePos; }
     InfoPanel& getInfoPanel()           { return mInfoPanel; }
     
@@ -63,6 +66,7 @@ private: // members
     // input
     AudioInput              mAudioInput;
     MidiInput               mMidiInput;
+    MindWave                mMindWave;
     Vec2f                   mMousePos;
     
     // render

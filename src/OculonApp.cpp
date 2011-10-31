@@ -18,6 +18,7 @@
 #include "InfoPanel.h"
 #include "Orbiter.h"
 #include "AudioTest.h"
+#include "MindWaveTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -60,6 +61,8 @@ void OculonApp::setup()
     // audio input
     mAudioInput.setup();
     
+    mMindWave.setup();
+    
     // debug
 	//glDisable( GL_TEXTURE_2D );
     
@@ -86,14 +89,21 @@ void OculonApp::setupScenes()
     mScenes.clear();
     
     //TODO: serialization
+    // Orbiter
     Scene* scene = new Orbiter();
     scene->init(this);
     mScenes.push_back( scene );
     
+    // AudioTest
     scene = new AudioTest();
     scene->init(this);
     scene->toggleActiveVisible(); // start disabled (should be default?)
     mScenes.push_back( scene );
+    
+    // MindWaveTet
+    scene = new MindWaveTest();
+    scene->init(this);
+    mScenes.push_back(scene);
     
     for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
@@ -205,6 +215,7 @@ void OculonApp::update()
     
     mAudioInput.update();
     mMidiInput.update();
+    mMindWave.update();
     
     for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();

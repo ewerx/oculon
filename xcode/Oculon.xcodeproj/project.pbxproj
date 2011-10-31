@@ -18,6 +18,7 @@
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		53E3CDFC0E86099300238D2B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E3CDFB0E86099300238D2B /* Carbon.framework */; };
+		7C146A32145E5FDE005B824E /* MindWaveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C146A30145E5FDE005B824E /* MindWaveTest.cpp */; };
 		7C1C51EA1457A79D00053F9D /* MidiInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C51E91457A79D00053F9D /* MidiInput.cpp */; };
 		7C1C52021457A97E00053F9D /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C1C52011457A97E00053F9D /* CoreMIDI.framework */; };
 		7C1C520C1457A99B00053F9D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C1C520B1457A99B00053F9D /* CoreFoundation.framework */; };
@@ -57,6 +58,8 @@
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		53E3CDFB0E86099300238D2B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		7C146A30145E5FDE005B824E /* MindWaveTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MindWaveTest.cpp; path = ../src/MindWaveTest.cpp; sourceTree = SOURCE_ROOT; };
+		7C146A31145E5FDE005B824E /* MindWaveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MindWaveTest.h; path = ../src/MindWaveTest.h; sourceTree = SOURCE_ROOT; };
 		7C1C51E81457A79D00053F9D /* MidiInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiInput.h; path = ../src/MidiInput.h; sourceTree = SOURCE_ROOT; };
 		7C1C51E91457A79D00053F9D /* MidiInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MidiInput.cpp; path = ../src/MidiInput.cpp; sourceTree = SOURCE_ROOT; };
 		7C1C52011457A97E00053F9D /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -279,19 +282,21 @@
 		7C566D49145A4EB5006E0E32 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				7C566D4B145A4EC9006E0E32 /* AudioTest */,
+				7C566D4B145A4EC9006E0E32 /* TestScenes */,
 				7CD3D2A814533D70007FB298 /* Oribter */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
 		};
-		7C566D4B145A4EC9006E0E32 /* AudioTest */ = {
+		7C566D4B145A4EC9006E0E32 /* TestScenes */ = {
 			isa = PBXGroup;
 			children = (
+				7C146A30145E5FDE005B824E /* MindWaveTest.cpp */,
+				7C146A31145E5FDE005B824E /* MindWaveTest.h */,
 				7C566D4C145A4EE9006E0E32 /* AudioTest.h */,
 				7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */,
 			);
-			name = AudioTest;
+			name = TestScenes;
 			sourceTree = "<group>";
 		};
 		7CB2A28A144D00480010C54D /* Entity */ = {
@@ -398,6 +403,7 @@
 				7C1C54B41458F48500053F9D /* MidiMap.cpp in Sources */,
 				7C566D4E145A4EE9006E0E32 /* AudioTest.cpp in Sources */,
 				7C566E27145DF9F0006E0E32 /* MindWave.cpp in Sources */,
+				7C146A32145E5FDE005B824E /* MindWaveTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

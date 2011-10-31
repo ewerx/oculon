@@ -16,7 +16,7 @@
 using namespace ci;
 
 GLfloat Orbiter::no_mat[]			= { 0.0, 0.0, 0.0, 1.0 };
-GLfloat Orbiter::mat_ambient[]		= { 0.6, 0.3, 0.4, 1.0 };
+GLfloat Orbiter::mat_ambient[]		= { 0.4, 0.1, 0.2, 1.0 };//{ 0.6, 0.3, 0.4, 1.0 };
 GLfloat Orbiter::mat_diffuse[]		= { 0.3, 0.5, 0.8, 1.0 };
 GLfloat Orbiter::mat_specular[]		= { 1.0, 1.0, 1.0, 1.0 };
 GLfloat Orbiter::mat_emission[]		= { 0.0, 0.1, 0.3, 0.0 };
@@ -186,7 +186,7 @@ void Orbiter::update(double dt)
     mElapsedTime += dt;
     
     bool simulate = true;
-    bool symmetric = false;
+    bool symmetric = true;
     int i = 0;
     bool print = false;
     
