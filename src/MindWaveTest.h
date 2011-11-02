@@ -32,6 +32,7 @@ public:
     
 private:
     void drawGraphs();
+    vector<float> mRawValues;
     
 };
 

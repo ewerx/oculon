@@ -41,6 +41,11 @@ MindWave::MindWave()
 ,TG_FreeConnection(NULL)
 ,TG_SetDataLog(NULL)
 {
+    for(int i=0; i < BAND_COUNT; ++i)
+    {
+        mBand[i] = 0.0f;
+    }
+    
     CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR("/Library/ThinkGear.bundle"),
                                                        kCFURLPOSIXPathStyle, true);
     

@@ -49,6 +49,21 @@ typedef int(*TGSetDataLogPtr)(int, const char*);
 class MindWave
 {
 public:
+    enum eBand
+    {
+        BAND_DELTA,
+        BAND_THETA,
+        BAND_ALPHA_LOW,
+        BAND_ALPHA_HIGH,
+        BAND_BETA_LOW,
+        BAND_BETA_HIGH,
+        BAND_GAMMA_LOW,
+        BAND_GAMMA_HIGH,
+        
+        BAND_COUNT
+    };
+    
+public:
     MindWave();
     ~MindWave();
     
@@ -90,6 +105,7 @@ private:
 	float mBeta2;
 	float mGamma1;
 	float mGamma2;
+    float mBand[BAND_COUNT];
     
     // thread
     boost::thread           mThread;
