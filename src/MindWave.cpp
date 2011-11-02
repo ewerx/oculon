@@ -9,6 +9,7 @@
 
 #include "cinder/app/App.h"
 #include "MindWave.h"
+#include "cinder/cocoa/CinderCocoa.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -29,6 +30,8 @@ MindWave::MindWave()
 ,mBeta2(0.0f)
 ,mGamma1(0.0f)
 ,mGamma2(0.0f)
+,mIsCollectingData(false)
+,mUseThread(false)
 ,TG_GetDriverVersion(NULL)
 ,TG_GetNewConnectionId(NULL)
 ,TG_Connect(NULL) 
@@ -49,15 +52,14 @@ MindWave::MindWave()
     
     if( mThinkGearBundle )
     {
-        TG_GetDriverVersion    = (TGFunctionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetDriverVersion"));
-        TG_GetNewConnectionId  = (TGFunctionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetNewConnectionId"));
-        TG_Connect  = (TGConnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_Connect"));
-        TG_ReadPackets = (TGReadPacketsPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_ReadPackets"));
-        TG_GetValue = (TGGetValuePtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_GetValue"));
-        TG_Disconnect = (TGDisconnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_Disconnect"));
-        TG_FreeConnection = (TGFreeConnectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_FreeConnection"));
-        
-        TG_SetDataLog = (TGSetDataLogPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_SetDataLog"));
+        TG_GetDriverVersion     = (TGFunctionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetDriverVersion"));
+        TG_GetNewConnectionId   = (TGFunctionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_GetNewConnectionId"));
+        TG_Connect              = (TGConnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_Connect"));
+        TG_ReadPackets          = (TGReadPacketsPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_ReadPackets"));
+        TG_GetValue             = (TGGetValuePtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_GetValue"));
+        TG_Disconnect           = (TGDisconnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_Disconnect"));
+        TG_FreeConnection       = (TGFreeConnectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_FreeConnection"));
+        TG_SetDataLog           = (TGSetDataLogPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_SetDataLog"));
         
         assert( TG_GetDriverVersion && TG_GetNewConnectionId && TG_Connect && 
                TG_ReadPackets && TG_GetValue && TG_Disconnect && TG_FreeConnection && TG_SetDataLog );
@@ -72,14 +74,36 @@ MindWave::~MindWave()
 
 void MindWave::setup()
 {
-    setupNewConnection();
+    if( 0 == setupNewConnection() )
+    {
+        if( mUseThread )
+        {
+            mIsCollectingData = true;
+            mThread = boost::thread(&MindWave::threadLoop, this);
+        }
+    }
+}
+
+void MindWave::threadLoop()
+{
+    console() << "[mindwave] thread launched...\n";
+    cocoa::SafeNsAutoreleasePool autorelease;
+    while( mIsCollectingData )
+    {
+        // sleep for half a second
+		usleep(50000);
+        
+        getData();
+    }
+    console() << "[mindwave] thread terminated\n";
 }
 
 void MindWave::update()
 {
     if( mConnectionId != -1 )
     {
-        getData();
+        if( !mUseThread )
+            getData();
     }
 }
 
@@ -114,6 +138,9 @@ void MindWave::endConnection()
 {
     TG_FreeConnection(mConnectionId);
     mConnectionId = -1;
+    mIsCollectingData = false;
+    
+    mThread.join();
     
     console() << "[mindwave] disconnected.\n";
 }
@@ -121,7 +148,7 @@ void MindWave::endConnection()
 void MindWave::getData()
 {
     int numPackets = TG_ReadPackets(mConnectionId, -1);
-    console() << "[mindwave] getData " << numPackets << " packets in stream.\n";
+    //console() << "[mindwave] getData " << numPackets << " packets in stream.\n";
     
     if( numPackets > 0 )
     {

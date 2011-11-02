@@ -11,6 +11,7 @@
 #define __MINDWAVE_H__
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <boost/thread.hpp>
 
 #define TG_BAUD_1200 1200
 #define TG_BAUD_2400 2400
@@ -67,6 +68,8 @@ public:
 	float getGamma1() const         { return mGamma1; }
 	float getGamma2() const         { return mGamma2; }
     
+    void threadLoop();
+    
 private:
     int setupNewConnection();
     void endConnection();
@@ -88,6 +91,10 @@ private:
 	float mGamma1;
 	float mGamma2;
     
+    // thread
+    boost::thread           mThread;
+    bool                    mIsCollectingData;
+    bool                    mUseThread;
     
     // connection
     CFURLRef                mBundleUrl;
