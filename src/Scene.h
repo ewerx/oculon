@@ -12,6 +12,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/params/Params.h"
+#include "cinder/app/KeyEvent.h"
 
 // fwd decl
 class OculonApp;
@@ -30,6 +31,7 @@ public:
     virtual void reset() {}
     virtual void update(double dt) {}
     virtual void draw() {}
+    virtual bool handleKeyDown(const ci::app::KeyEvent& keyEvent) { return false; }
     
     OculonApp* getApp();
     

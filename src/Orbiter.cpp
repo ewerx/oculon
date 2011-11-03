@@ -12,6 +12,7 @@
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
 #include "Orbiter.h"
+#include "Sun.h"
 
 using namespace ci;
 
@@ -45,6 +46,9 @@ PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //
 Orbiter::Orbiter()
 : Scene()
+, mSun()
+, mFollowTarget()
+, mIsFollowCameraEnabled(false)
 {
 }
 
@@ -91,26 +95,30 @@ void Orbiter::reset()
     mElapsedTime = 0.0f;
     
     const float radialEnhancement = 1000000.0f;
-    mBodies.clear();
+    mBodies.clear(); // this will delete mSun
+    
+    // sun
     double mass = 1.989E+030;
     float radius = 35.0f;
     double orbitalRadius;
     double orbitalVel;
-    mBodies.push_back(Body(Vec3d::zero(), 
-                           Vec3d::zero(),
-                           radius, mass, 
-                           ColorA(1.0f, 0.2f, 0.2f)) );
+    mSun = new Sun(Vec3d::zero(),
+                   Vec3d::zero(),
+                   radius,
+                   mass,
+                   ColorA(1.0f, 1.0f, 1.0f));
+    mBodies.push_back(mSun);
     
 #define PLANETS_ENTRY(name,orad,brad,mss,ovel) \
     mass = mss;\
     orbitalRadius = orad;\
     orbitalVel = ovel;\
     radius = brad * mDrawScale * radialEnhancement;\
-    mBodies.push_back(Body(Vec3d(-orbitalRadius, 0.0f, 0.0f), \
-                           Vec3d(0.0f, orbitalVel, 0.0f),\
-                           radius, \
-                           mass, \
-                           ColorA(0.3f, 0.5f, 0.7f)) ); 
+    mBodies.push_back(new Body( Vec3d(-orbitalRadius, 0.0f, 0.0f), \
+                                Vec3d(0.0f, orbitalVel, 0.0f),\
+                                radius, \
+                                mass, \
+                                ColorA(0.3f, 0.5f, 0.7f)) ); 
     
     PLANETS_TUPLE
 #undef PLANETS_ENTRY
@@ -155,13 +163,15 @@ void Orbiter::reset()
         //Vec3d orbitalPlaneNormal = pos.normalized();
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
         
-        mBodies.push_back(Body(pos, 
-                               /*orbitalPlaneNormal * orbitalVel,*/
-                               Vec3d(0.0f, orbitalVel, 0.0f),
-                               radius, 
-                               mass, 
-                               ColorA(0.1f, 0.8f, 0.3f)) );
+        mBodies.push_back(new Body(pos, 
+                                   /*orbitalPlaneNormal * orbitalVel,*/
+                                   Vec3d(0.0f, orbitalVel, 0.0f),
+                                   radius, 
+                                   mass, 
+                                   ColorA(0.1f, 0.8f, 0.3f)) );
     }
+    
+    mFollowTarget = mBodies.back();
     // TODO: determine orbital velocity
     /*
      for( int i = 1; i < mBodies.size(); ++i )
@@ -195,19 +205,20 @@ void Orbiter::update(double dt)
     
     if( simulate )
     {
-        for(vector<Body>::iterator bodyIt = mBodies.begin(); 
+        for(BodyList::iterator bodyIt = mBodies.begin(); 
             bodyIt != mBodies.end();
             ++bodyIt)
         {   
+            Body* body = (*bodyIt);
             if( symmetric )
             {
                 // N-bodies
-                for(vector<Body>::iterator otherBody = mBodies.begin();
+                for(BodyList::iterator otherBody = mBodies.begin();
                     otherBody != mBodies.end();
                     ++otherBody)
                 {
                     if( bodyIt != otherBody )
-                        bodyIt->applyForceFromBody(*otherBody,dt,mGravityConstant);
+                        body->applyForceFromBody(*(*otherBody),dt,mGravityConstant);
                 }
             }
             else
@@ -215,11 +226,11 @@ void Orbiter::update(double dt)
                 // assume sun at index 0
                 if( i!=0 )
                 {
-                    bodyIt->applyForceFromBody(mBodies[0], dt, mGravityConstant);
+                    body->applyForceFromBody(*mBodies[0], dt, mGravityConstant);
                 }
             }
             
-            bodyIt->update(dt);
+            body->update(dt);
             
             ++i;
         }
@@ -227,8 +238,48 @@ void Orbiter::update(double dt)
     
     updateAudioResponse();
     //updateTimeDisplay();
+    
+    if( mIsFollowCameraEnabled && mFollowTarget )
+    {
+        Matrix44d matrix = Matrix44d::identity();
+        matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
+                           mDrawScale * getWindowHeight() / 2.0f,
+                           mDrawScale * getWindowHeight() / 4.0f));
+        double offset = mFollowTarget->getRadius()*1.2f;
+        Vec3d toCore = matrix * mFollowTarget->getPosition();
+        Vec3d offsetVec = offset * mFollowTarget->getPosition().normalized();
+        toCore = toCore - offsetVec;
+        Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
+        mApp->setCamera( camPos, Vec3f::zero() );
+    }
 }
 
+//
+// handleKeyDown
+//
+bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
+{
+    bool handled = true;
+    
+    switch (keyEvent.getChar()) 
+    {
+        case ' ':
+            reset();
+            break;
+        case 'c':
+            mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
+            mApp->setUseMayaCam( !mIsFollowCameraEnabled );
+        default:
+            handled = false;
+            break;
+    }
+    
+    return handled;
+}
+
+//
+//
+//
 void Orbiter::updateAudioResponse()
 {
     AudioInput& audioInput = mApp->getAudioInput();
@@ -244,7 +295,7 @@ void Orbiter::updateAudioResponse()
             if( i < mBodies.size() )
             {
                 float multiplier = math<float>::clamp(0.5f, (fftBuffer[i] / bandCount) * (4.0f+i), (4.0f+i));
-                mBodies[i].setRadiusMultiplier( multiplier );
+                mBodies[i]->setRadiusMultiplier( multiplier );
             }
         }
     }
@@ -257,7 +308,7 @@ void Orbiter::draw()
 	glEnable( GL_LIGHT0 );
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	GLfloat light_position[] = { 0.0f, 0.0f, 75.0f, 1.0f };
+	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
     
     //if( DIFFUSE )
@@ -288,10 +339,10 @@ void Orbiter::draw()
     //if( EMISSIVE )
     glMaterialfv( GL_FRONT, GL_EMISSION, Orbiter::mat_emission );
     //else
-    //    glMaterialfv( GL_FRONT, GL_EMISSION, no_mat );
+        //glMaterialfv( GL_FRONT, GL_EMISSION, no_mat );
     
     
-    for(vector<Body>::iterator bodyIt = mBodies.begin(); 
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
         ++bodyIt)
     {
@@ -299,7 +350,7 @@ void Orbiter::draw()
         matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
                             mDrawScale * getWindowHeight() / 2.0f,
                             mDrawScale * getWindowHeight() / 4.0f));
-        bodyIt->draw(matrix);
+        (*bodyIt)->draw(matrix);
         
         //glPushMatrix();
         //Vec3d pos = matrix * bodyIt->getPosition();
@@ -316,7 +367,7 @@ void Orbiter::updateTimeDisplay()
 {
 
     char buf[64];
-    snprintf(buf, 64, "%.0f", mElapsedTime / 3600.f);
+    snprintf(buf, 64, "%.0f hours", mElapsedTime / 3600.f);
     mApp->getInfoPanel().addLine( buf, Color(0.5f, 0.5f, 0.5f) );
 }
 
