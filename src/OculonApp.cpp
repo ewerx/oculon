@@ -315,10 +315,9 @@ void OculonApp::setPresentationMode( bool enabled )
     mIsPresentationMode = enabled;
 }
 
-void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look )
+void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up )
 {
-    mCam.setEyePoint( eye );
-	mCam.setCenterOfInterestPoint( look );
+    mCam.lookAt( eye, look, up );
 }
 
 

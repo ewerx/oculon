@@ -8,7 +8,9 @@
  */
 
 #include "cinder/gl/gl.h"
-
+#include "cinder/App/App.h"
+#include "cinder/CinderMath.h"
+#include "cinder/Rand.h"
 #include "Body.h"
 
 using namespace ci;
@@ -26,6 +28,7 @@ Body::Body(const Vec3d& pos, const Vec3d& vel, float radius, double mass, const 
 , mColor(color)
 {
     mLabel.setPosition(Vec3d(mRadius, mRadius, 0.0f));
+    mLabel.setFont("Synchro LET");
     //mMotionTrail.setClosed(true);
 }
 
@@ -45,9 +48,13 @@ void Body::update(double dt)
 void Body::draw(const Matrix44d& transform)
 {
     static const int sphereDetail = 64;
-    static const int trailLength = 1024;
+    //static const int minTrailLength = 64;
+    //static const double scale = 6e-12 * 1.f;
     Vec3d screen_coords = transform * mPosition;
+    const int trailLength = 128 + 128 * randFloat();//(mMotionTrail.getPoints().front() - mMotionTrail.getPoints().back())//minTrailLength + minTrailLength*(math<double>::abs(mPosition.length())*scale);
+    //app::console() << "trail length: " << trailLength << std::endl;
     
+     
     glPushMatrix();
     {
         //glEnable( GL_LIGHTING );

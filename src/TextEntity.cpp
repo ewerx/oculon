@@ -77,6 +77,12 @@ void TextEntity::setTextColor( const ci::ColorA& color )
     createTexture();
 }
 
+void TextEntity::setFont( const std::string& fontName )
+{
+    mFontName = fontName;
+    createTexture();
+}
+
 void TextEntity::createTexture()
 {
     TextLayout layout;

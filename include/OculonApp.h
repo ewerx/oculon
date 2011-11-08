@@ -54,7 +54,7 @@ public: // new
     bool isPresentationMode() const     { return mIsPresentationMode; }
     void setUseMayaCam(bool use)        { mUseMayaCam = use; }
     
-    void setCamera( const Vec3f& eye, const Vec3f& look );
+    void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
     
 protected: // new
     

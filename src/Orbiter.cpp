@@ -238,20 +238,6 @@ void Orbiter::update(double dt)
     
     updateAudioResponse();
     //updateTimeDisplay();
-    
-    if( mIsFollowCameraEnabled && mFollowTarget )
-    {
-        Matrix44d matrix = Matrix44d::identity();
-        matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
-                           mDrawScale * getWindowHeight() / 2.0f,
-                           mDrawScale * getWindowHeight() / 4.0f));
-        double offset = mFollowTarget->getRadius()*1.2f;
-        Vec3d toCore = matrix * mFollowTarget->getPosition();
-        Vec3d offsetVec = offset * mFollowTarget->getPosition().normalized();
-        toCore = toCore - offsetVec;
-        Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
-        mApp->setCamera( camPos, Vec3f::zero() );
-    }
 }
 
 //
@@ -341,21 +327,32 @@ void Orbiter::draw()
     //else
         //glMaterialfv( GL_FRONT, GL_EMISSION, no_mat );
     
+    Matrix44d matrix = Matrix44d::identity();
+    matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
+                       mDrawScale * getWindowHeight() / 2.0f,
+                       mDrawScale * getWindowHeight() / 4.0f));
     
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
         ++bodyIt)
     {
-        Matrix44d matrix = Matrix44d::identity();
-        matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
-                            mDrawScale * getWindowHeight() / 2.0f,
-                            mDrawScale * getWindowHeight() / 4.0f));
         (*bodyIt)->draw(matrix);
         
         //glPushMatrix();
         //Vec3d pos = matrix * bodyIt->getPosition();
         //glTranslated(pos.x, pos.y, pos.z);
         //glPopMatrix();
+    }
+    
+    if( mIsFollowCameraEnabled && mFollowTarget )
+    {
+        double offset = mFollowTarget->getRadius()*1.2f;
+        Vec3d toCore = matrix * mFollowTarget->getPosition();
+        Vec3d offsetVec = offset * mFollowTarget->getPosition().normalized();
+        Vec3d up = Vec3d( sin(getElapsedSeconds()/100.f), 1.0f, 0.0f );
+        toCore = toCore - offsetVec;
+        Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
+        mApp->setCamera( camPos, Vec3f::zero(), up );
     }
     
     glPopMatrix();
