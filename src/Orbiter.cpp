@@ -50,6 +50,7 @@ Orbiter::Orbiter()
 , mFollowTarget()
 , mIsFollowCameraEnabled(false)
 {
+    mEnableFrustumCulling = true;
 }
 
 Orbiter::~Orbiter()
@@ -88,6 +89,7 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001");
     params.addParam("Time Scale", &mTimeScale, "step=100.0");
     params.addSeparator();
+    params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
 
 void Orbiter::reset()
@@ -243,6 +245,8 @@ void Orbiter::update(double dt)
     
     updateAudioResponse();
     //updateTimeDisplay();
+    
+    Scene::update(dt);
 }
 
 //
@@ -337,17 +341,29 @@ void Orbiter::draw()
                        mDrawScale * getWindowHeight() / 2.0f,
                        mDrawScale * getWindowHeight() / 4.0f));
     
+    int culled = 0;
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
         ++bodyIt)
     {
-        (*bodyIt)->draw(matrix);
+        Body* body = (*bodyIt);
+        if (!mEnableFrustumCulling ||
+            isSphereInFrustum( (matrix * body->getPosition()), body->getRadius()*mDrawScale ) )
+        {
+            body->draw(matrix);
+        }
+        else
+        {
+            culled++;
+        }
         
         //glPushMatrix();
         //Vec3d pos = matrix * bodyIt->getPosition();
         //glTranslated(pos.x, pos.y, pos.z);
         //glPopMatrix();
     }
+    
+    //mApp->console() << "culled " << culled << std::endl;
     
     if( mIsFollowCameraEnabled && mFollowTarget )
     {
