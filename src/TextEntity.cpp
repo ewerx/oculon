@@ -35,20 +35,25 @@ void TextEntity::draw()
     if( !mTexture )
         return;
 
-    glPushMatrix();
+    gl::pushMatrices();
     {
-        glDisable( GL_LIGHTING );
-        glEnable( GL_TEXTURE_2D );
-        glColor4f( 1, 1, 1, 1 );
         
-        glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+        glDisable( GL_LIGHTING );
+        glDisable( GL_DEPTH_TEST );
+        //gl::enableAdditiveBlending();
+        glEnable( GL_TEXTURE_2D );
+        glColor4f( mTextColor );
+        
+        
         glTranslatef(mPosition);
         gl::draw( mTexture, Rectf( 0.0f, 0.0f, mTexture.getCleanWidth(), mTexture.getCleanHeight() ));
         
         glDisable( GL_TEXTURE_2D );
+        glEnable( GL_DEPTH_TEST );
+        //gl::enableAlphaBlending();
         glEnable( GL_LIGHTING );
     }
-    glPopMatrix();
+    gl::popMatrices();
 }
 
 void TextEntity::setText( const std::string& str )

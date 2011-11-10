@@ -11,7 +11,9 @@
 #include "cinder/App/App.h"
 #include "cinder/CinderMath.h"
 #include "cinder/Rand.h"
+#include "cinder/Camera.h"
 #include "Body.h"
+#include "OculonApp.h"
 
 using namespace ci;
 
@@ -26,13 +28,17 @@ Body::Body(const Vec3d& pos, const Vec3d& vel, float radius, double mass, const 
 , mRadiusMultiplier(1.0f)
 , mMass(mass)
 , mColor(color)
+, mIsLabelVisible(true)
 {
-    mLabel.setPosition(Vec3d(mRadius, mRadius, 0.0f));
+    mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Synchro LET");
-    //mMotionTrail.setClosed(true);
 }
 
 Body::~Body()
+{
+}
+
+void Body::setup()
 {
 }
 
@@ -40,9 +46,7 @@ void Body::update(double dt)
 {
     mPosition += mVelocity * dt;
     
-    char buf[256];
-    snprintf(buf,256,"v = %.1f m/s", mVelocity.length());
-    mLabel.setText(buf);
+    updateLabel();
 }
 
 void Body::draw(const Matrix44d& transform)
@@ -50,7 +54,7 @@ void Body::draw(const Matrix44d& transform)
     static const int sphereDetail = 64;
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
-    Vec3d screen_coords = transform * mPosition;
+    Vec3d screenCoords = transform * mPosition;
     const int trailLength = 128 + 128 * randFloat();//(mMotionTrail.getPoints().front() - mMotionTrail.getPoints().back())//minTrailLength + minTrailLength*(math<double>::abs(mPosition.length())*scale);
     //app::console() << "trail length: " << trailLength << std::endl;
     
@@ -59,13 +63,29 @@ void Body::draw(const Matrix44d& transform)
     {
         //glEnable( GL_LIGHTING );
         
-        glTranslatef(screen_coords.x, screen_coords.y, screen_coords.z);
+        glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
         
         glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
         //glColor4f( mColor.r, mColor.g, mColor.b, mColor.a );
         gl::drawSphere( Vec3d::zero(), mRadius*mRadiusMultiplier, sphereDetail );
         
-        mLabel.draw();
+        // label
+        if( mIsLabelVisible )
+        {
+            gl::pushMatrices();
+        
+            CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+            gl::setMatrices(textCam);
+        
+            OculonApp* app = static_cast<OculonApp*>(App::get());
+            Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+            glTranslatef(textCoords.x, textCoords.y, 0.0f);
+
+            mLabel.draw();
+
+            gl::popMatrices();
+        }
+         
     }
     glPopMatrix();
     
@@ -75,7 +95,7 @@ void Body::draw(const Matrix44d& transform)
         {
             mMotionTrail.getPoints().erase(mMotionTrail.begin());
         }
-        mMotionTrail.push_back( Vec3f(screen_coords.x, screen_coords.y, screen_coords.z) );
+        mMotionTrail.push_back( Vec3f(screenCoords.x, screenCoords.y, screenCoords.z) );
         gl::draw(mMotionTrail);
     }
     glPopMatrix();
@@ -93,5 +113,15 @@ void Body::applyForceFromBody(Body& otherBody, double dt, double gravConst)
             double accel = -gravConst * ( otherBody.mMass / distSqrd );
             mVelocity += dir * accel * dt;
         }
+    }
+}
+
+void Body::updateLabel()
+{
+    if( mIsLabelVisible )
+    {
+        char buf[256];
+        snprintf(buf,256,"v = %.1f m/s", mVelocity.length());
+        mLabel.setText(buf);
     }
 }

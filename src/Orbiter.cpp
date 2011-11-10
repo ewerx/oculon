@@ -107,19 +107,24 @@ void Orbiter::reset()
                    radius,
                    mass,
                    ColorA(1.0f, 1.0f, 1.0f));
+    mSun->setup();
+    mSun->setLabelVisible(false);
     mBodies.push_back(mSun);
+    
+    Body* body;
     
 #define PLANETS_ENTRY(name,orad,brad,mss,ovel) \
     mass = mss;\
     orbitalRadius = orad;\
     orbitalVel = ovel;\
     radius = brad * mDrawScale * radialEnhancement;\
-    mBodies.push_back(new Body( Vec3d(-orbitalRadius, 0.0f, 0.0f), \
-                                Vec3d(0.0f, orbitalVel, 0.0f),\
-                                radius, \
-                                mass, \
-                                ColorA(0.3f, 0.5f, 0.7f)) ); 
-    
+    body = new Body(Vec3d(-orbitalRadius, 0.0f, 0.0f), \
+                    Vec3d(0.0f, orbitalVel, 0.0f),\
+                    radius, \
+                    mass, \
+                    ColorA(0.3f, 0.5f, 0.7f)); \
+    body->setup(); \
+    mBodies.push_back( body );
     PLANETS_TUPLE
 #undef PLANETS_ENTRY
     
@@ -349,7 +354,7 @@ void Orbiter::draw()
         double offset = mFollowTarget->getRadius()*1.2f;
         Vec3d toCore = matrix * mFollowTarget->getPosition();
         Vec3d offsetVec = offset * mFollowTarget->getPosition().normalized();
-        Vec3d up = Vec3d( sin(getElapsedSeconds()/100.f), 1.0f, 0.0f );
+        Vec3d up = Vec3d( sin(getElapsedSeconds()/20.f), 1.0f, 0.0f );
         toCore = toCore - offsetVec;
         Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
         mApp->setCamera( camPos, Vec3f::zero(), up );

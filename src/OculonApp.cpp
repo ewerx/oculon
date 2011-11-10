@@ -46,12 +46,10 @@ void OculonApp::setup()
     
     // setup our default camera, looking down the z-axis
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
-    //CameraPersp cam;
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
 	mCam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
     mMayaCam.setCurrentCam( mCam );
-    //mCam = cam;
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );

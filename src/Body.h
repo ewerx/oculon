@@ -33,6 +33,7 @@ public:
     virtual ~Body();
     
     // inherited from Entity
+    virtual void setup();
     virtual void update(double dt);
     virtual void draw(const Matrix44d& transform);
     
@@ -42,6 +43,11 @@ public:
     
     float getRadius() const { return mRadius; }
     void setRadiusMultiplier( float mult ) { mRadiusMultiplier = mult; }
+    
+    void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
+    
+protected:
+    void updateLabel();
     
 protected:
     Vec3d mVelocity;
@@ -54,6 +60,7 @@ protected:
     PolyLine<Vec3f> mMotionTrail;
     
     TextEntity mLabel;
+    bool mIsLabelVisible;
 };
 
 
