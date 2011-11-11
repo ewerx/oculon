@@ -27,6 +27,7 @@ void MindWaveTest::setup()
 void MindWaveTest::update(double /*dt*/)
 {
     MindWave& mindWave = mApp->getMindWave();
+    
     char buf[256];
     snprintf(buf, 256, "mw signal: %.1f", mindWave.getSignalQuality());
     mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.8f*mindWave.getSignalQuality()));
@@ -65,8 +66,6 @@ void MindWaveTest::update(double /*dt*/)
 
 void MindWaveTest::draw()
 {
-    MindWave& mindWave = mApp->getMindWave();
-    
     glPushMatrix();
     {
         gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
@@ -80,9 +79,7 @@ void MindWaveTest::draw()
 }
 
 void MindWaveTest::drawGraphs()
-{
-    MindWave& mindWave = mApp->getMindWave();
-    
+{   
     int displaySize = getWindowWidth();
     
     //only draw the last 1024 samples or less

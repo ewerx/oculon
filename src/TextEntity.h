@@ -32,6 +32,7 @@ public:
     void setText( const std::string& str, const ci::ColorA& color );
     void setText( const std::string& str, const std::string& font, const float size, const ci::ColorA& color );
     void setTextColor( const ci::ColorA& color );
+    void setFont( const std::string& fontName );
     
 private:
     void createTexture();
@@ -42,6 +43,7 @@ private:
     float               mFontSize;
     ci::ColorA          mTextColor;
     ci::gl::Texture     mTexture;
+    
 };
 
 #endif // __TEXTENTITY_H__

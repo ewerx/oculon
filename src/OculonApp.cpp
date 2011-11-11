@@ -29,25 +29,29 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setWindowSize( 800, 600 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
+    settings->enableSecondaryDisplayBlanking(false);
 }
 
 void OculonApp::setup()
 {
     mIsPresentationMode = false;
+    mUseMayaCam = true;
+    mEnableMindWave = false;
     
     // render
     gl::enableDepthWrite();
 	gl::enableDepthRead();
 	gl::enableAlphaBlending();
     glDisable( GL_TEXTURE_2D );
+    //wireframe
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
     // setup our default camera, looking down the z-axis
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
-    CameraPersp cam;
-    cam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
-	cam.setCenterOfInterestPoint( Vec3f::zero() );
-	cam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
-    mMayaCam.setCurrentCam( cam );
+    mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
+	mCam.setCenterOfInterestPoint( Vec3f::zero() );
+	mCam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
+    mMayaCam.setCurrentCam( mCam );
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -61,7 +65,10 @@ void OculonApp::setup()
     // audio input
     mAudioInput.setup();
     
-    mMindWave.setup();
+    if( mEnableMindWave )
+    {
+        mMindWave.setup();
+    }
     
     // debug
 	//glDisable( GL_TEXTURE_2D );
@@ -100,12 +107,7 @@ void OculonApp::setupScenes()
     scene->toggleActiveVisible(); // start disabled (should be default?)
     mScenes.push_back( scene );
     
-    // MindWaveTet
-    scene = new MindWaveTest();
-    scene->init(this);
-    mScenes.push_back(scene);
-    
-    for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -121,9 +123,12 @@ void OculonApp::setupScenes()
 
 void OculonApp::resize( ResizeEvent event )
 {
-    CameraPersp cam = mMayaCam.getCamera();
-    cam.setAspectRatio( getWindowAspectRatio() );
-    mMayaCam.setCurrentCam( cam );
+    if( mUseMayaCam )
+    {
+        mCam = mMayaCam.getCamera();
+    }
+    mCam.setAspectRatio( getWindowAspectRatio() );
+    mMayaCam.setCurrentCam( mCam );
     //mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
 	//mCam.setPerspective( 60, getWindowAspectRatio(), 1, 1000 );
 	//gl::setMatrices( mCam );
@@ -137,29 +142,35 @@ void OculonApp::mouseMove( MouseEvent event )
 
 void OculonApp::mouseDown( MouseEvent event )
 {
-    // let the camera handle the interaction
-	mMayaCam.mouseDown( event.getPos() );
+    if( mUseMayaCam )
+    {
+        // let the camera handle the interaction
+        mMayaCam.mouseDown( event.getPos() );
+    }
 }
 
 void OculonApp::mouseDrag( MouseEvent event )
 {
-    // let the camera handle the interaction
-	mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+    if( mUseMayaCam )
+    {
+        // let the camera handle the interaction
+        mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+    }
 }
 
 void OculonApp::keyDown( KeyEvent event )
 {
     switch( event.getChar() )
     {
-        case ' ':
-            mScenes[0]->reset();//TODO: active scene?
-            break;
+        //case ' ':
+            //mScenes[0]->reset();//TODO: active scene?
+            //break;
             
         // toggle pause-all
         case 'p':
         case 'P':
         {
-            for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
+            for (SceneList::iterator sceneIt = mScenes.begin(); 
                  sceneIt != mScenes.end();
                  ++sceneIt )
             {
@@ -200,6 +211,21 @@ void OculonApp::keyDown( KeyEvent event )
             }
         }
         default:
+        {
+            for (SceneList::iterator sceneIt = mScenes.begin(); 
+                 sceneIt != mScenes.end();
+                 ++sceneIt )
+            {
+                Scene* scene = (*sceneIt);
+                if( scene && scene->isActive() )
+                {
+                    if( scene->handleKeyDown(event) )
+                    {
+                        break;
+                    }
+                }
+            }
+        }
             break;
     }
 }
@@ -215,9 +241,12 @@ void OculonApp::update()
     
     mAudioInput.update();
     mMidiInput.update();
-    mMindWave.update();
+    if( mEnableMindWave )
+    {
+        mMindWave.update();
+    }
     
-    for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -239,14 +268,22 @@ void OculonApp::draw()
     glPushMatrix();
     {
         // setup camera
-        gl::setMatrices( mMayaCam.getCamera() );
+        if( mUseMayaCam )
+        {
+            gl::setMatrices( mMayaCam.getCamera() );
+        }
+        else 
+        {
+            gl::setMatrices( mCam );            
+        }
+
         // enable depth buffer
         // enable the depth buffer (after all, we are doing 3D)
         gl::enableDepthRead();
         gl::enableDepthWrite();
 
         // render scenes
-        for (vector<Scene*>::iterator sceneIt = mScenes.begin(); 
+        for (SceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -288,5 +325,11 @@ void OculonApp::setPresentationMode( bool enabled )
     mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
 }
+
+void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up )
+{
+    mCam.lookAt( eye, look, up );
+}
+
 
 CINDER_APP_BASIC( OculonApp, RendererGl )

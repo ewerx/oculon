@@ -55,6 +55,10 @@ public: // new
     InfoPanel& getInfoPanel()           { return mInfoPanel; }
     
     bool isPresentationMode() const     { return mIsPresentationMode; }
+    void setUseMayaCam(bool use)        { mUseMayaCam = use; }
+    
+    void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
+    const Camera& getCamera() const     { return (mUseMayaCam ? mMayaCam.getCamera() : mCam);  }
     
 protected: // new
     
@@ -67,15 +71,18 @@ private: // members
     AudioInput              mAudioInput;
     MidiInput               mMidiInput;
     MindWave                mMindWave;
+    bool                    mEnableMindWave;
     Vec2f                   mMousePos;
     
     // render
     double                  mLastElapsedSeconds;
     CameraPersp				mCam;
     MayaCamUI               mMayaCam;
+    bool                    mUseMayaCam;
     
     // temp
-    vector<Scene*>          mScenes;
+    typedef vector<Scene*>  SceneList;
+    SceneList               mScenes;
     
     // debug
     InfoPanel               mInfoPanel;

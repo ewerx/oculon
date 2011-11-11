@@ -11,7 +11,7 @@
 #define __BODY_H__
 
 #include "cinder/Color.h"
-#include "cinder/Matrix44.h"
+#include "cinder/Matrix.h"
 #include "cinder/PolyLine.h"
 #include "Entity.h"
 #include "TextEntity.h"
@@ -33,16 +33,23 @@ public:
     virtual ~Body();
     
     // inherited from Entity
-    void update(double dt);
-    void draw(const Matrix44d& transform);
+    virtual void setup();
+    virtual void update(double dt);
+    virtual void draw(const Matrix44d& transform);
     
     // new methods
     const Vec3d& getVelocity() const { return mVelocity; }
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
+    float getRadius() const { return mRadius; }
     void setRadiusMultiplier( float mult ) { mRadiusMultiplier = mult; }
     
-private:
+    void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
+    
+protected:
+    void updateLabel();
+    
+protected:
     Vec3d mVelocity;
     double mMass;
     float mRadius;
@@ -53,6 +60,7 @@ private:
     PolyLine<Vec3f> mMotionTrail;
     
     TextEntity mLabel;
+    bool mIsLabelVisible;
 };
 
 

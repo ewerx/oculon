@@ -16,6 +16,7 @@
 
 #include "Scene.h"
 #include "Body.h"
+#include "Sun.h"
 #include "MidiMap.h"
 
 using namespace ci;
@@ -36,6 +37,7 @@ public:
     void reset();
     void update(double dt);
     void draw();
+    bool handleKeyDown(const KeyEvent& keyEvent);
     
     // midi callbacks
     void handleGravityChange(MidiEvent midiEvent);
@@ -50,7 +52,12 @@ private:
 private:
     Vec3f           mLightDirection;
     
-    vector<Body>    mBodies;
+    typedef vector<Body*> BodyList;
+    BodyList        mBodies;
+    
+    Sun*                mSun;
+    Body*               mFollowTarget;
+    bool                mIsFollowCameraEnabled;
     
     double          mElapsedTime;
     double          mTimeScale;
@@ -70,7 +77,5 @@ private:
     static double sDefaultTimeScale;
     static double sDefaultGravityConstant;
 };
-
-
 
 #endif // __ORBITER_H__
