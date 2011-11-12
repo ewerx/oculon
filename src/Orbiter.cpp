@@ -17,10 +17,10 @@
 using namespace ci;
 
 GLfloat Orbiter::no_mat[]			= { 0.0, 0.0, 0.0, 1.0 };
-GLfloat Orbiter::mat_ambient[]		= { 0.4, 0.1, 0.2, 1.0 };//{ 0.6, 0.3, 0.4, 1.0 };
-GLfloat Orbiter::mat_diffuse[]		= { 0.3, 0.5, 0.8, 1.0 };
+GLfloat Orbiter::mat_ambient[]		= { 0.5, 0.5, 0.5, 1.0 };//{ 0.6, 0.3, 0.4, 1.0 };
+GLfloat Orbiter::mat_diffuse[]		= { 0.8, 0.8, 0.8, 1.0 };
 GLfloat Orbiter::mat_specular[]		= { 1.0, 1.0, 1.0, 1.0 };
-GLfloat Orbiter::mat_emission[]		= { 0.0, 0.1, 0.3, 0.0 };
+GLfloat Orbiter::mat_emission[]		= { 0.1, 0.1, 0.1, 0.0 };
 
 GLfloat Orbiter::mat_shininess[]	= { 128.0 };
 GLfloat Orbiter::no_shininess[]		= { 0.0 };
@@ -73,6 +73,16 @@ void Orbiter::setup()
     reset();
 }
 
+void Orbiter::resize()
+{
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+        bodyIt != mBodies.end();
+        ++bodyIt)
+    {
+        (*bodyIt)->resetTrail();
+    }
+}
+
 void Orbiter::setupMidiMapping()
 {
     // setup MIDI inputs for learning
@@ -115,16 +125,24 @@ void Orbiter::reset()
     
     Body* body;
     
+    double angle;
+    Vec3d pos;
+    pos.y = 0.0f;
+    
+    
 #define PLANETS_ENTRY(name,orad,brad,mss,ovel) \
     mass = mss;\
     orbitalRadius = orad;\
     orbitalVel = ovel;\
+    angle = toRadians(Rand::randFloat(3.0f, 8.0f));\
+    pos.x = orbitalRadius * sin ( angle );\
+    pos.z = orbitalRadius * cos ( angle );\
     radius = brad * mDrawScale * radialEnhancement;\
-    body = new Body(Vec3d(-orbitalRadius, 0.0f, 0.0f), \
+    body = new Body(pos, \
                     Vec3d(0.0f, orbitalVel, 0.0f),\
                     radius, \
                     mass, \
-                    ColorA(0.3f, 0.5f, 0.7f)); \
+                    ColorA(0.5f, 0.5f, 0.5f)); \
     body->setup(); \
     mBodies.push_back( body );
     PLANETS_TUPLE
@@ -157,7 +175,7 @@ void Orbiter::reset()
      */
     
     // random comets
-    int num_comets = 4;
+    int num_comets = 8;
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
     
     for( int i = 0; i < num_comets; ++i )
@@ -165,7 +183,7 @@ void Orbiter::reset()
         mass = 1e9;
         radius = 10.0f;
         double angle = Rand::randFloat(2*M_PI);
-        orbitalRadius = (Rand::randInt(100000) + 100000 ) * 4e6;
+        orbitalRadius = (Rand::randInt(1000000) + 100000 ) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
@@ -175,7 +193,7 @@ void Orbiter::reset()
                                    Vec3d(0.0f, orbitalVel, 0.0f),
                                    radius, 
                                    mass, 
-                                   ColorA(0.1f, 0.8f, 0.3f)) );
+                                   ColorA(0.5f, 0.55f, 0.525f)) );
     }
     
     mFollowTarget = mBodies.back();
@@ -289,7 +307,7 @@ void Orbiter::updateAudioResponse()
         {
             if( i < mBodies.size() )
             {
-                float multiplier = math<float>::clamp(0.5f, (fftBuffer[i] / bandCount) * (4.0f+i), (4.0f+i));
+                float multiplier = math<float>::clamp(0.5f, (fftBuffer[i] / bandCount) * (4.0f+i), 4.0f);
                 mBodies[i]->setRadiusMultiplier( multiplier );
             }
         }
@@ -319,9 +337,9 @@ void Orbiter::draw()
      */
     
     //if( AMBIENT )
-    glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
+    //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
     //else
-    //    glMaterialfv( GL_FRONT, GL_AMBIENT,	no_mat );
+        glMaterialfv( GL_FRONT, GL_AMBIENT,	no_mat );
     
     //if( SPECULAR ){
     //    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular );
@@ -338,8 +356,8 @@ void Orbiter::draw()
     
     Matrix44d matrix = Matrix44d::identity();
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
-                       mDrawScale * getWindowHeight() / 2.0f,
-                       mDrawScale * getWindowHeight() / 4.0f));
+                        mDrawScale * getWindowHeight() / 2.0f,
+                        mDrawScale * getWindowHeight() / 4.0f));
     
     int culled = 0;
     for(BodyList::iterator bodyIt = mBodies.begin(); 
@@ -350,10 +368,11 @@ void Orbiter::draw()
         if (!mEnableFrustumCulling ||
             isSphereInFrustum( (matrix * body->getPosition()), body->getRadius()*mDrawScale ) )
         {
-            body->draw(matrix);
+            body->draw(matrix, true);
         }
         else
         {
+            body->draw(matrix, false);
             culled++;
         }
         

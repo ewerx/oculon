@@ -49,8 +49,9 @@ void Body::update(double dt)
     updateLabel();
 }
 
-void Body::draw(const Matrix44d& transform)
+void Body::draw(const Matrix44d& transform, bool drawBody)
 {
+    //TODO: make hierarchy Entity <-- Sphere <-- Body, so Sphere can check its own culling
     static const int sphereDetail = 64;
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
@@ -58,9 +59,9 @@ void Body::draw(const Matrix44d& transform)
     const int trailLength = 128 + 128 * randFloat();//(mMotionTrail.getPoints().front() - mMotionTrail.getPoints().back())//minTrailLength + minTrailLength*(math<double>::abs(mPosition.length())*scale);
     //app::console() << "trail length: " << trailLength << std::endl;
     
-     
-    glPushMatrix();
+    if( drawBody )
     {
+        glPushMatrix();
         //glEnable( GL_LIGHTING );
         
         glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
@@ -85,17 +86,21 @@ void Body::draw(const Matrix44d& transform)
 
             gl::popMatrices();
         }
-         
+        glPopMatrix();
     }
-    glPopMatrix();
     
+    // always draw trail
     glPushMatrix();
     {
         if( mMotionTrail.size() > trailLength )
         {
             mMotionTrail.getPoints().erase(mMotionTrail.begin());
         }
-        mMotionTrail.push_back( Vec3f(screenCoords.x, screenCoords.y, screenCoords.z) );
+        
+        //float audioOffset = (mRadiusMultiplier*10.f); 
+        Vec3f trailPoint = screenCoords;//screenCoords + Vec3f( audioOffset*Rand::, audioOffset, audioOffset );
+        //console() << "audioOffset = " << audioOffset << std::endl;
+        mMotionTrail.push_back( trailPoint );
         gl::draw(mMotionTrail);
     }
     glPopMatrix();
@@ -124,4 +129,9 @@ void Body::updateLabel()
         snprintf(buf,256,"v = %.1f m/s", mVelocity.length());
         mLabel.setText(buf);
     }
+}
+
+void Body::resetTrail()
+{
+    mMotionTrail.getPoints().clear();
 }

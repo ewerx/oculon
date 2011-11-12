@@ -35,7 +35,7 @@ public:
     // inherited from Entity
     virtual void setup();
     virtual void update(double dt);
-    virtual void draw(const Matrix44d& transform);
+    virtual void draw(const Matrix44d& transform, bool drawBody =true);
     
     // new methods
     const Vec3d& getVelocity() const { return mVelocity; }
@@ -45,6 +45,8 @@ public:
     void setRadiusMultiplier( float mult ) { mRadiusMultiplier = mult; }
     
     void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
+    
+    void resetTrail();
     
 protected:
     void updateLabel();

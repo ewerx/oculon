@@ -129,9 +129,17 @@ void OculonApp::resize( ResizeEvent event )
     }
     mCam.setAspectRatio( getWindowAspectRatio() );
     mMayaCam.setCurrentCam( mCam );
-    //mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
-	//mCam.setPerspective( 60, getWindowAspectRatio(), 1, 1000 );
-	//gl::setMatrices( mCam );
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+        sceneIt != mScenes.end();
+        ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->resize();
+        }
+    }
 }
 
 void OculonApp::mouseMove( MouseEvent event )
@@ -161,11 +169,7 @@ void OculonApp::mouseDrag( MouseEvent event )
 void OculonApp::keyDown( KeyEvent event )
 {
     switch( event.getChar() )
-    {
-        //case ' ':
-            //mScenes[0]->reset();//TODO: active scene?
-            //break;
-            
+    {            
         // toggle pause-all
         case 'p':
         case 'P':
