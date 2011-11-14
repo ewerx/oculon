@@ -14,6 +14,7 @@
 #include "cinder/Vector.h"
 #include "cinder/Color.h"
 #include "cinder/gl/Texture.h"
+#include "cinder/Text.h"
 #include <string>
 #include "Entity.h"
 
@@ -32,18 +33,18 @@ public:
     void setText( const std::string& str, const ci::ColorA& color );
     void setText( const std::string& str, const std::string& font, const float size, const ci::ColorA& color );
     void setTextColor( const ci::ColorA& color );
-    void setFont( const std::string& fontName );
+    void setFont( const std::string& fontName, const float fontSize );
     
 private:
     void createTexture();
     
 private:
     std::string         mString;
-    std::string         mFontName;
-    float               mFontSize;
-    ci::ColorA          mTextColor;
-    ci::gl::Texture     mTexture;
-    
+    //std::string         mFontName;
+    //float               mFontSize;
+    //ci::ColorA          mTextColor;
+    //ci::gl::Texture     mTexture;
+    TextBox             mTextBox;
 };
 
 #endif // __TEXTENTITY_H__

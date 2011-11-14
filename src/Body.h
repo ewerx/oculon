@@ -42,7 +42,7 @@ public:
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
     float getRadius() const { return mRadius; }
-    void setRadiusMultiplier( float mult ) { mRadiusMultiplier = mult; }
+    void setRadiusMultiplier( float mult );
     
     void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
     
@@ -62,7 +62,20 @@ protected:
     PolyLine<Vec3f> mMotionTrail;
     
     TextEntity mLabel;
+    //TextBox mLabel;
     bool mIsLabelVisible;
+    
+    //TEST
+    float mRadiusAnimRate;
+    float mRadiusAnimTime;
+    
+    static GLfloat no_mat[];
+    static GLfloat mat_ambient[];
+    static GLfloat mat_diffuse[];
+    static GLfloat mat_specular[];
+    static GLfloat mat_emission[];
+    static GLfloat mat_shininess[];
+    static GLfloat no_shininess[];
 };
 
 

@@ -67,14 +67,6 @@ private:
     
     MidiMap         mMidiMap;
     
-    static GLfloat no_mat[];
-    static GLfloat mat_ambient[];
-    static GLfloat mat_diffuse[];
-    static GLfloat mat_specular[];
-    static GLfloat mat_emission[];
-    static GLfloat mat_shininess[];
-    static GLfloat no_shininess[];
-    
     static double sDefaultTimeScale;
     static double sDefaultGravityConstant;
 };

@@ -16,16 +16,7 @@
 
 using namespace ci;
 
-GLfloat Orbiter::no_mat[]			= { 0.0, 0.0, 0.0, 1.0 };
-GLfloat Orbiter::mat_ambient[]		= { 0.5, 0.5, 0.5, 1.0 };//{ 0.6, 0.3, 0.4, 1.0 };
-GLfloat Orbiter::mat_diffuse[]		= { 0.8, 0.8, 0.8, 1.0 };
-GLfloat Orbiter::mat_specular[]		= { 1.0, 1.0, 1.0, 1.0 };
-GLfloat Orbiter::mat_emission[]		= { 0.1, 0.1, 0.1, 0.0 };
-
-GLfloat Orbiter::mat_shininess[]	= { 128.0 };
-GLfloat Orbiter::no_shininess[]		= { 0.0 };
-
-//TODO: read from data file
+//TODO: read from data file (orbRad,    bodyRad, mass,      oVel)
 #define PLANETS_TUPLE \
 PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,  47900 ) \
 PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024, 35000 ) \
@@ -106,12 +97,12 @@ void Orbiter::reset()
 {
     mElapsedTime = 0.0f;
     
-    const float radialEnhancement = 1000000.0f;
+    const float radialEnhancement = 500000.0f;
     mBodies.clear(); // this will delete mSun
     
     // sun
     double mass = 1.989E+030;
-    float radius = 35.0f;
+    float radius = 15.0f;
     double orbitalRadius;
     double orbitalVel;
     mSun = new Sun(Vec3d::zero(),
@@ -307,7 +298,7 @@ void Orbiter::updateAudioResponse()
         {
             if( i < mBodies.size() )
             {
-                float multiplier = math<float>::clamp(0.5f, (fftBuffer[i] / bandCount) * (4.0f+i), 4.0f);
+                float multiplier = math<float>::clamp(1.0f, (fftBuffer[i] / bandCount) * (4.0f+i), 4.0f);
                 mBodies[i]->setRadiusMultiplier( multiplier );
             }
         }
@@ -324,35 +315,6 @@ void Orbiter::draw()
 	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
     
-    //if( DIFFUSE )
-    {
-        ci::ColorA color( CM_HSV, 1.0f, 1.0f, 1.0f, 1.0f );
-        glMaterialfv( GL_FRONT, GL_DIFFUSE,	color );
-    } 
-    /*
-     else 
-     {
-     glMaterialfv( GL_FRONT, GL_DIFFUSE,	no_mat );
-     }
-     */
-    
-    //if( AMBIENT )
-    //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
-    //else
-        glMaterialfv( GL_FRONT, GL_AMBIENT,	no_mat );
-    
-    //if( SPECULAR ){
-    //    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular );
-    //    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess );
-    //} else {
-    glMaterialfv( GL_FRONT, GL_SPECULAR, Orbiter::no_mat );
-    glMaterialfv( GL_FRONT, GL_SHININESS, Orbiter::no_shininess );
-    //}
-    
-    //if( EMISSIVE )
-    glMaterialfv( GL_FRONT, GL_EMISSION, Orbiter::mat_emission );
-    //else
-        //glMaterialfv( GL_FRONT, GL_EMISSION, no_mat );
     
     Matrix44d matrix = Matrix44d::identity();
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 

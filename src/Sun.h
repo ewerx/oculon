@@ -25,12 +25,14 @@ public:
     
     virtual ~Sun();
     
-    // inherited from Entity
+    // inherited from Body
     //void update(double dt);
-    void draw(const Matrix44d& transform);
+    void draw(const Matrix44d& transform, bool drawBody =true);
     
 private:
-    
+    static GLfloat mat_ambient[];
+    static GLfloat mat_diffuse[];
+    static GLfloat mat_emission[];
 };
 
 #endif // __SUN_H__
