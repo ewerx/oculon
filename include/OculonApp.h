@@ -47,18 +47,20 @@ public: // cinder interface
 	void draw();
     
 public: // new
-    AudioInput& getAudioInput()         { return mAudioInput; }
-    MidiInput& getMidiInput()           { return mMidiInput; }
-    MindWave& getMindWave()             { return mMindWave; }
+    inline AudioInput& getAudioInput()         { return mAudioInput; }
+    inline MidiInput& getMidiInput()           { return mMidiInput; }
+    inline MindWave& getMindWave()             { return mMindWave; }
     
-    const Vec2f& getMousePos()          { return mMousePos; }
-    InfoPanel& getInfoPanel()           { return mInfoPanel; }
+    inline const Vec2f& getMousePos()          { return mMousePos; }
+    inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
     
-    bool isPresentationMode() const     { return mIsPresentationMode; }
-    void setUseMayaCam(bool use)        { mUseMayaCam = use; }
+    inline bool isPresentationMode() const     { return mIsPresentationMode; }
+    inline void setUseMayaCam(bool use)        { mUseMayaCam = use; }
     
     void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    const Camera& getCamera() const     { return (mUseMayaCam ? mMayaCam.getCamera() : mCam);  }
+    inline const Camera& getCamera() const     { return (mUseMayaCam ? mMayaCam.getCamera() : mCam);  }
+    
+    inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
     
 protected: // new
     
@@ -76,6 +78,7 @@ private: // members
     
     // render
     double                  mLastElapsedSeconds;
+    double                  mElapsedSecondsThisFrame;
     CameraPersp				mCam;
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
