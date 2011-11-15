@@ -37,8 +37,9 @@ PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //
 Orbiter::Orbiter()
 : Scene()
-, mSun()
-, mFollowTarget()
+, mSun(NULL)
+, mFollowTargetIndex(0)
+, mFollowTarget(NULL)
 , mIsFollowCameraEnabled(false)
 {
     mEnableFrustumCulling = true;
@@ -89,6 +90,7 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addText( "text", "label=`Orbiter`" );
     params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001");
     params.addParam("Time Scale", &mTimeScale, "step=100.0");
+    params.addParam("Follow Target", &mFollowTargetIndex, "step=1,max=9");
     params.addSeparator();
     params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
@@ -102,7 +104,7 @@ void Orbiter::reset()
     
     // sun
     double mass = 1.989E+030;
-    float radius = 15.0f;
+    float radius = 10.0f;
     double orbitalRadius;
     double orbitalVel;
     mSun = new Sun(Vec3d::zero(),
@@ -168,26 +170,34 @@ void Orbiter::reset()
     // random comets
     int num_comets = 8;
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
+    double farthestRadius = 0.0f;
+    Body* farthestComet = NULL;
     
     for( int i = 0; i < num_comets; ++i )
     {
         mass = 1e9;
         radius = 10.0f;
         double angle = Rand::randFloat(2*M_PI);
-        orbitalRadius = (Rand::randInt(1000000) + 100000 ) * 4e6;
+        orbitalRadius = (Rand::randInt(500000) + 100000 ) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
+        Body* body = new Body(pos, 
+                              /*orbitalPlaneNormal * orbitalVel,*/
+                               Vec3d(0.0f, orbitalVel, 0.0f),
+                               radius, 
+                               mass, 
+                               ColorA(0.5f, 0.55f, 0.525f));
+        mBodies.push_back(body);
         
-        mBodies.push_back(new Body(pos, 
-                                   /*orbitalPlaneNormal * orbitalVel,*/
-                                   Vec3d(0.0f, orbitalVel, 0.0f),
-                                   radius, 
-                                   mass, 
-                                   ColorA(0.5f, 0.55f, 0.525f)) );
+        if( orbitalRadius < farthestRadius || farthestRadius == 0.0f )
+        {
+            farthestComet = body;
+            farthestRadius = orbitalRadius;
+        }
     }
     
-    mFollowTarget = mBodies.back();
+    mFollowTarget = farthestComet;
     // TODO: determine orbital velocity
     /*
      for( int i = 1; i < mBodies.size(); ++i )
@@ -203,7 +213,7 @@ void Orbiter::reset()
      */
     
     AudioInput& audioInput = mApp->getAudioInput();
-    audioInput.setFftBandCount(mBodies.size());
+    audioInput.setFftBandCount(512/*mBodies.size()*/);
 }
 
 void Orbiter::update(double dt)
@@ -298,8 +308,7 @@ void Orbiter::updateAudioResponse()
         {
             if( i < mBodies.size() )
             {
-                float multiplier = math<float>::clamp(1.0f, (fftBuffer[i] / bandCount) * (4.0f+i), 4.0f);
-                mBodies[i]->setRadiusMultiplier( multiplier );
+                mBodies[i]->applyFftBandValue( (fftBuffer[i] / bandCount) );
             }
         }
     }
@@ -319,7 +328,7 @@ void Orbiter::draw()
     Matrix44d matrix = Matrix44d::identity();
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
                         mDrawScale * getWindowHeight() / 2.0f,
-                        mDrawScale * getWindowHeight() / 4.0f));
+                        mDrawScale * getWindowHeight() / 2.0f));
     
     int culled = 0;
     for(BodyList::iterator bodyIt = mBodies.begin(); 
@@ -346,15 +355,28 @@ void Orbiter::draw()
     
     //mApp->console() << "culled " << culled << std::endl;
     
+    
     if( mIsFollowCameraEnabled && mFollowTarget )
     {
+        Body* cameraTarget = mSun;
+        if( mFollowTargetIndex >= 0 && mFollowTargetIndex < mBodies.size() )
+        {
+            //cameraTarget = mBodies[mFollowTargetIndex];
+            mFollowTarget = mBodies[mBodies.size()-mFollowTargetIndex-1];
+        }
+        
         double offset = mFollowTarget->getRadius()*1.2f;
-        Vec3d toCore = matrix * mFollowTarget->getPosition();
-        Vec3d offsetVec = offset * mFollowTarget->getPosition().normalized();
-        Vec3d up = Vec3d( sin(getElapsedSeconds()/20.f), 1.0f, 0.0f );
-        toCore = toCore - offsetVec;
-        Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
-        mApp->setCamera( camPos, Vec3f::zero(), up );
+        Vec3d cameraPos = matrix * mFollowTarget->getPosition();
+        Vec3d targetPos = matrix * cameraTarget->getPosition();
+        Vec3d toTarget = targetPos - cameraPos;
+        Vec3d offsetVec = offset * toTarget.normalized();
+        //Matrix44f transform = Matrix44f::createRotation( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );
+        //transform.rotate.rotate( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );
+        Vec3d up = /*Quatf( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f ) */ Vec3f::zAxis();
+        //up.rotate( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );
+        cameraPos = cameraPos + offsetVec;
+        //Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
+        mApp->setCamera( cameraPos, targetPos, up );
     }
     
     glPopMatrix();
@@ -364,7 +386,6 @@ void Orbiter::draw()
 
 void Orbiter::updateTimeDisplay()
 {
-
     char buf[64];
     snprintf(buf, 64, "%.0f hours", mElapsedTime / 3600.f);
     mApp->getInfoPanel().addLine( buf, Color(0.5f, 0.5f, 0.5f) );

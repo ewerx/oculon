@@ -32,12 +32,17 @@ Sun::~Sun()
 void Sun::draw(const Matrix44d& transform, bool drawBody)
 {
     static const int sphereDetail = 64;
-    Vec3d screenCoords = transform * mPosition;
     
     if( drawBody )
     {
+        Vec3d screenCoords = transform * mPosition;
+        float radius = mRadius*mRadiusMultiplier*0.75f;
         glPushMatrix();
         //glEnable( GL_LIGHTING );
+        
+        glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
+        
+        //drawDebugVectors();
         
         //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
         glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
@@ -45,12 +50,9 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
         glMaterialfv( GL_FRONT, GL_EMISSION, Sun::mat_emission );
         
-        
-        glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
-        
         glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
-        //glColor4f( mColor.r, mColor.g, mColor.b, mColor.a );
-        gl::drawSphere( Vec3d::zero(), mRadius*mRadiusMultiplier/2.0f, sphereDetail );
+        //glColor4f( mColor );
+        gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
         
         glPopMatrix();
     }

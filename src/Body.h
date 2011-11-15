@@ -42,7 +42,7 @@ public:
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
     float getRadius() const { return mRadius; }
-    void setRadiusMultiplier( float mult );
+    void applyFftBandValue( float fftBandValue );
     
     void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
     
@@ -50,11 +50,13 @@ public:
     
 protected:
     void updateLabel();
+    void drawDebugVectors();
     
 protected:
     Vec3d mVelocity;
     double mMass;
     float mRadius;
+    float mPeakRadiusMultiplier;
     float mRadiusMultiplier;
     
     ColorA mColor;

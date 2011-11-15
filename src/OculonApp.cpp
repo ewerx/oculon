@@ -87,6 +87,7 @@ void OculonApp::setup()
     //mParams.hide();
     
     mLastElapsedSeconds = getElapsedSeconds();
+    mElapsedSecondsThisFrame = 0.0f;
     
     setupScenes();
 }
@@ -240,7 +241,7 @@ void OculonApp::update()
     snprintf(buf, 64, "%.2ffps", getAverageFps());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     
-    double dt = getElapsedSeconds() - mLastElapsedSeconds;
+    mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
     mLastElapsedSeconds = getElapsedSeconds();
     
     mAudioInput.update();
@@ -257,7 +258,7 @@ void OculonApp::update()
         Scene* scene = (*sceneIt);
         if( scene && scene->isActive() )
         {
-            scene->update(dt);
+            scene->update(mElapsedSecondsThisFrame);
         }
     }
     

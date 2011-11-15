@@ -36,12 +36,14 @@ Body::Body(const Vec3d& pos, const Vec3d& vel, float radius, double mass, const 
 , mVelocity(vel)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
+, mPeakRadiusMultiplier(1.0f)
 , mMass(mass)
 , mColor(color)
 , mIsLabelVisible(true)
 {
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Monaco", 9.0f);
+    mLabel.setTextColor( ColorA(0.9f,0.9f,0.9f,0.9f) );
 }
 
 Body::~Body()
@@ -59,10 +61,14 @@ void Body::update(double dt)
     
     updateLabel();
     
-    if( mRadiusMultiplier > 1.0f )
+    if( mRadiusMultiplier > 1.0f && mRadiusAnimTime < 2.0f)
     {
-        mRadiusAnimTime += dt;
-        mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
+        //TODO: fix this hack
+        OculonApp* oculon = static_cast<OculonApp*>(App::get());
+        mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
+        float easeFactor = easeOutQuad(mRadiusAnimTime);
+        mRadiusMultiplier =  easeFactor * mPeakRadiusMultiplier;
+        //mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
     }
 }
 
@@ -70,16 +76,20 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
 {
     //TODO: make hierarchy Entity <-- Sphere <-- Body, so Sphere can check its own culling
     static const int sphereDetail = 64;
+    const float radius = mRadius * mRadiusMultiplier * 0.75f;
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
     Vec3d screenCoords = transform * mPosition;
-    const int trailLength = 128 + 128 * randFloat();//(mMotionTrail.getPoints().front() - mMotionTrail.getPoints().back())//minTrailLength + minTrailLength*(math<double>::abs(mPosition.length())*scale);
-    //app::console() << "trail length: " << trailLength << std::endl;
+    const int trailLength = 128 + (int)(screenCoords.length()/10.f) + (int)(radius);
     
     if( drawBody )
     {
         glPushMatrix();
         //glEnable( GL_LIGHTING );
+        
+        glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
+        
+        //drawDebugVectors();
         
         //glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::mat_ambient );
         glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
@@ -87,12 +97,9 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
         glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
         
-        
-        glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
-        
         glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
         //glColor4f( mColor.r, mColor.g, mColor.b, mColor.a );
-        gl::drawSphere( Vec3d::zero(), mRadius*mRadiusMultiplier/2.0f, sphereDetail );
+        gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
         
         // label
         if( mIsLabelVisible )
@@ -152,7 +159,8 @@ void Body::updateLabel()
     if( mIsLabelVisible )
     {
         char buf[256];
-        snprintf(buf,256,"%.1f m/s\n%.2f km", mVelocity.length(), mPosition.length()/1000.f);
+        //snprintf(buf,256,"%.1f m/s\n%.2f km", mVelocity.length(), mPosition.length()/1000.f);
+        snprintf(buf,256,"%.1f m/s\n%.3f\n%.3f", mVelocity.length(), mRadiusMultiplier, mPeakRadiusMultiplier);
         mLabel.setText(buf);
     }
 }
@@ -162,11 +170,27 @@ void Body::resetTrail()
     mMotionTrail.getPoints().clear();
 }
 
-void Body::setRadiusMultiplier( float mult )
+void Body::applyFftBandValue( float fftBandValue )
 {
+    float mult = 1.0f + fftBandValue * 4.0f; // max 4x radius
     if( mult > mRadiusMultiplier )
     {
-        mRadiusAnimTime = 0.0f;
+        mPeakRadiusMultiplier = mult;
         mRadiusMultiplier = mult;
+        mRadiusAnimTime = 0.0f;
     }
 }
+
+void Body::drawDebugVectors()
+{
+    float radius = mRadiusMultiplier*mRadius*2.0f;
+    glDisable(GL_LIGHTING);
+    glColor4f( 1.0f, 0.0f, 0.0f, 1.0f );
+    gl::drawVector( Vec3f::zero(), Vec3f::xAxis()*radius*2.0f );
+    glColor4f( 0.0f, 1.0f, 0.0f, 1.0f );
+    gl::drawVector( Vec3f::zero(), Vec3f::yAxis()*radius*2.0f );
+    glColor4f( 0.0f, 0.0f, 1.0f, 1.0f );
+    gl::drawVector( Vec3f::zero(), Vec3f::zAxis()*radius*2.0f );
+    glEnable(GL_LIGHTING);
+}
+

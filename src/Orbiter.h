@@ -57,6 +57,7 @@ private:
     BodyList        mBodies;
     
     Sun*                mSun;
+    int                 mFollowTargetIndex;
     Body*               mFollowTarget;
     bool                mIsFollowCameraEnabled;
     
