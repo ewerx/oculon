@@ -15,12 +15,13 @@
 #include <vector>
 
 #include "Scene.h"
-#include "Body.h"
-#include "Sun.h"
 #include "MidiMap.h"
 
 using namespace ci;
 using std::vector;
+
+class Body;
+class Sun;
 
 //
 // An orbital simulator
@@ -68,8 +69,11 @@ private:
     
     MidiMap         mMidiMap;
     
-    static double sDefaultTimeScale;
-    static double sDefaultGravityConstant;
+public:
+    static double   sDefaultTimeScale;
+    static double   sDefaultGravityConstant;
+    static float    sMaxRadiusMultiplier;
+    static int      sNumFramesToAvgFft;
 };
 
 #endif // __ORBITER_H__

@@ -15,8 +15,10 @@
 #include "cinder/Easing.h"
 #include "Body.h"
 #include "OculonApp.h"
+#include "Orbiter.h"
 
 using namespace ci;
+using namespace std;
 
 GLfloat Body::no_mat[]			= { 0.0, 0.0, 0.0, 1.0 };
 GLfloat Body::mat_ambient[]		= { 0.5, 0.5, 0.5, 1.0 };
@@ -41,6 +43,7 @@ Body::Body(const Vec3d& pos, const Vec3d& vel, float radius, double mass, const 
 , mColor(color)
 , mIsLabelVisible(true)
 {
+    mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Monaco", 9.0f);
     mLabel.setTextColor( ColorA(0.9f,0.9f,0.9f,0.9f) );
@@ -61,13 +64,13 @@ void Body::update(double dt)
     
     updateLabel();
     
-    if( mRadiusMultiplier > 1.0f && mRadiusAnimTime < 2.0f)
+    if( mRadiusMultiplier > 1.0f && mRadiusAnimTime < 3.0f)
     {
         //TODO: fix this hack
         OculonApp* oculon = static_cast<OculonApp*>(App::get());
         mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
-        float easeFactor = easeOutQuad(mRadiusAnimTime);
-        mRadiusMultiplier =  easeFactor * mPeakRadiusMultiplier;
+        mEaseFactor = easeOutQuad(mRadiusAnimTime);
+        mRadiusMultiplier = 1.0f + mEaseFactor * (mPeakRadiusMultiplier - 1.0f);
         //mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
     }
 }
@@ -80,7 +83,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
     Vec3d screenCoords = transform * mPosition;
-    const int trailLength = 128 + (int)(screenCoords.length()/10.f) + (int)(radius);
+    const int trailLength = 128 + (int)(screenCoords.length()/7.f) + (int)(radius);
     
     if( drawBody )
     {
@@ -172,7 +175,24 @@ void Body::resetTrail()
 
 void Body::applyFftBandValue( float fftBandValue )
 {
-    float mult = 1.0f + fftBandValue * 4.0f; // max 4x radius
+    OculonApp* oculon = static_cast<OculonApp*>(App::get());
+    mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
+    
+    int framesToAvgFft = Orbiter::sNumFramesToAvgFft;
+    if( mLastFftValues.size() > framesToAvgFft )
+    {
+        mLastFftValues.erase(mLastFftValues.begin());
+    }
+    mLastFftValues.push_back(fftBandValue);
+    
+    float avgFftValue = 0.0f;
+    for (vector<float>::iterator it = mLastFftValues.begin(); it != mLastFftValues.end(); ++it) 
+    {
+        avgFftValue += (*it);
+    }
+    avgFftValue /= mLastFftValues.size();
+    
+    float mult = 1.0f + avgFftValue * Orbiter::sMaxRadiusMultiplier;
     if( mult > mRadiusMultiplier )
     {
         mPeakRadiusMultiplier = mult;

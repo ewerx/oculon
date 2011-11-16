@@ -17,6 +17,7 @@
 #include "TextEntity.h"
 
 using namespace ci;
+using namespace std;
 
 //
 // An orbital body
@@ -70,6 +71,8 @@ protected:
     //TEST
     float mRadiusAnimRate;
     float mRadiusAnimTime;
+    float mEaseFactor;
+    vector<float> mLastFftValues;
     
     static GLfloat no_mat[];
     static GLfloat mat_ambient[];

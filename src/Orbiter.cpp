@@ -29,8 +29,10 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
 PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //end tuple
 
-/*static*/ double Orbiter::sDefaultTimeScale = 60.f * 60.f * 24.f * 10.f; // 10 days
-/*static*/ double Orbiter::sDefaultGravityConstant = 6.6742e-11;
+/*static*/ double   Orbiter::sDefaultTimeScale          = 60.f * 60.f * 24.f * 10.f; // 10 days
+/*static*/ double   Orbiter::sDefaultGravityConstant    = 6.6742e-11;
+/*static*/ float    Orbiter::sMaxRadiusMultiplier       = 2.6f;
+/*static*/ int      Orbiter::sNumFramesToAvgFft         = 1;
 
 //
 // Orbiter
@@ -88,11 +90,13 @@ void Orbiter::setupMidiMapping()
 void Orbiter::setupParams(params::InterfaceGl& params)
 {
     params.addText( "text", "label=`Orbiter`" );
-    params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001");
-    params.addParam("Time Scale", &mTimeScale, "step=100.0");
-    params.addParam("Follow Target", &mFollowTargetIndex, "step=1,max=9");
-    params.addSeparator();
-    params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+    params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
+    params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+    params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr='' keyDecr=;");
+    params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
+    params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
+    //params.addSeparator();
+    //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
 
 void Orbiter::reset()
@@ -135,7 +139,7 @@ void Orbiter::reset()
                     Vec3d(0.0f, orbitalVel, 0.0f),\
                     radius, \
                     mass, \
-                    ColorA(0.5f, 0.5f, 0.5f)); \
+                    ColorA(0.6f, 0.6f, 0.6f)); \
     body->setup(); \
     mBodies.push_back( body );
     PLANETS_TUPLE
@@ -178,7 +182,7 @@ void Orbiter::reset()
         mass = 1e9;
         radius = 10.0f;
         double angle = Rand::randFloat(2*M_PI);
-        orbitalRadius = (Rand::randInt(500000) + 100000 ) * 4e6;
+        orbitalRadius = (Rand::randInt(100000) + 100000 ) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
@@ -302,13 +306,23 @@ void Orbiter::updateAudioResponse()
     unsigned int bandCount = audioInput.getFftBandCount();
     float* fftBuffer = fftDataRef.get();
     
+    const int numBandsPerBody = 2;
+    int bodyIndex = 0;
+    
     if( fftBuffer )
     {
-        for( int i = 0; i < ( bandCount ); i++ ) 
+        for( int i = 0; i < ( bandCount - numBandsPerBody ); i += numBandsPerBody) 
         {
-            if( i < mBodies.size() )
+            if( bodyIndex < mBodies.size() )
             {
-                mBodies[i]->applyFftBandValue( (fftBuffer[i] / bandCount) );
+                float avgFft = 0.0f;
+                for( int j = 0; j < numBandsPerBody; ++j )
+                {
+                    avgFft += fftBuffer[i] / bandCount;
+                }
+                avgFft /= (float)(numBandsPerBody);
+                mBodies[bodyIndex]->applyFftBandValue( avgFft );
+                ++bodyIndex;
             }
         }
     }
