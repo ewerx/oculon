@@ -50,7 +50,7 @@ void OculonApp::setup()
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
+	mCam.setPerspective( 90.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
     mMayaCam.setCurrentCam( mCam );
     
     // load assets
@@ -73,8 +73,8 @@ void OculonApp::setup()
     // debug
 	//glDisable( GL_TEXTURE_2D );
     
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 300, 100 ) );
-    //mParams.setOptions("","position='200 10'");
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, 150 ) );
+    mParams.setOptions("","position='10 600'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
 	//mParams.addParam( "Light Direction", &mLightDirection, "" );

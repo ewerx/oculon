@@ -21,7 +21,7 @@ Sun::Sun(const Vec3d& pos,
          float radius, 
          double mass, 
          const ColorA& color) 
-: Body(pos,vel,radius,mass,color)
+: Body("Sol",pos,vel,radius,mass,color)
 {
 }
 
@@ -50,7 +50,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
         glMaterialfv( GL_FRONT, GL_EMISSION, Sun::mat_emission );
         
-        glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
+        //glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
         //glColor4f( mColor );
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
         

@@ -7,14 +7,16 @@
  *
  */
 
-//#include <boost/format.hpp>
+#include <boost/format.hpp>
 #include "AudioInput.h" // compile errors if this is not before App.h
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
 #include "Orbiter.h"
 #include "Sun.h"
+#include "TextEntity.h"
 
 using namespace ci;
+using namespace boost;
 
 //TODO: read from data file (orbRad,    bodyRad, mass,      oVel)
 #define PLANETS_TUPLE \
@@ -44,8 +46,14 @@ Orbiter::Orbiter()
 , mFollowTarget(NULL)
 , mIsFollowCameraEnabled(false)
 {
-    mEnableFrustumCulling = true;
-}
+    mEnableFrustumCulling = true; // Scene
+    
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i] = new TextEntity();
+        assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
+    }
+} 
 
 Orbiter::~Orbiter()
 {
@@ -64,6 +72,8 @@ void Orbiter::setup()
     mMidiMap.init(&mApp->getMidiInput());
     setupMidiMapping();
     
+    setupHud();
+    
     reset();
 }
 
@@ -74,6 +84,11 @@ void Orbiter::resize()
         ++bodyIt)
     {
         (*bodyIt)->resetTrail();
+    }
+    
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->resize();
     }
 }
 
@@ -92,7 +107,7 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addText( "text", "label=`Orbiter`" );
     params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
     params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr='' keyDecr=;");
+    params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
     //params.addSeparator();
@@ -135,7 +150,8 @@ void Orbiter::reset()
     pos.x = orbitalRadius * sin ( angle );\
     pos.z = orbitalRadius * cos ( angle );\
     radius = brad * mDrawScale * radialEnhancement;\
-    body = new Body(pos, \
+    body = new Body(name,\
+                    pos,\
                     Vec3d(0.0f, orbitalVel, 0.0f),\
                     radius, \
                     mass, \
@@ -145,48 +161,27 @@ void Orbiter::reset()
     PLANETS_TUPLE
 #undef PLANETS_ENTRY
     
-    /*
-    
-    
-    // venus
-    mass = 4.869E+024; 
-    double orbitalRadius = 108000000000.f;
-    double orbitalVel = 35000;
-    radius = 20.0f;
-    mBodies.push_back(Body(Vec3d(-orbitalRadius, 0.0f, 0.0f), 
-                           Vec3d(0.0f, orbitalVel, 0.0f),
-                           radius, 
-                           mass, 
-                           ColorA(0.3f, 0.5f, 0.7f)) ); 
-    
-    // earth
-    mass = 5.976E+024;
-    orbitalRadius = 150000000000.f;
-    orbitalVel = 29800;
-    mBodies.push_back(Body(Vec3d(-orbitalRadius, 0.0f, 0.0f), 
-                           Vec3d(0.0f, orbitalVel, 0.0f),
-                           radius, 
-                           mass, 
-                           ColorA(0.1f, 0.8f, 0.3f)) );
-     
-     */
-    
     // random comets
+    int num_planets = mBodies.size();
     int num_comets = 8;
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
     double farthestRadius = 0.0f;
     Body* farthestComet = NULL;
     
+    char name[128];
+    
     for( int i = 0; i < num_comets; ++i )
     {
-        mass = 1e9;
+        mass = 1e8 * Rand::randFloat(1.0f, 10.0f);
         radius = 10.0f;
         double angle = Rand::randFloat(2*M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000 ) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
+        snprintf(name,128,"%c%d/%04d/%02d", randInt('A','Z'), num_planets+i, randInt(1000,9999), randInt(300));
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
-        Body* body = new Body(pos, 
+        Body* body = new Body(name, 
+                              pos, 
                               /*orbitalPlaneNormal * orbitalVel,*/
                                Vec3d(0.0f, orbitalVel, 0.0f),
                                radius, 
@@ -253,10 +248,9 @@ void Orbiter::update(double dt)
             }
             else
             {
-                // assume sun at index 0
-                if( i!=0 )
+                if( body != mSun )
                 {
-                    body->applyForceFromBody(*mBodies[0], dt, mGravityConstant);
+                    body->applyForceFromBody(*mSun, dt, mGravityConstant);
                 }
             }
             
@@ -267,7 +261,7 @@ void Orbiter::update(double dt)
     }
     
     updateAudioResponse();
-    //updateTimeDisplay();
+    updateHud();
     
     Scene::update(dt);
 }
@@ -396,13 +390,8 @@ void Orbiter::draw()
     glPopMatrix();
     glDisable( GL_LIGHTING );
 	glDisable( GL_LIGHT0 );
-}
-
-void Orbiter::updateTimeDisplay()
-{
-    char buf[64];
-    snprintf(buf, 64, "%.0f hours", mElapsedTime / 3600.f);
-    mApp->getInfoPanel().addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    
+    drawHud();
 }
 
 void Orbiter::handleGravityChange(MidiEvent midiEvent)
@@ -414,4 +403,84 @@ void Orbiter::handleGravityChange(MidiEvent midiEvent)
 void Orbiter::handleTimeScaleChange(MidiEvent midiEvent)
 {
     mTimeScale = sDefaultTimeScale * ( midiEvent.getValueRatio() * 100.f );
+}
+
+//
+// HUD
+//
+
+void Orbiter::setupHud()
+{
+    const float margin = 20.0f;
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->setFont("Menlo", 13.0f);
+        mTextBox[i]->setTextColor( ColorA(0.9f,0.9f,0.9f,1.0f) );
+        
+        switch(i)
+        {
+            case TB_TOP_LEFT:
+                mTextBox[i]->setPosition( Vec3f(margin, margin, 0.0f) );
+                break;
+            case TB_TOP_RIGHT:
+                mTextBox[i]->setPosition( Vec3f(0.0f, margin, 0.0f) );
+                mTextBox[i]->setRightJustify( true, margin );
+                break;
+            case TB_BOT_LEFT:
+                mTextBox[i]->setPosition( Vec3f(margin, 0.0f, 0.0f) );
+                mTextBox[i]->setBottomJustify( true, margin );
+                break;
+            case TB_BOT_RIGHT:
+                mTextBox[i]->setRightJustify( true, margin );
+                mTextBox[i]->setBottomJustify( true, margin );
+                break;
+            default:
+                break;
+                
+        }
+    }
+}
+
+void Orbiter::updateHud()
+{
+    ostringstream oss1;
+    
+    format timeFormat("SIMULATION TIME: %02d:%02d:%02d:%04.1f");
+    int days = mElapsedTime / 86400; 
+    int hours = ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600;
+    int mins = ci::math<double>::fmod(mElapsedTime,3600.0f) / 60;
+    double secs = ci::math<double>::fmod(mElapsedTime,60.0f) + (mElapsedTime - (int)(mElapsedTime));
+    timeFormat % days % hours % mins % secs;
+    
+    format params("TIME SCALE: %-6g : 1\nG CONSTANT: %-8g\nPROJECTION SCALE: 1 : %-8g\n");
+    params % mTimeScale % mGravityConstant % mDrawScale;
+    
+    oss1 << timeFormat << endl << params;
+    
+    //snprintf(buf, 256, "SIMULATION TIME: %02d:%02d:%02d:%04.1f", days,hours,mins,secs);
+    mTextBox[TB_TOP_LEFT]->setText(oss1.str());
+    
+    ostringstream oss2;
+    
+    format followCamInfo("DESIGNATION: %s\nORBITAL RADIUS: %.4e km\nORBITAL SPEED: %6.1f m/s\nMASS: %.6e kg");
+    followCamInfo % (mFollowTarget->getName()) % (mFollowTarget->getPosition().length() / 1000.0f) % (mFollowTarget->getVelocity().length()) % (mFollowTarget->getMass());
+    
+    oss2 << followCamInfo;
+    
+    mTextBox[TB_BOT_RIGHT]->setText(oss2.str());
+}
+
+void Orbiter::drawHud()
+{
+    gl::pushMatrices();
+    
+    CameraOrtho textCam(0.0f, mApp->getWindowWidth(), mApp->getWindowHeight(), 0.0f, 0.0f, 50.f);
+    gl::setMatrices(textCam);
+    
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->draw();
+    }
+    
+    gl::popMatrices();
 }

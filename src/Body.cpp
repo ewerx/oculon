@@ -33,8 +33,9 @@ GLfloat Body::no_shininess[]	= { 0.0 };
 // Body
 // 
 
-Body::Body(const Vec3d& pos, const Vec3d& vel, float radius, double mass, const ColorA& color)
+Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double mass, const ColorA& color)
 : Entity<double>(pos)
+, mName(name)
 , mVelocity(vel)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
@@ -45,7 +46,7 @@ Body::Body(const Vec3d& pos, const Vec3d& vel, float radius, double mass, const 
 {
     mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
-    mLabel.setFont("Monaco", 9.0f);
+    mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(0.9f,0.9f,0.9f,0.9f) );
 }
 
@@ -162,8 +163,9 @@ void Body::updateLabel()
     if( mIsLabelVisible )
     {
         char buf[256];
-        //snprintf(buf,256,"%.1f m/s\n%.2f km", mVelocity.length(), mPosition.length()/1000.f);
-        snprintf(buf,256,"%.1f m/s\n%.3f\n%.3f", mVelocity.length(), mRadiusMultiplier, mPeakRadiusMultiplier);
+        snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
+        //snprintf(buf,256,"%.1f m/s\n%.3f\n%.3f", mVelocity.length(), mRadiusMultiplier, mPeakRadiusMultiplier);
+        //snprintf(buf,256,"%s\n%.1f m/s\n%.4e km", mName.c_str(), mVelocity.length(), (mPosition.length()/1000.f));
         mLabel.setText(buf);
     }
 }

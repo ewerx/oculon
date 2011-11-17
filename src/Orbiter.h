@@ -22,6 +22,7 @@ using std::vector;
 
 class Body;
 class Sun;
+class TextEntity;
 
 //
 // An orbital simulator
@@ -49,7 +50,10 @@ private:
     void setupMidiMapping();
     
     void updateAudioResponse();
-    void updateTimeDisplay();
+    
+    void setupHud();
+    void updateHud();
+    void drawHud();
     
 private:
     Vec3f           mLightDirection;
@@ -68,6 +72,17 @@ private:
     double          mGravityConstant;
     
     MidiMap         mMidiMap;
+    
+    enum eTextBoxLocations
+    {
+        TB_TOP_LEFT,
+        TB_TOP_RIGHT,
+        TB_BOT_LEFT,
+        TB_BOT_RIGHT,
+        
+        TB_COUNT
+    };
+    TextEntity*     mTextBox[TB_COUNT];
     
 public:
     static double   sDefaultTimeScale;

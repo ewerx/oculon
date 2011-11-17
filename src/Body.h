@@ -25,7 +25,8 @@ using namespace std;
 class Body : public Entity<double>
 {
 public:
-    Body(const Vec3d& pos, 
+    Body(string name,
+         const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
          double mass, 
@@ -43,7 +44,9 @@ public:
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
     float getRadius() const { return mRadius; }
+    double getMass() const { return mMass; }
     void applyFftBandValue( float fftBandValue );
+    const string& getName() const { return mName; }
     
     void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
     
@@ -59,6 +62,7 @@ protected:
     float mRadius;
     float mPeakRadiusMultiplier;
     float mRadiusMultiplier;
+    string mName;
     
     ColorA mColor;
     
