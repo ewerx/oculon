@@ -27,7 +27,7 @@ public:
     
     // inherited from Body
     //void update(double dt);
-    void draw(const Matrix44d& transform, bool drawBody =true);
+    void draw(const Matrix44d& transform, bool drawBody);
     
 private:
     static GLfloat mat_ambient[];

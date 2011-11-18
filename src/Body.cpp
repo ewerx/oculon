@@ -84,12 +84,14 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
     Vec3d screenCoords = transform * mPosition;
-    const int trailLength = 128 + (int)(screenCoords.length()/7.f) + (int)(radius);
+    double distanceFactor = mPosition.length() / 108000000000.f;
+    const int trailLength = Orbiter::sMinTrailLength + Orbiter::sMinTrailLength*(int)(distanceFactor) + (int)(radius*2);
     
     if( drawBody )
     {
         glPushMatrix();
         //glEnable( GL_LIGHTING );
+        glEnable( GL_POLYGON_SMOOTH );
         
         glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
         
@@ -130,7 +132,8 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
     {
         if( mMotionTrail.size() > trailLength )
         {
-            mMotionTrail.getPoints().erase(mMotionTrail.begin());
+            for( int i = 0; i < mMotionTrail.size() - trailLength; ++i )
+                mMotionTrail.getPoints().erase(mMotionTrail.begin());
         }
         glColor4f( 0.5f, 0.5f, 0.5f, 0.5f );
         //float audioOffset = (mRadiusMultiplier*10.f); 
@@ -138,7 +141,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         //console() << "audioOffset = " << audioOffset << std::endl;
         mMotionTrail.push_back( trailPoint );
         
-        if( Orbiter::sUseExpTrailDraw )
+        if( Orbiter::sUseSmoothLines )
         {
             glPushMatrix();
             //glEnable( GL_MULTISAMPLE_ARB );
@@ -146,13 +149,33 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             glEnable( GL_LINE_SMOOTH );
             glEnable( GL_POLYGON_SMOOTH );
             //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//did nothing?
-            //glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );//did nothing?
-            //glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );//did nothing?
-            glBegin( GL_LINE_STRIP );
-            for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
+            glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );//did nothing?
+            glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );//did nothing?
+            if( Orbiter::sUseTriStripLine )
             {
-                const Vec3f& point = (*it);
+                glBegin(GL_TRIANGLE_STRIP);
+                const Vec3f& point = mMotionTrail.getPoints()[0];
                 glVertex3f(point.x,point.y,point.z);
+                for( int i = 1; i < mMotionTrail.size()-3; ++i )
+                {
+                    // this makes a ribbon...
+                    //const Vec3f& point = mMotionTrail.getPoints()[i];//(*it);
+                    const Vec3f& point2 = mMotionTrail.getPoints()[i+1];
+                    //const Vec3f& point3 = mMotionTrail.getPoints()[i+2];
+                    glVertex3f(point2.x,point2.y,point2.z);
+                    glVertex3f(point2.x,point2.y+1,point2.z);
+                    //glVertex3f(point3.x,point3.y,point3z);
+                    //glVertex3f(point3.x+4,point3.y,point3z);
+                }
+            }
+            else 
+            {
+                glBegin( GL_LINE_STRIP );
+                for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
+                {
+                    const Vec3f& point = (*it);
+                    glVertex3f(point.x,point.y,point.z);
+                }
             }
             glEnd();
             //glDisable(GL_MULTISAMPLE_ARB );

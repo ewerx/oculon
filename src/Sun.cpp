@@ -8,6 +8,8 @@
  */
 
 #include "Sun.h"
+#include "Orbiter.h"
+#include "cinder/gl/gl.h"
 
 using namespace ci;
 
@@ -53,6 +55,16 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         //glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
         //glColor4f( mColor );
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
+        
+        if( Orbiter::sDrawRealSun )
+        {
+            double sunRadius = 695500000.0f * Orbiter::sDrawScale * 500000.0f;
+            sunRadius = sunRadius * mRadiusMultiplier * 0.75f;
+            gl::enableWireframe();
+            glColor4f(1.0f,0.0f,0.0f,1.0f);
+            gl::drawSphere( Vec3d::zero(), sunRadius, 16 );
+            gl::disableWireframe();
+        }
         
         glPopMatrix();
     }

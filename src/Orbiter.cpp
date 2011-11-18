@@ -28,14 +28,18 @@ PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,  13100 ) \
 PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640 ) \
 PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810 ) \
 PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
-PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
+//PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //end tuple
 
 /*static*/ double   Orbiter::sDefaultTimeScale          = 60.f * 60.f * 24.f * 10.f; // 10 days
 /*static*/ double   Orbiter::sDefaultGravityConstant    = 6.6742e-11;
+/*static*/ double   Orbiter::sDrawScale                 = 2e-11;
 /*static*/ float    Orbiter::sMaxRadiusMultiplier       = 2.6f;
 /*static*/ int      Orbiter::sNumFramesToAvgFft         = 1;
-/*static*/ bool     Orbiter::sUseExpTrailDraw           = false;
+/*static*/ bool     Orbiter::sUseSmoothLines            = true;
+/*static*/ bool     Orbiter::sUseTriStripLine           = false;
+/*static*/ int      Orbiter::sMinTrailLength            = 47;// in segments
+/*static*/ bool     Orbiter::sDrawRealSun               = false;
 
 //
 // Orbiter
@@ -45,7 +49,7 @@ Orbiter::Orbiter()
 , mSun(NULL)
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
-, mIsFollowCameraEnabled(false)
+, mIsFollowCameraEnabled(true)
 {
     mEnableFrustumCulling = true; // Scene
     
@@ -63,12 +67,14 @@ Orbiter::~Orbiter()
 
 void Orbiter::setup()
 {
+    mApp->setUseMayaCam(!mIsFollowCameraEnabled);
+    
     mTimeScale = sDefaultTimeScale;
-    mDrawScale = 6e-12;
+    mDrawScale = Orbiter::sDrawScale;
     mGravityConstant = sDefaultGravityConstant;
     
-    mLightDirection = Vec3f( 0.025f, 0.25f, 1.0f );
-	mLightDirection.normalize();
+    //mLightDirection = Vec3f( 0.025f, 0.25f, 1.0f );
+	//mLightDirection.normalize();
     
     mMidiMap.init(&mApp->getMidiInput());
     setupMidiMapping();
@@ -111,7 +117,10 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    params.addParam("New Trails", &Orbiter::sUseExpTrailDraw, "key=t");
+    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
+    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
+    params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
+    params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
     //params.addSeparator();
     //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
@@ -120,12 +129,12 @@ void Orbiter::reset()
 {
     mElapsedTime = 0.0f;
     
-    const float radialEnhancement = 500000.0f;
+    const float radialEnhancement = 500000.0f;// at true scale the plaents would be invisible
     mBodies.clear(); // this will delete mSun
     
     // sun
     double mass = 1.989E+030;
-    float radius = 10.0f;
+    float radius = 3800000.0f * mDrawScale * radialEnhancement;
     double orbitalRadius;
     double orbitalVel;
     mSun = new Sun(Vec3d::zero(),
@@ -169,13 +178,14 @@ void Orbiter::reset()
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
     double farthestRadius = 0.0f;
     Body* farthestComet = NULL;
+    const float minRadius = 1000000.0f * Orbiter::sDrawScale * radialEnhancement;
     
     char name[128];
     
     for( int i = 0; i < num_comets; ++i )
     {
         mass = 1e8 * Rand::randFloat(1.0f, 10.0f);
-        radius = 10.0f;
+        radius = Rand::randFloat(minRadius,minRadius*2.0f);
         double angle = Rand::randFloat(2*M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000 ) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
@@ -367,18 +377,20 @@ void Orbiter::draw()
     //mApp->console() << "culled " << culled << std::endl;
     
     
-    if( mIsFollowCameraEnabled && mFollowTarget )
+    if( mIsFollowCameraEnabled )
     {
-        Body* cameraTarget = mSun;
+        Body* cameraLookingAt = mSun;
+        Body* cameraAttachedTo = mFollowTarget;
         if( mFollowTargetIndex >= 0 && mFollowTargetIndex < mBodies.size() )
         {
-            //cameraTarget = mBodies[mFollowTargetIndex];
-            mFollowTarget = mBodies[mBodies.size()-mFollowTargetIndex-1];
+            cameraAttachedTo = mBodies[mBodies.size()-mFollowTargetIndex-1];
+            mFollowTarget = cameraAttachedTo;
         }
         
-        double offset = mFollowTarget->getRadius()*1.2f;
-        Vec3d cameraPos = matrix * mFollowTarget->getPosition();
-        Vec3d targetPos = matrix * cameraTarget->getPosition();
+        // put the camera outside the planet
+        double offset = cameraAttachedTo->getRadius()*1.2f;
+        Vec3d cameraPos = matrix * cameraAttachedTo->getPosition();
+        Vec3d targetPos = matrix * cameraLookingAt->getPosition();
         Vec3d toTarget = targetPos - cameraPos;
         Vec3d offsetVec = offset * toTarget.normalized();
         //Matrix44f transform = Matrix44f::createRotation( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );

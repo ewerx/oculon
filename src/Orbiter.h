@@ -56,7 +56,7 @@ private:
     void drawHud();
     
 private:
-    Vec3f           mLightDirection;
+    //Vec3f           mLightDirection;
     
     typedef vector<Body*> BodyList;
     BodyList        mBodies;
@@ -87,9 +87,13 @@ private:
 public:
     static double   sDefaultTimeScale;
     static double   sDefaultGravityConstant;
+    static double   sDrawScale;
     static float    sMaxRadiusMultiplier;
     static int      sNumFramesToAvgFft;
-    static bool     sUseExpTrailDraw;
+    static bool     sUseSmoothLines;
+    static bool     sUseTriStripLine;
+    static int      sMinTrailLength;
+    static bool     sDrawRealSun;
 };
 
 #endif // __ORBITER_H__

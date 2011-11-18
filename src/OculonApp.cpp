@@ -50,7 +50,7 @@ void OculonApp::setup()
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
+	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     mMayaCam.setCurrentCam( mCam );
     
     // load assets
@@ -74,7 +74,7 @@ void OculonApp::setup()
 	//glDisable( GL_TEXTURE_2D );
     
     mParams = params::InterfaceGl( "Parameters", Vec2i( 350, 150 ) );
-    mParams.setOptions("","position='10 600'");
+    //mParams.setOptions("","position='10 600'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
 	//mParams.addParam( "Light Direction", &mLightDirection, "" );
@@ -189,8 +189,8 @@ void OculonApp::keyDown( KeyEvent event )
             break;
         }
             
-        case 'l':
-        case 'L':
+        case 'f':
+        case 'F':
             setPresentationMode( !mIsPresentationMode );
             break;
 
@@ -337,4 +337,4 @@ void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up 
 }
 
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_16) )
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )
