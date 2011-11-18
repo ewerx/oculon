@@ -50,7 +50,7 @@ void OculonApp::setup()
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 90.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
+	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
     mMayaCam.setCurrentCam( mCam );
     
     // load assets
@@ -337,4 +337,4 @@ void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up 
 }
 
 
-CINDER_APP_BASIC( OculonApp, RendererGl )
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_16) )

@@ -35,6 +35,7 @@ PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 /*static*/ double   Orbiter::sDefaultGravityConstant    = 6.6742e-11;
 /*static*/ float    Orbiter::sMaxRadiusMultiplier       = 2.6f;
 /*static*/ int      Orbiter::sNumFramesToAvgFft         = 1;
+/*static*/ bool     Orbiter::sUseExpTrailDraw           = false;
 
 //
 // Orbiter
@@ -110,6 +111,7 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
+    params.addParam("New Trails", &Orbiter::sUseExpTrailDraw, "key=t");
     //params.addSeparator();
     //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
@@ -325,6 +327,7 @@ void Orbiter::updateAudioResponse()
 void Orbiter::draw()
 {
     glPushMatrix();
+    //glEnable( GL_MULTISAMPLE_ARB );
     glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
 	

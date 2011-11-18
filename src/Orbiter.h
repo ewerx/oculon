@@ -89,6 +89,7 @@ public:
     static double   sDefaultGravityConstant;
     static float    sMaxRadiusMultiplier;
     static int      sNumFramesToAvgFft;
+    static bool     sUseExpTrailDraw;
 };
 
 #endif // __ORBITER_H__

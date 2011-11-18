@@ -137,7 +137,34 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         Vec3f trailPoint = screenCoords;//screenCoords + Vec3f( audioOffset*Rand::, audioOffset, audioOffset );
         //console() << "audioOffset = " << audioOffset << std::endl;
         mMotionTrail.push_back( trailPoint );
-        gl::draw(mMotionTrail);
+        
+        if( Orbiter::sUseExpTrailDraw )
+        {
+            glPushMatrix();
+            //glEnable( GL_MULTISAMPLE_ARB );
+            //glEnable(GL_BLEND); 
+            glEnable( GL_LINE_SMOOTH );
+            glEnable( GL_POLYGON_SMOOTH );
+            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//did nothing?
+            //glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );//did nothing?
+            //glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );//did nothing?
+            glBegin( GL_LINE_STRIP );
+            for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
+            {
+                const Vec3f& point = (*it);
+                glVertex3f(point.x,point.y,point.z);
+            }
+            glEnd();
+            //glDisable(GL_MULTISAMPLE_ARB );
+            //glDisable(GL_BLEND); 
+            glDisable(GL_LINE_SMOOTH );
+            glDisable(GL_POLYGON_SMOOTH );
+            glPopMatrix();
+        }
+        else
+        {
+            gl::draw(mMotionTrail);
+        }
     }
     glPopMatrix();
     glEnable(GL_LIGHTING);
