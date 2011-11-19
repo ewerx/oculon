@@ -103,8 +103,9 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
         glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
         
-        glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
-        //glColor4f( mColor.r, mColor.g, mColor.b, mColor.a );
+        glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale) );
+        //glMaterialfv( GL_FRONT, GL_DIFFUSE, mColor );
+        //glColor4f( mColor );
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
         
         // label
@@ -151,6 +152,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//did nothing?
             glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );//did nothing?
             glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );//did nothing?
+            glLineWidth(Orbiter::sTrailWidth);
             if( Orbiter::sUseTriStripLine )
             {
                 glBegin(GL_TRIANGLE_STRIP);

@@ -39,7 +39,9 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
 /*static*/ bool     Orbiter::sUseSmoothLines            = true;
 /*static*/ bool     Orbiter::sUseTriStripLine           = false;
 /*static*/ int      Orbiter::sMinTrailLength            = 47;// in segments
+/*static*/ float    Orbiter::sTrailWidth                = 1.4f;
 /*static*/ bool     Orbiter::sDrawRealSun               = false;
+/*static*/ float    Orbiter::sPlanetGrayScale           = 0.6f;
 
 //
 // Orbiter
@@ -120,7 +122,9 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
     params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
     params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
-    params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
+    params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
+    params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
+    //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
     //params.addSeparator();
     //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
@@ -166,7 +170,7 @@ void Orbiter::reset()
                     Vec3d(0.0f, orbitalVel, 0.0f),\
                     radius, \
                     mass, \
-                    ColorA(0.6f, 0.6f, 0.6f)); \
+                    ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale)); \
     body->setup(); \
     mBodies.push_back( body );
     PLANETS_TUPLE

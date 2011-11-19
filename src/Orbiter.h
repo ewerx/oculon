@@ -93,7 +93,9 @@ public:
     static bool     sUseSmoothLines;
     static bool     sUseTriStripLine;
     static int      sMinTrailLength;
+    static float    sTrailWidth;
     static bool     sDrawRealSun;
+    static float    sPlanetGrayScale;
 };
 
 #endif // __ORBITER_H__

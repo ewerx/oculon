@@ -303,9 +303,9 @@ void OculonApp::draw()
     glPopMatrix();     
     
     // debug
+    drawInfoPanel();
     if( !mIsPresentationMode )
     {
-        drawInfoPanel();
         params::InterfaceGl::draw();
     }
 }
