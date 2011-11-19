@@ -54,6 +54,7 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 	}
 	
     glPushMatrix();
+    glDisable(GL_LIGHTING);
 	uint32_t bufferSamples = pcmBufferRef->getSampleCount();
 	audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
 	audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );

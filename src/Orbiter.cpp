@@ -41,7 +41,7 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
 /*static*/ int      Orbiter::sMinTrailLength            = 47;// in segments
 /*static*/ float    Orbiter::sTrailWidth                = 1.4f;
 /*static*/ bool     Orbiter::sDrawRealSun               = false;
-/*static*/ float    Orbiter::sPlanetGrayScale           = 0.6f;
+/*static*/ float    Orbiter::sPlanetGrayScale           = 0.9f;
 
 //
 // Orbiter
@@ -191,7 +191,7 @@ void Orbiter::reset()
         mass = 1e8 * Rand::randFloat(1.0f, 10.0f);
         radius = Rand::randFloat(minRadius,minRadius*2.0f);
         double angle = Rand::randFloat(2*M_PI);
-        orbitalRadius = (Rand::randInt(100000) + 100000 ) * 4e6;
+        orbitalRadius = (Rand::randInt(100000) + 100000) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
         snprintf(name,128,"%c%d/%04d/%02d", randInt('A','Z'), num_planets+i, randInt(1000,9999), randInt(300));
@@ -362,7 +362,7 @@ void Orbiter::draw()
     {
         Body* body = (*bodyIt);
         if (!mEnableFrustumCulling ||
-            isSphereInFrustum( (matrix * body->getPosition()), body->getRadius()*mDrawScale ) )
+            isSphereInFrustum( (matrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
         {
             body->draw(matrix, true);
         }
@@ -434,7 +434,7 @@ void Orbiter::setupHud()
     for( int i = 0; i < TB_COUNT; ++i )
     {
         mTextBox[i]->setFont("Menlo", 13.0f);
-        mTextBox[i]->setTextColor( ColorA(0.9f,0.9f,0.9f,1.0f) );
+        mTextBox[i]->setTextColor( ColorA(1.0f,1.0f,1.0f,1.0f) );
         
         switch(i)
         {
@@ -442,8 +442,10 @@ void Orbiter::setupHud()
                 mTextBox[i]->setPosition( Vec3f(margin, margin, 0.0f) );
                 break;
             case TB_TOP_RIGHT:
-                mTextBox[i]->setPosition( Vec3f(0.0f, margin, 0.0f) );
+                mTextBox[i]->setPosition( Vec3f(0.0f, margin+40.f, 0.0f) );
                 mTextBox[i]->setRightJustify( true, margin );
+                mTextBox[i]->setFont("Menlo", 10.0f);
+                mTextBox[i]->setTextColor( ColorA(1.0f,1.0f,1.0f,0.85f));
                 break;
             case TB_BOT_LEFT:
                 mTextBox[i]->setPosition( Vec3f(margin, 0.0f, 0.0f) );
@@ -462,6 +464,7 @@ void Orbiter::setupHud()
 
 void Orbiter::updateHud()
 {
+    // TOP LEFT
     ostringstream oss1;
     
     format timeFormat("SIMULATION TIME: %02d:%02d:%02d:%04.1f");
@@ -471,7 +474,7 @@ void Orbiter::updateHud()
     double secs = ci::math<double>::fmod(mElapsedTime,60.0f) + (mElapsedTime - (int)(mElapsedTime));
     timeFormat % days % hours % mins % secs;
     
-    format params("TIME SCALE: %-6g : 1\nG CONSTANT: %-8g\nPROJECTION SCALE: 1 : %-8g\n");
+    format params("TIME SCALE: %-6g : 1\nG CONSTANT: %-8g\nPROJECTION SCALE: 1 / %-8g\n");
     params % mTimeScale % mGravityConstant % mDrawScale;
     
     oss1 << timeFormat << endl << params;
@@ -479,14 +482,29 @@ void Orbiter::updateHud()
     //snprintf(buf, 256, "SIMULATION TIME: %02d:%02d:%02d:%04.1f", days,hours,mins,secs);
     mTextBox[TB_TOP_LEFT]->setText(oss1.str());
     
+    // BOTTOM RIGHT
     ostringstream oss2;
     
-    format followCamInfo("DESIGNATION: %s\nORBITAL RADIUS: %.4e km\nORBITAL SPEED: %6.1f m/s\nMASS: %.6e kg");
+    format followCamInfo("%s\nOr: %.4e km\nOv: %6.1f m/s\nM: %.6e kg");
     followCamInfo % (mFollowTarget->getName()) % (mFollowTarget->getPosition().length() / 1000.0f) % (mFollowTarget->getVelocity().length()) % (mFollowTarget->getMass());
     
     oss2 << followCamInfo;
     
     mTextBox[TB_BOT_RIGHT]->setText(oss2.str());
+    
+    // TOP RIGHT
+    ostringstream oss3;
+    format planetInfo("%.8e\n");
+    
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+        bodyIt != mBodies.end();
+        ++bodyIt)
+    {
+        Body* body = (*bodyIt);
+        oss3 << format(planetInfo) % body->getAcceleration();
+    }
+    
+    mTextBox[TB_TOP_RIGHT]->setText(oss3.str());
 }
 
 void Orbiter::drawHud()
@@ -501,5 +519,107 @@ void Orbiter::drawHud()
         mTextBox[i]->draw();
     }
     
+    const float width = 200.0f;
+    const float height = 100.0f;
+    const float space = 10.0f;
+    const float left = 20.0f;
+    const float top = mApp->getWindowHeight() - 20.0f - (height*2.0f) - space;
+    drawHudWaveformAnalyzer(0.0f,100.0f,getWindowWidth(),height);
+    drawHudSpectrumAnalyzer(left,top+height+space,width,height);
+    
     gl::popMatrices();
 }
+
+void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float height)
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+    audio::PcmBuffer32fRef pcmBufferRef = audioInput.getPcmBuffer();
+    if( !pcmBufferRef )
+    {
+        return;
+    }
+    
+    glPushMatrix();
+    glDisable(GL_LIGHTING);
+    uint32_t bufferSamples = pcmBufferRef->getSampleCount();
+    audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
+    audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
+    
+    //float mid = top + height / 2.0f;
+    int endIdx = bufferSamples;
+    
+    //only draw the last 1024 samples or less
+    int32_t startIdx = ( endIdx - 1024 );
+    startIdx = ci::math<int32_t>::clamp( startIdx, 0, endIdx );
+    
+    float scale = width / (float)( endIdx - startIdx );
+    
+    PolyLine<Vec2f>	spectrum_right;
+    PolyLine<Vec2f> spectrum_left;
+    for( uint32_t i = startIdx, c = 0; i < endIdx; i++, c++ ) 
+    {
+        float y = ( ( rightBuffer->mData[i] - 1 ) * - height );
+        spectrum_right.push_back( Vec2f( ( c * scale ), y ) );
+        y = ( ( leftBuffer->mData[i] - 1 ) * - height );
+        spectrum_left.push_back( Vec2f( ( c * scale ), y ) );
+    }
+    glPushMatrix();
+    glTranslatef(left,getWindowHeight()/6.0f,0.0f);
+    gl::color( ColorA( 0.0f, 0.0f, 0.0f, 0.75f ) );
+    gl::draw( spectrum_right );
+    glPopMatrix();
+    glPushMatrix();
+    //gl::color( Color( 0.75f, 0.75f, 0.75f ) );
+    glTranslatef(left,getWindowHeight()/2.0f,0.0f);
+    gl::draw( spectrum_left );
+    glPopMatrix();
+    
+    //float shade = 0.4f;
+    //glColor3f(shade,shade,shade);
+    //gl::drawStrokedRect(Rectf(left, top, width, top+height));
+    
+    glPopMatrix();    
+}
+
+void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float height)
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
+    uint16_t bandCount = audioInput.getFftBandCount();
+    uint16_t bandsToShow = 200;
+    
+    //const float bottom = top+height;
+    const float space = 1.0f;
+    const float barWidth = width / bandsToShow;
+    const float bumpUp = 1.0f;
+    
+    if( ! fftDataRef ) 
+    {
+        return;
+    }
+    
+    glPushMatrix();
+    glDisable(GL_LIGHTING);
+    glTranslatef(left,top,0.0f);
+    float * fftBuffer = fftDataRef.get();
+    
+    for( int i = 0; i < bandsToShow; i++ ) 
+    {
+        float barY = (fftBuffer[i] / bandCount) * height;
+        glBegin( GL_QUADS );
+        glColor3f( 0.3f,0.3f,0.3f );
+        glVertex2f( i * space, height-2.f );
+        glVertex2f( i * space + barWidth, height-bumpUp );
+        glColor3f( 0.8f, 0.8f, 0.8f );
+        glVertex2f( i * space + barWidth, height - barY-bumpUp );
+        glVertex2f( i * space, height - barY-2.f );
+        glEnd();
+    }
+    
+    float shade = 0.3f;
+    gl::color( ColorA(shade,shade,shade,0.6f) );
+    gl::drawStrokedRect(Rectf(0.0f, 0.0f, width, height));
+    
+    glPopMatrix();
+}
+

@@ -54,6 +54,8 @@ private:
     void setupHud();
     void updateHud();
     void drawHud();
+    void drawHudWaveformAnalyzer(float left, float top, float width, float height);
+    void drawHudSpectrumAnalyzer(float left, float top, float width, float height);
     
 private:
     //Vec3f           mLightDirection;

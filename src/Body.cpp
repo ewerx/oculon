@@ -24,7 +24,7 @@ GLfloat Body::no_mat[]			= { 0.0, 0.0, 0.0, 1.0 };
 GLfloat Body::mat_ambient[]		= { 0.5, 0.5, 0.5, 1.0 };
 GLfloat Body::mat_diffuse[]		= { 0.8, 0.8, 0.8, 1.0 };
 GLfloat Body::mat_specular[]	= { 1.0, 1.0, 1.0, 1.0 };
-GLfloat Body::mat_emission[]	= { 0.1, 0.1, 0.1, 0.0 };
+GLfloat Body::mat_emission[]	= { 0.2, 0.2, 0.2, 0.0 };
 
 GLfloat Body::mat_shininess[]	= { 128.0 };
 GLfloat Body::no_shininess[]	= { 0.0 };
@@ -37,6 +37,7 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
 : Entity<double>(pos)
 , mName(name)
 , mVelocity(vel)
+, mAcceleration(0.0f)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
 , mPeakRadiusMultiplier(1.0f)
@@ -80,12 +81,12 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
 {
     //TODO: make hierarchy Entity <-- Sphere <-- Body, so Sphere can check its own culling
     static const int sphereDetail = 64;
-    const float radius = mRadius * mRadiusMultiplier * 0.75f;
+    //fconst float radius = mRadius; //* 0.75f;
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
     Vec3d screenCoords = transform * mPosition;
     double distanceFactor = mPosition.length() / 108000000000.f;
-    const int trailLength = Orbiter::sMinTrailLength + Orbiter::sMinTrailLength*(int)(distanceFactor) + (int)(radius*2);
+    const int trailLength = Orbiter::sMinTrailLength + Orbiter::sMinTrailLength*(int)(distanceFactor) + (int)(mRadius*2);
     
     if( drawBody )
     {
@@ -105,8 +106,15 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         
         glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale) );
         //glMaterialfv( GL_FRONT, GL_DIFFUSE, mColor );
-        //glColor4f( mColor );
+        bool drawShell = false;
+        float radius = drawShell ? mRadius : mRadius * mRadiusMultiplier;
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
+        
+        if( drawShell )
+        {
+            glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, 0.5f) );
+            gl::drawSphere( Vec3d::zero(), mRadius * mRadiusMultiplier, sphereDetail );
+        }
         
         // label
         if( mIsLabelVisible )
@@ -204,8 +212,8 @@ void Body::applyForceFromBody(Body& otherBody, double dt, double gravConst)
         if( distSqrd > 0 )
         {
             dir.normalize();
-            double accel = -gravConst * ( otherBody.mMass / distSqrd );
-            mVelocity += dir * accel * dt;
+            mAcceleration = -gravConst * ( otherBody.mMass / distSqrd );
+            mVelocity += dir * mAcceleration * dt;
         }
     }
 }

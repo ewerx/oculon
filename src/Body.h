@@ -41,9 +41,11 @@ public:
     
     // new methods
     const Vec3d& getVelocity() const { return mVelocity; }
+    const double& getAcceleration() const { return mAcceleration; }
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
-    float getRadius() const { return mRadius; }
+    float getRadius() const { return mRadius*mRadiusMultiplier; }
+    float getBaseRadius() const { return mRadius; }
     double getMass() const { return mMass; }
     void applyFftBandValue( float fftBandValue );
     const string& getName() const { return mName; }
@@ -58,6 +60,7 @@ protected:
     
 protected:
     Vec3d mVelocity;
+    double mAcceleration;
     double mMass;
     float mRadius;
     float mPeakRadiusMultiplier;

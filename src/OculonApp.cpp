@@ -329,6 +329,10 @@ void OculonApp::setPresentationMode( bool enabled )
     setFullScreen(enabled);
     mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
+    if( enabled )
+        hideCursor();
+    else
+        showCursor();
 }
 
 void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up )

@@ -15,7 +15,7 @@ using namespace ci;
 
 GLfloat Sun::mat_ambient[]		= { 0.5, 0.5, 0.5, 1.0 };
 GLfloat Sun::mat_diffuse[]		= { 0.8, 0.8, 0.8, 1.0 };
-GLfloat Sun::mat_emission[]     = { 0.8, 0.8, 0.8, 0.0 };
+GLfloat Sun::mat_emission[]     = { 1.0, 1.0, 1.0, 1.0 };
 
 
 Sun::Sun(const Vec3d& pos, 
