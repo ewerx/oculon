@@ -58,6 +58,7 @@ public:
     virtual ~MidiInput();
     
     void update();
+    void setEnabled(bool enabled) { mEnabled = enabled; }
     
     template<typename T>
     CallbackId registerMidiCallback( T* obj, bool (T::*callback)(MidiEvent) )
@@ -67,12 +68,15 @@ public:
 
     void unregisterMidiCallback( CallbackId id ) { mCallbacksMidi.unregisterCb( id ); }
     
+    
 
 private:
     
     midi::Hub   mMidiHub;
                     
     CallbackMgr<bool(MidiEvent)> mCallbacksMidi;
+    
+    bool        mEnabled;
     
     //queue<tMidiKey*>    mLearningQueue;
     //vector<tMidiKey*>   mKnownKeys;

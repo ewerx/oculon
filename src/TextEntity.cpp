@@ -39,8 +39,10 @@ void TextEntity::update(double dt)
 
 void TextEntity::draw()
 {
-    //if( !mTexture )
-    //    return;
+    if( mTextBox.getText().length() == 0 )
+    {
+        return;
+    }
 
     gl::pushMatrices();
     {
@@ -105,4 +107,11 @@ void TextEntity::updateTextSize()
     {
         mPosition.y = app::getWindowHeight() - mTextBox.measure().y - mMarginBottom;
     }
+}
+
+void TextEntity::setRightJustify( bool on, float margin )
+{
+    mJustifyRight = on; 
+    mMarginRight = margin;
+    //mTextBox.setAlignment( mJustifyRight ? TextBox::RIGHT : TextBox::LEFT );//TODO: doesn't work...
 }

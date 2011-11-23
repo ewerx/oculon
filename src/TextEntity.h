@@ -36,7 +36,7 @@ public:
     void setText( const std::string& str, const std::string& font, const float size, const ci::ColorA& color );
     void setTextColor( const ci::ColorA& color );
     void setFont( const std::string& fontName, const float fontSize );
-    void setRightJustify( bool on, float margin = 0.0f )    { mJustifyRight = on; mMarginRight = margin; }
+    void setRightJustify( bool on, float margin = 0.0f );
     void setBottomJustify( bool on, float margin = 0.0f )   { mJustifyBottom = on; mMarginBottom = margin; }
     
 private:

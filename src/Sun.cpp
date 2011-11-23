@@ -38,7 +38,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
     if( drawBody )
     {
         Vec3d screenCoords = transform * mPosition;
-        float radius = mRadius*mRadiusMultiplier*0.75f;
+        float radius = mRadius*mRadiusMultiplier;
         glPushMatrix();
         //glEnable( GL_LIGHTING );
         

@@ -41,7 +41,7 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
 /*static*/ int      Orbiter::sMinTrailLength            = 47;// in segments
 /*static*/ float    Orbiter::sTrailWidth                = 1.4f;
 /*static*/ bool     Orbiter::sDrawRealSun               = false;
-/*static*/ float    Orbiter::sPlanetGrayScale           = 0.9f;
+/*static*/ float    Orbiter::sPlanetGrayScale           = 1.0f;
 
 //
 // Orbiter
@@ -115,7 +115,7 @@ void Orbiter::setupParams(params::InterfaceGl& params)
 {
     params.addText( "text", "label=`Orbiter`" );
     params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
-    params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+    //params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
     params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
@@ -204,15 +204,9 @@ void Orbiter::reset()
                                mass, 
                                ColorA(0.5f, 0.55f, 0.525f));
         mBodies.push_back(body);
-        
-        if( orbitalRadius < farthestRadius || farthestRadius == 0.0f )
-        {
-            farthestComet = body;
-            farthestRadius = orbitalRadius;
-        }
     }
     
-    mFollowTarget = farthestComet;
+    mFollowTargetIndex = Rand::randInt(9,mBodies.size()-1);
     // TODO: determine orbital velocity
     /*
      for( int i = 1; i < mBodies.size(); ++i )
@@ -297,6 +291,14 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
         case 'c':
             mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
             mApp->setUseMayaCam( !mIsFollowCameraEnabled );
+        case '[':
+            if( --mFollowTargetIndex < 4 )
+                mFollowTargetIndex = mBodies.size()-1;
+            break;
+        case ']':
+            if( ++mFollowTargetIndex == mBodies.size() )
+                mFollowTargetIndex = 4;
+            break;
         default:
             handled = false;
             break;
@@ -387,7 +389,7 @@ void Orbiter::draw()
         Body* cameraAttachedTo = mFollowTarget;
         if( mFollowTargetIndex >= 0 && mFollowTargetIndex < mBodies.size() )
         {
-            cameraAttachedTo = mBodies[mBodies.size()-mFollowTargetIndex-1];
+            cameraAttachedTo = mBodies[mFollowTargetIndex];
             mFollowTarget = cameraAttachedTo;
         }
         
@@ -397,12 +399,27 @@ void Orbiter::draw()
         Vec3d targetPos = matrix * cameraLookingAt->getPosition();
         Vec3d toTarget = targetPos - cameraPos;
         Vec3d offsetVec = offset * toTarget.normalized();
-        //Matrix44f transform = Matrix44f::createRotation( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );
-        //transform.rotate.rotate( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );
-        Vec3d up = /*Quatf( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f ) */ Vec3f::zAxis();
-        //up.rotate( Vec3f::zAxis(), sinf( (float) getElapsedSeconds() * 0.5f ) * 1.08f );
+        Vec3d up = Vec3f::zAxis();
+        
+#if 0//rotating camera
+        float rotationSpeed = 5;
+        static Vec3f currentAngles = Vec3f::zero();
+        static Vec3f targetAngles = Vec3f::zero();
+        float lerpSpeed = 1;
+        
+        targetAngles.x += toRadians(getElapsedSeconds() * rotationSpeed);
+        targetAngles.y += toRadians(getElapsedSeconds() * rotationSpeed);
+        targetAngles.y = ci::math<float>::clamp(targetAngles.y,-M_PI,M_PI);
+            
+            currentAngles = lerp<Vec3f>(currentAngles,targetAngles,mApp->getElapsedSecondsThisFrame()*lerpSpeed);
+            
+            Quatf xQuaternion(Vec3f::zAxis(), currentAngles.x);
+            Quatf yQuaternion(Vec3f::xAxis(), currentAngles.y);
+            
+            up = up * (xQuaternion * yQuaternion);
+#endif
+        
         cameraPos = cameraPos + offsetVec;
-        //Vec3f camPos = Vec3f( toCore.x, toCore.y, toCore.z );
         mApp->setCamera( cameraPos, targetPos, up );
     }
     
@@ -424,6 +441,7 @@ void Orbiter::handleTimeScaleChange(MidiEvent midiEvent)
     mTimeScale = sDefaultTimeScale * ( midiEvent.getValueRatio() * 100.f );
 }
 
+#pragma mark HUD
 //
 // HUD
 //
@@ -445,7 +463,7 @@ void Orbiter::setupHud()
                 mTextBox[i]->setPosition( Vec3f(0.0f, margin+40.f, 0.0f) );
                 mTextBox[i]->setRightJustify( true, margin );
                 mTextBox[i]->setFont("Menlo", 10.0f);
-                mTextBox[i]->setTextColor( ColorA(1.0f,1.0f,1.0f,0.85f));
+                //mTextBox[i]->setTextColor( ColorA(1.0f,1.0f,1.0f,1.0f));
                 break;
             case TB_BOT_LEFT:
                 mTextBox[i]->setPosition( Vec3f(margin, 0.0f, 0.0f) );
@@ -467,7 +485,7 @@ void Orbiter::updateHud()
     // TOP LEFT
     ostringstream oss1;
     
-    format timeFormat("SIMULATION TIME: %02d:%02d:%02d:%04.1f");
+    format timeFormat("SIMULATION TIME: %02dd%02dh%02dm%04.1fs");
     int days = mElapsedTime / 86400; 
     int hours = ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600;
     int mins = ci::math<double>::fmod(mElapsedTime,3600.0f) / 60;
@@ -494,14 +512,14 @@ void Orbiter::updateHud()
     
     // TOP RIGHT
     ostringstream oss3;
-    format planetInfo("%.8e\n");
+    format planetInfo("%.8e\n%.8e\n");
     
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
         ++bodyIt)
     {
         Body* body = (*bodyIt);
-        oss3 << format(planetInfo) % body->getAcceleration();
+        oss3 << format(planetInfo) % body->getAcceleration() % body->getPosition().length();
     }
     
     mTextBox[TB_TOP_RIGHT]->setText(oss3.str());
@@ -607,16 +625,16 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     {
         float barY = (fftBuffer[i] / bandCount) * height;
         glBegin( GL_QUADS );
-        glColor3f( 0.3f,0.3f,0.3f );
+        glColor3f( 0.8f,0.8f,0.8f );
         glVertex2f( i * space, height-2.f );
         glVertex2f( i * space + barWidth, height-bumpUp );
-        glColor3f( 0.8f, 0.8f, 0.8f );
+        glColor3f( 1.0f, 1.0f, 1.0f );
         glVertex2f( i * space + barWidth, height - barY-bumpUp );
         glVertex2f( i * space, height - barY-2.f );
         glEnd();
     }
     
-    float shade = 0.3f;
+    float shade = 0.6f;
     gl::color( ColorA(shade,shade,shade,0.6f) );
     gl::drawStrokedRect(Rectf(0.0f, 0.0f, width, height));
     

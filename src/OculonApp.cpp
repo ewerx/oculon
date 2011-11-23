@@ -69,6 +69,7 @@ void OculonApp::setup()
     {
         mMindWave.setup();
     }
+    mMidiInput.setEnabled(false);
     
     // debug
 	//glDisable( GL_TEXTURE_2D );
@@ -239,6 +240,8 @@ void OculonApp::update()
 {
     char buf[64];
     snprintf(buf, 64, "%.2ffps", getAverageFps());
+    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    snprintf(buf, 64, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     
     mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;

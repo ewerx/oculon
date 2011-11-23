@@ -73,6 +73,8 @@ private:
     double          mDrawScale;
     double          mGravityConstant;
     
+    Quatd           mCameraRotation;
+    
     MidiMap         mMidiMap;
     
     enum eTextBoxLocations

@@ -48,7 +48,7 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
     mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Menlo", 10.0f);
-    mLabel.setTextColor( ColorA(0.9f,0.9f,0.9f,0.9f) );
+    mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
 }
 
 Body::~Body()
@@ -144,7 +144,8 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             for( int i = 0; i < mMotionTrail.size() - trailLength; ++i )
                 mMotionTrail.getPoints().erase(mMotionTrail.begin());
         }
-        glColor4f( 0.5f, 0.5f, 0.5f, 0.5f );
+        const float lineShade = 1.0f;
+        glColor4f( lineShade, lineShade, lineShade, 0.75f );
         //float audioOffset = (mRadiusMultiplier*10.f); 
         Vec3f trailPoint = screenCoords;//screenCoords + Vec3f( audioOffset*Rand::, audioOffset, audioOffset );
         //console() << "audioOffset = " << audioOffset << std::endl;
