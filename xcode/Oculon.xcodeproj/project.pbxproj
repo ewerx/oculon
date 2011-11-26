@@ -30,6 +30,7 @@
 		7C1C54B41458F48500053F9D /* MidiMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C54B31458F48500053F9D /* MidiMap.cpp */; };
 		7C566D4E145A4EE9006E0E32 /* AudioTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */; };
 		7C566E27145DF9F0006E0E32 /* MindWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C566E26145DF9F0006E0E32 /* MindWave.cpp */; };
+		7C94E6771481858100A552A0 /* ParticleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C94E6761481858100A552A0 /* ParticleController.cpp */; };
 		7CA202CE14623B0E000AFFFD /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA202CD14623B0E000AFFFD /* Sun.cpp */; };
 		7CB2A23B144BE81C0010C54D /* InfoPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */; };
 		7CB2A28D144D007C0010C54D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A28C144D007C0010C54D /* Entity.cpp */; };
@@ -39,6 +40,7 @@
 		7CCA8F41144BAEF500C5229F /* AudioInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA8F40144BAEF500C5229F /* AudioInput.cpp */; };
 		7CD3D2AB14533D83007FB298 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD3D2AA14533D83007FB298 /* Body.cpp */; };
 		7CD3D5BA14552B57007FB298 /* TextEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD3D5B914552B57007FB298 /* TextEntity.cpp */; };
+		7CE0305A147CB6D1000F24F0 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE03059147CB6D1000F24F0 /* Particle.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +85,8 @@
 		7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioTest.cpp; path = ../src/AudioTest.cpp; sourceTree = SOURCE_ROOT; };
 		7C566E25145DF9F0006E0E32 /* MindWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MindWave.h; path = ../src/MindWave.h; sourceTree = SOURCE_ROOT; };
 		7C566E26145DF9F0006E0E32 /* MindWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MindWave.cpp; path = ../src/MindWave.cpp; sourceTree = SOURCE_ROOT; };
+		7C94E6751481858100A552A0 /* ParticleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleController.h; path = ../src/ParticleController.h; sourceTree = SOURCE_ROOT; };
+		7C94E6761481858100A552A0 /* ParticleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleController.cpp; path = ../src/ParticleController.cpp; sourceTree = SOURCE_ROOT; };
 		7CA202CC14623B0E000AFFFD /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sun.h; path = ../src/Sun.h; sourceTree = SOURCE_ROOT; };
 		7CA202CD14623B0E000AFFFD /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sun.cpp; path = ../src/Sun.cpp; sourceTree = SOURCE_ROOT; };
 		7CB2A239144BE80C0010C54D /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoPanel.h; path = ../include/InfoPanel.h; sourceTree = SOURCE_ROOT; };
@@ -102,6 +106,8 @@
 		7CD3D2AA14533D83007FB298 /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Body.cpp; path = ../src/Body.cpp; sourceTree = SOURCE_ROOT; };
 		7CD3D5B814552B57007FB298 /* TextEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextEntity.h; path = ../src/TextEntity.h; sourceTree = SOURCE_ROOT; };
 		7CD3D5B914552B57007FB298 /* TextEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextEntity.cpp; path = ../src/TextEntity.cpp; sourceTree = SOURCE_ROOT; };
+		7CE03058147CB6D1000F24F0 /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Particle.h; path = ../src/Particle.h; sourceTree = SOURCE_ROOT; };
+		7CE03059147CB6D1000F24F0 /* Particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Particle.cpp; path = ../src/Particle.cpp; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -309,6 +315,10 @@
 				7CB2A28C144D007C0010C54D /* Entity.cpp */,
 				7CD3D5B814552B57007FB298 /* TextEntity.h */,
 				7CD3D5B914552B57007FB298 /* TextEntity.cpp */,
+				7CE03058147CB6D1000F24F0 /* Particle.h */,
+				7CE03059147CB6D1000F24F0 /* Particle.cpp */,
+				7C94E6751481858100A552A0 /* ParticleController.h */,
+				7C94E6761481858100A552A0 /* ParticleController.cpp */,
 			);
 			name = Entity;
 			sourceTree = "<group>";
@@ -410,6 +420,8 @@
 				7C566E27145DF9F0006E0E32 /* MindWave.cpp in Sources */,
 				7C146A32145E5FDE005B824E /* MindWaveTest.cpp in Sources */,
 				7CA202CE14623B0E000AFFFD /* Sun.cpp in Sources */,
+				7CE0305A147CB6D1000F24F0 /* Particle.cpp in Sources */,
+				7C94E6771481858100A552A0 /* ParticleController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
