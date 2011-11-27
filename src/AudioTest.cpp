@@ -106,10 +106,12 @@ void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
     {
 		float barY = fftBuffer[i] / bandCount * ht;
 		glBegin( GL_QUADS );
-        glColor3f( 0.0f, 255.0f, 0.0f );
+        // bottom
+        glColor3f( 0.25f, 0.0f, 0.0f );
         glVertex2f( i * space, bottom );
         glVertex2f( i * space + width, bottom );
-        glColor3f( 255.0f, 0.0f, 0.0f );
+        // top
+        glColor3f( 1.0f, 0.25f, 0.0f );
         glVertex2f( i * space + width, bottom - barY );
         glVertex2f( i * space, bottom - barY );
 		glEnd();

@@ -12,8 +12,8 @@
 
 Scene::Scene()
 : mApp(NULL)
-, mIsActive(true)
-, mIsVisible(true)
+, mIsActive(false)
+, mIsVisible(false)
 , mIsFrustumPlaneCached(false)
 , mEnableFrustumCulling(false)
 {

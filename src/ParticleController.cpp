@@ -18,6 +18,7 @@ using namespace ci;
 
 ParticleController::ParticleController()
 : mPerlin(3)// octaves
+, mCounter(0)
 {
     mEnabledForces[FORCE_PERLIN] = true;
     mEnabledForces[FORCE_GRAVITY] = false;
@@ -29,7 +30,7 @@ void ParticleController::setup()
     mCounter = 0;
 }
 
-void ParticleController::update(int counter, double dt)
+void ParticleController::update(double dt)
 {
 	
     for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
@@ -62,7 +63,6 @@ void ParticleController::update(int counter, double dt)
 //			(*constraintIt)->apply( emitter );
 //		}
 //	}
-    
 }
 
 void ParticleController::draw()

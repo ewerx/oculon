@@ -30,6 +30,10 @@ Particle::Particle(const Vec3f& pos, const Vec3f& vel, float radius, float mass,
     mInvMass = 1.0f / mMass;
 }
 
+Particle::~Particle()
+{
+}
+
 void Particle::update(double dt)
 {
     if( mVelocity != Vec3f::zero() )
@@ -123,11 +127,12 @@ void Particle::renderLineStripTrail()
 
 void Particle::renderQuadStripTrail()
 {
+    int size = mPosHistory.size();
     int len = math<int>::min( mAge, mPosHistory.size() );
     
 	glBegin( GL_QUAD_STRIP );
     
-	for( int i = 0; i < mPosHistory.size()-2; i++ )
+	for( int i = 0; i < (size - 2); i++ )
     {
         float per = i / (float)(len-1);
 		Vec3f perp0	= Vec3f( mPosHistory[i].x, mPosHistory[i].y, 0.0f ) - Vec3f( mPosHistory[i+1].x, mPosHistory[i+1].y, 0.0f );

@@ -17,6 +17,7 @@
 #include "AudioInput.h"
 #include "InfoPanel.h"
 #include "Orbiter.h"
+#include "Magnetosphere.h"
 #include "AudioTest.h"
 #include "MindWaveTest.h"
 
@@ -101,13 +102,26 @@ void OculonApp::setupScenes()
     // Orbiter
     Scene* scene = new Orbiter();
     scene->init(this);
+    //scene->toggleActiveVisible(); // enable
     mScenes.push_back( scene );
+    
+    // Magnetosphere
+    scene = new Magnetosphere();
+    scene->init(this);
+    mScenes.push_back(scene);
     
     // AudioTest
     scene = new AudioTest();
     scene->init(this);
-    scene->toggleActiveVisible(); // start disabled (should be default?)
     mScenes.push_back( scene );
+    
+    if( mEnableMindWave )
+    {
+        scene = new MindWaveTest();
+        scene->init(this);
+        scene->toggleActiveVisible();
+        mScenes.push_back(scene);
+    }
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();

@@ -37,11 +37,13 @@ public:
     ParticleController();
     
     void setup();
-    void update(int counter, double dt);
+    void update(double dt);
     void draw();
     
     void addParticles( int amt, ci::Vec3f pos, ci::Vec3f vel, float radius );
     void setForceEnabled( eForce force, bool enabled ) { mEnabledForces[force] = enabled; }
+    
+    int getParticleCount() const { return mParticles.size(); }
     
 private:
     void applyForces(ParticleController::ParticleList::iterator p1, double dt );

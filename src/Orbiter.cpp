@@ -503,12 +503,15 @@ void Orbiter::updateHud()
     // BOTTOM RIGHT
     ostringstream oss2;
     
-    format followCamInfo("%s\nOr: %.4e km\nOv: %6.1f m/s\nM: %.6e kg");
-    followCamInfo % (mFollowTarget->getName()) % (mFollowTarget->getPosition().length() / 1000.0f) % (mFollowTarget->getVelocity().length()) % (mFollowTarget->getMass());
+    if( mFollowTarget )
+    {
+        format followCamInfo("%s\nOr: %.4e km\nOv: %6.1f m/s\nM: %.6e kg");
+        followCamInfo % (mFollowTarget->getName()) % (mFollowTarget->getPosition().length() / 1000.0f) % (mFollowTarget->getVelocity().length()) % (mFollowTarget->getMass());
     
-    oss2 << followCamInfo;
+        oss2 << followCamInfo;
     
-    mTextBox[TB_BOT_RIGHT]->setText(oss2.str());
+        mTextBox[TB_BOT_RIGHT]->setText(oss2.str());
+    }
     
     // TOP RIGHT
     ostringstream oss3;

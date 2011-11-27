@@ -31,6 +31,7 @@
 		7C566D4E145A4EE9006E0E32 /* AudioTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */; };
 		7C566E27145DF9F0006E0E32 /* MindWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C566E26145DF9F0006E0E32 /* MindWave.cpp */; };
 		7C94E6771481858100A552A0 /* ParticleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C94E6761481858100A552A0 /* ParticleController.cpp */; };
+		7C94E6B014819A8800A552A0 /* Magnetosphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C94E6AF14819A8800A552A0 /* Magnetosphere.cpp */; };
 		7CA202CE14623B0E000AFFFD /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA202CD14623B0E000AFFFD /* Sun.cpp */; };
 		7CB2A23B144BE81C0010C54D /* InfoPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A23A144BE81C0010C54D /* InfoPanel.cpp */; };
 		7CB2A28D144D007C0010C54D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB2A28C144D007C0010C54D /* Entity.cpp */; };
@@ -87,6 +88,8 @@
 		7C566E26145DF9F0006E0E32 /* MindWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MindWave.cpp; path = ../src/MindWave.cpp; sourceTree = SOURCE_ROOT; };
 		7C94E6751481858100A552A0 /* ParticleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleController.h; path = ../src/ParticleController.h; sourceTree = SOURCE_ROOT; };
 		7C94E6761481858100A552A0 /* ParticleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleController.cpp; path = ../src/ParticleController.cpp; sourceTree = SOURCE_ROOT; };
+		7C94E6AE14819A8800A552A0 /* Magnetosphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Magnetosphere.h; path = ../src/Magnetosphere.h; sourceTree = SOURCE_ROOT; };
+		7C94E6AF14819A8800A552A0 /* Magnetosphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Magnetosphere.cpp; path = ../src/Magnetosphere.cpp; sourceTree = SOURCE_ROOT; };
 		7CA202CC14623B0E000AFFFD /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sun.h; path = ../src/Sun.h; sourceTree = SOURCE_ROOT; };
 		7CA202CD14623B0E000AFFFD /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sun.cpp; path = ../src/Sun.cpp; sourceTree = SOURCE_ROOT; };
 		7CB2A239144BE80C0010C54D /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoPanel.h; path = ../include/InfoPanel.h; sourceTree = SOURCE_ROOT; };
@@ -291,6 +294,7 @@
 		7C566D49145A4EB5006E0E32 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				7C94E6AD14819A6E00A552A0 /* Magnetosphere */,
 				7C566D4B145A4EC9006E0E32 /* TestScenes */,
 				7CD3D2A814533D70007FB298 /* Oribter */,
 			);
@@ -306,6 +310,15 @@
 				7C566D4D145A4EE9006E0E32 /* AudioTest.cpp */,
 			);
 			name = TestScenes;
+			sourceTree = "<group>";
+		};
+		7C94E6AD14819A6E00A552A0 /* Magnetosphere */ = {
+			isa = PBXGroup;
+			children = (
+				7C94E6AE14819A8800A552A0 /* Magnetosphere.h */,
+				7C94E6AF14819A8800A552A0 /* Magnetosphere.cpp */,
+			);
+			name = Magnetosphere;
 			sourceTree = "<group>";
 		};
 		7CB2A28A144D00480010C54D /* Entity */ = {
@@ -422,6 +435,7 @@
 				7CA202CE14623B0E000AFFFD /* Sun.cpp in Sources */,
 				7CE0305A147CB6D1000F24F0 /* Particle.cpp in Sources */,
 				7C94E6771481858100A552A0 /* ParticleController.cpp in Sources */,
+				7C94E6B014819A8800A552A0 /* Magnetosphere.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
