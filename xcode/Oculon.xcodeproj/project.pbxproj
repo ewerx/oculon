@@ -126,6 +126,9 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				7CB2A239144BE80C0010C54D /* InfoPanel.h */,
+				7CCA8F03144BA28500C5229F /* OculonApp.h */,
+				32CA4F630368D1EE00C91783 /* Oculon_Prefix.pch */,
 				7C566D49145A4EB5006E0E32 /* Scenes */,
 				7C1C53CF1457C5A800053F9D /* Input */,
 				7CB2A28A144D00480010C54D /* Entity */,
@@ -192,9 +195,6 @@
 		29B97315FDCFA39411CA2CEA /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				7CB2A239144BE80C0010C54D /* InfoPanel.h */,
-				7CCA8F03144BA28500C5229F /* OculonApp.h */,
-				32CA4F630368D1EE00C91783 /* Oculon_Prefix.pch */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
