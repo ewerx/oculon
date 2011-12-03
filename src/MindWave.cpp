@@ -46,8 +46,7 @@ MindWave::MindWave()
         mBand[i] = 0.0f;
     }
     
-    CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR("/Library/ThinkGear.bundle"),
-                                                       kCFURLPOSIXPathStyle, true);
+    CFURLRef bundleUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("ThinkGear"), CFSTR("bundle"), CFSTR(""));
     
     mThinkGearBundle = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
     
