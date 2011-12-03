@@ -40,7 +40,6 @@ void AudioTest::draw()
         //gl::clear( Color( 0, 0, 0 ) ); 
         
         drawWaveform( audioInput.getPcmBuffer() );
-        glTranslatef( 0.0f, 200.0f, 0.0f );
         drawFft( audioInput.getFftDataRef() );
     }
     glPopMatrix();
@@ -54,6 +53,8 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 		return;
 	}
 	
+    glPushMatrix();
+    glDisable(GL_LIGHTING);
 	uint32_t bufferSamples = pcmBufferRef->getSampleCount();
 	audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
 	audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
@@ -81,32 +82,39 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 	gl::draw( spectrum_right );
     gl::color( Color( 0.5f, 0.5f, 1.0f ) );
     gl::draw( spectrum_left );
+    glPopMatrix();
 }
 
 void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
 {
     AudioInput& audioInput = mApp->getAudioInput();
     uint16_t bandCount = audioInput.getFftBandCount();
-	float ht = 1000.0f;
-	float bottom = 150.0f;
+	float ht = getWindowHeight() * 0.70f;
+	float bottom = getWindowHeight() - 50.f;
+    const float width = 4.0f;
+    const float space = width + 3.0f;
 	
 	if( ! fftDataRef ) 
     {
 		return;
 	}
 	
+    glPushMatrix();
 	float * fftBuffer = fftDataRef.get();
 	
 	for( int i = 0; i < ( bandCount ); i++ ) 
     {
 		float barY = fftBuffer[i] / bandCount * ht;
 		glBegin( GL_QUADS );
-        glColor3f( 255.0f, 255.0f, 0.0f );
-        glVertex2f( i * 3, bottom );
-        glVertex2f( i * 3 + 1, bottom );
-        glColor3f( 0.0f, 255.0f, 0.0f );
-        glVertex2f( i * 3 + 1, bottom - barY );
-        glVertex2f( i * 3, bottom - barY );
+        // bottom
+        glColor3f( 0.25f, 0.0f, 0.0f );
+        glVertex2f( i * space, bottom );
+        glVertex2f( i * space + width, bottom );
+        // top
+        glColor3f( 1.0f, 0.25f, 0.0f );
+        glVertex2f( i * space + width, bottom - barY );
+        glVertex2f( i * space, bottom - barY );
 		glEnd();
 	}
+    glPopMatrix();
 }

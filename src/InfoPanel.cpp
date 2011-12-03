@@ -93,7 +93,7 @@ void InfoPanel::render( Vec2f aWindowDim )
         gl::setMatricesWindow( aWindowDim );
         
         float x = aWindowDim.x - mTexture.getWidth() - 20.0f;
-        float y = aWindowDim.y - mTexture.getHeight() - 40.0f;
+        float y = /*aWindowDim.y - mTexture.getHeight() -*/ 20.0f;
         glColor4f( 1, 1, 1, mOpacity );
         gl::draw( mTexture, Vec2f( x, y ) );
         

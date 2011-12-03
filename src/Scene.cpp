@@ -12,17 +12,17 @@
 
 Scene::Scene()
 : mApp(NULL)
-, mIsActive(true)
-, mIsVisible(true)
+, mIsActive(false)
+, mIsVisible(false)
 , mIsFrustumPlaneCached(false)
 , mEnableFrustumCulling(false)
 {
     // frustum culling
 	for( int i=0; i<SIDE_COUNT; i++ )
     {
-		mCachedFrustumPlane.mNormals[i] = Vec3f::zero();
-		mCachedFrustumPlane.mPoints[i] = Vec3f::zero();
-		mCachedFrustumPlane.mDists[i] = 0.0f;
+		mCachedFrustumPlane[i].mNormal = Vec3f::zero();
+		mCachedFrustumPlane[i].mPoint = Vec3f::zero();
+		mCachedFrustumPlane[i].mDistance = 0.0f;
 	}
 }
 
@@ -49,12 +49,12 @@ void Scene::calcNearAndFarClipCoordinates( const Camera &cam )
 	
 	if( ! mIsFrustumPlaneCached )
     {
-		calcFrustumPlane( mCachedFrustumPlane.mNormals[TOP], mCachedFrustumPlane.mPoints[TOP], mCachedFrustumPlane.mDists[TOP], ntr, ntl, ftl );
-		calcFrustumPlane( mCachedFrustumPlane.mNormals[BOT], mCachedFrustumPlane.mPoints[BOT], mCachedFrustumPlane.mDists[BOT], nbl, nbr, fbr );
-		calcFrustumPlane( mCachedFrustumPlane.mNormals[LEF], mCachedFrustumPlane.mPoints[LEF], mCachedFrustumPlane.mDists[LEF], ntl, nbl, fbl );
-		calcFrustumPlane( mCachedFrustumPlane.mNormals[RIG], mCachedFrustumPlane.mPoints[RIG], mCachedFrustumPlane.mDists[RIG], ftr, fbr, nbr );
-		calcFrustumPlane( mCachedFrustumPlane.mNormals[NEA], mCachedFrustumPlane.mPoints[NEA], mCachedFrustumPlane.mDists[NEA], ntl, ntr, nbr );
-		calcFrustumPlane( mCachedFrustumPlane.mNormals[FARP], mCachedFrustumPlane.mPoints[FARP], mCachedFrustumPlane.mDists[FARP], ftr, ftl, fbl );
+		calcFrustumPlane( mCachedFrustumPlane[TOP].mNormal, mCachedFrustumPlane[TOP].mPoint, mCachedFrustumPlane[TOP].mDistance, ntr, ntl, ftl );
+		calcFrustumPlane( mCachedFrustumPlane[BOT].mNormal, mCachedFrustumPlane[BOT].mPoint, mCachedFrustumPlane[BOT].mDistance, nbl, nbr, fbr );
+		calcFrustumPlane( mCachedFrustumPlane[LEF].mNormal, mCachedFrustumPlane[LEF].mPoint, mCachedFrustumPlane[LEF].mDistance, ntl, nbl, fbl );
+		calcFrustumPlane( mCachedFrustumPlane[RIG].mNormal, mCachedFrustumPlane[RIG].mPoint, mCachedFrustumPlane[RIG].mDistance, ftr, fbr, nbr );
+		calcFrustumPlane( mCachedFrustumPlane[NEA].mNormal, mCachedFrustumPlane[NEA].mPoint, mCachedFrustumPlane[NEA].mDistance, ntl, ntr, nbr );
+		calcFrustumPlane( mCachedFrustumPlane[FARP].mNormal, mCachedFrustumPlane[FARP].mPoint, mCachedFrustumPlane[FARP].mDistance, ftr, ftl, fbl );
 	}
 	
 	mIsFrustumPlaneCached = true;
@@ -81,7 +81,7 @@ bool Scene::isPointInFrustum( const Vec3f &loc )
     
 	for( int i=0; i<SIDE_COUNT; i++ )
     {
-		d = mCachedFrustumPlane.mDists[i] + mCachedFrustumPlane.mNormals[i].dot( loc );
+		d = mCachedFrustumPlane[i].mDistance + mCachedFrustumPlane[i].mNormal.dot( loc );
 		if( d < 0 )
 			return( false );
 	}
@@ -97,7 +97,7 @@ bool Scene::isSphereInFrustum( const Vec3f &loc, float radius )
 	
 	for(int i=0; i<SIDE_COUNT; i++ )
     {
-		d = mCachedFrustumPlane.mDists[i] + mCachedFrustumPlane.mNormals[i].dot( loc );
+		d = mCachedFrustumPlane[i].mDistance + mCachedFrustumPlane[i].mNormal.dot( loc );
 		if( d < -radius )
 			return( false );
 	}
@@ -130,7 +130,7 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
         
 		for( int k=0; k<8 && ( in==0 || out==0 ); k++ )
         {
-			d = mCachedFrustumPlane.mDists[i] + mCachedFrustumPlane.mNormals[i].dot( vertex[k] );
+			d = mCachedFrustumPlane[i].mDistance + mCachedFrustumPlane[i].mNormal.dot( vertex[k] );
 			
 			if( d < 0 )
 				out ++;

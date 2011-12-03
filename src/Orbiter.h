@@ -15,12 +15,14 @@
 #include <vector>
 
 #include "Scene.h"
-#include "Body.h"
-#include "Sun.h"
 #include "MidiMap.h"
 
 using namespace ci;
 using std::vector;
+
+class Body;
+class Sun;
+class TextEntity;
 
 //
 // An orbital simulator
@@ -35,6 +37,7 @@ public:
     void setup();
     void setupParams(params::InterfaceGl& params);
     void reset();
+    void resize();
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
@@ -47,15 +50,21 @@ private:
     void setupMidiMapping();
     
     void updateAudioResponse();
-    void updateTimeDisplay();
+    
+    void setupHud();
+    void updateHud();
+    void drawHud();
+    void drawHudWaveformAnalyzer(float left, float top, float width, float height);
+    void drawHudSpectrumAnalyzer(float left, float top, float width, float height);
     
 private:
-    Vec3f           mLightDirection;
+    //Vec3f           mLightDirection;
     
     typedef vector<Body*> BodyList;
     BodyList        mBodies;
     
     Sun*                mSun;
+    int                 mFollowTargetIndex;
     Body*               mFollowTarget;
     bool                mIsFollowCameraEnabled;
     
@@ -64,18 +73,33 @@ private:
     double          mDrawScale;
     double          mGravityConstant;
     
+    Quatd           mCameraRotation;
+    
     MidiMap         mMidiMap;
     
-    static GLfloat no_mat[];
-    static GLfloat mat_ambient[];
-    static GLfloat mat_diffuse[];
-    static GLfloat mat_specular[];
-    static GLfloat mat_emission[];
-    static GLfloat mat_shininess[];
-    static GLfloat no_shininess[];
+    enum eTextBoxLocations
+    {
+        TB_TOP_LEFT,
+        TB_TOP_RIGHT,
+        TB_BOT_LEFT,
+        TB_BOT_RIGHT,
+        
+        TB_COUNT
+    };
+    TextEntity*     mTextBox[TB_COUNT];
     
-    static double sDefaultTimeScale;
-    static double sDefaultGravityConstant;
+public:
+    static double   sDefaultTimeScale;
+    static double   sDefaultGravityConstant;
+    static double   sDrawScale;
+    static float    sMaxRadiusMultiplier;
+    static int      sNumFramesToAvgFft;
+    static bool     sUseSmoothLines;
+    static bool     sUseTriStripLine;
+    static int      sMinTrailLength;
+    static float    sTrailWidth;
+    static bool     sDrawRealSun;
+    static float    sPlanetGrayScale;
 };
 
 #endif // __ORBITER_H__

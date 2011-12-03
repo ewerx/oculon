@@ -17,7 +17,9 @@
 #include "AudioInput.h"
 #include "InfoPanel.h"
 #include "Orbiter.h"
+#include "Magnetosphere.h"
 #include "AudioTest.h"
+#include "MindWaveTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -35,6 +37,7 @@ void OculonApp::setup()
 {
     mIsPresentationMode = false;
     mUseMayaCam = true;
+    mEnableMindWave = false;
     
     // render
     gl::enableDepthWrite();
@@ -48,7 +51,7 @@ void OculonApp::setup()
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 60.0f, getWindowAspectRatio(), 1.0f, 20000.0f );
+	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     mMayaCam.setCurrentCam( mCam );
     
     // load assets
@@ -63,11 +66,17 @@ void OculonApp::setup()
     // audio input
     mAudioInput.setup();
     
+    if( mEnableMindWave )
+    {
+        mMindWave.setup();
+    }
+    mMidiInput.setEnabled(false);
+    
     // debug
 	//glDisable( GL_TEXTURE_2D );
     
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 300, 100 ) );
-    //mParams.setOptions("","position='200 10'");
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, 150 ) );
+    //mParams.setOptions("","position='10 600'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
 	//mParams.addParam( "Light Direction", &mLightDirection, "" );
@@ -80,6 +89,7 @@ void OculonApp::setup()
     //mParams.hide();
     
     mLastElapsedSeconds = getElapsedSeconds();
+    mElapsedSecondsThisFrame = 0.0f;
     
     setupScenes();
 }
@@ -89,14 +99,29 @@ void OculonApp::setupScenes()
     mScenes.clear();
     
     //TODO: serialization
+    // Orbiter
     Scene* scene = new Orbiter();
+    scene->init(this);
+    //scene->toggleActiveVisible(); // enable
+    mScenes.push_back( scene );
+    
+    // Magnetosphere
+    scene = new Magnetosphere();
+    scene->init(this);
+    mScenes.push_back(scene);
+    
+    // AudioTest
+    scene = new AudioTest();
     scene->init(this);
     mScenes.push_back( scene );
     
-    scene = new AudioTest();
-    scene->init(this);
-    scene->toggleActiveVisible(); // start disabled (should be default?)
-    mScenes.push_back( scene );
+    if( mEnableMindWave )
+    {
+        scene = new MindWaveTest();
+        scene->init(this);
+        scene->toggleActiveVisible();
+        mScenes.push_back(scene);
+    }
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
@@ -120,9 +145,17 @@ void OculonApp::resize( ResizeEvent event )
     }
     mCam.setAspectRatio( getWindowAspectRatio() );
     mMayaCam.setCurrentCam( mCam );
-    //mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
-	//mCam.setPerspective( 60, getWindowAspectRatio(), 1, 1000 );
-	//gl::setMatrices( mCam );
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+        sceneIt != mScenes.end();
+        ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->resize();
+        }
+    }
 }
 
 void OculonApp::mouseMove( MouseEvent event )
@@ -152,11 +185,7 @@ void OculonApp::mouseDrag( MouseEvent event )
 void OculonApp::keyDown( KeyEvent event )
 {
     switch( event.getChar() )
-    {
-        //case ' ':
-            //mScenes[0]->reset();//TODO: active scene?
-            //break;
-            
+    {            
         // toggle pause-all
         case 'p':
         case 'P':
@@ -175,8 +204,8 @@ void OculonApp::keyDown( KeyEvent event )
             break;
         }
             
-        case 'l':
-        case 'L':
+        case 'f':
+        case 'F':
             setPresentationMode( !mIsPresentationMode );
             break;
 
@@ -226,12 +255,18 @@ void OculonApp::update()
     char buf[64];
     snprintf(buf, 64, "%.2ffps", getAverageFps());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    snprintf(buf, 64, "%.1fs", getElapsedSeconds());
+    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     
-    double dt = getElapsedSeconds() - mLastElapsedSeconds;
+    mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
     mLastElapsedSeconds = getElapsedSeconds();
     
     mAudioInput.update();
     mMidiInput.update();
+    if( mEnableMindWave )
+    {
+        mMindWave.update();
+    }
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
@@ -240,7 +275,7 @@ void OculonApp::update()
         Scene* scene = (*sceneIt);
         if( scene && scene->isActive() )
         {
-            scene->update(dt);
+            scene->update(mElapsedSecondsThisFrame);
         }
     }
     
@@ -285,9 +320,9 @@ void OculonApp::draw()
     glPopMatrix();     
     
     // debug
+    drawInfoPanel();
     if( !mIsPresentationMode )
     {
-        drawInfoPanel();
         params::InterfaceGl::draw();
     }
 }
@@ -311,6 +346,10 @@ void OculonApp::setPresentationMode( bool enabled )
     setFullScreen(enabled);
     mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
+    if( enabled )
+        hideCursor();
+    else
+        showCursor();
 }
 
 void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up )
@@ -319,4 +358,4 @@ void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up 
 }
 
 
-CINDER_APP_BASIC( OculonApp, RendererGl )
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )

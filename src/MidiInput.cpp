@@ -15,6 +15,7 @@ using namespace ci::app;
 
 
 MidiInput::MidiInput()
+:mEnabled(true)
 {
 }
 
@@ -24,34 +25,37 @@ MidiInput::~MidiInput()
 
 void MidiInput::update()
 {
-    midi::Message msg;
-    
-    while (mMidiHub.getNextMessage(&msg))
+    if( mEnabled )
     {
-        if( DEBUG_MIDI )
-        {
-            console() << "[midi] port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
-            console() << " note: " << msg.byteOne << " val: " << msg.byteTwo << std::endl;
-        }
+        midi::Message msg;
         
-        mCallbacksMidi.call( MidiEvent(msg) );
-        /*
-        if( mLearnMode )
+        while (mMidiHub.getNextMessage(&msg))
         {
+            if( DEBUG_MIDI )
+            {
+                console() << "[midi] port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
+                console() << " note: " << msg.byteOne << " val: " << msg.byteTwo << std::endl;
+            }
             
+            mCallbacksMidi.call( MidiEvent(msg) );
+            /*
+            if( mLearnMode )
+            {
+                
 
-        }
-        else 
-        {
+            }
+            else 
+            {
+                
             
-        
-        switch (msg.status) 
-        {
-            case MIDI_CONTROL_CHANGE:
-                //TODO: look up in map structure, update current value
-                break;
+            switch (msg.status) 
+            {
+                case MIDI_CONTROL_CHANGE:
+                    //TODO: look up in map structure, update current value
+                    break;
+            }
+            }
+            */
         }
-        }
-        */
     }
 }

@@ -33,6 +33,7 @@ public:
     virtual void setup() {}
     virtual void setupParams(ci::params::InterfaceGl& params) {}
     virtual void reset() {}
+    virtual void resize() {}
     virtual void update(double dt);
     virtual void draw() {}
     virtual bool handleKeyDown(const ci::app::KeyEvent& keyEvent) { return false; }
@@ -84,12 +85,12 @@ private:
     bool        mIsFrustumPlaneCached;
     struct tFrustumPlane
     {
-        Vec3f mNormals[SIDE_COUNT];
-        Vec3f mPoints[SIDE_COUNT];
-        float mDists[SIDE_COUNT];
+        Vec3f mNormal;
+        Vec3f mPoint;
+        float mDistance;
     };
     
-    tFrustumPlane mCachedFrustumPlane;
+    tFrustumPlane mCachedFrustumPlane[SIDE_COUNT];
     
 };
 
