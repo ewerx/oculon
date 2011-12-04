@@ -15,6 +15,7 @@
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
 #include "cinder/MayaCamUI.h"
+#include "cinder/qtime/MovieWriter.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
@@ -68,6 +69,9 @@ protected: // new
     void drawInfoPanel();
     void setPresentationMode( bool enabled );
     
+    void startVideoCapture( bool useDefaultPath =true );
+    void stopVideoCapture();
+    
 private: // members
     // input
     AudioInput              mAudioInput;
@@ -92,6 +96,9 @@ private: // members
     params::InterfaceGl		mParams;
     
     bool                    mIsPresentationMode;
+    
+    bool                    mIsCapturingVideo;
+    qtime::MovieWriter      mMovieWriter;
 };
 
 #endif

@@ -11,8 +11,11 @@
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
+#include "cinder/Filesystem.h"
+#include "cinder/Utilities.h"
 #include <iostream>
 #include <vector>
+#include <boost/format.hpp>
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "InfoPanel.h"
@@ -24,10 +27,11 @@
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 800, 600 );
+	settings->setWindowSize( 1024, 768 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -35,9 +39,12 @@ void OculonApp::prepareSettings( Settings *settings )
 
 void OculonApp::setup()
 {
+    console() << "[main] initializing...\n";
+    
     mIsPresentationMode = false;
     mUseMayaCam = true;
     mEnableMindWave = false;
+    mIsCapturingVideo = false;
     
     // render
     gl::enableDepthWrite();
@@ -53,6 +60,20 @@ void OculonApp::setup()
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
 	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     mMayaCam.setCurrentCam( mCam );
+    
+    // params
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, 150 ) );
+    //mParams.setOptions("","position='10 600'");
+    //mParams.addParam( "Cube Color", &mColor, "" );
+    //mParams.addSeparator();	
+	//mParams.addParam( "Light Direction", &mLightDirection, "" );
+    
+    //mParams.addText( "text", "label=`Temp`" );
+    //mParams.addParam( "Cube Size", &mObjSize, "min=0.1 max=20.5 step=0.5 keyIncr=z keyDecr=Z" );
+    //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
+    //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
+    //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
+    //mParams.hide();
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -75,19 +96,6 @@ void OculonApp::setup()
     // debug
 	//glDisable( GL_TEXTURE_2D );
     
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, 150 ) );
-    //mParams.setOptions("","position='10 600'");
-    //mParams.addParam( "Cube Color", &mColor, "" );
-    //mParams.addSeparator();	
-	//mParams.addParam( "Light Direction", &mLightDirection, "" );
-    
-    //mParams.addText( "text", "label=`Temp`" );
-    //mParams.addParam( "Cube Size", &mObjSize, "min=0.1 max=20.5 step=0.5 keyIncr=z keyDecr=Z" );
-    //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
-    //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
-    //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
-    //mParams.hide();
-    
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
     
@@ -96,27 +104,33 @@ void OculonApp::setup()
 
 void OculonApp::setupScenes()
 {
-    mScenes.clear();
+    console() << "[main] creating scenes...\n";
+    
+    mScenes.clear(); 
     
     //TODO: serialization
     // Orbiter
+    console() << "\tOrbiter\n";
     Scene* scene = new Orbiter();
     scene->init(this);
     //scene->toggleActiveVisible(); // enable
     mScenes.push_back( scene );
     
     // Magnetosphere
+    console() << "\tMagneto\n";
     scene = new Magnetosphere();
     scene->init(this);
     mScenes.push_back(scene);
     
     // AudioTest
+    console() << "\tAudioTest\n";
     scene = new AudioTest();
     scene->init(this);
     mScenes.push_back( scene );
     
     if( mEnableMindWave )
     {
+        console() << "\tMindWave\n";
         scene = new MindWaveTest();
         scene->init(this);
         scene->toggleActiveVisible();
@@ -203,17 +217,20 @@ void OculonApp::keyDown( KeyEvent event )
             }
             break;
         }
-            
+        
+        // fullscreen
         case 'f':
         case 'F':
             setPresentationMode( !mIsPresentationMode );
             break;
 
+        // info panel
         case '/':
         case '?':
             mInfoPanel.toggleState();
             break;
             
+        // scene toggle
         case '1':
         case '2':
         case '3':
@@ -222,14 +239,28 @@ void OculonApp::keyDown( KeyEvent event )
         case '6':
         case '7':
         case '8':
-        {
-            char index = event.getChar() - '1';
-            
-            if( index < mScenes.size() && mScenes[index] != NULL )
             {
-                mScenes[index]->toggleActiveVisible();
+                char index = event.getChar() - '1';
+                
+                if( index < mScenes.size() && mScenes[index] != NULL )
+                {
+                    mScenes[index]->toggleActiveVisible();
+                }
             }
-        }
+            break;
+            
+        // video capture
+        case 'r':
+        case 'R':
+            if( mIsCapturingVideo )
+            {
+                stopVideoCapture();
+            }
+            else
+            {
+                bool useDefaultPath = event.isShiftDown() ? false : true;
+                startVideoCapture(useDefaultPath);
+            }
         default:
         {
             for (SceneList::iterator sceneIt = mScenes.begin(); 
@@ -253,10 +284,15 @@ void OculonApp::keyDown( KeyEvent event )
 void OculonApp::update()
 {
     char buf[64];
+    Color infoPanelText(0.5f,0.5f,0.5f);
     snprintf(buf, 64, "%.2ffps", getAverageFps());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     snprintf(buf, 64, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    if( mIsCapturingVideo )
+    {
+        mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
+    }
     
     mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
     mLastElapsedSeconds = getElapsedSeconds();
@@ -317,13 +353,20 @@ void OculonApp::draw()
             }
         }
     }
-    glPopMatrix();     
+    glPopMatrix();
+    
+    // capture video
+	if( mIsCapturingVideo && mMovieWriter )
+    {
+		mMovieWriter.addFrame( copyWindowSurface(), mElapsedSecondsThisFrame );
+    }
     
     // debug
     drawInfoPanel();
     if( !mIsPresentationMode )
     {
-        params::InterfaceGl::draw();
+        //params::InterfaceGl::draw();
+        mParams.draw();
     }
 }
 
@@ -357,5 +400,60 @@ void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up 
     mCam.lookAt( eye, look, up );
 }
 
+void OculonApp::startVideoCapture(bool useDefaultPath)
+{
+    fs::path outputPath;
+    qtime::MovieWriter::Format mwFormat;
+    bool ready = false;
+    
+    // spawn file dialog
+    // outputPath = getSaveFilePath();
+    
+    format filenameFormat("~/Desktop/oculon%03d.mov");
+    string pathString;
+    int counter = 0;
+    
+    while( !ready && counter < 999 )
+    {
+        pathString = str( filenameFormat % counter );
+        outputPath = expandPath( fs::path(pathString) );
+        if( ! fs::exists(outputPath) )
+        {
+            ready = true;
+            break;
+        }
+        ++counter;
+    }
+    
+    if( ready )
+    {
+        if( useDefaultPath )
+        {
+            // H.264, 30fps, high detail
+            mwFormat.setCodec(1635148593); // get this value from the output of the dialog
+            mwFormat.setTimeScale(3000);
+            mwFormat.setDefaultDuration(1.0f/15.0f);
+            mwFormat.setQuality(0.99f);
+        }
+        else
+        {
+            ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
+        }
+    }
+    
+    if( ready )
+    {
+        console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
+        mMovieWriter = qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat );
+        mIsCapturingVideo = true;
+    }
+}
+
+void OculonApp::stopVideoCapture()
+{
+    console() << "[main] stop video capture\n";
+    mMovieWriter.finish();
+    mIsCapturingVideo = false;
+}
 
 CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )

@@ -37,10 +37,12 @@ void AudioInput::setup()
 {
     //iterate input devices and print their names to the console
 	const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
+    
+    console() << "[audio] input devices found:\n";
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); 
         iter != devices.end(); ++iter ) 
     {
-		console() << (*iter)->getName() << std::endl;
+		console() << '\t' << (*iter)->getName() << std::endl;
 	}
     
 	//initialize the audio Input, using the default input device

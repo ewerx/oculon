@@ -113,13 +113,13 @@ void Orbiter::setupMidiMapping()
 
 void Orbiter::setupParams(params::InterfaceGl& params)
 {
-    params.addText( "text", "label=`Orbiter`" );
+    params.addText( "orbiter", "label=`Orbiter`" );
     params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
     //params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
     params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
+    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines);
     params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
     params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
     params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");

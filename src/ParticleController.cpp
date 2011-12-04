@@ -20,7 +20,7 @@ ParticleController::ParticleController()
 : mPerlin(3)// octaves
 , mCounter(0)
 {
-    mEnabledForces[FORCE_PERLIN] = true;
+    mEnabledForces[FORCE_PERLIN] = false;
     mEnabledForces[FORCE_GRAVITY] = false;
     mEnabledForces[FORCE_REPULSION] = true;
 }

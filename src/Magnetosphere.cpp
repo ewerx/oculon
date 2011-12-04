@@ -50,7 +50,7 @@ void Magnetosphere::resize()
 
 void Magnetosphere::setupParams(params::InterfaceGl& params)
 {
-    params.addText( "text", "label=`Magnetosphere`" );
+    params.addText( "magneto", "label=`Magnetosphere`" );
     //params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
     //params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
     //params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
@@ -112,10 +112,10 @@ void Magnetosphere::updateAudioResponse()
     AudioInput& audioInput = mApp->getAudioInput();
     std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
     
-    unsigned int bandCount = audioInput.getFftBandCount();
-    float* fftBuffer = fftDataRef.get();
+    //unsigned int bandCount = audioInput.getFftBandCount();
+    //float* fftBuffer = fftDataRef.get();
     
-    int bodyIndex = 0;
+    //int bodyIndex = 0;
     
     //TODO
 }
