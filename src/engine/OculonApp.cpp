@@ -358,7 +358,7 @@ void OculonApp::draw()
     // capture video
 	if( mIsCapturingVideo && mMovieWriter )
     {
-		mMovieWriter.addFrame( copyWindowSurface(), mElapsedSecondsThisFrame );
+		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
     }
     
     // debug
