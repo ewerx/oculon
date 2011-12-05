@@ -73,7 +73,7 @@ void OculonApp::setup()
     //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
     //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
     //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
-    //mParams.hide();
+    mParams.hide();
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -198,11 +198,10 @@ void OculonApp::mouseDrag( MouseEvent event )
 
 void OculonApp::keyDown( KeyEvent event )
 {
-    switch( event.getChar() )
+    switch( event.getCode() )
     {            
         // toggle pause-all
-        case 'p':
-        case 'P':
+        case KeyEvent::KEY_p:
         {
             for (SceneList::iterator sceneIt = mScenes.begin(); 
                  sceneIt != mScenes.end();
@@ -219,26 +218,24 @@ void OculonApp::keyDown( KeyEvent event )
         }
         
         // fullscreen
-        case 'f':
-        case 'F':
+        case KeyEvent::KEY_f:
             setPresentationMode( !mIsPresentationMode );
             break;
 
         // info panel
-        case '/':
-        case '?':
+        case KeyEvent::KEY_SLASH:
             mInfoPanel.toggleState();
             break;
             
         // scene toggle
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
+        case KeyEvent::KEY_1:
+        case KeyEvent::KEY_2:
+        case KeyEvent::KEY_3:
+        case KeyEvent::KEY_4:
+        case KeyEvent::KEY_5:
+        case KeyEvent::KEY_6:
+        case KeyEvent::KEY_7:
+        case KeyEvent::KEY_8:
             {
                 char index = event.getChar() - '1';
                 
@@ -250,17 +247,20 @@ void OculonApp::keyDown( KeyEvent event )
             break;
             
         // video capture
-        case 'r':
-        case 'R':
+        case KeyEvent::KEY_r:
             if( mIsCapturingVideo )
             {
                 stopVideoCapture();
             }
             else
             {
-                bool useDefaultPath = event.isShiftDown() ? false : true;
-                startVideoCapture(useDefaultPath);
+                bool useDefaultSettings = event.isShiftDown() ? false : true;
+                startVideoCapture(useDefaultSettings);
             }
+            break;
+        case KeyEvent::KEY_ESCAPE:
+            quit();
+            break;
         default:
         {
             for (SceneList::iterator sceneIt = mScenes.begin(); 
