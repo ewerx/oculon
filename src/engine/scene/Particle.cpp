@@ -46,14 +46,22 @@ void Particle::update(double dt)
     
     mPosHistory.push_back( mPosition );
     
-    mAge++;
-    if( mAge > mLifeSpan )
+    if( mLifeSpan > 0.0f )
     {
-        mState = STATE_DEAD;
+        mAge++;
+        if( mAge > mLifeSpan )
+        {
+            mState = STATE_DEAD;
+        }
+        else 
+        {
+            mAgePer = 1.0f - mAge/mLifeSpan;
+        }
     }
-    else 
+    else
     {
-        mAgePer = 1.0f - mAge/mLifeSpan;
+        mAge++;
+        mAgePer = 1.0f;
     }
 
     // decay velocity
@@ -82,7 +90,7 @@ void Particle::draw()
         float radius = mRadius;
         if( mAge == 1 && mState != STATE_DECAY && heat > 0.3f )
         {
-            radius *= 20.0f * heat;
+            //radius *= 20.0f * heat;
         }
         
         glTexCoord2f( 0, 0 );

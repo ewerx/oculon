@@ -137,7 +137,7 @@ void Magnetosphere::generateParticles()
     int numParticlesToSpawn = Rand::randInt(100,250);
     if( Rand::randFloat() < 0.02f )
     {
-        numParticlesToSpawn *= 5;
+        //numParticlesToSpawn *= 5;
     }
     mParticleController.addParticles( numParticlesToSpawn, pos, vel * per, emitterRadius );
 }

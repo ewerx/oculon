@@ -98,7 +98,7 @@ void ParticleController::addParticles( int amt, Vec3f pos, Vec3f vel, float radi
         float pRadius = Rand::randFloat( 1.0f, 3.0f );
         float mass = pRadius;
         float charge = Rand::randFloat( 0.35f, 0.75f );
-        float lifespan = Rand::randFloat( 5.0f, 70.0f );
+        float lifespan = 0.0f;//Rand::randFloat( 5.0f, 70.0f );
 		mParticles.push_back( Particle( p, v, radius, mass, charge, lifespan ) );
 	}
 }
