@@ -35,10 +35,14 @@ public:
     
     // inherited from Entity
     virtual void update(double dt);
-    virtual void draw();
+    virtual void draw(bool asSphere);
     
     inline const Vec3f& getVelocity() const     { return mVelocity; }
+    inline void setVelocity( const Vec3f& vel ) { mVelocity = vel; }
+    
     inline const Vec3f& getAccel() const        { return mAccel; }
+    inline void setAccel( const Vec3f& acc )    { mAccel = acc; }
+    
     inline float getCharge() const              { return mCharge; }
     
     bool isState( eState state )        { return (mState == state); }
@@ -54,7 +58,7 @@ private:
     void reset();
     
     
-private:
+public://private:
     //float   mInvLen;
     Vec3f   mVelocity;
     Vec3f   mAccel;

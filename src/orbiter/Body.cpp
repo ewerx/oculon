@@ -94,7 +94,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         //glEnable( GL_LIGHTING );
         glEnable( GL_POLYGON_SMOOTH );
         
-        glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
+        glTranslated(screenCoords.x, screenCoords.y, screenCoords.z);
         
         //drawDebugVectors();
         

@@ -46,10 +46,17 @@
 		7C86563E148C2A97000E00B6 /* MidiHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C86560A148C2A97000E00B6 /* MidiHub.cpp */; };
 		7C86563F148C2A97000E00B6 /* MidiIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C86560B148C2A97000E00B6 /* MidiIn.cpp */; };
 		7C865640148C2A97000E00B6 /* MidiMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C86560C148C2A97000E00B6 /* MidiMessage.cpp */; };
-		7C86564B148C2BCD000E00B6 /* rg_grad.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C865646148C2BCD000E00B6 /* rg_grad.png */; };
 		7C86564C148C2BCD000E00B6 /* passthru.vsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865648148C2BCD000E00B6 /* passthru.vsh */; };
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
+		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C9693431496FFC400C0E1E6 /* Pulsar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9693411496FFC400C0E1E6 /* Pulsar.cpp */; };
+		7C96934614970AF800C0E1E6 /* emitter_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
+		7C96934714970AF800C0E1E6 /* emitter_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
+		7C96934D14970B3F00C0E1E6 /* specExponent.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934914970B3F00C0E1E6 /* specExponent.png */; };
+		7C96934E14970B3F00C0E1E6 /* normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934A14970B3F00C0E1E6 /* normal.png */; };
+		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
+		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -121,10 +128,18 @@
 		7C86560A148C2A97000E00B6 /* MidiHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiHub.cpp; sourceTree = "<group>"; };
 		7C86560B148C2A97000E00B6 /* MidiIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiIn.cpp; sourceTree = "<group>"; };
 		7C86560C148C2A97000E00B6 /* MidiMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiMessage.cpp; sourceTree = "<group>"; };
-		7C865646148C2BCD000E00B6 /* rg_grad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rg_grad.png; sourceTree = "<group>"; };
 		7C865648148C2BCD000E00B6 /* passthru.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passthru.vsh; sourceTree = "<group>"; };
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
+		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C9693411496FFC400C0E1E6 /* Pulsar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pulsar.cpp; sourceTree = "<group>"; };
+		7C9693421496FFC400C0E1E6 /* Pulsar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pulsar.h; sourceTree = "<group>"; };
+		7C96934414970AF800C0E1E6 /* emitter_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emitter_vert.glsl; sourceTree = "<group>"; };
+		7C96934514970AF800C0E1E6 /* emitter_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emitter_frag.glsl; sourceTree = "<group>"; };
+		7C96934914970B3F00C0E1E6 /* specExponent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = specExponent.png; sourceTree = "<group>"; };
+		7C96934A14970B3F00C0E1E6 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
+		7C96934B14970B3F00C0E1E6 /* emitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emitter.png; sourceTree = "<group>"; };
+		7C96934C14970B3F00C0E1E6 /* bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bump.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +232,7 @@
 				7C74555A148C259C009C0356 /* engine */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
+				7C9693401496FFC400C0E1E6 /* pulsar */,
 				7C745582148C259C009C0356 /* test */,
 			);
 			path = src;
@@ -361,7 +377,8 @@
 		7C865645148C2BCD000E00B6 /* images */ = {
 			isa = PBXGroup;
 			children = (
-				7C865646148C2BCD000E00B6 /* rg_grad.png */,
+				7C96934814970B2900C0E1E6 /* pulsar */,
+				7C8663BF149536F0004C9558 /* particle.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -369,10 +386,32 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7C96934414970AF800C0E1E6 /* emitter_vert.glsl */,
+				7C96934514970AF800C0E1E6 /* emitter_frag.glsl */,
 				7C865648148C2BCD000E00B6 /* passthru.vsh */,
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C9693401496FFC400C0E1E6 /* pulsar */ = {
+			isa = PBXGroup;
+			children = (
+				7C9693411496FFC400C0E1E6 /* Pulsar.cpp */,
+				7C9693421496FFC400C0E1E6 /* Pulsar.h */,
+			);
+			path = pulsar;
+			sourceTree = "<group>";
+		};
+		7C96934814970B2900C0E1E6 /* pulsar */ = {
+			isa = PBXGroup;
+			children = (
+				7C96934914970B3F00C0E1E6 /* specExponent.png */,
+				7C96934A14970B3F00C0E1E6 /* normal.png */,
+				7C96934B14970B3F00C0E1E6 /* emitter.png */,
+				7C96934C14970B3F00C0E1E6 /* bump.png */,
+			);
+			name = pulsar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,8 +466,14 @@
 			files = (
 				7C745553148C2413009C0356 /* InfoPlist.strings in Resources */,
 				7C745554148C2413009C0356 /* Oculon-Info.plist in Resources */,
-				7C86564B148C2BCD000E00B6 /* rg_grad.png in Resources */,
 				7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */,
+				7C8663C0149536F0004C9558 /* particle.png in Resources */,
+				7C96934614970AF800C0E1E6 /* emitter_vert.glsl in Resources */,
+				7C96934714970AF800C0E1E6 /* emitter_frag.glsl in Resources */,
+				7C96934D14970B3F00C0E1E6 /* specExponent.png in Resources */,
+				7C96934E14970B3F00C0E1E6 /* normal.png in Resources */,
+				7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */,
+				7C96935014970B3F00C0E1E6 /* bump.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,6 +509,7 @@
 				7C865640148C2A97000E00B6 /* MidiMessage.cpp in Sources */,
 				7C86564C148C2BCD000E00B6 /* passthru.vsh in Sources */,
 				7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */,
+				7C9693431496FFC400C0E1E6 /* Pulsar.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

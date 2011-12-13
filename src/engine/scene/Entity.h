@@ -27,7 +27,7 @@ public:
     virtual void update(double dt) {}
     virtual void draw() {}
     
-    Vec3<T> getPosition() const         { return mPosition; }
+    inline const Vec3<T>& getPosition() const         { return mPosition; }
     
     void setPosition(const Vec3<T>& val)  { mPosition = val; }
     

@@ -96,6 +96,9 @@ bool Magnetosphere::handleKeyDown(const KeyEvent& keyEvent)
         case 'g':
             generateParticles();
             break;
+        case 'q':
+            mParticleController.toggleParticleDrawMode();
+            break;
         default:
             handled = false;
             break;
@@ -122,7 +125,14 @@ void Magnetosphere::updateAudioResponse()
 
 void Magnetosphere::draw()
 {
+    glPushMatrix();
+    //gl::enableDepthWrite( true );
+	//gl::enableDepthRead( true );
+	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	
+
     mParticleController.draw();
+    glPopMatrix();
 }
 
 void Magnetosphere::generateParticles()

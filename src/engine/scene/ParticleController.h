@@ -45,14 +45,19 @@ public:
     
     int getParticleCount() const { return mParticles.size(); }
     
+    void toggleParticleDrawMode() { mDrawAsSpheres = !mDrawAsSpheres; }
+    
 private:
     void applyForces(ParticleController::ParticleList::iterator p1, double dt );
+    void applyForces2( double dt );
  
 private:
     ParticleList mParticles;
     
     bool mEnabledForces[FORCE_COUNT];
     Perlin mPerlin;
+    
+    bool mDrawAsSpheres;
     
     int mCounter;
     ci::gl::Texture mParticleTexture;

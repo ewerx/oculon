@@ -70,9 +70,8 @@ void Particle::update(double dt)
     mAccel.set(0.0f,0.0f,0.0f);
 }
 
-void Particle::draw()
+void Particle::draw(bool asSphere)
 {
-    if( mRadius > 0.1f )
     {
     
         //TODO: need this?
@@ -93,17 +92,24 @@ void Particle::draw()
             //radius *= 20.0f * heat;
         }
         
-        glTexCoord2f( 0, 0 );
-        glVertex3f( mPosition.x - radius, mPosition.y - radius, mPosition.z );
-        
-        glTexCoord2f( 1, 0 );
-        glVertex3f( mPosition.x + radius, mPosition.y - radius, mPosition.z );
-        
-        glTexCoord2f( 1, 1 );
-        glVertex3f( mPosition.x + radius, mPosition.y + radius, mPosition.z );
-        
-        glTexCoord2f( 0, 1 );
-        glVertex3f( mPosition.x - radius, mPosition.y + radius, mPosition.z );
+        if( asSphere )
+        {
+            gl::drawSphere( mPosition, radius, 4 );
+        }
+        else
+        {
+            glTexCoord2f( 0, 0 );
+            glVertex3f( mPosition.x - radius, mPosition.y - radius, mPosition.z );
+            
+            glTexCoord2f( 1, 0 );
+            glVertex3f( mPosition.x + radius, mPosition.y - radius, mPosition.z );
+            
+            glTexCoord2f( 1, 1 );
+            glVertex3f( mPosition.x + radius, mPosition.y + radius, mPosition.z );
+            
+            glTexCoord2f( 0, 1 );
+            glVertex3f( mPosition.x - radius, mPosition.y + radius, mPosition.z );
+        }
     }
 
 }
@@ -185,9 +191,9 @@ void Particle::applyRepulsion(Particle& other, double dt)
     
     Vec3f dir = this->mPosition - other.mPosition;
     float distSqrd = dir.lengthSquared();
-    float radiusSum = 125.0f;//( p1->mRadius + p2->mRadius ) * 100.0f;
-    float radiusSqrd = radiusSum * radiusSum;
-    float thisQTimesInvM = mInvMass * mCharge;
+    static float radiusSum = 125.0f;//( p1->mRadius + p2->mRadius ) * 100.0f;
+    static float radiusSqrd = radiusSum * radiusSum;
+    static float thisQTimesInvM = mInvMass * mCharge;
     
     if( distSqrd < radiusSqrd && distSqrd > 0.1f ) 
     {

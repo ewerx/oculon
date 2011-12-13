@@ -19,8 +19,12 @@
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "InfoPanel.h"
+
+// scenes
 #include "Orbiter.h"
 #include "Magnetosphere.h"
+#include "Pulsar.h"
+// test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
 
@@ -115,6 +119,12 @@ void OculonApp::setupScenes()
     scene->init(this);
     //scene->toggleActiveVisible(); // enable
     mScenes.push_back( scene );
+    
+    // Pulsar
+    console() <<"\tPulsar\n";
+    scene = new Pulsar();
+    scene->init(this);
+    mScenes.push_back(scene);
     
     // Magnetosphere
     console() << "\tMagneto\n";
