@@ -69,7 +69,8 @@ Orbiter::~Orbiter()
 
 void Orbiter::setup()
 {
-    mApp->setUseMayaCam(!mIsFollowCameraEnabled);
+    //TODO: add a function that gets called on scene activation to do this type of init
+    //mApp->setUseMayaCam(!mIsFollowCameraEnabled);
     
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
