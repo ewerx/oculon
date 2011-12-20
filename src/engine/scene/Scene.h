@@ -28,11 +28,10 @@ public:
     Scene();
     virtual ~Scene();
     
-    void init(OculonApp* app)  { mApp = app; }
+    void init(OculonApp* app);
     
-    virtual void setup() {}
-    virtual void setupParams(ci::params::InterfaceGl& params) {}
     virtual void reset() {}
+    virtual void shutdown() {}
     virtual void resize() {}
     virtual void update(double dt);
     virtual void draw() {}
@@ -56,6 +55,10 @@ public:
 	bool isBoxInFrustum( const Vec3f &loc, const Vec3f &size );
     
 protected:
+    
+    virtual void setup() {}
+    virtual void setupParams(ci::params::InterfaceGl& params) {}
+    
     // frustum culling
     void calcFrustumPlane( Vec3f &fNormal, Vec3f& fPoint, float& fDist, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3 );
 	void calcNearAndFarClipCoordinates( const Camera& cam );	

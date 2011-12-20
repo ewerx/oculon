@@ -106,6 +106,31 @@ void OculonApp::setup()
     setupScenes();
 }
 
+void OculonApp::shutdown()
+{
+    console() << "[main] shutting down...\n";
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene )
+        {
+            scene->shutdown();
+            delete scene;
+        }
+    }
+    
+    mScenes.clear();
+}
+
+void OculonApp::addScene(Scene* scene)
+{
+    scene->init(this);
+    mScenes.push_back(scene);
+}
+
 void OculonApp::setupScenes()
 {
     console() << "[main] creating scenes...\n";
@@ -115,49 +140,25 @@ void OculonApp::setupScenes()
     //TODO: serialization
     // Orbiter
     console() << "\tOrbiter\n";
-    Scene* scene = new Orbiter();
-    scene->init(this);
-    //scene->toggleActiveVisible(); // enable
-    mScenes.push_back( scene );
+    addScene( new Orbiter() );
     
     // Pulsar
     console() <<"\tPulsar\n";
-    scene = new Pulsar();
-    scene->init(this);
-    mScenes.push_back(scene);
+    addScene( new Pulsar() );
+
     
     // Magnetosphere
     console() << "\tMagneto\n";
-    scene = new Magnetosphere();
-    scene->init(this);
-    mScenes.push_back(scene);
+    addScene( new Magnetosphere() );
     
     // AudioTest
     console() << "\tAudioTest\n";
-    scene = new AudioTest();
-    scene->init(this);
-    mScenes.push_back( scene );
+    addScene( new AudioTest() );
     
     if( mEnableMindWave )
     {
         console() << "\tMindWave\n";
-        scene = new MindWaveTest();
-        scene->init(this);
-        scene->toggleActiveVisible();
-        mScenes.push_back(scene);
-    }
-    
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
-         sceneIt != mScenes.end();
-         ++sceneIt )
-    {
-        Scene* scene = (*sceneIt);
-        assert( scene != NULL );
-        if( scene )
-        {
-            scene->setup();
-            scene->setupParams(mParams);
-        }
+        addScene( new MindWaveTest() );
     }
 }
 

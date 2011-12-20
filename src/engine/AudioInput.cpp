@@ -46,6 +46,7 @@ void AudioInput::setup()
 	}
     
 	//initialize the audio Input, using the default input device
+    //TODO: specify audio input, change at run-time
 	mInput = audio::Input();
 	
 	//tell the input to start capturing audio

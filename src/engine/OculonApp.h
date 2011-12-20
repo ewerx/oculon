@@ -38,6 +38,7 @@ public: // cinder interface
 	void setup();
 	void update();
     void resize( ResizeEvent event );
+    void shutdown();
     
     void mouseMove( MouseEvent event );
 	void mouseDrag( MouseEvent event );
@@ -54,6 +55,7 @@ public: // new
     
     inline const Vec2f& getMousePos()          { return mMousePos; }
     inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
+    inline params::InterfaceGl& getParams()    { return mParams; }
     
     inline bool isPresentationMode() const     { return mIsPresentationMode; }
     inline void setUseMayaCam(bool use)        { mUseMayaCam = use; }
@@ -66,6 +68,7 @@ public: // new
 protected: // new
     
     void setupScenes();
+    void addScene(Scene* newScene);
     void drawInfoPanel();
     void setPresentationMode( bool enabled );
     

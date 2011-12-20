@@ -21,15 +21,20 @@ MidiMap::MidiMap()
 
 void MidiMap::init(MidiInput* midiInput)
 {
-    mMidiInput = midiInput;
-    mCbMidiEvent = midiInput->registerMidiCallback(this, &MidiMap::handleMidiMessage);
+    if( midiInput->isEnabled() )
+    {
+        mMidiInput = midiInput;
+        mCbMidiEvent = midiInput->registerMidiCallback(this, &MidiMap::handleMidiMessage);
+    }
 }
 
 MidiMap::~MidiMap()
 {
     mCmdMap.clear();
     if( mMidiInput != NULL )
+    {
         mMidiInput->unregisterMidiCallback(mCbMidiEvent);
+    }
 }
 
 // register function defined in header
@@ -109,11 +114,14 @@ bool MidiMap::handleMidiMessage(MidiEvent midiEvent)
 
 void MidiMap::beginLearning()
 {
-    mIsLearning = true;
-    
-    //TODO: interactive learning, for now do them all in sequence
-    mLearningIterator = mCmdMap.begin();
-    
-    console() << "[midi] entered learning mode...\n";
-    console() << "[midi] now listening for command: " << (*mLearningIterator).first << "...\n";
+    if( mMidiInput && mMidiInput->isEnabled() )
+    {
+        mIsLearning = true;
+        
+        //TODO: interactive learning, for now do them all in sequence
+        mLearningIterator = mCmdMap.begin();
+        
+        console() << "[midi] entered learning mode...\n";
+        console() << "[midi] now listening for command: " << (*mLearningIterator).first << "...\n";
+    }
 }

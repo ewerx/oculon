@@ -64,7 +64,14 @@ Orbiter::Orbiter()
 
 Orbiter::~Orbiter()
 {
+    removeBodies();
+    
     // midi map will get destroyed
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        delete[] mTextBox[i];
+        mTextBox[i] = NULL;
+    }
 }
 
 void Orbiter::setup()
@@ -135,11 +142,12 @@ void Orbiter::reset()
     mElapsedTime = 0.0f;
     
     const float radialEnhancement = 500000.0f;// at true scale the plaents would be invisible
-    mBodies.clear(); // this will delete mSun
+    
+    removeBodies();
     
     // sun
     double mass = 1.989E+030;
-    float radius = 3800000.0f * mDrawScale * radialEnhancement;
+    float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
     double orbitalRadius;
     double orbitalVel;
     mSun = new Sun(Vec3d::zero(),
@@ -181,9 +189,9 @@ void Orbiter::reset()
     int num_planets = mBodies.size();
     int num_comets = 8;
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
-    double farthestRadius = 0.0f;
-    Body* farthestComet = NULL;
-    const float minRadius = 1000000.0f * Orbiter::sDrawScale * radialEnhancement;
+    //double farthestRadius = 0.0f;
+    //Body* farthestComet = NULL;
+    const float minRadius = (float)(1000000.0f * Orbiter::sDrawScale * radialEnhancement);
     
     char name[128];
     
@@ -191,7 +199,7 @@ void Orbiter::reset()
     {
         mass = 1e8 * Rand::randFloat(1.0f, 10.0f);
         radius = Rand::randFloat(minRadius,minRadius*2.0f);
-        double angle = Rand::randFloat(2*M_PI);
+        double angle = Rand::randFloat(2.0f*M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000) * 4e6;
         Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
@@ -224,6 +232,18 @@ void Orbiter::reset()
     
     AudioInput& audioInput = mApp->getAudioInput();
     audioInput.setFftBandCount(512/*mBodies.size()*/);
+}
+
+void Orbiter::removeBodies()
+{
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+        bodyIt != mBodies.end();
+        ++bodyIt)
+    {
+        delete (*bodyIt);
+    }
+    mBodies.clear();
+    mSun = NULL;
 }
 
 void Orbiter::update(double dt)

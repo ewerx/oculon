@@ -30,6 +30,13 @@ Scene::~Scene()
 {
 }
 
+void Scene::init(OculonApp* app)
+{
+    mApp = app;
+    setup();
+    setupParams(app->getParams());
+}
+
 void Scene::update(double dt)
 {
     if( mEnableFrustumCulling )

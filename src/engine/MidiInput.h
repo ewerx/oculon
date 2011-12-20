@@ -58,7 +58,8 @@ public:
     virtual ~MidiInput();
     
     void update();
-    void setEnabled(bool enabled) { mEnabled = enabled; }
+    inline void setEnabled(bool enabled) { mEnabled = enabled; }
+    inline bool isEnabled() const { return mEnabled; }
     
     template<typename T>
     CallbackId registerMidiCallback( T* obj, bool (T::*callback)(MidiEvent) )
