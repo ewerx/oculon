@@ -123,6 +123,8 @@ void OculonApp::shutdown()
     }
     
     mScenes.clear();
+    
+    mAudioInput.shutdown();
 }
 
 void OculonApp::addScene(Scene* scene)

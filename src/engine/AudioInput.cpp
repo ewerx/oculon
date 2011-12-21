@@ -21,7 +21,8 @@ using namespace ci::audio;
 // constructor
 //
 AudioInput::AudioInput()
-: mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
+: mInput(NULL)
+, mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
 {
 }
 
@@ -29,6 +30,7 @@ AudioInput::AudioInput()
 //
 AudioInput::~AudioInput()
 {
+    delete mInput;
 }
 
 // init
@@ -47,22 +49,52 @@ void AudioInput::setup()
     
 	//initialize the audio Input, using the default input device
     //TODO: specify audio input, change at run-time
-	mInput = audio::Input();
-	
-	//tell the input to start capturing audio
-	mInput.start();
+	mInput = new audio::Input( devices.front() );
+}
+
+void AudioInput::shutdown()
+{
+    if( mInput )
+    {
+        mInput->stop();
+    }
 }
 
 // update
 //
 void AudioInput::update()
 {
-    mPcmBuffer = mInput.getPcmBuffer();
-	if( ! mPcmBuffer ) 
+    if( !mInput )
     {
-		return;
-	}
+        return;
+    }
     
-	//presently FFT only works on OS X, not iOS or Windows
-	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), mFftBandCount );
+    if( !mInput->isCapturing())
+    {
+        if( getElapsedSeconds() > 2.0f )
+        {
+            //tell the input to start capturing audio
+            mInput->start();
+            console() << "[audio] now listening...\n";
+        }
+    }
+    else
+    {
+        if( getElapsedSeconds() > 3.0f )
+        {
+        mPcmBuffer = mInput->getPcmBuffer();
+        if( !mPcmBuffer ) 
+        {
+            return;
+        }
+            
+        cinder::audio::Buffer32fRef pcmBuffer =  mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );        
+        if( mPcmBuffer->getSampleCount() > 0 )
+        {
+            console() << "!!! got audio samples\n";
+            //presently FFT only works on OS X, not iOS or Windows
+            mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData()/*getChannelData( audio::CHANNEL_FRONT_LEFT )*/, mFftBandCount );
+        }
+        }
+    }
 }

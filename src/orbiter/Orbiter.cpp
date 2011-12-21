@@ -69,7 +69,7 @@ Orbiter::~Orbiter()
     // midi map will get destroyed
     for( int i=0; i < TB_COUNT; ++i )
     {
-        delete[] mTextBox[i];
+        delete mTextBox[i];
         mTextBox[i] = NULL;
     }
 }

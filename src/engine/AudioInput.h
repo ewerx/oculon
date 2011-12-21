@@ -22,6 +22,7 @@ public:
     ~AudioInput();
     
     void setup();
+    void shutdown();
     void update();
     
     // accessors
@@ -32,7 +33,7 @@ public:
     void setFftBandCount(const unsigned int count) { mFftBandCount = count; }
     
 private:
-    audio::Input mInput;
+    audio::Input* mInput;
     std::shared_ptr<float> mFftDataRef;
     audio::PcmBuffer32fRef mPcmBuffer;
     unsigned int mFftBandCount;

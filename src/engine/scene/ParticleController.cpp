@@ -22,7 +22,7 @@ using namespace ci;
 ParticleController::ParticleController()
 : mPerlin(3)// octaves
 , mCounter(0)
-, mDrawAsSpheres(true)
+, mDrawAsSpheres(false)
 {
     mEnabledForces[FORCE_PERLIN] = false;
     mEnabledForces[FORCE_GRAVITY] = true;
