@@ -49,7 +49,7 @@ void AudioInput::setup()
     
 	//initialize the audio Input, using the default input device
     //TODO: specify audio input, change at run-time
-	mInput = new audio::Input( devices.front() );
+	mInput = new audio::Input( /*devices.front()*/ );
 }
 
 void AudioInput::shutdown()
@@ -71,7 +71,7 @@ void AudioInput::update()
     
     if( !mInput->isCapturing())
     {
-        if( getElapsedSeconds() > 2.0f )
+        //if( getElapsedSeconds() > 2.0f )
         {
             //tell the input to start capturing audio
             mInput->start();
@@ -80,11 +80,12 @@ void AudioInput::update()
     }
     else
     {
-        if( getElapsedSeconds() > 3.0f )
-        {
+        //if( getElapsedSeconds() > 3.0f )
+        //{
         mPcmBuffer = mInput->getPcmBuffer();
         if( !mPcmBuffer ) 
         {
+            console() << "!! no pcm buffer\n";
             return;
         }
             
@@ -95,6 +96,6 @@ void AudioInput::update()
             //presently FFT only works on OS X, not iOS or Windows
             mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData()/*getChannelData( audio::CHANNEL_FRONT_LEFT )*/, mFftBandCount );
         }
-        }
+        //}
     }
 }
