@@ -68,7 +68,7 @@ public: // new
 protected: // new
     
     void setupScenes();
-    void addScene(Scene* newScene);
+    void addScene(Scene* newScene, bool startActive =false);
     void drawInfoPanel();
     void setPresentationMode( bool enabled );
     

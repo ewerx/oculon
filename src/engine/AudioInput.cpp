@@ -71,31 +71,23 @@ void AudioInput::update()
     
     if( !mInput->isCapturing())
     {
-        //if( getElapsedSeconds() > 2.0f )
-        {
-            //tell the input to start capturing audio
-            mInput->start();
-            console() << "[audio] now listening...\n";
-        }
+        //tell the input to start capturing audio
+        mInput->start();
+        console() << "[audio] capturing input from device: " << mInput->getDefaultDevice()->getName() << std::endl;
     }
     else
     {
-        //if( getElapsedSeconds() > 3.0f )
-        //{
         mPcmBuffer = mInput->getPcmBuffer();
         if( !mPcmBuffer ) 
         {
-            console() << "!! no pcm buffer\n";
+            console() << "[audio] no pcm buffer\n";
             return;
         }
-            
-        cinder::audio::Buffer32fRef pcmBuffer =  mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );        
+       
         if( mPcmBuffer->getSampleCount() > 0 )
         {
-            console() << "!!! got audio samples\n";
             //presently FFT only works on OS X, not iOS or Windows
-            mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData()/*getChannelData( audio::CHANNEL_FRONT_LEFT )*/, mFftBandCount );
+            mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
         }
-        //}
     }
 }

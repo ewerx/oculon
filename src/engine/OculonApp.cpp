@@ -127,10 +127,14 @@ void OculonApp::shutdown()
     mAudioInput.shutdown();
 }
 
-void OculonApp::addScene(Scene* scene)
+void OculonApp::addScene(Scene* scene, bool startActive)
 {
     scene->init(this);
     mScenes.push_back(scene);
+    if( startActive )
+    {
+        scene->toggleActiveVisible();
+    }
 }
 
 void OculonApp::setupScenes()
@@ -155,7 +159,7 @@ void OculonApp::setupScenes()
     
     // AudioTest
     console() << "\tAudioTest\n";
-    addScene( new AudioTest() );
+    addScene( new AudioTest(), true );
     
     if( mEnableMindWave )
     {

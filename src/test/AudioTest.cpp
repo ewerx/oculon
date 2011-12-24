@@ -57,7 +57,7 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     glDisable(GL_LIGHTING);
 	uint32_t bufferSamples = pcmBufferRef->getSampleCount();
 	audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
-	//audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
+	audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
     
 	int displaySize = getWindowWidth();
 	int endIdx = bufferSamples;
@@ -68,20 +68,20 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 	
 	float scale = displaySize / (float)( endIdx - startIdx );
 	
-	//PolyLine<Vec2f>	spectrum_right;
+	PolyLine<Vec2f>	spectrum_right;
     PolyLine<Vec2f> spectrum_left;
 	
 	for( uint32_t i = startIdx, c = 0; i < endIdx; i++, c++ ) 
     {
         float y = ( ( leftBuffer->mData[i] - 1 ) * - 100 );
 		spectrum_left.push_back( Vec2f( ( c * scale ), y ) );
-        //float y = ( ( rightBuffer->mData[i] - 1 ) * - 100 );
-		//spectrum_right.push_back( Vec2f( ( c * scale ), y ) );
+        y = ( ( rightBuffer->mData[i] - 1 ) * - 100 );
+		spectrum_right.push_back( Vec2f( ( c * scale ), y ) );
 	}
     gl::color( Color( 0.5f, 0.5f, 1.0f ) );
     gl::draw( spectrum_left );
-    //gl::color( Color( 1.0f, 0.5f, 0.25f ) );
-	//gl::draw( spectrum_right );
+    gl::color( Color( 1.0f, 0.5f, 0.25f ) );
+	gl::draw( spectrum_right );
     glPopMatrix();
 }
 
@@ -91,8 +91,8 @@ void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
     uint16_t bandCount = audioInput.getFftBandCount();
 	float ht = getWindowHeight() * 0.70f;
 	float bottom = getWindowHeight() - 50.f;
-    const float width = 4.0f;
-    const float space = width + 3.0f;
+    const float width = 2.0f;
+    const float space = width + 0.0f;
 	
 	if( ! fftDataRef ) 
     {
