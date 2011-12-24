@@ -45,8 +45,8 @@ void OculonApp::setup()
 {
     console() << "[main] initializing...\n";
     
-    mIsPresentationMode = false;
-    mUseMayaCam = true;
+    mIsPresentationMode = true;
+    mUseMayaCam = false;
     mEnableMindWave = false;
     mIsCapturingVideo = false;
     
@@ -62,7 +62,7 @@ void OculonApp::setup()
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
+	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     mMayaCam.setCurrentCam( mCam );
     
     // params
@@ -143,19 +143,20 @@ void OculonApp::setupScenes()
     // Orbiter
     console() << "\tOrbiter\n";
     addScene( new Orbiter() );
+    mScenes.front()->toggleActiveVisible();
     
     // Pulsar
-    console() <<"\tPulsar\n";
-    addScene( new Pulsar() );
+    //console() <<"\tPulsar\n";
+    //addScene( new Pulsar() );
 
     
     // Magnetosphere
-    console() << "\tMagneto\n";
-    addScene( new Magnetosphere() );
+    //console() << "\tMagneto\n";
+    //addScene( new Magnetosphere() );
     
     // AudioTest
-    console() << "\tAudioTest\n";
-    addScene( new AudioTest() );
+    //console() << "\tAudioTest\n";
+    //addScene( new AudioTest() );
     
     if( mEnableMindWave )
     {

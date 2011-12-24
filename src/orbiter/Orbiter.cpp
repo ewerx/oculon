@@ -77,7 +77,7 @@ Orbiter::~Orbiter()
 void Orbiter::setup()
 {
     //TODO: add a function that gets called on scene activation to do this type of init
-    //mApp->setUseMayaCam(!mIsFollowCameraEnabled);
+    mApp->setUseMayaCam(!mIsFollowCameraEnabled);
     
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
@@ -187,7 +187,7 @@ void Orbiter::reset()
     
     // random comets
     int num_planets = mBodies.size();
-    int num_comets = 8;
+    int num_comets = 12;
     //Vec3f orbitalPlaneN = Vec3d( Rand::randFloat(
     //double farthestRadius = 0.0f;
     //Body* farthestComet = NULL;
@@ -574,6 +574,7 @@ void Orbiter::drawHud()
 
 void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float height)
 {
+    /*
     AudioInput& audioInput = mApp->getAudioInput();
     audio::PcmBuffer32fRef pcmBufferRef = audioInput.getPcmBuffer();
     if( !pcmBufferRef )
@@ -621,6 +622,7 @@ void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float 
     //gl::drawStrokedRect(Rectf(left, top, width, top+height));
     
     glPopMatrix();    
+     */
 }
 
 void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float height)
