@@ -87,7 +87,7 @@ void AudioInput::update()
         if( mPcmBuffer->getSampleCount() > 0 )
         {
             //presently FFT only works on OS X, not iOS or Windows
-            mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
+            mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( CHANNEL_FRONT_LEFT ), mFftBandCount );
         }
     }
 }
