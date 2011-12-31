@@ -507,9 +507,9 @@ void Orbiter::updateHud()
     ostringstream oss1;
     
     format timeFormat("SIMULATION TIME: %02dd%02dh%02dm%04.1fs");
-    int days = mElapsedTime / 86400; 
-    int hours = ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600;
-    int mins = ci::math<double>::fmod(mElapsedTime,3600.0f) / 60;
+    int days = (int)(mElapsedTime / 86400.0f); 
+    int hours = (int)(ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600.f);
+    int mins = (int)(ci::math<double>::fmod(mElapsedTime,3600.0f) / 60);
     double secs = ci::math<double>::fmod(mElapsedTime,60.0f) + (mElapsedTime - (int)(mElapsedTime));
     timeFormat % days % hours % mins % secs;
     

@@ -70,7 +70,7 @@ void Body::update(double dt)
     {
         //TODO: fix this hack
         OculonApp* oculon = static_cast<OculonApp*>(App::get());
-        mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
+        mRadiusAnimTime += (float)(oculon->getElapsedSecondsThisFrame());
         mEaseFactor = easeOutQuad(mRadiusAnimTime);
         mRadiusMultiplier = 1.0f + mEaseFactor * (mPeakRadiusMultiplier - 1.0f);
         //mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
@@ -239,7 +239,7 @@ void Body::resetTrail()
 void Body::applyFftBandValue( float fftBandValue )
 {
     OculonApp* oculon = static_cast<OculonApp*>(App::get());
-    mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
+    mRadiusAnimTime += (float)(oculon->getElapsedSecondsThisFrame());
     
     int framesToAvgFft = Orbiter::sNumFramesToAvgFft;
     if( mLastFftValues.size() > framesToAvgFft )
