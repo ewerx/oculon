@@ -14,20 +14,21 @@
 #include "Orbiter.h"
 #include "Sun.h"
 #include "TextEntity.h"
+#include "Resources.h"
 
 using namespace ci;
 using namespace boost;
 
-//TODO: read from data file (orbRad,    bodyRad, mass,      oVel)
+//TODO: read from data file (orbRad,    bodyRad, mass,          oVel,   tex)
 #define PLANETS_TUPLE \
-PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,  47900 ) \
-PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024, 35000 ) \
-PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024, 29800 ) \
-PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023, 24100 ) \
-PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,  13100 ) \
-PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640 ) \
-PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810 ) \
-PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
+PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,      47900,  RES_ORBITER_MERCURY ) \
+PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024,     35000,  RES_ORBITER_VENUS ) \
+PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024,     29800,  RES_ORBITER_EARTH ) \
+PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023,     24100,  RES_ORBITER_MARS ) \
+PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,      13100,  RES_ORBITER_JUPITER ) \
+PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640,   RES_ORBITER_SATURN ) \
+PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810,   RES_ORBITER_URANUS ) \
+PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   RES_ORBITER_NEPTUNE ) \
 //PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //end tuple
 
@@ -166,7 +167,7 @@ void Orbiter::reset()
     pos.y = 0.0f;
     
     
-#define PLANETS_ENTRY(name,orad,brad,mss,ovel) \
+#define PLANETS_ENTRY(name,orad,brad,mss,ovel,tex) \
     mass = mss;\
     orbitalRadius = orad;\
     orbitalVel = ovel;\
@@ -179,7 +180,8 @@ void Orbiter::reset()
                     Vec3d(0.0f, orbitalVel, 0.0f),\
                     radius, \
                     mass, \
-                    ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale)); \
+                    ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), \
+                    loadImage( loadResource(tex))); \
     body->setup(); \
     mBodies.push_back( body );
     PLANETS_TUPLE

@@ -50,6 +50,15 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */; };
+		7C948F4E14B3A1E7003A3DA8 /* jupitermap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */; };
+		7C948F4F14B3A1E7003A3DA8 /* marsmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */; };
+		7C948F5014B3A1E7003A3DA8 /* mercurymap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4714B3A1E7003A3DA8 /* mercurymap.jpg */; };
+		7C948F5114B3A1E7003A3DA8 /* neptunemap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4814B3A1E7003A3DA8 /* neptunemap.jpg */; };
+		7C948F5214B3A1E7003A3DA8 /* saturnmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4914B3A1E7003A3DA8 /* saturnmap.jpg */; };
+		7C948F5314B3A1E7003A3DA8 /* sunmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4A14B3A1E7003A3DA8 /* sunmap.jpg */; };
+		7C948F5414B3A1E7003A3DA8 /* uranusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4B14B3A1E7003A3DA8 /* uranusmap.jpg */; };
+		7C948F5514B3A1E7003A3DA8 /* venusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4C14B3A1E7003A3DA8 /* venusmap.jpg */; };
 		7C9693431496FFC400C0E1E6 /* Pulsar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9693411496FFC400C0E1E6 /* Pulsar.cpp */; };
 		7C96934614970AF800C0E1E6 /* emitter_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C96934714970AF800C0E1E6 /* emitter_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
@@ -132,6 +141,15 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earthmap1k.jpg; sourceTree = "<group>"; };
+		7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupitermap.jpg; sourceTree = "<group>"; };
+		7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marsmap1k.jpg; sourceTree = "<group>"; };
+		7C948F4714B3A1E7003A3DA8 /* mercurymap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mercurymap.jpg; sourceTree = "<group>"; };
+		7C948F4814B3A1E7003A3DA8 /* neptunemap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = neptunemap.jpg; sourceTree = "<group>"; };
+		7C948F4914B3A1E7003A3DA8 /* saturnmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = saturnmap.jpg; sourceTree = "<group>"; };
+		7C948F4A14B3A1E7003A3DA8 /* sunmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sunmap.jpg; sourceTree = "<group>"; };
+		7C948F4B14B3A1E7003A3DA8 /* uranusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = uranusmap.jpg; sourceTree = "<group>"; };
+		7C948F4C14B3A1E7003A3DA8 /* venusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = venusmap.jpg; sourceTree = "<group>"; };
 		7C9693411496FFC400C0E1E6 /* Pulsar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pulsar.cpp; sourceTree = "<group>"; };
 		7C9693421496FFC400C0E1E6 /* Pulsar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pulsar.h; sourceTree = "<group>"; };
 		7C96934414970AF800C0E1E6 /* emitter_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emitter_vert.glsl; sourceTree = "<group>"; };
@@ -377,6 +395,7 @@
 		7C865645148C2BCD000E00B6 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7C948F4314B3A1E7003A3DA8 /* orbiter */,
 				7C96934814970B2900C0E1E6 /* pulsar */,
 				7C8663BF149536F0004C9558 /* particle.png */,
 			);
@@ -392,6 +411,22 @@
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C948F4314B3A1E7003A3DA8 /* orbiter */ = {
+			isa = PBXGroup;
+			children = (
+				7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */,
+				7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */,
+				7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */,
+				7C948F4714B3A1E7003A3DA8 /* mercurymap.jpg */,
+				7C948F4814B3A1E7003A3DA8 /* neptunemap.jpg */,
+				7C948F4914B3A1E7003A3DA8 /* saturnmap.jpg */,
+				7C948F4A14B3A1E7003A3DA8 /* sunmap.jpg */,
+				7C948F4B14B3A1E7003A3DA8 /* uranusmap.jpg */,
+				7C948F4C14B3A1E7003A3DA8 /* venusmap.jpg */,
+			);
+			path = orbiter;
 			sourceTree = "<group>";
 		};
 		7C9693401496FFC400C0E1E6 /* pulsar */ = {
@@ -474,6 +509,15 @@
 				7C96934E14970B3F00C0E1E6 /* normal.png in Resources */,
 				7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */,
 				7C96935014970B3F00C0E1E6 /* bump.png in Resources */,
+				7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */,
+				7C948F4E14B3A1E7003A3DA8 /* jupitermap.jpg in Resources */,
+				7C948F4F14B3A1E7003A3DA8 /* marsmap1k.jpg in Resources */,
+				7C948F5014B3A1E7003A3DA8 /* mercurymap.jpg in Resources */,
+				7C948F5114B3A1E7003A3DA8 /* neptunemap.jpg in Resources */,
+				7C948F5214B3A1E7003A3DA8 /* saturnmap.jpg in Resources */,
+				7C948F5314B3A1E7003A3DA8 /* sunmap.jpg in Resources */,
+				7C948F5414B3A1E7003A3DA8 /* uranusmap.jpg in Resources */,
+				7C948F5514B3A1E7003A3DA8 /* venusmap.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

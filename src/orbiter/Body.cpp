@@ -43,12 +43,35 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
 , mPeakRadiusMultiplier(1.0f)
 , mMass(mass)
 , mColor(color)
+, mHasTexture(false)
 , mIsLabelVisible(true)
 {
     mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
+}
+
+Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double mass, const ColorA& color, ImageSourceRef textureImage)
+: Entity<double>(pos)
+, mName(name)
+, mVelocity(vel)
+, mAcceleration(0.0f)
+, mRadius(radius)
+, mRadiusMultiplier(1.0f)
+, mPeakRadiusMultiplier(1.0f)
+, mMass(mass)
+, mColor(color)
+, mTexture(textureImage)
+, mHasTexture(true)
+, mIsLabelVisible(true)
+{
+    mEaseFactor = 1.0f;
+    mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
+    mLabel.setFont("Menlo", 10.0f);
+    mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
+    
+    mTexture.setWrap( GL_REPEAT, GL_REPEAT );
 }
 
 Body::~Body()
@@ -108,7 +131,10 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         //glMaterialfv( GL_FRONT, GL_DIFFUSE, mColor );
         bool drawShell = false;
         float radius = drawShell ? mRadius : mRadius * mRadiusMultiplier;
+        
+        if( mHasTexture ) mTexture.enableAndBind();
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
+        if( mHasTexture ) mTexture.disable();
         
         if( drawShell )
         {
