@@ -146,7 +146,7 @@ void OculonApp::setupScenes()
     //TODO: serialization
     // Orbiter
     console() << "\tOrbiter\n";
-    addScene( new Orbiter() );
+    addScene( new Orbiter(), true );
     
     // Pulsar
     console() <<"\tPulsar\n";
@@ -159,7 +159,7 @@ void OculonApp::setupScenes()
     
     // AudioTest
     console() << "\tAudioTest\n";
-    addScene( new AudioTest(), true );
+    addScene( new AudioTest() );
     
     if( mEnableMindWave )
     {
