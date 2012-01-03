@@ -172,12 +172,12 @@ void Orbiter::reset()
     orbitalRadius = orad;\
     orbitalVel = ovel;\
     angle = toRadians(Rand::randFloat(3.0f, 8.0f));\
-    pos.x = orbitalRadius * sin ( angle );\
+    pos.y = orbitalRadius * sin ( angle );\
     pos.z = orbitalRadius * cos ( angle );\
     radius = brad * mDrawScale * radialEnhancement;\
     body = new Body(name,\
                     pos,\
-                    Vec3d(0.0f, orbitalVel, 0.0f),\
+                    Vec3d(orbitalVel, 0.0f, 0.0f),\
                     radius, \
                     mass, \
                     ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), \
@@ -203,14 +203,14 @@ void Orbiter::reset()
         radius = Rand::randFloat(minRadius,minRadius*2.0f);
         double angle = Rand::randFloat(2.0f*M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000) * 4e6;
-        Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
+        Vec3d pos( 0.0f, orbitalRadius * sin ( angle ), orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
         snprintf(name,128,"%c%d/%04d/%02d", randInt('A','Z'), num_planets+i, randInt(1000,9999), randInt(300));
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
         Body* body = new Body(name, 
                               pos, 
                               /*orbitalPlaneNormal * orbitalVel,*/
-                               Vec3d(0.0f, orbitalVel, 0.0f),
+                               Vec3d(orbitalVel, 0.0f, 0.0f),
                                radius, 
                                mass, 
                                ColorA(0.5f, 0.55f, 0.525f));
