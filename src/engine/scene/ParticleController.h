@@ -31,7 +31,7 @@ public:
         FORCE_COUNT
     };
     
-    typedef std::list<Particle> ParticleList;
+    typedef std::list<Particle*> ParticleList;
     
 public:
     ParticleController();

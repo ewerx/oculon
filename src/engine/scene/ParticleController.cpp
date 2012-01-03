@@ -47,25 +47,26 @@ void ParticleController::update(double dt)
     
     for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-		if( ! particleIt->isState(Particle::STATE_DEAD) ) 
+		if( ! (*particleIt)->isState(Particle::STATE_DEAD) ) 
         {
 			
-//			if( particleIt->mIsBouncing ){
-//				if( Rand::randFloat() < 0.025f && !particleIt->mIsDying ){
-//					mParticles.push_back( Particle( particleIt->mLoc[0], Vec3f::zero() ) );
+//			if( (*particleIt)->mIsBouncing ){
+//				if( Rand::randFloat() < 0.025f && !(*particleIt)->mIsDying ){
+//					mParticles.push_back( Particle( (*particleIt)->mLoc[0], Vec3f::zero() ) );
 //					mParticles.back().mIsDying = true;
-//					particleIt->mIsDying = true;
-//					//particleIt->mVel += Rand::randVec3f() * Rand::randFloat( 2.0f, 3.0f );
+//					(*particleIt)->mIsDying = true;
+//					//(*particleIt)->mVel += Rand::randVec3f() * Rand::randFloat( 2.0f, 3.0f );
 //				}
 //			}
             
             if( !newway )
                 applyForces( particleIt, dt );
             
-			particleIt->update(dt);
+			(*particleIt)->update(dt);
 		}
 		else 
         {
+            delete (*particleIt);
 			particleIt = mParticles.erase( particleIt );
 		}
 	}
@@ -94,8 +95,8 @@ void ParticleController::draw()
     }
 	for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-        if( particleIt->mRadius > 0.1f )
-            particleIt->draw(mDrawAsSpheres);
+        if( (*particleIt)->mRadius > 0.1f )
+            (*particleIt)->draw(mDrawAsSpheres);
 	}
     if( !mDrawAsSpheres )
     {
@@ -107,7 +108,7 @@ void ParticleController::draw()
     glDisable( GL_TEXTURE_2D );
     for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-		particleIt->drawTrail();
+		(*particleIt)->drawTrail();
 	}
     
     mCounter++;
@@ -130,7 +131,7 @@ void ParticleController::addParticles( int amt, Vec3f pos, Vec3f vel, float radi
         float mass = pRadius;
         float charge = Rand::randFloat( 0.35f, 0.75f );
         float lifespan = Rand::randFloat( 5.0f, 70.0f ); // 0.
-		mParticles.push_back( Particle( p, v, radius, mass, charge, lifespan ) );
+		mParticles.push_back( new Particle( p, v, radius, mass, charge, lifespan ) );
 	}
 }
 
@@ -143,10 +144,10 @@ void ParticleController::applyForces( ParticleController::ParticleList::iterator
             switch (static_cast<eForce>(i)) 
             {
                 case FORCE_GRAVITY:
-                    p1->applyGravity(dt);
+                    (*p1)->applyGravity(dt);
                     break;
                 case FORCE_PERLIN:
-                    p1->applyPerlin(mPerlin, mCounter, dt);
+                    (*p1)->applyPerlin(mPerlin, mCounter, dt);
                     break;
                 case FORCE_REPULSION:
                 {
@@ -154,7 +155,7 @@ void ParticleController::applyForces( ParticleController::ParticleList::iterator
                     {
                         if( p2 != p1 )
                         {
-                            p1->applyRepulsion((*p2), dt);
+                            (*p1)->applyRepulsion(*(*p2), dt);
                         }
                     }
                 }
@@ -179,34 +180,34 @@ void ParticleController::applyForces2( double dt )
                 case FORCE_GRAVITY:
                     for( ParticleList::iterator pIt = mParticles.begin(); pIt != mParticles.end(); ++pIt )
                     {
-                        pIt->applyGravity(dt);
+                        (*pIt)->applyGravity(dt);
                     }
                     break;
                 case FORCE_PERLIN:
                     for( ParticleList::iterator pIt = mParticles.begin(); pIt != mParticles.end(); ++pIt )
                     {
-                        pIt->applyPerlin(mPerlin, mCounter, dt);
+                        (*pIt)->applyPerlin(mPerlin, mCounter, dt);
                     }
                     break;
                 case FORCE_REPULSION:
                 {
                     for( ParticleList::iterator p1 = mParticles.begin(); p1 != mParticles.end(); ++p1 )
                     {
-                        float thisQTimesInvM = p1->mInvMass * p1->mCharge;
+                        float thisQTimesInvM = (*p1)->mInvMass * (*p1)->mCharge;
                         
                         for( ParticleList::iterator p2 = p1; p2 != mParticles.end(); ++p2 )
                         {
                             if( p1 != p2 )
                             {
-                                Vec3f dir = p1->getPosition() - p2->getPosition();
+                                Vec3f dir = (*p1)->getPosition() - (*p2)->getPosition();
                                 float distSqrd = dir.lengthSquared();
-                                float radiusSum = 125.0f;//( p1->mRadius + p2->mRadius ) * 100.0f;
+                                float radiusSum = 125.0f;//( (*p1)->mRadius + (*p2)->mRadius ) * 100.0f;
                                 static float radiusSqrd = radiusSum * radiusSum;
                                 
                                 if( distSqrd < radiusSqrd && distSqrd > 0.1f ) 
                                 {
                                     float per = 1.0f - distSqrd/radiusSqrd;
-                                    float E = p2->mCharge / distSqrd;
+                                    float E = (*p2)->mCharge / distSqrd;
                                     float F = E * thisQTimesInvM;
                                     
                                     if( F > 15.0f )
@@ -215,8 +216,8 @@ void ParticleController::applyForces2( double dt )
                                     dir.normalize();
                                     dir *= F * per * magnitude;
                                     
-                                    p1->mAccel += dir;
-                                    p2->mAccel -= dir;
+                                    (*p1)->mAccel += dir;
+                                    (*p2)->mAccel -= dir;
                                 }
                             }
                         }
