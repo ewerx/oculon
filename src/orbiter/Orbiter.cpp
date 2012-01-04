@@ -19,16 +19,16 @@
 using namespace ci;
 using namespace boost;
 
-//TODO: read from data file (orbRad,    bodyRad, mass,          oVel,   tex)
+//TODO: read from data file (orbRad,    bodyRad, mass,          oVel,   rot,        tex)
 #define PLANETS_TUPLE \
-PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,      47900,  RES_ORBITER_MERCURY ) \
-PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024,     35000,  RES_ORBITER_VENUS ) \
-PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024,     29800,  RES_ORBITER_EARTH ) \
-PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023,     24100,  RES_ORBITER_MARS ) \
-PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,      13100,  RES_ORBITER_JUPITER ) \
-PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640,   RES_ORBITER_SATURN ) \
-PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810,   RES_ORBITER_URANUS ) \
-PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   RES_ORBITER_NEPTUNE ) \
+PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,      47900,  3.40E-09,   RES_ORBITER_MERCURY ) \
+PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024,     35000,  -2.99E-07,  RES_ORBITER_VENUS ) \
+PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024,     29800,  1.99E-07,   RES_ORBITER_EARTH ) \
+PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023,     24100,  1.94E-07,   RES_ORBITER_MARS ) \
+PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,      13100,  4.83E-07,   RES_ORBITER_JUPITER ) \
+PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640,   4.47E-07,   RES_ORBITER_SATURN ) \
+PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810,   -2.78E-07,   RES_ORBITER_URANUS ) \
+PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   2.97E-07,   RES_ORBITER_NEPTUNE ) \
 //PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //end tuple
 
@@ -128,8 +128,8 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines);
-    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
+    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
+    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
     params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
     params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
     params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
@@ -151,9 +151,11 @@ void Orbiter::reset()
     float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
     double orbitalRadius;
     double orbitalVel;
+    double rotationSpeed = 0.0f;
     mSun = new Sun(Vec3d::zero(),
                    Vec3d::zero(),
                    radius,
+                   rotationSpeed,
                    mass,
                    ColorA(1.0f, 1.0f, 1.0f));
     mSun->setup();
@@ -167,10 +169,11 @@ void Orbiter::reset()
     pos.y = 0.0f;
     
     
-#define PLANETS_ENTRY(name,orad,brad,mss,ovel,tex) \
+#define PLANETS_ENTRY(name,orad,brad,mss,ovel,rot,tex) \
     mass = mss;\
     orbitalRadius = orad;\
     orbitalVel = ovel;\
+    rotationSpeed = rot;\
     angle = toRadians(Rand::randFloat(3.0f, 8.0f));\
     pos.y = orbitalRadius * sin ( angle );\
     pos.z = orbitalRadius * cos ( angle );\
@@ -179,6 +182,7 @@ void Orbiter::reset()
                     pos,\
                     Vec3d(orbitalVel, 0.0f, 0.0f),\
                     radius, \
+                    rotationSpeed, \
                     mass, \
                     ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), \
                     loadImage( loadResource(tex))); \
@@ -201,7 +205,7 @@ void Orbiter::reset()
     {
         mass = 1e8 * Rand::randFloat(1.0f, 10.0f);
         radius = Rand::randFloat(minRadius,minRadius*2.0f);
-        double angle = Rand::randFloat(2.0f*M_PI);
+        double angle = Rand::randFloat(2.0f*(float)M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000) * 4e6;
         Vec3d pos( 0.0f, orbitalRadius * sin ( angle ), orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
@@ -212,6 +216,7 @@ void Orbiter::reset()
                               /*orbitalPlaneNormal * orbitalVel,*/
                                Vec3d(orbitalVel, 0.0f, 0.0f),
                                radius, 
+                               0.0000000001f,
                                mass, 
                                ColorA(0.5f, 0.55f, 0.525f));
         mBodies.push_back(body);

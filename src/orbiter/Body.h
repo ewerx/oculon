@@ -30,6 +30,7 @@ public:
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
+         double rotationSpeed,
          double mass, 
          const ColorA& color);
     
@@ -37,6 +38,7 @@ public:
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
+         double rotationSpeed,
          double mass, 
          const ColorA& color,
          ImageSourceRef textureImage);
@@ -74,6 +76,8 @@ protected:
     float mRadius;
     float mPeakRadiusMultiplier;
     float mRadiusMultiplier;
+    double mRotation;
+    double mRotationSpeed;
     string mName;
     
     ColorA mColor;

@@ -33,11 +33,12 @@ GLfloat Body::no_shininess[]	= { 0.0f };
 // Body
 // 
 
-Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double mass, const ColorA& color)
+Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color)
 : Entity<double>(pos)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
+, mRotationSpeed(rotSpeed)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
 , mPeakRadiusMultiplier(1.0f)
@@ -52,11 +53,12 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
 }
 
-Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double mass, const ColorA& color, ImageSourceRef textureImage)
+Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color, ImageSourceRef textureImage)
 : Entity<double>(pos)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
+, mRotationSpeed(rotSpeed)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
 , mPeakRadiusMultiplier(1.0f)
@@ -86,6 +88,7 @@ void Body::setup()
 void Body::update(double dt)
 {
     mPosition += mVelocity * dt;
+    mRotation += mRotationSpeed * dt * (mRadiusMultiplier*10.f);
     
     updateLabel();
     
@@ -118,6 +121,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         glEnable( GL_POLYGON_SMOOTH );
         
         glTranslated(screenCoords.x, screenCoords.y, screenCoords.z);
+        glRotatef(mRotation, 0.0f, 1.0f, 0.0f);
         
         //drawDebugVectors();
         
@@ -200,19 +204,22 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
                     const Vec3f& point2 = mMotionTrail.getPoints()[i+1];
                     //const Vec3f& point3 = mMotionTrail.getPoints()[i+2];
                     glVertex3f(point2.x,point2.y,point2.z);
-                    glVertex3f(point2.x,point2.y+1,point2.z);
+                    glVertex3f(point2.x,point2.y+Orbiter::sTrailWidth,point2.z);
                     //glVertex3f(point3.x,point3.y,point3z);
                     //glVertex3f(point3.x+4,point3.y,point3z);
                 }
             }
             else 
             {
+                glLineWidth(Orbiter::sTrailWidth);
+                //gl::draw(mMotionTrail);
                 glBegin( GL_LINE_STRIP );
                 for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
                 {
                     const Vec3f& point = (*it);
                     glVertex3f(point.x,point.y,point.z);
                 }
+                glLineWidth(1.0f);
             }
             glEnd();
             //glDisable(GL_MULTISAMPLE_ARB );

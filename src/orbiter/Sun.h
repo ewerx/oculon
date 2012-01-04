@@ -20,6 +20,7 @@ public:
     Sun(const Vec3d& pos, 
         const Vec3d& vel, 
         float radius, 
+        double rotSpeed,
         double mass, 
         const ColorA& color);
     

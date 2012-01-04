@@ -77,7 +77,7 @@ void OculonApp::setup()
     //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
     //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
     //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
-    mParams.hide();
+    //mParams.hide();
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -473,4 +473,4 @@ void OculonApp::stopVideoCapture()
     mIsCapturingVideo = false;
 }
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_8) )

@@ -23,9 +23,10 @@ GLfloat Sun::mat_emission[]     = { 1.0f, 1.0f, 1.0f, 1.0f };
 Sun::Sun(const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
+         double rotSpeed,
          double mass, 
          const ColorA& color) 
-: Body("Sol",pos,vel,radius,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
+: Body("Sol",pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
 {
 }
 
