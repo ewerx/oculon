@@ -88,7 +88,7 @@ void Body::setup()
 void Body::update(double dt)
 {
     mPosition += mVelocity * dt;
-    mRotation += mRotationSpeed * dt * (mRadiusMultiplier*10.f);
+    mRotation += toDegrees(mRotationSpeed) * dt * (mRadiusMultiplier*10.f);
     
     updateLabel();
     
@@ -121,7 +121,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         glEnable( GL_POLYGON_SMOOTH );
         
         glTranslated(screenCoords.x, screenCoords.y, screenCoords.z);
-        glRotatef(mRotation, 0.0f, 1.0f, 0.0f);
+        glRotated(mRotation, 0.0f, 1.0f, 0.0f);
         
         //drawDebugVectors();
         
