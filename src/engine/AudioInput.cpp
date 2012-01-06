@@ -78,11 +78,46 @@ void AudioInput::update()
     else
     {
         mPcmBuffer = mInput->getPcmBuffer();
+        
         if( !mPcmBuffer ) 
         {
             console() << "[audio] no pcm buffer\n";
             return;
         }
+        
+        //KISS
+        {
+            if (mPcmBuffer->getInterleavedData())
+            {
+                
+                // Get sample count
+                uint32_t mSampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
+                if (mSampleCount > 0)
+                {
+                    
+                    // Initialize analyzer, if needed
+                    if (!mFftInit)
+                    {
+                        mFftInit = true;
+                        mFft.setDataSize(mSampleCount);
+                    }
+                    
+                    // Analyze data
+                    if (mPcmBuffer->getInterleavedData()->mData != 0) 
+                    {
+                        mInputData = mPcmBuffer->getInterleavedData()->mData;
+                        mInputSize = mPcmBuffer->getInterleavedData()->mSampleCount;
+                        mFft.setData(mInputData);
+                    }
+                    
+                    // Get data
+                    mTimeData = mFft.getData();
+                    mDataSize = mFft.getDataSize();
+
+                }
+            }
+        }
+        
         if( mPcmBuffer->getSampleCount() > 0 )
         {
             //presently FFT only works on OS X, not iOS or Windows

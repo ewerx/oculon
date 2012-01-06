@@ -52,9 +52,50 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     {
 		return;
 	}
-	
+    
+    AudioInput& audioInput = mApp->getAudioInput();
+    
     glPushMatrix();
     glDisable(GL_LIGHTING);
+    glColor4f(1.0f,1.0f,1.0f,0.95f);
+	
+    bool useKiss = true;
+    if( useKiss )
+    {
+        // Get data
+		float * mFreqData = audioInput.getFft().getAmplitude();
+		float * mTimeData = audioInput.getFft().getData();
+		int32_t mDataSize = audioInput.getFft().getBinSize();
+        
+		// Get dimensions
+		float mScale = ((float)getWindowWidth() - 20.0f) / (float)mDataSize;
+		float mWindowHeight = (float)getWindowHeight();
+        
+		// Use polylines to depict time and frequency domains
+		PolyLine<Vec2f> mFreqLine;
+		PolyLine<Vec2f> mTimeLine;
+        
+		// Iterate through data
+		for (int32_t i = 0; i < mDataSize; i++) 
+		{
+            
+			// Do logarithmic plotting for frequency domain
+			double mLogSize = log((double)mDataSize);
+			float x = (float)(log((double)i) / mLogSize) * (double)mDataSize;
+			float y = math<float>::clamp(mFreqData[i] * (x / mDataSize) * log((double)(mDataSize - i)), 0.0f, 2.0f);
+            
+			// Plot points on lines
+			mFreqLine.push_back(Vec2f(x * mScale + 10.0f,           -y * (mWindowHeight - 20.0f) * 0.25f + (mWindowHeight - 10.0f)));
+			mTimeLine.push_back(Vec2f(i * mScale + 10.0f, mTimeData[i] * (mWindowHeight - 20.0f) * 0.25f + (mWindowHeight * 0.25 + 10.0f)));
+            
+		}
+        
+		// Draw signals
+		gl::draw(mFreqLine);
+		gl::draw(mTimeLine);
+    }
+    else
+    {
 	uint32_t bufferSamples = pcmBufferRef->getSampleCount();
 	audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
 	audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
@@ -82,6 +123,7 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     gl::draw( spectrum_left );
     gl::color( Color( 1.0f, 0.5f, 0.25f ) );
 	gl::draw( spectrum_right );
+    }
     glPopMatrix();
 }
 
