@@ -371,45 +371,11 @@ void Orbiter::updateAudioResponse()
 void Orbiter::draw()
 {
     glPushMatrix();
-    //glEnable( GL_MULTISAMPLE_ARB );
-    glEnable( GL_LIGHTING );
-	glEnable( GL_LIGHT0 );
-	
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
-    
     
     Matrix44d matrix = Matrix44d::identity();
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
-                        mDrawScale * getWindowHeight() / 2.0f,
-                        mDrawScale * getWindowHeight() / 2.0f));
-    
-    int culled = 0;
-    for(BodyList::iterator bodyIt = mBodies.begin(); 
-        bodyIt != mBodies.end();
-        ++bodyIt)
-    {
-        Body* body = (*bodyIt);
-        if (!mEnableFrustumCulling ||
-            isSphereInFrustum( (matrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
-        {
-            body->draw(matrix, true);
-        }
-        else
-        {
-            body->draw(matrix, false);
-            culled++;
-        }
-        
-        //glPushMatrix();
-        //Vec3d pos = matrix * bodyIt->getPosition();
-        //glTranslated(pos.x, pos.y, pos.z);
-        //glPopMatrix();
-    }
-    
-    //mApp->console() << "culled " << culled << std::endl;
-    
+                       mDrawScale * getWindowHeight() / 2.0f,
+                       mDrawScale * getWindowHeight() / 2.0f));
     
     if( mIsFollowCameraEnabled )
     {
@@ -438,18 +404,54 @@ void Orbiter::draw()
         targetAngles.x += toRadians(getElapsedSeconds() * rotationSpeed);
         targetAngles.y += toRadians(getElapsedSeconds() * rotationSpeed);
         targetAngles.y = ci::math<float>::clamp(targetAngles.y,-M_PI,M_PI);
-            
-            currentAngles = lerp<Vec3f>(currentAngles,targetAngles,mApp->getElapsedSecondsThisFrame()*lerpSpeed);
-            
-            Quatf xQuaternion(Vec3f::zAxis(), currentAngles.x);
-            Quatf yQuaternion(Vec3f::xAxis(), currentAngles.y);
-            
-            up = up * (xQuaternion * yQuaternion);
+        
+        currentAngles = lerp<Vec3f>(currentAngles,targetAngles,mApp->getElapsedSecondsThisFrame()*lerpSpeed);
+        
+        Quatf xQuaternion(Vec3f::zAxis(), currentAngles.x);
+        Quatf yQuaternion(Vec3f::xAxis(), currentAngles.y);
+        
+        up = up * (xQuaternion * yQuaternion);
 #endif
         
         cameraPos = cameraPos + offsetVec;
         mApp->setCamera( cameraPos, targetPos, up );
     }
+    
+    gl::setMatrices(mApp->getCamera());
+    
+    //glEnable( GL_MULTISAMPLE_ARB );
+    glEnable( GL_LIGHTING );
+	glEnable( GL_LIGHT0 );
+	
+	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
+    
+    
+    // frustum culling
+    int culled = 0;
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+        bodyIt != mBodies.end();
+        ++bodyIt)
+    {
+        Body* body = (*bodyIt);
+        if (!mEnableFrustumCulling ||
+            isSphereInFrustum( (matrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
+        {
+            body->draw(matrix, true);
+        }
+        else
+        {
+            body->draw(matrix, false);
+            culled++;
+        }
+        
+        //glPushMatrix();
+        //Vec3d pos = matrix * bodyIt->getPosition();
+        //glTranslated(pos.x, pos.y, pos.z);
+        //glPopMatrix();
+    }
+    
+    //mApp->console() << "culled " << culled << std::endl;
     
     glPopMatrix();
     glDisable( GL_LIGHTING );

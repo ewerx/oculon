@@ -34,6 +34,19 @@ Sun::~Sun()
 {
 }
 
+void Sun::setup()
+{
+    mMoviePlayer.setup();
+    mMoviePlayer.loadMoviePrompt();
+}
+
+void Sun::update(double dt)
+{
+    Body::update(dt);
+    
+    mMoviePlayer.update(dt);
+}
+
 void Sun::draw(const Matrix44d& transform, bool drawBody)
 {
     static const int sphereDetail = 64;
@@ -49,18 +62,39 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         
         //drawDebugVectors();
         
-        //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
-        glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
-        glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
-        glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
-        glMaterialfv( GL_FRONT, GL_EMISSION, Sun::mat_emission );
         
-        mTexture.enableAndBind();
+        
+        gl::Texture texture;
+        if( mMoviePlayer.isPlaying() )
+        {
+            glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
+            glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
+            glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(1.0f, 1.0f, 1.0f) );
+            
+            texture = mMoviePlayer.getActiveMovie().getTexture();
+            //glColor4f(1.0f,1.0f,1.0f,1.0f);
+        }
+        else
+        {
+            //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
+            glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
+            glMaterialfv( GL_FRONT, GL_EMISSION, Sun::mat_emission );
+            
+            texture = mTexture;
+            texture.setWrap( GL_REPEAT, GL_REPEAT );
+            //mTexture.enableAndBind();
+        }
+        
+        texture.bind();
         //glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
         //glColor4f( mColor );
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
         
-        mTexture.disable();
+        texture.unbind();
         
         if( Orbiter::sDrawRealSun )
         {
@@ -73,5 +107,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         }
         
         glPopMatrix();
+        
+        mMoviePlayer.draw();
     }
 }

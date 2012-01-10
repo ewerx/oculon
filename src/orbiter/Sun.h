@@ -11,6 +11,7 @@
 #define __SUN_H__
 
 #include "Body.h"
+#include "MoviePlayer.h"
 
 using namespace ci;
 
@@ -27,10 +28,13 @@ public:
     virtual ~Sun();
     
     // inherited from Body
-    //void update(double dt);
+    void setup();
+    void update(double dt);
     void draw(const Matrix44d& transform, bool drawBody);
     
 private:
+    MoviePlayer mMoviePlayer;
+    
     static GLfloat mat_ambient[];
     static GLfloat mat_diffuse[];
     static GLfloat mat_emission[];
