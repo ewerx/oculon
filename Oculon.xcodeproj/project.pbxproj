@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
+		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
 		7C745519148C04C6009C0356 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745518148C04C6009C0356 /* Foundation.framework */; };
@@ -72,6 +74,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoviePlayer.cpp; sourceTree = "<group>"; };
+		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
+		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
+		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		7C745516148C04C6009C0356 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -296,6 +302,8 @@
 				7C74556D148C259C009C0356 /* Behavior.h */,
 				7C74556E148C259C009C0356 /* Entity.cpp */,
 				7C74556F148C259C009C0356 /* Entity.h */,
+				7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */,
+				7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */,
 				7C745570148C259C009C0356 /* Particle.cpp */,
 				7C745571148C259C009C0356 /* Particle.h */,
 				7C745572148C259C009C0356 /* ParticleController.cpp */,
@@ -337,6 +345,8 @@
 				7C745584148C259C009C0356 /* AudioTest.h */,
 				7C745585148C259C009C0356 /* MindWaveTest.cpp */,
 				7C745586148C259C009C0356 /* MindWaveTest.h */,
+				7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */,
+				7C5CA3BC14B8F7F10037B007 /* MovieTest.h */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -607,6 +617,8 @@
 				7CD0B85114B6B68E002505C5 /* kiss_fft.c in Sources */,
 				7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */,
 				7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */,
+				7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */,
+				7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

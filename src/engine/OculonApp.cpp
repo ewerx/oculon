@@ -27,6 +27,7 @@
 // test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
+#include "MovieTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -143,27 +144,33 @@ void OculonApp::setupScenes()
     
     mScenes.clear(); 
     
+    int sceneId = 0;
+    
     //TODO: serialization
     // Orbiter
-    console() << "\tOrbiter\n";
+    console() << ++sceneId << ": Orbiter\n";
     addScene( new Orbiter(), true );
     
     // Pulsar
-    console() <<"\tPulsar\n";
+    console() << ++sceneId << ": Pulsar\n";
     addScene( new Pulsar() );
 
     
     // Magnetosphere
-    console() << "\tMagneto\n";
+    console() << ++sceneId << ": Magneto\n";
     addScene( new Magnetosphere() );
     
     // AudioTest
-    console() << "\tAudioTest\n";
+    console() << ++sceneId << ": AudioTest\n";
     addScene( new AudioTest() );
+    
+    // MovieTest
+    console() << ++sceneId << ": MovieTest\n";
+    addScene( new MovieTest() );
     
     if( mEnableMindWave )
     {
-        console() << "\tMindWave\n";
+        console() << "\t" << sceneId << ": MindWave\n";
         addScene( new MindWaveTest() );
     }
 }
@@ -337,7 +344,7 @@ void OculonApp::update()
 
 void OculonApp::draw()
 {
-    gl::clear( Colorf(0.0f, 0.0f, 0.0f) );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     // 3D scenes
     glPushMatrix();
