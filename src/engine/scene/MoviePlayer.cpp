@@ -44,9 +44,13 @@ void MoviePlayer::setActiveMovie( qtime::MovieGl movie )
 	console() << "\tFrames:    " << movie.getNumFrames() << std::endl;
 	console() << "\tFramerate: " << movie.getFramerate() << std::endl;
 	movie.setLoop( mLoop, mPalindrome );
+    movie.setVolume(0.0f);
 	
     mMovie = movie;
+    
+    mMovie.seekToStart();
 	mMovie.play();
+    
     mState = STATE_READY;
 }
 

@@ -12,6 +12,7 @@
 
 #include "cinder/app/AppBasic.h"
 #include "cinder/qtime/QuickTime.h"
+#include "cinder/Surface.h"
 #include "Entity.h"
 
 using namespace ci;
@@ -32,9 +33,10 @@ public:
 	void loadMovieFile( const fs::path &path );
     void loadMoviePrompt();
     
-    bool isPlaying() const { return mState == STATE_READY; }
+    bool isPlaying() const      { return mState == STATE_READY; }
+    qtime::MovieGl getMovie()   { return mMovie; }
     
-    qtime::MovieGl getActiveMovie()         { return mMovie; }
+    void setSize( const float width, const float height )   { mWidth = width; mHeight = height; }
     
     
 protected:

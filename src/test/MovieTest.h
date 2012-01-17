@@ -22,8 +22,8 @@
 class MovieTest : public Scene
 {
 public:
-    MovieTest() {}
-    virtual ~MovieTest() {}
+    MovieTest();
+    virtual ~MovieTest();
     
     // inherited from Scene
     void setup();
@@ -32,10 +32,17 @@ public:
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
+    void setActive(bool active);
     
 private:
-    MoviePlayer mMoviePlayer1;
+    //MoviePlayer mMoviePlayer1;
     
+    enum { NUM_MOVIES = 4 };
+    MoviePlayer mMoviePlayers[NUM_MOVIES];
+    int mActiveMovie;
+    
+    float mCycleDuration;
+    float mCycleTimer;
     
 };
 

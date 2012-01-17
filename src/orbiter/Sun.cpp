@@ -37,7 +37,7 @@ Sun::~Sun()
 void Sun::setup()
 {
     mMoviePlayer.setup();
-    mMoviePlayer.loadMoviePrompt();
+    //mMoviePlayer.loadMoviePrompt();
 }
 
 void Sun::update(double dt)
@@ -73,7 +73,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
             glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(1.0f, 1.0f, 1.0f) );
             
-            texture = mMoviePlayer.getActiveMovie().getTexture();
+            texture = mMoviePlayer.getMovie().getTexture();
             //glColor4f(1.0f,1.0f,1.0f,1.0f);
         }
         else
@@ -108,6 +108,6 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         
         glPopMatrix();
         
-        mMoviePlayer.draw();
+        //mMoviePlayer.draw();
     }
 }

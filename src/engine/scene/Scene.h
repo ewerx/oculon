@@ -42,8 +42,8 @@ public:
     bool isActive() const           { return mIsActive; }
     bool isVisible() const          { return mIsVisible; }
     
-    void setActive(bool active)     { mIsActive = active; }
-    void setVisible(bool visible)   { mIsVisible = visible; }
+    virtual void setActive(bool active)     { mIsActive = active; }
+    virtual void setVisible(bool visible)   { mIsVisible = visible; }
     
     void toggleActiveVisible()      { mIsActive = !mIsActive; mIsVisible = !mIsVisible; }
     
