@@ -18,6 +18,7 @@ MoviePlayer::MoviePlayer()
 ,mHeight(0.0f)
 ,mLoop(true)
 ,mPalindrome(false)
+,mColor(1.0f,1.0f,1.0f,1.0f)
 ,mState(STATE_INVALID)
 {
 }
@@ -133,11 +134,11 @@ void MoviePlayer::draw()
         {
             drawHeight = mHeight;
         }
-            
+        
         gl::Texture texture = mMovie.getTexture();
         if( texture ) 
         {			
-            gl::color( Color::white() );
+            gl::color( mColor );
             gl::draw( texture, Rectf( mPosition.x, mPosition.y, mPosition.x + drawWidth, mPosition.y + drawHeight ) );
             texture.disable();
 

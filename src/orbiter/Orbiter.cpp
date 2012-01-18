@@ -370,7 +370,7 @@ void Orbiter::updateAudioResponse()
 
 void Orbiter::draw()
 {
-    glPushMatrix();
+    gl::pushMatrices();
     
     Matrix44d matrix = Matrix44d::identity();
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
@@ -453,7 +453,7 @@ void Orbiter::draw()
     
     //mApp->console() << "culled " << culled << std::endl;
     
-    glPopMatrix();
+    gl::popMatrices();
     glDisable( GL_LIGHTING );
 	glDisable( GL_LIGHT0 );
     

@@ -40,11 +40,11 @@ void MovieTest::setup()
         pathString = str( filenameFormat % i );
         filePath = expandPath( fs::path(pathString) );
         mMoviePlayers[i].loadMovieFile( filePath );
+        
+        mMoviePlayers[i].setColor( ColorA( 1.0f-i*0.3f, i*0.3f, 1.0f-i*0.3f, 1.0f ) );
         //mMoviePlayers[i].loadMovieFile( fs::path("/Users/ehsan/Downloads/NASA's Alien Anomalies caught on film - A compilation of stunning UFO footage from NASA's archives [H.264 360p].mp4") );
         //mMoviePlayers[i].getMovie().stop();
     }
-    
-    
     
     mCycleDuration = 60.0f/125.0f; // 125 bpm
     
@@ -94,9 +94,14 @@ void MovieTest::draw()
 {
     gl::pushMatrices();
     
-    CameraOrtho cam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+    //CameraOrtho cam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 1.0f);
     //CameraPersp cam(app::getWindowWidth(), app::getWindowHeight(), 60.0f);
-    gl::setMatrices(cam);
+    //gl::setMatrices(cam);
+    gl::setMatricesWindowPersp(app::getWindowWidth(), app::getWindowHeight(), 60.0f, -1.0f, 0.0f);
+    
+    gl::enableDepthRead(false);
+    //gl::enableDepthWrite(false);
+    gl::enableAdditiveBlending();
     
     if( mActiveMovie >= 0 && mActiveMovie < NUM_MOVIES )
     {
@@ -106,6 +111,10 @@ void MovieTest::draw()
     {
         assert(false && "active movie out of range");
     }
+    
+    gl::enableAlphaBlending();
+    gl::enableDepthRead(true);
+    //gl::enableDepthWrite(true);
     
     gl::popMatrices();
 }

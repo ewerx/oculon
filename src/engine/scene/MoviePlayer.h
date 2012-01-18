@@ -37,7 +37,7 @@ public:
     qtime::MovieGl getMovie()   { return mMovie; }
     
     void setSize( const float width, const float height )   { mWidth = width; mHeight = height; }
-    
+    void setColor( const ColorA& color )                    { mColor = color; }
     
 protected:
     void setActiveMovie( qtime::MovieGl movie );
@@ -53,6 +53,8 @@ private:
     
     bool mLoop;
     bool mPalindrome;
+    
+    ColorA mColor;
     
     enum eState
     {

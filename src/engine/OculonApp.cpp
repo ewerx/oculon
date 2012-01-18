@@ -146,7 +146,7 @@ void OculonApp::setupScenes()
     
     int sceneId = 0;
     
-    //TODO: serialization
+    //TODO: serialization    
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
     addScene( new Orbiter(), true );
@@ -154,7 +154,6 @@ void OculonApp::setupScenes()
     // Pulsar
     console() << ++sceneId << ": Pulsar\n";
     addScene( new Pulsar() );
-
     
     // Magnetosphere
     console() << ++sceneId << ": Magneto\n";
@@ -360,7 +359,6 @@ void OculonApp::draw()
         }
 
         // enable depth buffer
-        // enable the depth buffer (after all, we are doing 3D)
         gl::enableDepthRead();
         gl::enableDepthWrite();
 
