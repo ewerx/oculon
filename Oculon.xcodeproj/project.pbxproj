@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C52DF9814CB8CB7008507D3 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C52DF8D14CB8CB7008507D3 /* kiss_fft.c */; };
+		7C52DF9914CB8CB7008507D3 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C52DF8F14CB8CB7008507D3 /* kiss_fftr.c */; };
+		7C52DF9C14CB8CB7008507D3 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52DF9614CB8CB7008507D3 /* KissFFT.cpp */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
@@ -68,12 +71,16 @@
 		7C96934E14970B3F00C0E1E6 /* normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934A14970B3F00C0E1E6 /* normal.png */; };
 		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
 		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
-		7CD0B85114B6B68E002505C5 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84914B6B68E002505C5 /* kiss_fft.c */; };
-		7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */; };
-		7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B85014B6B68E002505C5 /* Kiss.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C52DF8C14CB8CB7008507D3 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
+		7C52DF8D14CB8CB7008507D3 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
+		7C52DF8E14CB8CB7008507D3 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
+		7C52DF8F14CB8CB7008507D3 /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
+		7C52DF9014CB8CB7008507D3 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
+		7C52DF9614CB8CB7008507D3 /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
+		7C52DF9714CB8CB7008507D3 /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
 		7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoviePlayer.cpp; sourceTree = "<group>"; };
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
@@ -167,13 +174,6 @@
 		7C96934A14970B3F00C0E1E6 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
 		7C96934B14970B3F00C0E1E6 /* emitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emitter.png; sourceTree = "<group>"; };
 		7C96934C14970B3F00C0E1E6 /* bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bump.png; sourceTree = "<group>"; };
-		7CD0B84814B6B68E002505C5 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _kiss_fft_guts.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/_kiss_fft_guts.h; sourceTree = DEVELOPER_DIR; };
-		7CD0B84914B6B68E002505C5 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kiss_fft.c; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fft.c; sourceTree = DEVELOPER_DIR; };
-		7CD0B84A14B6B68E002505C5 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fft.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fft.h; sourceTree = DEVELOPER_DIR; };
-		7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kiss_fftr.c; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fftr.c; sourceTree = DEVELOPER_DIR; };
-		7CD0B84C14B6B68E002505C5 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fftr.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fftr.h; sourceTree = DEVELOPER_DIR; };
-		7CD0B84D14B6B68E002505C5 /* Kiss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Kiss.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/Kiss.h; sourceTree = DEVELOPER_DIR; };
-		7CD0B85014B6B68E002505C5 /* Kiss.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kiss.cpp; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/src/Kiss.cpp; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +201,45 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C52DF2914CB86C3008507D3 /* KissFFT */ = {
+			isa = PBXGroup;
+			children = (
+				7C52DF2A14CB86C3008507D3 /* lib */,
+				7C52DF5614CB86C3008507D3 /* src */,
+			);
+			name = KissFFT;
+			path = ../sdks/cinder_master/blocks/KissFFT;
+			sourceTree = SOURCE_ROOT;
+		};
+		7C52DF2A14CB86C3008507D3 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		7C52DF5614CB86C3008507D3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7C52DF8B14CB8CB7008507D3 /* kiss */,
+				7C52DF9614CB8CB7008507D3 /* KissFFT.cpp */,
+				7C52DF9714CB8CB7008507D3 /* KissFFT.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		7C52DF8B14CB8CB7008507D3 /* kiss */ = {
+			isa = PBXGroup;
+			children = (
+				7C52DF8C14CB8CB7008507D3 /* _kiss_fft_guts.h */,
+				7C52DF8D14CB8CB7008507D3 /* kiss_fft.c */,
+				7C52DF8E14CB8CB7008507D3 /* kiss_fft.h */,
+				7C52DF8F14CB8CB7008507D3 /* kiss_fftr.c */,
+				7C52DF9014CB8CB7008507D3 /* kiss_fftr.h */,
+			);
+			path = kiss;
+			sourceTree = "<group>";
+		};
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
@@ -242,7 +281,7 @@
 		7C74552E148C04C6009C0356 /* Oculon */ = {
 			isa = PBXGroup;
 			children = (
-				7C865570148C2784000E00B6 /* external */,
+				7C865570148C2784000E00B6 /* blocks */,
 				7C745559148C259C009C0356 /* src */,
 				7C74552F148C04C6009C0356 /* xcode */,
 				7C865644148C2BCD000E00B6 /* resources */,
@@ -351,14 +390,15 @@
 			path = test;
 			sourceTree = "<group>";
 		};
-		7C865570148C2784000E00B6 /* external */ = {
+		7C865570148C2784000E00B6 /* blocks */ = {
 			isa = PBXGroup;
 			children = (
-				7CD0B84514B6B68E002505C5 /* kiss */,
+				7C52DF2914CB86C3008507D3 /* KissFFT */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 			);
-			name = external;
-			sourceTree = "<group>";
+			name = blocks;
+			path = ../sdks/cinder_master/blocks;
+			sourceTree = SOURCE_ROOT;
 		};
 		7C8655B4148C2A97000E00B6 /* Cinder-MIDI */ = {
 			isa = PBXGroup;
@@ -470,45 +510,6 @@
 			name = pulsar;
 			sourceTree = "<group>";
 		};
-		7CD0B84514B6B68E002505C5 /* kiss */ = {
-			isa = PBXGroup;
-			children = (
-				7CD0B84614B6B68E002505C5 /* include */,
-				7CD0B84F14B6B68E002505C5 /* src */,
-			);
-			name = kiss;
-			path = ../../sdks/cinder_master/blocks/BanTheRewind/blocks/kiss;
-			sourceTree = SOURCE_ROOT;
-		};
-		7CD0B84614B6B68E002505C5 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				7CD0B84714B6B68E002505C5 /* kiss */,
-				7CD0B84D14B6B68E002505C5 /* Kiss.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		7CD0B84714B6B68E002505C5 /* kiss */ = {
-			isa = PBXGroup;
-			children = (
-				7CD0B84814B6B68E002505C5 /* _kiss_fft_guts.h */,
-				7CD0B84914B6B68E002505C5 /* kiss_fft.c */,
-				7CD0B84A14B6B68E002505C5 /* kiss_fft.h */,
-				7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */,
-				7CD0B84C14B6B68E002505C5 /* kiss_fftr.h */,
-			);
-			path = kiss;
-			sourceTree = "<group>";
-		};
-		7CD0B84F14B6B68E002505C5 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7CD0B85014B6B68E002505C5 /* Kiss.cpp */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -614,11 +615,11 @@
 				7C86564C148C2BCD000E00B6 /* passthru.vsh in Sources */,
 				7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */,
 				7C9693431496FFC400C0E1E6 /* Pulsar.cpp in Sources */,
-				7CD0B85114B6B68E002505C5 /* kiss_fft.c in Sources */,
-				7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */,
-				7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */,
 				7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */,
 				7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */,
+				7C52DF9814CB8CB7008507D3 /* kiss_fft.c in Sources */,
+				7C52DF9914CB8CB7008507D3 /* kiss_fftr.c in Sources */,
+				7C52DF9C14CB8CB7008507D3 /* KissFFT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,7 +667,7 @@
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/KissFFT/src";
 			};
 			name = Debug;
 		};
@@ -693,7 +694,7 @@
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/KissFFT/src";
 			};
 			name = Release;
 		};
@@ -703,6 +704,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/KissFFT/lib\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -714,6 +719,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/KissFFT/lib\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

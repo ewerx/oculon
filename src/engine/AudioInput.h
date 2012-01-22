@@ -12,7 +12,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
-#include "Kiss.h"
+#include "KissFFT.h"
 
 using namespace ci;
 
@@ -33,7 +33,12 @@ public:
     unsigned int getFftBandCount() const { return mFftBandCount; }
     void setFftBandCount(const unsigned int count) { mFftBandCount = count; }
     
-    Kiss& getFft() { return mFft; }
+    KissRef getFft() { return mFft; }
+    
+    float* getTimeData() const { return mTimeData; }
+    float* getFrequencyData() const { return mFrequencyData; }
+    
+    void resetTempoAnalyzer();
     
 private:
     audio::Input* mInput;
@@ -44,13 +49,25 @@ private:
     
     // Analyzer
 	bool mFftInit;
-	Kiss mFft;
+	KissRef mFft;
     
 	// Data
 	int32_t mDataSize;
 	int32_t mInputSize;
-	float * mInputData;
-	float * mTimeData;
+	float*  mInputData;
+	float*  mFrequencyData;
+    float*  mTimeData;
+    
+    // Tempo
+    int32_t mFirstPeak;
+	int32_t mNeighbors;
+	std::vector<int32_t> mPeakDistances;
+	int32_t mSampleDistance;
+	float mTempo;
+	std::vector<float> mTempos;
+	std::map<float, int32_t> mTempoScore;
+	float mThreshold;
+    
 };
 
 #endif
