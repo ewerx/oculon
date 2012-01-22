@@ -146,9 +146,7 @@ void OculonApp::setupScenes()
     
     int sceneId = 0;
     
-    //TODO: serialization   
-    //TODO: changable Z-order via sort keys
-    
+    //TODO: serialization    
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
     addScene( new Orbiter(), true );

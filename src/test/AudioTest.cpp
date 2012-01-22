@@ -63,64 +63,36 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     if( useKiss )
     {
         // Get data
-		float * freqData = audioInput.getFrequencyData();//audioInput.getFft().getAmplitude();
-		float * timeData = audioInput.getTimeData();//audioInput.getFft().getData();
-		int32_t dataSize = audioInput.getFft()->getBinSize();
-        
-        if( !freqData || !timeData )
-        {
-            return;
-        }
+		float * mFreqData = audioInput.getFft().getAmplitude();
+		float * mTimeData = audioInput.getFft().getData();
+		int32_t mDataSize = audioInput.getFft().getBinSize();
         
 		// Get dimensions
-		float scale = ((float)getWindowWidth() - 20.0f) / (float)dataSize;
-		float windowHeight = (float)getWindowHeight();
+		float mScale = ((float)getWindowWidth() - 20.0f) / (float)mDataSize;
+		float mWindowHeight = (float)getWindowHeight();
         
 		// Use polylines to depict time and frequency domains
-		PolyLine<Vec2f> freqLine;
-		PolyLine<Vec2f> timeLine;
+		PolyLine<Vec2f> mFreqLine;
+		PolyLine<Vec2f> mTimeLine;
         
-        // Do logarithmic plotting for frequency domain
-        double logSize = log((double)dataSize);
-        
-        float ht = getWindowHeight() * 0.25f;
-        float bottom = getWindowHeight() - 250.f;
-        const float width = 2.0f;
-        const float space = width + 0.0f;
-        
-        glPushMatrix();
 		// Iterate through data
-		for (int32_t i = 0; i < dataSize; i++) 
+		for (int32_t i = 0; i < mDataSize; i++) 
 		{
-			float x = (float)(log((double)i) / logSize) * (double)dataSize;
-			float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
             
-            float barY = y * ht;
-            glBegin( GL_QUADS );
-                // bottom
-                glColor3f( 0.25f, 0.0f, 0.0f );
-                glVertex2f( i * space, bottom );
-                glVertex2f( i * space + width, bottom );
-                // top
-                glColor3f( 1.0f, 0.25f, 0.0f );
-                glVertex2f( i * space + width, bottom - barY );
-                glVertex2f( i * space, bottom - barY );
-            glEnd();
+			// Do logarithmic plotting for frequency domain
+			double mLogSize = log((double)mDataSize);
+			float x = (float)(log((double)i) / mLogSize) * (double)mDataSize;
+			float y = math<float>::clamp(mFreqData[i] * (x / mDataSize) * log((double)(mDataSize - i)), 0.0f, 2.0f);
             
 			// Plot points on lines
-			freqLine.push_back(Vec2f(x * scale + 10.0f,           -y * (windowHeight - 20.0f) * 0.25f + (windowHeight - 10.0f)));
-			timeLine.push_back(Vec2f(i * scale + 10.0f, timeData[i] * (windowHeight - 20.0f) * 0.25f + (windowHeight * 0.25 + 10.0f)));
-            
-            //console() << i << ": " << mTimeData[i] << std::endl;
+			mFreqLine.push_back(Vec2f(x * mScale + 10.0f,           -y * (mWindowHeight - 20.0f) * 0.25f + (mWindowHeight - 10.0f)));
+			mTimeLine.push_back(Vec2f(i * mScale + 10.0f, mTimeData[i] * (mWindowHeight - 20.0f) * 0.25f + (mWindowHeight * 0.25 + 10.0f)));
             
 		}
-        //console() << "--------------" << std::endl;
-        glPopMatrix();
         
 		// Draw signals
-        glColor4f(1.0f,1.0f,1.0f,0.95f);
-		gl::draw(freqLine);
-		gl::draw(timeLine);
+		gl::draw(mFreqLine);
+		gl::draw(mTimeLine);
     }
     else
     {

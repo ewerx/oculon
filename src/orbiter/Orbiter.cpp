@@ -635,44 +635,35 @@ void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float 
 void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float height)
 {
     AudioInput& audioInput = mApp->getAudioInput();
-    //std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
-    //uint16_t bandCount = audioInput.getFftBandCount();
-    //uint16_t bandsToShow = 200;
+    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
+    uint16_t bandCount = audioInput.getFftBandCount();
+    uint16_t bandsToShow = 200;
     
-    // Get data
-    float * freqData = audioInput.getFft().getAmplitude();
-    int32_t dataSize = audioInput.getFft().getBinSize();
-    double logSize = log((double)dataSize);
+    //const float bottom = top+height;
+    const float space = 1.0f;
+    const float barWidth = width / bandsToShow;
+    const float bumpUp = 1.0f;
     
-    if( ! freqData ) 
+    if( ! fftDataRef ) 
     {
         return;
     }
     
-    //width = math<float>::max(width,float(dataSize));
-    //const float bottom = top+height;
-    const float barWidth = width / dataSize;
-    const float space = barWidth;
-    const float bumpUp = 1.0f;
-
     glPushMatrix();
     glDisable(GL_LIGHTING);
     glTranslatef(left,top,0.0f);
+    float * fftBuffer = fftDataRef.get();
     
-    for( int i = 0; i < dataSize; i++ ) 
+    for( int i = 0; i < bandsToShow; i++ ) 
     {
-        const float x = (float)(log((double)i) / logSize) * (double)dataSize;
-        const float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
-        
-        const float barY = y * height;
-           
+        float barY = (fftBuffer[i] / bandCount) * height;
         glBegin( GL_QUADS );
-            glColor3f( 0.8f,0.8f,0.8f );
-            glVertex2f( i * space, height-2.f );
-            glVertex2f( i * space + barWidth, height-bumpUp );
-            glColor3f( 1.0f, 1.0f, 1.0f );
-            glVertex2f( i * space + barWidth, height - barY-bumpUp );
-            glVertex2f( i * space, height - barY-2.f );
+        glColor3f( 0.8f,0.8f,0.8f );
+        glVertex2f( i * space, height-2.f );
+        glVertex2f( i * space + barWidth, height-bumpUp );
+        glColor3f( 1.0f, 1.0f, 1.0f );
+        glVertex2f( i * space + barWidth, height - barY-bumpUp );
+        glVertex2f( i * space, height - barY-2.f );
         glEnd();
     }
     
