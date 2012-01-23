@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
+		7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11C14CCFCA6008507D3 /* OscListener.cpp */; };
+		7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */; };
+		7C52E12214CCFCA6008507D3 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11E14CCFCA6008507D3 /* OscSender.cpp */; };
+		7C52E12414CCFE99008507D3 /* OscServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E12314CCFE99008507D3 /* OscServer.cpp */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
@@ -74,6 +79,30 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C52E10714CCFC9B008507D3 /* IpEndpointName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
+		7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
+		7C52E10914CCFC9B008507D3 /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
+		7C52E10A14CCFC9B008507D3 /* TimerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerListener.h; sourceTree = "<group>"; };
+		7C52E10B14CCFC9B008507D3 /* UdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UdpSocket.h; sourceTree = "<group>"; };
+		7C52E10D14CCFC9B008507D3 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageMappingOscPacketListener.h; sourceTree = "<group>"; };
+		7C52E10E14CCFC9B008507D3 /* OscException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscException.h; sourceTree = "<group>"; };
+		7C52E10F14CCFC9B008507D3 /* OscHostEndianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscHostEndianness.h; sourceTree = "<group>"; };
+		7C52E11014CCFC9B008507D3 /* OscOutboundPacketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscOutboundPacketStream.h; sourceTree = "<group>"; };
+		7C52E11114CCFC9B008507D3 /* OscPacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscPacketListener.h; sourceTree = "<group>"; };
+		7C52E11214CCFC9B008507D3 /* OscPrintReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscPrintReceivedElements.h; sourceTree = "<group>"; };
+		7C52E11314CCFC9B008507D3 /* OscReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscReceivedElements.h; sourceTree = "<group>"; };
+		7C52E11414CCFC9B008507D3 /* OscTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscTypes.h; sourceTree = "<group>"; };
+		7C52E11514CCFC9B008507D3 /* OscArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscArg.h; sourceTree = "<group>"; };
+		7C52E11614CCFC9B008507D3 /* OscBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscBundle.h; sourceTree = "<group>"; };
+		7C52E11714CCFC9B008507D3 /* OscListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscListener.h; sourceTree = "<group>"; };
+		7C52E11814CCFC9B008507D3 /* OscMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscMessage.h; sourceTree = "<group>"; };
+		7C52E11914CCFC9B008507D3 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscSender.h; sourceTree = "<group>"; };
+		7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscBundle.cpp; sourceTree = "<group>"; };
+		7C52E11C14CCFCA6008507D3 /* OscListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscListener.cpp; sourceTree = "<group>"; };
+		7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscMessage.cpp; sourceTree = "<group>"; };
+		7C52E11E14CCFCA6008507D3 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscSender.cpp; sourceTree = "<group>"; };
+		7C52E12314CCFE99008507D3 /* OscServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscServer.cpp; sourceTree = "<group>"; };
+		7C52E12514CCFEB7008507D3 /* OscServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscServer.h; sourceTree = "<group>"; };
 		7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoviePlayer.cpp; sourceTree = "<group>"; };
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
@@ -201,6 +230,68 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C52DFB314CCFC2F008507D3 /* osc */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10514CCFC9B008507D3 /* include */,
+				7C52E11A14CCFCA6008507D3 /* src */,
+			);
+			name = osc;
+			path = ../sdks/cinder_master/blocks/osc;
+			sourceTree = SOURCE_ROOT;
+		};
+		7C52E10514CCFC9B008507D3 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10614CCFC9B008507D3 /* ip */,
+				7C52E10C14CCFC9B008507D3 /* osc */,
+				7C52E11514CCFC9B008507D3 /* OscArg.h */,
+				7C52E11614CCFC9B008507D3 /* OscBundle.h */,
+				7C52E11714CCFC9B008507D3 /* OscListener.h */,
+				7C52E11814CCFC9B008507D3 /* OscMessage.h */,
+				7C52E11914CCFC9B008507D3 /* OscSender.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		7C52E10614CCFC9B008507D3 /* ip */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10714CCFC9B008507D3 /* IpEndpointName.h */,
+				7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */,
+				7C52E10914CCFC9B008507D3 /* PacketListener.h */,
+				7C52E10A14CCFC9B008507D3 /* TimerListener.h */,
+				7C52E10B14CCFC9B008507D3 /* UdpSocket.h */,
+			);
+			path = ip;
+			sourceTree = "<group>";
+		};
+		7C52E10C14CCFC9B008507D3 /* osc */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10D14CCFC9B008507D3 /* MessageMappingOscPacketListener.h */,
+				7C52E10E14CCFC9B008507D3 /* OscException.h */,
+				7C52E10F14CCFC9B008507D3 /* OscHostEndianness.h */,
+				7C52E11014CCFC9B008507D3 /* OscOutboundPacketStream.h */,
+				7C52E11114CCFC9B008507D3 /* OscPacketListener.h */,
+				7C52E11214CCFC9B008507D3 /* OscPrintReceivedElements.h */,
+				7C52E11314CCFC9B008507D3 /* OscReceivedElements.h */,
+				7C52E11414CCFC9B008507D3 /* OscTypes.h */,
+			);
+			path = osc;
+			sourceTree = "<group>";
+		};
+		7C52E11A14CCFCA6008507D3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */,
+				7C52E11C14CCFCA6008507D3 /* OscListener.cpp */,
+				7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */,
+				7C52E11E14CCFCA6008507D3 /* OscSender.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +380,8 @@
 				7C745566148C259C009C0356 /* MindWave.h */,
 				7C745567148C259C009C0356 /* OculonApp.cpp */,
 				7C745568148C259C009C0356 /* OculonApp.h */,
+				7C52E12514CCFEB7008507D3 /* OscServer.h */,
+				7C52E12314CCFE99008507D3 /* OscServer.cpp */,
 				7C74556A148C259C009C0356 /* Resources.h */,
 				7C74556B148C259C009C0356 /* scene */,
 			);
@@ -356,6 +449,7 @@
 			children = (
 				7CD0B84514B6B68E002505C5 /* kiss */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
+				7C52DFB314CCFC2F008507D3 /* osc */,
 			);
 			name = external;
 			sourceTree = "<group>";
@@ -619,6 +713,11 @@
 				7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */,
 				7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */,
 				7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */,
+				7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */,
+				7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */,
+				7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */,
+				7C52E12214CCFCA6008507D3 /* OscSender.cpp in Sources */,
+				7C52E12414CCFE99008507D3 /* OscServer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -664,9 +763,11 @@
 					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
+					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
+					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include $(CINDER_PATH)/blocks/osc/include";
 			};
 			name = Debug;
 		};
@@ -691,9 +792,11 @@
 					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
+					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
+					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include $(CINDER_PATH)/blocks/osc/include";
 			};
 			name = Release;
 		};
@@ -703,6 +806,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/iphone\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/macosx\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/vc10\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -714,6 +823,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/iphone\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/macosx\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/vc10\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

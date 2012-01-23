@@ -19,6 +19,7 @@
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
+#include "OscServer.h"
 #include "InfoPanel.h"
 #include <vector>
 
@@ -82,6 +83,8 @@ private: // members
     MindWave                mMindWave;
     bool                    mEnableMindWave;
     Vec2f                   mMousePos;
+    OscServer               mOscServer;
+    bool                    mEnableOscServer;
     
     // render
     double                  mLastElapsedSeconds;

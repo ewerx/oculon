@@ -50,6 +50,7 @@ void OculonApp::setup()
     mUseMayaCam = true;
     mEnableMindWave = false;
     mIsCapturingVideo = false;
+    mEnableOscServer = true;
     
     // render
     gl::enableDepthWrite();
@@ -98,6 +99,11 @@ void OculonApp::setup()
     }
     mMidiInput.setEnabled(false);
     
+    if( mEnableOscServer )
+    {
+        mOscServer.setup();
+    }
+    
     // debug
 	//glDisable( GL_TEXTURE_2D );
     
@@ -124,6 +130,11 @@ void OculonApp::shutdown()
     }
     
     mScenes.clear();
+    
+    if( mEnableOscServer )
+    {
+        mOscServer.shutdown();
+    }
     
     mAudioInput.shutdown();
 }
@@ -325,6 +336,11 @@ void OculonApp::update()
     if( mEnableMindWave )
     {
         mMindWave.update();
+    }
+    
+    if( mEnableOscServer )
+    {
+        mOscServer.update();
     }
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
