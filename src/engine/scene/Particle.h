@@ -30,12 +30,15 @@ public:
         STATE_COUNT
     };
 public:
+    Particle();
     Particle(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
     virtual ~Particle();
     
     // inherited from Entity
     virtual void update(double dt);
     virtual void draw(bool asSphere);
+    
+    void reset(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
     
     inline const Vec3f& getVelocity() const     { return mVelocity; }
     inline void setVelocity( const Vec3f& vel ) { mVelocity = vel; }

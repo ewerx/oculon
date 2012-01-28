@@ -15,6 +15,21 @@
 
 using namespace ci;
 
+Particle::Particle()
+: Entity<float>(Vec3f::zero())
+, mVelocity(Vec3f::zero())
+, mAccel(Vec3f::zero())
+, mRadius(0.0f)
+, mMass(0.0f)
+, mInvMass(0.0f)
+, mCharge(0.0f)
+, mAge(0.0f)
+, mLifeSpan(0.0f)
+, mPosHistory(TRAIL_LENGTH)
+, mState(STATE_NORMAL)
+{
+    reset();
+}
 
 Particle::Particle(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan)
 : Entity<float>(pos)
@@ -26,12 +41,38 @@ Particle::Particle(const Vec3f& pos, const Vec3f& vel, float radius, float mass,
 , mAge(0.0f)
 , mLifeSpan(lifespan)
 , mPosHistory(TRAIL_LENGTH)
+, mState(STATE_NORMAL)
 {
-    mInvMass = 1.0f / mMass;
+    reset(pos,vel,radius,mass,charge,lifespan);
 }
 
 Particle::~Particle()
 {
+}
+
+void Particle::reset()
+{
+    reset(Vec3f::zero(), Vec3f::zero(), 1.0f, 1.0f, 0.0f, 1.0f);
+}
+
+void Particle::reset(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan)
+{
+    mState = STATE_NORMAL;
+    
+    mPosition = pos;
+    mVelocity = vel;
+    mAccel = Vec3f::zero();
+    mRadius = radius;
+    mMass = mass;
+    mCharge = charge;
+    mAge = 0.0f;
+    mLifeSpan = lifespan;
+    mPosHistory.clear();
+    
+    if( mMass > 0.0f )
+    {
+        mInvMass = 1.0f / mMass;
+    }
 }
 
 void Particle::update(double dt)
@@ -162,11 +203,6 @@ void Particle::renderQuadStripTrail()
 	}
     
 	glEnd();
-}
-
-void Particle::reset()
-{
-    mState = STATE_NORMAL;
 }
 
 void Particle::applyGravity(double dt)
