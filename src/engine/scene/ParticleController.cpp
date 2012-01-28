@@ -27,6 +27,21 @@ ParticleController::ParticleController()
     mEnabledForces[FORCE_PERLIN] = false;
     mEnabledForces[FORCE_GRAVITY] = true;
     mEnabledForces[FORCE_REPULSION] = false;
+    
+    for( int i = 0; i < MAX_PARTICLES; ++i )
+    {
+        mObjStore[i] = NULL;
+    }
+}
+
+ParticleController::~ParticleController()
+{
+    mUnusedPool.clear();
+    mParticles.clear();
+    for( int i = 0; i < MAX_PARTICLES; ++i )
+    {
+        delete mObjStore[i];
+    }
 }
 
 void ParticleController::setup()
@@ -35,6 +50,24 @@ void ParticleController::setup()
     
     mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    for( int i = 0; i < MAX_PARTICLES; ++i )
+    {
+        mObjStore[i] = new Particle();
+        mUnusedPool.push_back( mObjStore[i] );
+    }
+}
+
+Particle* ParticleController::getNewParticle()
+{
+    Particle* p = NULL;
+    if( !mUnusedPool.empty() )
+    {
+        p = mUnusedPool.back();
+        mUnusedPool.pop_back();
+    }
+    
+    return p;
 }
 
 void ParticleController::update(double dt)
@@ -47,7 +80,8 @@ void ParticleController::update(double dt)
     
     for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-		if( ! (*particleIt)->isState(Particle::STATE_DEAD) ) 
+        Particle* particle = (*particleIt);
+		if( ! particle->isState(Particle::STATE_DEAD) ) 
         {
 			
 //			if( (*particleIt)->mIsBouncing ){
@@ -60,13 +94,15 @@ void ParticleController::update(double dt)
 //			}
             
             if( !newway )
+            {
                 applyForces( particleIt, dt );
+            }
             
-			(*particleIt)->update(dt);
+			particle->update(dt);
 		}
 		else 
         {
-            delete (*particleIt);
+            mUnusedPool.push_back(particle);
 			particleIt = mParticles.erase( particleIt );
 		}
 	}
@@ -95,8 +131,11 @@ void ParticleController::draw()
     }
 	for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-        if( (*particleIt)->mRadius > 0.1f )
-            (*particleIt)->draw(mDrawAsSpheres);
+        Particle* const particle = (*particleIt);
+        if( particle->mRadius > 0.1f )
+        {
+            particle->draw(mDrawAsSpheres);
+        }
 	}
     if( !mDrawAsSpheres )
     {
@@ -127,11 +166,17 @@ void ParticleController::addParticles( int amt, Vec3f pos, Vec3f vel, float radi
 		Vec3f p = pos + lOffset * radius * 0.25f;
 		Vec3f v = -vel + lOffset * Rand::randFloat( 6.0f, 10.5f ) * ( heat + 0.75f ) + Rand::randVec3f() * Rand::randFloat( 1.0f, 2.0f );
 		v.y *= 0.65f;
-        float pRadius = Rand::randFloat( 1.0f, 3.0f );
-        float mass = pRadius;
+        //float pRadius = Rand::randFloat( 1.0f, 3.0f );
+        float mass = radius;//pRadius;
         float charge = Rand::randFloat( 0.35f, 0.75f );
-        float lifespan = Rand::randFloat( 5.0f, 70.0f ); // 0.
-		mParticles.push_back( new Particle( p, v, radius, mass, charge, lifespan ) );
+        float lifespan = Rand::randFloat( 5.0f, 70.0f );
+        
+        Particle* particle = getNewParticle();
+        if( particle )
+        {
+            particle->reset(p, v, radius, mass, charge, lifespan);
+            mParticles.push_back( particle );
+        }
 	}
 }
 

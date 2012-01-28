@@ -35,6 +35,7 @@ public:
     
 public:
     ParticleController();
+    ~ParticleController();
     
     void setup();
     void update(double dt);
@@ -50,9 +51,14 @@ public:
 private:
     void applyForces(ParticleController::ParticleList::iterator p1, double dt );
     void applyForces2( double dt );
+    
+    Particle* getNewParticle();
  
 private:
+    enum { MAX_PARTICLES = 100000 };
+    Particle*    mObjStore[MAX_PARTICLES];
     ParticleList mParticles;
+    ParticleList mUnusedPool;
     
     bool mEnabledForces[FORCE_COUNT];
     Perlin mPerlin;
