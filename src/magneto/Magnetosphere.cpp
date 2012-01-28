@@ -26,7 +26,7 @@ Magnetosphere::~Magnetosphere()
 
 void Magnetosphere::setup()
 {
-    mParticleController.setup();
+    mParticleController.setup(this);
     reset();
 }
 

@@ -52,10 +52,10 @@ private:
     //TODO: make a class for emitter/pulsar based on Body... maybe.
     // physical
     double mMass;
-    ci::Quatd mRotation;    
+    ci::Quatf mRotation;    
     double mRotationVelocity;
     double mRadius;
-    double mRotationAngle;
+    float mRotationAngle;
     
     // abstract
     float mHeat;
@@ -64,11 +64,13 @@ private:
     
     gl::Texture		mEmitterTexture;
 	//gl::Texture		mParticleTexture;
-	gl::Texture		mNormalTexture;
-	gl::Texture		mHeightTexture;
-	gl::Texture		mSpecTexture;
+	//gl::Texture		mNormalTexture;
+	//gl::Texture		mHeightTexture;
+	//gl::Texture		mSpecTexture;
     
-    gl::GlslProg	mPulsarShader;
+    //gl::Texture     mStarTexture;
+    
+    //gl::GlslProg	mPulsarShader;
     
     ParticleController mParticleStream;
 };

@@ -37,7 +37,8 @@ public:
     virtual void draw() {}
     virtual bool handleKeyDown(const ci::app::KeyEvent& keyEvent) { return false; }
     
-    OculonApp* getApp();
+    OculonApp* getApp() { return mApp; }
+    const Camera& getCamera();
     
     bool isActive() const           { return mIsActive; }
     bool isVisible() const          { return mIsVisible; }
