@@ -111,7 +111,7 @@ void Particle::update(double dt)
     mAccel.set(0.0f,0.0f,0.0f);
 }
 
-void Particle::draw(bool asSphere)
+void Particle::draw(bool useBillboard, const Vec3f& bbRight, const Vec3f &bbUp)
 {
     {
     
@@ -133,9 +133,9 @@ void Particle::draw(bool asSphere)
             //radius *= 20.0f * heat;
         }
         
-        if( asSphere )
+        if( useBillboard )
         {
-            gl::drawSphere( mPosition, radius, 4 );
+            gl::drawBillboard(mPosition, Vec2f(radius,radius), 0.0f, bbRight, bbUp);
         }
         else
         {

@@ -9,6 +9,8 @@
 
 #include "ParticleController.h"
 #include "Particle.h"
+#include "Scene.h"
+#include "OculonApp.h"
 #include "Resources.h"
 #include "cinder/Rand.h"
 #include "cinder/Vector.h"
@@ -22,7 +24,7 @@ using namespace ci;
 ParticleController::ParticleController()
 : mPerlin(3)// octaves
 , mCounter(0)
-, mDrawAsSpheres(false)
+, mDrawAsBillboard(true)
 {
     mEnabledForces[FORCE_PERLIN] = false;
     mEnabledForces[FORCE_GRAVITY] = true;
@@ -44,8 +46,10 @@ ParticleController::~ParticleController()
     }
 }
 
-void ParticleController::setup()
+void ParticleController::setup(Scene* owner)
 {
+    mScene = owner;
+    
     mCounter = 0;
     
     mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE ) ) );
@@ -125,7 +129,12 @@ void ParticleController::draw()
     mParticleTexture.bind();
     glColor4f( 1, 1, 1, 1 );
     
-    if( !mDrawAsSpheres )
+    Vec3f bbRight;
+    Vec3f bbUp;
+    const Camera& cam = mScene->getCamera();
+    cam.getBillboardVectors(&bbRight, &bbUp);
+    
+    if( !mDrawAsBillboard )
     {
         glBegin( GL_QUADS );
     }
@@ -134,10 +143,10 @@ void ParticleController::draw()
         Particle* const particle = (*particleIt);
         if( particle->mRadius > 0.1f )
         {
-            particle->draw(mDrawAsSpheres);
+            particle->draw(mDrawAsBillboard,bbRight,bbUp);
         }
 	}
-    if( !mDrawAsSpheres )
+    if( !mDrawAsBillboard )
     {
         glEnd();
     }

@@ -151,3 +151,8 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
 	
 	return( result );
 }
+
+const Camera& Scene::getCamera()
+{
+    return mApp->getCamera();
+}

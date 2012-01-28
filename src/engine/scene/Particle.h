@@ -36,7 +36,7 @@ public:
     
     // inherited from Entity
     virtual void update(double dt);
-    virtual void draw(bool asSphere);
+    virtual void draw(bool useBillboard, const Vec3f& bbRight, const Vec3f &bbUp);
     
     void reset(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
     

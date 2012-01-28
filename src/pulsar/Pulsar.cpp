@@ -28,7 +28,7 @@ Pulsar::~Pulsar()
 
 void Pulsar::setup()
 {
-    mParticleStream.setup();
+    mParticleStream.setup(this);
     
     // textures
     mEmitterTexture		= gl::Texture( loadImage( loadResource( RES_NORMAL ) ) );
@@ -248,7 +248,7 @@ void Pulsar::generateParticles()
     float per = depth/340.0f;
     //Vec3f vel = mEmitter.mVel * per;
     //vel.y *= 0.02f;
-    int numParticlesToSpawn = Rand::randInt(20,50);
+    int numParticlesToSpawn = Rand::randInt(40,100);
     if( Rand::randFloat() < 0.02f )
     {
         //numParticlesToSpawn *= 5;

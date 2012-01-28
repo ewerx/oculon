@@ -17,6 +17,8 @@
 #include "cinder/Perlin.h"
 #include <list>
 
+class Scene;
+
 
 class ParticleController
 {
@@ -37,7 +39,7 @@ public:
     ParticleController();
     ~ParticleController();
     
-    void setup();
+    void setup(Scene* owner);
     void update(double dt);
     void draw();
     
@@ -46,7 +48,7 @@ public:
     
     int getParticleCount() const { return mParticles.size(); }
     
-    void toggleParticleDrawMode() { mDrawAsSpheres = !mDrawAsSpheres; }
+    void toggleParticleDrawMode() { mDrawAsBillboard = !mDrawAsBillboard; }
     
 private:
     void applyForces(ParticleController::ParticleList::iterator p1, double dt );
@@ -63,10 +65,12 @@ private:
     bool mEnabledForces[FORCE_COUNT];
     Perlin mPerlin;
     
-    bool mDrawAsSpheres;
+    bool mDrawAsBillboard;
     
     int mCounter;
     ci::gl::Texture mParticleTexture;
+    
+    Scene* mScene;
 };
 
 #endif // __PARTICLECONTROLLER_H__
