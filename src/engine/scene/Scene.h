@@ -15,6 +15,7 @@
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
 #include "cinder/app/KeyEvent.h"
+#include "cinder/app/MouseEvent.h"
 
 // fwd decl
 class OculonApp;
@@ -35,7 +36,11 @@ public:
     virtual void resize() {}
     virtual void update(double dt);
     virtual void draw() {}
-    virtual bool handleKeyDown(const ci::app::KeyEvent& keyEvent) { return false; }
+    
+    virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
+    virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { return; }
+	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { return; }
+	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { return; }
     
     OculonApp* getApp() { return mApp; }
     const Camera& getCamera();

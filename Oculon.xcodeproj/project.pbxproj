@@ -57,6 +57,8 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
+		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
 		7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */; };
 		7C948F4E14B3A1E7003A3DA8 /* jupitermap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */; };
 		7C948F4F14B3A1E7003A3DA8 /* marsmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */; };
@@ -179,6 +181,11 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8F207514D79B4400AC2D64 /* BinnedParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticle.h; sourceTree = "<group>"; };
+		7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinnedParticleSystem.cpp; sourceTree = "<group>"; };
+		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
+		7C8F207914D79C7500AC2D64 /* Binned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Binned.cpp; sourceTree = "<group>"; };
+		7C8F207A14D79C7500AC2D64 /* Binned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Binned.h; sourceTree = "<group>"; };
 		7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earthmap1k.jpg; sourceTree = "<group>"; };
 		7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupitermap.jpg; sourceTree = "<group>"; };
 		7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marsmap1k.jpg; sourceTree = "<group>"; };
@@ -355,6 +362,7 @@
 			isa = PBXGroup;
 			children = (
 				7C74555A148C259C009C0356 /* engine */,
+				7C8F207414D79B4400AC2D64 /* binned */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
 				7C9693401496FFC400C0E1E6 /* pulsar */,
@@ -526,6 +534,19 @@
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C8F207414D79B4400AC2D64 /* binned */ = {
+			isa = PBXGroup;
+			children = (
+				7C8F207914D79C7500AC2D64 /* Binned.cpp */,
+				7C8F207A14D79C7500AC2D64 /* Binned.h */,
+				7C8F207514D79B4400AC2D64 /* BinnedParticle.h */,
+				7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */,
+				7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */,
+			);
+			name = binned;
+			path = bps;
 			sourceTree = "<group>";
 		};
 		7C948F4314B3A1E7003A3DA8 /* orbiter */ = {
@@ -718,6 +739,8 @@
 				7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */,
 				7C52E12214CCFCA6008507D3 /* OscSender.cpp in Sources */,
 				7C52E12414CCFE99008507D3 /* OscServer.cpp in Sources */,
+				7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */,
+				7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -803,6 +826,7 @@
 		7C74554D148C04C6009C0356 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
@@ -820,6 +844,7 @@
 		7C74554E148C04C6009C0356 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";

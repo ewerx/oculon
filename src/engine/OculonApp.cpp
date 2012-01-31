@@ -24,6 +24,7 @@
 #include "Orbiter.h"
 #include "Magnetosphere.h"
 #include "Pulsar.h"
+#include "Binned.h"
 // test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
@@ -158,6 +159,7 @@ void OculonApp::setupScenes()
     int sceneId = 0;
     
     //TODO: serialization    
+    
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
     addScene( new Orbiter(), true );
@@ -170,6 +172,10 @@ void OculonApp::setupScenes()
     console() << ++sceneId << ": Magneto\n";
     addScene( new Magnetosphere() );
     
+    // Binned
+    console() << ++sceneId << ": Binned\n";
+    addScene( new Binned() );
+    
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
     addScene( new AudioTest() );
@@ -177,6 +183,7 @@ void OculonApp::setupScenes()
     // MovieTest
     console() << ++sceneId << ": MovieTest\n";
     addScene( new MovieTest() );
+
     
     if( mEnableMindWave )
     {
@@ -219,6 +226,17 @@ void OculonApp::mouseDown( MouseEvent event )
         // let the camera handle the interaction
         mMayaCam.mouseDown( event.getPos() );
     }
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->handleMouseDown(event);
+        }
+    }
 }
 
 void OculonApp::mouseDrag( MouseEvent event )
@@ -227,6 +245,31 @@ void OculonApp::mouseDrag( MouseEvent event )
     {
         // let the camera handle the interaction
         mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+    }
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->handleMouseDrag(event);
+        }
+    }
+}
+
+void OculonApp::mouseUp( MouseEvent event)
+{
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->handleMouseUp(event);
+        }
     }
 }
 
@@ -318,7 +361,6 @@ void OculonApp::keyDown( KeyEvent event )
 void OculonApp::update()
 {
     char buf[64];
-    Color infoPanelText(0.5f,0.5f,0.5f);
     snprintf(buf, 64, "%.2ffps", getAverageFps());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     snprintf(buf, 64, "%.1fs", getElapsedSeconds());

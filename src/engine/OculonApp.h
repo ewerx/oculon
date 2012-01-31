@@ -44,7 +44,7 @@ public: // cinder interface
     void mouseMove( MouseEvent event );
 	void mouseDrag( MouseEvent event );
     void mouseDown( MouseEvent event );	
-    void mouseUp( MouseEvent event ) {};
+    void mouseUp( MouseEvent event );
     void keyDown( KeyEvent event );
 
 	void draw();
