@@ -87,19 +87,27 @@ void InfoPanel::render( Vec2f aWindowDim )
     {
         glDisable( GL_LIGHTING );
         glEnable( GL_TEXTURE_2D );
-        glColor4f( 1, 1, 1, 1 );
+        gl::disableDepthRead();
+        gl::disableDepthWrite();
+        //glColor4f( 1, 1, 1, 1 );
         
         gl::pushMatrices();
         gl::setMatricesWindow( aWindowDim );
         
         float x = aWindowDim.x - mTexture.getWidth() - 20.0f;
         float y = /*aWindowDim.y - mTexture.getHeight() -*/ 20.0f;
+        
+        //const float pad = 4.0f;
+        //glColor4f( 0.1, 0.1, 0.1, mOpacity );
+        //gl::drawSolidRect( Rectf( x-pad, y-pad, x+mTexture.getWidth()+pad, y+mTexture.getHeight()+pad ) );
         glColor4f( 1, 1, 1, mOpacity );
         gl::draw( mTexture, Vec2f( x, y ) );
         
         gl::popMatrices();
         
         glDisable( GL_TEXTURE_2D );
+        gl::enableDepthRead();
+        gl::enableDepthWrite();
     }
 }
 
