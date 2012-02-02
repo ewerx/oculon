@@ -21,11 +21,11 @@ using namespace ci::app;
 using namespace bps;
 
 Binned::Binned()
-: mMode(MODE_RADIUS)
+: mMode(MODE_BOTH)
 , mTopBottom(false)
 , mForceScaleX(1.0f)
 , mForceScaleY(1.0f)
-, mRandomPlacement(false)
+, mRandomPlacement(true)
 {
 }
 
@@ -48,8 +48,9 @@ void Binned::setup()
     
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
-    mAudioForceScale = 200.0f;
-    mAudioRadiusScale = mApp->getWindowHeight() * 0.7f;
+    mMaxForce = 150.0f;
+    mMaxRadius = mApp->getWindowHeight() * 0.3f;
+    mAudioSensitivity = 1.0f;
 }
 
 void Binned::reset()
@@ -97,10 +98,11 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
     params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
     params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
-    params.addParam("Audio Min Force", &mMinForce, "");
-    params.addParam("Audio Min Radius", &mMinRadius, "");
-    params.addParam("Audio Force Scale", &mAudioForceScale, "");
-    params.addParam("Audio Radius Scale", &mAudioRadiusScale, "");
+    params.addParam("Min Force", &mMinForce, "");
+    params.addParam("Max Force", &mMaxForce, "");
+    params.addParam("Min Radius", &mMinRadius, "");
+    params.addParam("Max Radius", &mMaxRadius, "");
+    params.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
 }
 
 void Binned::update(double /*dt*/)
@@ -142,10 +144,12 @@ void Binned::draw()
 	glEnd();
 	// single global forces
 	mParticleSystem.addAttractionForce(getWindowWidth()/2, getWindowHeight()/2, getWindowWidth(), mCenterAttraction);
-	//if(mIsMousePressed)
-    //{
-	//	ff
-    //}
+	if(mIsMousePressed)
+    {
+        const float radius = mMaxRadius*0.5f;
+        const float force = mMaxForce*0.5f;
+        mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
+    }
     updateAudioResponse();
 	mParticleSystem.update();
 	glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
@@ -169,14 +173,15 @@ void Binned::updateAudioResponse()
     spacing *=2;
     int x1 = mApp->getWindowWidth() / 2;
     int x2 = x1;
-    int numBandsPerBody = 1;
+    //int numBandsPerBody = 1;
     
     if( fftBuffer )
     {
         for( int i = 0; i < bandCount; i += 2) 
         {
             float avgFft = fftBuffer[i] / bandCount;
-            avgFft /= (float)(numBandsPerBody);
+            //avgFft /= (float)(numBandsPerBody);
+            avgFft *= mAudioSensitivity;
             
             x1 += spacing;
             x2 -= spacing;
@@ -187,16 +192,16 @@ void Binned::updateAudioResponse()
             switch( mMode )
             {
                 case MODE_RADIUS:
-                    radius += mAudioRadiusScale * avgFft;
-                    force = mAudioForceScale / 2.0f;
+                    radius += mMaxRadius * avgFft;
+                    force = mMaxForce / 2.0f;
                     break;
                 case MODE_FORCE:
                     radius = mMinRadius * 5.0f;
-                    force += mAudioForceScale * avgFft;
+                    force += mMaxForce * avgFft;
                     break;
                 case MODE_BOTH:
-                    radius += mAudioRadiusScale * avgFft;
-                    force += mAudioForceScale * avgFft;
+                    radius += mMaxRadius * avgFft;
+                    force += mMaxForce * avgFft;
                     break;
                 default:
                     assert(false && "invalid mode");
@@ -265,7 +270,7 @@ bool Binned::handleKeyDown( const KeyEvent& event )
         {
             int mode = mMode;
             mode++;
-            if( mode > MODE_COUNT )
+            if( mode >= MODE_COUNT )
                 mode = 0;
             mMode = static_cast<eMode>(mode);
             break;

@@ -48,8 +48,6 @@ private:
 private:
     Vec2i mMousePos;
     
-    
-    
     float mTimeStep;
 	float mLineOpacity;
     float mPointOpacity;
@@ -67,10 +65,12 @@ private:
     
     float mMinForce;
     float mMinRadius;
-    float mAudioForceScale;
-    float mAudioRadiusScale;
+    float mMaxForce;
+    float mMaxRadius;
     
     bool mRandomPlacement;
+    
+    float mAudioSensitivity;
     
     enum eMode
     {
