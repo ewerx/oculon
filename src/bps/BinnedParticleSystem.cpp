@@ -164,10 +164,6 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
 					yd = curParticle.y - targetY;
 					length = xd * xd + yd * yd;
 					if(length > 0 && length < maxrsq) {
-						#ifdef DRAW_FORCES
-							glVertex2f(targetX, targetY);
-							glVertex2f(curParticle.x, curParticle.y);
-						#endif
 						#ifdef USE_INVSQRT
 							xhalf = 0.5f * length;
 							lengthi = *(int*) &length;
@@ -191,6 +187,12 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
 							curParticle.xf += xd * effect;
 							curParticle.yf += yd * effect;
 						#endif
+                        #ifdef DRAW_FORCES
+                            glColor4f(1.0f,xd,yd,0.12f);
+                            glVertex2f(targetX, targetY);
+                            //glColor3f(1.0f,curParticle.xf,curParticle.yf);
+                            glVertex2f(curParticle.x, curParticle.y);
+                        #endif
 					}
 //				}
 			}
@@ -204,11 +206,11 @@ void ParticleSystem::update() {
 		particles[i].updatePosition(timeStep);
 }
 
-void ParticleSystem::draw() {
+void ParticleSystem::draw(float opacity) {
 	int n = particles.size();
 	glBegin(GL_POINTS);
 	for(int i = 0; i < n; i++)
-		particles[i].draw();
+		particles[i].draw(opacity);
 	glEnd();
 }
 

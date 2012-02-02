@@ -42,7 +42,7 @@ public:
 	void addForce(float x, float y, float radius, float scaleX, float scaleY);
 	void update();
 
-	void draw();
+	void draw(float opacity);
 };
 
 inline float InvSqrt(float x){

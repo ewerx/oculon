@@ -70,6 +70,8 @@ private:
     float mAudioForceScale;
     float mAudioRadiusScale;
     
+    bool mRandomPlacement;
+    
     enum eMode
     {
         MODE_RADIUS,

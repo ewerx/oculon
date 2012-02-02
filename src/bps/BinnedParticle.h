@@ -64,7 +64,8 @@ public:
 		xf = xf - xv * damping;
         yf = yf - yv * damping;
 	}
-	void draw() {
+	void draw(float opacity) {
+        glColor4f(1.0f, 1.0f-xf, 1.0f-yf, opacity);
 		glVertex2f(x, y);
 	}
 };

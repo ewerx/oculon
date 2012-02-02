@@ -25,6 +25,7 @@ Binned::Binned()
 , mTopBottom(false)
 , mForceScaleX(1.0f)
 , mForceScaleY(1.0f)
+, mRandomPlacement(false)
 {
 }
 
@@ -46,7 +47,7 @@ void Binned::setup()
 	mCenterAttraction = 0.05;
     
     mMinForce = 0.0f;
-    mMinRadius = 10.0f;
+    mMinRadius = 0.0f;
     mAudioForceScale = 200.0f;
     mAudioRadiusScale = mApp->getWindowHeight() * 0.7f;
 }
@@ -88,9 +89,11 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addText( "binned", "label=`Binned`" );
     params.addParam("Mode", &mMode, "");
     params.addParam("Slow Motion", &mSlowMotion, "");
-    params.addParam("Point Opacity", &mPointOpacity, "step=0.1");
+    params.addParam("Random Placement", &mRandomPlacement, "");
+    params.addParam("Top/Bottom", &mTopBottom, "");
+    params.addParam("Point Opacity", &mPointOpacity, "step=0.01");
     params.addParam("Line Opacity", &mLineOpacity, "step=0.01");
-    params.addParam("Repulsion", &mParticleRepulsion, "step=0.01");
+    params.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
     params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
     params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
     params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
@@ -146,7 +149,7 @@ void Binned::draw()
     updateAudioResponse();
 	mParticleSystem.update();
 	glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw();
+	mParticleSystem.draw(mPointOpacity);
     
     gl::enableDepthRead();
     gl::enableAlphaBlending();
@@ -200,9 +203,14 @@ void Binned::updateAudioResponse()
                     break;
             }
             
+            if( mRandomPlacement )
+            {
+                x1 = Rand::randFloat(0,getWindowWidth());
+                x2 = Rand::randFloat(0,getWindowWidth());
+            }
             const float magX = force * mForceScaleX;
             const float magY = force * mForceScaleY;
-            const float centerY = getWindowHeight()/2;
+            const float centerY = mRandomPlacement ? Rand::randFloat(0,getWindowHeight()) :(getWindowHeight()/2.0f);
             
             if( mTopBottom )
             {
