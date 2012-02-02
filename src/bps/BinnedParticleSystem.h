@@ -35,11 +35,11 @@ public:
 
 	void setupForces();
 	void addRepulsionForce(const Particle& particle, float radius, float scale);
-	void addRepulsionForce(float x, float y, float radius, float scale);
+	void addRepulsionForce(float x, float y, float radius, float scaleX, float scaleY);
 	void addAttractionForce(const Particle& particle, float radius, float scale);
 	void addAttractionForce(float x, float y, float radius, float scale);
 	void addForce(const Particle& particle, float radius, float scale);
-	void addForce(float x, float y, float radius, float scale);
+	void addForce(float x, float y, float radius, float scaleX, float scaleY);
 	void update();
 
 	void draw();

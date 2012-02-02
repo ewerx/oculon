@@ -32,7 +32,7 @@ public:
     
     // inherited from Scene
     void setup();
-    //void setupParams(params::InterfaceGl& params);
+    void setupParams(params::InterfaceGl& params);
     void reset();
     void resize();
     void update(double dt);
@@ -48,6 +48,8 @@ private:
 private:
     Vec2i mMousePos;
     
+    
+    
     float mTimeStep;
 	float mLineOpacity;
     float mPointOpacity;
@@ -59,6 +61,26 @@ private:
     bps::ParticleSystem mParticleSystem;
 	bool mIsMousePressed;
     bool mSlowMotion;
+    
+    float mForceScaleX;
+    float mForceScaleY;
+    
+    float mMinForce;
+    float mMinRadius;
+    float mAudioForceScale;
+    float mAudioRadiusScale;
+    
+    enum eMode
+    {
+        MODE_RADIUS,
+        MODE_FORCE,
+        MODE_BOTH,
+        
+        MODE_COUNT
+    };
+    int mMode;
+    
+    bool mTopBottom;
 };
 
 #endif // __MAGNETOSPHERE_H__

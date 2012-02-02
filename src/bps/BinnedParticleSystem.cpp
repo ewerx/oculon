@@ -104,11 +104,11 @@ void ParticleSystem::setupForces() {
 }
 
 void ParticleSystem::addRepulsionForce(const bps::Particle& particle, float radius, float scale) {
-	addRepulsionForce(particle.x, particle.y, radius, scale);
+	addRepulsionForce(particle.x, particle.y, radius, scale, scale);
 }
 
-void ParticleSystem::addRepulsionForce(float x, float y, float radius, float scale) {
-	addForce(x, y, radius, scale);
+void ParticleSystem::addRepulsionForce(float x, float y, float radius, float scaleX, float scaleY) {
+	addForce(x, y, radius, scaleX, scaleY);
 }
 
 void ParticleSystem::addAttractionForce(const bps::Particle& particle, float radius, float scale) {
@@ -116,14 +116,14 @@ void ParticleSystem::addAttractionForce(const bps::Particle& particle, float rad
 }
 
 void ParticleSystem::addAttractionForce(float x, float y, float radius, float scale) {
-	addForce(x, y, radius, -scale);
+	addForce(x, y, radius, -scale, -scale);
 }
 
 void ParticleSystem::addForce(const bps::Particle& particle, float radius, float scale) {
-	addForce(particle.x, particle.y, radius, -scale);
+	addForce(particle.x, particle.y, radius, -scale, -scale);
 }
 
-void ParticleSystem::addForce(float targetX, float targetY, float radius, float scale) {
+void ParticleSystem::addForce(float targetX, float targetY, float radius, float scaleX, float scaleY) {
 	float minX = targetX - radius;
 	float minY = targetY - radius;
 	float maxX = targetX + radius;
@@ -179,9 +179,8 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
 							length *= radius;
 							length = 1 / length;
 							length = (1 - length);
-							length *= scale;
-							xd *= length;
-							yd *= length;
+							xd *= (length * scaleX);
+							yd *= (length * scaleY);
 							curParticle.xf += xd;
 							curParticle.yf += yd;
 						#else

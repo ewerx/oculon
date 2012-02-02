@@ -162,7 +162,7 @@ void OculonApp::setupScenes()
     
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter(), true );
+    addScene( new Orbiter() );
     
     // Pulsar
     console() << ++sceneId << ": Pulsar\n";
@@ -174,7 +174,7 @@ void OculonApp::setupScenes()
     
     // Binned
     console() << ++sceneId << ": Binned\n";
-    addScene( new Binned() );
+    addScene( new Binned(), true );
     
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";

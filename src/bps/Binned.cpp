@@ -21,6 +21,10 @@ using namespace ci::app;
 using namespace bps;
 
 Binned::Binned()
+: mMode(MODE_RADIUS)
+, mTopBottom(false)
+, mForceScaleX(1.0f)
+, mForceScaleY(1.0f)
 {
 }
 
@@ -31,6 +35,20 @@ Binned::~Binned()
 void Binned::setup()
 {
 	reset();
+    
+    mTimeStep = 1;
+	mLineOpacity = 0.12f;
+	mPointOpacity = 0.5f;
+	mSlowMotion = false;
+	mParticleNeighborhood = 14;
+    
+	mParticleRepulsion = 1.5;
+	mCenterAttraction = 0.05;
+    
+    mMinForce = 0.0f;
+    mMinRadius = 10.0f;
+    mAudioForceScale = 200.0f;
+    mAudioRadiusScale = mApp->getWindowHeight() * 0.7f;
 }
 
 void Binned::reset()
@@ -41,7 +59,7 @@ void Binned::reset()
 	// because the screen is not subdivided enough. if
 	// it's too low, the bins take up so much memory as to
 	// become inefficient.
-	int binPower = 4;
+	int binPower = 2;
 	
     // this clears the particle list
 	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower);
@@ -58,19 +76,28 @@ void Binned::reset()
 		Particle particle(x, y, xv, yv);
 		mParticleSystem.add(particle);
 	}
-	
-	mTimeStep = 1;
-	mLineOpacity = 0.12f;
-	mPointOpacity = 0.5f;
-	mSlowMotion = false;
-	mParticleNeighborhood = 14;
-	mParticleRepulsion = 1.5;
-	mCenterAttraction = .05;
 }
 
 void Binned::resize()
 {
     reset();
+}
+
+void Binned::setupParams(params::InterfaceGl& params)
+{
+    params.addText( "binned", "label=`Binned`" );
+    params.addParam("Mode", &mMode, "");
+    params.addParam("Slow Motion", &mSlowMotion, "");
+    params.addParam("Point Opacity", &mPointOpacity, "step=0.1");
+    params.addParam("Line Opacity", &mLineOpacity, "step=0.01");
+    params.addParam("Repulsion", &mParticleRepulsion, "step=0.01");
+    params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
+    params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
+    params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
+    params.addParam("Audio Min Force", &mMinForce, "");
+    params.addParam("Audio Min Radius", &mMinRadius, "");
+    params.addParam("Audio Force Scale", &mAudioForceScale, "");
+    params.addParam("Audio Radius Scale", &mAudioRadiusScale, "");
 }
 
 void Binned::update(double /*dt*/)
@@ -81,6 +108,9 @@ void Binned::update(double /*dt*/)
     char buf[256];
     snprintf(buf, 256, "particles: %d", mKParticles * 1024);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
+    
+    snprintf(buf, 256, "mode: %d", mMode);
+    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
 }
 
 void Binned::draw()
@@ -109,10 +139,11 @@ void Binned::draw()
 	glEnd();
 	// single global forces
 	mParticleSystem.addAttractionForce(getWindowWidth()/2, getWindowHeight()/2, getWindowWidth(), mCenterAttraction);
-	if(mIsMousePressed)
-    {
-		mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, 100, 10);
-    }
+	//if(mIsMousePressed)
+    //{
+	//	ff
+    //}
+    updateAudioResponse();
 	mParticleSystem.update();
 	glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
 	mParticleSystem.draw();
@@ -122,25 +153,124 @@ void Binned::draw()
     gl::popMatrices();
 }
 
+void Binned::updateAudioResponse()
+{
+    // audio response
+    AudioInput& audioInput = mApp->getAudioInput();
+    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
+    
+    unsigned int bandCount = audioInput.getFftBandCount();
+    float* fftBuffer = fftDataRef.get();
+    
+    int spacing = mApp->getWindowWidth() / bandCount;
+    spacing *=2;
+    int x1 = mApp->getWindowWidth() / 2;
+    int x2 = x1;
+    int numBandsPerBody = 1;
+    
+    if( fftBuffer )
+    {
+        for( int i = 0; i < bandCount; i += 2) 
+        {
+            float avgFft = fftBuffer[i] / bandCount;
+            avgFft /= (float)(numBandsPerBody);
+            
+            x1 += spacing;
+            x2 -= spacing;
+            
+            float radius = mMinRadius;
+            float force = mMinForce;
+            
+            switch( mMode )
+            {
+                case MODE_RADIUS:
+                    radius += mAudioRadiusScale * avgFft;
+                    force = mAudioForceScale / 2.0f;
+                    break;
+                case MODE_FORCE:
+                    radius = mMinRadius * 5.0f;
+                    force += mAudioForceScale * avgFft;
+                    break;
+                case MODE_BOTH:
+                    radius += mAudioRadiusScale * avgFft;
+                    force += mAudioForceScale * avgFft;
+                    break;
+                default:
+                    assert(false && "invalid mode");
+                    break;
+            }
+            
+            const float magX = force * mForceScaleX;
+            const float magY = force * mForceScaleY;
+            const float centerY = getWindowHeight()/2;
+            
+            if( mTopBottom )
+            {
+                mParticleSystem.addRepulsionForce(x1, 0, radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, 0, radius, magX, magY);
+            
+                mParticleSystem.addRepulsionForce(x1, getWindowHeight(), radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, getWindowHeight(), radius, magX, magY);
+            }
+            else
+            {
+                mParticleSystem.addRepulsionForce(x1, centerY, radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, centerY, radius, magX, magY);
+            }
+            
+            bool debug = false;
+            if( debug )
+            {
+                const float maxRadius = 50.0f;
+                
+                glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+                gl::drawSolidCircle(Vec2f(x1, centerY), maxRadius * avgFft);
+                gl::drawSolidCircle(Vec2f(x2, centerY), maxRadius * avgFft);
+            }
+        }
+    }
+}
 
 bool Binned::handleKeyDown( const KeyEvent& event )
 {
-    bool handled = false;
+    bool handled = true;
     
-	if( event.getChar() == 's' ) 
+	switch( event.getChar() )
     {
-		mSlowMotion = !mSlowMotion;
-		if(mSlowMotion)
+        case 's':
+            mSlowMotion = !mSlowMotion;
+            if(mSlowMotion)
+            {
+                mTimeStep = .05;
+            }
+            else
+            {
+                mTimeStep = 1;
+            }
+            break;
+            
+        case 'T':
+            mTopBottom = !mTopBottom;
+            break;
+            
+        case 'm':
         {
-			mTimeStep = .05;
+            int mode = mMode;
+            mode++;
+            if( mode > MODE_COUNT )
+                mode = 0;
+            mMode = static_cast<eMode>(mode);
+            break;
         }
-		else
-        {
-			mTimeStep = 1;
-        }
-        
-        handled = true;
-	}
+            
+        case ' ':
+            reset();
+            break;
+            
+        default:
+            handled = false;
+            break;
+    }
     
     return handled;
 }
