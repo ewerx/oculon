@@ -13,6 +13,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include <vector>
+#include <queue>
 
 #include "Scene.h"
 #include "MidiMap.h"
@@ -42,8 +43,12 @@ public:
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
     
+    // new
+    void addRepulsionForce( const Vec2f& pos, float radius, float force );
+    
 private:
     void updateAudioResponse();
+    void applyQueuedForces();
     
 private:
     Vec2i mMousePos;
@@ -83,6 +88,15 @@ private:
     int mMode;
     
     bool mTopBottom;
+    
+    struct tRepulsionForce
+    {
+        Vec2f mPos;
+        float mRadius;
+        float mForce;
+    };
+    
+    std::queue<tRepulsionForce> mQueuedForces;
 };
 
 #endif // __MAGNETOSPHERE_H__

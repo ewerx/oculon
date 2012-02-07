@@ -17,6 +17,8 @@
 #include "OculonApp.h"
 #include "Orbiter.h"
 
+#include "Binned.h" //TODO: hack
+
 using namespace ci;
 using namespace std;
 
@@ -159,6 +161,19 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             glTranslatef(textCoords.x, textCoords.y, 0.0f);
 
             mLabel.draw();
+            
+            const bool binned = true;
+            if( binned )
+            {
+                //OculonApp* oculon = static_cast<OculonApp*>(App::get());
+                //TODO: hack, use a message
+                Binned* binnedScene = static_cast<Binned*>(app->getScene(3));
+                
+                Vec3d screenCoords = transform * mPosition;
+                //Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+                float force = 200.f;
+                binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.3f, force*mRadiusMultiplier);
+            }
 
             gl::popMatrices();
         }

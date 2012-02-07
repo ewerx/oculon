@@ -66,6 +66,9 @@ public: // new
     
     inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
     
+    //TODO: hack
+    Scene* getScene(const int index)            { return mScenes[index]; }
+    
 protected: // new
     
     void setupScenes();

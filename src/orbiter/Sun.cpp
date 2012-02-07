@@ -13,6 +13,8 @@
 #include "OculonApp.h"
 #include "cinder/gl/gl.h"
 
+#include "Binned.h"
+
 using namespace ci;
 
 GLfloat Sun::mat_ambient[]		= { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -104,6 +106,19 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             glColor4f(1.0f,0.0f,0.0f,1.0f);
             gl::drawSphere( Vec3d::zero(), sunRadius, 16 );
             gl::disableWireframe();
+        }
+        
+        const bool binned = true;
+        if( binned )
+        {
+            OculonApp* app = static_cast<OculonApp*>(App::get());
+            //TODO: hack, use a message
+            Binned* binnedScene = static_cast<Binned*>(app->getScene(3));
+            
+            Vec3d screenCoords = transform * mPosition;
+            Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+            float force = 500.f;
+            binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.7f, force*mRadiusMultiplier);
         }
         
         glPopMatrix();

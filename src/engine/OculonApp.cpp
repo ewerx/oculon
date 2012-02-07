@@ -275,6 +275,8 @@ void OculonApp::mouseUp( MouseEvent event)
 
 void OculonApp::keyDown( KeyEvent event )
 {
+    bool passToScenes = false;
+    
     switch( event.getCode() )
     {            
         // toggle pause-all
@@ -335,26 +337,42 @@ void OculonApp::keyDown( KeyEvent event )
                 startVideoCapture(useDefaultSettings);
             }
             break;
+        case KeyEvent::KEY_c:
+            if( event.isShiftDown() )
+            {
+                const Camera& cam = this->getCamera();
+                
+                console() << (mUseMayaCam ? "Camera (maya): " : "Camera:");
+                console() << " Eye: " << cam.getEyePoint() << " LookAt: " << cam.getViewDirection() << " Up: " << cam.getWorldUp() << std::endl;
+            }
+            else
+            {
+                passToScenes = true;
+            }
+            break;
         case KeyEvent::KEY_ESCAPE:
             quit();
             break;
         default:
+            passToScenes = true;
+            break;
+    }
+    
+    if( passToScenes )
+    {
+        for (SceneList::iterator sceneIt = mScenes.begin(); 
+             sceneIt != mScenes.end();
+             ++sceneIt )
         {
-            for (SceneList::iterator sceneIt = mScenes.begin(); 
-                 sceneIt != mScenes.end();
-                 ++sceneIt )
+            Scene* scene = (*sceneIt);
+            if( scene && scene->isActive() )
             {
-                Scene* scene = (*sceneIt);
-                if( scene && scene->isActive() )
+                if( scene->handleKeyDown(event) )
                 {
-                    if( scene->handleKeyDown(event) )
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
         }
-            break;
     }
 }
 

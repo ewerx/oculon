@@ -66,7 +66,7 @@ void Binned::reset()
     // this clears the particle list
 	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower);
 	
-	mKParticles = 12;
+	mKParticles = 15;
 	float padding = 0;
 	float maxVelocity = .5;
 	for(int i = 0; i < mKParticles * 1024; i++) 
@@ -78,6 +78,9 @@ void Binned::reset()
 		Particle particle(x, y, xv, yv);
 		mParticleSystem.add(particle);
 	}
+    
+    while( !mQueuedForces.empty() )
+        mQueuedForces.pop();
 }
 
 void Binned::resize()
@@ -150,7 +153,17 @@ void Binned::draw()
         const float force = mMaxForce*0.5f;
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
-    updateAudioResponse();
+    
+    const bool orbiter_mode = true; 
+    if( orbiter_mode )
+    {
+        applyQueuedForces();
+    }
+    else
+    {
+        updateAudioResponse();
+    }
+    
 	mParticleSystem.update();
 	glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
 	mParticleSystem.draw(mPointOpacity);
@@ -304,3 +317,21 @@ void Binned::handleMouseDrag( const MouseEvent& event )
 	mMousePos = Vec2i(event.getPos());
 }
 
+void Binned::addRepulsionForce( const Vec2f& pos, float radius, float force )
+{
+    tRepulsionForce repulsion;
+    repulsion.mPos = pos;
+    repulsion.mRadius = radius;
+    repulsion.mForce = force;
+    mQueuedForces.push( repulsion );
+}
+
+void Binned::applyQueuedForces()
+{
+    while( ! mQueuedForces.empty() )
+    {
+        tRepulsionForce& repulsion = mQueuedForces.front();
+        mParticleSystem.addRepulsionForce(repulsion.mPos.x, repulsion.mPos.y, repulsion.mRadius, repulsion.mForce*mForceScaleX, repulsion.mForce*mForceScaleY);
+        mQueuedForces.pop();
+    }
+}

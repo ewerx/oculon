@@ -375,6 +375,13 @@ void Orbiter::draw()
                        mDrawScale * getWindowHeight() / 2.0f,
                        mDrawScale * getWindowHeight() / 2.0f));
     
+    const bool binnedCam = true;
+    
+    if( binnedCam && mIsFollowCameraEnabled )
+    {
+        mApp->setCamera( Vec3d(0,4000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
+    }
+    else 
     if( mIsFollowCameraEnabled )
     {
         Body* cameraLookingAt = mSun;
