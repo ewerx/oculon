@@ -236,9 +236,6 @@ void Orbiter::reset()
      mBodies[i].mVelocity = initVelDir * magnitude;
      }
      */
-    
-    AudioInput& audioInput = mApp->getAudioInput();
-    audioInput.setFftBandCount(512/*mBodies.size()*/);
 }
 
 void Orbiter::removeBodies()
@@ -251,6 +248,7 @@ void Orbiter::removeBodies()
     }
     mBodies.clear();
     mSun = NULL;
+    mFollowTarget = NULL;
 }
 
 void Orbiter::update(double dt)
