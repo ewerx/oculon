@@ -49,7 +49,7 @@ void Binned::setup()
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
     mMaxForce = 150.0f;
-    mMaxRadius = mApp->getWindowHeight() * 0.3f;
+    mMaxRadius = mApp->getWindowHeight() * 0.2f;
     mAudioSensitivity = 1.0f;
 }
 
@@ -66,7 +66,7 @@ void Binned::reset()
     // this clears the particle list
 	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower);
 	
-	mKParticles = 15;
+	mKParticles = 55;
 	float padding = 0;
 	float maxVelocity = .5;
 	for(int i = 0; i < mKParticles * 1024; i++) 
@@ -304,7 +304,7 @@ bool Binned::handleKeyDown( const KeyEvent& event )
 void Binned::handleMouseDown( const MouseEvent& event )
 {
 	mIsMousePressed = true;
-	mMousePos = Vec2i(event.getPos());
+	mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);//Vec2i(event.getPos());
 }
 
 void Binned::handleMouseUp( const MouseEvent& event )
@@ -314,7 +314,8 @@ void Binned::handleMouseUp( const MouseEvent& event )
 
 void Binned::handleMouseDrag( const MouseEvent& event )
 {
-	mMousePos = Vec2i(event.getPos());
+	//mMousePos = Vec2i(event.getPos());
+    mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
 }
 
 void Binned::addRepulsionForce( const Vec2f& pos, float radius, float force )

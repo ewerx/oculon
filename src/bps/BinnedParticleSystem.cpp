@@ -188,7 +188,7 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
 							curParticle.yf += yd * effect;
 						#endif
                         #ifdef DRAW_FORCES
-                            glColor4f(1.0f,xd,yd,0.12f);
+                            //glColor4f(1.0f,xd,yd,0.12f);
                             glVertex2f(targetX, targetY);
                             //glColor3f(1.0f,curParticle.xf,curParticle.yf);
                             glVertex2f(curParticle.x, curParticle.y);
