@@ -13,12 +13,15 @@
 #include "cinder/params/Params.h"
 #include "cinder/Filesystem.h"
 #include "cinder/Utilities.h"
+#include "cinder/ImageIo.h"
 #include <iostream>
 #include <vector>
 #include <boost/format.hpp>
+
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "InfoPanel.h"
+#include "Utils.h"
 
 // scenes
 #include "Orbiter.h"
@@ -51,7 +54,10 @@ void OculonApp::setup()
     mUseMayaCam = true;
     mEnableMindWave = false;
     mIsCapturingVideo = false;
+    mIsCapturingFrames = false;
+    mFrameCaptureCount = 0;
     mEnableOscServer = true;
+    mSaveNextFrame = false;
     
     // render
     gl::enableDepthWrite();
@@ -327,14 +333,21 @@ void OculonApp::keyDown( KeyEvent event )
             
         // video capture
         case KeyEvent::KEY_r:
-            if( mIsCapturingVideo )
+            if( event.isShiftDown() )
             {
-                stopVideoCapture();
+                enableFrameCapture( !mIsCapturingFrames );
             }
             else
             {
-                bool useDefaultSettings = event.isShiftDown() ? false : true;
-                startVideoCapture(useDefaultSettings);
+                if( mIsCapturingVideo )
+                {
+                    stopVideoCapture();
+                }
+                else
+                {
+                    bool useDefaultSettings = event.isShiftDown() ? false : true;
+                    startVideoCapture(useDefaultSettings);
+                }
             }
             break;
         case KeyEvent::KEY_c:
@@ -344,6 +357,16 @@ void OculonApp::keyDown( KeyEvent event )
                 
                 console() << (mUseMayaCam ? "Camera (maya): " : "Camera:");
                 console() << " Eye: " << cam.getEyePoint() << " LookAt: " << cam.getViewDirection() << " Up: " << cam.getWorldUp() << std::endl;
+            }
+            else
+            {
+                passToScenes = true;
+            }
+            break;
+        case KeyEvent::KEY_s:
+            if( event.isShiftDown() )
+            {
+                mSaveNextFrame = true;
             }
             else
             {
@@ -378,14 +401,21 @@ void OculonApp::keyDown( KeyEvent event )
 
 void OculonApp::update()
 {
-    char buf[64];
-    snprintf(buf, 64, "%.2ffps", getAverageFps());
+    char buf[256];
+    snprintf(buf, 256, "%.2ffps", getAverageFps());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
-    snprintf(buf, 64, "%.1fs", getElapsedSeconds());
+    snprintf(buf, 256, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    
     if( mIsCapturingVideo )
     {
         mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
+    }
+    
+    if( mIsCapturingFrames )
+    {
+        snprintf(buf, 64, "CAPTURE (%d)", mFrameCaptureCount);
+        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
     
     mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
@@ -459,6 +489,21 @@ void OculonApp::draw()
 		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
     }
     
+    // capture frames
+    if( mIsCapturingFrames )
+    {
+        ++mFrameCaptureCount;
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+    }
+    
+    // screenshot
+    if( mSaveNextFrame )
+    {
+        mSaveNextFrame = false;
+        fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
+		writeImage( p, copyWindowSurface() );
+	}
+    
     // debug
     drawInfoPanel();
     if( !mIsPresentationMode )
@@ -500,43 +545,26 @@ void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up 
 
 void OculonApp::startVideoCapture(bool useDefaultPath)
 {
-    fs::path outputPath;
+    fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
     qtime::MovieWriter::Format mwFormat;
     bool ready = false;
     
     // spawn file dialog
     // outputPath = getSaveFilePath();
     
-    format filenameFormat("~/Desktop/oculon%03d.mov");
-    string pathString;
-    int counter = 0;
-    
-    while( !ready && counter < 999 )
+    if( useDefaultPath )
     {
-        pathString = str( filenameFormat % counter );
-        outputPath = expandPath( fs::path(pathString) );
-        if( ! fs::exists(outputPath) )
-        {
-            ready = true;
-            break;
-        }
-        ++counter;
+        // H.264, 30fps, high detail
+        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
+        mwFormat.setTimeScale(3000);
+        mwFormat.setDefaultDuration(1.0f/15.0f);
+        mwFormat.setQuality(0.99f);
+        ready = true;
     }
-    
-    if( ready )
+    else
     {
-        if( useDefaultPath )
-        {
-            // H.264, 30fps, high detail
-            mwFormat.setCodec(1635148593); // get this value from the output of the dialog
-            mwFormat.setTimeScale(3000);
-            mwFormat.setDefaultDuration(1.0f/15.0f);
-            mwFormat.setQuality(0.99f);
-        }
-        else
-        {
-            ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
-        }
+        // user prompt
+        ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
     }
     
     if( ready )
@@ -552,6 +580,31 @@ void OculonApp::stopVideoCapture()
     console() << "[main] stop video capture\n";
     mMovieWriter.finish();
     mIsCapturingVideo = false;
+}
+
+void OculonApp::enableFrameCapture( bool enable )
+{
+    mIsCapturingFrames = enable;
+    
+    if( mIsCapturingFrames )
+    {
+        mFrameCaptureCount = 0;
+        fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_capture");
+        mFrameCapturePath = outputPath.string();
+        if( fs::create_directory(outputPath) )
+        {
+            console() << "[main] frame capture started. location: " << mFrameCapturePath << std::endl;
+        }
+        else
+        {
+            mIsCapturingFrames = false;
+            console() << "[main] ERROR: frame capture failed to start. location: " << mFrameCapturePath << std::endl;
+        }
+    }
+    else
+    {
+        console() << "[main] frame capture stopped" << std::endl;
+    }
 }
 
 CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_8) )

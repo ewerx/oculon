@@ -78,6 +78,7 @@ protected: // new
     
     void startVideoCapture( bool useDefaultPath =true );
     void stopVideoCapture();
+    void enableFrameCapture( bool enable );
     
 private: // members
     // input
@@ -108,6 +109,12 @@ private: // members
     
     bool                    mIsCapturingVideo;
     qtime::MovieWriter      mMovieWriter;
+    
+    bool                    mIsCapturingFrames;
+    string                  mFrameCapturePath;
+    int                     mFrameCaptureCount;
+    
+    bool                    mSaveNextFrame;
 };
 
 #endif
