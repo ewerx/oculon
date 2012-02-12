@@ -73,6 +73,11 @@ private:
     float mMaxForce;
     float mMaxRadius;
     
+    float mDamping;
+    float mWallDamping;
+    
+    Colorf mPrimaryColor;
+    
     bool mRandomPlacement;
     
     float mAudioSensitivity;

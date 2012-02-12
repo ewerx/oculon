@@ -35,7 +35,7 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-	reset();
+    mKParticles = 16;
     
     mTimeStep = 1;
 	mLineOpacity = 0.12f;
@@ -46,11 +46,16 @@ void Binned::setup()
 	mParticleRepulsion = 1.5;
 	mCenterAttraction = 0.05;
     
+    mDamping = 0.01f;
+    mWallDamping = 0.3f;
+    
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
     mMaxForce = 150.0f;
     mMaxRadius = mApp->getWindowHeight() * 0.3f;
     mAudioSensitivity = 1.0f;
+    
+    reset();
 }
 
 void Binned::reset()
@@ -66,7 +71,6 @@ void Binned::reset()
     // this clears the particle list
 	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower);
 	
-	mKParticles = 15;
 	float padding = 0;
 	float maxVelocity = .5;
 	for(int i = 0; i < mKParticles * 1024; i++) 
@@ -93,11 +97,14 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addText( "binned", "label=`Binned`" );
     params.addParam("Mode", &mMode, "");
     params.addParam("Slow Motion", &mSlowMotion, "");
+    params.addParam("Time Step", &mTimeStep, "step=0.01 min=0.01 max=1.0");
     params.addParam("Random Placement", &mRandomPlacement, "");
     params.addParam("Top/Bottom", &mTopBottom, "");
     params.addParam("Point Opacity", &mPointOpacity, "step=0.01");
     params.addParam("Line Opacity", &mLineOpacity, "step=0.01");
     params.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
+    params.addParam("Damping Force", &mDamping, "step=0.01");
+    params.addParam("Wall Damping", &mWallDamping, "step=0.01");
     params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
     params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
     params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
@@ -106,6 +113,7 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Min Radius", &mMinRadius, "");
     params.addParam("Max Radius", &mMaxRadius, "");
     params.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
+    params.addParam("K Particles", &mKParticles, "min=1 max=100");
 }
 
 void Binned::update(double /*dt*/)
@@ -141,8 +149,8 @@ void Binned::draw()
 		// global force on other particles
 		mParticleSystem.addRepulsionForce(cur, mParticleNeighborhood, mParticleRepulsion);
 		// forces on this particle
-		cur.bounceOffWalls(0, 0, getWindowWidth(), getWindowHeight());
-		cur.addDampingForce();
+		cur.bounceOffWalls(0, 0, getWindowWidth(), getWindowHeight(), mWallDamping);
+		cur.addDampingForce(mDamping);
 	}
 	glEnd();
 	// single global forces
@@ -154,7 +162,7 @@ void Binned::draw()
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
     
-    const bool orbiter_mode = true; 
+    const bool orbiter_mode = false; 
     if( orbiter_mode )
     {
         applyQueuedForces();
