@@ -38,8 +38,8 @@ void Binned::setup()
     mKParticles = 16;
     
     mTimeStep = 1;
-	mLineOpacity = 0.12f;
-	mPointOpacity = 0.5f;
+	//mLineOpacity = 0.12f;
+	//mPointOpacity = 0.5f;
 	mSlowMotion = false;
 	mParticleNeighborhood = 14;
     
@@ -54,6 +54,18 @@ void Binned::setup()
     mMaxForce = 150.0f;
     mMaxRadius = mApp->getWindowHeight() * 0.3f;
     mAudioSensitivity = 1.0f;
+    
+    mPointColor.r = 1.0f;
+    mPointColor.g = 1.0f;
+    mPointColor.b = 1.0f;
+    mPointColor.a = 0.5f;
+    
+    mForceColor.r = 1.0f;
+    mForceColor.g = 0.0f;
+    mForceColor.b = 0.0f;
+    mForceColor.a = 0.12f;
+    
+    mParticleSystem.setForceColor( &mForceColor );
     
     reset();
 }
@@ -100,8 +112,6 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Time Step", &mTimeStep, "step=0.01 min=0.01 max=1.0");
     params.addParam("Random Placement", &mRandomPlacement, "");
     params.addParam("Top/Bottom", &mTopBottom, "");
-    params.addParam("Point Opacity", &mPointOpacity, "step=0.01");
-    params.addParam("Line Opacity", &mLineOpacity, "step=0.01");
     params.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
     params.addParam("Damping Force", &mDamping, "step=0.01");
     params.addParam("Wall Damping", &mWallDamping, "step=0.01");
@@ -114,6 +124,8 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Max Radius", &mMaxRadius, "");
     params.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
     params.addParam("K Particles", &mKParticles, "min=1 max=100");
+    params.addParam("Point Color", &mPointColor, "");
+    params.addParam("Force Color", &mForceColor, "");
 }
 
 void Binned::update(double /*dt*/)
@@ -138,7 +150,7 @@ void Binned::draw()
     //gl::disableDepthWrite();
     glDisable(GL_LIGHTING);
 	gl::enableAdditiveBlending();
-	glColor4f(1.0f, 1.0f, 1.0f, mLineOpacity);
+	//glColor4f(1.0f, 1.0f, 1.0f, mLineOpacity);
 	
 	mParticleSystem.setupForces();
 	// apply per-particle forces
@@ -173,8 +185,8 @@ void Binned::draw()
     }
     
 	mParticleSystem.update();
-	glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw(mPointOpacity);
+	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
+	mParticleSystem.draw( mPointColor );
     
     gl::enableDepthRead();
     gl::enableAlphaBlending();

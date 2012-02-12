@@ -54,8 +54,6 @@ private:
     Vec2i mMousePos;
     
     float mTimeStep;
-	float mLineOpacity;
-    float mPointOpacity;
 	float mParticleNeighborhood;
     float mParticleRepulsion;
 	float mCenterAttraction;
@@ -76,7 +74,8 @@ private:
     float mDamping;
     float mWallDamping;
     
-    Colorf mPrimaryColor;
+    ColorAf mPointColor;
+    ColorAf mForceColor;
     
     bool mRandomPlacement;
     
