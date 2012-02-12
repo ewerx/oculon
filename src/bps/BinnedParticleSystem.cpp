@@ -188,7 +188,17 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
 							curParticle.yf += yd * effect;
 						#endif
                         #ifdef DRAW_FORCES
-                            //glColor4f(1.0f,xd,yd,0.12f);
+                            if( mForceColor )
+                            {
+                                ci::ColorAf color;
+                                const float mag = (xd+yd)/2.0f;
+                                color = (*mForceColor) + ci::ColorAf(mag,mag,mag,0.0f);
+                                glColor4f(color.r,color.g,color.b,color.a);
+                            }
+                            else
+                            {
+                                glColor4f(1.0f,xd,yd,0.12f);
+                            }
                             glVertex2f(targetX, targetY);
                             //glColor3f(1.0f,curParticle.xf,curParticle.yf);
                             glVertex2f(curParticle.x, curParticle.y);
@@ -200,17 +210,19 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
 	}
 }
 
-void ParticleSystem::update() {
+void ParticleSystem::update() 
+{
 	int n = particles.size();
 	for(int i = 0; i < n; i++)
 		particles[i].updatePosition(timeStep);
 }
 
-void ParticleSystem::draw(float opacity) {
+void ParticleSystem::draw(const ci::ColorAf& color) 
+{
 	int n = particles.size();
 	glBegin(GL_POINTS);
 	for(int i = 0; i < n; i++)
-		particles[i].draw(opacity);
+		particles[i].draw(color);
 	glEnd();
 }
 

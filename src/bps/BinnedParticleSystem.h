@@ -19,6 +19,7 @@ protected:
 	vector<Particle> particles;
 	vector< vector<Particle*> > bins;
 	int width, height, k, xBins, yBins, binSize;
+    const ci::ColorAf* mForceColor;
 
 public:
 	ParticleSystem();
@@ -42,7 +43,9 @@ public:
 	void addForce(float x, float y, float radius, float scaleX, float scaleY);
 	void update();
 
-	void draw(float opacity);
+	void draw(const ci::ColorAf& color);
+    
+    void setForceColor(const ci::ColorAf* color) { mForceColor = color; }
 };
 
 inline float InvSqrt(float x){

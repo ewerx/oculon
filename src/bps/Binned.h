@@ -54,8 +54,6 @@ private:
     Vec2i mMousePos;
     
     float mTimeStep;
-	float mLineOpacity;
-    float mPointOpacity;
 	float mParticleNeighborhood;
     float mParticleRepulsion;
 	float mCenterAttraction;
@@ -72,6 +70,12 @@ private:
     float mMinRadius;
     float mMaxForce;
     float mMaxRadius;
+    
+    float mDamping;
+    float mWallDamping;
+    
+    ColorAf mPointColor;
+    ColorAf mForceColor;
     
     bool mRandomPlacement;
     
