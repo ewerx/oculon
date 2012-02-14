@@ -40,7 +40,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1024, 768 );
+	settings->setWindowSize( 1280, 960 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -75,7 +75,7 @@ void OculonApp::setup()
     mMayaCam.setCurrentCam( mCam );
     
     // params
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, 150 ) );
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()/2 ) );
     //mParams.setOptions("","position='10 600'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
@@ -168,15 +168,15 @@ void OculonApp::setupScenes()
     
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter() );
+    //addScene( new Orbiter() );
     
     // Pulsar
     console() << ++sceneId << ": Pulsar\n";
-    addScene( new Pulsar() );
+    //addScene( new Pulsar() );
     
     // Magnetosphere
     console() << ++sceneId << ": Magneto\n";
-    addScene( new Magnetosphere() );
+    //addScene( new Magnetosphere() );
     
     // Binned
     console() << ++sceneId << ": Binned\n";
@@ -188,7 +188,7 @@ void OculonApp::setupScenes()
     
     // MovieTest
     console() << ++sceneId << ": MovieTest\n";
-    addScene( new MovieTest() );
+    //addScene( new MovieTest() );
 
     
     if( mEnableMindWave )
@@ -335,10 +335,6 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_r:
             if( event.isShiftDown() )
             {
-                enableFrameCapture( !mIsCapturingFrames );
-            }
-            else
-            {
                 if( mIsCapturingVideo )
                 {
                     stopVideoCapture();
@@ -348,6 +344,10 @@ void OculonApp::keyDown( KeyEvent event )
                     bool useDefaultSettings = event.isShiftDown() ? false : true;
                     startVideoCapture(useDefaultSettings);
                 }
+            }
+            else
+            {
+                enableFrameCapture( !mIsCapturingFrames );
             }
             break;
         case KeyEvent::KEY_c:
@@ -414,7 +414,8 @@ void OculonApp::update()
     
     if( mIsCapturingFrames )
     {
-        snprintf(buf, 64, "CAPTURE (%d)", mFrameCaptureCount);
+        const float videoFps = 25.0f;
+        snprintf(buf, 64, "CAPTURING #%d (%ds)", mFrameCaptureCount, (int)(mFrameCaptureCount/videoFps));
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
     
@@ -589,7 +590,7 @@ void OculonApp::enableFrameCapture( bool enable )
     if( mIsCapturingFrames )
     {
         mFrameCaptureCount = 0;
-        fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_capture");
+        fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/capture/oculon_capture");
         mFrameCapturePath = outputPath.string();
         if( fs::create_directory(outputPath) )
         {

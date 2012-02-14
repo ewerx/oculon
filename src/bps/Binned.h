@@ -78,6 +78,7 @@ private:
     ColorAf mForceColor;
     
     bool mRandomPlacement;
+    bool mBounceOffWalls;
     
     float mAudioSensitivity;
     
