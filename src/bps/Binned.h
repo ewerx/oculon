@@ -80,6 +80,23 @@ private:
     bool mRandomPlacement;
     bool mBounceOffWalls;
     
+    enum eForcePattern
+    {
+        PATTERN_NONE,
+        PATTERN_FOUR_CORNERS,
+        PATTERN_BPM_BOUNCE,
+        PATTERN_CROSSING,
+        PATTERN_RING,
+        
+    };
+    eForcePattern mApplyForcePattern;
+    float mBpmBounceTime;
+    int mBeatCount;
+    int mBpmBouncePosition;
+    int mFrameCounter;
+    
+    Vec2i mCrossForcePoint[4];
+    
     float mAudioSensitivity;
     
     enum eMode

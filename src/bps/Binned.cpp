@@ -37,22 +37,25 @@ void Binned::setup()
 {
     mKParticles = 24;
     
-    mTimeStep = 0.05f;
+    mTimeStep = 0.01f;// 0.05
 	mSlowMotion = false;
     mBounceOffWalls = false;
 	mParticleNeighborhood = 14;
     
 	mParticleRepulsion = 1.5;
-	mCenterAttraction = 0.05;
+	mCenterAttraction = 0.0f;//0.05;
     
     mDamping = 0.01f;
     mWallDamping = 0.3f;
     
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
-    mMaxForce = 250.0f;
-    mMaxRadius = mApp->getWindowHeight() * 0.3f;
+    mMaxForce = 300.0f;
+    mMaxRadius = 150.0f;
     mAudioSensitivity = 0.0f;
+    
+    mIsMousePressed = false;
+    mApplyForcePattern = PATTERN_NONE;
     
     mPointColor.r = 1.0f;
     mPointColor.g = 1.0f;
@@ -71,6 +74,8 @@ void Binned::setup()
 
 void Binned::reset()
 {
+    mFrameCounter = 0; 
+    
     // this number describes how many bins are used
 	// on my machine, 2 is the ideal number (2^2 = 4x4 pixel bins)
 	// if this number is too high, binning is not effective
@@ -177,7 +182,7 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Force Color", &mForceColor, "");
 }
 
-void Binned::update(double /*dt*/)
+void Binned::update(double dt)
 {
 	mParticleSystem.setTimeStep(mTimeStep);
     
@@ -228,7 +233,169 @@ void Binned::draw()
     {
         const float radius = mMaxRadius*0.5f;
         const float force = mMaxForce*0.5f;
+        
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
+    }
+    
+    switch (mApplyForcePattern) 
+    {
+        case PATTERN_FOUR_CORNERS:
+            {
+            Vec2i center(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+            const float radius = mMaxRadius*0.5f;
+            const float force = mMaxForce*0.5f;
+            float d = radius;
+            
+            mParticleSystem.addRepulsionForce(center.x+d, center.y+d, radius, force*mForceScaleX, force*mForceScaleY);
+            mParticleSystem.addRepulsionForce(center.x-d, center.y-d, radius, force*mForceScaleX, force*mForceScaleY);
+            
+            mParticleSystem.addRepulsionForce(center.x+d, center.y-d, radius, force*mForceScaleX, force*mForceScaleY);
+            mParticleSystem.addRepulsionForce(center.x-d, center.y+d, radius, force*mForceScaleX, force*mForceScaleY);
+            }
+            break;
+            
+        case PATTERN_BPM_BOUNCE:
+        {
+            mBpmBounceTime -= mApp->getElapsedSecondsThisFrame();
+            if( mBpmBounceTime <= 0.0f )
+            {
+                mBpmBounceTime = 60.0f / 126.0f; // 126 bpm
+                Vec2i center;
+                
+                float radius = mMaxRadius*0.5f;
+                const float force = mMaxForce;//*0.5f;
+                //float d = radius*1.5f;
+                /*
+                switch( mBpmBouncePosition )
+                {
+                    case 0:
+                        center.x = mApp->getWindowWidth()/2 - radius*2.0f;
+                        center.y = mApp->getWindowHeight()/2 + d;
+                        break;
+                
+                    case 1:
+                        center.x = mApp->getWindowWidth()/2 + radius*2.0f;
+                        center.y = mApp->getWindowHeight()/2 + d;
+                        break;
+                        
+                    case 2:
+                        center.x = mApp->getWindowWidth()/2 - radius*2.0f;
+                        center.y = mApp->getWindowHeight()/2 - d;
+                        break;
+                        
+                    case 3:
+                        center.x = mApp->getWindowWidth()/2 + radius*2.0f;
+                        center.y = mApp->getWindowHeight()/2 - d;
+                        break;
+                }
+                 */
+                center.x = mApp->getWindowWidth()/2;
+                center.y = mApp->getWindowHeight()/2;
+                
+                radius *= (mBpmBouncePosition+1)*(mBpmBouncePosition+1);
+                
+                mParticleSystem.addRepulsionForce(center.x, center.y, radius, force*mForceScaleX, force*mForceScaleY);
+                
+                if( ++mBpmBouncePosition > 3 )
+                {
+                    mBpmBouncePosition = 0;
+                }
+            }
+            break;
+        }
+        case PATTERN_CROSSING:
+        {
+            mBpmBounceTime -= mApp->getElapsedSecondsThisFrame();
+            if( mBpmBounceTime <= 0.0f )
+            {
+                mBpmBounceTime = 60.0f / 126.0f; // 126 bpm
+            }
+            else
+            {
+                break;
+            }
+            
+            const float radius = mMaxRadius*0.5f;
+            const float force = mMaxForce*0.5f;
+            
+            for( int i = 0; i < 4; ++i )
+            {
+                float d = radius*0.8f;
+                
+                switch( i )
+                {
+                    case 0:
+                        mCrossForcePoint[i].x += d;
+                        //mCrossForcePoint[i].y += d;
+                        break;
+                        
+                    case 1:
+                        //mCrossForcePoint[i].x += d;
+                        mCrossForcePoint[i].y -= d;
+                        break;
+                        
+                    case 2:
+                        mCrossForcePoint[i].x -= d;
+                        //mCrossForcePoint[i].y -= d;
+                        break;
+                        
+                    case 3:
+                        //mCrossForcePoint[i].x -= d;
+                        mCrossForcePoint[i].y += d;
+                        break;
+                }
+                
+                mParticleSystem.addRepulsionForce(mCrossForcePoint[i].x, mCrossForcePoint[i].y, radius, force*mForceScaleX, force*mForceScaleY);
+                
+                if( mCrossForcePoint[i].x > getWindowWidth() || mCrossForcePoint[i].x < 0.0f || mCrossForcePoint[i].y > getWindowHeight() || mCrossForcePoint[i].y < 0.0f )
+                {
+                    mApplyForcePattern = PATTERN_NONE;
+                    break;
+                }
+            }
+            break;
+        }
+            
+        case PATTERN_RING:
+        {
+            bool gotime = false;
+            //float desired_fps = 25.0f;
+            //float actual_fps = mApp->getAverageFps();
+            //float scaled_elapsed_frame_time = mApp->getElapsedSecondsThisFrame() * (actual_fps/desired_fps);
+            float scaled_elapsed_frame_time = 1.0f/25.0f;
+            mBpmBounceTime -= scaled_elapsed_frame_time;//mApp->getElapsedSecondsThisFrame();
+            if( mBpmBounceTime <= 0.0f )
+            {
+                gotime = (mBeatCount == -1);
+                mBpmBounceTime = 60.0f / 126.0f; // 126 bpm
+                if( ++mBeatCount == 4 )
+                {
+                    mBeatCount = 0;
+                    gotime = true;
+                }
+            }
+            
+            if( gotime )
+            {
+                const float radius = mMaxRadius*0.5f;
+                const float force = mMaxForce*0.5f;
+                float theta = 0.0f;
+                const float delta = (M_PI*2.0f)/54.f;
+                
+                Vec2i center(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+                
+                for( theta = 0.0f; theta < (M_PI*2.0f); theta += delta )
+                {
+                    mParticleSystem.addRepulsionForce(center.x+sin(theta)*radius*2.0f, center.y+cos(theta)*radius*2.0f, radius, force*mForceScaleX, force*mForceScaleY);
+                    
+                }
+            }
+            break;
+        }
+        
+        case PATTERN_NONE:
+        default:
+            break;
     }
     
     const bool orbiter_mode = false; 
@@ -248,6 +415,8 @@ void Binned::draw()
     gl::enableDepthRead();
     gl::enableAlphaBlending();
     gl::popMatrices();
+    
+    ++mFrameCounter;
 }
 
 void Binned::updateAudioResponse()
@@ -371,6 +540,30 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             break;
         }
             
+        case 'v':
+            mApplyForcePattern = (mApplyForcePattern == PATTERN_FOUR_CORNERS) ? PATTERN_NONE : PATTERN_FOUR_CORNERS;
+            break;
+            
+        case 'b':
+            mApplyForcePattern = (mApplyForcePattern == PATTERN_BPM_BOUNCE ) ? PATTERN_NONE : PATTERN_BPM_BOUNCE;
+            mBpmBounceTime = 0.0f;
+            mBeatCount = -1;
+            break;
+            
+        case 'x':
+            mApplyForcePattern = (mApplyForcePattern == PATTERN_CROSSING ) ? PATTERN_NONE : PATTERN_CROSSING;
+            for( int i = 0; i < 4; ++i )
+            {
+                mCrossForcePoint[i] = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+            }
+            break;
+            
+        case 'n':
+            mApplyForcePattern = (mApplyForcePattern == PATTERN_RING ) ? PATTERN_NONE : PATTERN_RING;
+            mBpmBounceTime = 0.0f;
+            mBeatCount = -1;
+            break;
+            
         case ' ':
             reset();
             break;
@@ -386,7 +579,8 @@ bool Binned::handleKeyDown( const KeyEvent& event )
 void Binned::handleMouseDown( const MouseEvent& event )
 {
 	mIsMousePressed = true;
-	mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);//Vec2i(event.getPos());
+	mMousePos = Vec2i(event.getPos());
+    //mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
 }
 
 void Binned::handleMouseUp( const MouseEvent& event )
@@ -396,8 +590,8 @@ void Binned::handleMouseUp( const MouseEvent& event )
 
 void Binned::handleMouseDrag( const MouseEvent& event )
 {
-	//mMousePos = Vec2i(event.getPos());
-    mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+	mMousePos = Vec2i(event.getPos());
+    //mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
 }
 
 void Binned::addRepulsionForce( const Vec2f& pos, float radius, float force )
