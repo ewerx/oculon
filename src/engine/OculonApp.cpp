@@ -8,6 +8,7 @@
  */
 
 #include "cinder/gl/gl.h"
+#include "cinder/gl/TileRender.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
@@ -58,6 +59,7 @@ void OculonApp::setup()
     mFrameCaptureCount = 0;
     mEnableOscServer = true;
     mSaveNextFrame = false;
+    mIsCapturingHighRes = true;
     
     // render
     gl::enableDepthWrite();
@@ -494,7 +496,30 @@ void OculonApp::draw()
     if( mIsCapturingFrames )
     {
         ++mFrameCaptureCount;
-        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+        
+        if( mIsCapturingHighRes )
+        {
+            //HACKHACK
+            mIsCapturingFrames = false;
+            
+            gl::TileRender tr( 2200, 2200 );
+            //CameraPersp cam;
+            //cam.lookAt( mCam.getEyePoint(), mCam.getPos() );
+            //cam.setPerspective( 60.0f, tr.getImageAspectRatio(), 1, 20000 );
+            tr.setMatricesWindowPersp( getWindowWidth(), getWindowHeight() );
+            while( tr.nextTile() )
+            {
+                draw();
+            }
+            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", tr.getSurface() );
+            
+            //HACKHACK
+            mIsCapturingFrames = true;
+        }
+        else
+        {
+            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+        }
     }
     
     // screenshot

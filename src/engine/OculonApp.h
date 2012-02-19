@@ -113,6 +113,7 @@ private: // members
     bool                    mIsCapturingFrames;
     string                  mFrameCapturePath;
     int                     mFrameCaptureCount;
+    bool                    mIsCapturingHighRes;
     
     bool                    mSaveNextFrame;
 };
