@@ -5,6 +5,9 @@
 
 #pragma once
 #include "BinnedParticle.h"
+#include "cinder/gl/Texture.h"
+
+class Scene;
 
 #define DRAW_FORCES
 #define USE_INVSQRT
@@ -20,11 +23,15 @@ protected:
 	vector< vector<Particle*> > bins;
 	int width, height, k, xBins, yBins, binSize;
     const ci::ColorAf* mForceColor;
+    
+    Scene* mScene;
+    
+    ci::gl::Texture mParticleTexture;
 
 public:
 	ParticleSystem();
 
-	void setup(int width, int height, int k);
+	void setup(int width, int height, int k, Scene* scene);
 	void setTimeStep(float timeStep);
 
 	void add(Particle particle);
@@ -43,12 +50,13 @@ public:
 	void addForce(float x, float y, float radius, float scaleX, float scaleY);
 	void update();
 
-	void draw(const ci::ColorAf& color);
+	void draw(const ci::ColorAf& color, float radius);
     
     void setForceColor(const ci::ColorAf* color) { mForceColor = color; }
 };
 
-inline float InvSqrt(float x){
+inline float InvSqrt(float x)
+{
 	float xhalf = 0.5f * x;
 	int i = *(int*)&x; // store floating-point bits in integer
 	i = 0x5f3759d5 - (i >> 1); // initial guess for Newton's method

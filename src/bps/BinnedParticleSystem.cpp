@@ -4,14 +4,24 @@
  */
 
 #include "BinnedParticleSystem.h"
+#include "Scene.h"
+#include "Resources.h"
+#include "OculonApp.h"
+
+#include "cinder/ImageIo.h"
 
 using namespace bps;
 
 ParticleSystem::ParticleSystem() :
-	timeStep(1) {
+	timeStep(1) 
+{
+    mParticleTexture = gl::Texture( loadImage( ci::app::loadResource( RES_PARTICLE_WHITE ) ) );
+    mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
 }
 
-void ParticleSystem::setup(int width, int height, int k) {
+void ParticleSystem::setup(int width, int height, int k, Scene* scene) 
+{
+    this->mScene = scene;
 	this->width = width;
 	this->height = height;
 	this->k = k;
@@ -22,11 +32,13 @@ void ParticleSystem::setup(int width, int height, int k) {
     particles.clear();
 }
 
-void ParticleSystem::setTimeStep(float timeStep) {
+void ParticleSystem::setTimeStep(float timeStep) 
+{
 	this->timeStep = timeStep;
 }
 
-void ParticleSystem::add(bps::Particle particle) {
+void ParticleSystem::add(bps::Particle particle) 
+{
 	particles.push_back(particle);
 }
 
@@ -34,15 +46,18 @@ unsigned ParticleSystem::size() const {
 	return particles.size();
 }
 
-bps::Particle& ParticleSystem::operator[](unsigned i) {
+bps::Particle& ParticleSystem::operator[](unsigned i) 
+{
 	return particles[i];
 }
 
-vector<bps::Particle*> ParticleSystem::getNeighbors(bps::Particle& particle, float radius) {
+vector<bps::Particle*> ParticleSystem::getNeighbors(bps::Particle& particle, float radius) 
+{
 	return getNeighbors(particle.x, particle.y, radius);
 }
 
-vector<bps::Particle*> ParticleSystem::getNeighbors(float x, float y, float radius) {
+vector<bps::Particle*> ParticleSystem::getNeighbors(float x, float y, float radius) 
+{
 	vector<bps::Particle*> region = getRegion(
 		(int) (x - radius),
 		(int) (y - radius),
@@ -63,7 +78,8 @@ vector<bps::Particle*> ParticleSystem::getNeighbors(float x, float y, float radi
 	return neighbors;
 }
 
-vector<bps::Particle*> ParticleSystem::getRegion(unsigned minX, unsigned minY, unsigned maxX, unsigned maxY) {
+vector<bps::Particle*> ParticleSystem::getRegion(unsigned minX, unsigned minY, unsigned maxX, unsigned maxY) 
+{
 	vector<bps::Particle*> region;
 	back_insert_iterator< vector<bps::Particle*> > back = back_inserter(region);
 	unsigned minXBin = minX >> k;
@@ -85,7 +101,8 @@ vector<bps::Particle*> ParticleSystem::getRegion(unsigned minX, unsigned minY, u
 	return region;
 }
 
-void ParticleSystem::setupForces() {
+void ParticleSystem::setupForces() 
+{
 	int n = bins.size();
 	for(int i = 0; i < n; i++) {
 		bins[i].clear();
@@ -123,7 +140,8 @@ void ParticleSystem::addForce(const bps::Particle& particle, float radius, float
 	addForce(particle.x, particle.y, radius, -scale, -scale);
 }
 
-void ParticleSystem::addForce(float targetX, float targetY, float radius, float scaleX, float scaleY) {
+void ParticleSystem::addForce(float targetX, float targetY, float radius, float scaleX, float scaleY) 
+{
 	float minX = targetX - radius;
 	float minY = targetY - radius;
 	float maxX = targetX + radius;
@@ -217,12 +235,26 @@ void ParticleSystem::update()
 		particles[i].updatePosition(timeStep);
 }
 
-void ParticleSystem::draw(const ci::ColorAf& color) 
+void ParticleSystem::draw(const ci::ColorAf& color, float radius) 
 {
 	int n = particles.size();
+#if BINNED_QUADS
+    glEnable( GL_TEXTURE_2D );
+    mParticleTexture.bind();
+    glBegin(GL_QUADS);
+    for(int i = 0; i < n; i++)
+    {
+		particles[i].draw(color, radius);
+    }
+    glEnd();
+    glDisable( GL_TEXTURE_2D );
+#else
 	glBegin(GL_POINTS);
 	for(int i = 0; i < n; i++)
+    {
 		particles[i].draw(color);
+    }
 	glEnd();
+#endif
 }
 

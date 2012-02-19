@@ -8,7 +8,10 @@
 #include <cmath>
 #include "cinder/gl/gl.h"
 
+#define BINNED_QUADS 1
+
 using namespace std;
+using namespace ci;
 
 namespace bps {
 
@@ -65,12 +68,28 @@ public:
 		xf = xf - xv * damping;
         yf = yf - yv * damping;
 	}
-	void draw(const ci::ColorAf& baseColor) {
+	void draw(const ci::ColorAf& baseColor, float radius) 
+    {
         ci::ColorAf color(baseColor);
         const float mag = (xf+yf) * (xf+yf);
         color += ci::ColorAf( mag, mag, mag, 0.0f );
         glColor4f( color.r, color.g, color.b, color.a );
+#if BINNED_QUADS
+        //gl::drawBillboard(Vec2f(x,y), Vec2f(radius,radius), 0.0f, bbRight, bbUp);
+        glTexCoord2f( 0, 0 );
+        glVertex2f( x - radius, y - radius );
+        
+        glTexCoord2f( 1, 0 );
+        glVertex2f( x + radius, y - radius );
+        
+        glTexCoord2f( 1, 1 );
+        glVertex2f( x + radius, y + radius );
+        
+        glTexCoord2f( 0, 1 );
+        glVertex2f( x - radius, y + radius );
+#else
 		glVertex2f(x, y);
+#endif
 	}
 };
 

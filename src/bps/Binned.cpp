@@ -35,7 +35,9 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 24;
+    mKParticles = 12;
+    
+    mParticleRadius = 5.0f;
     
     mTimeStep = 0.01f;// 0.05
 	mSlowMotion = false;
@@ -50,8 +52,8 @@ void Binned::setup()
     
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
-    mMaxForce = 300.0f;
-    mMaxRadius = 150.0f;
+    mMaxForce = 500.0f;
+    mMaxRadius = 540.0f;
     mAudioSensitivity = 0.0f;
     
     mIsMousePressed = false;
@@ -85,7 +87,7 @@ void Binned::reset()
 	int binPower = 2;
 	
     // this clears the particle list
-	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower);
+	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower, this);
 	
 	float padding = 0;
 	float maxVelocity = .5;
@@ -162,7 +164,7 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addText( "binned", "label=`Binned`" );
     params.addParam("Mode", &mMode, "");
     params.addParam("Slow Motion", &mSlowMotion, "");
-    params.addParam("Time Step", &mTimeStep, "step=0.01 min=0.01 max=1.0");
+    params.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
     params.addParam("Wall Bounce", &mBounceOffWalls, "");
     params.addParam("Random Placement", &mRandomPlacement, "");
     params.addParam("Top/Bottom", &mTopBottom, "");
@@ -180,6 +182,7 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("K Particles", &mKParticles, "min=1 max=100");
     params.addParam("Point Color", &mPointColor, "");
     params.addParam("Force Color", &mForceColor, "");
+    params.addParam("Particle Radius", &mParticleRadius, "min=1 max=50");
 }
 
 void Binned::update(double dt)
@@ -292,7 +295,7 @@ void Binned::draw()
                 center.x = mApp->getWindowWidth()/2;
                 center.y = mApp->getWindowHeight()/2;
                 
-                radius *= (mBpmBouncePosition+1)*(mBpmBouncePosition+1);
+                //radius *= (mBpmBouncePosition+1)*(mBpmBouncePosition+1);
                 
                 mParticleSystem.addRepulsionForce(center.x, center.y, radius, force*mForceScaleX, force*mForceScaleY);
                 
@@ -380,15 +383,28 @@ void Binned::draw()
                 const float radius = mMaxRadius*0.5f;
                 const float force = mMaxForce*0.5f;
                 float theta = 0.0f;
-                const float delta = (M_PI*2.0f)/54.f;
+                const float delta = (M_PI*2.0f)/180.f;
+                static bool alternate = true;
                 
                 Vec2i center(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+                
+                //if( alternate )
+                {
                 
                 for( theta = 0.0f; theta < (M_PI*2.0f); theta += delta )
                 {
                     mParticleSystem.addRepulsionForce(center.x+sin(theta)*radius*2.0f, center.y+cos(theta)*radius*2.0f, radius, force*mForceScaleX, force*mForceScaleY);
                     
                 }
+                }
+                //else
+                {
+                
+                const float inner_force = force*1.25f;
+                const float inner_radius = radius*1.f;
+                mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
+                }
+                alternate = !alternate;
             }
             break;
         }
@@ -410,7 +426,7 @@ void Binned::draw()
     
 	mParticleSystem.update();
 	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw( mPointColor );
+	mParticleSystem.draw( mPointColor, mParticleRadius );
     
     gl::enableDepthRead();
     gl::enableAlphaBlending();

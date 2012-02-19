@@ -76,6 +76,7 @@ private:
     
     ColorAf mPointColor;
     ColorAf mForceColor;
+    float mParticleRadius;
     
     bool mRandomPlacement;
     bool mBounceOffWalls;
