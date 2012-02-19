@@ -9,6 +9,7 @@
 
 #include "cinder/gl/gl.h"
 #include "cinder/gl/TileRender.h"
+#include "cinder/gl/Fbo.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
@@ -41,7 +42,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1280, 960 );
+	settings->setWindowSize( 560, 560 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -54,12 +55,20 @@ void OculonApp::setup()
     mIsPresentationMode = false;
     mUseMayaCam = true;
     mEnableMindWave = false;
-    mIsCapturingVideo = false;
-    mIsCapturingFrames = false;
     mFrameCaptureCount = 0;
     mEnableOscServer = true;
+    
+    
+    // capture
+    mIsCapturingVideo = false;
+    mIsCapturingFrames = false;
     mSaveNextFrame = false;
     mIsCapturingHighRes = true;
+    static const int FBO_WIDTH = 2240;
+    static const int FBO_HEIGHT = 2240;
+    gl::Fbo::Format format;
+    //	format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
+    mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
     // render
     gl::enableDepthWrite();
@@ -454,6 +463,17 @@ void OculonApp::draw()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
+    if( mIsCapturingHighRes && mIsCapturingFrames )
+    {
+        // bind the framebuffer - now everything we draw will go there
+        mFbo.bindFramebuffer();
+        
+        // setup the viewport to match the dimensions of the FBO
+        gl::setViewport( mFbo.getBounds() );
+        
+        gl::clear( Color(0.0f,0.0f,0.0f) );
+    }
+    
     // 3D scenes
     glPushMatrix();
     {
@@ -499,6 +519,7 @@ void OculonApp::draw()
         
         if( mIsCapturingHighRes )
         {
+#ifdef TILED_RENDER
             //HACKHACK
             mIsCapturingFrames = false;
             
@@ -515,6 +536,9 @@ void OculonApp::draw()
             
             //HACKHACK
             mIsCapturingFrames = true;
+#endif
+            mFbo.unbindFramebuffer();
+            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
         }
         else
         {
@@ -614,6 +638,11 @@ void OculonApp::enableFrameCapture( bool enable )
     
     if( mIsCapturingFrames )
     {
+        if( mIsCapturingHighRes )
+        {
+            resize( ResizeEvent(mFbo.getSize()) );
+        }
+        
         mFrameCaptureCount = 0;
         fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/capture/oculon_capture");
         mFrameCapturePath = outputPath.string();
@@ -633,4 +662,29 @@ void OculonApp::enableFrameCapture( bool enable )
     }
 }
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_8) )
+int OculonApp::getWindowWidth() const
+{
+    if( mIsCapturingFrames && mIsCapturingHighRes ) 
+    {
+        return mFbo.getWidth();
+    }
+    else
+    {
+        return AppBasic::getWindowWidth();
+    }
+}
+
+int OculonApp::getWindowHeight() const
+{
+    if( mIsCapturingFrames && mIsCapturingHighRes ) 
+    {
+        return mFbo.getHeight();
+    }
+    else
+    {
+        return AppBasic::getWindowHeight();
+    }
+}
+
+
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_2) )

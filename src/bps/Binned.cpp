@@ -35,9 +35,9 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 12;
+    mKParticles = 24;
     
-    mParticleRadius = 5.0f;
+    mParticleRadius = 15.0f;
     
     mTimeStep = 0.01f;// 0.05
 	mSlowMotion = false;
@@ -87,7 +87,7 @@ void Binned::reset()
 	int binPower = 2;
 	
     // this clears the particle list
-	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower, this);
+	mParticleSystem.setup(mApp->getWindowWidth(), mApp->getWindowHeight(), binPower, this);
 	
 	float padding = 0;
 	float maxVelocity = .5;
@@ -201,7 +201,7 @@ void Binned::update(double dt)
 void Binned::draw()
 {
     gl::pushMatrices();
-	gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+	gl::setMatricesWindow( mApp->getWindowWidth(), mApp->getWindowHeight() );
     
     gl::disableDepthRead();
     //gl::disableDepthWrite();
@@ -215,23 +215,22 @@ void Binned::draw()
 	for(int i = 0; i < mParticleSystem.size(); i++) 
     {
 		Particle& cur = mParticleSystem[i];
-        if(!( cur.x < -100 || cur.x > ci::app::getWindowWidth()+100 || cur.y < -100 || cur.y > ci::app::getWindowHeight()+100 ))
+        if(!( cur.x < -100 || cur.x > mApp->getWindowWidth()+100 || cur.y < -100 || cur.y > mApp->getWindowHeight()+100 ))
         {
-            
-		// global force on other particles
-		mParticleSystem.addRepulsionForce(cur, mParticleNeighborhood, mParticleRepulsion);
-		// forces on this particle
-        if( mBounceOffWalls )
-        {
-            const float padding = 50;
-            cur.bounceOffWalls(0-padding, 0-padding, getWindowWidth()+padding, getWindowHeight()+padding, mWallDamping);
-        }
+            // global force on other particles
+            mParticleSystem.addRepulsionForce(cur, mParticleNeighborhood, mParticleRepulsion);
+            // forces on this particle
+            if( mBounceOffWalls )
+            {
+                const float padding = 50;
+                cur.bounceOffWalls(0-padding, 0-padding, mApp->getWindowWidth()+padding, mApp->getWindowHeight()+padding, mWallDamping);
+            }
         }
 		cur.addDampingForce(mDamping);
 	}
 	glEnd();
 	// single global forces
-	mParticleSystem.addAttractionForce(getWindowWidth()/2, getWindowHeight()/2, getWindowWidth(), mCenterAttraction);
+	mParticleSystem.addAttractionForce(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2, mApp->getWindowWidth(), mCenterAttraction);
 	if(mIsMousePressed)
     {
         const float radius = mMaxRadius*0.5f;
@@ -350,7 +349,7 @@ void Binned::draw()
                 
                 mParticleSystem.addRepulsionForce(mCrossForcePoint[i].x, mCrossForcePoint[i].y, radius, force*mForceScaleX, force*mForceScaleY);
                 
-                if( mCrossForcePoint[i].x > getWindowWidth() || mCrossForcePoint[i].x < 0.0f || mCrossForcePoint[i].y > getWindowHeight() || mCrossForcePoint[i].y < 0.0f )
+                if( mCrossForcePoint[i].x > mApp->getWindowWidth() || mCrossForcePoint[i].x < 0.0f || mCrossForcePoint[i].y > mApp->getWindowHeight() || mCrossForcePoint[i].y < 0.0f )
                 {
                     mApplyForcePattern = PATTERN_NONE;
                     break;
@@ -490,20 +489,20 @@ void Binned::updateAudioResponse()
             
             if( mRandomPlacement )
             {
-                x1 = Rand::randFloat(0,getWindowWidth());
-                x2 = Rand::randFloat(0,getWindowWidth());
+                x1 = Rand::randFloat(0,mApp->getWindowWidth());
+                x2 = Rand::randFloat(0,mApp->getWindowWidth());
             }
             const float magX = force * mForceScaleX;
             const float magY = force * mForceScaleY;
-            const float centerY = mRandomPlacement ? Rand::randFloat(0,getWindowHeight()) :(getWindowHeight()/2.0f);
+            const float centerY = mRandomPlacement ? Rand::randFloat(0,mApp->getWindowHeight()) :(mApp->getWindowHeight()/2.0f);
             
             if( mTopBottom )
             {
                 mParticleSystem.addRepulsionForce(x1, 0, radius, magX, magY);
                 mParticleSystem.addRepulsionForce(x2, 0, radius, magX, magY);
             
-                mParticleSystem.addRepulsionForce(x1, getWindowHeight(), radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, getWindowHeight(), radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x1, mApp->getWindowHeight(), radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, mApp->getWindowHeight(), radius, magX, magY);
             }
             else
             {

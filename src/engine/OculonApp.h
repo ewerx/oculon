@@ -16,6 +16,7 @@
 #include "cinder/params/Params.h"
 #include "cinder/MayaCamUI.h"
 #include "cinder/qtime/MovieWriter.h"
+#include "cinder/gl/Fbo.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
@@ -48,6 +49,9 @@ public: // cinder interface
     void keyDown( KeyEvent event );
 
 	void draw();
+    
+    int getWindowWidth() const;                 
+    int getWindowHeight() const;
     
 public: // new
     inline AudioInput& getAudioInput()         { return mAudioInput; }
@@ -114,6 +118,7 @@ private: // members
     string                  mFrameCapturePath;
     int                     mFrameCaptureCount;
     bool                    mIsCapturingHighRes;
+    gl::Fbo                 mFbo;
     
     bool                    mSaveNextFrame;
 };

@@ -252,7 +252,7 @@ void ParticleSystem::draw(const ci::ColorAf& color, float radius)
 	glBegin(GL_POINTS);
 	for(int i = 0; i < n; i++)
     {
-		particles[i].draw(color);
+		particles[i].draw(color, radius);
     }
 	glEnd();
 #endif
