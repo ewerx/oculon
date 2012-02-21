@@ -50,8 +50,8 @@ public: // cinder interface
 
 	void draw();
     
-    int getWindowWidth() const;                 
-    int getWindowHeight() const;
+    int getViewportWidth() const;                 
+    int getViewportHeight() const;
     
 public: // new
     inline AudioInput& getAudioInput()         { return mAudioInput; }

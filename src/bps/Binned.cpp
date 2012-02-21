@@ -84,10 +84,10 @@ void Binned::reset()
 	// because the screen is not subdivided enough. if
 	// it's too low, the bins take up so much memory as to
 	// become inefficient.
-	int binPower = 2;
+	int binPower = 4;
 	
     // this clears the particle list
-	mParticleSystem.setup(mApp->getWindowWidth(), mApp->getWindowHeight(), binPower, this);
+	mParticleSystem.setup(mApp->getViewportWidth(), mApp->getViewportHeight(), binPower, this);
 	
 	float padding = 0;
 	float maxVelocity = .5;
@@ -124,8 +124,8 @@ void Binned::reset()
             mParticleSystem.add(Particle(x, y, xv, yv));
         }
          */
-        const float centerX = getWindowWidth()/2.0f;
-        const float centerY = getWindowHeight()/2.0f;
+        const float centerX = mApp->getViewportWidth()/2.0f;
+        const float centerY = mApp->getViewportHeight()/2.0f;
         const float thickness = 50;
         for(int i = 0; i < mKParticles * 1024; i++) 
         {
@@ -141,8 +141,8 @@ void Binned::reset()
     {
         for(int i = 0; i < mKParticles * 1024; i++) 
         {
-            float x = Rand::randFloat(padding, getWindowWidth() - padding);
-            float y = Rand::randFloat(padding, getWindowHeight() - padding);
+            float x = Rand::randFloat(padding, mApp->getViewportWidth() - padding);
+            float y = Rand::randFloat(padding, mApp->getViewportHeight() - padding);
             float xv = Rand::randFloat(-maxVelocity, maxVelocity);
             float yv = Rand::randFloat(-maxVelocity, maxVelocity);
             Particle particle(x, y, xv, yv);
@@ -201,7 +201,7 @@ void Binned::update(double dt)
 void Binned::draw()
 {
     gl::pushMatrices();
-	gl::setMatricesWindow( mApp->getWindowWidth(), mApp->getWindowHeight() );
+	gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     gl::disableDepthRead();
     //gl::disableDepthWrite();
@@ -215,7 +215,7 @@ void Binned::draw()
 	for(int i = 0; i < mParticleSystem.size(); i++) 
     {
 		Particle& cur = mParticleSystem[i];
-        if(!( cur.x < -100 || cur.x > mApp->getWindowWidth()+100 || cur.y < -100 || cur.y > mApp->getWindowHeight()+100 ))
+        if(!( cur.x < -100 || cur.x > mApp->getViewportWidth()+100 || cur.y < -100 || cur.y > mApp->getViewportHeight()+100 ))
         {
             // global force on other particles
             mParticleSystem.addRepulsionForce(cur, mParticleNeighborhood, mParticleRepulsion);
@@ -223,14 +223,14 @@ void Binned::draw()
             if( mBounceOffWalls )
             {
                 const float padding = 50;
-                cur.bounceOffWalls(0-padding, 0-padding, mApp->getWindowWidth()+padding, mApp->getWindowHeight()+padding, mWallDamping);
+                cur.bounceOffWalls(0-padding, 0-padding, mApp->getViewportWidth()+padding, mApp->getViewportHeight()+padding, mWallDamping);
             }
         }
 		cur.addDampingForce(mDamping);
 	}
 	glEnd();
 	// single global forces
-	mParticleSystem.addAttractionForce(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2, mApp->getWindowWidth(), mCenterAttraction);
+	mParticleSystem.addAttractionForce(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2, mApp->getViewportWidth(), mCenterAttraction);
 	if(mIsMousePressed)
     {
         const float radius = mMaxRadius*0.5f;
@@ -243,7 +243,7 @@ void Binned::draw()
     {
         case PATTERN_FOUR_CORNERS:
             {
-            Vec2i center(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+            Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
             const float radius = mMaxRadius*0.5f;
             const float force = mMaxForce*0.5f;
             float d = radius;
@@ -271,28 +271,28 @@ void Binned::draw()
                 switch( mBpmBouncePosition )
                 {
                     case 0:
-                        center.x = mApp->getWindowWidth()/2 - radius*2.0f;
-                        center.y = mApp->getWindowHeight()/2 + d;
+                        center.x = mApp->getViewportWidth()/2 - radius*2.0f;
+                        center.y = mApp->getViewportHeight()/2 + d;
                         break;
                 
                     case 1:
-                        center.x = mApp->getWindowWidth()/2 + radius*2.0f;
-                        center.y = mApp->getWindowHeight()/2 + d;
+                        center.x = mApp->getViewportWidth()/2 + radius*2.0f;
+                        center.y = mApp->getViewportHeight()/2 + d;
                         break;
                         
                     case 2:
-                        center.x = mApp->getWindowWidth()/2 - radius*2.0f;
-                        center.y = mApp->getWindowHeight()/2 - d;
+                        center.x = mApp->getViewportWidth()/2 - radius*2.0f;
+                        center.y = mApp->getViewportHeight()/2 - d;
                         break;
                         
                     case 3:
-                        center.x = mApp->getWindowWidth()/2 + radius*2.0f;
-                        center.y = mApp->getWindowHeight()/2 - d;
+                        center.x = mApp->getViewportWidth()/2 + radius*2.0f;
+                        center.y = mApp->getViewportHeight()/2 - d;
                         break;
                 }
                  */
-                center.x = mApp->getWindowWidth()/2;
-                center.y = mApp->getWindowHeight()/2;
+                center.x = mApp->getViewportWidth()/2;
+                center.y = mApp->getViewportHeight()/2;
                 
                 //radius *= (mBpmBouncePosition+1)*(mBpmBouncePosition+1);
                 
@@ -349,7 +349,7 @@ void Binned::draw()
                 
                 mParticleSystem.addRepulsionForce(mCrossForcePoint[i].x, mCrossForcePoint[i].y, radius, force*mForceScaleX, force*mForceScaleY);
                 
-                if( mCrossForcePoint[i].x > mApp->getWindowWidth() || mCrossForcePoint[i].x < 0.0f || mCrossForcePoint[i].y > mApp->getWindowHeight() || mCrossForcePoint[i].y < 0.0f )
+                if( mCrossForcePoint[i].x > mApp->getViewportWidth() || mCrossForcePoint[i].x < 0.0f || mCrossForcePoint[i].y > mApp->getViewportHeight() || mCrossForcePoint[i].y < 0.0f )
                 {
                     mApplyForcePattern = PATTERN_NONE;
                     break;
@@ -385,7 +385,7 @@ void Binned::draw()
                 const float delta = (M_PI*2.0f)/180.f;
                 static bool alternate = true;
                 
-                Vec2i center(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+                Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
                 
                 //if( alternate )
                 {
@@ -448,9 +448,9 @@ void Binned::updateAudioResponse()
     unsigned int bandCount = audioInput.getFftBandCount();
     float* fftBuffer = fftDataRef.get();
     
-    int spacing = mApp->getWindowWidth() / bandCount;
+    int spacing = mApp->getViewportWidth() / bandCount;
     spacing *=2;
-    int x1 = mApp->getWindowWidth() / 2;
+    int x1 = mApp->getViewportWidth() / 2;
     int x2 = x1;
     //int numBandsPerBody = 1;
     
@@ -489,20 +489,20 @@ void Binned::updateAudioResponse()
             
             if( mRandomPlacement )
             {
-                x1 = Rand::randFloat(0,mApp->getWindowWidth());
-                x2 = Rand::randFloat(0,mApp->getWindowWidth());
+                x1 = Rand::randFloat(0,mApp->getViewportWidth());
+                x2 = Rand::randFloat(0,mApp->getViewportWidth());
             }
             const float magX = force * mForceScaleX;
             const float magY = force * mForceScaleY;
-            const float centerY = mRandomPlacement ? Rand::randFloat(0,mApp->getWindowHeight()) :(mApp->getWindowHeight()/2.0f);
+            const float centerY = mRandomPlacement ? Rand::randFloat(0,mApp->getViewportHeight()) :(mApp->getViewportHeight()/2.0f);
             
             if( mTopBottom )
             {
                 mParticleSystem.addRepulsionForce(x1, 0, radius, magX, magY);
                 mParticleSystem.addRepulsionForce(x2, 0, radius, magX, magY);
             
-                mParticleSystem.addRepulsionForce(x1, mApp->getWindowHeight(), radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, mApp->getWindowHeight(), radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x1, mApp->getViewportHeight(), radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, mApp->getViewportHeight(), radius, magX, magY);
             }
             else
             {
@@ -569,7 +569,7 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             mApplyForcePattern = (mApplyForcePattern == PATTERN_CROSSING ) ? PATTERN_NONE : PATTERN_CROSSING;
             for( int i = 0; i < 4; ++i )
             {
-                mCrossForcePoint[i] = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+                mCrossForcePoint[i] = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
             }
             break;
             
@@ -595,7 +595,7 @@ void Binned::handleMouseDown( const MouseEvent& event )
 {
 	mIsMousePressed = true;
 	mMousePos = Vec2i(event.getPos());
-    //mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+    //mMousePos = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
 }
 
 void Binned::handleMouseUp( const MouseEvent& event )
@@ -606,7 +606,7 @@ void Binned::handleMouseUp( const MouseEvent& event )
 void Binned::handleMouseDrag( const MouseEvent& event )
 {
 	mMousePos = Vec2i(event.getPos());
-    //mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
+    //mMousePos = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
 }
 
 void Binned::addRepulsionForce( const Vec2f& pos, float radius, float force )

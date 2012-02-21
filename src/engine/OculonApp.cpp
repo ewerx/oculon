@@ -42,7 +42,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 560, 560 );
+	settings->setWindowSize( 800, 800 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -463,7 +463,7 @@ void OculonApp::draw()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
-    if( mIsCapturingHighRes && mIsCapturingFrames )
+    if( mIsCapturingHighRes )
     {
         // bind the framebuffer - now everything we draw will go there
         mFbo.bindFramebuffer();
@@ -506,6 +506,11 @@ void OculonApp::draw()
     }
     glPopMatrix();
     
+    if( mIsCapturingHighRes )
+    {
+        mFbo.unbindFramebuffer();
+    }
+    
     // capture video
 	if( mIsCapturingVideo && mMovieWriter )
     {
@@ -537,7 +542,7 @@ void OculonApp::draw()
             //HACKHACK
             mIsCapturingFrames = true;
 #endif
-            mFbo.unbindFramebuffer();
+            //mFbo.unbindFramebuffer();
             writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
         }
         else
@@ -554,6 +559,20 @@ void OculonApp::draw()
 		writeImage( p, copyWindowSurface() );
 	}
     
+    if( mIsCapturingHighRes )
+    {
+        gl::pushMatrices();
+        glEnable(GL_TEXTURE_2D);
+        // draw the captured texture back to screen
+        glColor4f(1.0f,1.0f,1.0f,1.0f);
+        gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
+        float width = getWindowWidth();
+        float height = getWindowHeight();
+        gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
+        gl::popMatrices();
+    }
+    
+    //TODO: option to capture debug output
     // debug
     drawInfoPanel();
     if( !mIsPresentationMode )
@@ -570,7 +589,7 @@ void OculonApp::drawInfoPanel()
 	glColor4f( 1, 1, 1, 1 );
 	
 	gl::pushMatrices();
-        gl::setMatricesWindow( getWindowSize() );
+        gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
         mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
 	gl::popMatrices();
     
@@ -662,27 +681,27 @@ void OculonApp::enableFrameCapture( bool enable )
     }
 }
 
-int OculonApp::getWindowWidth() const
+int OculonApp::getViewportWidth() const
 {
-    if( mIsCapturingFrames && mIsCapturingHighRes ) 
+    if( mIsCapturingHighRes ) 
     {
         return mFbo.getWidth();
     }
     else
     {
-        return AppBasic::getWindowWidth();
+        return getWindowWidth();
     }
 }
 
-int OculonApp::getWindowHeight() const
+int OculonApp::getViewportHeight() const
 {
-    if( mIsCapturingFrames && mIsCapturingHighRes ) 
+    if( mIsCapturingHighRes ) 
     {
         return mFbo.getHeight();
     }
     else
     {
-        return AppBasic::getWindowHeight();
+        return getWindowHeight();
     }
 }
 
