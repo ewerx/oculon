@@ -14,7 +14,9 @@
 #include "cinder/Utilities.h"
 //#include "cinder/gl/gl.h" <-- included in Particle.h
 #include "cinder/Rand.h"
+#include "cinder/Easing.h"
 #include "OculonApp.h"
+#include "Constants.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -35,25 +37,25 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 24;
+    mKParticles = 17;
     
-    mParticleRadius = 15.0f;
+    mParticleRadius = 5.0f;
     
-    mTimeStep = 0.01f;// 0.05
+    mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
-    mBounceOffWalls = false;
+    mBounceOffWalls = true;
 	mParticleNeighborhood = 14;
     
 	mParticleRepulsion = 1.5;
-	mCenterAttraction = 0.0f;//0.05;
+	mCenterAttraction = 0.03f;//0.05;
     
     mDamping = 0.01f;
     mWallDamping = 0.3f;
     
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
-    mMaxForce = 500.0f;
-    mMaxRadius = 540.0f;
+    mMaxForce = 800.0f;
+    mMaxRadius = 500.0f;
     mAudioSensitivity = 0.0f;
     
     mIsMousePressed = false;
@@ -61,13 +63,13 @@ void Binned::setup()
     
     mPointColor.r = 1.0f;
     mPointColor.g = 1.0f;
-    mPointColor.b = 1.0f;
-    mPointColor.a = 0.5f;
+    mPointColor.b = 1.0f;//0.25f
+    mPointColor.a = 0.5f;//0.5f;
     
-    mForceColor.r = 0.85f;
-    mForceColor.g = 0.85f;
-    mForceColor.b = 0.85f;
-    mForceColor.a = 0.12f;
+    mForceColor.r = 0.80f;
+    mForceColor.g = 0.80f;//0.85f;
+    mForceColor.b = 0.80f;//0.85f;
+    mForceColor.a = 0.18f;//0.12f;
     
     mParticleSystem.setForceColor( &mForceColor );
     
@@ -84,7 +86,7 @@ void Binned::reset()
 	// because the screen is not subdivided enough. if
 	// it's too low, the bins take up so much memory as to
 	// become inefficient.
-	int binPower = 4;
+	int binPower = 2;
 	
     // this clears the particle list
 	mParticleSystem.setup(mApp->getViewportWidth(), mApp->getViewportHeight(), binPower, this);
@@ -92,8 +94,8 @@ void Binned::reset()
 	float padding = 0;
 	float maxVelocity = .5;
     
-    bool offScreen = false;
-    if( offScreen )
+    bool ringformation = false;
+    if( ringformation )
     {
         
         padding = 250;
@@ -196,6 +198,13 @@ void Binned::update(double dt)
     
     snprintf(buf, 256, "mode: %d", mMode);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
+    
+    if( mApplyForcePattern == PATTERN_DISSOLVE )
+    {
+        float time = (mPatternDuration*kCaptureFramerate - mFrameCounter) * dt;
+        snprintf(buf, 256, "finished in: %.1fs", time);
+        mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
+    }
 }
 
 void Binned::draw()
@@ -233,8 +242,8 @@ void Binned::draw()
 	mParticleSystem.addAttractionForce(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2, mApp->getViewportWidth(), mCenterAttraction);
 	if(mIsMousePressed)
     {
-        const float radius = mMaxRadius*0.5f;
-        const float force = mMaxForce*0.5f;
+        const float radius = mMaxRadius;
+        const float force = mMaxForce;
         
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
@@ -244,8 +253,8 @@ void Binned::draw()
         case PATTERN_FOUR_CORNERS:
             {
             Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
-            const float radius = mMaxRadius*0.5f;
-            const float force = mMaxForce*0.5f;
+            const float radius = mMaxRadius;
+            const float force = mMaxForce;
             float d = radius;
             
             mParticleSystem.addRepulsionForce(center.x+d, center.y+d, radius, force*mForceScaleX, force*mForceScaleY);
@@ -264,7 +273,7 @@ void Binned::draw()
                 mBpmBounceTime = 60.0f / 126.0f; // 126 bpm
                 Vec2i center;
                 
-                float radius = mMaxRadius*0.5f;
+                float radius = mMaxRadius;
                 const float force = mMaxForce;//*0.5f;
                 //float d = radius*1.5f;
                 /*
@@ -361,10 +370,10 @@ void Binned::draw()
         case PATTERN_RING:
         {
             bool gotime = false;
-            //float desired_fps = 25.0f;
+            //float desired_fps = kCaptureFramerate;
             //float actual_fps = mApp->getAverageFps();
             //float scaled_elapsed_frame_time = mApp->getElapsedSecondsThisFrame() * (actual_fps/desired_fps);
-            float scaled_elapsed_frame_time = 1.0f/25.0f;
+            float scaled_elapsed_frame_time = 1.0f/kCaptureFramerate;
             mBpmBounceTime -= scaled_elapsed_frame_time;//mApp->getElapsedSecondsThisFrame();
             if( mBpmBounceTime <= 0.0f )
             {
@@ -379,32 +388,55 @@ void Binned::draw()
             
             if( gotime )
             {
-                const float radius = mMaxRadius*0.5f;
-                const float force = mMaxForce*0.5f;
+                const float radius = Rand::randFloat(mMaxRadius*0.75f,mMaxRadius*1.25f);//mMaxRadius*0.5f;
+                const float force = Rand::randFloat(mMaxForce*0.75f,mMaxForce*1.25f);
                 float theta = 0.0f;
-                const float delta = (M_PI*2.0f)/180.f;
+                const float delta = (M_PI*2.0f)/90.f;
                 static bool alternate = true;
                 
                 Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
-                
-                //if( alternate )
+                bool both = Rand::randFloat(1.0f) < 0.75f;
+                if( alternate || both )
                 {
                 
-                for( theta = 0.0f; theta < (M_PI*2.0f); theta += delta )
-                {
-                    mParticleSystem.addRepulsionForce(center.x+sin(theta)*radius*2.0f, center.y+cos(theta)*radius*2.0f, radius, force*mForceScaleX, force*mForceScaleY);
-                    
-                }
-                }
-                //else
+                    for( theta = 0.0f; theta < (M_PI*2.0f); theta += delta )
+                    {
+                        mParticleSystem.addRepulsionForce(center.x+sin(theta)*radius*2.0f, center.y+cos(theta)*radius*2.0f, radius, force*mForceScaleX, force*mForceScaleY);
+                        
+                    }
+                }                
+                if( !alternate || both )
                 {
                 
-                const float inner_force = force*1.25f;
-                const float inner_radius = radius*1.f;
-                mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
+                    const float inner_force = Rand::randFloat(force,force*1.5f);
+                    const float inner_radius = Rand::randFloat(radius*0.25f,radius);
+                    mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
                 }
                 alternate = !alternate;
             }
+            break;
+        }
+            
+        case PATTERN_DISSOLVE:
+        {
+            const float maxVal = 2.0f;
+            const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
+            float time = elapsed_seconds / mPatternDuration;
+            if( time > 1.0f )
+            {
+                mApplyForcePattern = PATTERN_NONE;
+                mApp->enableFrameCapture( false );
+                mApp->quit();
+            }
+            else if( time > 0.5f )
+            {
+                mAudioSensitivity = math<float>::clamp( maxVal - maxVal * EaseOutInQuad()(time), 0.0f, maxVal );
+            }
+            else
+            {
+                mAudioSensitivity = math<float>::clamp( maxVal * EaseOutInQuad()(time), 0.0f, maxVal );
+            }
+            
             break;
         }
         
@@ -434,6 +466,33 @@ void Binned::draw()
     ++mFrameCounter;
 }
 
+void Binned::drawDebug()
+{
+    //gl::pushMatrices();
+	//gl::setMatricesWindow( mApp->getWindowWidth(), mApp->getWindowHeight() );
+    gl::disableDepthRead();
+    //gl::disableDepthWrite();
+    glDisable( GL_LIGHTING );
+    glDisable( GL_TEXTURE_2D );
+	gl::enableAdditiveBlending();
+    //gl::enableAlphaBlending();
+    
+    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
+    float scale = (float)(mApp->getWindowWidth()) / (float)(mApp->getViewportWidth()); 
+    
+    glColor4f(1.0f,0.0f,0.0f,1.0f);
+    gl::drawStrokedCircle(center, mMaxRadius*scale);
+    glColor4f(1.0f,0.2f,0.2f,1.0f);
+    gl::drawStrokedCircle(center, mMaxRadius*0.75f*scale);
+    gl::drawStrokedCircle(center, mMaxRadius*1.25f*scale);
+    //gl::drawStrokedCircle(center, mApp->getWindowWidth()/3.0f);
+    
+    gl::enableDepthRead();
+    //gl::enableDepthWrite();
+    gl::enableAlphaBlending();
+    //gl::popMatrices();
+}
+
 void Binned::updateAudioResponse()
 {
     if( mAudioSensitivity == 0.0f )
@@ -456,7 +515,7 @@ void Binned::updateAudioResponse()
     
     if( fftBuffer )
     {
-        for( int i = 0; i < bandCount; i += 2) 
+        for( int i = 0; i < bandCount; ++i) 
         {
             float avgFft = fftBuffer[i] / bandCount;
             //avgFft /= (float)(numBandsPerBody);
@@ -577,6 +636,16 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             mApplyForcePattern = (mApplyForcePattern == PATTERN_RING ) ? PATTERN_NONE : PATTERN_RING;
             mBpmBounceTime = 0.0f;
             mBeatCount = -1;
+            break;
+            
+        
+        case 'D':
+            mApp->enableFrameCapture( (mApplyForcePattern != PATTERN_DISSOLVE) );
+            // pass-thru
+        case 'd':
+            mApplyForcePattern = (mApplyForcePattern == PATTERN_DISSOLVE) ? PATTERN_NONE : PATTERN_DISSOLVE;
+            mFrameCounter = 0;
+            mPatternDuration = 60.0f;
             break;
             
         case ' ':

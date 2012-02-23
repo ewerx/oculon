@@ -210,7 +210,7 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius, float 
                             {
                                 ci::ColorAf color;
                                 const float mag = (xd+yd)/2.0f;
-                                color = (*mForceColor) + ci::ColorAf(mag,mag,mag,0.0f);
+                                color = (*mForceColor) + ci::ColorAf(mag,mag,mag,mag*0.5f);
                                 glColor4f(color.r,color.g,color.b,color.a);
                             }
                             else

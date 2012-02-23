@@ -38,6 +38,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
+    void drawDebug();
     bool handleKeyDown(const KeyEvent& keyEvent);
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
@@ -88,6 +89,7 @@ private:
         PATTERN_BPM_BOUNCE,
         PATTERN_CROSSING,
         PATTERN_RING,
+        PATTERN_DISSOLVE,
         
     };
     eForcePattern mApplyForcePattern;
@@ -95,8 +97,11 @@ private:
     int mBeatCount;
     int mBpmBouncePosition;
     int mFrameCounter;
+    float mPatternDuration;
     
     Vec2i mCrossForcePoint[4];
+    
+    
     
     float mAudioSensitivity;
     

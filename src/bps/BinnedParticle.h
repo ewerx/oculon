@@ -71,8 +71,8 @@ public:
 	void draw(const ci::ColorAf& baseColor, float radius) 
     {
         ci::ColorAf color(baseColor);
-        const float mag = (xf+yf) * (xf+yf);
-        color += ci::ColorAf( mag, mag, mag, 0.0f );
+        //const float mag = (xf+yf) * (xf+yf);
+        //color += ci::ColorAf( mag, mag, mag, 0.0f );
         glColor4f( color.r, color.g, color.b, color.a );
 #if BINNED_QUADS
         //gl::drawBillboard(Vec2f(x,y), Vec2f(radius,radius), 0.0f, bbRight, bbUp);
