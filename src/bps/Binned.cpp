@@ -39,15 +39,18 @@ void Binned::setup()
 {
     mKParticles = 17;
     
-    mParticleRadius = 5.0f;
+    mParticleRadius = 10.f;//5.0f;
     
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
     mBounceOffWalls = true;
+    mCircularWall = true;
 	mParticleNeighborhood = 14;
     
+    mCircularWallRadius = (mApp->getViewportWidth()/2) * 0.96f;;
+    
 	mParticleRepulsion = 1.5;
-	mCenterAttraction = 0.03f;//0.05;
+	mCenterAttraction = 0.12f;//0.03f;//0.05;
     
     mDamping = 0.01f;
     mWallDamping = 0.3f;
@@ -55,11 +58,12 @@ void Binned::setup()
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
     mMaxForce = 800.0f;
-    mMaxRadius = 500.0f;
+    mMaxRadius = 650.0f;
     mAudioSensitivity = 0.0f;
     
     mIsMousePressed = false;
     mApplyForcePattern = PATTERN_NONE;
+    mPatternDuration = 0.0f;
     
     mPointColor.r = 1.0f;
     mPointColor.g = 1.0f;
@@ -94,11 +98,11 @@ void Binned::reset()
 	float padding = 0;
 	float maxVelocity = .5;
     
-    bool ringformation = false;
+    bool ringformation = true;
     if( ringformation )
     {
         
-        padding = 250;
+        padding = mApp->getViewportWidth()*0.2f;
         /*
         for(int i = 0; i < mKParticles * 256; i++) 
         {
@@ -128,7 +132,7 @@ void Binned::reset()
          */
         const float centerX = mApp->getViewportWidth()/2.0f;
         const float centerY = mApp->getViewportHeight()/2.0f;
-        const float thickness = 50;
+        const float thickness = mApp->getViewportWidth()*0.1f;
         for(int i = 0; i < mKParticles * 1024; i++) 
         {
             float r = Rand::randFloat(0.0f,M_PI*2.0f);
@@ -173,6 +177,7 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
     params.addParam("Damping Force", &mDamping, "step=0.01");
     params.addParam("Wall Damping", &mWallDamping, "step=0.01");
+    params.addParam("Wall Radius", &mCircularWallRadius, "");
     params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
     params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
     params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
@@ -199,10 +204,15 @@ void Binned::update(double dt)
     snprintf(buf, 256, "mode: %d", mMode);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
     
-    if( mApplyForcePattern == PATTERN_DISSOLVE )
+    snprintf(buf, 256, "pattern: %d", mApplyForcePattern);
+    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
+    
+    if( mPatternDuration > 0.0f )
     {
         float time = (mPatternDuration*kCaptureFramerate - mFrameCounter) * dt;
-        snprintf(buf, 256, "finished in: %.1fs", time);
+        snprintf(buf, 256, "est. remaining: %.1fs", time);
+        mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
+        snprintf(buf, 256, "actual elapsed: %.1fs", mFrameCounter/kCaptureFramerate);
         mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
     }
 }
@@ -220,6 +230,8 @@ void Binned::draw()
 	
 	mParticleSystem.setupForces();
 	// apply per-particle forces
+    const float radius_sq = mCircularWallRadius*mCircularWallRadius;
+    
 	glBegin(GL_LINES);
 	for(int i = 0; i < mParticleSystem.size(); i++) 
     {
@@ -231,8 +243,15 @@ void Binned::draw()
             // forces on this particle
             if( mBounceOffWalls )
             {
-                const float padding = 50;
-                cur.bounceOffWalls(0-padding, 0-padding, mApp->getViewportWidth()+padding, mApp->getViewportHeight()+padding, mWallDamping);
+                if( mCircularWall )
+                {
+                    cur.bounceOffCircularWall(Vec2f( mApp->getViewportWidth()/2.0f, mApp->getViewportHeight()/2.0f ), mCircularWallRadius, radius_sq, mWallDamping);
+                }
+                else
+                {
+                    const float padding = 50;
+                    cur.bounceOffWalls(0-padding, 0-padding, mApp->getViewportWidth()+padding, mApp->getViewportHeight()+padding, mWallDamping);
+                }
             }
         }
 		cur.addDampingForce(mDamping);
@@ -369,6 +388,16 @@ void Binned::draw()
             
         case PATTERN_RING:
         {
+            const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
+            float time = elapsed_seconds / mPatternDuration;
+            if( time > 1.0f )
+            {
+                mApplyForcePattern = PATTERN_NONE;
+                mApp->enableFrameCapture( false );
+                break;
+                //mApp->quit();
+            }
+            
             bool gotime = false;
             //float desired_fps = kCaptureFramerate;
             //float actual_fps = mApp->getAverageFps();
@@ -384,11 +413,13 @@ void Binned::draw()
                     mBeatCount = 0;
                     gotime = true;
                 }
+                
+                
             }
             
             if( gotime )
             {
-                const float radius = Rand::randFloat(mMaxRadius*0.75f,mMaxRadius*1.25f);//mMaxRadius*0.5f;
+                const float radius = Rand::randFloat(mMaxRadius*0.5f,mMaxRadius*1.5f);//mMaxRadius*0.5f;
                 const float force = Rand::randFloat(mMaxForce*0.75f,mMaxForce*1.25f);
                 float theta = 0.0f;
                 const float delta = (M_PI*2.0f)/90.f;
@@ -408,7 +439,7 @@ void Binned::draw()
                 if( !alternate || both )
                 {
                 
-                    const float inner_force = Rand::randFloat(force,force*1.5f);
+                    const float inner_force = Rand::randFloat(0.5f*force,force*1.5f);
                     const float inner_radius = Rand::randFloat(radius*0.25f,radius);
                     mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
                 }
@@ -480,12 +511,15 @@ void Binned::drawDebug()
     Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
     float scale = (float)(mApp->getWindowWidth()) / (float)(mApp->getViewportWidth()); 
     
-    glColor4f(1.0f,0.0f,0.0f,1.0f);
+    glColor4f(1.0f,0.0f,0.0f,0.5f);
     gl::drawStrokedCircle(center, mMaxRadius*scale);
-    glColor4f(1.0f,0.2f,0.2f,1.0f);
+    glColor4f(1.0f,0.2f,0.2f,0.25f);
     gl::drawStrokedCircle(center, mMaxRadius*0.75f*scale);
     gl::drawStrokedCircle(center, mMaxRadius*1.25f*scale);
     //gl::drawStrokedCircle(center, mApp->getWindowWidth()/3.0f);
+    
+    glColor4f(0.0f,0.2f,0.5f,0.5f);
+    gl::drawStrokedCircle(center, mCircularWallRadius*scale);
     
     gl::enableDepthRead();
     //gl::enableDepthWrite();
@@ -632,10 +666,15 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             }
             break;
             
+        case 'N':
+            mApp->enableFrameCapture( (mApplyForcePattern != PATTERN_RING) );
+            // pass-thru
         case 'n':
             mApplyForcePattern = (mApplyForcePattern == PATTERN_RING ) ? PATTERN_NONE : PATTERN_RING;
             mBpmBounceTime = 0.0f;
             mBeatCount = -1;
+            mFrameCounter = 0;
+            mPatternDuration = 30.0f;
             break;
             
         

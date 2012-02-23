@@ -81,6 +81,8 @@ private:
     
     bool mRandomPlacement;
     bool mBounceOffWalls;
+    bool mCircularWall;
+    float mCircularWallRadius;
     
     enum eForcePattern
     {

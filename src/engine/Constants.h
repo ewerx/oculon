@@ -1,6 +1,7 @@
 #pragma once
 #include "cinder/Color.h"
 
+static const float kTwoPi           = 2.0f*M_PI;
 static const float kWindowWidth		= 640.0f;
 static const float kWindowHeight	= 480.0f;
 
