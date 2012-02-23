@@ -73,6 +73,8 @@ public: // new
     //TODO: hack
     Scene* getScene(const int index)            { return mScenes[index]; }
     
+    void enableFrameCapture( bool enable );
+    
 protected: // new
     
     void setupScenes();
@@ -82,7 +84,7 @@ protected: // new
     
     void startVideoCapture( bool useDefaultPath =true );
     void stopVideoCapture();
-    void enableFrameCapture( bool enable );
+    
     
 private: // members
     // input

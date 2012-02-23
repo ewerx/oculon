@@ -384,6 +384,17 @@ void OculonApp::keyDown( KeyEvent event )
                 passToScenes = true;
             }
             break;
+        case KeyEvent::KEY_h:
+            mIsCapturingHighRes = !mIsCapturingHighRes;
+            if( mIsCapturingHighRes )
+            {
+                resize( ResizeEvent(mFbo.getSize()) );
+            }
+            else
+            {
+                resize( ResizeEvent(getWindowSize()) );
+            }
+            break;
         case KeyEvent::KEY_ESCAPE:
             quit();
             break;
@@ -561,6 +572,8 @@ void OculonApp::draw()
     
     if( mIsCapturingHighRes )
     {
+        gl::enableDepthRead();
+        gl::enableDepthWrite();
         gl::pushMatrices();
         glEnable(GL_TEXTURE_2D);
         // draw the captured texture back to screen
@@ -574,6 +587,22 @@ void OculonApp::draw()
     
     //TODO: option to capture debug output
     // debug
+    // render scenes
+    gl::pushMatrices();
+    gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        assert( scene != NULL );
+        if( scene && scene->isVisible() )
+        {
+            scene->drawDebug();
+        }
+    }
+    gl::popMatrices();
+    
     drawInfoPanel();
     if( !mIsPresentationMode )
     {
@@ -657,11 +686,6 @@ void OculonApp::enableFrameCapture( bool enable )
     
     if( mIsCapturingFrames )
     {
-        if( mIsCapturingHighRes )
-        {
-            resize( ResizeEvent(mFbo.getSize()) );
-        }
-        
         mFrameCaptureCount = 0;
         fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/capture/oculon_capture");
         mFrameCapturePath = outputPath.string();

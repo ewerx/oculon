@@ -89,7 +89,6 @@ void InfoPanel::render( Vec2f aWindowDim )
         glEnable( GL_TEXTURE_2D );
         gl::disableDepthRead();
         gl::disableDepthWrite();
-        //glColor4f( 1, 1, 1, 1 );
         
         gl::pushMatrices();
         gl::setMatricesWindow( aWindowDim );

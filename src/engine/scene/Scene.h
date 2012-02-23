@@ -36,6 +36,7 @@ public:
     virtual void resize() {}
     virtual void update(double dt);
     virtual void draw() {}
+    virtual void drawDebug() {}
     
     virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
     virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { return; }
