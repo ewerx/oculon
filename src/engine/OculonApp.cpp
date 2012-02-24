@@ -63,7 +63,7 @@ void OculonApp::setup()
     mIsCapturingVideo = false;
     mIsCapturingFrames = false;
     mSaveNextFrame = false;
-    mIsCapturingHighRes = true;
+    mIsCapturingHighRes = false;
     static const int FBO_WIDTH = 2240;
     static const int FBO_HEIGHT = 2240;
     gl::Fbo::Format format;
@@ -187,11 +187,11 @@ void OculonApp::setupScenes()
     
     // Magnetosphere
     console() << ++sceneId << ": Magneto\n";
-    //addScene( new Magnetosphere() );
+    addScene( new Magnetosphere(), true );
     
     // Binned
     console() << ++sceneId << ": Binned\n";
-    addScene( new Binned(), true );
+    addScene( new Binned() );
     
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
