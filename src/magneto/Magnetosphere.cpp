@@ -31,7 +31,7 @@ void Magnetosphere::setup()
 #ifdef USE_OPENGL_CONTEXT
 	mOpencl.setupFromOpenGL();
 #else	
-	opencl.setup(CL_DEVICE_TYPE_CPU, 2);
+	mOpencl.setup(CL_DEVICE_TYPE_CPU, 2);
 #endif	
 	
 	for(int i=0; i<NUM_PARTICLES; i++) 
@@ -56,7 +56,7 @@ void Magnetosphere::setup()
 #ifdef USE_OPENGL_CONTEXT
 	mClMemPosVBO.initFromGLObject(mVbo[0]);
 #else
-	mClMemPosVBO.initBuffer(sizeof(Vec2) * NUM_PARTICLES, CL_MEM_READ_WRITE, particlesPos);
+	mClMemPosVBO.initBuffer(sizeof(Vec2f) * NUM_PARTICLES, CL_MEM_READ_WRITE, mParticlesPos);
 #endif	
 	
 	mKernelUpdate->setArg(0, mClMemParticles.getCLMem());
@@ -198,8 +198,8 @@ void Magnetosphere::draw()
 #ifdef USE_OPENGL_CONTEXT
 	mOpencl.finish();
 #else	
-	opencl.readBuffer(sizeof(Vec2) * NUM_PARTICLES, clMemPosVBO, particlesPos);
-	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(Vec2) * NUM_PARTICLES, particlesPos);
+	mOpencl.readBuffer(sizeof(Vec2f) * NUM_PARTICLES, mClMemPosVBO, mParticlesPos);
+	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(Vec2f) * NUM_PARTICLES, mParticlesPos);
 #endif	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, 0);

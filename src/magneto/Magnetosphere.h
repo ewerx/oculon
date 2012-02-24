@@ -24,7 +24,7 @@ using namespace ci;
 using std::vector;
 
 #define USE_OPENGL_CONTEXT
-#define NUM_PARTICLES (1000*1000)
+#define NUM_PARTICLES (2000*1000)
 
 //
 // The Magnificent Magnetosphere!
