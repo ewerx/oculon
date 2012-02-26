@@ -37,9 +37,9 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 17;
+    mKParticles = 20;
     
-    mParticleRadius = 10.f;//5.0f;
+    mParticleRadius = 15.f;//5.0f;
     
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
@@ -444,6 +444,12 @@ void Binned::draw()
                     mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
                 }
                 alternate = !alternate;
+                
+                if( Rand::randFloat() < 0.5f )
+                {
+                    mMaxRadius *= randFloat(0.75f,1.25f);
+                    mMaxForce *= randFloat(0.75f,1.25f);
+                }
             }
             break;
         }
@@ -674,7 +680,7 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             mBpmBounceTime = 0.0f;
             mBeatCount = -1;
             mFrameCounter = 0;
-            mPatternDuration = 30.0f;
+            mPatternDuration = 90.0f;
             break;
             
         
@@ -684,7 +690,7 @@ bool Binned::handleKeyDown( const KeyEvent& event )
         case 'd':
             mApplyForcePattern = (mApplyForcePattern == PATTERN_DISSOLVE) ? PATTERN_NONE : PATTERN_DISSOLVE;
             mFrameCounter = 0;
-            mPatternDuration = 60.0f;
+            mPatternDuration = 90.0f;
             break;
             
         case ' ':

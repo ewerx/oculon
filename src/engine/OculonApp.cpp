@@ -64,8 +64,8 @@ void OculonApp::setup()
     mIsCapturingFrames = false;
     mSaveNextFrame = false;
     mIsCapturingHighRes = true;
-    static const int FBO_WIDTH = 2240;
-    static const int FBO_HEIGHT = 2240;
+    static const int FBO_WIDTH = 2600;
+    static const int FBO_HEIGHT = 2600;
     gl::Fbo::Format format;
     //	format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
