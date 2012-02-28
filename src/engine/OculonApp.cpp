@@ -67,7 +67,7 @@ void OculonApp::setup()
     static const int FBO_WIDTH = 2240;
     static const int FBO_HEIGHT = 2240;
     gl::Fbo::Format format;
-    //	format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
+    format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
     // render
@@ -86,7 +86,7 @@ void OculonApp::setup()
     mMayaCam.setCurrentCam( mCam );
     
     // params
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()/2 ) );
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 275, getWindowHeight()/2 ) );
     //mParams.setOptions("","position='10 600'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
@@ -730,4 +730,4 @@ int OculonApp::getViewportHeight() const
 }
 
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_2) )
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )

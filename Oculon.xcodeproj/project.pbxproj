@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC014FB1346002CE80B /* WaveParticle.cl */; };
+		7C1C5CC414FB13B7002CE80B /* blur2_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */; };
+		7C1C5CC514FB13B7002CE80B /* blur2_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
+		7C1C5CC714FB13D3002CE80B /* glitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC614FB13D3002CE80B /* glitter.png */; };
+		7C1C5CC814FC618B002CE80B /* blur2_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */; };
+		7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
+		7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
+		7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
 		7C3738F514F7359B00B24851 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738EA14F7359B00B24851 /* Color.cpp */; };
@@ -109,6 +117,10 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		7C1C5CC014FB1346002CE80B /* WaveParticle.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = WaveParticle.cl; path = opencl/WaveParticle.cl; sourceTree = "<group>"; };
+		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
+		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
+		7C1C5CC614FB13D3002CE80B /* glitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glitter.png; sourceTree = "<group>"; };
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
 		7C3738DA14F36A4C00B24851 /* oculon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oculon.png; sourceTree = "<group>"; };
 		7C3738E814F7359B00B24851 /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
@@ -575,6 +587,7 @@
 			isa = PBXGroup;
 			children = (
 				7C5C209314F7571700971B41 /* Particle.cl */,
+				7C1C5CC014FB1346002CE80B /* WaveParticle.cl */,
 			);
 			name = opencl;
 			sourceTree = "<group>";
@@ -582,7 +595,6 @@
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
-				7C37393814F737DA00B24851 /* OpenCL.framework */,
 				7C74552E148C04C6009C0356 /* Oculon */,
 				7C745513148C04C6009C0356 /* Frameworks */,
 				7C745511148C04C6009C0356 /* Products */,
@@ -601,6 +613,7 @@
 		7C745513148C04C6009C0356 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7C37393814F737DA00B24851 /* OpenCL.framework */,
 				7C865590148C2980000E00B6 /* CoreMIDI.framework */,
 				7C745514148C04C6009C0356 /* Cocoa.framework */,
 				7C745516148C04C6009C0356 /* AppKit.framework */,
@@ -806,6 +819,7 @@
 			children = (
 				7C948F4314B3A1E7003A3DA8 /* orbiter */,
 				7C96934814970B2900C0E1E6 /* pulsar */,
+				7C1C5CC614FB13D3002CE80B /* glitter.png */,
 				7C8663BF149536F0004C9558 /* particle.png */,
 				7C3738C114F03AED00B24851 /* particle_white.png */,
 			);
@@ -815,6 +829,8 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */,
+				7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */,
 				7C96934414970AF800C0E1E6 /* emitter_vert.glsl */,
 				7C96934514970AF800C0E1E6 /* emitter_frag.glsl */,
 				7C865648148C2BCD000E00B6 /* passthru.vsh */,
@@ -979,6 +995,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C1C5CC814FC618B002CE80B /* blur2_frag.glsl in Resources */,
+				7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */,
 				7C5C209514F7572800971B41 /* Particle.cl in Resources */,
 				7C745553148C2413009C0356 /* InfoPlist.strings in Resources */,
 				7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */,
@@ -1003,6 +1021,8 @@
 				7C37392614F736E300B24851 /* changelog.txt in Resources */,
 				7C37393014F736E300B24851 /* install.xml in Resources */,
 				7C37393114F736E300B24851 /* LICENSE.txt in Resources */,
+				7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */,
+				7C1C5CC714FB13D3002CE80B /* glitter.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1013,6 +1033,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */,
+				7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */,
 				7C745587148C259C009C0356 /* AudioInput.cpp in Sources */,
 				7C745588148C259C009C0356 /* InfoPanel.cpp in Sources */,
 				7C745589148C259C009C0356 /* Kinect.cpp in Sources */,
@@ -1060,6 +1082,8 @@
 				7C37393514F736E300B24851 /* MSAOpenCLKernel.cpp in Sources */,
 				7C37393614F736E300B24851 /* MSAOpenCLMemoryObject.cpp in Sources */,
 				7C37393714F736E300B24851 /* MSAOpenCLProgram.cpp in Sources */,
+				7C1C5CC414FB13B7002CE80B /* blur2_frag.glsl in Sources */,
+				7C1C5CC514FB13B7002CE80B /* blur2_vert.glsl in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
