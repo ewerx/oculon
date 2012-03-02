@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
+		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
 		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
 		7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11C14CCFCA6008507D3 /* OscListener.cpp */; };
 		7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */; };
@@ -82,6 +84,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
+		7C3738DA14F36A4C00B24851 /* oculon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oculon.png; sourceTree = "<group>"; };
 		7C52E10714CCFC9B008507D3 /* IpEndpointName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
 		7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
 		7C52E10914CCFC9B008507D3 /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
@@ -308,6 +312,7 @@
 				7C74552E148C04C6009C0356 /* Oculon */,
 				7C745513148C04C6009C0356 /* Frameworks */,
 				7C745511148C04C6009C0356 /* Products */,
+				7C3738DA14F36A4C00B24851 /* oculon.png */,
 			);
 			sourceTree = "<group>";
 		};
@@ -526,6 +531,7 @@
 				7C948F4314B3A1E7003A3DA8 /* orbiter */,
 				7C96934814970B2900C0E1E6 /* pulsar */,
 				7C8663BF149536F0004C9558 /* particle.png */,
+				7C3738C114F03AED00B24851 /* particle_white.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -698,6 +704,8 @@
 				7C948F5314B3A1E7003A3DA8 /* sunmap.jpg in Resources */,
 				7C948F5414B3A1E7003A3DA8 /* uranusmap.jpg in Resources */,
 				7C948F5514B3A1E7003A3DA8 /* venusmap.jpg in Resources */,
+				7C3738C214F03AED00B24851 /* particle_white.png in Resources */,
+				7C3738DB14F36A4C00B24851 /* oculon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

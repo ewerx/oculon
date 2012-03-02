@@ -16,6 +16,7 @@
 #include "cinder/params/Params.h"
 #include "cinder/MayaCamUI.h"
 #include "cinder/qtime/MovieWriter.h"
+#include "cinder/gl/Fbo.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
@@ -49,6 +50,9 @@ public: // cinder interface
 
 	void draw();
     
+    int getViewportWidth() const;                 
+    int getViewportHeight() const;
+    
 public: // new
     inline AudioInput& getAudioInput()         { return mAudioInput; }
     inline MidiInput& getMidiInput()           { return mMidiInput; }
@@ -69,6 +73,8 @@ public: // new
     //TODO: hack
     Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     
+    void enableFrameCapture( bool enable );
+    
 protected: // new
     
     void setupScenes();
@@ -78,7 +84,7 @@ protected: // new
     
     void startVideoCapture( bool useDefaultPath =true );
     void stopVideoCapture();
-    void enableFrameCapture( bool enable );
+    
     
 private: // members
     // input
@@ -113,6 +119,8 @@ private: // members
     bool                    mIsCapturingFrames;
     string                  mFrameCapturePath;
     int                     mFrameCaptureCount;
+    bool                    mIsCapturingHighRes;
+    gl::Fbo                 mFbo;
     
     bool                    mSaveNextFrame;
 };

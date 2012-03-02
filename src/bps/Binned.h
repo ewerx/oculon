@@ -38,6 +38,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
+    void drawDebug();
     bool handleKeyDown(const KeyEvent& keyEvent);
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
@@ -76,9 +77,33 @@ private:
     
     ColorAf mPointColor;
     ColorAf mForceColor;
+    float mParticleRadius;
     
     bool mRandomPlacement;
     bool mBounceOffWalls;
+    bool mCircularWall;
+    float mCircularWallRadius;
+    
+    enum eForcePattern
+    {
+        PATTERN_NONE,
+        PATTERN_FOUR_CORNERS,
+        PATTERN_BPM_BOUNCE,
+        PATTERN_CROSSING,
+        PATTERN_RING,
+        PATTERN_DISSOLVE,
+        
+    };
+    eForcePattern mApplyForcePattern;
+    float mBpmBounceTime;
+    int mBeatCount;
+    int mBpmBouncePosition;
+    int mFrameCounter;
+    float mPatternDuration;
+    
+    Vec2i mCrossForcePoint[4];
+    
+    
     
     float mAudioSensitivity;
     
