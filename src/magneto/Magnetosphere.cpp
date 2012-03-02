@@ -84,11 +84,19 @@ void Magnetosphere::setup()
     
     gl::Fbo::Format format;
     //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-    const int fboWidth = 512;
-    const int fboHeight = 512;
+    const int fboWidth = mApp->getWindowWidth();
+    const int fboHeight = mApp->getWindowHeight();
     mFboNew = gl::Fbo( fboWidth, fboHeight, format );
     mFboComp = gl::Fbo( fboWidth, fboHeight, format );
     mFboBlur = gl::Fbo( fboWidth, fboHeight, format );
+    
+    mFboBlur.bindFramebuffer();
+    {
+        gl::setMatricesWindow( mFboNew.getSize(), false );
+        gl::setViewport( mFboNew.getBounds() );
+        gl::clear( ColorA(0,0,0,0) );
+    }
+    mFboBlur.unbindFramebuffer();
     
     /*
     for(int i=0; i < kMagnetoNumParticles; i++) 
@@ -336,17 +344,23 @@ void Magnetosphere::handleMouseDown( const MouseEvent& event )
 	mIsMousePressed = true;
 	mMousePos.x = event.getPos().x;
     mMousePos.y = event.getPos().y;
+    
+    mNodesNeedUpdating = true;
 }
 
 void Magnetosphere::handleMouseUp( const MouseEvent& event )
 {
 	mIsMousePressed = false;
+    
+    mNodesNeedUpdating = true;
 }
 
 void Magnetosphere::handleMouseDrag( const MouseEvent& event )
 {
 	mMousePos.x = event.getPos().x;
     mMousePos.y = event.getPos().y;
+    
+    mNodesNeedUpdating = true;
 }
 
 //
@@ -387,7 +401,8 @@ void Magnetosphere::draw()
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     */
     
-    drawParticles();
+    if(!mUseFbo)
+        drawParticles();
     
     if(mUseFbo) 
     {
@@ -682,6 +697,8 @@ void Magnetosphere::drawStrokes()
 		mOldNodes[i].id = i;
 		mOldNodes[i].add(mNodes[i].pos.x, mNodes[i].pos.y);
 		mOldNodes[i].draw(mTrailAudioDistortMin, mTrailAudioDistortMax, mTrailWaveFreqMin, mTrailWaveFreqMax, mTrailDistanceAffectsWave, mTrailBrightness, mColor, mRenderDimensions);
+        
+        //console() << i << ": " << mNodes[i].pos.x << ", " << mNodes[i].pos.y << std::endl;
 	}
 	//ofFill();
 }
@@ -695,9 +712,10 @@ void Magnetosphere::drawOffscreen()
     {
         gl::setMatricesWindow( mFboNew.getSize(), false );
         gl::setViewport( mFboNew.getBounds() );
-        gl::clear( ColorA(0,0,0,0) );
+        gl::clear( ColorA(0,0,0,0.0f) );
         
-        drawStrokes();
+        drawParticles();
+        //drawStrokes();
     }
     mFboNew.unbindFramebuffer();
 	
@@ -705,7 +723,7 @@ void Magnetosphere::drawOffscreen()
     {
         gl::setMatricesWindow( mFboComp.getSize(), false );
         gl::setViewport( mFboComp.getBounds() );
-        gl::clear( ColorA(0,0,0,0) );
+        gl::clear( ColorA(0,0,0,1.0f) );
         gl::enableAdditiveBlending();
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_ONE, GL_ONE);
@@ -729,6 +747,7 @@ void Magnetosphere::drawOffscreen()
         //mFboNew.bindTexture(0); // use rendered scene as texture
         //gl::drawSolidRect( mFboComp.getBounds() );
         //mFboNew.unbindTexture();
+
     }
     mFboComp.unbindFramebuffer();
 	
@@ -737,7 +756,7 @@ void Magnetosphere::drawOffscreen()
     {
         gl::setMatricesWindow( mFboBlur.getSize(), false );
         gl::setViewport( mFboBlur.getBounds() );
-		gl::clear( ColorA(0,0,0,0) );
+		gl::clear( ColorA(0,0,0,1.0f) );
         if(mDoBlur) 
         {
             mBlurShader.bind();

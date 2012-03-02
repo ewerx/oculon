@@ -83,16 +83,25 @@ private:
         int curHead;
         int id;
         
+        OldNode()
+        {
+            curHead = 0;
+            id = 0;
+        }
         
-        void add(float px, float py) {
+        
+        void add(float px, float py) 
+        {
             curHead--;
             if(curHead<0) curHead += Magnetosphere::sOldNodeHistory;
             history[curHead].set(px, py);
         }
         
-        void init(float px, float py) {
+        void init(float px, float py) 
+        {
             curHead = 0;
-            for(int i=0; i<Magnetosphere::sOldNodeHistory; i++) {
+            for(int i=0; i<Magnetosphere::sOldNodeHistory; i++) 
+            {
                 add(px, py);
             }
         }
@@ -172,6 +181,7 @@ private:
                 glColor4f(color.x * a, color.y * a, color.z * a, 1.0f);
                 //gl::draw( Path2d( BSpline2f( points, 1, /*loop*/false, /*open*/true ) ) );
                 			glVertex3f(cur.x, cur.y, 0);
+                console() << "vertex: " << cur.x << ", " << cur.y << std::endl;
                 //ofCurve(old2.x, old2.y, old.x, old.y, cur.x, cur.y, next.x, next.y);
                 
             }
