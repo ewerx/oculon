@@ -34,6 +34,7 @@
 #include "AudioTest.h"
 #include "MindWaveTest.h"
 #include "MovieTest.h"
+#include "ShaderTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -187,11 +188,11 @@ void OculonApp::setupScenes()
     
     // Magnetosphere
     console() << ++sceneId << ": Magneto\n";
-    addScene( new Magnetosphere(), true );
+    //addScene( new Magnetosphere(), true );
     
     // Binned
     console() << ++sceneId << ": Binned\n";
-    addScene( new Binned() );
+    //addScene( new Binned() );
     
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
@@ -200,6 +201,10 @@ void OculonApp::setupScenes()
     // MovieTest
     console() << ++sceneId << ": MovieTest\n";
     //addScene( new MovieTest() );
+    
+    // ShaderTest
+    console() << ++sceneId << ": ShaderTest\n";
+    addScene( new ShaderTest(), true );
 
     
     if( mEnableMindWave )
