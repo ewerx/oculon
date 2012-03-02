@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
+		7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11C14CCFCA6008507D3 /* OscListener.cpp */; };
+		7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */; };
+		7C52E12214CCFCA6008507D3 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11E14CCFCA6008507D3 /* OscSender.cpp */; };
+		7C52E12414CCFE99008507D3 /* OscServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E12314CCFE99008507D3 /* OscServer.cpp */; };
+		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
+		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
 		7C745519148C04C6009C0356 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745518148C04C6009C0356 /* Foundation.framework */; };
@@ -50,6 +57,17 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
+		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
+		7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */; };
+		7C948F4E14B3A1E7003A3DA8 /* jupitermap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */; };
+		7C948F4F14B3A1E7003A3DA8 /* marsmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */; };
+		7C948F5014B3A1E7003A3DA8 /* mercurymap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4714B3A1E7003A3DA8 /* mercurymap.jpg */; };
+		7C948F5114B3A1E7003A3DA8 /* neptunemap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4814B3A1E7003A3DA8 /* neptunemap.jpg */; };
+		7C948F5214B3A1E7003A3DA8 /* saturnmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4914B3A1E7003A3DA8 /* saturnmap.jpg */; };
+		7C948F5314B3A1E7003A3DA8 /* sunmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4A14B3A1E7003A3DA8 /* sunmap.jpg */; };
+		7C948F5414B3A1E7003A3DA8 /* uranusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4B14B3A1E7003A3DA8 /* uranusmap.jpg */; };
+		7C948F5514B3A1E7003A3DA8 /* venusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4C14B3A1E7003A3DA8 /* venusmap.jpg */; };
 		7C9693431496FFC400C0E1E6 /* Pulsar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9693411496FFC400C0E1E6 /* Pulsar.cpp */; };
 		7C96934614970AF800C0E1E6 /* emitter_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C96934714970AF800C0E1E6 /* emitter_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
@@ -57,9 +75,41 @@
 		7C96934E14970B3F00C0E1E6 /* normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934A14970B3F00C0E1E6 /* normal.png */; };
 		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
 		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
+		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
+		7CD0B85114B6B68E002505C5 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84914B6B68E002505C5 /* kiss_fft.c */; };
+		7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */; };
+		7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B85014B6B68E002505C5 /* Kiss.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C52E10714CCFC9B008507D3 /* IpEndpointName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
+		7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
+		7C52E10914CCFC9B008507D3 /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
+		7C52E10A14CCFC9B008507D3 /* TimerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerListener.h; sourceTree = "<group>"; };
+		7C52E10B14CCFC9B008507D3 /* UdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UdpSocket.h; sourceTree = "<group>"; };
+		7C52E10D14CCFC9B008507D3 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageMappingOscPacketListener.h; sourceTree = "<group>"; };
+		7C52E10E14CCFC9B008507D3 /* OscException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscException.h; sourceTree = "<group>"; };
+		7C52E10F14CCFC9B008507D3 /* OscHostEndianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscHostEndianness.h; sourceTree = "<group>"; };
+		7C52E11014CCFC9B008507D3 /* OscOutboundPacketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscOutboundPacketStream.h; sourceTree = "<group>"; };
+		7C52E11114CCFC9B008507D3 /* OscPacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscPacketListener.h; sourceTree = "<group>"; };
+		7C52E11214CCFC9B008507D3 /* OscPrintReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscPrintReceivedElements.h; sourceTree = "<group>"; };
+		7C52E11314CCFC9B008507D3 /* OscReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscReceivedElements.h; sourceTree = "<group>"; };
+		7C52E11414CCFC9B008507D3 /* OscTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscTypes.h; sourceTree = "<group>"; };
+		7C52E11514CCFC9B008507D3 /* OscArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscArg.h; sourceTree = "<group>"; };
+		7C52E11614CCFC9B008507D3 /* OscBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscBundle.h; sourceTree = "<group>"; };
+		7C52E11714CCFC9B008507D3 /* OscListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscListener.h; sourceTree = "<group>"; };
+		7C52E11814CCFC9B008507D3 /* OscMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscMessage.h; sourceTree = "<group>"; };
+		7C52E11914CCFC9B008507D3 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscSender.h; sourceTree = "<group>"; };
+		7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscBundle.cpp; sourceTree = "<group>"; };
+		7C52E11C14CCFCA6008507D3 /* OscListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscListener.cpp; sourceTree = "<group>"; };
+		7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscMessage.cpp; sourceTree = "<group>"; };
+		7C52E11E14CCFCA6008507D3 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscSender.cpp; sourceTree = "<group>"; };
+		7C52E12314CCFE99008507D3 /* OscServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscServer.cpp; sourceTree = "<group>"; };
+		7C52E12514CCFEB7008507D3 /* OscServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscServer.h; sourceTree = "<group>"; };
+		7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoviePlayer.cpp; sourceTree = "<group>"; };
+		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
+		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
+		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		7C745516148C04C6009C0356 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -132,6 +182,20 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8F207514D79B4400AC2D64 /* BinnedParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticle.h; sourceTree = "<group>"; };
+		7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinnedParticleSystem.cpp; sourceTree = "<group>"; };
+		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
+		7C8F207914D79C7500AC2D64 /* Binned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Binned.cpp; sourceTree = "<group>"; };
+		7C8F207A14D79C7500AC2D64 /* Binned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Binned.h; sourceTree = "<group>"; };
+		7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earthmap1k.jpg; sourceTree = "<group>"; };
+		7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupitermap.jpg; sourceTree = "<group>"; };
+		7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marsmap1k.jpg; sourceTree = "<group>"; };
+		7C948F4714B3A1E7003A3DA8 /* mercurymap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mercurymap.jpg; sourceTree = "<group>"; };
+		7C948F4814B3A1E7003A3DA8 /* neptunemap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = neptunemap.jpg; sourceTree = "<group>"; };
+		7C948F4914B3A1E7003A3DA8 /* saturnmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = saturnmap.jpg; sourceTree = "<group>"; };
+		7C948F4A14B3A1E7003A3DA8 /* sunmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sunmap.jpg; sourceTree = "<group>"; };
+		7C948F4B14B3A1E7003A3DA8 /* uranusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = uranusmap.jpg; sourceTree = "<group>"; };
+		7C948F4C14B3A1E7003A3DA8 /* venusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = venusmap.jpg; sourceTree = "<group>"; };
 		7C9693411496FFC400C0E1E6 /* Pulsar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pulsar.cpp; sourceTree = "<group>"; };
 		7C9693421496FFC400C0E1E6 /* Pulsar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pulsar.h; sourceTree = "<group>"; };
 		7C96934414970AF800C0E1E6 /* emitter_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emitter_vert.glsl; sourceTree = "<group>"; };
@@ -140,6 +204,15 @@
 		7C96934A14970B3F00C0E1E6 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
 		7C96934B14970B3F00C0E1E6 /* emitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emitter.png; sourceTree = "<group>"; };
 		7C96934C14970B3F00C0E1E6 /* bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bump.png; sourceTree = "<group>"; };
+		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		7CD0B84814B6B68E002505C5 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _kiss_fft_guts.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/_kiss_fft_guts.h; sourceTree = DEVELOPER_DIR; };
+		7CD0B84914B6B68E002505C5 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kiss_fft.c; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fft.c; sourceTree = DEVELOPER_DIR; };
+		7CD0B84A14B6B68E002505C5 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fft.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fft.h; sourceTree = DEVELOPER_DIR; };
+		7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kiss_fftr.c; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fftr.c; sourceTree = DEVELOPER_DIR; };
+		7CD0B84C14B6B68E002505C5 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fftr.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fftr.h; sourceTree = DEVELOPER_DIR; };
+		7CD0B84D14B6B68E002505C5 /* Kiss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Kiss.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/Kiss.h; sourceTree = DEVELOPER_DIR; };
+		7CD0B85014B6B68E002505C5 /* Kiss.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kiss.cpp; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/src/Kiss.cpp; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +240,68 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C52DFB314CCFC2F008507D3 /* osc */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10514CCFC9B008507D3 /* include */,
+				7C52E11A14CCFCA6008507D3 /* src */,
+			);
+			name = osc;
+			path = ../sdks/cinder_master/blocks/osc;
+			sourceTree = SOURCE_ROOT;
+		};
+		7C52E10514CCFC9B008507D3 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10614CCFC9B008507D3 /* ip */,
+				7C52E10C14CCFC9B008507D3 /* osc */,
+				7C52E11514CCFC9B008507D3 /* OscArg.h */,
+				7C52E11614CCFC9B008507D3 /* OscBundle.h */,
+				7C52E11714CCFC9B008507D3 /* OscListener.h */,
+				7C52E11814CCFC9B008507D3 /* OscMessage.h */,
+				7C52E11914CCFC9B008507D3 /* OscSender.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		7C52E10614CCFC9B008507D3 /* ip */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10714CCFC9B008507D3 /* IpEndpointName.h */,
+				7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */,
+				7C52E10914CCFC9B008507D3 /* PacketListener.h */,
+				7C52E10A14CCFC9B008507D3 /* TimerListener.h */,
+				7C52E10B14CCFC9B008507D3 /* UdpSocket.h */,
+			);
+			path = ip;
+			sourceTree = "<group>";
+		};
+		7C52E10C14CCFC9B008507D3 /* osc */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E10D14CCFC9B008507D3 /* MessageMappingOscPacketListener.h */,
+				7C52E10E14CCFC9B008507D3 /* OscException.h */,
+				7C52E10F14CCFC9B008507D3 /* OscHostEndianness.h */,
+				7C52E11014CCFC9B008507D3 /* OscOutboundPacketStream.h */,
+				7C52E11114CCFC9B008507D3 /* OscPacketListener.h */,
+				7C52E11214CCFC9B008507D3 /* OscPrintReceivedElements.h */,
+				7C52E11314CCFC9B008507D3 /* OscReceivedElements.h */,
+				7C52E11414CCFC9B008507D3 /* OscTypes.h */,
+			);
+			path = osc;
+			sourceTree = "<group>";
+		};
+		7C52E11A14CCFCA6008507D3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */,
+				7C52E11C14CCFCA6008507D3 /* OscListener.cpp */,
+				7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */,
+				7C52E11E14CCFCA6008507D3 /* OscSender.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
@@ -230,6 +365,7 @@
 			isa = PBXGroup;
 			children = (
 				7C74555A148C259C009C0356 /* engine */,
+				7C8F207414D79B4400AC2D64 /* binned */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
 				7C9693401496FFC400C0E1E6 /* pulsar */,
@@ -255,7 +391,11 @@
 				7C745566148C259C009C0356 /* MindWave.h */,
 				7C745567148C259C009C0356 /* OculonApp.cpp */,
 				7C745568148C259C009C0356 /* OculonApp.h */,
+				7C52E12514CCFEB7008507D3 /* OscServer.h */,
+				7C52E12314CCFE99008507D3 /* OscServer.cpp */,
 				7C74556A148C259C009C0356 /* Resources.h */,
+				7CAF998814E3681200E6D9F3 /* Utils.h */,
+				7CAF998514E367FB00E6D9F3 /* Utils.cpp */,
 				7C74556B148C259C009C0356 /* scene */,
 			);
 			path = engine;
@@ -268,6 +408,8 @@
 				7C74556D148C259C009C0356 /* Behavior.h */,
 				7C74556E148C259C009C0356 /* Entity.cpp */,
 				7C74556F148C259C009C0356 /* Entity.h */,
+				7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */,
+				7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */,
 				7C745570148C259C009C0356 /* Particle.cpp */,
 				7C745571148C259C009C0356 /* Particle.h */,
 				7C745572148C259C009C0356 /* ParticleController.cpp */,
@@ -309,6 +451,8 @@
 				7C745584148C259C009C0356 /* AudioTest.h */,
 				7C745585148C259C009C0356 /* MindWaveTest.cpp */,
 				7C745586148C259C009C0356 /* MindWaveTest.h */,
+				7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */,
+				7C5CA3BC14B8F7F10037B007 /* MovieTest.h */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -316,7 +460,9 @@
 		7C865570148C2784000E00B6 /* external */ = {
 			isa = PBXGroup;
 			children = (
+				7CD0B84514B6B68E002505C5 /* kiss */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
+				7C52DFB314CCFC2F008507D3 /* osc */,
 			);
 			name = external;
 			sourceTree = "<group>";
@@ -377,6 +523,7 @@
 		7C865645148C2BCD000E00B6 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7C948F4314B3A1E7003A3DA8 /* orbiter */,
 				7C96934814970B2900C0E1E6 /* pulsar */,
 				7C8663BF149536F0004C9558 /* particle.png */,
 			);
@@ -392,6 +539,35 @@
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C8F207414D79B4400AC2D64 /* binned */ = {
+			isa = PBXGroup;
+			children = (
+				7C8F207914D79C7500AC2D64 /* Binned.cpp */,
+				7C8F207A14D79C7500AC2D64 /* Binned.h */,
+				7C8F207514D79B4400AC2D64 /* BinnedParticle.h */,
+				7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */,
+				7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */,
+			);
+			name = binned;
+			path = bps;
+			sourceTree = "<group>";
+		};
+		7C948F4314B3A1E7003A3DA8 /* orbiter */ = {
+			isa = PBXGroup;
+			children = (
+				7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */,
+				7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */,
+				7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */,
+				7C948F4714B3A1E7003A3DA8 /* mercurymap.jpg */,
+				7C948F4814B3A1E7003A3DA8 /* neptunemap.jpg */,
+				7C948F4914B3A1E7003A3DA8 /* saturnmap.jpg */,
+				7C948F4A14B3A1E7003A3DA8 /* sunmap.jpg */,
+				7C948F4B14B3A1E7003A3DA8 /* uranusmap.jpg */,
+				7C948F4C14B3A1E7003A3DA8 /* venusmap.jpg */,
+			);
+			path = orbiter;
 			sourceTree = "<group>";
 		};
 		7C9693401496FFC400C0E1E6 /* pulsar */ = {
@@ -412,6 +588,45 @@
 				7C96934C14970B3F00C0E1E6 /* bump.png */,
 			);
 			name = pulsar;
+			sourceTree = "<group>";
+		};
+		7CD0B84514B6B68E002505C5 /* kiss */ = {
+			isa = PBXGroup;
+			children = (
+				7CD0B84614B6B68E002505C5 /* include */,
+				7CD0B84F14B6B68E002505C5 /* src */,
+			);
+			name = kiss;
+			path = ../../sdks/cinder_master/blocks/BanTheRewind/blocks/kiss;
+			sourceTree = SOURCE_ROOT;
+		};
+		7CD0B84614B6B68E002505C5 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7CD0B84714B6B68E002505C5 /* kiss */,
+				7CD0B84D14B6B68E002505C5 /* Kiss.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		7CD0B84714B6B68E002505C5 /* kiss */ = {
+			isa = PBXGroup;
+			children = (
+				7CD0B84814B6B68E002505C5 /* _kiss_fft_guts.h */,
+				7CD0B84914B6B68E002505C5 /* kiss_fft.c */,
+				7CD0B84A14B6B68E002505C5 /* kiss_fft.h */,
+				7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */,
+				7CD0B84C14B6B68E002505C5 /* kiss_fftr.h */,
+			);
+			path = kiss;
+			sourceTree = "<group>";
+		};
+		7CD0B84F14B6B68E002505C5 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7CD0B85014B6B68E002505C5 /* Kiss.cpp */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -474,6 +689,15 @@
 				7C96934E14970B3F00C0E1E6 /* normal.png in Resources */,
 				7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */,
 				7C96935014970B3F00C0E1E6 /* bump.png in Resources */,
+				7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */,
+				7C948F4E14B3A1E7003A3DA8 /* jupitermap.jpg in Resources */,
+				7C948F4F14B3A1E7003A3DA8 /* marsmap1k.jpg in Resources */,
+				7C948F5014B3A1E7003A3DA8 /* mercurymap.jpg in Resources */,
+				7C948F5114B3A1E7003A3DA8 /* neptunemap.jpg in Resources */,
+				7C948F5214B3A1E7003A3DA8 /* saturnmap.jpg in Resources */,
+				7C948F5314B3A1E7003A3DA8 /* sunmap.jpg in Resources */,
+				7C948F5414B3A1E7003A3DA8 /* uranusmap.jpg in Resources */,
+				7C948F5514B3A1E7003A3DA8 /* venusmap.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,6 +734,19 @@
 				7C86564C148C2BCD000E00B6 /* passthru.vsh in Sources */,
 				7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */,
 				7C9693431496FFC400C0E1E6 /* Pulsar.cpp in Sources */,
+				7CD0B85114B6B68E002505C5 /* kiss_fft.c in Sources */,
+				7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */,
+				7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */,
+				7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */,
+				7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */,
+				7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */,
+				7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */,
+				7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */,
+				7C52E12214CCFCA6008507D3 /* OscSender.cpp in Sources */,
+				7C52E12414CCFE99008507D3 /* OscServer.cpp in Sources */,
+				7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */,
+				7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */,
+				7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,7 +780,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -555,9 +792,11 @@
 					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
+					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
+					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include $(CINDER_PATH)/blocks/osc/include";
 			};
 			name = Debug;
 		};
@@ -571,7 +810,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -582,18 +821,27 @@
 					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
+					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
+					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include $(CINDER_PATH)/blocks/osc/include";
 			};
 			name = Release;
 		};
 		7C74554D148C04C6009C0356 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/iphone\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/macosx\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/vc10\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -602,9 +850,16 @@
 		7C74554E148C04C6009C0356 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/iphone\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/macosx\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/osc/lib/vc10\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

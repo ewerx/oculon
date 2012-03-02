@@ -10,3 +10,13 @@
 #define RES_SHADER_FRAGMENT			CINDER_RESOURCE( ../resources/shaders/, shader.fsh, 134, GLSL )
 #define RES_EMITTER_VERT			CINDER_RESOURCE( ../resources/shaders/, emitter_vert.glsl, 135, GLSL )
 #define RES_EMITTER_FRAG			CINDER_RESOURCE( ../resources/shaders/, emitter_frag.glsl, 136, GLSL )
+
+#define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )
+#define RES_ORBITER_MERCURY         CINDER_RESOURCE( ../resources/images/orbiter/, mercurymap.jpg, 201, JPG )
+#define RES_ORBITER_VENUS           CINDER_RESOURCE( ../resources/images/orbiter/, venusmap.jpg, 202, JPG )
+#define RES_ORBITER_EARTH           CINDER_RESOURCE( ../resources/images/orbiter/, earthmap1k.jpg, 203, JPG )
+#define RES_ORBITER_MARS            CINDER_RESOURCE( ../resources/images/orbiter/, marsmap1k.jpg, 204, JPG )
+#define RES_ORBITER_JUPITER         CINDER_RESOURCE( ../resources/images/orbiter/, jupitermap.jpg, 205, JPG )
+#define RES_ORBITER_SATURN          CINDER_RESOURCE( ../resources/images/orbiter/, saturnmap.jpg, 206, JPG )
+#define RES_ORBITER_URANUS          CINDER_RESOURCE( ../resources/images/orbiter/, uranusmap.jpg, 207, JPG )
+#define RES_ORBITER_NEPTUNE         CINDER_RESOURCE( ../resources/images/orbiter/, neptunemap.jpg, 208, JPG )

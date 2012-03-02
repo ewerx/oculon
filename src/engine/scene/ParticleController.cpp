@@ -9,6 +9,8 @@
 
 #include "ParticleController.h"
 #include "Particle.h"
+#include "Scene.h"
+#include "OculonApp.h"
 #include "Resources.h"
 #include "cinder/Rand.h"
 #include "cinder/Vector.h"
@@ -22,19 +24,54 @@ using namespace ci;
 ParticleController::ParticleController()
 : mPerlin(3)// octaves
 , mCounter(0)
-, mDrawAsSpheres(false)
+, mDrawAsBillboard(true)
 {
     mEnabledForces[FORCE_PERLIN] = false;
     mEnabledForces[FORCE_GRAVITY] = true;
     mEnabledForces[FORCE_REPULSION] = false;
+    
+    for( int i = 0; i < MAX_PARTICLES; ++i )
+    {
+        mObjStore[i] = NULL;
+    }
 }
 
-void ParticleController::setup()
+ParticleController::~ParticleController()
 {
+    mUnusedPool.clear();
+    mParticles.clear();
+    for( int i = 0; i < MAX_PARTICLES; ++i )
+    {
+        delete mObjStore[i];
+    }
+}
+
+void ParticleController::setup(Scene* owner)
+{
+    mScene = owner;
+    
     mCounter = 0;
     
     mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    for( int i = 0; i < MAX_PARTICLES; ++i )
+    {
+        mObjStore[i] = new Particle();
+        mUnusedPool.push_back( mObjStore[i] );
+    }
+}
+
+Particle* ParticleController::getNewParticle()
+{
+    Particle* p = NULL;
+    if( !mUnusedPool.empty() )
+    {
+        p = mUnusedPool.back();
+        mUnusedPool.pop_back();
+    }
+    
+    return p;
 }
 
 void ParticleController::update(double dt)
@@ -47,25 +84,29 @@ void ParticleController::update(double dt)
     
     for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-		if( ! particleIt->isState(Particle::STATE_DEAD) ) 
+        Particle* particle = (*particleIt);
+		if( ! particle->isState(Particle::STATE_DEAD) ) 
         {
 			
-//			if( particleIt->mIsBouncing ){
-//				if( Rand::randFloat() < 0.025f && !particleIt->mIsDying ){
-//					mParticles.push_back( Particle( particleIt->mLoc[0], Vec3f::zero() ) );
+//			if( (*particleIt)->mIsBouncing ){
+//				if( Rand::randFloat() < 0.025f && !(*particleIt)->mIsDying ){
+//					mParticles.push_back( Particle( (*particleIt)->mLoc[0], Vec3f::zero() ) );
 //					mParticles.back().mIsDying = true;
-//					particleIt->mIsDying = true;
-//					//particleIt->mVel += Rand::randVec3f() * Rand::randFloat( 2.0f, 3.0f );
+//					(*particleIt)->mIsDying = true;
+//					//(*particleIt)->mVel += Rand::randVec3f() * Rand::randFloat( 2.0f, 3.0f );
 //				}
 //			}
             
             if( !newway )
+            {
                 applyForces( particleIt, dt );
+            }
             
-			particleIt->update(dt);
+			particle->update(dt);
 		}
 		else 
         {
+            mUnusedPool.push_back(particle);
 			particleIt = mParticles.erase( particleIt );
 		}
 	}
@@ -88,16 +129,24 @@ void ParticleController::draw()
     mParticleTexture.bind();
     glColor4f( 1, 1, 1, 1 );
     
-    if( !mDrawAsSpheres )
+    Vec3f bbRight;
+    Vec3f bbUp;
+    const Camera& cam = mScene->getCamera();
+    cam.getBillboardVectors(&bbRight, &bbUp);
+    
+    if( !mDrawAsBillboard )
     {
         glBegin( GL_QUADS );
     }
 	for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-        if( particleIt->mRadius > 0.1f )
-            particleIt->draw(mDrawAsSpheres);
+        Particle* const particle = (*particleIt);
+        if( particle->mRadius > 0.1f )
+        {
+            particle->draw(mDrawAsBillboard,bbRight,bbUp);
+        }
 	}
-    if( !mDrawAsSpheres )
+    if( !mDrawAsBillboard )
     {
         glEnd();
     }
@@ -107,7 +156,7 @@ void ParticleController::draw()
     glDisable( GL_TEXTURE_2D );
     for( ParticleList::iterator particleIt = mParticles.begin(); particleIt != mParticles.end(); ++particleIt ) 
     {
-		particleIt->drawTrail();
+		(*particleIt)->drawTrail();
 	}
     
     mCounter++;
@@ -126,11 +175,17 @@ void ParticleController::addParticles( int amt, Vec3f pos, Vec3f vel, float radi
 		Vec3f p = pos + lOffset * radius * 0.25f;
 		Vec3f v = -vel + lOffset * Rand::randFloat( 6.0f, 10.5f ) * ( heat + 0.75f ) + Rand::randVec3f() * Rand::randFloat( 1.0f, 2.0f );
 		v.y *= 0.65f;
-        float pRadius = Rand::randFloat( 1.0f, 3.0f );
-        float mass = pRadius;
+        //float pRadius = Rand::randFloat( 1.0f, 3.0f );
+        float mass = radius;//pRadius;
         float charge = Rand::randFloat( 0.35f, 0.75f );
-        float lifespan = Rand::randFloat( 5.0f, 70.0f ); // 0.
-		mParticles.push_back( Particle( p, v, radius, mass, charge, lifespan ) );
+        float lifespan = Rand::randFloat( 5.0f, 70.0f );
+        
+        Particle* particle = getNewParticle();
+        if( particle )
+        {
+            particle->reset(p, v, radius, mass, charge, lifespan);
+            mParticles.push_back( particle );
+        }
 	}
 }
 
@@ -143,10 +198,10 @@ void ParticleController::applyForces( ParticleController::ParticleList::iterator
             switch (static_cast<eForce>(i)) 
             {
                 case FORCE_GRAVITY:
-                    p1->applyGravity(dt);
+                    (*p1)->applyGravity(dt);
                     break;
                 case FORCE_PERLIN:
-                    p1->applyPerlin(mPerlin, mCounter, dt);
+                    (*p1)->applyPerlin(mPerlin, mCounter, dt);
                     break;
                 case FORCE_REPULSION:
                 {
@@ -154,7 +209,7 @@ void ParticleController::applyForces( ParticleController::ParticleList::iterator
                     {
                         if( p2 != p1 )
                         {
-                            p1->applyRepulsion((*p2), dt);
+                            (*p1)->applyRepulsion(*(*p2), dt);
                         }
                     }
                 }
@@ -179,34 +234,34 @@ void ParticleController::applyForces2( double dt )
                 case FORCE_GRAVITY:
                     for( ParticleList::iterator pIt = mParticles.begin(); pIt != mParticles.end(); ++pIt )
                     {
-                        pIt->applyGravity(dt);
+                        (*pIt)->applyGravity(dt);
                     }
                     break;
                 case FORCE_PERLIN:
                     for( ParticleList::iterator pIt = mParticles.begin(); pIt != mParticles.end(); ++pIt )
                     {
-                        pIt->applyPerlin(mPerlin, mCounter, dt);
+                        (*pIt)->applyPerlin(mPerlin, mCounter, dt);
                     }
                     break;
                 case FORCE_REPULSION:
                 {
                     for( ParticleList::iterator p1 = mParticles.begin(); p1 != mParticles.end(); ++p1 )
                     {
-                        float thisQTimesInvM = p1->mInvMass * p1->mCharge;
+                        float thisQTimesInvM = (*p1)->mInvMass * (*p1)->mCharge;
                         
                         for( ParticleList::iterator p2 = p1; p2 != mParticles.end(); ++p2 )
                         {
                             if( p1 != p2 )
                             {
-                                Vec3f dir = p1->getPosition() - p2->getPosition();
+                                Vec3f dir = (*p1)->getPosition() - (*p2)->getPosition();
                                 float distSqrd = dir.lengthSquared();
-                                float radiusSum = 125.0f;//( p1->mRadius + p2->mRadius ) * 100.0f;
+                                float radiusSum = 125.0f;//( (*p1)->mRadius + (*p2)->mRadius ) * 100.0f;
                                 static float radiusSqrd = radiusSum * radiusSum;
                                 
                                 if( distSqrd < radiusSqrd && distSqrd > 0.1f ) 
                                 {
                                     float per = 1.0f - distSqrd/radiusSqrd;
-                                    float E = p2->mCharge / distSqrd;
+                                    float E = (*p2)->mCharge / distSqrd;
                                     float F = E * thisQTimesInvM;
                                     
                                     if( F > 15.0f )
@@ -215,8 +270,8 @@ void ParticleController::applyForces2( double dt )
                                     dir.normalize();
                                     dir *= F * per * magnitude;
                                     
-                                    p1->mAccel += dir;
-                                    p2->mAccel -= dir;
+                                    (*p1)->mAccel += dir;
+                                    (*p2)->mAccel -= dir;
                                 }
                             }
                         }

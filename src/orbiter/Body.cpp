@@ -17,6 +17,8 @@
 #include "OculonApp.h"
 #include "Orbiter.h"
 
+#include "Binned.h" //TODO: hack
+
 using namespace ci;
 using namespace std;
 
@@ -33,22 +35,47 @@ GLfloat Body::no_shininess[]	= { 0.0f };
 // Body
 // 
 
-Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double mass, const ColorA& color)
+Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color)
 : Entity<double>(pos)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
+, mRotationSpeed(rotSpeed)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
 , mPeakRadiusMultiplier(1.0f)
 , mMass(mass)
 , mColor(color)
+, mHasTexture(false)
 , mIsLabelVisible(true)
 {
     mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
+}
+
+Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color, ImageSourceRef textureImage)
+: Entity<double>(pos)
+, mName(name)
+, mVelocity(vel)
+, mAcceleration(0.0f)
+, mRotationSpeed(rotSpeed)
+, mRadius(radius)
+, mRadiusMultiplier(1.0f)
+, mPeakRadiusMultiplier(1.0f)
+, mMass(mass)
+, mColor(color)
+, mTexture(textureImage)
+, mHasTexture(true)
+, mIsLabelVisible(true)
+{
+    mEaseFactor = 1.0f;
+    mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
+    mLabel.setFont("Menlo", 10.0f);
+    mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
+    
+    mTexture.setWrap( GL_REPEAT, GL_REPEAT );
 }
 
 Body::~Body()
@@ -63,6 +90,7 @@ void Body::setup()
 void Body::update(double dt)
 {
     mPosition += mVelocity * dt;
+    mRotation += toDegrees(mRotationSpeed) * dt * (mRadiusMultiplier*10.f);
     
     updateLabel();
     
@@ -70,7 +98,7 @@ void Body::update(double dt)
     {
         //TODO: fix this hack
         OculonApp* oculon = static_cast<OculonApp*>(App::get());
-        mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
+        mRadiusAnimTime += (float)(oculon->getElapsedSecondsThisFrame());
         mEaseFactor = easeOutQuad(mRadiusAnimTime);
         mRadiusMultiplier = 1.0f + mEaseFactor * (mPeakRadiusMultiplier - 1.0f);
         //mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
@@ -95,6 +123,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         glEnable( GL_POLYGON_SMOOTH );
         
         glTranslated(screenCoords.x, screenCoords.y, screenCoords.z);
+        glRotated(mRotation, 0.0f, 1.0f, 0.0f);
         
         //drawDebugVectors();
         
@@ -108,7 +137,10 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         //glMaterialfv( GL_FRONT, GL_DIFFUSE, mColor );
         bool drawShell = false;
         float radius = drawShell ? mRadius : mRadius * mRadiusMultiplier;
+        
+        if( mHasTexture ) mTexture.enableAndBind();
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
+        if( mHasTexture ) mTexture.disable();
         
         if( drawShell )
         {
@@ -129,6 +161,22 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             glTranslatef(textCoords.x, textCoords.y, 0.0f);
 
             mLabel.draw();
+            
+            const bool binned = true;
+            if( binned )
+            {
+                //OculonApp* oculon = static_cast<OculonApp*>(App::get());
+                //TODO: hack, use a message
+                Binned* binnedScene = static_cast<Binned*>(app->getScene(3));
+                
+                if( binnedScene && binnedScene->isActive() )
+                {
+                    Vec3d screenCoords = transform * mPosition;
+                    //Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+                    float force = 200.f;
+                    binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.3f, force*mRadiusMultiplier);
+                }
+            }
 
             gl::popMatrices();
         }
@@ -174,19 +222,22 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
                     const Vec3f& point2 = mMotionTrail.getPoints()[i+1];
                     //const Vec3f& point3 = mMotionTrail.getPoints()[i+2];
                     glVertex3f(point2.x,point2.y,point2.z);
-                    glVertex3f(point2.x,point2.y+1,point2.z);
+                    glVertex3f(point2.x,point2.y+Orbiter::sTrailWidth,point2.z);
                     //glVertex3f(point3.x,point3.y,point3z);
                     //glVertex3f(point3.x+4,point3.y,point3z);
                 }
             }
             else 
             {
+                glLineWidth(Orbiter::sTrailWidth);
+                //gl::draw(mMotionTrail);
                 glBegin( GL_LINE_STRIP );
                 for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
                 {
                     const Vec3f& point = (*it);
                     glVertex3f(point.x,point.y,point.z);
                 }
+                glLineWidth(1.0f);
             }
             glEnd();
             //glDisable(GL_MULTISAMPLE_ARB );
@@ -239,7 +290,7 @@ void Body::resetTrail()
 void Body::applyFftBandValue( float fftBandValue )
 {
     OculonApp* oculon = static_cast<OculonApp*>(App::get());
-    mRadiusAnimTime += oculon->getElapsedSecondsThisFrame();
+    mRadiusAnimTime += (float)(oculon->getElapsedSecondsThisFrame());
     
     int framesToAvgFft = Orbiter::sNumFramesToAvgFft;
     if( mLastFftValues.size() > framesToAvgFft )

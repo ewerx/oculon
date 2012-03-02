@@ -12,6 +12,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
+#include "Kiss.h"
 
 using namespace ci;
 
@@ -32,11 +33,24 @@ public:
     unsigned int getFftBandCount() const { return mFftBandCount; }
     void setFftBandCount(const unsigned int count) { mFftBandCount = count; }
     
+    Kiss& getFft() { return mFft; }
+    
 private:
     audio::Input* mInput;
-    std::shared_ptr<float> mFftDataRef;
     audio::PcmBuffer32fRef mPcmBuffer;
+    
+    std::shared_ptr<float> mFftDataRef;
     unsigned int mFftBandCount;
+    
+    // Analyzer
+	bool mFftInit;
+	Kiss mFft;
+    
+	// Data
+	int32_t mDataSize;
+	int32_t mInputSize;
+	float * mInputData;
+	float * mTimeData;
 };
 
 #endif

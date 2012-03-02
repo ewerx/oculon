@@ -28,19 +28,20 @@ Pulsar::~Pulsar()
 
 void Pulsar::setup()
 {
-    mParticleStream.setup();
+    mParticleStream.setup(this);
     
     // textures
-    mEmitterTexture		= gl::Texture( loadImage( loadResource( RES_EMITTER ) ) );
-	mNormalTexture		= gl::Texture( loadImage( loadResource( RES_NORMAL ) ) );
-	mHeightTexture		= gl::Texture( loadImage( loadResource( RES_BUMP ) ) );
-	mSpecTexture		= gl::Texture( loadImage( loadResource( RES_SPEC_EXPONENT ) ) );
+    mEmitterTexture		= gl::Texture( loadImage( loadResource( RES_NORMAL ) ) );
+	//mNormalTexture		= gl::Texture( loadImage( loadResource( RES_NORMAL ) ) );
+	//mHeightTexture		= gl::Texture( loadImage( loadResource( RES_BUMP ) ) );
+	//mSpecTexture		= gl::Texture( loadImage( loadResource( RES_SPEC_EXPONENT ) ) );
     
     mEmitterTexture.setWrap( GL_REPEAT, GL_REPEAT );
-	mNormalTexture.setWrap( GL_REPEAT, GL_REPEAT );
-	mHeightTexture.setWrap( GL_REPEAT, GL_REPEAT );
-	mSpecTexture.setWrap( GL_REPEAT, GL_REPEAT );
+	//mNormalTexture.setWrap( GL_REPEAT, GL_REPEAT );
+	//mHeightTexture.setWrap( GL_REPEAT, GL_REPEAT );
+	//mSpecTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
+    /*
     try 
     {
 		mPulsarShader = gl::GlslProg( loadResource( RES_EMITTER_VERT ), loadResource( RES_EMITTER_FRAG ) );
@@ -54,11 +55,11 @@ void Pulsar::setup()
     {
 		std::cout << "Unable to load shader" << std::endl;
 	}
-    
+    */
     
     // physics
     mRadius = 50.0f;
-    mRotationVelocity = 400.8f;
+    mRotationVelocity = 400.0f;
     mHeat = 0.49f;
     
     reset();
@@ -110,14 +111,14 @@ void Pulsar::update(double dt)
     Scene::update(dt);
     
     mRotationAngle += mRotationVelocity*dt;
-    mRotation.set( Vec3d(0.0f, 1.0f, 0.0f), mRotationAngle );
+    mRotation.set( Vec3f(1.0f, 1.0f, 0.0f), mRotationAngle );
     
     generateParticles();
     
-    // debug info
-    //char buf[256];
-    //snprintf(buf, 256, "particles: %d", mParticleStream.getParticleCount());
-    //mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
+    // debug info   
+    char buf[256];
+    snprintf(buf, 256, "particles: %d", mParticleStream.getParticleCount());
+    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
 }
 
 //
@@ -169,8 +170,10 @@ void Pulsar::draw()
 	//gl::enableDepthRead( true );
 	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
+    glRotatef((float)mRotationAngle, 1.0f, 0.0f, 0.0f);
     drawStar();
-	
+
+	//glRotatef(mRotationAngle, 0.0f, 1.0f, 0.0f);
 
     mParticleStream.draw();
     glPopMatrix();
@@ -179,6 +182,7 @@ void Pulsar::draw()
 void Pulsar::drawStar()
 {
     glPushMatrix();
+    /*
     glEnable( GL_TEXTURE_2D );
 	
     Vec3f lightDir( 0.0f, 0.0f, 1.0f );
@@ -221,20 +225,30 @@ void Pulsar::drawStar()
 	mPulsarShader.unbind();
     
     glDisable( GL_TEXTURE_2D );
+    */
+    glDisable(GL_LIGHTING);
+    mEmitterTexture.enableAndBind();
+    //glRotatef(mRotationAngle, 0.0f, 1.0f, 0.0f);
+    //glRotatef((float)mRotationAngle, 1.0f, 0.0f, 0.0f);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    gl::drawSphere(Vec3f::zero(), (float)mRadius, 32);
+    mEmitterTexture.disable();
     glPopMatrix();
     ++mFrameCount;
 }
 
 void Pulsar::generateParticles()
 {
-    Vec3f pos = Vec3f(0.0f, mRadius, 0.0f);
-    Vec3f vel = Vec3f(0.0f, 10.f, 0.0f);
-    float particleRadius = 5.0f;//mRadius;
+    Vec3f pos = Vec3f(0.0f, 0.0f, 0.0f);
+    //pos.rotateX(mRotationAngle);
+    Vec3f vel = Vec3f(0.0f, 50.f, 0.0f);
+    //vel.rotateX(mRotationAngle);
+    float particleRadius = 10.0f;//mRadius;
     int depth = pos.y - 380;
     float per = depth/340.0f;
     //Vec3f vel = mEmitter.mVel * per;
     //vel.y *= 0.02f;
-    int numParticlesToSpawn = Rand::randInt(20,50);
+    int numParticlesToSpawn = Rand::randInt(40,100);
     if( Rand::randFloat() < 0.02f )
     {
         //numParticlesToSpawn *= 5;

@@ -19,6 +19,7 @@
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
+#include "OscServer.h"
 #include "InfoPanel.h"
 #include <vector>
 
@@ -43,7 +44,7 @@ public: // cinder interface
     void mouseMove( MouseEvent event );
 	void mouseDrag( MouseEvent event );
     void mouseDown( MouseEvent event );	
-    void mouseUp( MouseEvent event ) {};
+    void mouseUp( MouseEvent event );
     void keyDown( KeyEvent event );
 
 	void draw();
@@ -65,15 +66,19 @@ public: // new
     
     inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
     
+    //TODO: hack
+    Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
+    
 protected: // new
     
     void setupScenes();
-    void addScene(Scene* newScene);
+    void addScene(Scene* newScene, bool startActive =false);
     void drawInfoPanel();
     void setPresentationMode( bool enabled );
     
     void startVideoCapture( bool useDefaultPath =true );
     void stopVideoCapture();
+    void enableFrameCapture( bool enable );
     
 private: // members
     // input
@@ -82,6 +87,8 @@ private: // members
     MindWave                mMindWave;
     bool                    mEnableMindWave;
     Vec2f                   mMousePos;
+    OscServer               mOscServer;
+    bool                    mEnableOscServer;
     
     // render
     double                  mLastElapsedSeconds;
@@ -102,6 +109,12 @@ private: // members
     
     bool                    mIsCapturingVideo;
     qtime::MovieWriter      mMovieWriter;
+    
+    bool                    mIsCapturingFrames;
+    string                  mFrameCapturePath;
+    int                     mFrameCaptureCount;
+    
+    bool                    mSaveNextFrame;
 };
 
 #endif

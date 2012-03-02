@@ -9,7 +9,11 @@
 
 #include "Sun.h"
 #include "Orbiter.h"
+#include "Resources.h"
+#include "OculonApp.h"
 #include "cinder/gl/gl.h"
+
+#include "Binned.h"
 
 using namespace ci;
 
@@ -21,14 +25,28 @@ GLfloat Sun::mat_emission[]     = { 1.0f, 1.0f, 1.0f, 1.0f };
 Sun::Sun(const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
+         double rotSpeed,
          double mass, 
          const ColorA& color) 
-: Body("Sol",pos,vel,radius,mass,color)
+: Body("Sol",pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
 {
 }
 
 Sun::~Sun()
 {
+}
+
+void Sun::setup()
+{
+    mMoviePlayer.setup();
+    //mMoviePlayer.loadMoviePrompt();
+}
+
+void Sun::update(double dt)
+{
+    Body::update(dt);
+    
+    mMoviePlayer.update(dt);
 }
 
 void Sun::draw(const Matrix44d& transform, bool drawBody)
@@ -46,15 +64,39 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         
         //drawDebugVectors();
         
-        //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
-        glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
-        glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
-        glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
-        glMaterialfv( GL_FRONT, GL_EMISSION, Sun::mat_emission );
         
+        
+        gl::Texture texture;
+        if( mMoviePlayer.isPlaying() )
+        {
+            glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
+            glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
+            glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(1.0f, 1.0f, 1.0f) );
+            
+            texture = mMoviePlayer.getMovie().getTexture();
+            //glColor4f(1.0f,1.0f,1.0f,1.0f);
+        }
+        else
+        {
+            //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
+            glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
+            glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
+            glMaterialfv( GL_FRONT, GL_EMISSION, Sun::mat_emission );
+            
+            texture = mTexture;
+            texture.setWrap( GL_REPEAT, GL_REPEAT );
+            //mTexture.enableAndBind();
+        }
+        
+        texture.bind();
         //glMaterialfv( GL_FRONT, GL_DIFFUSE,	mColor );
         //glColor4f( mColor );
         gl::drawSphere( Vec3d::zero(), radius, sphereDetail );
+        
+        texture.unbind();
         
         if( Orbiter::sDrawRealSun )
         {
@@ -66,6 +108,24 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             gl::disableWireframe();
         }
         
+        const bool binned = true;
+        if( binned )
+        {
+            OculonApp* app = static_cast<OculonApp*>(App::get());
+            //TODO: hack, use a message
+            Binned* binnedScene = static_cast<Binned*>(app->getScene(3));
+            
+            if( binnedScene && binnedScene->isActive() )
+            {
+                Vec3d screenCoords = transform * mPosition;
+                Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+                float force = 500.f;
+                binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.7f, force*mRadiusMultiplier);
+            }
+        }
+        
         glPopMatrix();
+        
+        //mMoviePlayer.draw();
     }
 }

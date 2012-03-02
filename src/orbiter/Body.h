@@ -13,6 +13,7 @@
 #include "cinder/Color.h"
 #include "cinder/Matrix.h"
 #include "cinder/PolyLine.h"
+#include "cinder/gl/gl.h"
 #include "Entity.h"
 #include "TextEntity.h"
 
@@ -29,8 +30,18 @@ public:
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
+         double rotationSpeed,
          double mass, 
          const ColorA& color);
+    
+    Body(string name,
+         const Vec3d& pos, 
+         const Vec3d& vel, 
+         float radius, 
+         double rotationSpeed,
+         double mass, 
+         const ColorA& color,
+         ImageSourceRef textureImage);
     
     virtual ~Body();
     
@@ -65,9 +76,13 @@ protected:
     float mRadius;
     float mPeakRadiusMultiplier;
     float mRadiusMultiplier;
+    double mRotation;
+    double mRotationSpeed;
     string mName;
     
     ColorA mColor;
+    gl::Texture mTexture;
+    bool mHasTexture;
     
     PolyLine<Vec3f> mMotionTrail;
     

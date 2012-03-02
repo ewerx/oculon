@@ -14,20 +14,21 @@
 #include "Orbiter.h"
 #include "Sun.h"
 #include "TextEntity.h"
+#include "Resources.h"
 
 using namespace ci;
 using namespace boost;
 
-//TODO: read from data file (orbRad,    bodyRad, mass,      oVel)
+//TODO: read from data file (orbRad,    bodyRad, mass,          oVel,   rot,        tex)
 #define PLANETS_TUPLE \
-PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,  47900 ) \
-PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024, 35000 ) \
-PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024, 29800 ) \
-PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023, 24100 ) \
-PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,  13100 ) \
-PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640 ) \
-PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810 ) \
-PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430 ) \
+PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,      47900,  1.240E-06,   RES_ORBITER_MERCURY ) \
+PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024,     35000,  -2.99E-07,  RES_ORBITER_VENUS ) \
+PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024,     29800,  7.30E-05,   RES_ORBITER_EARTH ) \
+PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023,     24100,  7.09E-05,   RES_ORBITER_MARS ) \
+PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,      13100,  1.76E-04,   RES_ORBITER_JUPITER ) \
+PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640,   1.63E-04,   RES_ORBITER_SATURN ) \
+PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810,   -1.01E-04,   RES_ORBITER_URANUS ) \
+PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04,   RES_ORBITER_NEPTUNE ) \
 //PLANETS_ENTRY("Pluto",  5913520000000.f,1137000,1.27E+022,  4740 )
 //end tuple
 
@@ -127,8 +128,8 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
     params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines);
-    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
+    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
+    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
     params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
     params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
     params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
@@ -150,9 +151,11 @@ void Orbiter::reset()
     float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
     double orbitalRadius;
     double orbitalVel;
+    double rotationSpeed = 0.0f;
     mSun = new Sun(Vec3d::zero(),
                    Vec3d::zero(),
                    radius,
+                   rotationSpeed,
                    mass,
                    ColorA(1.0f, 1.0f, 1.0f));
     mSun->setup();
@@ -166,20 +169,23 @@ void Orbiter::reset()
     pos.y = 0.0f;
     
     
-#define PLANETS_ENTRY(name,orad,brad,mss,ovel) \
+#define PLANETS_ENTRY(name,orad,brad,mss,ovel,rot,tex) \
     mass = mss;\
     orbitalRadius = orad;\
     orbitalVel = ovel;\
+    rotationSpeed = rot;\
     angle = toRadians(Rand::randFloat(3.0f, 8.0f));\
-    pos.x = orbitalRadius * sin ( angle );\
+    pos.y = orbitalRadius * sin ( angle );\
     pos.z = orbitalRadius * cos ( angle );\
     radius = brad * mDrawScale * radialEnhancement;\
     body = new Body(name,\
                     pos,\
-                    Vec3d(0.0f, orbitalVel, 0.0f),\
+                    Vec3d(orbitalVel, 0.0f, 0.0f),\
                     radius, \
+                    rotationSpeed, \
                     mass, \
-                    ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale)); \
+                    ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), \
+                    loadImage( loadResource(tex))); \
     body->setup(); \
     mBodies.push_back( body );
     PLANETS_TUPLE
@@ -199,17 +205,18 @@ void Orbiter::reset()
     {
         mass = 1e8 * Rand::randFloat(1.0f, 10.0f);
         radius = Rand::randFloat(minRadius,minRadius*2.0f);
-        double angle = Rand::randFloat(2.0f*M_PI);
+        double angle = Rand::randFloat(2.0f*(float)M_PI);
         orbitalRadius = (Rand::randInt(100000) + 100000) * 4e6;
-        Vec3d pos( orbitalRadius * sin ( angle ), 0.0f, orbitalRadius * cos ( angle ) );
+        Vec3d pos( 0.0f, orbitalRadius * sin ( angle ), orbitalRadius * cos ( angle ) );
         //Vec3d orbitalPlaneNormal = pos.normalized();
         snprintf(name,128,"%c%d/%04d/%02d", randInt('A','Z'), num_planets+i, randInt(1000,9999), randInt(300));
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
         Body* body = new Body(name, 
                               pos, 
                               /*orbitalPlaneNormal * orbitalVel,*/
-                               Vec3d(0.0f, orbitalVel, 0.0f),
+                               Vec3d(orbitalVel, 0.0f, 0.0f),
                                radius, 
+                               0.0000000001f,
                                mass, 
                                ColorA(0.5f, 0.55f, 0.525f));
         mBodies.push_back(body);
@@ -229,9 +236,6 @@ void Orbiter::reset()
      mBodies[i].mVelocity = initVelDir * magnitude;
      }
      */
-    
-    AudioInput& audioInput = mApp->getAudioInput();
-    audioInput.setFftBandCount(512/*mBodies.size()*/);
 }
 
 void Orbiter::removeBodies()
@@ -244,6 +248,7 @@ void Orbiter::removeBodies()
     }
     mBodies.clear();
     mSun = NULL;
+    mFollowTarget = NULL;
 }
 
 void Orbiter::update(double dt)
@@ -363,47 +368,20 @@ void Orbiter::updateAudioResponse()
 
 void Orbiter::draw()
 {
-    glPushMatrix();
-    //glEnable( GL_MULTISAMPLE_ARB );
-    glEnable( GL_LIGHTING );
-	glEnable( GL_LIGHT0 );
-	
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
-    
+    gl::pushMatrices();
     
     Matrix44d matrix = Matrix44d::identity();
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
-                        mDrawScale * getWindowHeight() / 2.0f,
-                        mDrawScale * getWindowHeight() / 2.0f));
+                       mDrawScale * getWindowHeight() / 2.0f,
+                       mDrawScale * getWindowHeight() / 2.0f));
     
-    int culled = 0;
-    for(BodyList::iterator bodyIt = mBodies.begin(); 
-        bodyIt != mBodies.end();
-        ++bodyIt)
+    const bool binnedCam = true;
+    
+    if( binnedCam && mIsFollowCameraEnabled )
     {
-        Body* body = (*bodyIt);
-        if (!mEnableFrustumCulling ||
-            isSphereInFrustum( (matrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
-        {
-            body->draw(matrix, true);
-        }
-        else
-        {
-            body->draw(matrix, false);
-            culled++;
-        }
-        
-        //glPushMatrix();
-        //Vec3d pos = matrix * bodyIt->getPosition();
-        //glTranslated(pos.x, pos.y, pos.z);
-        //glPopMatrix();
+        mApp->setCamera( Vec3d(0,4000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
     }
-    
-    //mApp->console() << "culled " << culled << std::endl;
-    
-    
+    else 
     if( mIsFollowCameraEnabled )
     {
         Body* cameraLookingAt = mSun;
@@ -431,20 +409,56 @@ void Orbiter::draw()
         targetAngles.x += toRadians(getElapsedSeconds() * rotationSpeed);
         targetAngles.y += toRadians(getElapsedSeconds() * rotationSpeed);
         targetAngles.y = ci::math<float>::clamp(targetAngles.y,-M_PI,M_PI);
-            
-            currentAngles = lerp<Vec3f>(currentAngles,targetAngles,mApp->getElapsedSecondsThisFrame()*lerpSpeed);
-            
-            Quatf xQuaternion(Vec3f::zAxis(), currentAngles.x);
-            Quatf yQuaternion(Vec3f::xAxis(), currentAngles.y);
-            
-            up = up * (xQuaternion * yQuaternion);
+        
+        currentAngles = lerp<Vec3f>(currentAngles,targetAngles,mApp->getElapsedSecondsThisFrame()*lerpSpeed);
+        
+        Quatf xQuaternion(Vec3f::zAxis(), currentAngles.x);
+        Quatf yQuaternion(Vec3f::xAxis(), currentAngles.y);
+        
+        up = up * (xQuaternion * yQuaternion);
 #endif
         
         cameraPos = cameraPos + offsetVec;
         mApp->setCamera( cameraPos, targetPos, up );
     }
     
-    glPopMatrix();
+    gl::setMatrices(mApp->getCamera());
+    
+    //glEnable( GL_MULTISAMPLE_ARB );
+    glEnable( GL_LIGHTING );
+	glEnable( GL_LIGHT0 );
+	
+	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
+    
+    
+    // frustum culling
+    int culled = 0;
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+        bodyIt != mBodies.end();
+        ++bodyIt)
+    {
+        Body* body = (*bodyIt);
+        if (!mEnableFrustumCulling ||
+            isSphereInFrustum( (matrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
+        {
+            body->draw(matrix, true);
+        }
+        else
+        {
+            body->draw(matrix, false);
+            culled++;
+        }
+        
+        //glPushMatrix();
+        //Vec3d pos = matrix * bodyIt->getPosition();
+        //glTranslated(pos.x, pos.y, pos.z);
+        //glPopMatrix();
+    }
+    
+    //mApp->console() << "culled " << culled << std::endl;
+    
+    gl::popMatrices();
     glDisable( GL_LIGHTING );
 	glDisable( GL_LIGHT0 );
     
@@ -507,9 +521,9 @@ void Orbiter::updateHud()
     ostringstream oss1;
     
     format timeFormat("SIMULATION TIME: %02dd%02dh%02dm%04.1fs");
-    int days = mElapsedTime / 86400; 
-    int hours = ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600;
-    int mins = ci::math<double>::fmod(mElapsedTime,3600.0f) / 60;
+    int days = (int)(mElapsedTime / 86400.0f); 
+    int hours = (int)(ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600.f);
+    int mins = (int)(ci::math<double>::fmod(mElapsedTime,3600.0f) / 60);
     double secs = ci::math<double>::fmod(mElapsedTime,60.0f) + (mElapsedTime - (int)(mElapsedTime));
     timeFormat % days % hours % mins % secs;
     

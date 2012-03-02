@@ -140,13 +140,16 @@ int MindWave::setupNewConnection()
 
 void MindWave::endConnection()
 {
+    if( mIsCollectingData )
+    {
+        console() << "[mindwave] disconnected" << std::endl;
+    }
+    
     TG_FreeConnection(mConnectionId);
     mConnectionId = -1;
     mIsCollectingData = false;
     
     mThread.join();
-    
-    console() << "[mindwave] disconnected.\n";
 }
 
 void MindWave::getData()

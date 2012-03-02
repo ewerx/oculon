@@ -49,7 +49,7 @@ void AudioInput::setup()
     
 	//initialize the audio Input, using the default input device
     //TODO: specify audio input, change at run-time
-	mInput = new audio::Input();
+	mInput = new audio::Input( /*devices.front()*/ );
 }
 
 void AudioInput::shutdown()
@@ -73,20 +73,56 @@ void AudioInput::update()
     {
         //tell the input to start capturing audio
         mInput->start();
-        console() << "[audio] now listening...\n";
+        console() << "[audio] capturing input from device: " << mInput->getDefaultDevice()->getName() << std::endl;
     }
     else
     {
         mPcmBuffer = mInput->getPcmBuffer();
+        
         if( !mPcmBuffer ) 
         {
+            console() << "[audio] no pcm buffer\n";
             return;
+        }
+        
+        //KISS
+        {
+            if (mPcmBuffer->getInterleavedData())
+            {
+                
+                // Get sample count
+                uint32_t mSampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
+                if (mSampleCount > 0)
+                {
+                    
+                    // Initialize analyzer, if needed
+                    if (!mFftInit)
+                    {
+                        mFftInit = true;
+                        mFft.setDataSize(mSampleCount);
+                    }
+                    
+                    // Analyze data
+                    if (mPcmBuffer->getInterleavedData()->mData != 0) 
+                    {
+                        mInputData = mPcmBuffer->getInterleavedData()->mData;
+                        mInputSize = mPcmBuffer->getInterleavedData()->mSampleCount;
+                        mFft.setData(mInputData);
+                    }
+                    
+                    // Get data
+                    mTimeData = mFft.getData();
+                    mDataSize = mFft.getDataSize();
+
+                }
+            }
         }
         
         if( mPcmBuffer->getSampleCount() > 0 )
         {
             //presently FFT only works on OS X, not iOS or Windows
-            mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
+            //mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
+            mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( CHANNEL_FRONT_LEFT ), mFftBandCount );
         }
     }
 }

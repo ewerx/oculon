@@ -13,20 +13,25 @@
 #include "cinder/params/Params.h"
 #include "cinder/Filesystem.h"
 #include "cinder/Utilities.h"
+#include "cinder/ImageIo.h"
 #include <iostream>
 #include <vector>
 #include <boost/format.hpp>
+
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "InfoPanel.h"
+#include "Utils.h"
 
 // scenes
 #include "Orbiter.h"
 #include "Magnetosphere.h"
 #include "Pulsar.h"
+#include "Binned.h"
 // test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
+#include "MovieTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -49,6 +54,10 @@ void OculonApp::setup()
     mUseMayaCam = false;
     mEnableMindWave = false;
     mIsCapturingVideo = false;
+    mIsCapturingFrames = false;
+    mFrameCaptureCount = 0;
+    mEnableOscServer = true;
+    mSaveNextFrame = false;
     
     // render
     gl::enableDepthWrite();
@@ -77,7 +86,7 @@ void OculonApp::setup()
     //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
     //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
     //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
-    mParams.hide();
+    //mParams.hide();
     
     // load assets
     //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -96,6 +105,11 @@ void OculonApp::setup()
         mMindWave.setup();
     }
     mMidiInput.setEnabled(false);
+    
+    if( mEnableOscServer )
+    {
+        mOscServer.setup();
+    }
     
     // debug
 	//glDisable( GL_TEXTURE_2D );
@@ -124,13 +138,22 @@ void OculonApp::shutdown()
     
     mScenes.clear();
     
+    if( mEnableOscServer )
+    {
+        mOscServer.shutdown();
+    }
+    
     mAudioInput.shutdown();
 }
 
-void OculonApp::addScene(Scene* scene)
+void OculonApp::addScene(Scene* scene, bool startActive)
 {
     scene->init(this);
     mScenes.push_back(scene);
+    if( startActive )
+    {
+        scene->toggleActiveVisible();
+    }
 }
 
 void OculonApp::setupScenes()
@@ -139,28 +162,40 @@ void OculonApp::setupScenes()
     
     mScenes.clear(); 
     
-    //TODO: serialization
+    int sceneId = 0;
+    
+    //TODO: serialization    
+    
+    const bool autoStart = true;
+    
     // Orbiter
-    console() << "\tOrbiter\n";
-    addScene( new Orbiter() );
-    mScenes.front()->toggleActiveVisible();
+    console() << ++sceneId << ": Orbiter\n";
+    addScene( new Orbiter(), autoStart );
     
     // Pulsar
-    //console() <<"\tPulsar\n";
+    //console() << ++sceneId << ": Pulsar\n";
     //addScene( new Pulsar() );
-
     
     // Magnetosphere
-    //console() << "\tMagneto\n";
+    //console() << ++sceneId << ": Magneto\n";
     //addScene( new Magnetosphere() );
     
+    // Binned
+    //console() << ++sceneId << ": Binned\n";
+    //addScene( new Binned(), true );
+    
     // AudioTest
-    //console() << "\tAudioTest\n";
+    //console() << ++sceneId << ": AudioTest\n";
     //addScene( new AudioTest() );
+    
+    // MovieTest
+    //console() << ++sceneId << ": MovieTest\n";
+    //addScene( new MovieTest() );
+
     
     if( mEnableMindWave )
     {
-        console() << "\tMindWave\n";
+        console() << "\t" << sceneId << ": MindWave\n";
         addScene( new MindWaveTest() );
     }
 }
@@ -199,6 +234,17 @@ void OculonApp::mouseDown( MouseEvent event )
         // let the camera handle the interaction
         mMayaCam.mouseDown( event.getPos() );
     }
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->handleMouseDown(event);
+        }
+    }
 }
 
 void OculonApp::mouseDrag( MouseEvent event )
@@ -208,10 +254,37 @@ void OculonApp::mouseDrag( MouseEvent event )
         // let the camera handle the interaction
         mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
     }
+    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->handleMouseDrag(event);
+        }
+    }
+}
+
+void OculonApp::mouseUp( MouseEvent event)
+{
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isActive() )
+        {
+            scene->handleMouseUp(event);
+        }
+    }
 }
 
 void OculonApp::keyDown( KeyEvent event )
 {
+    bool passToScenes = false;
+    
     switch( event.getCode() )
     {            
         // toggle pause-all
@@ -262,50 +335,89 @@ void OculonApp::keyDown( KeyEvent event )
             
         // video capture
         case KeyEvent::KEY_r:
-            if( mIsCapturingVideo )
+            if( event.isShiftDown() )
             {
-                stopVideoCapture();
+                enableFrameCapture( !mIsCapturingFrames );
             }
             else
             {
-                bool useDefaultSettings = event.isShiftDown() ? false : true;
-                startVideoCapture(useDefaultSettings);
+                if( mIsCapturingVideo )
+                {
+                    stopVideoCapture();
+                }
+                else
+                {
+                    bool useDefaultSettings = event.isShiftDown() ? false : true;
+                    startVideoCapture(useDefaultSettings);
+                }
+            }
+            break;
+        case KeyEvent::KEY_c:
+            if( event.isShiftDown() )
+            {
+                const Camera& cam = this->getCamera();
+                
+                console() << (mUseMayaCam ? "Camera (maya): " : "Camera:");
+                console() << " Eye: " << cam.getEyePoint() << " LookAt: " << cam.getViewDirection() << " Up: " << cam.getWorldUp() << std::endl;
+            }
+            else
+            {
+                passToScenes = true;
+            }
+            break;
+        case KeyEvent::KEY_s:
+            if( event.isShiftDown() )
+            {
+                mSaveNextFrame = true;
+            }
+            else
+            {
+                passToScenes = true;
             }
             break;
         case KeyEvent::KEY_ESCAPE:
             quit();
             break;
         default:
+            passToScenes = true;
+            break;
+    }
+    
+    if( passToScenes )
+    {
+        for (SceneList::iterator sceneIt = mScenes.begin(); 
+             sceneIt != mScenes.end();
+             ++sceneIt )
         {
-            for (SceneList::iterator sceneIt = mScenes.begin(); 
-                 sceneIt != mScenes.end();
-                 ++sceneIt )
+            Scene* scene = (*sceneIt);
+            if( scene && scene->isActive() )
             {
-                Scene* scene = (*sceneIt);
-                if( scene && scene->isActive() )
+                if( scene->handleKeyDown(event) )
                 {
-                    if( scene->handleKeyDown(event) )
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
         }
-            break;
     }
 }
 
 void OculonApp::update()
 {
-    char buf[64];
-    Color infoPanelText(0.5f,0.5f,0.5f);
-    snprintf(buf, 64, "%.2ffps", getAverageFps());
+    char buf[256];
+    snprintf(buf, 256, "%.2ffps", getAverageFps());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
-    snprintf(buf, 64, "%.1fs", getElapsedSeconds());
+    snprintf(buf, 256, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    
     if( mIsCapturingVideo )
     {
         mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
+    }
+    
+    if( mIsCapturingFrames )
+    {
+        snprintf(buf, 64, "CAPTURE (%d)", mFrameCaptureCount);
+        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
     
     mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
@@ -316,6 +428,11 @@ void OculonApp::update()
     if( mEnableMindWave )
     {
         mMindWave.update();
+    }
+    
+    if( mEnableOscServer )
+    {
+        mOscServer.update();
     }
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
@@ -334,7 +451,7 @@ void OculonApp::update()
 
 void OculonApp::draw()
 {
-    gl::clear( Colorf(0.0f, 0.0f, 0.0f) );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     // 3D scenes
     glPushMatrix();
@@ -350,7 +467,6 @@ void OculonApp::draw()
         }
 
         // enable depth buffer
-        // enable the depth buffer (after all, we are doing 3D)
         gl::enableDepthRead();
         gl::enableDepthWrite();
 
@@ -374,6 +490,21 @@ void OculonApp::draw()
     {
 		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
     }
+    
+    // capture frames
+    if( mIsCapturingFrames )
+    {
+        ++mFrameCaptureCount;
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+    }
+    
+    // screenshot
+    if( mSaveNextFrame )
+    {
+        mSaveNextFrame = false;
+        fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
+		writeImage( p, copyWindowSurface() );
+	}
     
     // debug
     drawInfoPanel();
@@ -416,43 +547,26 @@ void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up 
 
 void OculonApp::startVideoCapture(bool useDefaultPath)
 {
-    fs::path outputPath;
+    fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
     qtime::MovieWriter::Format mwFormat;
     bool ready = false;
     
     // spawn file dialog
     // outputPath = getSaveFilePath();
     
-    format filenameFormat("~/Desktop/oculon%03d.mov");
-    string pathString;
-    int counter = 0;
-    
-    while( !ready && counter < 999 )
+    if( useDefaultPath )
     {
-        pathString = str( filenameFormat % counter );
-        outputPath = expandPath( fs::path(pathString) );
-        if( ! fs::exists(outputPath) )
-        {
-            ready = true;
-            break;
-        }
-        ++counter;
+        // H.264, 30fps, high detail
+        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
+        mwFormat.setTimeScale(3000);
+        mwFormat.setDefaultDuration(1.0f/15.0f);
+        mwFormat.setQuality(0.99f);
+        ready = true;
     }
-    
-    if( ready )
+    else
     {
-        if( useDefaultPath )
-        {
-            // H.264, 30fps, high detail
-            mwFormat.setCodec(1635148593); // get this value from the output of the dialog
-            mwFormat.setTimeScale(3000);
-            mwFormat.setDefaultDuration(1.0f/15.0f);
-            mwFormat.setQuality(0.99f);
-        }
-        else
-        {
-            ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
-        }
+        // user prompt
+        ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
     }
     
     if( ready )
@@ -470,4 +584,29 @@ void OculonApp::stopVideoCapture()
     mIsCapturingVideo = false;
 }
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )
+void OculonApp::enableFrameCapture( bool enable )
+{
+    mIsCapturingFrames = enable;
+    
+    if( mIsCapturingFrames )
+    {
+        mFrameCaptureCount = 0;
+        fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_capture");
+        mFrameCapturePath = outputPath.string();
+        if( fs::create_directory(outputPath) )
+        {
+            console() << "[main] frame capture started. location: " << mFrameCapturePath << std::endl;
+        }
+        else
+        {
+            mIsCapturingFrames = false;
+            console() << "[main] ERROR: frame capture failed to start. location: " << mFrameCapturePath << std::endl;
+        }
+    }
+    else
+    {
+        console() << "[main] frame capture stopped" << std::endl;
+    }
+}
+
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_8) )
