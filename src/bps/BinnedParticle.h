@@ -7,6 +7,7 @@
 #include <vector>
 #include <cmath>
 #include "cinder/gl/gl.h"
+
 using namespace std;
 
 namespace bps {
@@ -64,8 +65,11 @@ public:
 		xf = xf - xv * damping;
         yf = yf - yv * damping;
 	}
-	void draw(float opacity) {
-        glColor4f(1.0f, 1.0f-xf, 1.0f-yf, opacity);
+	void draw(const ci::ColorAf& baseColor) {
+        ci::ColorAf color(baseColor);
+        const float mag = (xf+yf) * (xf+yf);
+        color += ci::ColorAf( mag, mag, mag, 0.0f );
+        glColor4f( color.r, color.g, color.b, color.a );
 		glVertex2f(x, y);
 	}
 };

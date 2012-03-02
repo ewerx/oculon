@@ -30,7 +30,7 @@ public:
     
     // registerMidiEvent( string id, eEventType type, callback )
     template<typename T>
-    void registerMidiEvent( string name, int eventType, T* obj, void (T::*callback)(MidiEvent) )
+    void registerMidiEvent( string name, int eventType, T* obj, void (T::*callback)(MidiEvent), int channel =UNDEFINED_CHANNEL, int note =UNDEFINED_NOTE )
     {
         if( mIsLearning )
         {
@@ -40,6 +40,7 @@ public:
         
         mCmdMap.insert(std::make_pair(name, 
                                       MidiCommand(static_cast<MidiEvent::eEventType>(eventType), 
+                                                  channel, note,
                                                   std::bind1st( std::mem_fun(callback), obj)) ) );
     }
     

@@ -35,22 +35,38 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-	reset();
+    mKParticles = 12;
     
-    mTimeStep = 1;
-	mLineOpacity = 0.12f;
-	mPointOpacity = 0.5f;
+    mTimeStep = 0.05f;
 	mSlowMotion = false;
+    mBounceOffWalls = true;
 	mParticleNeighborhood = 14;
     
 	mParticleRepulsion = 1.5;
 	mCenterAttraction = 0.05;
     
+    mDamping = 0.01f;
+    mWallDamping = 0.3f;
+    
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
-    mMaxForce = 150.0f;
+    mMaxForce = 250.0f;
     mMaxRadius = mApp->getWindowHeight() * 0.3f;
-    mAudioSensitivity = 1.0f;
+    mAudioSensitivity = 0.0f;
+    
+    mPointColor.r = 1.0f;
+    mPointColor.g = 0.0f;
+    mPointColor.b = 0.0f;
+    mPointColor.a = 0.5f;
+    
+    mForceColor.r = 0.85f;
+    mForceColor.g = 0.0f;
+    mForceColor.b = 0.0f;
+    mForceColor.a = 0.12f;
+    
+    mParticleSystem.setForceColor( &mForceColor );
+    
+    reset();
 }
 
 void Binned::reset()
@@ -66,18 +82,66 @@ void Binned::reset()
     // this clears the particle list
 	mParticleSystem.setup(getWindowWidth(), getWindowHeight(), binPower);
 	
-	mKParticles = 15;
 	float padding = 0;
 	float maxVelocity = .5;
-	for(int i = 0; i < mKParticles * 1024; i++) 
+    
+    bool offScreen = false;
+    if( offScreen )
     {
-		float x = Rand::randFloat(padding, getWindowWidth() - padding);
-		float y = Rand::randFloat(padding, getWindowHeight() - padding);
-		float xv = Rand::randFloat(-maxVelocity, maxVelocity);
-		float yv = Rand::randFloat(-maxVelocity, maxVelocity);
-		Particle particle(x, y, xv, yv);
-		mParticleSystem.add(particle);
-	}
+        
+        padding = 250;
+        /*
+        for(int i = 0; i < mKParticles * 256; i++) 
+        {
+            float xv = Rand::randFloat(-maxVelocity, maxVelocity);
+            float yv = Rand::randFloat(-maxVelocity, maxVelocity);
+            
+            // left
+            float x = Rand::randFloat(-padding*2, -padding);
+            float y = Rand::randFloat(padding, getWindowHeight() - padding);
+            mParticleSystem.add(Particle(x, y, xv, yv));
+            
+            // right
+            x = Rand::randFloat(getWindowWidth()+padding, getWindowWidth()+padding*2);
+            y = Rand::randFloat(-padding, getWindowHeight() + padding);
+            mParticleSystem.add(Particle(x, y, xv, yv));
+            
+            // top
+            x = Rand::randFloat(-padding, getWindowWidth() + padding);
+            y = Rand::randFloat(-padding*2, -padding);
+            mParticleSystem.add(Particle(x, y, xv, yv));
+            
+            // bottom
+            x = Rand::randFloat(-padding, getWindowWidth() + padding);
+            y = Rand::randFloat(getWindowHeight()+padding, getWindowHeight()+padding*2);
+            mParticleSystem.add(Particle(x, y, xv, yv));
+        }
+         */
+        const float centerX = getWindowWidth()/2.0f;
+        const float centerY = getWindowHeight()/2.0f;
+        const float thickness = 50;
+        for(int i = 0; i < mKParticles * 1024; i++) 
+        {
+            float r = Rand::randFloat(0.0f,M_PI*2.0f);
+            float x = centerX + sin(r)*(centerX-padding) + Rand::randFloat(-thickness,thickness);
+            float y = centerY + cos(r)*(centerX-padding) + Rand::randFloat(-thickness,thickness);
+            float xv = Rand::randFloat(-maxVelocity, maxVelocity);
+            float yv = Rand::randFloat(-maxVelocity, maxVelocity);
+            mParticleSystem.add(Particle(x, y, xv, yv));
+        }
+    }
+    else
+    {
+        for(int i = 0; i < mKParticles * 1024; i++) 
+        {
+            float x = Rand::randFloat(padding, getWindowWidth() - padding);
+            float y = Rand::randFloat(padding, getWindowHeight() - padding);
+            float xv = Rand::randFloat(-maxVelocity, maxVelocity);
+            float yv = Rand::randFloat(-maxVelocity, maxVelocity);
+            Particle particle(x, y, xv, yv);
+            mParticleSystem.add(particle);
+        }
+    }
     
     while( !mQueuedForces.empty() )
         mQueuedForces.pop();
@@ -93,11 +157,13 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addText( "binned", "label=`Binned`" );
     params.addParam("Mode", &mMode, "");
     params.addParam("Slow Motion", &mSlowMotion, "");
+    params.addParam("Time Step", &mTimeStep, "step=0.01 min=0.01 max=1.0");
+    params.addParam("Wall Bounce", &mBounceOffWalls, "");
     params.addParam("Random Placement", &mRandomPlacement, "");
     params.addParam("Top/Bottom", &mTopBottom, "");
-    params.addParam("Point Opacity", &mPointOpacity, "step=0.01");
-    params.addParam("Line Opacity", &mLineOpacity, "step=0.01");
     params.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
+    params.addParam("Damping Force", &mDamping, "step=0.01");
+    params.addParam("Wall Damping", &mWallDamping, "step=0.01");
     params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
     params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
     params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
@@ -106,6 +172,9 @@ void Binned::setupParams(params::InterfaceGl& params)
     params.addParam("Min Radius", &mMinRadius, "");
     params.addParam("Max Radius", &mMaxRadius, "");
     params.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
+    params.addParam("K Particles", &mKParticles, "min=1 max=100");
+    params.addParam("Point Color", &mPointColor, "");
+    params.addParam("Force Color", &mForceColor, "");
 }
 
 void Binned::update(double /*dt*/)
@@ -130,7 +199,7 @@ void Binned::draw()
     //gl::disableDepthWrite();
     glDisable(GL_LIGHTING);
 	gl::enableAdditiveBlending();
-	glColor4f(1.0f, 1.0f, 1.0f, mLineOpacity);
+	//glColor4f(1.0f, 1.0f, 1.0f, mLineOpacity);
 	
 	mParticleSystem.setupForces();
 	// apply per-particle forces
@@ -138,11 +207,19 @@ void Binned::draw()
 	for(int i = 0; i < mParticleSystem.size(); i++) 
     {
 		Particle& cur = mParticleSystem[i];
+        if(!( cur.x < -100 || cur.x > ci::app::getWindowWidth()+100 || cur.y < -100 || cur.y > ci::app::getWindowHeight()+100 ))
+        {
+            
 		// global force on other particles
 		mParticleSystem.addRepulsionForce(cur, mParticleNeighborhood, mParticleRepulsion);
 		// forces on this particle
-		cur.bounceOffWalls(0, 0, getWindowWidth(), getWindowHeight());
-		cur.addDampingForce();
+        if( mBounceOffWalls )
+        {
+            const float padding = 50;
+            cur.bounceOffWalls(0-padding, 0-padding, getWindowWidth()+padding, getWindowHeight()+padding, mWallDamping);
+        }
+        }
+		cur.addDampingForce(mDamping);
 	}
 	glEnd();
 	// single global forces
@@ -165,8 +242,8 @@ void Binned::draw()
     }
     
 	mParticleSystem.update();
-	glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw(mPointOpacity);
+	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
+	mParticleSystem.draw( mPointColor );
     
     gl::enableDepthRead();
     gl::enableAlphaBlending();
@@ -175,6 +252,11 @@ void Binned::draw()
 
 void Binned::updateAudioResponse()
 {
+    if( mAudioSensitivity == 0.0f )
+    {
+        return;
+    }
+    
     // audio response
     AudioInput& audioInput = mApp->getAudioInput();
     std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
@@ -304,7 +386,7 @@ bool Binned::handleKeyDown( const KeyEvent& event )
 void Binned::handleMouseDown( const MouseEvent& event )
 {
 	mIsMousePressed = true;
-	mMousePos = Vec2i(event.getPos());
+	mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);//Vec2i(event.getPos());
 }
 
 void Binned::handleMouseUp( const MouseEvent& event )
@@ -314,7 +396,8 @@ void Binned::handleMouseUp( const MouseEvent& event )
 
 void Binned::handleMouseDrag( const MouseEvent& event )
 {
-	mMousePos = Vec2i(event.getPos());
+	//mMousePos = Vec2i(event.getPos());
+    mMousePos = Vec2i(mApp->getWindowWidth()/2, mApp->getWindowHeight()/2);
 }
 
 void Binned::addRepulsionForce( const Vec2f& pos, float radius, float force )
