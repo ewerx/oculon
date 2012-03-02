@@ -23,6 +23,7 @@
 #include "OscServer.h"
 #include "InfoPanel.h"
 #include <vector>
+#include "cinderSyphon.h"
 
 // fwd decl
 class Scene;
@@ -123,6 +124,9 @@ private: // members
     gl::Fbo                 mFbo;
     
     bool                    mSaveNextFrame;
+    
+    syphonServer            mScreenSyphon;
+    bool                    mEnableSyphonServer;
 };
 
 #endif

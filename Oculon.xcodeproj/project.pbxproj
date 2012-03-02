@@ -59,6 +59,11 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8C236B15007D960009FF26 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
+		7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
+		7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */; };
+		7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3211500784E0009FF26 /* syphonClient.mm */; };
+		7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3231500784E0009FF26 /* syphonServer.mm */; };
 		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
 		7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */; };
@@ -82,6 +87,19 @@
 		7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */; };
 		7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B85014B6B68E002505C5 /* Kiss.cpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7C8C237015007E620009FF26 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
@@ -186,6 +204,14 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8CD31A1500784E0009FF26 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
+		7C8CD31B1500784E0009FF26 /* SyphonNameboundClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonNameboundClient.h; sourceTree = "<group>"; };
+		7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonNameboundClient.m; sourceTree = "<group>"; };
+		7C8CD31F1500784E0009FF26 /* cinderSyphon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cinderSyphon.h; sourceTree = "<group>"; };
+		7C8CD3201500784E0009FF26 /* syphonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syphonClient.h; sourceTree = "<group>"; };
+		7C8CD3211500784E0009FF26 /* syphonClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonClient.mm; sourceTree = "<group>"; };
+		7C8CD3221500784E0009FF26 /* syphonServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syphonServer.h; sourceTree = "<group>"; };
+		7C8CD3231500784E0009FF26 /* syphonServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonServer.mm; sourceTree = "<group>"; };
 		7C8F207514D79B4400AC2D64 /* BinnedParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticle.h; sourceTree = "<group>"; };
 		7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinnedParticleSystem.cpp; sourceTree = "<group>"; };
 		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
@@ -238,6 +264,7 @@
 				7C745529148C04C6009C0356 /* Carbon.framework in Frameworks */,
 				7C74552B148C04C6009C0356 /* OpenGL.framework in Frameworks */,
 				7C74552D148C04C6009C0356 /* IOKit.framework in Frameworks */,
+				7C8C236B15007D960009FF26 /* Syphon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +492,7 @@
 		7C865570148C2784000E00B6 /* external */ = {
 			isa = PBXGroup;
 			children = (
+				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7CD0B84514B6B68E002505C5 /* kiss */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 				7C52DFB314CCFC2F008507D3 /* osc */,
@@ -545,6 +573,38 @@
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */ = {
+			isa = PBXGroup;
+			children = (
+				7C8CD3191500784E0009FF26 /* lib */,
+				7C8CD31E1500784E0009FF26 /* src */,
+			);
+			name = "Cinder-Syphon";
+			path = "../sdks/cinder_master/blocks/Cinder-Syphon";
+			sourceTree = SOURCE_ROOT;
+		};
+		7C8CD3191500784E0009FF26 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				7C8CD31A1500784E0009FF26 /* Syphon.framework */,
+				7C8CD31B1500784E0009FF26 /* SyphonNameboundClient.h */,
+				7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		7C8CD31E1500784E0009FF26 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7C8CD31F1500784E0009FF26 /* cinderSyphon.h */,
+				7C8CD3201500784E0009FF26 /* syphonClient.h */,
+				7C8CD3211500784E0009FF26 /* syphonClient.mm */,
+				7C8CD3221500784E0009FF26 /* syphonServer.h */,
+				7C8CD3231500784E0009FF26 /* syphonServer.mm */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		7C8F207414D79B4400AC2D64 /* binned */ = {
@@ -645,6 +705,7 @@
 				7C74550C148C04C6009C0356 /* Sources */,
 				7C74550D148C04C6009C0356 /* Frameworks */,
 				7C74550E148C04C6009C0356 /* Resources */,
+				7C8C237015007E620009FF26 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -755,6 +816,9 @@
 				7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */,
 				7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */,
 				7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */,
+				7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */,
+				7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */,
+				7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -840,6 +904,11 @@
 		7C74554D148C04C6009C0356 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/cinder_master/blocks/Cinder-Syphon/lib\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/Cinder-Syphon/lib\"",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
@@ -858,6 +927,11 @@
 		7C74554E148C04C6009C0356 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/cinder_master/blocks/Cinder-Syphon/lib\"",
+					"\"$(SRCROOT)/../sdks/cinder_master/blocks/Cinder-Syphon/lib\"",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";

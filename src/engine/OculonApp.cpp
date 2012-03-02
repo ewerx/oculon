@@ -43,7 +43,7 @@ using namespace boost;
 void OculonApp::prepareSettings( Settings *settings )
 {
 	settings->setWindowSize( 1024, 768 );
-	settings->setFrameRate( 30.0f );
+	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
 }
@@ -57,6 +57,7 @@ void OculonApp::setup()
     mEnableMindWave = false;
     mFrameCaptureCount = 0;
     mEnableOscServer = false;
+    mEnableSyphonServer = true;
     
     
     // capture
@@ -121,6 +122,9 @@ void OculonApp::setup()
     {
         mOscServer.setup();
     }
+    
+    // syphon
+    mScreenSyphon.setName("Oculon");
     
     // debug
 	//glDisable( GL_TEXTURE_2D );
@@ -585,6 +589,11 @@ void OculonApp::draw()
         float height = getWindowHeight();
         gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
         gl::popMatrices();
+    }
+    
+    if( mEnableSyphonServer )
+    {    
+        mScreenSyphon.publishScreen(); //publish the screen
     }
     
     //TODO: option to capture debug output
