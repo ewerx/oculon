@@ -174,15 +174,15 @@ void OculonApp::setupScenes()
     
     // Pulsar
     //console() << ++sceneId << ": Pulsar\n";
-    //addScene( new Pulsar() );
+    addScene( new Pulsar() );
     
     // Magnetosphere
     //console() << ++sceneId << ": Magneto\n";
-    //addScene( new Magnetosphere() );
+    addScene( new Magnetosphere() );
     
     // Binned
-    //console() << ++sceneId << ": Binned\n";
-    //addScene( new Binned(), true );
+    console() << ++sceneId << ": Binned\n";
+    addScene( new Binned(), true );
     
     // AudioTest
     //console() << ++sceneId << ": AudioTest\n";
