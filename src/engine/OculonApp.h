@@ -36,6 +36,14 @@ using std::vector;
 //
 class OculonApp : public AppBasic 
 {
+public:
+    //TODO: cleanup
+    enum eScenes
+    {
+        SCENE_ORBITER,
+        SCENE_BINNED
+    };
+    
 public: // cinder interface
     void prepareSettings( Settings *settings );
 	void setup();

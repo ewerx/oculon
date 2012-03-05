@@ -53,6 +53,7 @@ Orbiter::Orbiter()
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
 , mIsFollowCameraEnabled(true)
+, mIsBinnedModeEnabled(true)
 {
     mEnableFrustumCulling = true; // Scene
     
@@ -61,6 +62,13 @@ Orbiter::Orbiter()
         mTextBox[i] = new TextEntity();
         assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
     }
+    
+    // load textures
+    int i = 0;
+#define PLANETS_ENTRY(name,orad,brad,mss,ovel,rot,tex) \
+mTextures[i++] = loadImage( loadResource(tex) );
+    PLANETS_TUPLE
+#undef PLANETS_ENTRY
 } 
 
 Orbiter::~Orbiter()
@@ -130,9 +138,11 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
     params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
     params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
-    params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
-    params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
-    params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
+    params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
+    params.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
+    params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
+    params.addParam("Orbit Cam", &mIsFollowCameraEnabled, "");
+    params.addParam("Binned", &mIsBinnedModeEnabled, "");
     //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
     //params.addSeparator();
     //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
@@ -168,6 +178,7 @@ void Orbiter::reset()
     Vec3d pos;
     pos.y = 0.0f;
     
+    int i = 0;
     
 #define PLANETS_ENTRY(name,orad,brad,mss,ovel,rot,tex) \
     mass = mss;\
@@ -185,7 +196,7 @@ void Orbiter::reset()
                     rotationSpeed, \
                     mass, \
                     ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), \
-                    loadImage( loadResource(tex))); \
+                    mTextures[i++]); \
     body->setup(); \
     mBodies.push_back( body );
     PLANETS_TUPLE
@@ -219,6 +230,7 @@ void Orbiter::reset()
                                0.0000000001f,
                                mass, 
                                ColorA(0.5f, 0.55f, 0.525f));
+        body->setup();
         mBodies.push_back(body);
     }
     
@@ -249,12 +261,18 @@ void Orbiter::removeBodies()
     mBodies.clear();
     mSun = NULL;
     mFollowTarget = NULL;
+    mFollowTargetIndex = 0;
 }
 
 void Orbiter::update(double dt)
 {
     dt *= mTimeScale;
     mElapsedTime += dt;
+
+    // debug info
+    char buf[256];
+    snprintf(buf, 256, "orbiter cam: %s", mIsBinnedModeEnabled ? "locked 2D" : (mIsFollowCameraEnabled ? "follow []" : "manual" ) );
+    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.75f));
     
     bool simulate = true;
     bool symmetric = true;
@@ -312,11 +330,12 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
     switch (keyEvent.getChar()) 
     {
         case ' ':
-            reset();
+            //reset();
+            handled = false;
             break;
         case 'c':
             mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
-            mApp->setUseMayaCam( !mIsFollowCameraEnabled );
+            mApp->setUseMayaCam( !mIsBinnedModeEnabled&& !mIsFollowCameraEnabled );
         case '[':
             if( --mFollowTargetIndex < 4 )
                 mFollowTargetIndex = mBodies.size()-1;
@@ -324,6 +343,15 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
         case ']':
             if( ++mFollowTargetIndex == mBodies.size() )
                 mFollowTargetIndex = 4;
+            break;
+        case 'b':
+            mIsBinnedModeEnabled = !mIsBinnedModeEnabled;
+            mApp->setUseMayaCam( !mIsBinnedModeEnabled && !mIsFollowCameraEnabled );
+            handled = false;
+            break;
+        case 'o':
+            toggleActiveVisible();
+            handled = false;
             break;
         default:
             handled = false;
@@ -374,15 +402,12 @@ void Orbiter::draw()
     matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
                        mDrawScale * getWindowHeight() / 2.0f,
                        mDrawScale * getWindowHeight() / 2.0f));
-    
-    const bool binnedCam = true;
-    
-    if( binnedCam && mIsFollowCameraEnabled )
+
+    if( mIsBinnedModeEnabled )
     {
-        mApp->setCamera( Vec3d(0,4000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
+        mApp->setCamera( Vec3d(0,6000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
     }
-    else 
-    if( mIsFollowCameraEnabled )
+    else if( mIsFollowCameraEnabled )
     {
         Body* cameraLookingAt = mSun;
         Body* cameraAttachedTo = mFollowTarget;
@@ -552,12 +577,19 @@ void Orbiter::updateHud()
     ostringstream oss3;
     format planetInfo("%.8e\n%.8e\n");
     
-    for(BodyList::iterator bodyIt = mBodies.begin(); 
-        bodyIt != mBodies.end();
-        ++bodyIt)
+        
+//    for(BodyList::iterator bodyIt = mBodies.begin(); 
+//        bodyIt != mBodies.end();
+//        ++bodyIt)
+//    {
+//        Body* body = (*bodyIt);
+    for( int i=0; i < NUM_PLANETS; ++i )
     {
-        Body* body = (*bodyIt);
-        oss3 << format(planetInfo) % body->getAcceleration() % body->getPosition().length();
+        Body* body = mBodies[i];
+        if( body )
+        {
+            oss3 << format(planetInfo) % body->getAcceleration() % body->getPosition().length();
+        }
     }
     
     mTextBox[TB_TOP_RIGHT]->setText(oss3.str());

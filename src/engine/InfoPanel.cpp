@@ -94,7 +94,7 @@ void InfoPanel::render( Vec2f aWindowDim )
         gl::setMatricesWindow( aWindowDim );
         
         float x = aWindowDim.x - mTexture.getWidth() - 20.0f;
-        float y = /*aWindowDim.y - mTexture.getHeight() -*/ 20.0f;
+        float y = aWindowDim.y - mTexture.getHeight() - 20.0f;
         
         //const float pad = 4.0f;
         //glColor4f( 0.1, 0.1, 0.1, mOpacity );

@@ -37,7 +37,7 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 9;
+    mKParticles = 6;
     
     mParticleRadius = 5.0f;
     
@@ -50,15 +50,15 @@ void Binned::setup()
     mCircularWallRadius = (mApp->getViewportWidth()/2)*1.2f;
     
 	mParticleRepulsion = 1.5;
-	mCenterAttraction = 0.12f;//0.03f;//0.05;
+	mCenterAttraction = 0.94f;//0.03f;//0.05;
     
     mDamping = 0.01f;
     mWallDamping = 0.3f;
     
     mMinForce = 0.0f;
     mMinRadius = 0.0f;
-    mMaxForce = 800.0f;
-    mMaxRadius = 650.0f;
+    mMaxForce = 200.0f;
+    mMaxRadius = 100.0f;
     mAudioSensitivity = 0.0f;
     
     mIsMousePressed = false;
@@ -76,6 +76,8 @@ void Binned::setup()
     mForceColor.a = 0.12f;
     
     mParticleSystem.setForceColor( &mForceColor );
+    
+    mIsOrbiterModeEnabled = true;
     
     reset();
 }
@@ -98,7 +100,7 @@ void Binned::reset()
 	float padding = 0;
 	float maxVelocity = .5;
     
-    bool ringformation = true;
+    bool ringformation = false;
     if( ringformation )
     {
         
@@ -132,7 +134,7 @@ void Binned::reset()
          */
         const float centerX = mApp->getViewportWidth()/2.0f;
         const float centerY = mApp->getViewportHeight()/2.0f;
-        const float thickness = mApp->getViewportWidth()*0.1f;
+        const float thickness = mApp->getViewportWidth()*0.15f;
         for(int i = 0; i < mKParticles * 1024; i++) 
         {
             float r = Rand::randFloat(0.0f,M_PI*2.0f);
@@ -201,7 +203,7 @@ void Binned::update(double dt)
     snprintf(buf, 256, "particles: %d", mKParticles * 1024);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
     
-    snprintf(buf, 256, "mode: %d", mMode);
+    snprintf(buf, 256, "mode: %s", mIsOrbiterModeEnabled ? "orbiter" : ( mCircularWall ? "circular" : "random" ));
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
     
     snprintf(buf, 256, "pattern: %d", mApplyForcePattern);
@@ -388,6 +390,7 @@ void Binned::draw()
             
         case PATTERN_RING:
         {
+            /*
             const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
             float time = elapsed_seconds / mPatternDuration;
             if( time > 1.0f )
@@ -397,8 +400,9 @@ void Binned::draw()
                 break;
                 //mApp->quit();
             }
+             */
             
-            bool gotime = false;
+            bool gotime = true;
             //float desired_fps = kCaptureFramerate;
             //float actual_fps = mApp->getAverageFps();
             //float scaled_elapsed_frame_time = mApp->getElapsedSecondsThisFrame() * (actual_fps/desired_fps);
@@ -444,6 +448,8 @@ void Binned::draw()
                     mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
                 }
                 alternate = !alternate;
+                
+                mApplyForcePattern = PATTERN_NONE;
             }
             break;
         }
@@ -476,8 +482,7 @@ void Binned::draw()
             break;
     }
     
-    const bool orbiter_mode = true; 
-    if( orbiter_mode )
+    if( mIsOrbiterModeEnabled )
     {
         applyQueuedForces();
     }
@@ -653,9 +658,52 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             break;
             
         case 'b':
-            mApplyForcePattern = (mApplyForcePattern == PATTERN_BPM_BOUNCE ) ? PATTERN_NONE : PATTERN_BPM_BOUNCE;
-            mBpmBounceTime = 0.0f;
-            mBeatCount = -1;
+            //mApplyForcePattern = (mApplyForcePattern == PATTERN_BPM_BOUNCE ) ? PATTERN_NONE : PATTERN_BPM_BOUNCE;
+            //mBpmBounceTime = 0.0f;
+            //mBeatCount = -1;
+            toggleActiveVisible();
+            break;
+            
+        case 'o':
+            mIsOrbiterModeEnabled = !mIsOrbiterModeEnabled;
+            if( mIsOrbiterModeEnabled )
+            {
+                mAudioSensitivity = 0.0f;
+                mCircularWall = true;
+                mCenterAttraction = 0.9f;
+                mRandomPlacement = false;
+            }
+            else
+            {
+                mAudioSensitivity = 1.0f;
+                mCircularWall = false;
+                mCenterAttraction = 0.05f;
+                mRandomPlacement = true;
+            }
+            reset();
+            break;
+            
+        case 'g':
+            if( !mIsOrbiterModeEnabled )
+            {
+                if( mCircularWall )
+                {
+                    mAudioSensitivity = 0.8f;
+                    mMaxRadius = 80.0f;
+                    mCircularWall = false;
+                    mRandomPlacement = true;
+                    mCenterAttraction = 0.0f;
+                }
+                else
+                {
+                    mMaxRadius = 300.0f;
+                    mCircularWall = true;
+                    mAudioSensitivity = 0.0f;
+                    mRandomPlacement = false;
+                    mCenterAttraction = 0.9f;
+                }
+                reset();
+            }
             break;
             
         case 'x':
@@ -674,21 +722,45 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             mBpmBounceTime = 0.0f;
             mBeatCount = -1;
             mFrameCounter = 0;
-            mPatternDuration = 30.0f;
+            mPatternDuration = 1.0f;
             break;
             
         
         case 'D':
             mApp->enableFrameCapture( (mApplyForcePattern != PATTERN_DISSOLVE) );
             // pass-thru
-        case 'd':
-            mApplyForcePattern = (mApplyForcePattern == PATTERN_DISSOLVE) ? PATTERN_NONE : PATTERN_DISSOLVE;
-            mFrameCounter = 0;
-            mPatternDuration = 60.0f;
-            break;
+//        case 'd':
+//            mApplyForcePattern = (mApplyForcePattern == PATTERN_DISSOLVE) ? PATTERN_NONE : PATTERN_DISSOLVE;
+//            mFrameCounter = 0;
+//            mPatternDuration = 60.0f;
+//            break;
             
         case ' ':
             reset();
+            break;
+            
+        case 'w':
+            mPointColor.r = 1.0f;
+            mPointColor.g = 1.0f;
+            mPointColor.b = 1.0f;
+            mPointColor.a = 0.5f;
+            
+            mForceColor.r = 0.85f;
+            mForceColor.g = 0.85f;
+            mForceColor.b = 0.85f;
+            mForceColor.a = 0.12f;
+            break;
+            
+        case 'd':
+            mPointColor.r = 1.0f;
+            mPointColor.g = 0.0f;
+            mPointColor.b = 0.0f;
+            mPointColor.a = 0.5f;
+            
+            mForceColor.r = 0.85f;
+            mForceColor.g = 0.0f;
+            mForceColor.b = 0.0f;
+            mForceColor.a = 0.12f;
             break;
             
         default:

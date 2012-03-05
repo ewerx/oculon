@@ -42,7 +42,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1024, 768 );
+	settings->setWindowSize( 1024, 384 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -87,7 +87,7 @@ void OculonApp::setup()
     mMayaCam.setCurrentCam( mCam );
     
     // params
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()/2 ) );
+    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
     //mParams.setOptions("","position='10 600'");
     //mParams.addParam( "Cube Color", &mColor, "" );
     //mParams.addSeparator();	
@@ -343,7 +343,14 @@ void OculonApp::keyDown( KeyEvent event )
                 
                 if( index < mScenes.size() && mScenes[index] != NULL )
                 {
-                    mScenes[index]->toggleActiveVisible();
+                    if( event.isControlDown() )
+                    {
+                        mScenes[index]->setVisible( !mScenes[index]->isVisible() );
+                    }
+                    else
+                    {
+                        mScenes[index]->toggleActiveVisible();
+                    }
                 }
             }
             break;
@@ -385,6 +392,10 @@ void OculonApp::keyDown( KeyEvent event )
             {
                 mSaveNextFrame = true;
             }
+            else if( event.isControlDown() )
+            {
+                mEnableSyphonServer = !mEnableSyphonServer;
+            }
             else
             {
                 passToScenes = true;
@@ -400,6 +411,11 @@ void OculonApp::keyDown( KeyEvent event )
             {
                 resize( ResizeEvent(getWindowSize()) );
             }
+            break;
+        case KeyEvent::KEY_o://pass-thru
+        case KeyEvent::KEY_b:
+            mScenes[SCENE_ORBITER]->handleKeyDown(event);
+            mScenes[SCENE_BINNED]->handleKeyDown(event);
             break;
         case KeyEvent::KEY_ESCAPE:
             quit();
@@ -434,6 +450,10 @@ void OculonApp::update()
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     snprintf(buf, 256, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    if( mEnableSyphonServer )
+    {
+        mInfoPanel.addLine( "SYPHON", Color(0.3f, 0.3f, 1.0f) );
+    }
     
     if( mIsCapturingVideo )
     {

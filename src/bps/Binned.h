@@ -104,6 +104,7 @@ private:
     Vec2i mCrossForcePoint[4];
     
     
+    bool mIsOrbiterModeEnabled;
     
     float mAudioSensitivity;
     
