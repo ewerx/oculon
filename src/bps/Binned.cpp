@@ -37,9 +37,9 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 17;
+    mKParticles = 9;
     
-    mParticleRadius = 10.f;//5.0f;
+    mParticleRadius = 5.0f;
     
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
@@ -47,7 +47,7 @@ void Binned::setup()
     mCircularWall = true;
 	mParticleNeighborhood = 14;
     
-    mCircularWallRadius = (mApp->getViewportWidth()/2) * 0.96f;;
+    mCircularWallRadius = (mApp->getViewportWidth()/2)*1.2f;
     
 	mParticleRepulsion = 1.5;
 	mCenterAttraction = 0.12f;//0.03f;//0.05;
@@ -66,14 +66,14 @@ void Binned::setup()
     mPatternDuration = 0.0f;
     
     mPointColor.r = 1.0f;
-    mPointColor.g = 1.0f;
-    mPointColor.b = 1.0f;//0.25f
-    mPointColor.a = 0.5f;//0.5f;
+    mPointColor.g = 0.0f;
+    mPointColor.b = 0.0f;
+    mPointColor.a = 0.5f;
     
-    mForceColor.r = 0.80f;
-    mForceColor.g = 0.80f;//0.85f;
-    mForceColor.b = 0.80f;//0.85f;
-    mForceColor.a = 0.18f;//0.12f;
+    mForceColor.r = 0.85f;
+    mForceColor.g = 0.0f;
+    mForceColor.b = 0.0f;
+    mForceColor.a = 0.12f;
     
     mParticleSystem.setForceColor( &mForceColor );
     
@@ -476,7 +476,7 @@ void Binned::draw()
             break;
     }
     
-    const bool orbiter_mode = false; 
+    const bool orbiter_mode = true; 
     if( orbiter_mode )
     {
         applyQueuedForces();

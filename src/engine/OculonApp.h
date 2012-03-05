@@ -23,6 +23,7 @@
 #include "OscServer.h"
 #include "InfoPanel.h"
 #include <vector>
+#include "cinderSyphon.h"
 
 // fwd decl
 class Scene;
@@ -71,7 +72,7 @@ public: // new
     inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
     
     //TODO: hack
-    Scene* getScene(const int index)            { return mScenes[index]; }
+    Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     
     void enableFrameCapture( bool enable );
     
@@ -123,6 +124,9 @@ private: // members
     gl::Fbo                 mFbo;
     
     bool                    mSaveNextFrame;
+    
+    syphonServer            mScreenSyphon;
+    bool                    mEnableSyphonServer;
 };
 
 #endif

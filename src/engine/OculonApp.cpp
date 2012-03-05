@@ -43,7 +43,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 800, 800 );
+	settings->setWindowSize( 1024, 768 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -54,10 +54,11 @@ void OculonApp::setup()
     console() << "[main] initializing...\n";
     
     mIsPresentationMode = false;
-    mUseMayaCam = true;
+    mUseMayaCam = false;
     mEnableMindWave = false;
     mFrameCaptureCount = 0;
-    mEnableOscServer = true;
+    mEnableOscServer = false;
+    mEnableSyphonServer = true;
     
     
     // capture
@@ -83,7 +84,7 @@ void OculonApp::setup()
 	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 75.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
+	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     mMayaCam.setCurrentCam( mCam );
     
     // params
@@ -122,6 +123,9 @@ void OculonApp::setup()
     {
         mOscServer.setup();
     }
+    
+    // syphon
+    mScreenSyphon.setName("Oculon");
     
     // debug
 	//glDisable( GL_TEXTURE_2D );
@@ -178,28 +182,30 @@ void OculonApp::setupScenes()
     
     //TODO: serialization    
     
+    const bool autoStart = true;
+    
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
-    //addScene( new Orbiter() );
+    addScene( new Orbiter(), autoStart );
+    
+    // Binned
+    console() << ++sceneId << ": Binned\n";
+    addScene( new Binned(), true );
     
     // Pulsar
-    console() << ++sceneId << ": Pulsar\n";
+    //console() << ++sceneId << ": Pulsar\n";
     //addScene( new Pulsar() );
     
     // Magnetosphere
     console() << ++sceneId << ": Magneto\n";
     //addScene( new Magnetosphere(), true );
     
-    // Binned
-    console() << ++sceneId << ": Binned\n";
-    //addScene( new Binned() );
-    
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
     addScene( new AudioTest() );
     
     // MovieTest
-    console() << ++sceneId << ": MovieTest\n";
+    //console() << ++sceneId << ": MovieTest\n";
     //addScene( new MovieTest() );
     
     // ShaderTest
@@ -590,6 +596,11 @@ void OculonApp::draw()
         gl::popMatrices();
     }
     
+    if( mEnableSyphonServer )
+    {    
+        mScreenSyphon.publishScreen(); //publish the screen
+    }
+    
     //TODO: option to capture debug output
     // debug
     // render scenes
@@ -611,7 +622,7 @@ void OculonApp::draw()
     drawInfoPanel();
     if( !mIsPresentationMode )
     {
-        //params::InterfaceGl::draw();
+        params::InterfaceGl::draw();
         mParams.draw();
     }
 }
