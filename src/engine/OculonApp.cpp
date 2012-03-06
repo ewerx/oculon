@@ -197,8 +197,8 @@ void OculonApp::setupScenes()
     //addScene( new Pulsar() );
     
     // Magnetosphere
-    //console() << ++sceneId << ": Magneto\n";
-    //addScene( new Magnetosphere(), true );
+    console() << ++sceneId << ": Magneto\n";
+    addScene( new Magnetosphere(), true );
     
     // AudioTest
     //console() << ++sceneId << ": AudioTest\n";
@@ -210,7 +210,7 @@ void OculonApp::setupScenes()
     
     // ShaderTest
     console() << ++sceneId << ": ShaderTest\n";
-    addScene( new ShaderTest(), autoStart );
+    addScene( new ShaderTest() );
 
     
     if( mEnableMindWave )
@@ -619,26 +619,12 @@ void OculonApp::draw()
     }
     gl::popMatrices();
     
-    drawInfoPanel();
+    mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
     if( !mIsPresentationMode )
     {
         params::InterfaceGl::draw();
         mParams.draw();
     }
-}
-
-void OculonApp::drawInfoPanel()
-{
-	//glDisable( GL_LIGHTING );
-	//glEnable( GL_TEXTURE_2D );
-	//glColor4f( 1, 1, 1, 1 );
-	
-	//gl::pushMatrices();
-        //gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
-        mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
-	//gl::popMatrices();
-    
-	//glDisable( GL_TEXTURE_2D );
 }
 
 void OculonApp::setPresentationMode( bool enabled )

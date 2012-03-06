@@ -261,7 +261,7 @@ void Magnetosphere::setupParams(params::InterfaceGl& params)
     params.addParam("DoBlur", &mDoBlur, "");
     
     params.addParam("mFboScaleDown", &mFboScaleDown, "step=0.01 min=1.0 max=8.0");
-    params.addParam("mBlurAmount", &mBlurAmount, "step=0.01 min=0.0 max=50.0");
+    params.addParam("mBlurAmount", &mBlurAmount, "min=1 max=50");
     params.addParam("mTrailAudioDistortMin", &mTrailAudioDistortMin, "step=0.01 min=0.0 max=1.0");
     params.addParam("mTrailAudioDistortMax", &mTrailAudioDistortMax, "step=0.01 min=0.0 max=10.0");
     params.addParam("mTrailWaveFreqMin", &mTrailWaveFreqMin, "step=0.01 min=0.0 max=1.0");
@@ -715,7 +715,7 @@ void Magnetosphere::drawOffscreen()
         gl::clear( ColorA(0,0,0,0.0f) );
         
         drawParticles();
-        //drawStrokes();
+        drawStrokes();
     }
     mFboNew.unbindFramebuffer();
 	
