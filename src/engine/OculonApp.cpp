@@ -73,10 +73,10 @@ void OculonApp::setup()
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
     // render
-    gl::enableDepthWrite();
-	gl::enableDepthRead();
-	gl::enableAlphaBlending();
-    glDisable( GL_TEXTURE_2D );
+    //gl::enableDepthWrite();
+	//gl::enableDepthRead();
+	//gl::enableAlphaBlending();
+    //glDisable( GL_TEXTURE_2D );
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
@@ -506,12 +506,12 @@ void OculonApp::draw()
         }
         else 
         {
-            gl::setMatrices( mCam );            
+            //gl::setMatrices( mCam );            
         }
 
         // enable depth buffer
-        gl::enableDepthRead();
-        gl::enableDepthWrite();
+        //gl::enableDepthRead();
+        //gl::enableDepthWrite();
 
         // render scenes
         for (SceneList::iterator sceneIt = mScenes.begin(); 
@@ -629,16 +629,16 @@ void OculonApp::draw()
 
 void OculonApp::drawInfoPanel()
 {
-	glDisable( GL_LIGHTING );
-	glEnable( GL_TEXTURE_2D );
-	glColor4f( 1, 1, 1, 1 );
+	//glDisable( GL_LIGHTING );
+	//glEnable( GL_TEXTURE_2D );
+	//glColor4f( 1, 1, 1, 1 );
 	
-	gl::pushMatrices();
-        gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
+	//gl::pushMatrices();
+        //gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
         mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
-	gl::popMatrices();
+	//gl::popMatrices();
     
-	glDisable( GL_TEXTURE_2D );
+	//glDisable( GL_TEXTURE_2D );
 }
 
 void OculonApp::setPresentationMode( bool enabled )

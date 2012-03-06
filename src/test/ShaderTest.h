@@ -34,13 +34,18 @@ public:
     bool handleKeyDown(const KeyEvent& keyEvent);
     
 private:
+    void updateBlur();
+    
+private:
+
     enum 
     { 
         FBO_COUNT = 2,
         FBO_ITERATIONS = 4
     };
     
-    //gl::Fbo             mFbo[FBO_COUNT];
+    gl::Fbo             mFbo[FBO_COUNT];
+    gl::Fbo             mFboScene;
     int                 mFboPing;
     int                 mFboPong;
     

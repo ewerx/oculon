@@ -31,17 +31,22 @@ void ShaderTest::setup()
     //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     const int fboWidth = mApp->getWindowWidth();
     const int fboHeight = mApp->getWindowHeight();
+    format.enableMipmapping(false);
+	format.setCoverageSamples(16);
+	format.setSamples(4);
     
     for( int i = 0; i < FBO_COUNT; ++i )
     {
         mFbo[i] = gl::Fbo( fboWidth, fboHeight, format );
     }
+    
+    mFboScene = gl::Fbo( fboWidth, fboHeight, format );
         
     // blur shader
     try 
     {
-		//mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
-        mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_BLUR_FRAG ) );
+		mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
+        //mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_BLUR_FRAG ) );
 	}
 	catch( gl::GlslProgCompileExc &exc ) 
     {
@@ -62,11 +67,13 @@ void ShaderTest::setup()
 		std::cout << "unable to load the texture file!" << std::endl;
 	}
     
+    mTexture.bind(1);
+    
     mVel = Vec2f(100.0f,0.0f);
     mPos = Vec2f(0.0f,mApp->getWindowHeight()/2.0f);
     
     mEnableShader = false;
-    mBlurAmount = 0.5f;
+    mBlurAmount = 8.0f / getWindowWidth();
     
     mFboPing = 0;
     mFboPong = 1;
@@ -74,7 +81,7 @@ void ShaderTest::setup()
 
 void ShaderTest::update(double dt)
 {
-    /*
+#if 0
     gl::setMatricesWindow(mFbo[mFboPing].getSize(), false);
     gl::setViewport(mFbo[mFboPing].getBounds());
     
@@ -125,7 +132,7 @@ void ShaderTest::update(double dt)
          shaderProcess.uniform("height", (float)FBO_HEIGHT);
          
          /****** End process shader configuration ******/
-        /*
+        
         if(mEnableShader) 
         {
             mShader.bind();
@@ -144,6 +151,13 @@ void ShaderTest::update(double dt)
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         gl::drawSolidRect(mFbo[mFboPing].getBounds());
         
+        RectMapping windowToFBO(getWindowBounds(), mFbo[mFboPing].getBounds());
+        glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+        gl::drawSolidCircle(windowToFBO.map(Vec2f(
+                                                  Rand::randFloat(mApp->getWindowWidth()), 
+                                                  Rand::randFloat(mApp->getWindowHeight()))), 
+                            Rand::randFloat(1.0f, 30.0f), 64);
+        
         // Stop the shader
         //shaderProcess.unbind();
         if(mEnableShader) 
@@ -153,7 +167,7 @@ void ShaderTest::update(double dt)
         
         // Draw a red circle randomly on the screen
         //random.randomize();
-        RectMapping windowToFBO(getWindowBounds(), mFbo[mFboPing].getBounds());
+        //RectMapping windowToFBO(getWindowBounds(), mFbo[mFboPing].getBounds());
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         gl::drawSolidCircle(windowToFBO.map(Vec2f(
                                                   Rand::randFloat(mApp->getWindowWidth()), 
@@ -167,8 +181,8 @@ void ShaderTest::update(double dt)
         mFbo[mFboPing].unbindFramebuffer();
         
     }
+#endif//0
     
-    */
     mPos += mVel * dt;
     
     if( mPos.x > (mApp->getWindowWidth()-100) || mPos.x < 0.0f )
@@ -178,18 +192,110 @@ void ShaderTest::update(double dt)
          
 }
 
+void ShaderTest::updateBlur()
+{
+    mFboScene.bindFramebuffer();
+    {
+        glDisable( GL_TEXTURE_2D );
+        //gl::clear(Color::black());
+        gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
+        glColor4f(1.0f,1.0f,0.0f,1.0f);
+        const float radius = 100.f;
+        gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + radius, mPos.y + radius) );
+    }
+	mFboScene.unbindFramebuffer();
+    
+    /*
+    if (mEnableShader)
+	{
+        mShader.bind();
+        mShader.uniform("tex0", 0);
+        mShader.uniform("sampleOffset", Vec2f(mBlurAmount, 0.0f));
+	}
+     */
+    
+	mFbo[mFboPing].bindFramebuffer();
+    {
+        gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
+        gl::enableAdditiveBlending();
+        
+        const float fadeSpeed = 0.5f;
+        const float c = 1.0f - fadeSpeed;
+        glColor4f(c, c, c, 1.0f);
+        glEnable( GL_TEXTURE_2D );
+        
+        mFbo[mFboPong].bindTexture(0);
+        gl::drawSolidRect(mFbo[mFboPing].getBounds());
+        mFbo[mFboPong].unbindTexture();
+        
+        mFboScene.bindTexture(0);
+        gl::drawSolidRect(mFbo[mFboPing].getBounds());
+        mFboScene.unbindTexture();
+    }
+	mFbo[mFboPing].unbindFramebuffer();
+    
+    if(mEnableShader) 
+    {
+        mShader.bind();
+        float invWidth = 1.0f/mFbo[mFboPong].getWidth();
+        float invHeight = 1.0f/mFbo[mFboPong].getHeight();
+        float i = 10.0f;//mBlurAmount;
+        //mShader.uniform("tex0", 0);
+        //mShader.uniform("blurCenterWeight", 0.5f);
+        mShader.uniform("amountX", 1 * invWidth * i);
+        mShader.uniform("amountY", 1 * invHeight * i);
+        
+    }
+	
+    if (mEnableShader)
+    {
+        //mShader.uniform("sampleOffset", Vec2f(0.0f, mBlurAmount));
+	}
+        
+	mFbo[mFboPong].bindFramebuffer();
+    {
+        gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
+        mFbo[mFboPing].bindTexture(0);
+        gl::drawSolidRect(mFbo[mFboPong].getBounds());
+        mFbo[mFboPing].unbindTexture();
+    }
+    mFbo[mFboPong].unbindFramebuffer();
+        
+    if (mEnableShader)
+    {
+        mShader.unbind();
+    }
+     
+}
+
 void ShaderTest::draw()
 {
     gl::pushMatrices();
 
     Area viewport = gl::getViewport();
-    
-    // Clear screen and set up viewport
-	gl::clear(ColorA(0.0f, 0.0f, 0.0f, 0.0f));
-	gl::setMatricesWindow(getWindowSize());
+    gl::setMatricesWindow(getWindowSize());
 	gl::setViewport(getWindowBounds());
     
+    //glEnable(GL_TEXTURE_2D);
+    updateBlur();
     
+    // Clear screen and set up viewport
+	//gl::clear(ColorA(0.0f, 0.0f, 0.0f, 0.0f));
+	
+    
+	gl::color(Color::white());
+    
+    
+	gl::draw(mFboScene.getTexture());
+	
+    if( mEnableShader )
+    {
+        gl::enableAdditiveBlending();
+        gl::draw(mFbo[mFboPing].getTexture());
+        gl::disableAlphaBlending();
+    }
+#if 0
+    /*
     static float mAngle = 0.0f;
     mAngle += 0.05f;
     
@@ -204,7 +310,7 @@ void ShaderTest::draw()
     gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + radius, mPos.y + radius) );
     
     mTexture.unbind();
-    /*
+    */
 	// We're in input-only mode
 	if (!mEnableShader)
 	{
@@ -217,8 +323,8 @@ void ShaderTest::draw()
 	{
 		// Bind the FBO we last rendered as a texture
 		mFbo[mFboPing].bindTexture();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         
 		// Start and configure the render shader
 		//shaderRender.bind();
@@ -343,9 +449,10 @@ void ShaderTest::draw()
     gl::enableAdditiveBlending();
     gl::setMatricesWindow( mApp->getWindowSize() );
     gl::draw( mFboB.getTexture(), getWindowBounds() );
+     */
+#endif
     
     gl::setViewport( viewport );
-     */
     
     gl::popMatrices();
 }
