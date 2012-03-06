@@ -15,6 +15,9 @@
 #define RES_BLUR2_VERT              CINDER_RESOURCE( ../resources/shaders/, blur2_vert.glsl, 135, GLSL )
 #define RES_BLUR2_FRAG              CINDER_RESOURCE( ../resources/shaders/, blur2_frag.glsl, 136, GLSL )
 
+#define RES_PASSTHRU_VERT           CINDER_RESOURCE( ../resources/shaders/, passThru_vert.glsl, 128, GLSL )
+#define RES_BLUR_FRAG               CINDER_RESOURCE( ../resources/shaders/, gaussianBlur_frag.glsl, 129, GLSL )
+
 
 #define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )
 #define RES_ORBITER_MERCURY         CINDER_RESOURCE( ../resources/images/orbiter/, mercurymap.jpg, 201, JPG )

@@ -58,7 +58,7 @@ void OculonApp::setup()
     mEnableMindWave = false;
     mFrameCaptureCount = 0;
     mEnableOscServer = false;
-    mEnableSyphonServer = true;
+    mEnableSyphonServer = false;
     
     
     // capture
@@ -186,18 +186,18 @@ void OculonApp::setupScenes()
     
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter(), autoStart );
+    //addScene( new Orbiter() );
     
     // Binned
     console() << ++sceneId << ": Binned\n";
-    addScene( new Binned(), true );
+    //addScene( new Binned() );
     
     // Pulsar
     //console() << ++sceneId << ": Pulsar\n";
     //addScene( new Pulsar() );
     
     // Magnetosphere
-    console() << ++sceneId << ": Magneto\n";
+    //console() << ++sceneId << ": Magneto\n";
     //addScene( new Magnetosphere(), true );
     
     // AudioTest
@@ -210,7 +210,7 @@ void OculonApp::setupScenes()
     
     // ShaderTest
     console() << ++sceneId << ": ShaderTest\n";
-    addScene( new ShaderTest(), true );
+    addScene( new ShaderTest(), autoStart );
 
     
     if( mEnableMindWave )

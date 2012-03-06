@@ -34,9 +34,16 @@ public:
     bool handleKeyDown(const KeyEvent& keyEvent);
     
 private:
-    gl::Fbo             mFboA;
-    gl::Fbo             mFboB;
-    gl::Fbo             mFboC;
+    enum 
+    { 
+        FBO_COUNT = 2,
+        FBO_ITERATIONS = 4
+    };
+    
+    gl::Fbo             mFbo[FBO_COUNT];
+    int                 mFboPing;
+    int                 mFboPong;
+    
     gl::GlslProg        mShader;
     
     Vec2f               mPos;

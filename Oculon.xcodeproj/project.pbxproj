@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C17495A1505ADF600BFC351 /* process_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749581505ADF600BFC351 /* process_frag.glsl */; };
+		7C17495B1505ADF600BFC351 /* render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749591505ADF600BFC351 /* render_frag.glsl */; };
+		7C1749BC1505DA2800BFC351 /* gaussianBlur_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749BB1505DA2800BFC351 /* gaussianBlur_frag.glsl */; };
+		7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */; };
 		7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC014FB1346002CE80B /* WaveParticle.cl */; };
 		7C1C5CC414FB13B7002CE80B /* blur2_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */; };
 		7C1C5CC514FB13B7002CE80B /* blur2_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
@@ -81,10 +85,10 @@
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
 		7C8C236B15007D960009FF26 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
 		7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
+		7C8CD29614FFAA3E0009FF26 /* ShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */; };
 		7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */; };
 		7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3211500784E0009FF26 /* syphonClient.mm */; };
 		7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3231500784E0009FF26 /* syphonServer.mm */; };
-		7C8CD29614FFAA3E0009FF26 /* ShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */; };
 		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
 		7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */; };
@@ -109,19 +113,6 @@
 		7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B85014B6B68E002505C5 /* Kiss.cpp */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		7C8C237015007E620009FF26 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXBuildRule section */
 		7C1C5CA514F75EB5002CE80B /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -135,7 +126,24 @@
 		};
 /* End PBXBuildRule section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7C8C237015007E620009FF26 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		7C1749581505ADF600BFC351 /* process_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = process_frag.glsl; sourceTree = "<group>"; };
+		7C1749591505ADF600BFC351 /* render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = render_frag.glsl; sourceTree = "<group>"; };
+		7C1749BB1505DA2800BFC351 /* gaussianBlur_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gaussianBlur_frag.glsl; sourceTree = "<group>"; };
+		7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = passThru_vert.glsl; sourceTree = "<group>"; };
 		7C1C5CC014FB1346002CE80B /* WaveParticle.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = WaveParticle.cl; path = opencl/WaveParticle.cl; sourceTree = "<group>"; };
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
@@ -280,6 +288,8 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderTest.cpp; sourceTree = "<group>"; };
+		7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTest.h; sourceTree = "<group>"; };
 		7C8CD31A1500784E0009FF26 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
 		7C8CD31B1500784E0009FF26 /* SyphonNameboundClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonNameboundClient.h; sourceTree = "<group>"; };
 		7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonNameboundClient.m; sourceTree = "<group>"; };
@@ -288,8 +298,6 @@
 		7C8CD3211500784E0009FF26 /* syphonClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonClient.mm; sourceTree = "<group>"; };
 		7C8CD3221500784E0009FF26 /* syphonServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syphonServer.h; sourceTree = "<group>"; };
 		7C8CD3231500784E0009FF26 /* syphonServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonServer.mm; sourceTree = "<group>"; };
-		7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderTest.cpp; sourceTree = "<group>"; };
-		7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTest.h; sourceTree = "<group>"; };
 		7C8F207514D79B4400AC2D64 /* BinnedParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticle.h; sourceTree = "<group>"; };
 		7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinnedParticleSystem.cpp; sourceTree = "<group>"; };
 		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
@@ -862,6 +870,10 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */,
+				7C1749BB1505DA2800BFC351 /* gaussianBlur_frag.glsl */,
+				7C1749581505ADF600BFC351 /* process_frag.glsl */,
+				7C1749591505ADF600BFC351 /* render_frag.glsl */,
 				7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */,
 				7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */,
 				7C96934414970AF800C0E1E6 /* emitter_vert.glsl */,
@@ -1089,6 +1101,10 @@
 				7C37393114F736E300B24851 /* LICENSE.txt in Resources */,
 				7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */,
 				7C1C5CC714FB13D3002CE80B /* glitter.png in Resources */,
+				7C17495A1505ADF600BFC351 /* process_frag.glsl in Resources */,
+				7C17495B1505ADF600BFC351 /* render_frag.glsl in Resources */,
+				7C1749BC1505DA2800BFC351 /* gaussianBlur_frag.glsl in Resources */,
+				7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
