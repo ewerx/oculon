@@ -40,7 +40,8 @@ void ShaderTest::setup()
     // blur shader
     try 
     {
-		mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
+		//mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
+        mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_BLUR_FRAG ) );
 	}
 	catch( gl::GlslProgCompileExc &exc ) 
     {
@@ -50,6 +51,15 @@ void ShaderTest::setup()
 	catch( ... ) 
     {
 		std::cout << "Unable to load shader" << std::endl;
+	}
+    
+    try 
+    {
+		mTexture = gl::Texture( loadImage( loadResource( RES_ORBITER_JUPITER ) ) );
+	}
+	catch( ... ) 
+    {
+		std::cout << "unable to load the texture file!" << std::endl;
 	}
     
     mVel = Vec2f(100.0f,0.0f);
@@ -64,6 +74,7 @@ void ShaderTest::setup()
 
 void ShaderTest::update(double dt)
 {
+    /*
     gl::setMatricesWindow(mFbo[mFboPing].getSize(), false);
     gl::setViewport(mFbo[mFboPing].getBounds());
     
@@ -114,7 +125,7 @@ void ShaderTest::update(double dt)
          shaderProcess.uniform("height", (float)FBO_HEIGHT);
          
          /****** End process shader configuration ******/
-        
+        /*
         if(mEnableShader) 
         {
             mShader.bind();
@@ -157,13 +168,14 @@ void ShaderTest::update(double dt)
         
     }
     
-    
+    */
     mPos += mVel * dt;
     
     if( mPos.x > (mApp->getWindowWidth()-100) || mPos.x < 0.0f )
     {
         mVel.x *= -1.0f;
     }
+         
 }
 
 void ShaderTest::draw()
@@ -177,6 +189,22 @@ void ShaderTest::draw()
 	gl::setMatricesWindow(getWindowSize());
 	gl::setViewport(getWindowBounds());
     
+    
+    static float mAngle = 0.0f;
+    mAngle += 0.05f;
+    
+    mTexture.enableAndBind();
+    
+    mShader.bind();
+	mShader.uniform( "tex0", 0 );
+	mShader.uniform( "sampleOffset", Vec2f( cos( mAngle ), sin( mAngle ) ) * ( 3.0f / getWindowWidth() ) );
+    
+    glColor4f(1.0f,1.0f,0.0f,1.0f);
+    const float radius = 100.f;
+    gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + radius, mPos.y + radius) );
+    
+    mTexture.unbind();
+    /*
 	// We're in input-only mode
 	if (!mEnableShader)
 	{

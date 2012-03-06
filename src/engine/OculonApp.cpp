@@ -185,11 +185,11 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     // Orbiter
-    console() << ++sceneId << ": Orbiter\n";
+    //console() << ++sceneId << ": Orbiter\n";
     //addScene( new Orbiter() );
     
     // Binned
-    console() << ++sceneId << ": Binned\n";
+    //console() << ++sceneId << ": Binned\n";
     //addScene( new Binned() );
     
     // Pulsar
@@ -201,8 +201,8 @@ void OculonApp::setupScenes()
     //addScene( new Magnetosphere(), true );
     
     // AudioTest
-    console() << ++sceneId << ": AudioTest\n";
-    addScene( new AudioTest() );
+    //console() << ++sceneId << ": AudioTest\n";
+    //addScene( new AudioTest() );
     
     // MovieTest
     //console() << ++sceneId << ": MovieTest\n";

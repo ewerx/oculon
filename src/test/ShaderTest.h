@@ -40,7 +40,7 @@ private:
         FBO_ITERATIONS = 4
     };
     
-    gl::Fbo             mFbo[FBO_COUNT];
+    //gl::Fbo             mFbo[FBO_COUNT];
     int                 mFboPing;
     int                 mFboPong;
     
@@ -51,6 +51,8 @@ private:
     
     bool                mEnableShader;
     float               mBlurAmount;
+    
+    gl::Texture         mTexture;
     
 };
 
