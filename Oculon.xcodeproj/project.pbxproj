@@ -37,6 +37,8 @@
 		7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */; };
 		7C52E12214CCFCA6008507D3 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11E14CCFCA6008507D3 /* OscSender.cpp */; };
 		7C52E12414CCFE99008507D3 /* OscServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E12314CCFE99008507D3 /* OscServer.cpp */; };
+		7C560DE91506C4D2000B91B0 /* Nbody.cl in Sources */ = {isa = PBXBuildFile; fileRef = 7C560DE81506C4D2000B91B0 /* Nbody.cl */; };
+		7C560DEE1506E22F000B91B0 /* Graviton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C560DEC1506E22F000B91B0 /* Graviton.cpp */; };
 		7C5C209514F7572800971B41 /* Particle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C5C209314F7571700971B41 /* Particle.cl */; };
 		7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C37393814F737DA00B24851 /* OpenCL.framework */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
@@ -211,6 +213,9 @@
 		7C52E11E14CCFCA6008507D3 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscSender.cpp; sourceTree = "<group>"; };
 		7C52E12314CCFE99008507D3 /* OscServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscServer.cpp; sourceTree = "<group>"; };
 		7C52E12514CCFEB7008507D3 /* OscServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscServer.h; sourceTree = "<group>"; };
+		7C560DE81506C4D2000B91B0 /* Nbody.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = Nbody.cl; path = opencl/Nbody.cl; sourceTree = "<group>"; };
+		7C560DEC1506E22F000B91B0 /* Graviton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Graviton.cpp; sourceTree = "<group>"; };
+		7C560DED1506E22F000B91B0 /* Graviton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Graviton.h; sourceTree = "<group>"; };
 		7C5C209314F7571700971B41 /* Particle.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = Particle.cl; path = opencl/Particle.cl; sourceTree = "<group>"; };
 		7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoviePlayer.cpp; sourceTree = "<group>"; };
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
@@ -621,11 +626,21 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		7C560DEB1506E22F000B91B0 /* graviton */ = {
+			isa = PBXGroup;
+			children = (
+				7C560DEC1506E22F000B91B0 /* Graviton.cpp */,
+				7C560DED1506E22F000B91B0 /* Graviton.h */,
+			);
+			path = graviton;
+			sourceTree = "<group>";
+		};
 		7C5C208E14F751B600971B41 /* opencl */ = {
 			isa = PBXGroup;
 			children = (
 				7C5C209314F7571700971B41 /* Particle.cl */,
 				7C1C5CC014FB1346002CE80B /* WaveParticle.cl */,
+				7C560DE81506C4D2000B91B0 /* Nbody.cl */,
 			);
 			name = opencl;
 			sourceTree = "<group>";
@@ -696,6 +711,7 @@
 			children = (
 				7C74555A148C259C009C0356 /* engine */,
 				7C8F207414D79B4400AC2D64 /* binned */,
+				7C560DEB1506E22F000B91B0 /* graviton */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
 				7C9693401496FFC400C0E1E6 /* pulsar */,
@@ -1170,6 +1186,8 @@
 				7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */,
 				7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */,
 				7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */,
+				7C560DE91506C4D2000B91B0 /* Nbody.cl in Sources */,
+				7C560DEE1506E22F000B91B0 /* Graviton.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

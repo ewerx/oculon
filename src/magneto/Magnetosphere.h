@@ -32,8 +32,8 @@ using std::vector;
 #define kMagnetoMaxTrailLength      2
 #define kMagnetoOldNodeHistory      200
 
-#define kSizeofPosBuffer	(kMagnetoNumParticles * sizeof(float2) * kMagnetoMaxTrailLength)
-#define kSizeofColBuffer	(kMagnetoNumParticles * sizeof(float4) * kMagnetoMaxTrailLength)
+#define kMagnetoSizeofPosBuffer	(kMagnetoNumParticles * sizeof(float2) * kMagnetoMaxTrailLength)
+#define kMagnetoSizeofColBuffer	(kMagnetoNumParticles * sizeof(float4) * kMagnetoMaxTrailLength)
 
 
 class Magnetosphere : public Scene

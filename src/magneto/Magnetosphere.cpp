@@ -162,11 +162,11 @@ void Magnetosphere::initOpenCl()
 	glGenBuffersARB(2, mVbo);
 	
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kSizeofPosBuffer, mPosBuffer, GL_STREAM_COPY_ARB);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofPosBuffer, mPosBuffer, GL_STREAM_COPY_ARB);
 	glVertexPointer(2, GL_FLOAT, 0, 0);
 	
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
 	glColorPointer(4, GL_FLOAT, 0, 0);
 	
     

@@ -30,6 +30,7 @@
 #include "Magnetosphere.h"
 #include "Pulsar.h"
 #include "Binned.h"
+#include "Graviton.h"
 // test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
@@ -54,7 +55,7 @@ void OculonApp::setup()
     console() << "[main] initializing...\n";
     
     mIsPresentationMode = false;
-    mUseMayaCam = false;
+    mUseMayaCam = true;
     mEnableMindWave = false;
     mFrameCaptureCount = 0;
     mEnableOscServer = false;
@@ -197,12 +198,16 @@ void OculonApp::setupScenes()
     //addScene( new Pulsar() );
     
     // Magnetosphere
-    console() << ++sceneId << ": Magneto\n";
-    addScene( new Magnetosphere(), true );
+    //console() << ++sceneId << ": Magneto\n";
+    //addScene( new Magnetosphere() );
+    
+    // Graviton
+    console() << ++sceneId << ": Graviton\n";
+    addScene( new Graviton(), true );
     
     // AudioTest
-    //console() << ++sceneId << ": AudioTest\n";
-    //addScene( new AudioTest() );
+    console() << ++sceneId << ": AudioTest\n";
+    addScene( new AudioTest() );
     
     // MovieTest
     //console() << ++sceneId << ": MovieTest\n";
