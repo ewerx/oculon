@@ -34,6 +34,7 @@
 #include "AudioTest.h"
 #include "MindWaveTest.h"
 #include "MovieTest.h"
+#include "FisheyeTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -63,7 +64,7 @@ void OculonApp::setup()
     mIsCapturingVideo = false;
     mIsCapturingFrames = false;
     mSaveNextFrame = false;
-    mIsCapturingHighRes = true;
+    mIsCapturingHighRes = false;
     static const int FBO_WIDTH = 2600;
     static const int FBO_HEIGHT = 2600;
     gl::Fbo::Format format;
@@ -200,6 +201,10 @@ void OculonApp::setupScenes()
     // MovieTest
     console() << ++sceneId << ": MovieTest\n";
     //addScene( new MovieTest() );
+    
+    // FisheyeTest
+    console() << ++sceneId << ": FisheyeTest\n";
+    addScene( new FisheyeTest() );
 
     
     if( mEnableMindWave )
@@ -428,6 +433,12 @@ void OculonApp::update()
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     snprintf(buf, 256, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    
+    if( mIsCapturingHighRes )
+    {
+        snprintf(buf, 256, "Viewport: %d x %d", (int)getViewportWidth(), (int)getViewportHeight());
+        mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.95f) );
+    }
     
     if( mIsCapturingVideo )
     {

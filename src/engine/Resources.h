@@ -11,6 +11,7 @@
 #define RES_SHADER_FRAGMENT			CINDER_RESOURCE( ../resources/shaders/, shader.fsh, 134, GLSL )
 #define RES_EMITTER_VERT			CINDER_RESOURCE( ../resources/shaders/, emitter_vert.glsl, 135, GLSL )
 #define RES_EMITTER_FRAG			CINDER_RESOURCE( ../resources/shaders/, emitter_frag.glsl, 136, GLSL )
+#define RES_FISHEYE_VERT			CINDER_RESOURCE( ../resources/shaders/, fisheye_vert.glsl, 136, GLSL )
 
 #define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )
 #define RES_ORBITER_MERCURY         CINDER_RESOURCE( ../resources/images/orbiter/, mercurymap.jpg, 201, JPG )

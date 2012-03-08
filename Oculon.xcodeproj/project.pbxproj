@@ -81,6 +81,9 @@
 		7CD0B85114B6B68E002505C5 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84914B6B68E002505C5 /* kiss_fft.c */; };
 		7CD0B85214B6B68E002505C5 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B84B14B6B68E002505C5 /* kiss_fftr.c */; };
 		7CD0B85414B6B68E002505C5 /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0B85014B6B68E002505C5 /* Kiss.cpp */; };
+		7CDF802F15083EAE006341A0 /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CDF802E15083EAE006341A0 /* FisheyeRender.cpp */; };
+		7CDF80341508439D006341A0 /* FisheyeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CDF80321508439D006341A0 /* FisheyeTest.cpp */; };
+		7CDF80361508452A006341A0 /* fisheye_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CDF80351508452A006341A0 /* fisheye_vert.glsl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -217,6 +220,11 @@
 		7CD0B84C14B6B68E002505C5 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fftr.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/kiss/kiss_fftr.h; sourceTree = DEVELOPER_DIR; };
 		7CD0B84D14B6B68E002505C5 /* Kiss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Kiss.h; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/include/Kiss.h; sourceTree = DEVELOPER_DIR; };
 		7CD0B85014B6B68E002505C5 /* Kiss.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kiss.cpp; path = ../Users/ehsan/dev/sdks/cinder_master/blocks/BanTheRewind/blocks/kiss/src/Kiss.cpp; sourceTree = DEVELOPER_DIR; };
+		7CDF802E15083EAE006341A0 /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
+		7CDF803115083EC9006341A0 /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
+		7CDF80321508439D006341A0 /* FisheyeTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeTest.cpp; sourceTree = "<group>"; };
+		7CDF80331508439D006341A0 /* FisheyeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeTest.h; sourceTree = "<group>"; };
+		7CDF80351508452A006341A0 /* fisheye_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fisheye_vert.glsl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -385,6 +393,8 @@
 				7C74555B148C259C009C0356 /* AudioInput.cpp */,
 				7C74555C148C259C009C0356 /* AudioInput.h */,
 				7C74555D148C259C009C0356 /* Constants.h */,
+				7CDF802E15083EAE006341A0 /* FisheyeRender.cpp */,
+				7CDF803115083EC9006341A0 /* FisheyeRender.h */,
 				7C74555E148C259C009C0356 /* InfoPanel.cpp */,
 				7C74555F148C259C009C0356 /* InfoPanel.h */,
 				7C745560148C259C009C0356 /* Kinect.cpp */,
@@ -454,6 +464,8 @@
 			children = (
 				7C745583148C259C009C0356 /* AudioTest.cpp */,
 				7C745584148C259C009C0356 /* AudioTest.h */,
+				7CDF80321508439D006341A0 /* FisheyeTest.cpp */,
+				7CDF80331508439D006341A0 /* FisheyeTest.h */,
 				7C745585148C259C009C0356 /* MindWaveTest.cpp */,
 				7C745586148C259C009C0356 /* MindWaveTest.h */,
 				7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */,
@@ -543,6 +555,7 @@
 				7C96934514970AF800C0E1E6 /* emitter_frag.glsl */,
 				7C865648148C2BCD000E00B6 /* passthru.vsh */,
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
+				7CDF80351508452A006341A0 /* fisheye_vert.glsl */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -691,6 +704,7 @@
 				7C8663C0149536F0004C9558 /* particle.png in Resources */,
 				7C96934614970AF800C0E1E6 /* emitter_vert.glsl in Resources */,
 				7C96934714970AF800C0E1E6 /* emitter_frag.glsl in Resources */,
+				7CDF80361508452A006341A0 /* fisheye_vert.glsl in Resources */,
 				7C96934D14970B3F00C0E1E6 /* specExponent.png in Resources */,
 				7C96934E14970B3F00C0E1E6 /* normal.png in Resources */,
 				7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */,
@@ -755,6 +769,8 @@
 				7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */,
 				7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */,
 				7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */,
+				7CDF802F15083EAE006341A0 /* FisheyeRender.cpp in Sources */,
+				7CDF80341508439D006341A0 /* FisheyeTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
