@@ -12,6 +12,7 @@
 #include "AudioInput.h" // compile errors if this is not before App.h
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
+#include "Utils.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -30,9 +31,7 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
-    
-    initParticles();
-    initVbo();
+    //initParticles();
 	initOpenCl();
 	
 	glPointSize(1);
@@ -63,20 +62,31 @@ void Graviton::initParticles()
     mStep = kStep;
     mNumParticles = kNumParticles;
     
-    const double r = 1e2; // wha??
+    // position particles randomly inside a sphere
+    //const double r = 1e2;
     
     const Vec2f center = mApp->getWindowSize() / 2.0f;
     
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        const double rho = r * pow((double(rand()) / RAND_MAX), 0.75);
-        double theta = (double(rand()) / RAND_MAX) * (M_PI * 2.0);
-        theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-        const double z = 2.0 * (double(rand()) / RAND_MAX) - 1.0;
+        const double r = Rand::randFloat(1.0f, 100.0f);
+        
+        //const double rho = radius * pow(Utils::randDouble(), 0.75);
+        const double rho = Utils::randDouble() * (M_PI * 2.0);
+        double theta = Utils::randDouble() * (M_PI * 2.0);
+        //theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+        
+        //const double z = 2.0 * (double(rand()) / RAND_MAX) - 1.0;
         const double c = cos(theta);
         const double s = sin(theta);
-        mPosAndMass[i].s[0] = rho * c;
-        mPosAndMass[i].s[1] = rho * s;
+        //const double 
+        
+        const double x = r * cos(rho) * sin(theta);
+        const double y = r * sin(rho) * sin(theta);
+        const double z = r * cos(theta);
+        
+        mPosAndMass[i].s[0] = x;//rho * c;
+        mPosAndMass[i].s[1] = y;//rho * s;
         mPosAndMass[i].s[2] = z;
         mPosAndMass[i].s[3] = 1.0;
         
@@ -88,61 +98,44 @@ void Graviton::initParticles()
     }
 }
 
-void Graviton::initVbo()
+void Graviton::initOpenCl()
 {
-	glGenBuffersARB(1, mVbo);
+    mOpenCl.setupFromOpenGL();
     
     const size_t size = sizeof(cl_float4) * kNumParticles;
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
+    
+    // init VBO
+    //
+    glGenBuffersARB(1, mVbo); // 1 VBO
+    
+    // use VBO instead of CL buffer for positions to render directly
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
 	glVertexPointer(4, GL_FLOAT, 0, 0);
 	
 	//glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
 	//glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
 	//glColorPointer(4, GL_FLOAT, 0, 0);
-	
     
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-}
-
-void Graviton::initOpenCl()
-{
-    mOpenCl.setupFromOpenGL();
     
-    /*
-	glGenBuffersARB(2, mVbo);
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kSizeofPosBuffer, mPosBuffer, GL_STREAM_COPY_ARB);
-	glVertexPointer(2, GL_FLOAT, 0, 0);
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
-	glColorPointer(4, GL_FLOAT, 0, 0);
-	
     
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    */
+    // init CL kernel
+    //
     fs::path clPath = App::getResourcePath("Nbody.cl");
 	mOpenCl.loadProgramFromFile(clPath.string());
 	mKernel = mOpenCl.loadKernel("gravity");
 	
-    //mClBufPos0.initBuffer( sizeof(cl_float4) * kNumParticles, CL_MEM_READ_WRITE, mPosAndMass );
+    // init CL buffers
+    //
+    //mClBufPos0.initBuffer( size, CL_MEM_READ_WRITE, mPosAndMass );
     mClBufPos0.initFromGLObject(mVbo[0]);
-    mClBufPos1.initBuffer( sizeof(cl_float4) * kNumParticles, CL_MEM_READ_ONLY );
-    mClBufVel0.initBuffer( sizeof(cl_float4) * kNumParticles, CL_MEM_READ_WRITE, mVel );
-    mClBufVel1.initBuffer( sizeof(cl_float4) * kNumParticles, CL_MEM_READ_ONLY );
+    mClBufPos1.initBuffer( size, CL_MEM_READ_ONLY );
+    mClBufVel0.initBuffer( size, CL_MEM_READ_WRITE );
+    mClBufVel1.initBuffer( size, CL_MEM_READ_ONLY );
     
     
-	mKernel->setArg(ARG_POS_IN, mClBufPos0.getCLMem());
-    mKernel->setArg(ARG_POS_OUT, mClBufPos1.getCLMem());
-    mKernel->setArg(ARG_VEL_IN, mClBufVel0.getCLMem());
-    mKernel->setArg(ARG_VEL_OUT, mClBufVel1.getCLMem());
-    mKernel->setArg(ARG_COUNT, mNumParticles);
-    mKernel->setArg(ARG_STEP, mStep);
-    
-    mSwap = true;
+	
     
 	//mClBufParticles.initBuffer(sizeof(clParticle) * kNumParticles, CL_MEM_READ_WRITE, mParticles);
     
@@ -160,6 +153,30 @@ void Graviton::initOpenCl()
 
 void Graviton::reset()
 {
+    initParticles();
+    
+    const size_t size = sizeof(cl_float4) * kNumParticles;
+	
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
+	glVertexPointer(4, GL_FLOAT, 0, 0);
+	
+	//glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
+	//glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
+	//glColorPointer(4, GL_FLOAT, 0, 0);
+    
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    
+    mClBufVel0.write( mVel, 0, sizeof(cl_float4) * kNumParticles );
+    
+    mKernel->setArg(ARG_POS_IN, mClBufPos0.getCLMem());
+    mKernel->setArg(ARG_POS_OUT, mClBufPos1.getCLMem());
+    mKernel->setArg(ARG_VEL_IN, mClBufVel0.getCLMem());
+    mKernel->setArg(ARG_VEL_OUT, mClBufVel1.getCLMem());
+    mKernel->setArg(ARG_COUNT, mNumParticles);
+    mKernel->setArg(ARG_STEP, mStep);
+    
+    mSwap = true;
 }
 
 void Graviton::resize()

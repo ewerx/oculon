@@ -49,7 +49,6 @@ private:
     void updateAudioResponse();
     
     void initParticles();
-    void initVbo();
     void initOpenCl();
     void updateParams();
         

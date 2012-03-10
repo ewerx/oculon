@@ -21,6 +21,9 @@ public:
     //! Returns a left-padded string based on the input string
 	static std::string leftPaddedString( const std::string &input, int padding=3, const std::string pad="0" );
     
+    // math
+    static double randDouble()  { return (double(rand()) / RAND_MAX); }
+    
 };
 
 #endif
