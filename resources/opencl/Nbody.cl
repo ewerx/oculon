@@ -78,7 +78,6 @@ __kernel void gravity(__global const float4 *in_pos,
 		return;
     
 	float4 pos = in_pos[i];
-    float4 v = in_vel[i];
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
     
 	const uint n = nb_particles;
@@ -91,15 +90,10 @@ __kernel void gravity(__global const float4 *in_pos,
         
         float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
         float f = p2.w*invr*invr*invr; // use both masses and g constant?
-        //a += f*d;
-        
-        float4 acc = dt * (f*d);
-        v += acc;
-        
-        out_vel[j] = out_vel[j] - acc;
+        a += f*d;
 	}
 	//a *= step;
-	//float4 v = in_vel[i] + dt * a;
+	float4 v = in_vel[i] + dt * a;
 	out_vel[i] = v;
-	out_pos[i] = pos + (dt * v) + (0.5f*dt*dt*a); // not sure what the last part is...
+	out_pos[i] = pos + (dt * v) + (0.5f*dt*dt*a); // don't know what the last part is...
 }
