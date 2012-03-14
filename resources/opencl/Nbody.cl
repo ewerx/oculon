@@ -9,12 +9,14 @@
 // pos.w = mass
 // vel.w = unused
 
+// based on Brown Deer N-body tutorial
 __kernel void nbody_kern(
-                         float dt1, float eps,
-                         __global float4* pos_old,
+                         __global const float4* pos_old,
                          __global float4* pos_new,
                          __global float4* vel,
-                         __local float4* pblock
+                         __local float4* pblock,
+                         const float dt1, 
+                         const float eps
                          ) 
 {
     const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
@@ -56,21 +58,29 @@ __kernel void nbody_kern(
     
 }
 
-#define dt 1e-2f
+// based on FreeOCL sample
 __kernel void gravity(__global const float4 *in_pos, 
                       __global float4 *out_pos,
 					  __global const float4 *in_vel, 
                       __global float4 *out_vel,
 					  const uint nb_particles,
-					  const uint step)
+					  const uint step)//,
+                      //const float dt1,
+                      //const float eps)
 {
+    // the 4th element of in_pos holds mass, this filters it out
+    //const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
+    const float dt = 1e-2;
+    
 	const uint i = get_global_id(0);
 	if (i >= nb_particles)
 		return;
+    
 	float4 pos = in_pos[i];
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	const uint n = nb_particles / step;
-	for(uint j = 0 ; j < n ; ++j)
+    
+	const uint n = i + nb_particles / step;
+	for(uint j = i ; j < n ; ++j)
 	{
 		float4 p = in_pos[j] - pos;
 		p.w = 0.0f;

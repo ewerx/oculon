@@ -26,6 +26,9 @@ using namespace ci;
 using std::vector;
 
 
+#define FREEOCL_VERSION
+
+
 class Graviton : public Scene
 {
 public:
@@ -63,6 +66,7 @@ private:
         kNumParticles =         (64 * kStep),
     };
     
+#if defined (FREEOCL_VERSION)
     enum eClArgs
     {
         ARG_POS_IN,
@@ -70,9 +74,23 @@ private:
         ARG_VEL_IN,
         ARG_VEL_OUT,
         ARG_COUNT,
-        ARG_STEP
+        ARG_STEP,
+        ARG_DT,
+        ARG_EPS
         
     };
+#else
+    enum eClArgs
+    {
+        ARG_POS_IN,
+        ARG_POS_OUT,
+        ARG_VEL,
+        ARG_PBLOCK,
+        ARG_DT,
+        ARG_EPS
+        
+    };
+#endif
     
     bool                    mIsMousePressed;
     float2                  mMousePos;

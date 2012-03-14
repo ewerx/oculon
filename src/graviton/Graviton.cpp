@@ -169,12 +169,19 @@ void Graviton::reset()
     
     mClBufVel0.write( mVel, 0, sizeof(cl_float4) * kNumParticles );
     
+#if defined( FREEOCL_VERSION )
     mKernel->setArg(ARG_POS_IN, mClBufPos0.getCLMem());
     mKernel->setArg(ARG_POS_OUT, mClBufPos1.getCLMem());
     mKernel->setArg(ARG_VEL_IN, mClBufVel0.getCLMem());
     mKernel->setArg(ARG_VEL_OUT, mClBufVel1.getCLMem());
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
+#else
+    //TODO
+    mKernel->setArg(ARG_POS_IN, mSwap ? mClBufPos1.getCLMem() : mClBufPos0.getCLMem());
+    mKernel->setArg(ARG_POS_OUT, mSwap ? mClBufPos0.getCLMem() : mClBufPos1.getCLMem());
+    mKernel->setArg(ARG_VEL, mClBufVel0.getCLMem());
+#endif
     
     mSwap = true;
 }
@@ -207,7 +214,8 @@ void Graviton::update(double dt)
 	//mDimensions.y = mApp->getViewportHeight();
     
     updateAudioResponse();
-    
+
+#if defined( FREEOCL_VERSION )
     //mAnimTime += mTimeSpeed;
     //mKernelUpdate->setArg(ARG_TIME, mAnimTime);
 
@@ -224,6 +232,43 @@ void Graviton::update(double dt)
     mKernel->setArg(ARG_VEL_IN, mSwap ? mClBufVel1.getCLMem() : mClBufVel0.getCLMem());
     mKernel->setArg(ARG_VEL_OUT, mSwap ? mClBufVel0.getCLMem() : mClBufVel1.getCLMem());
 
+#else
+    int nparticle = 8192; /* MUST be a nice power of two for simplicity */
+    int nstep = 100;
+    int nburst = 20; /* MUST divide the value of nstep without remainder */
+    int nthread = 64; /* chosen for ATI Radeon HD 5870 */
+    
+    float dt1 = 0.0001;
+    float eps = 0.0001;
+    
+    mKernel->setArg(ARG_POS_IN, mSwap ? mClBufPos1.getCLMem() : mClBufPos0.getCLMem());
+    mKernel->setArg(ARG_POS_OUT, mSwap ? mClBufPos0.getCLMem() : mClBufPos1.getCLMem());
+    mKernel->setArg(ARG_VEL, mClBufVel0.getCLMem());
+    mKernel->setLocalArg(ARG_PBLOCK,nthread*sizeof(cl_float4));
+    
+    clmsync(stdgpu,0,pos1,CL_MEM_DEVICE|CL_EVENT_NOWAIT);
+    clmsync(stdgpu,0,vel,CL_MEM_DEVICE|CL_EVENT_NOWAIT);
+    for(int step=0; step<nstep; step+=nburst) {
+        
+        for(int burst=0; burst<nburst; burst+=2) {
+            
+            clarg_set_global(stdgpu,krn,2,pos1);
+            clarg_set_global(stdgpu,krn,3,pos2);
+            clfork(stdgpu,0,krn,&ndr,CL_EVENT_NOWAIT);
+            
+            clarg_set_global(stdgpu,krn,2,pos2);
+            clarg_set_global(stdgpu,krn,3,pos1);
+            clfork(stdgpu,0,krn,&ndr,CL_EVENT_NOWAIT);
+            
+        }
+        
+        clmsync(stdgpu,0,pos1,CL_MEM_HOST|CL_EVENT_NOWAIT);
+        
+        clwait(stdgpu,0,CL_KERNEL_EVENT|CL_MEM_EVENT|CL_EVENT_RELEASE);
+        
+    }
+#endif
+    
     mSwap = !mSwap;
     
 	//mKernelUpdate->setArg(2, mMousePos);

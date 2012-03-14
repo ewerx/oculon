@@ -85,6 +85,7 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8B6EF5150C3B9B004AE472 /* Nbody2.cl in Sources */ = {isa = PBXBuildFile; fileRef = 7C8B6EF4150C3B9B004AE472 /* Nbody2.cl */; };
 		7C8C236B15007D960009FF26 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
 		7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
 		7C8CD29614FFAA3E0009FF26 /* ShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */; };
@@ -293,6 +294,7 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8B6EF4150C3B9B004AE472 /* Nbody2.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = Nbody2.cl; sourceTree = "<group>"; };
 		7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderTest.cpp; sourceTree = "<group>"; };
 		7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTest.h; sourceTree = "<group>"; };
 		7C8CD31A1500784E0009FF26 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
@@ -638,9 +640,10 @@
 		7C5C208E14F751B600971B41 /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				7C560DE81506C4D2000B91B0 /* Nbody.cl */,
+				7C8B6EF4150C3B9B004AE472 /* Nbody2.cl */,
 				7C5C209314F7571700971B41 /* Particle.cl */,
 				7C1C5CC014FB1346002CE80B /* WaveParticle.cl */,
-				7C560DE81506C4D2000B91B0 /* Nbody.cl */,
 			);
 			name = opencl;
 			sourceTree = "<group>";
@@ -1188,6 +1191,7 @@
 				7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */,
 				7C560DE91506C4D2000B91B0 /* Nbody.cl in Sources */,
 				7C560DEE1506E22F000B91B0 /* Graviton.cpp in Sources */,
+				7C8B6EF5150C3B9B004AE472 /* Nbody2.cl in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
