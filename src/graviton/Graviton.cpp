@@ -71,26 +71,27 @@ void Graviton::initParticles()
     
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        const double r = Rand::randFloat(1.0f, 100.0f);
+        const double r = Rand::randFloat(100.0f, 500.0f);
         
         //const double rho = radius * pow(Utils::randDouble(), 0.75);
         const double rho = Utils::randDouble() * (M_PI * 2.0);
         double theta = Utils::randDouble() * (M_PI * 2.0);
         //theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
         
-        //const double z = 2.0 * (double(rand()) / RAND_MAX) - 1.0;
         const double c = cos(theta);
         const double s = sin(theta);
-        //const double 
         
         const double x = r * cos(rho) * sin(theta);
         const double y = r * sin(rho) * sin(theta);
+        // sphere
         const double z = r * cos(theta);
+        // disc
+        //const double z = 2.0 * (double(rand()) / RAND_MAX) - 1.0;
         
         mPosAndMass[i].s[0] = x;//rho * c;
         mPosAndMass[i].s[1] = y;//rho * s;
         mPosAndMass[i].s[2] = z;
-        mPosAndMass[i].s[3] = 1.0;
+        mPosAndMass[i].s[3] = Rand::randFloat(1.0f,100000.0f);
         
         const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
         mVel[i].s[0] = -a * s;
