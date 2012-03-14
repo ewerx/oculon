@@ -31,6 +31,8 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
+    mTimeStep = 0.01f;
+    
     //initParticles();
 	initOpenCl();
 	
@@ -219,6 +221,7 @@ void Graviton::update(double dt)
     //mAnimTime += mTimeSpeed;
     //mKernelUpdate->setArg(ARG_TIME, mAnimTime);
 
+    mKernel->setArg(ARG_DT, mTimeStep);
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
     

@@ -63,7 +63,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (8 * kStep),
+        kNumParticles =         (4 * kStep),
     };
     
 #if defined (FREEOCL_VERSION)
@@ -115,6 +115,8 @@ private:
     
     GLuint                  mVbo[1];
     
+    
+    cl_float                mTimeStep;
     
 //    clNode              mNodes[kMaxNodes];
 //    MSA::OpenCLBuffer	mClBufNodes;

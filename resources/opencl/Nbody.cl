@@ -64,13 +64,13 @@ __kernel void gravity(__global const float4 *in_pos,
 					  __global const float4 *in_vel, 
                       __global float4 *out_vel,
 					  const uint nb_particles,
-					  const uint step)//,
-                      //const float dt1,
+					  const uint step,
+                      const float dt1)
                       //const float eps)
 {
     // the 4th element of in_pos holds mass, this filters it out
-    //const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
-    const float dt = 1e-2;
+    const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
+    //const float dt = 1e-2;
     const float eps = 0.0001f;
     
 	const uint i = get_global_id(0);
@@ -82,7 +82,7 @@ __kernel void gravity(__global const float4 *in_pos,
     
 	const uint n = nb_particles;
     
-	for(uint j = i ; j < n ; ++j)
+	for(uint j = 0 ; j < n ; ++j)
 	{
         const float4 p2 = in_pos[j];
         
