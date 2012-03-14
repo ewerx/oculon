@@ -71,29 +71,35 @@ __kernel void gravity(__global const float4 *in_pos,
     // the 4th element of in_pos holds mass, this filters it out
     //const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
     const float dt = 1e-2;
+    const float eps = 0.0001f;
     
 	const uint i = get_global_id(0);
 	if (i >= nb_particles)
 		return;
     
 	float4 pos = in_pos[i];
+    float4 v = in_vel[i];
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
     
-	const uint n = i + nb_particles / step;
+	const uint n = nb_particles;
+    
 	for(uint j = i ; j < n ; ++j)
 	{
-		float4 p = in_pos[j] - pos;
-		p.w = 0.0f;
-		float d2 = dot(p, p);
-		p /= sqrt(d2);
-		if (isnan(p.x) || isnan(p.y) || isnan(p.z) || i == j)
-			continue;
-		p.w = 0.0f;
-		d2 = max(d2, 1e0f);
-		a += (1.0f / d2) * p;
+        const float4 p2 = in_pos[j];
+        
+		float4 d = p2 - pos;
+        
+        float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
+        float f = p2.w*invr*invr*invr; // use both masses and g constant?
+        //a += f*d;
+        
+        float4 acc = dt * (f*d);
+        v += acc;
+        
+        out_vel[j] = out_vel[j] - acc;
 	}
-	a *= step;
-	float4 v = in_vel[i] + dt * a;
+	//a *= step;
+	//float4 v = in_vel[i] + dt * a;
 	out_vel[i] = v;
-	out_pos[i] = pos + dt * v;
+	out_pos[i] = pos + (dt * v) + (0.5f*dt*dt*a); // not sure what the last part is...
 }
