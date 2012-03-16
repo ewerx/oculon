@@ -66,6 +66,12 @@ private:
         kNumParticles =         (8 * kStep),
     };
     
+    enum eFlags
+    {
+        FLAGS_NONE  = 0x0,
+        FLAGS_ALL   = 0xFFFFFFFF
+    };
+    
 #if defined (FREEOCL_VERSION)
     enum eClArgs
     {
@@ -73,10 +79,13 @@ private:
         ARG_POS_OUT,
         ARG_VEL_IN,
         ARG_VEL_OUT,
+        ARG_COLOR,
         ARG_COUNT,
         ARG_STEP,
         ARG_DT,
-        ARG_EPS
+        ARG_DAMPING,
+        ARG_FLAGS,
+        //ARG_EPS
         
     };
 #else
@@ -103,20 +112,24 @@ private:
     MSA::OpenCLBuffer       mClBufPos1;
     MSA::OpenCLBuffer       mClBufVel0;
     MSA::OpenCLBuffer       mClBufVel1;
+    MSA::OpenCLBuffer       mClBufColor;
     bool                    mSwap;
     
     MSA::OpenCLBuffer       mClBufPos;
     
-    cl_float4               mPosAndMass[kNumParticles];
-    cl_float4               mVel[kNumParticles];
+    float4                  mPosAndMass[kNumParticles];
+    float4                  mVel[kNumParticles];
+    float4                  mColor[kNumParticles];
     
     cl_uint                 mStep;
     cl_uint                 mNumParticles;
     
-    GLuint                  mVbo[1];
+    GLuint                  mVbo[2];
     
     
     cl_float                mTimeStep;
+    cl_float                mDamping;
+    cl_uint                 mFlags;
     
 //    clNode              mNodes[kMaxNodes];
 //    MSA::OpenCLBuffer	mClBufNodes;
@@ -142,7 +155,7 @@ private:
 //    
 //    GLuint              mIndices[kNumParticles * kMaxTrailLength];
 //    
-//    gl::Texture         mParticleTexture;
+    gl::Texture         mParticleTexture;
 //    GLuint				mVbo[2];
 //
 //    float               mSpreadMin;
@@ -181,7 +194,7 @@ private:
 //    bool				mDoDrawNodes;
 //    bool				mEnableLineSmoothing;
 //    bool				mEnablePointSmoothing;
-//    bool                mUseImageForPoints;
+    bool                mUseImageForPoints;
 //    
 //    gl::Fbo             mFboNew;
 //    gl::Fbo             mFboComp;

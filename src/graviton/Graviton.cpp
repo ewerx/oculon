@@ -71,7 +71,7 @@ void Graviton::initParticles()
     
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        const double r = Rand::randFloat(100.0f, 500.0f);
+        const double r = Rand::randFloat(1.0f, 1000.0f);
         
         //const double rho = radius * pow(Utils::randDouble(), 0.75);
         const double rho = Utils::randDouble() * (M_PI * 2.0);
@@ -84,20 +84,30 @@ void Graviton::initParticles()
         const double x = r * cos(rho) * sin(theta);
         const double y = r * sin(rho) * sin(theta);
         // sphere
-        const double z = r * cos(theta);
+        //const double z = r * cos(theta);
         // disc
-        //const double z = 2.0 * (double(rand()) / RAND_MAX) - 1.0;
+        const double z = 200.0 * (double(rand()) / RAND_MAX) - 1.0;
         
-        mPosAndMass[i].s[0] = x;//rho * c;
-        mPosAndMass[i].s[1] = y;//rho * s;
-        mPosAndMass[i].s[2] = z;
-        mPosAndMass[i].s[3] = Rand::randFloat(1.0f,100000.0f);
+        // pos
+        mPosAndMass[i].x = x;//rho * c;
+        mPosAndMass[i].y = y;//rho * s;
+        mPosAndMass[i].z = z;
+        // mass
+        mPosAndMass[i].w = 1.0f;//Rand::randFloat(1.0f,100000.0f);
         
+        // vel
         const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-        mVel[i].s[0] = -a * s;
-        mVel[i].s[1] = a * c;
-        mVel[i].s[2] = 0.0f;
-        mVel[i].s[3] = 0.0f;
+        mVel[i].x = -a * s;
+        mVel[i].y = a * c;
+        mVel[i].z = 0.0f;
+        // unused
+        mVel[i].w = 0.0f;
+        
+        // color
+        mColor[i].x = 1.0f;
+        mColor[i].y = 1.0f;
+        mColor[i].z = 1.0f;
+        mColor[i].w = 1.0f;
     }
 }
 
@@ -105,20 +115,21 @@ void Graviton::initOpenCl()
 {
     mOpenCl.setupFromOpenGL();
     
-    const size_t size = sizeof(cl_float4) * kNumParticles;
+    const size_t size = sizeof(float4) * kNumParticles;
     
     // init VBO
     //
-    glGenBuffersARB(1, mVbo); // 1 VBO
+    glGenBuffersARB(2, mVbo); // 2 VBOs, color and position
     
     // use VBO instead of CL buffer for positions to render directly
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
 	glVertexPointer(4, GL_FLOAT, 0, 0);
 	
-	//glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	//glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
-	//glColorPointer(4, GL_FLOAT, 0, 0);
+    // colors store in another vbo
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mColor, GL_STREAM_COPY_ARB);
+	glColorPointer(4, GL_FLOAT, 0, 0);
     
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     
@@ -136,47 +147,35 @@ void Graviton::initOpenCl()
     mClBufPos1.initBuffer( size, CL_MEM_READ_ONLY );
     mClBufVel0.initBuffer( size, CL_MEM_READ_WRITE );
     mClBufVel1.initBuffer( size, CL_MEM_READ_ONLY );
-    
-    
-	
-    
-	//mClBufParticles.initBuffer(sizeof(clParticle) * kNumParticles, CL_MEM_READ_WRITE, mParticles);
-    
-    //mClBufParticles.initBuffer(sizeof(clParticle) * kNumParticles, CL_MEM_READ_WRITE, mParticles);
-    //mClBufNodes.initBuffer(sizeof(clNode) * kMaxNodes, CL_MEM_READ_ONLY, NULL);
-    
-    
-    //mClBufPosBuffer.initFromGLObject(mVbo[0]);
-	//mClBufColorBuffer.initFromGLObject(mVbo[1]);
-	
-	//mKernelUpdate->setArg(ARG_PARTICLES, mClBufParticles.getCLMem());
-    //mKernelUpdate->setArg(ARG_POS_BUFFER, mClBufPosBuffer.getCLMem());
-    //mKernelUpdate->setArg(ARG_COLOR_BUFFER, mClBufColorBuffer.getCLMem());
+    mClBufColor.initFromGLObject(mVbo[1]);
+
 }
 
 void Graviton::reset()
 {
     initParticles();
     
-    const size_t size = sizeof(cl_float4) * kNumParticles;
+    const size_t size = sizeof(float4) * kNumParticles;
 	
+    // recreate teh buffers (afaik there's no leak here)
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
 	glVertexPointer(4, GL_FLOAT, 0, 0);
 	
-	//glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	//glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
-	//glColorPointer(4, GL_FLOAT, 0, 0);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mColor, GL_STREAM_COPY_ARB);
+	glColorPointer(4, GL_FLOAT, 0, 0);
     
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     
-    mClBufVel0.write( mVel, 0, sizeof(cl_float4) * kNumParticles );
+    mClBufVel0.write( mVel, 0, sizeof(float4) * kNumParticles );
     
 #if defined( FREEOCL_VERSION )
     mKernel->setArg(ARG_POS_IN, mClBufPos0.getCLMem());
     mKernel->setArg(ARG_POS_OUT, mClBufPos1.getCLMem());
     mKernel->setArg(ARG_VEL_IN, mClBufVel0.getCLMem());
     mKernel->setArg(ARG_VEL_OUT, mClBufVel1.getCLMem());
+    mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
 #else
@@ -186,7 +185,7 @@ void Graviton::reset()
     mKernel->setArg(ARG_VEL, mClBufVel0.getCLMem());
 #endif
     
-    mSwap = true;
+    mSwap = false;
 }
 
 void Graviton::resize()
@@ -225,16 +224,17 @@ void Graviton::update(double dt)
     mKernel->setArg(ARG_DT, mTimeStep);
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
+    mKernel->setArg(ARG_DAMPING, mDamping);
+    mKernel->setArg(ARG_FLAGS, mFlags);
     
     mKernel->run1D(mNumParticles);
 	
-    
-    //std::swap(mClBufPos0, mClBufPos1);
-    //std::swap(mClBufVel0, mClBufVel1);
     mKernel->setArg(ARG_POS_IN, mSwap ? mClBufPos1.getCLMem() : mClBufPos0.getCLMem());
     mKernel->setArg(ARG_POS_OUT, mSwap ? mClBufPos0.getCLMem() : mClBufPos1.getCLMem());
     mKernel->setArg(ARG_VEL_IN, mSwap ? mClBufVel1.getCLMem() : mClBufVel0.getCLMem());
     mKernel->setArg(ARG_VEL_OUT, mSwap ? mClBufVel0.getCLMem() : mClBufVel1.getCLMem());
+    
+    mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
 
 #else
     int nparticle = 8192; /* MUST be a nice power of two for simplicity */
@@ -429,14 +429,30 @@ void Graviton::drawParticles()
     mOpenCl.flush();
     
     glEnableClientState(GL_VERTEX_ARRAY);
-    //glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
     
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
     glVertexPointer(4, GL_FLOAT, 0, 0);
     
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
+    glColorPointer(4, GL_FLOAT, 0, 0);
+    
+    if(mUseImageForPoints) 
+    {
+        //glEnable(GL_TEXTURE_2D);
+        mParticleTexture.bind();
+    }
+    
     glDrawArrays(GL_POINTS, 0, mNumParticles);
     
+    if(mUseImageForPoints) 
+    {
+        mParticleTexture.unbind();
+        //glDisable(GL_TEXTURE_2D);
+    }
+    
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glDisableClientState(GL_COLOR_ARRAY);
     
 /*    
     if(mDoDrawNodes) 

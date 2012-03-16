@@ -63,9 +63,12 @@ __kernel void gravity(__global const float4 *in_pos,
                       __global float4 *out_pos,
 					  __global const float4 *in_vel, 
                       __global float4 *out_vel,
+                      __global float4 *color,
 					  const uint nb_particles,
 					  const uint step,
-                      const float dt1)
+                      const float dt1,
+                      const float damping,
+                      const uint flags)
                       //const float eps)
 {
     // the 4th element of in_pos holds mass, this filters it out
@@ -80,7 +83,8 @@ __kernel void gravity(__global const float4 *in_pos,
 	float4 p1 = in_pos[i];
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
     
-	const uint n = nb_particles;
+    // the higgs bassons
+	const uint n = step;
     
 	for(uint j = 0 ; j < n ; ++j)
 	{
@@ -92,8 +96,13 @@ __kernel void gravity(__global const float4 *in_pos,
         float f = /*g*p1.w**/p2.w*invr*invr*invr;
         a += f*d;
 	}
-	//a *= step;
+    
+	a *= step;
 	float4 v = in_vel[i] + dt * a;
 	out_vel[i] = v;
 	out_pos[i] = p1 + (dt * v) + (0.5f*dt*dt*a); // don't know what the last part is...
+    
+    float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
+    color[i].y = speed;
+    color[i].z = speed;
 }
