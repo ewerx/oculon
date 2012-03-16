@@ -17,7 +17,8 @@
 using namespace ci;
 using namespace ci::app;
 
-
+#define PARTICLE_FLAGS_NONE     0x00
+#define PARTICLE_FLAGS_INVSQR   0x02
 
 
 Graviton::Graviton()
@@ -31,15 +32,18 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
-    mTimeStep = 0.01f;
+    mTimeStep = 1e-2f;//0.01f;
     
-    //initParticles();
+    mUseImageForPoints = false;
+    mUseInvSquareCalc = false;
+    mFlags = PARTICLE_FLAGS_NONE;
+    
 	initOpenCl();
 	
 	glPointSize(1);
     
-    //mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
-    //mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
+    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
+    mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
     // blur shader
     try 
@@ -67,30 +71,35 @@ void Graviton::initParticles()
     // position particles randomly inside a sphere
     //const double r = 1e2;
     
-    const Vec2f center = mApp->getWindowSize() / 2.0f;
-    
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        const double r = Rand::randFloat(1.0f, 1000.0f);
+        const double r = 1e2;//Rand::randFloat(1.0f, 10000.0f);
         
-        //const double rho = radius * pow(Utils::randDouble(), 0.75);
-        const double rho = Utils::randDouble() * (M_PI * 2.0);
+        // spiral/disc
+        const double rho = r * pow(Utils::randDouble(), 0.75);
         double theta = Utils::randDouble() * (M_PI * 2.0);
-        //theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+        theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+        
+        // sphere
+        //const double rho = Utils::randDouble() * (M_PI * 2.0);
+        //const double theta = Utils::randDouble() * (M_PI * 2.0);
         
         const double c = cos(theta);
         const double s = sin(theta);
         
-        const double x = r * cos(rho) * sin(theta);
-        const double y = r * sin(rho) * sin(theta);
         // sphere
+        //const double x = r * cos(rho) * sin(theta);
+        //const double y = r * sin(rho) * sin(theta);
         //const double z = r * cos(theta);
         // disc
-        const double z = 200.0 * (double(rand()) / RAND_MAX) - 1.0;
+        const float thickness = 1.0f;
+        const double x = rho * c;
+        const double y = rho * s;
+        const double z = thickness * 2.0 * Utils::randDouble() - 1.0;
         
         // pos
-        mPosAndMass[i].x = x;//rho * c;
-        mPosAndMass[i].y = y;//rho * s;
+        mPosAndMass[i].x = x;
+        mPosAndMass[i].y = y;
         mPosAndMass[i].z = z;
         // mass
         mPosAndMass[i].w = 1.0f;//Rand::randFloat(1.0f,100000.0f);
@@ -205,6 +214,7 @@ void Graviton::resize()
 void Graviton::setupParams(params::InterfaceGl& params)
 {
     params.addText( "graviton", "label=`Graviton`" );
+    params.addParam( "Inv Square", &mUseInvSquareCalc );
     
 }
 
@@ -225,6 +235,11 @@ void Graviton::update(double dt)
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
     mKernel->setArg(ARG_DAMPING, mDamping);
+    
+    // update flags // TODO: cleanup
+    mFlags = PARTICLE_FLAGS_NONE;
+    if( mUseInvSquareCalc ) mFlags |= PARTICLE_FLAGS_INVSQR;
+        
     mKernel->setArg(ARG_FLAGS, mFlags);
     
     mKernel->run1D(mNumParticles);

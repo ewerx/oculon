@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#define PARTICLE_FLAGS_INVSQR   0x02
+
 // pos.w = mass
 // vel.w = unused
 
@@ -84,7 +86,7 @@ __kernel void gravity(__global const float4 *in_pos,
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
     
     // the higgs bassons
-	const uint n = step;
+	const uint n = nb_particles / step;
     
 	for(uint j = 0 ; j < n ; ++j)
 	{
@@ -92,15 +94,39 @@ __kernel void gravity(__global const float4 *in_pos,
         
 		float4 d = p2 - p1;
         
-        float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
-        float f = /*g*p1.w**/p2.w*invr*invr*invr;
-        a += f*d;
+        if( flags & PARTICLE_FLAGS_INVSQR )
+        {
+            float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
+            float f = /*g*p1.w**/p2.w*invr*invr*invr;
+            a += f*d;
+        }
+        else
+        {
+            d.w = 0.0f;
+            float d2 = dot(d, d);
+            d /= sqrt(d2);
+            if (isnan(d.x) || isnan(d.y) || isnan(d.z) || i == j)
+                continue;
+            d.w = 0.0f;
+            d2 = max(d2, 1e0f);
+            a += (1.0f / d2) * d;
+        }
 	}
     
 	a *= step;
-	float4 v = in_vel[i] + dt * a;
-	out_vel[i] = v;
-	out_pos[i] = p1 + (dt * v) + (0.5f*dt*dt*a); // don't know what the last part is...
+    // uniform
+	//float4 v = in_vel[i] + dt * a;
+    //out_pos[i] = p1 + (dt * v);
+    // spiral
+    float4 v = in_vel[i] + dt1 * a;
+	out_pos[i] = p1 + (dt1 * v);
+    
+    out_vel[i] = v;
+    
+    if( flags & PARTICLE_FLAGS_INVSQR )
+    {
+        out_pos[i] += (0.5f*dt*dt*a); // don't know what the last part is...
+    }
     
     float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
     color[i].y = speed;

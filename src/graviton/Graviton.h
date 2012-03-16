@@ -66,12 +66,6 @@ private:
         kNumParticles =         (8 * kStep),
     };
     
-    enum eFlags
-    {
-        FLAGS_NONE  = 0x0,
-        FLAGS_ALL   = 0xFFFFFFFF
-    };
-    
 #if defined (FREEOCL_VERSION)
     enum eClArgs
     {
@@ -195,6 +189,7 @@ private:
 //    bool				mEnableLineSmoothing;
 //    bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
+    bool                mUseInvSquareCalc;
 //    
 //    gl::Fbo             mFboNew;
 //    gl::Fbo             mFboComp;
