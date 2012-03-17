@@ -63,7 +63,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (8 * kStep),
+        kNumParticles =         (32 * kStep),
     };
     
 #if defined (FREEOCL_VERSION)
@@ -94,6 +94,19 @@ private:
         
     };
 #endif
+    
+    enum eFormation
+    {
+        FORMATION_SPHERE,
+        FORMATION_SPHERE_SHELL,
+        FORMATION_DISC,
+        FORMATION_GALAXY,
+        
+        FORMATION_COUNT
+    };
+    eFormation              mInitialFormation;
+    
+    float                   mFormationRadius;
     
     bool                    mIsMousePressed;
     float2                  mMousePos;

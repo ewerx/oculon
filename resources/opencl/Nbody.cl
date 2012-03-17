@@ -6,7 +6,9 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#define PARTICLE_FLAGS_INVSQR   0x02
+#define PARTICLE_FLAGS_INVSQR       0x02
+#define PARTICLE_FLAGS_SHOW_DARK    0x04
+#define PARTCILE_FLAGS_SHOW_SPEED   0x08
 
 // pos.w = mass
 // vel.w = unused
@@ -93,6 +95,7 @@ __kernel void gravity(__global const float4 *in_pos,
         const float4 p2 = in_pos[j];
         
 		float4 d = p2 - p1;
+        d.w = 0.0f;
         
         if( flags & PARTICLE_FLAGS_INVSQR )
         {
@@ -113,22 +116,36 @@ __kernel void gravity(__global const float4 *in_pos,
         }
 	}
     
-	a *= step;
-    // uniform
-	//float4 v = in_vel[i] + dt * a;
-    //out_pos[i] = p1 + (dt * v);
-    // spiral
-    float4 v = in_vel[i] + dt1 * a;
-	out_pos[i] = p1 + (dt1 * v);
+	a *= step; // what??
+	float4 v = in_vel[i] + dt * a;
+    out_pos[i] = p1 + (dt * v);
     
     out_vel[i] = v;
     
     if( flags & PARTICLE_FLAGS_INVSQR )
     {
-        out_pos[i] += (0.5f*dt*dt*a); // don't know what the last part is...
+        out_pos[i] += (0.5f*dt*dt*a); // what??
     }
     
-    float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
-    color[i].y = speed;
-    color[i].z = speed;
+    if( flags & PARTICLE_FLAGS_SHOW_DARK )
+    {
+        if( i < n )
+        {
+            color[i].x = 1.0f;
+            color[i].y = 0.0f;
+            color[i].z = 0.0f;
+        }
+        else
+        {
+            color[i].x = 1.0f;
+            color[i].y = 1.0f;
+            color[i].z = 1.0f;
+        }
+    }
+    else if( flags & PARTCILE_FLAGS_SHOW_SPEED )
+    {
+        float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
+        color[i].y = speed;
+        color[i].z = speed;
+    }
 }

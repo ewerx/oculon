@@ -12,13 +12,15 @@
 #include "AudioInput.h" // compile errors if this is not before App.h
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
+#include "cinder/Easing.h"
 #include "Utils.h"
 
 using namespace ci;
 using namespace ci::app;
 
-#define PARTICLE_FLAGS_NONE     0x00
-#define PARTICLE_FLAGS_INVSQR   0x02
+#define PARTICLE_FLAGS_NONE         0x00
+#define PARTICLE_FLAGS_INVSQR       0x02
+#define PARTICLE_FLAGS_SHOW_DARK    0x04
 
 
 Graviton::Graviton()
@@ -32,11 +34,14 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
-    mTimeStep = 1e-2f;//0.01f;
+    mTimeStep = 0.0005f;
     
     mUseImageForPoints = false;
-    mUseInvSquareCalc = false;
+    mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
+    
+    mInitialFormation = FORMATION_GALAXY;
+    mFormationRadius = 300;
     
 	initOpenCl();
 	
@@ -63,51 +68,107 @@ void Graviton::setup()
     reset();
 }
 
+//void Graviton::setupMidiMapping()
+//{
+// setup MIDI inputs for learning
+//mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
+//mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
+//mMidiMap.beginLearning();
+// ... or load a MIDI mapping
+//mMidiInput.setMidiKey("gravity", channel, note);
+//}
+
+void Graviton::setupParams(params::InterfaceGl& params)
+{
+    params.addText( "graviton", "label=`Graviton`" );
+    params.addParam( "Inv Square", &mUseInvSquareCalc );
+    params.addParam( "Time Step", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
+    params.addParam( "Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
+    params.addParam( "Formation Radius", &mFormationRadius, "min=1.0" );
+}
+
 void Graviton::initParticles()
 {
     mStep = kStep;
     mNumParticles = kNumParticles;
     
-    // position particles randomly inside a sphere
-    //const double r = 1e2;
+    const double r = mFormationRadius;
     
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        const double r = 1e2;//Rand::randFloat(1.0f, 10000.0f);
+        double x = 0.0f;
+        double y = 0.0f;
+        double z = 0.0f;
         
-        // spiral/disc
-        const double rho = r * pow(Utils::randDouble(), 0.75);
-        double theta = Utils::randDouble() * (M_PI * 2.0);
-        theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+        double rho = 0.0f;
+        double theta = 0.0f;
         
-        // sphere
-        //const double rho = Utils::randDouble() * (M_PI * 2.0);
-        //const double theta = Utils::randDouble() * (M_PI * 2.0);
-        
-        const double c = cos(theta);
-        const double s = sin(theta);
-        
-        // sphere
-        //const double x = r * cos(rho) * sin(theta);
-        //const double y = r * sin(rho) * sin(theta);
-        //const double z = r * cos(theta);
-        // disc
-        const float thickness = 1.0f;
-        const double x = rho * c;
-        const double y = rho * s;
-        const double z = thickness * 2.0 * Utils::randDouble() - 1.0;
+        switch( mInitialFormation )
+        {
+            case FORMATION_SPHERE:
+            {
+                rho = Utils::randDouble() * (M_PI * 2.0);
+                theta = Utils::randDouble() * (M_PI * 2.0);
+                
+                x = r * cos(rho) * sin(theta);
+                y = r * sin(rho) * sin(theta);
+                z = r * cos(theta);
+            }
+                break;
+                
+            case FORMATION_SPHERE_SHELL:
+            {
+                
+            }
+                break;
+                
+            case FORMATION_DISC:
+            {
+                rho = r * pow(Utils::randDouble(), 0.75);
+                theta = Utils::randDouble() * (M_PI * 2.0);
+                theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+                
+                const float thickness = 1.0f;
+                
+                x = rho * cos(theta);
+                y = rho * sin(theta);
+                z = thickness * 2.0 * Utils::randDouble() - 1.0;
+            }
+                break;
+                
+            case FORMATION_GALAXY:
+            {
+                rho = r * pow(Utils::randDouble(), 0.75);
+                theta = Utils::randDouble() * (M_PI * 2.0);
+                theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+                
+                x = rho * cos(theta);
+                y = rho * sin(theta);
+                
+                const float dist = sqrt(x*x + y*y);
+                const float maxThickness = r / 4.0f;
+                const float thickness =  maxThickness * EaseOutInQuad()(1.0f - dist / r);
+                
+                z = thickness * (2.0 * Utils::randDouble() - 1.0);
+            }
+                break;
+                
+            default:
+                break;
+        }
         
         // pos
         mPosAndMass[i].x = x;
         mPosAndMass[i].y = y;
         mPosAndMass[i].z = z;
         // mass
-        mPosAndMass[i].w = 1.0f;//Rand::randFloat(1.0f,100000.0f);
+        const float maxMass = (i < mStep) ? 50.0f : 1.0f;
+        mPosAndMass[i].w = Rand::randFloat(1.0f,maxMass);
         
         // vel
         const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-        mVel[i].x = -a * s;
-        mVel[i].y = a * c;
+        mVel[i].x = -a * sin(theta);
+        mVel[i].y = a * cos(theta);
         mVel[i].z = 0.0f;
         // unused
         mVel[i].w = 0.0f;
@@ -201,23 +262,6 @@ void Graviton::resize()
 {
 }
 
-//void Graviton::setupMidiMapping()
-//{
-    // setup MIDI inputs for learning
-    //mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    //mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    //mMidiMap.beginLearning();
-    // ... or load a MIDI mapping
-    //mMidiInput.setMidiKey("gravity", channel, note);
-//}
-
-void Graviton::setupParams(params::InterfaceGl& params)
-{
-    params.addText( "graviton", "label=`Graviton`" );
-    params.addParam( "Inv Square", &mUseInvSquareCalc );
-    
-}
-
 void Graviton::update(double dt)
 {
     Scene::update(dt);
@@ -238,6 +282,7 @@ void Graviton::update(double dt)
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
+    mFlags |= PARTICLE_FLAGS_SHOW_DARK;
     if( mUseInvSquareCalc ) mFlags |= PARTICLE_FLAGS_INVSQR;
         
     mKernel->setArg(ARG_FLAGS, mFlags);
