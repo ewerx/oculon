@@ -37,6 +37,7 @@ Graviton::~Graviton()
 void Graviton::setup()
 {
     mTimeStep = 0.00075f;
+    mGravity = 50.0f;
     
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
@@ -52,6 +53,10 @@ void Graviton::setup()
     mParticleAlpha = 0.5f;
     
     mDamping = 1.0f;
+    mGravity = 100.0f;
+    
+    mEnableGravityNodes = true;
+    mNumNodes = 3;
     
     //TODO: extensions are not supported, is there an alternative?
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
@@ -104,6 +109,7 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
     params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
     params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
+    params.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
     
     params.addParam("Point Size", &mPointSize, "");
     params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
@@ -183,21 +189,43 @@ void Graviton::initParticles()
                 
                 const float dist = sqrt(x*x + y*y);
                 const float maxThickness = r / 8.0f;
-                const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / (r*0.75f));
+                const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / r);
                 const float thickness =  maxThickness * coreDistanceRatio;
                 
                 z = thickness * (2.0 * Utils::randDouble() - 1.0);
                 
                 mass = maxMass * coreDistanceRatio;
-                if( i < (mStep / kNumParticles) )
-                {
-                    mass *= 100.f;
-                }
             }
                 break;
                 
             default:
                 break;
+        }
+        
+        if( mEnableGravityNodes && i < mNumNodes)
+        {
+            switch(i)
+            {
+                case 0:
+                    x = 0.0f;
+                    y = 0.0f;
+                    z = 0.0f;
+                    break;
+                    
+                case 1:
+                    
+                    x = r*0.5f;
+                    y = -r*0.5f;
+                    z = r / 4.0f;
+                    break;
+                case 2:
+                    x = -r*0.5f;
+                    y = r*0.5f;
+                    z = -r / 4.0f;
+                    break;
+            }
+            
+            mass = 10000.f;
         }
         
         // pos
@@ -314,11 +342,14 @@ void Graviton::update(double dt)
 #if defined( FREEOCL_VERSION )
     //mAnimTime += mTimeSpeed;
     //mKernelUpdate->setArg(ARG_TIME, mAnimTime);
+    
+    mStep = mEnableGravityNodes ? mNumNodes : (mNumParticles / kStep);
 
     mKernel->setArg(ARG_DT, mTimeStep);
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
     mKernel->setArg(ARG_DAMPING, mDamping);
+    mKernel->setArg(ARG_GRAVITY, mGravity);
     mKernel->setArg(ARG_ALPHA, mParticleAlpha);
     
     // update flags // TODO: cleanup

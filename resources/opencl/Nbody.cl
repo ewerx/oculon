@@ -75,14 +75,14 @@ __kernel void gravity(__global const float4 *in_pos,
 					  const uint step,
                       const float dt1,
                       const float damping,
+                      const float gravity,
                       const float alpha,
                       const uint flags)
                       //const float eps)
 {
-    // the 4th element of in_pos holds mass, this filters it out
+    // the 4th element of in_vel holds mass, this filters it out
     const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
     const float eps = 0.0001f;
-    //const float g = 1e-2;
     
 	const uint i = get_global_id(0);
 	if (i >= nb_particles)
@@ -92,7 +92,7 @@ __kernel void gravity(__global const float4 *in_pos,
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
     
     // the higgs bassons
-	const uint n = 2 * nb_particles / step;
+	const uint n = step;
     
 	for(uint j = 0 ; j < n ; ++j)
 	{
@@ -104,7 +104,7 @@ __kernel void gravity(__global const float4 *in_pos,
         if( flags & PARTICLE_FLAGS_INVSQR )
         {
             float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
-            float f = /*g*p1.w**/in_vel[j].w*invr*invr*invr;
+            float f = /*in_vel[i].w */ gravity * in_vel[j].w * invr*invr*invr;
             a += f*d;
         }
         else
@@ -120,7 +120,6 @@ __kernel void gravity(__global const float4 *in_pos,
         }
 	}
     
-	a *= step; // what??
 	float4 v = in_vel[i] + dt * a;
     float4 damping1 = (float4)(damping,damping,damping,1.0f);
     v *= damping1;

@@ -63,7 +63,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (64 * kStep),
+        kNumParticles =         (256 * kStep),
     };
     
 #if defined (FREEOCL_VERSION)
@@ -78,6 +78,7 @@ private:
         ARG_STEP,
         ARG_DT,
         ARG_DAMPING,
+        ARG_GRAVITY,
         ARG_ALPHA,
         ARG_FLAGS,
         //ARG_EPS
@@ -137,11 +138,12 @@ private:
     
     cl_float                mTimeStep;
     cl_float                mDamping;
+    cl_float                mGravity;
     cl_uint                 mFlags;
     
 //    clNode              mNodes[kMaxNodes];
 //    MSA::OpenCLBuffer	mClBufNodes;
-//    cl_int              mNumNodes;
+    cl_int                  mNumNodes;
 //    
 //    bool                    mNodesNeedUpdating;
 //    
@@ -206,6 +208,8 @@ private:
     bool                mUseImageForPoints;
     bool                mScalePointsByDistance;
     bool                mUseInvSquareCalc;
+    
+    bool                mEnableGravityNodes;
 //    
 //    gl::Fbo             mFboNew;
 //    gl::Fbo             mFboComp;
