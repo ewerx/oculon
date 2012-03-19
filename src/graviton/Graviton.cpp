@@ -43,11 +43,24 @@ void Graviton::setup()
     mInitialFormation = FORMATION_GALAXY;
     mFormationRadius = 300;
     
-	initOpenCl();
-	
-	glPointSize(1);
+    mEnableLineSmoothing = false;
+    mEnablePointSmoothing = false;
+    mUseImageForPoints = false;
+    mPointSize = 2.0f;
     
-    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
+    //TODO: extensions are not supported, is there an alternative?
+    if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
+    {
+        mScalePointsByDistance = false;
+    }
+    else
+    {
+        mScalePointsByDistance = false;
+    }
+    
+	initOpenCl();
+    
+    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE_WHITE ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
     // blur shader
@@ -85,6 +98,13 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addParam( "Time Step", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
     params.addParam( "Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
     params.addParam( "Formation Radius", &mFormationRadius, "min=1.0" );
+    
+    params.addParam("Point Size", &mPointSize, "");
+    params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
+    params.addParam("Point Sprites", &mUseImageForPoints, "");
+    params.addParam("Point Scaling", &mScalePointsByDistance, "");
+    params.addParam("Additive Blending", &mAdditiveBlending, "");
+
 }
 
 void Graviton::initParticles()
@@ -110,15 +130,21 @@ void Graviton::initParticles()
                 rho = Utils::randDouble() * (M_PI * 2.0);
                 theta = Utils::randDouble() * (M_PI * 2.0);
                 
-                x = r * cos(rho) * sin(theta);
-                y = r * sin(rho) * sin(theta);
-                z = r * cos(theta);
+                const float d = Rand::randFloat(1.0f, r);
+                x = d * cos(rho) * sin(theta);
+                y = d * sin(rho) * sin(theta);
+                z = d * cos(theta);
             }
                 break;
                 
             case FORMATION_SPHERE_SHELL:
             {
+                rho = Utils::randDouble() * (M_PI * 2.0);
+                theta = Utils::randDouble() * (M_PI * 2.0);
                 
+                x = r * cos(rho) * sin(theta);
+                y = r * sin(rho) * sin(theta);
+                z = r * cos(theta);
             }
                 break;
                 
@@ -434,27 +460,43 @@ void Graviton::draw()
 
 void Graviton::preRender() 
 {
-    /*
+    
 	if(mUseImageForPoints) 
     {
-		glEnable(GL_POINT_SPRITE);
-		glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+        if( mScalePointsByDistance )
+        {
+            float quadratic[] =  { 0.0f, 0.0f, 0.00001f };
+            float sizes[] = { 3.0f, mPointSize };
+            glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes);
+            glDisable(GL_POINT_SPRITE);
+            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, sizes[1] );
+            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, sizes[0] );
+            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
+            glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
+            glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
+            glEnable( GL_POINT_SPRITE_ARB );
+        }
+        else
+        {
+            glDisable(GL_POINT_SPRITE_ARB);
+            glEnable(GL_POINT_SPRITE);
+            glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+            glPointSize(mPointSize);
+        }
 	} 
     else 
     {
 		glDisable(GL_POINT_SPRITE);
 	}
 	
-	if(mEnableBlending || mAdditiveBlending) 
+	if(mAdditiveBlending) 
     {
-		if(mAdditiveBlending) 
-            gl::enableAdditiveBlending();
-		else 
-            gl::enableAlphaBlending();
+        gl::enableAdditiveBlending();
 	} 
     else 
     {
-		glDisable(GL_BLEND);
+		gl::enableAlphaBlending();
 	}
 	
 	if(mEnableLineSmoothing) 
@@ -475,10 +517,8 @@ void Graviton::preRender()
 		glDisable(GL_POINT_SMOOTH);
 	}
     
-	
-	glPointSize(mPointSize);
 	glLineWidth(mLineWidth);
-     */
+    
 }
 
 
@@ -499,7 +539,7 @@ void Graviton::drawParticles()
     
     if(mUseImageForPoints) 
     {
-        //glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
         mParticleTexture.bind();
     }
     

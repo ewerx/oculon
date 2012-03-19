@@ -185,8 +185,8 @@ private:
 //    cl_float			mWavePosMult;
 //    cl_float			mWaveVelMult;
 //    cl_float			mMassMin;
-//    int					mPointSize;
-//    int					mLineWidth;
+    float					mPointSize;
+    float					mLineWidth;
 //    cl_int				mNumParticles;
 //    int					mNumParticlesPower;
 //    float				mFadeSpeed;
@@ -194,14 +194,15 @@ private:
 //    float				mNodeBrightness;
 //    
 //    // rendering / fx
-//    bool				mEnableBlending;
-//    bool				mAdditiveBlending;
+    bool				mEnableBlending;
+    bool				mAdditiveBlending;
 //    bool				mDoDrawLines;
 //    bool				mDoDrawPoints;
 //    bool				mDoDrawNodes;
-//    bool				mEnableLineSmoothing;
-//    bool				mEnablePointSmoothing;
+    bool				mEnableLineSmoothing;
+    bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
+    bool                mScalePointsByDistance;
     bool                mUseInvSquareCalc;
 //    
 //    gl::Fbo             mFboNew;

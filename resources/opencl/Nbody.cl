@@ -134,12 +134,14 @@ __kernel void gravity(__global const float4 *in_pos,
             color[i].x = 1.0f;
             color[i].y = 0.0f;
             color[i].z = 0.0f;
+            color[i].w = 0.7f;
         }
         else
         {
             color[i].x = 1.0f;
             color[i].y = 1.0f;
             color[i].z = 1.0f;
+            color[i].w = 0.7f;
         }
     }
     else if( flags & PARTCILE_FLAGS_SHOW_SPEED )
@@ -147,5 +149,6 @@ __kernel void gravity(__global const float4 *in_pos,
         float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
         color[i].y = speed;
         color[i].z = speed;
+        color[i].w = 0.7f;
     }
 }
