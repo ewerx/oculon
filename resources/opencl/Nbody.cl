@@ -6,9 +6,12 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#define PARTICLE_FLAGS_INVSQR       0x02
-#define PARTICLE_FLAGS_SHOW_DARK    0x04
-#define PARTCILE_FLAGS_SHOW_SPEED   0x08
+#define PARTICLE_FLAGS_INVSQR       (1 << 0)
+#define PARTICLE_FLAGS_SHOW_DARK    (1 << 1)
+#define PARTICLE_FLAGS_SHOW_SPEED   (1 << 2)
+#define PARTICLE_FLAGS_SHOW_MASS    (1 << 3)
+
+#define MAX_MASS 50.0f
 
 // pos.w = mass
 // vel.w = unused
@@ -88,7 +91,7 @@ __kernel void gravity(__global const float4 *in_pos,
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
     
     // the higgs bassons
-	const uint n = nb_particles / step;
+	const uint n = 2 * nb_particles / step;
     
 	for(uint j = 0 ; j < n ; ++j)
 	{
@@ -100,7 +103,7 @@ __kernel void gravity(__global const float4 *in_pos,
         if( flags & PARTICLE_FLAGS_INVSQR )
         {
             float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
-            float f = /*g*p1.w**/p2.w*invr*invr*invr;
+            float f = /*g*p1.w**/in_vel[j].w*invr*invr*invr;
             a += f*d;
         }
         else
@@ -144,11 +147,19 @@ __kernel void gravity(__global const float4 *in_pos,
             color[i].w = 0.7f;
         }
     }
-    else if( flags & PARTCILE_FLAGS_SHOW_SPEED )
+    else if( flags & PARTICLE_FLAGS_SHOW_SPEED )
     {
         float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
         color[i].y = speed;
         color[i].z = speed;
+        color[i].w = 0.7f;
+    }
+    else if( flags & PARTICLE_FLAGS_SHOW_MASS )
+    {
+        float massRatio = out_vel[i].w / MAX_MASS;
+        color[i].x = massRatio*massRatio;
+        color[i].y = massRatio/2.0f;
+        color[i].z = massRatio;
         color[i].w = 0.7f;
     }
 }

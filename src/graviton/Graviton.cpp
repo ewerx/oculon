@@ -19,8 +19,10 @@ using namespace ci;
 using namespace ci::app;
 
 #define PARTICLE_FLAGS_NONE         0x00
-#define PARTICLE_FLAGS_INVSQR       0x02
-#define PARTICLE_FLAGS_SHOW_DARK    0x04
+#define PARTICLE_FLAGS_INVSQR       (1 << 0)
+#define PARTICLE_FLAGS_SHOW_DARK    (1 << 1)
+#define PARTICLE_FLAGS_SHOW_SPEED   (1 << 2)
+#define PARTICLE_FLAGS_SHOW_MASS    (1 << 3)
 
 
 Graviton::Graviton()
@@ -34,19 +36,19 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
-    mTimeStep = 0.0005f;
+    mTimeStep = 0.00075f;
     
-    mUseImageForPoints = false;
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
     
     mInitialFormation = FORMATION_GALAXY;
     mFormationRadius = 300;
     
+    mAdditiveBlending = true;
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
-    mUseImageForPoints = false;
-    mPointSize = 2.0f;
+    mUseImageForPoints = true;
+    mPointSize = 8.0f;
     
     //TODO: extensions are not supported, is there an alternative?
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
@@ -60,7 +62,7 @@ void Graviton::setup()
     
 	initOpenCl();
     
-    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE_WHITE ) ) );
+    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
     // blur shader
@@ -123,6 +125,9 @@ void Graviton::initParticles()
         double rho = 0.0f;
         double theta = 0.0f;
         
+        const float maxMass = 50.0f;
+        float mass = Rand::randFloat(1.0f,maxMass);
+        
         switch( mInitialFormation )
         {
             case FORMATION_SPHERE:
@@ -172,10 +177,12 @@ void Graviton::initParticles()
                 y = rho * sin(theta);
                 
                 const float dist = sqrt(x*x + y*y);
-                const float maxThickness = r / 4.0f;
-                const float thickness =  maxThickness * EaseOutInQuad()(1.0f - dist / r);
+                const float maxThickness = r / 8.0f;
+                const float thickness =  maxThickness * (1.0f - EaseInOutQuad()(dist / (r*0.5f)));
                 
                 z = thickness * (2.0 * Utils::randDouble() - 1.0);
+                
+                mass = maxMass * EaseInOutQuad()(1.0f - dist / r);
             }
                 break;
                 
@@ -187,17 +194,14 @@ void Graviton::initParticles()
         mPosAndMass[i].x = x;
         mPosAndMass[i].y = y;
         mPosAndMass[i].z = z;
-        // mass
-        const float maxMass = (i < mStep) ? 50.0f : 1.0f;
-        mPosAndMass[i].w = Rand::randFloat(1.0f,maxMass);
+        mPosAndMass[i].w = 1.0f; //scale??
         
         // vel
         const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
         mVel[i].x = -a * sin(theta);
         mVel[i].y = a * cos(theta);
         mVel[i].z = 0.0f;
-        // unused
-        mVel[i].w = 0.0f;
+        mVel[i].w = mass;
         
         // color
         mColor[i].x = 1.0f;
@@ -308,7 +312,7 @@ void Graviton::update(double dt)
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
-    mFlags |= PARTICLE_FLAGS_SHOW_DARK;
+    mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
     if( mUseInvSquareCalc ) mFlags |= PARTICLE_FLAGS_INVSQR;
         
     mKernel->setArg(ARG_FLAGS, mFlags);
