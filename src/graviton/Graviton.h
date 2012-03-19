@@ -78,6 +78,7 @@ private:
         ARG_STEP,
         ARG_DT,
         ARG_DAMPING,
+        ARG_ALPHA,
         ARG_FLAGS,
         //ARG_EPS
         
@@ -187,6 +188,7 @@ private:
 //    cl_float			mMassMin;
     float					mPointSize;
     float					mLineWidth;
+    float                   mParticleAlpha;
 //    cl_int				mNumParticles;
 //    int					mNumParticlesPower;
 //    float				mFadeSpeed;

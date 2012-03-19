@@ -49,6 +49,9 @@ void Graviton::setup()
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
     mPointSize = 8.0f;
+    mParticleAlpha = 0.5f;
+    
+    mDamping = 1.0f;
     
     //TODO: extensions are not supported, is there an alternative?
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
@@ -96,16 +99,18 @@ void Graviton::setup()
 void Graviton::setupParams(params::InterfaceGl& params)
 {
     params.addText( "graviton", "label=`Graviton`" );
-    params.addParam( "Inv Square", &mUseInvSquareCalc );
-    params.addParam( "Time Step", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    params.addParam( "Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
-    params.addParam( "Formation Radius", &mFormationRadius, "min=1.0" );
+    params.addParam("Inv Square", &mUseInvSquareCalc );
+    params.addParam("Time Step", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
+    params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
+    params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
+    params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
     
     params.addParam("Point Size", &mPointSize, "");
     params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
     params.addParam("Point Sprites", &mUseImageForPoints, "");
     params.addParam("Point Scaling", &mScalePointsByDistance, "");
     params.addParam("Additive Blending", &mAdditiveBlending, "");
+    params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
 
 }
 
@@ -178,11 +183,16 @@ void Graviton::initParticles()
                 
                 const float dist = sqrt(x*x + y*y);
                 const float maxThickness = r / 8.0f;
-                const float thickness =  maxThickness * (1.0f - EaseInOutQuad()(dist / (r*0.5f)));
+                const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / (r*0.75f));
+                const float thickness =  maxThickness * coreDistanceRatio;
                 
                 z = thickness * (2.0 * Utils::randDouble() - 1.0);
                 
-                mass = maxMass * EaseInOutQuad()(1.0f - dist / r);
+                mass = maxMass * coreDistanceRatio;
+                if( i < (mStep / kNumParticles) )
+                {
+                    mass *= 100.f;
+                }
             }
                 break;
                 
@@ -309,6 +319,7 @@ void Graviton::update(double dt)
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
     mKernel->setArg(ARG_DAMPING, mDamping);
+    mKernel->setArg(ARG_ALPHA, mParticleAlpha);
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
