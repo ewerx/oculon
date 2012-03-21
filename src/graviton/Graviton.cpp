@@ -476,8 +476,8 @@ void Graviton::updateAudioResponse()
 void Graviton::draw()
 {
     glPushMatrix();
-    //gl::setMatricesWindow( mApp->getWindowSize() );
     
+    gl::setMatrices( mApp->getMayaCam() );
     
     //gl::enableDepthWrite( false );
 	//gl::enableDepthRead( false );

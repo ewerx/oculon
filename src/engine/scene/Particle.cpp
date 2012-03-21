@@ -15,8 +15,10 @@
 
 using namespace ci;
 
-Particle::Particle()
-: Entity<float>(Vec3f::zero())
+class Scene;
+
+Particle::Particle(Scene* scene)
+: Entity<float>(scene,Vec3f::zero())
 , mVelocity(Vec3f::zero())
 , mAccel(Vec3f::zero())
 , mRadius(0.0f)
@@ -31,8 +33,8 @@ Particle::Particle()
     reset();
 }
 
-Particle::Particle(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan)
-: Entity<float>(pos)
+Particle::Particle(Scene* scene, const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan)
+: Entity<float>(scene,pos)
 , mVelocity(vel)
 , mAccel(Vec3f::zero())
 , mRadius(radius)

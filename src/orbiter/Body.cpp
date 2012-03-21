@@ -35,8 +35,8 @@ GLfloat Body::no_shininess[]	= { 0.0f };
 // Body
 // 
 
-Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color)
-: Entity<double>(pos)
+Body::Body(Scene* scene, string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color)
+: Entity<double>(scene,pos)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
@@ -48,6 +48,7 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
 , mColor(color)
 , mHasTexture(false)
 , mIsLabelVisible(true)
+, mLabel(scene)
 {
     mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
@@ -55,8 +56,8 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
 }
 
-Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color, ImageSourceRef textureImage)
-: Entity<double>(pos)
+Body::Body(Scene* scene, string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color, ImageSourceRef textureImage)
+: Entity<double>(scene,pos)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
@@ -69,6 +70,7 @@ Body::Body(string name, const Vec3d& pos, const Vec3d& vel, float radius, double
 , mTexture(textureImage)
 , mHasTexture(true)
 , mIsLabelVisible(true)
+, mLabel(scene)
 {
     mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
@@ -157,7 +159,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             gl::setMatrices(textCam);
         
             OculonApp* app = static_cast<OculonApp*>(App::get());
-            Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+            Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
             glTranslatef(textCoords.x, textCoords.y, 0.0f);
 
             mLabel.draw();

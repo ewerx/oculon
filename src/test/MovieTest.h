@@ -38,7 +38,7 @@ private:
     //MoviePlayer mMoviePlayer1;
     
     enum { NUM_MOVIES = 4 };
-    MoviePlayer mMoviePlayers[NUM_MOVIES];
+    MoviePlayer* mMoviePlayers[NUM_MOVIES];
     int mActiveMovie;
     
     float mCycleDuration;

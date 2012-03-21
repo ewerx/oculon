@@ -15,10 +15,13 @@
 
 using namespace ci;
 
+class Scene;
+
 class Sun : public Body
 {
 public:
-    Sun(const Vec3d& pos, 
+    Sun(Scene* scene,
+        const Vec3d& pos, 
         const Vec3d& vel, 
         float radius, 
         double rotSpeed,

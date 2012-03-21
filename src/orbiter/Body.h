@@ -20,13 +20,16 @@
 using namespace ci;
 using namespace std;
 
+class Scene;
+
 //
 // An orbital body
 //
 class Body : public Entity<double>
 {
 public:
-    Body(string name,
+    Body(Scene* scene,
+         string name,
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
@@ -34,7 +37,8 @@ public:
          double mass, 
          const ColorA& color);
     
-    Body(string name,
+    Body(Scene* scene,
+         string name,
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 

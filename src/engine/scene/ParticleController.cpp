@@ -57,7 +57,7 @@ void ParticleController::setup(Scene* owner)
     
     for( int i = 0; i < MAX_PARTICLES; ++i )
     {
-        mObjStore[i] = new Particle();
+        mObjStore[i] = new Particle(mScene);
         mUnusedPool.push_back( mObjStore[i] );
     }
 }

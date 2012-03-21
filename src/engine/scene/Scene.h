@@ -44,7 +44,7 @@ public:
 	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { return; }
     
     OculonApp* getApp() { return mApp; }
-    const Camera& getCamera();
+    virtual const Camera& getCamera() const;
     
     bool isActive() const           { return mIsActive; }
     bool isVisible() const          { return mIsVisible; }

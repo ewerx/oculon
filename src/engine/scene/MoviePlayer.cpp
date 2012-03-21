@@ -12,8 +12,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-MoviePlayer::MoviePlayer()
-:Entity<float>()
+MoviePlayer::MoviePlayer(Scene* scene)
+:Entity<float>(scene)
 ,mWidth(0.0f)
 ,mHeight(0.0f)
 ,mLoop(true)

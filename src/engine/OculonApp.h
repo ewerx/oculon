@@ -75,7 +75,7 @@ public: // new
     inline void setUseMayaCam(bool use)        { mUseMayaCam = use; }
     
     void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    inline const Camera& getCamera() const     { return (mUseMayaCam ? mMayaCam.getCamera() : mCam);  }
+    inline const Camera& getMayaCam() const     { return mMayaCam.getCamera();  }
     
     inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
     
@@ -107,7 +107,6 @@ private: // members
     // render
     double                  mLastElapsedSeconds;
     double                  mElapsedSecondsThisFrame;
-    CameraPersp				mCam;
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     

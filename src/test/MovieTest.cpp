@@ -24,6 +24,10 @@ MovieTest::MovieTest()
 
 MovieTest::~MovieTest()
 {
+    for( int i = 0; i < NUM_MOVIES; ++i )
+    {
+        delete mMoviePlayers[i];
+    }
 }
 
 void MovieTest::setup()
@@ -32,18 +36,23 @@ void MovieTest::setup()
     boost::format filenameFormat("~/Desktop/oculon%03d.mov");
     string pathString;
     
+    for( int i = 0; i < NUM_MOVIES; ++i )
+    {
+        mMoviePlayers[i] = new MoviePlayer(this);
+    }
+    
     for( int i=0; i < NUM_MOVIES; ++i )
     {
-        mMoviePlayers[i].setup();
-        mMoviePlayers[i].setSize( app::getWindowWidth(), app::getWindowHeight() );
+        mMoviePlayers[i]->setup();
+        mMoviePlayers[i]->setSize( app::getWindowWidth(), app::getWindowHeight() );
         
         pathString = str( filenameFormat % i );
         filePath = expandPath( fs::path(pathString) );
-        mMoviePlayers[i].loadMovieFile( filePath );
+        mMoviePlayers[i]->loadMovieFile( filePath );
         
-        mMoviePlayers[i].setColor( ColorA( 1.0f-i*0.3f, i*0.3f, 1.0f-i*0.3f, 1.0f ) );
-        //mMoviePlayers[i].loadMovieFile( fs::path("/Users/ehsan/Downloads/NASA's Alien Anomalies caught on film - A compilation of stunning UFO footage from NASA's archives [H.264 360p].mp4") );
-        //mMoviePlayers[i].getMovie().stop();
+        mMoviePlayers[i]->setColor( ColorA( 1.0f-i*0.3f, i*0.3f, 1.0f-i*0.3f, 1.0f ) );
+        //mMoviePlayers[i]->loadMovieFile( fs::path("/Users/ehsan/Downloads/NASA's Alien Anomalies caught on film - A compilation of stunning UFO footage from NASA's archives [H.264 360p].mp4") );
+        //mMoviePlayers[i]->getMovie().stop();
     }
     
     mCycleDuration = 60.0f/125.0f; // 125 bpm
@@ -56,13 +65,13 @@ void MovieTest::setActive(bool active)
     
     for( int i=0; i < NUM_MOVIES; ++i )
     {
-        if( mMoviePlayers[i].isPlaying() && !active )
+        if( mMoviePlayers[i]->isPlaying() && !active )
         {
-            mMoviePlayers[i].getMovie().stop();
+            mMoviePlayers[i]->getMovie().stop();
         }
-        else if( !mMoviePlayers[i].isPlaying() && active )
+        else if( !mMoviePlayers[i]->isPlaying() && active )
         {
-            mMoviePlayers[i].getMovie().play();
+            mMoviePlayers[i]->getMovie().play();
         }
     }
 }
@@ -82,7 +91,7 @@ void MovieTest::update(double dt)
     
     if( mActiveMovie >= 0 && mActiveMovie < NUM_MOVIES )
     {
-        mMoviePlayers[mActiveMovie].update(dt);
+        mMoviePlayers[mActiveMovie]->update(dt);
     }
     else
     {
@@ -105,7 +114,7 @@ void MovieTest::draw()
     
     if( mActiveMovie >= 0 && mActiveMovie < NUM_MOVIES )
     {
-        mMoviePlayers[mActiveMovie].draw();
+        mMoviePlayers[mActiveMovie]->draw();
     }
     else
     {
@@ -131,7 +140,7 @@ bool MovieTest::handleKeyDown(const KeyEvent& keyEvent)
             break;
              */
         case 'b':
-            mMoviePlayers[0].getMovie().stepForward();
+            mMoviePlayers[0]->getMovie().stepForward();
             break;
         default:
             handled = false;

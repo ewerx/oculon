@@ -22,13 +22,15 @@ GLfloat Sun::mat_diffuse[]		= { 0.8f, 0.8f, 0.8f, 1.0f };
 GLfloat Sun::mat_emission[]     = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
-Sun::Sun(const Vec3d& pos, 
+Sun::Sun(Scene* scene,
+         const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
          double rotSpeed,
          double mass, 
          const ColorA& color) 
-: Body("Sol",pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
+: Body(scene,"Sol",pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
+, mMoviePlayer(scene)
 {
 }
 
@@ -118,7 +120,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             if( binnedScene && binnedScene->isActive() )
             {
                 Vec3d screenCoords = transform * mPosition;
-                Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+                Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
                 float force = 500.f;
                 binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.5f, force*mRadiusMultiplier);
             }

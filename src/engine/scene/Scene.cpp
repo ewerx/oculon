@@ -8,7 +8,7 @@
  */
 
 #include "Scene.h"
-#include "OculonApp.h" //TODO: this dependency shouldn't exist
+#include "OculonApp.h"
 
 Scene::Scene()
 : mApp(NULL)
@@ -42,7 +42,7 @@ void Scene::update(double dt)
     if( mEnableFrustumCulling )
     {
         mIsFrustumPlaneCached = false;
-        calcNearAndFarClipCoordinates( mApp->getCamera() ); //TODO: scene should own the camera
+        calcNearAndFarClipCoordinates( getCamera() );
     }
 }
 
@@ -152,7 +152,7 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
 	return( result );
 }
 
-const Camera& Scene::getCamera()
+const Camera& Scene::getCamera() const
 {
-    return mApp->getCamera();
+    return mApp->getMayaCam();
 }

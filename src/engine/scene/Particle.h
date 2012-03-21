@@ -30,8 +30,8 @@ public:
         STATE_COUNT
     };
 public:
-    Particle();
-    Particle(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
+    Particle(Scene* scene);
+    Particle(Scene* scene,const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
     virtual ~Particle();
     
     // inherited from Entity

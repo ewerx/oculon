@@ -59,7 +59,7 @@ Orbiter::Orbiter()
     
     for( int i=0; i < TB_COUNT; ++i )
     {
-        mTextBox[i] = new TextEntity();
+        mTextBox[i] = new TextEntity(this);
         assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
     }
     
@@ -85,8 +85,9 @@ Orbiter::~Orbiter()
 
 void Orbiter::setup()
 {
-    //TODO: add a function that gets called on scene activation to do this type of init
-    mApp->setUseMayaCam(!mIsFollowCameraEnabled);
+    mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
+	mCam.setCenterOfInterestPoint( Vec3f::zero() );
+	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
@@ -162,7 +163,8 @@ void Orbiter::reset()
     double orbitalRadius;
     double orbitalVel;
     double rotationSpeed = 0.0f;
-    mSun = new Sun(Vec3d::zero(),
+    mSun = new Sun(this,
+                   Vec3d::zero(),
                    Vec3d::zero(),
                    radius,
                    rotationSpeed,
@@ -189,7 +191,7 @@ void Orbiter::reset()
     pos.y = orbitalRadius * sin ( angle );\
     pos.z = orbitalRadius * cos ( angle );\
     radius = brad * mDrawScale * radialEnhancement;\
-    body = new Body(name,\
+    body = new Body(this, name,\
                     pos,\
                     Vec3d(orbitalVel, 0.0f, 0.0f),\
                     radius, \
@@ -222,7 +224,8 @@ void Orbiter::reset()
         //Vec3d orbitalPlaneNormal = pos.normalized();
         snprintf(name,128,"%c%d/%04d/%02d", randInt('A','Z'), num_planets+i, randInt(1000,9999), randInt(300));
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
-        Body* body = new Body(name, 
+        Body* body = new Body(this,
+                              name, 
                               pos, 
                               /*orbitalPlaneNormal * orbitalVel,*/
                                Vec3d(orbitalVel, 0.0f, 0.0f),
@@ -336,7 +339,6 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
         case 'c':
             mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
             mApp->setUseMayaCam( !mIsBinnedModeEnabled&& !mIsFollowCameraEnabled );
-            mApp->setUseMayaCam( !mIsFollowCameraEnabled );
             break;
         case '[':
             if( --mFollowTargetIndex < 4 )
@@ -407,7 +409,8 @@ void Orbiter::draw()
 
     if( mIsBinnedModeEnabled )
     {
-        mApp->setCamera( Vec3d(0,6000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
+        mCam.lookAt( Vec3d(0,6000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
+        gl::setMatrices(mCam);
     }
     else if( mIsFollowCameraEnabled )
     {
@@ -446,10 +449,13 @@ void Orbiter::draw()
 #endif
         
         cameraPos = cameraPos + offsetVec;
-        mApp->setCamera( cameraPos, targetPos, up );
+        mCam.lookAt( cameraPos, targetPos, up );
+        gl::setMatrices(mCam);
     }
-    
-    gl::setMatrices(mApp->getCamera());
+    else
+    {
+        gl::setMatrices(mApp->getMayaCam());
+    }
     
     //glEnable( GL_MULTISAMPLE_ARB );
     glEnable( GL_LIGHTING );
@@ -715,3 +721,14 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     glPopMatrix();
 }
 
+const Camera& Orbiter::getCamera() const
+{
+    if( mIsBinnedModeEnabled || mIsFollowCameraEnabled )
+    {
+        return mCam;
+    }
+    else
+    {
+        return mApp->getMayaCam();
+    }
+}

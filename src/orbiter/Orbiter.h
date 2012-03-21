@@ -41,6 +41,7 @@ public:
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
+    const Camera& getCamera() const;
     
     // midi callbacks
     void handleGravityChange(MidiEvent midiEvent);
@@ -75,6 +76,7 @@ private:
     Body*               mFollowTarget;
     bool                mIsFollowCameraEnabled;
     bool                mIsBinnedModeEnabled;
+    CameraPersp         mCam;
     
     double          mElapsedTime;
     double          mTimeScale;

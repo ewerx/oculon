@@ -11,12 +11,14 @@
 #include "cinder/Text.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/app/App.h"
+#include "Scene.h"
 
 using namespace std;
 using namespace ci;
 
-TextEntity::TextEntity()
-: mString("")
+TextEntity::TextEntity(Scene* scene)
+: Entity<float>(scene,Vec3f::zero())
+, mString("")
 , mJustifyRight(false)
 , mJustifyBottom(false)
 , mMarginRight(10.0f)

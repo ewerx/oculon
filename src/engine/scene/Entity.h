@@ -15,12 +15,14 @@
 
 using namespace ci;
 
+class Scene;
+
 template<typename T>
 class Entity
 {
 public:
-    Entity();
-    Entity(const Vec3<T>& pos);
+    Entity(Scene* scene);
+    Entity(Scene* scene, const Vec3<T>& pos);
     virtual ~Entity();
     
     virtual void setup() {}
@@ -34,7 +36,7 @@ public:
 protected:
     Vec3<T> mPosition;
     
-    
+    Scene*  mParentScene;
 };
 
 typedef Entity<float> Entityf;

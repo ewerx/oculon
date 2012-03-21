@@ -20,7 +20,7 @@ using namespace ci;
 class MoviePlayer : public Entity<float>
 {
 public:
-    MoviePlayer();
+    MoviePlayer(Scene* scene);
     ~MoviePlayer();
     
     // inherited from Entity

@@ -18,10 +18,12 @@
 #include <string>
 #include "Entity.h"
 
+class Scene;
+
 class TextEntity : public Entity<float>
 {
 public:
-    TextEntity();
+    TextEntity(Scene* scene);
     virtual ~TextEntity();
     
     // inherited from Entity

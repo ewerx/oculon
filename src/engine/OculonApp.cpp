@@ -44,7 +44,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1024, 384 );
+	settings->setWindowSize( 1024, 768 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -81,12 +81,13 @@ void OculonApp::setup()
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
-    // setup our default camera, looking down the z-axis
-	//mCam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
-    mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
-	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
-    mMayaCam.setCurrentCam( mCam );
+    // setup the default camera, looking down the z-axis
+	CameraPersp cam;
+    //cam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
+    cam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
+	cam.setCenterOfInterestPoint( Vec3f::zero() );
+	cam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
+    mMayaCam.setCurrentCam( cam );
     
     // params
     mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
@@ -227,12 +228,9 @@ void OculonApp::setupScenes()
 
 void OculonApp::resize( ResizeEvent event )
 {
-    if( mUseMayaCam )
-    {
-        mCam = mMayaCam.getCamera();
-    }
-    mCam.setAspectRatio( getWindowAspectRatio() );
-    mMayaCam.setCurrentCam( mCam );
+    CameraPersp cam = mMayaCam.getCamera();
+    cam.setAspectRatio( getWindowAspectRatio() );
+    mMayaCam.setCurrentCam( cam );
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
         sceneIt != mScenes.end();
@@ -254,11 +252,8 @@ void OculonApp::mouseMove( MouseEvent event )
 
 void OculonApp::mouseDown( MouseEvent event )
 {
-    if( mUseMayaCam )
-    {
-        // let the camera handle the interaction
-        mMayaCam.mouseDown( event.getPos() );
-    }
+    // let the camera handle the interaction
+    mMayaCam.mouseDown( event.getPos() );
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
@@ -274,11 +269,9 @@ void OculonApp::mouseDown( MouseEvent event )
 
 void OculonApp::mouseDrag( MouseEvent event )
 {
-    if( mUseMayaCam )
-    {
-        // let the camera handle the interaction
-        mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
-    }
+    // let the camera handle the interaction
+    mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
@@ -387,10 +380,10 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_c:
             if( event.isShiftDown() )
             {
-                const Camera& cam = this->getCamera();
+                const Camera& cam = mMayaCam.getCamera();
                 
-                console() << (mUseMayaCam ? "Camera (maya): " : "Camera:");
-                console() << " Eye: " << cam.getEyePoint() << " LookAt: " << cam.getViewDirection() << " Up: " << cam.getWorldUp() << std::endl;
+                console() << "Camera (manual):" << std::endl;
+                console() << "\tEye: " << cam.getEyePoint() << " LookAt: " << cam.getViewDirection() << " Up: " << cam.getWorldUp() << std::endl;
             }
             else
             {
@@ -521,23 +514,9 @@ void OculonApp::draw()
         gl::clear( Color(0.0f,0.0f,0.0f) );
     }
     
-    // 3D scenes
+    // render scenes
     glPushMatrix();
     {
-        // setup camera
-        if( mUseMayaCam )
-        {
-            gl::setMatrices( mMayaCam.getCamera() );
-        }
-        else 
-        {
-            //gl::setMatrices( mCam );            
-        }
-
-        // enable depth buffer
-        //gl::enableDepthRead();
-        //gl::enableDepthWrite();
-
         // render scenes
         for (SceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
@@ -661,11 +640,6 @@ void OculonApp::setPresentationMode( bool enabled )
         hideCursor();
     else
         showCursor();
-}
-
-void OculonApp::setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up )
-{
-    mCam.lookAt( eye, look, up );
 }
 
 void OculonApp::startVideoCapture(bool useDefaultPath)

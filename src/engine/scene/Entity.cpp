@@ -8,22 +8,25 @@
  */
 
 #include "Entity.h"
+#include "Scene.h"
 
 using namespace ci;
 
 // constructor
 //
 template<typename T>
-Entity<T>::Entity()
-: mPosition(Vec3<T>::zero())
+Entity<T>::Entity( Scene* scene )
+: mParentScene(scene)
+, mPosition(Vec3<T>::zero())
 {
 }
 
 // constructor
 //
 template<typename T>
-Entity<T>::Entity( const Vec3<T>& pos )
-: mPosition(pos)
+Entity<T>::Entity( Scene* scene, const Vec3<T>& pos )
+: mParentScene(scene)
+, mPosition(pos)
 {
 }
 
