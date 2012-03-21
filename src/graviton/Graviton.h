@@ -63,7 +63,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (256 * kStep),
+        kNumParticles =         (512 * kStep),
     };
     
 #if defined (FREEOCL_VERSION)
