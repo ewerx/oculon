@@ -33,7 +33,7 @@ public:
     unsigned int getFftBandCount() const { return mFftBandCount; }
     void setFftBandCount(const unsigned int count) { mFftBandCount = count; }
     
-    Kiss& getFft() { return mFft; }
+    Kiss::Kiss& getFft() { return mFft; }
     
 private:
     audio::Input* mInput;
@@ -44,7 +44,7 @@ private:
     
     // Analyzer
 	bool mFftInit;
-	Kiss mFft;
+	Kiss::Kiss mFft;
     
 	// Data
 	int32_t mDataSize;
