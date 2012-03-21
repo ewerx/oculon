@@ -317,6 +317,7 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
         case 'c':
             mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
             mApp->setUseMayaCam( !mIsFollowCameraEnabled );
+            break;
         case '[':
             if( --mFollowTargetIndex < 4 )
                 mFollowTargetIndex = mBodies.size()-1;

@@ -186,12 +186,12 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     // Orbiter
-    //console() << ++sceneId << ": Orbiter\n";
-    //addScene( new Orbiter() );
+    console() << ++sceneId << ": Orbiter\n";
+    addScene( new Orbiter() );
     
     // Binned
-    //console() << ++sceneId << ": Binned\n";
-    //addScene( new Binned() );
+    console() << ++sceneId << ": Binned\n";
+    addScene( new Binned() );
     
     // Pulsar
     //console() << ++sceneId << ": Pulsar\n";
