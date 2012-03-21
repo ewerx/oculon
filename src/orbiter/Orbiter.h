@@ -59,16 +59,22 @@ private:
     
     void removeBodies();
     
+    void enableBinnedMode( bool enable = true ) { mIsBinnedModeEnabled = enable; }
+    
 private:
     //Vec3f           mLightDirection;
     
     typedef vector<Body*> BodyList;
     BodyList        mBodies;
     
+    enum { NUM_PLANETS = 8 };
+    ImageSourceRef      mTextures[NUM_PLANETS];
+    
     Sun*                mSun;
     int                 mFollowTargetIndex;
     Body*               mFollowTarget;
     bool                mIsFollowCameraEnabled;
+    bool                mIsBinnedModeEnabled;
     
     double          mElapsedTime;
     double          mTimeScale;
