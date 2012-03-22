@@ -105,7 +105,7 @@ void Graviton::setupParams(params::InterfaceGl& params)
 {
     params.addText( "graviton", "label=`Graviton`" );
     params.addParam("Inv Square", &mUseInvSquareCalc );
-    params.addParam("Time Step", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
+    params.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
     params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
     params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
     params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
