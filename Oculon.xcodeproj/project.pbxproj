@@ -58,7 +58,6 @@
 		7C745553148C2413009C0356 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7C74554F148C2413009C0356 /* InfoPlist.strings */; };
 		7C745587148C259C009C0356 /* AudioInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74555B148C259C009C0356 /* AudioInput.cpp */; };
 		7C745588148C259C009C0356 /* InfoPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74555E148C259C009C0356 /* InfoPanel.cpp */; };
-		7C745589148C259C009C0356 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745560148C259C009C0356 /* Kinect.cpp */; };
 		7C74558A148C259C009C0356 /* MidiInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745561148C259C009C0356 /* MidiInput.cpp */; };
 		7C74558B148C259C009C0356 /* MidiMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745563148C259C009C0356 /* MidiMap.cpp */; };
 		7C74558C148C259C009C0356 /* MindWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745565148C259C009C0356 /* MindWave.cpp */; };
@@ -114,6 +113,8 @@
 		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
 		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
+		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
+		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -244,7 +245,6 @@
 		7C74555D148C259C009C0356 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		7C74555E148C259C009C0356 /* InfoPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InfoPanel.cpp; sourceTree = "<group>"; };
 		7C74555F148C259C009C0356 /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanel.h; sourceTree = "<group>"; };
-		7C745560148C259C009C0356 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Kinect.cpp; sourceTree = "<group>"; };
 		7C745561148C259C009C0356 /* MidiInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiInput.cpp; sourceTree = "<group>"; };
 		7C745562148C259C009C0356 /* MidiInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiInput.h; sourceTree = "<group>"; };
 		7C745563148C259C009C0356 /* MidiMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiMap.cpp; sourceTree = "<group>"; };
@@ -337,6 +337,9 @@
 		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
+		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
+		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
+		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -691,7 +694,7 @@
 		7C74552E148C04C6009C0356 /* Oculon */ = {
 			isa = PBXGroup;
 			children = (
-				7C865570148C2784000E00B6 /* external */,
+				7C865570148C2784000E00B6 /* blocks */,
 				7C745559148C259C009C0356 /* src */,
 				7C74552F148C04C6009C0356 /* xcode */,
 				7C865644148C2BCD000E00B6 /* resources */,
@@ -731,7 +734,6 @@
 				7C74555D148C259C009C0356 /* Constants.h */,
 				7C74555E148C259C009C0356 /* InfoPanel.cpp */,
 				7C74555F148C259C009C0356 /* InfoPanel.h */,
-				7C745560148C259C009C0356 /* Kinect.cpp */,
 				7C745561148C259C009C0356 /* MidiInput.cpp */,
 				7C745562148C259C009C0356 /* MidiInput.h */,
 				7C745563148C259C009C0356 /* MidiMap.cpp */,
@@ -798,6 +800,8 @@
 			children = (
 				7C745583148C259C009C0356 /* AudioTest.cpp */,
 				7C745584148C259C009C0356 /* AudioTest.h */,
+				7CF23588151ADE7600445AD8 /* KinectTest.cpp */,
+				7CF23589151ADE7600445AD8 /* KinectTest.h */,
 				7C745585148C259C009C0356 /* MindWaveTest.cpp */,
 				7C745586148C259C009C0356 /* MindWaveTest.h */,
 				7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */,
@@ -808,16 +812,17 @@
 			path = test;
 			sourceTree = "<group>";
 		};
-		7C865570148C2784000E00B6 /* external */ = {
+		7C865570148C2784000E00B6 /* blocks */ = {
 			isa = PBXGroup;
 			children = (
+				7CF235E9151AE76600445AD8 /* Kinect */,
 				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7C3738F814F7364300B24851 /* msalibs */,
 				7CD0B84514B6B68E002505C5 /* kiss */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 				7C52DFB314CCFC2F008507D3 /* osc */,
 			);
-			name = external;
+			name = blocks;
 			sourceTree = "<group>";
 		};
 		7C8655B4148C2A97000E00B6 /* Cinder-MIDI */ = {
@@ -1040,6 +1045,23 @@
 			path = ../sdks/cinder/blocks/kiss;
 			sourceTree = SOURCE_ROOT;
 		};
+		7CF235E9151AE76600445AD8 /* Kinect */ = {
+			isa = PBXGroup;
+			children = (
+				7CF235EA151AE80C00445AD8 /* src */,
+			);
+			name = Kinect;
+			sourceTree = "<group>";
+		};
+		7CF235EA151AE80C00445AD8 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7CF235EB151AE80C00445AD8 /* Kinect.cpp */,
+			);
+			name = src;
+			path = "../../sdks/cinder/blocks/Cinder-Kinect/src";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1140,7 +1162,6 @@
 				7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */,
 				7C745587148C259C009C0356 /* AudioInput.cpp in Sources */,
 				7C745588148C259C009C0356 /* InfoPanel.cpp in Sources */,
-				7C745589148C259C009C0356 /* Kinect.cpp in Sources */,
 				7C74558A148C259C009C0356 /* MidiInput.cpp in Sources */,
 				7C74558B148C259C009C0356 /* MidiMap.cpp in Sources */,
 				7C74558C148C259C009C0356 /* MindWave.cpp in Sources */,
@@ -1192,6 +1213,8 @@
 				7C94796415196481003F133E /* kiss_fft.c in Sources */,
 				7C94796515196481003F133E /* kiss_fftr.c in Sources */,
 				7C9479681519648B003F133E /* Kiss.cpp in Sources */,
+				7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */,
+				7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

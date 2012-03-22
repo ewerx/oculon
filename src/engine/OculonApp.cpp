@@ -36,6 +36,7 @@
 #include "MindWaveTest.h"
 #include "MovieTest.h"
 #include "ShaderTest.h"
+#include "KinectTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -204,7 +205,7 @@ void OculonApp::setupScenes()
     
     // Graviton
     console() << ++sceneId << ": Graviton\n";
-    addScene( new Graviton(), true );
+    addScene( new Graviton() );
     
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
@@ -217,6 +218,10 @@ void OculonApp::setupScenes()
     // ShaderTest
     console() << ++sceneId << ": ShaderTest\n";
     addScene( new ShaderTest() );
+    
+    // KinectTest
+    console() << ++sceneId << ": KinectTest\n";
+    addScene( new KinectTest(), autoStart );
 
     
     if( mEnableMindWave )
