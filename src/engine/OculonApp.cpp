@@ -49,21 +49,22 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
+    
+    mIsPresentationMode = false;
+    mUseMayaCam         = true;
+    
+    mEnableMindWave     = false;
+    mEnableOscServer    = false;
+    mEnableSyphonServer = false;
+    mEnableKinect       = true;
 }
 
 void OculonApp::setup()
 {
     console() << "[main] initializing...\n";
     
-    mIsPresentationMode = false;
-    mUseMayaCam = true;
-    mEnableMindWave = false;
-    mFrameCaptureCount = 0;
-    mEnableOscServer = false;
-    mEnableSyphonServer = false;
-    
-    
     // capture
+    mFrameCaptureCount = 0;
     mIsCapturingVideo = false;
     mIsCapturingFrames = false;
     mSaveNextFrame = false;
@@ -125,6 +126,11 @@ void OculonApp::setup()
     if( mEnableOscServer )
     {
         mOscServer.setup();
+    }
+    
+    if( mEnableKinect )
+    {
+        mKinectController.setup();
     }
     
     // syphon
@@ -219,10 +225,12 @@ void OculonApp::setupScenes()
     console() << ++sceneId << ": ShaderTest\n";
     addScene( new ShaderTest() );
     
-    // KinectTest
-    console() << ++sceneId << ": KinectTest\n";
-    addScene( new KinectTest(), autoStart );
-
+    if( mEnableKinect )
+    {
+        // KinectTest
+        console() << ++sceneId << ": KinectTest\n";
+        addScene( new KinectTest(), autoStart );
+    }
     
     if( mEnableMindWave )
     {
@@ -488,6 +496,11 @@ void OculonApp::update()
     if( mEnableOscServer )
     {
         mOscServer.update();
+    }
+    
+    if( mEnableKinect )
+    {
+        mKinectController.update();
     }
     
     for (SceneList::iterator sceneIt = mScenes.begin(); 

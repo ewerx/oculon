@@ -10,6 +10,7 @@
 #include "OculonApp.h"
 #include "KinectTest.h"
 #include "Resources.h"
+#include "KinectController.h"
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include "cinder/CinderMath.h"
@@ -28,19 +29,13 @@ KinectTest::~KinectTest()
 
 void KinectTest::setup()
 {
-    console() << "[kinect] " << Kinect::getNumDevices() << " Kinects connected." << std::endl;
-    mKinect = Kinect( Kinect::Device() ); // the default Device implies the first Kinect connected
+    mBlobTracker.setup( mApp->getKinectController() );
     mKinectTilt = 0.0f;
-    mIsVideoInfrared = false;
 }
 
 void KinectTest::update(double dt)
 {
-    if( mKinect.checkNewDepthFrame() )
-		mDepthTexture = mKinect.getDepthImage();
-	
-	if( mKinect.checkNewVideoFrame() )
-		mColorTexture = mKinect.getVideoImage();
+    mBlobTracker.update();
 }
 
 void KinectTest::draw()
@@ -50,24 +45,33 @@ void KinectTest::draw()
 
     const int centerX = getWindowWidth() / 2;
     
-    if( mDepthTexture )
+    KinectController& kinectCtrl = mApp->getKinectController();
+    
+    gl::Texture depthTexture = kinectCtrl.getDepthTexture();
+    gl::Texture colorTexture = kinectCtrl.getColorTexture();
+    
+    if( depthTexture )
     {
-        gl::draw( mDepthTexture, Rectf( centerX, 0, 0, centerX/mDepthTexture.getAspectRatio() ) );
+        gl::draw( depthTexture, Rectf( centerX, 0, 0, centerX/depthTexture.getAspectRatio() ) );
     }
 		
-	if( mColorTexture )
+	if( colorTexture )
     {
-		gl::draw( mColorTexture, Rectf( getWindowWidth(), 0, centerX, centerX/mColorTexture.getAspectRatio() ) );
+		gl::draw( colorTexture, Rectf( getWindowWidth(), 0, centerX, centerX/colorTexture.getAspectRatio() ) );
     }
+    
+    gl::color(Colorf(1.0f, 0.0f, 0.0f));
+    gl::drawSphere(mBlobTracker.getTargetPosition(), 10.0f);
     
     gl::popMatrices();
 }
 
 void KinectTest::drawDebug()
 {
-    //char buf[256];
-    //snprintf(buf, 256, "kinect accel: %.1f,%.1f,%.1f", mKinect.getAccel().x, mKinect.getAccel().y, mKinect.getAccel().z );
-    //mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.7f, 0.8f));
+    char buf[256];
+    const Vec3f& pos = mBlobTracker.getTargetPosition();
+    snprintf(buf, 256, "tracking: %.1f,%.1f,%.1f", pos.x, pos.y, pos.z );
+    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.7f, 0.8f));
 }
 
 bool KinectTest::handleKeyDown(const KeyEvent& keyEvent)
@@ -78,19 +82,20 @@ bool KinectTest::handleKeyDown(const KeyEvent& keyEvent)
     
     bool handled = true;
     
+    Kinect& kinect = mApp->getKinectController().getKinect();
+    
     switch (keyEvent.getCode()) 
     {
         case KeyEvent::KEY_UP:
             mKinectTilt = min( (mKinectTilt + TILT_INCREMENT), TILT_MAX );
-            mKinect.setTilt(mKinectTilt);
+            kinect.setTilt(mKinectTilt);
             break;
         case KeyEvent::KEY_DOWN:
             mKinectTilt = max( (mKinectTilt - TILT_INCREMENT), TILT_MIN );
-            mKinect.setTilt(mKinectTilt);
+            kinect.setTilt(mKinectTilt);
             break;
         case KeyEvent::KEY_i:
-            mIsVideoInfrared = !mIsVideoInfrared;
-            mKinect.setVideoInfrared(mIsVideoInfrared);
+            kinect.setVideoInfrared(!kinect.isVideoInfrared());
             break;
         default:
             handled = false;

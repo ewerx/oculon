@@ -91,6 +91,8 @@
 		7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3231500784E0009FF26 /* syphonServer.mm */; };
 		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
+		7C922869151C066400FB3773 /* BlobTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C922867151C066400FB3773 /* BlobTracker.cpp */; };
+		7C922870151C098D00FB3773 /* KinectController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C92286E151C098D00FB3773 /* KinectController.cpp */; };
 		7C94796415196481003F133E /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C94795F15196481003F133E /* kiss_fft.c */; };
 		7C94796515196481003F133E /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C94796115196481003F133E /* kiss_fftr.c */; };
 		7C9479681519648B003F133E /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9479671519648B003F133E /* Kiss.cpp */; };
@@ -310,6 +312,10 @@
 		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
 		7C8F207914D79C7500AC2D64 /* Binned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Binned.cpp; sourceTree = "<group>"; };
 		7C8F207A14D79C7500AC2D64 /* Binned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Binned.h; sourceTree = "<group>"; };
+		7C922867151C066400FB3773 /* BlobTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobTracker.cpp; sourceTree = "<group>"; };
+		7C922868151C066400FB3773 /* BlobTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobTracker.h; sourceTree = "<group>"; };
+		7C92286E151C098D00FB3773 /* KinectController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectController.cpp; sourceTree = "<group>"; };
+		7C92286F151C098D00FB3773 /* KinectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectController.h; sourceTree = "<group>"; };
 		7C94795E15196481003F133E /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		7C94795F15196481003F133E /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
 		7C94796015196481003F133E /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
@@ -339,6 +345,7 @@
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
 		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
 		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
+		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
 		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -731,9 +738,13 @@
 			children = (
 				7C74555B148C259C009C0356 /* AudioInput.cpp */,
 				7C74555C148C259C009C0356 /* AudioInput.h */,
+				7C922867151C066400FB3773 /* BlobTracker.cpp */,
+				7C922868151C066400FB3773 /* BlobTracker.h */,
 				7C74555D148C259C009C0356 /* Constants.h */,
 				7C74555E148C259C009C0356 /* InfoPanel.cpp */,
 				7C74555F148C259C009C0356 /* InfoPanel.h */,
+				7C92286E151C098D00FB3773 /* KinectController.cpp */,
+				7C92286F151C098D00FB3773 /* KinectController.h */,
 				7C745561148C259C009C0356 /* MidiInput.cpp */,
 				7C745562148C259C009C0356 /* MidiInput.h */,
 				7C745563148C259C009C0356 /* MidiMap.cpp */,
@@ -816,6 +827,7 @@
 			isa = PBXGroup;
 			children = (
 				7CF235E9151AE76600445AD8 /* Kinect */,
+				7CF235A0151AE35700445AD8 /* OpenCV */,
 				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7C3738F814F7364300B24851 /* msalibs */,
 				7CD0B84514B6B68E002505C5 /* kiss */,
@@ -1045,6 +1057,23 @@
 			path = ../sdks/cinder/blocks/kiss;
 			sourceTree = SOURCE_ROOT;
 		};
+		7CF235A0151AE35700445AD8 /* OpenCV */ = {
+			isa = PBXGroup;
+			children = (
+				7CF235A1151AE38E00445AD8 /* include */,
+			);
+			name = OpenCV;
+			sourceTree = "<group>";
+		};
+		7CF235A1151AE38E00445AD8 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */,
+			);
+			name = include;
+			path = "../../sdks/cinder/blocks/Cinder-OpenCV/include";
+			sourceTree = "<group>";
+		};
 		7CF235E9151AE76600445AD8 /* Kinect */ = {
 			isa = PBXGroup;
 			children = (
@@ -1215,6 +1244,8 @@
 				7C9479681519648B003F133E /* Kiss.cpp in Sources */,
 				7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */,
 				7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */,
+				7C922869151C066400FB3773 /* BlobTracker.cpp in Sources */,
+				7C922870151C098D00FB3773 /* KinectController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1260,6 +1291,8 @@
 					"$(CINDER_PATH)/lib/libcinder_d.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
+					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_imgproc.a",
+					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_core.a",
 					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
 					"-lcurl",
 				);
@@ -1289,6 +1322,8 @@
 					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
+					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_imgproc.a",
+					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_core.a",
 					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
 					"-lcurl",
 				);

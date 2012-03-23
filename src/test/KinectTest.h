@@ -11,13 +11,7 @@
 #define __KINECTEST_H__
 
 #include "Scene.h"
-#include <vector>
-#include "cinder/Cinder.h"
-#include "cinder/gl/Fbo.h"
-#include "cinder/gl/GlslProg.h"
-#include "Kinect.h"
-#include "CinderOpenCV.h"
-
+#include "BlobTracker.h"
 
 //
 // Audio input tests
@@ -40,20 +34,18 @@ public:
     
 private:
     
-    Kinect              mKinect;
     float               mKinectTilt;
-    bool                mIsVideoInfrared;
     
-    gl::Texture         mColorTexture;
-    gl::Texture         mDepthTexture;
+    BlobTracker         mBlobTracker;
     
-    Surface             mColorSurface;
-    cv::Mat             mPrevFrame;
+    //Surface             mColorSurface;
+    
 
-    // hand tracking
-    vector<cv::Point2f> mPrevFeatures;
-    vector<cv::Point2f> mFeatures;
-    vector<uint8_t>     mFeatureStatuses;  
+    // hand tracking -- where is this from???
+    //cv::Mat             mPrevFrame;
+    //vector<cv::Point2f> mPrevFeatures;
+    //vector<cv::Point2f> mFeatures;
+    //vector<uint8_t>     mFeatureStatuses;  
     
 };
 

@@ -21,6 +21,7 @@
 #include "MidiInput.h"
 #include "MindWave.h"
 #include "OscServer.h"
+#include "KinectController.h"
 #include "InfoPanel.h"
 #include <vector>
 #include "cinderSyphon.h"
@@ -63,9 +64,10 @@ public: // cinder interface
     int getViewportHeight() const;
     
 public: // new
-    inline AudioInput& getAudioInput()         { return mAudioInput; }
-    inline MidiInput& getMidiInput()           { return mMidiInput; }
-    inline MindWave& getMindWave()             { return mMindWave; }
+    inline AudioInput& getAudioInput()               { return mAudioInput; }
+    inline MidiInput& getMidiInput()                 { return mMidiInput; }
+    inline MindWave& getMindWave()                   { return mMindWave; }
+    inline KinectController& getKinectController()   { return mKinectController; }
     
     inline const Vec2f& getMousePos()          { return mMousePos; }
     inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
@@ -95,14 +97,21 @@ protected: // new
     
     
 private: // members
+    
     // input
     AudioInput              mAudioInput;
     MidiInput               mMidiInput;
+    
     MindWave                mMindWave;
     bool                    mEnableMindWave;
-    Vec2f                   mMousePos;
+    
     OscServer               mOscServer;
     bool                    mEnableOscServer;
+    
+    KinectController        mKinectController;
+    bool                    mEnableKinect;
+    
+    Vec2f                   mMousePos;
     
     // render
     double                  mLastElapsedSeconds;
