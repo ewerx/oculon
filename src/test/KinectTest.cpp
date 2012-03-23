@@ -41,14 +41,16 @@ void KinectTest::update(double dt)
 void KinectTest::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindow(getWindowSize());
+    gl::setMatricesWindowPersp(getWindowSize());
 
     const int centerX = getWindowWidth() / 2;
     
     KinectController& kinectCtrl = mApp->getKinectController();
     
     gl::Texture depthTexture = kinectCtrl.getDepthTexture();
-    gl::Texture colorTexture = kinectCtrl.getColorTexture();
+    gl::Texture colorTexture = kinectCtrl.getVideoTexture();
+    gl::Texture cvTexture = mBlobTracker.getCvTexture();
+    Surface depthSurface = kinectCtrl.getDepthSurface();
     
     if( depthTexture )
     {
@@ -58,6 +60,16 @@ void KinectTest::draw()
 	if( colorTexture )
     {
 		gl::draw( colorTexture, Rectf( getWindowWidth(), 0, centerX, centerX/colorTexture.getAspectRatio() ) );
+    }
+    
+    if( cvTexture )
+    {
+        gl::draw( cvTexture, Rectf( centerX, getWindowHeight()/2, 0, getWindowHeight() ) );
+    }
+    
+    if( depthSurface )
+    {
+        gl::draw( depthSurface, Rectf( getWindowWidth(), getWindowHeight()/2, centerX, getWindowHeight() ) );
     }
     
     gl::color(Colorf(1.0f, 0.0f, 0.0f));

@@ -15,8 +15,6 @@ using namespace ci;
 using namespace ci::app;
 
 KinectController::KinectController()
-: mDepthTexture()
-, mColorTexture()
 {
 }
 
@@ -38,14 +36,19 @@ void KinectController::update()
     //TODO: multithreaded
     if( mKinect.checkNewDepthFrame() )
     {
-        mHasNewDepthFrame = true;
-		mDepthTexture = mKinect.getDepthImage();
+        ImageSourceRef depthImage = mKinect.getDepthImage();
+        if( depthImage )
+        {
+            mHasNewDepthFrame = true;
+            mDepthTexture = depthImage;
+            mDepthSurface = depthImage;
+        }
     }
 	
 	if( mKinect.checkNewVideoFrame() )
     {
         mHasNewVideoFrame = true;
-		mColorTexture = mKinect.getVideoImage();
+		mVideoTexture = mKinect.getVideoImage();
     }
 }
 

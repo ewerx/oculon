@@ -29,7 +29,6 @@ public:
     
     Vec3f getTargetPosition() const        { return mTargetPosition; }
     gl::Texture getCvTexture() const       { return mCvTexture; }
-    Surface getDepthSurface() const        { return mDepthSurface; }
 
 private:
     KinectController* mKinectController;
@@ -39,10 +38,7 @@ private:
     float mBlobMax;
     float mKinectTilt;
     
-    gl::Texture mColorTexture;
-    gl::Texture mDepthTexture;
     gl::Texture mCvTexture; 
-    Surface mDepthSurface;
     
     Vec3f mTargetPosition;
     

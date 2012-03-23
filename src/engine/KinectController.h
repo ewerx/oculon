@@ -12,7 +12,7 @@
 
 
 #include "cinder/gl/Texture.h"
-//#include "cinder/Surface.h"
+#include "cinder/Surface.h"
 #include "Kinect.h"
 
 using namespace std;
@@ -27,8 +27,9 @@ public:
     void setup();
 	void update();
     
+    gl::Texture getVideoTexture() const { return mVideoTexture; }
     gl::Texture getDepthTexture() const { return mDepthTexture; }
-    gl::Texture getColorTexture() const { return mColorTexture; }
+    Surface getDepthSurface() const     { return mDepthSurface; }
     bool hasNewDepthFrame() const       { return mHasNewDepthFrame; }
     bool hasNewVideoFrame() const       { return mHasNewVideoFrame; }
     
@@ -37,8 +38,9 @@ public:
 private:
     Kinect              mKinect;
     
-    gl::Texture         mColorTexture;
+    gl::Texture         mVideoTexture;
     gl::Texture         mDepthTexture;
+    Surface             mDepthSurface;
     
     bool                mHasNewDepthFrame;
     bool                mHasNewVideoFrame;
