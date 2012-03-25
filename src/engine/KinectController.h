@@ -45,6 +45,8 @@ private:
     bool                mHasNewDepthFrame;
     bool                mHasNewVideoFrame;
     
+    int                 mNumKinects;
+    
     //Surface             mColorSurface;
     
 };

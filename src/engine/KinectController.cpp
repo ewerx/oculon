@@ -24,31 +24,42 @@ KinectController::~KinectController()
 
 void KinectController::setup()
 {
-    console() << "[kinect] " << Kinect::getNumDevices() << " Kinects connected." << std::endl;
-    mKinect = Kinect( Kinect::Device() ); // the default Device implies the first Kinect connected
+    mHasNewVideoFrame = false;
+    mHasNewDepthFrame = false;
+    
+    mNumKinects = Kinect::getNumDevices();
+    console() << "[kinect] " << mNumKinects << " Kinects connected." << std::endl;
+    if( mNumKinects > 0 )
+    {   
+        mKinect = Kinect( Kinect::Device() ); // the default Device implies the first Kinect connected
+    }
 }
 
 
 void KinectController::update()
 {
-    mHasNewVideoFrame = false;
-    mHasNewDepthFrame = false;
-    //TODO: multithreaded
-    if( mKinect.checkNewDepthFrame() )
+    if( mNumKinects > 0 )
     {
-        ImageSourceRef depthImage = mKinect.getDepthImage();
-        if( depthImage )
+        mHasNewVideoFrame = false;
+        mHasNewDepthFrame = false;
+        
+        //TODO: multithreaded
+        if( mKinect.checkNewDepthFrame() )
         {
-            mHasNewDepthFrame = true;
-            mDepthTexture = depthImage;
-            mDepthSurface = depthImage;
+            ImageSourceRef depthImage = mKinect.getDepthImage();
+            if( depthImage )
+            {
+                mHasNewDepthFrame = true;
+                mDepthTexture = depthImage;
+                mDepthSurface = depthImage;
+            }
         }
-    }
-	
-	if( mKinect.checkNewVideoFrame() )
-    {
-        mHasNewVideoFrame = true;
-		mVideoTexture = mKinect.getVideoImage();
+        
+        if( mKinect.checkNewVideoFrame() )
+        {
+            mHasNewVideoFrame = true;
+            mVideoTexture = mKinect.getVideoImage();
+        }
     }
 }
 
