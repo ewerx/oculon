@@ -34,7 +34,7 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04
 
 /*static*/ double   Orbiter::sDefaultTimeScale          = 60.f * 60.f * 24.f * 10.f; // 10 days
 /*static*/ double   Orbiter::sDefaultGravityConstant    = 6.6742e-11;
-/*static*/ double   Orbiter::sDrawScale                 = 2e-11;
+/*static*/ double   Orbiter::sDrawScale                 = 2e-12;
 /*static*/ float    Orbiter::sMaxRadiusMultiplier       = 2.6f;
 /*static*/ int      Orbiter::sNumFramesToAvgFft         = 1;
 /*static*/ bool     Orbiter::sUseSmoothLines            = true;
@@ -53,7 +53,7 @@ Orbiter::Orbiter()
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
 , mIsFollowCameraEnabled(true)
-, mIsBinnedModeEnabled(true)
+, mIsBinnedModeEnabled(false)
 {
     mEnableFrustumCulling = true; // Scene
     
@@ -274,7 +274,7 @@ void Orbiter::update(double dt)
 
     // debug info
     char buf[256];
-    snprintf(buf, 256, "orbiter cam: %s", mIsBinnedModeEnabled ? "locked 2D" : (mIsFollowCameraEnabled ? "follow []" : "manual" ) );
+    snprintf(buf, 256, "orbiter cam: %s", mIsBinnedModeEnabled ? "locked 2D" : (mIsFollowCameraEnabled ? "follow" : "manual" ) );
     mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.75f));
     
     bool simulate = true;

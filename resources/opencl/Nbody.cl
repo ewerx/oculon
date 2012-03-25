@@ -77,12 +77,12 @@ __kernel void gravity(__global const float4 *in_pos,
                       const float damping,
                       const float gravity,
                       const float alpha,
-                      const uint flags)
-                      //const float eps)
+                      const uint flags,
+                      const float eps)
 {
     // the 4th element of in_vel holds mass, this filters it out
     const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
-    const float eps = 0.0001f;
+    //const float eps = eps;//150.f//0.0001f;
     
 	const uint i = get_global_id(0);
 	if (i >= nb_particles)
@@ -96,9 +96,7 @@ __kernel void gravity(__global const float4 *in_pos,
     
 	for(uint j = 0 ; j < n ; ++j)
 	{
-        const float4 p2 = in_pos[j];
-        
-		float4 d = p2 - p1;
+		float4 d = in_pos[j] - p1;
         d.w = 0.0f;
         
         if( flags & PARTICLE_FLAGS_INVSQR )

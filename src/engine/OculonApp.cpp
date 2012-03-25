@@ -194,8 +194,8 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     // Orbiter
-    //console() << ++sceneId << ": Orbiter\n";
-    //addScene( new Orbiter() );
+    console() << ++sceneId << ": Orbiter\n";
+    addScene( new Orbiter() );
     
     // Binned
     //console() << ++sceneId << ": Binned\n";
@@ -210,8 +210,8 @@ void OculonApp::setupScenes()
     //addScene( new Magnetosphere() );
     
     // Graviton
-    //console() << ++sceneId << ": Graviton\n";
-    //addScene( new Graviton() );
+    console() << ++sceneId << ": Graviton\n";
+    addScene( new Graviton(), true );
     
     // AudioTest
     //console() << ++sceneId << ": AudioTest\n";
@@ -222,14 +222,14 @@ void OculonApp::setupScenes()
     //addScene( new MovieTest() );
     
     // ShaderTest
-    console() << ++sceneId << ": ShaderTest\n";
+    //console() << ++sceneId << ": ShaderTest\n";
     //addScene( new ShaderTest() );
     
     if( mEnableKinect )
     {
         // KinectTest
-        console() << ++sceneId << ": KinectTest\n";
-        addScene( new KinectTest(), autoStart );
+        //console() << ++sceneId << ": KinectTest\n";
+        //addScene( new KinectTest(), autoStart );
     }
     
     if( mEnableMindWave )

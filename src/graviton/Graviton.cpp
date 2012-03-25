@@ -14,6 +14,7 @@
 #include "cinder/Rand.h"
 #include "cinder/Easing.h"
 #include "Utils.h"
+#include "Orbiter.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -42,30 +43,33 @@ void Graviton::setup()
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
     
-    mInitialFormation = FORMATION_GALAXY;
-    mFormationRadius = 300;
+    mInitialFormation = FORMATION_SPHERE;
+    mFormationRadius = 50.0f;
     
     mAdditiveBlending = true;
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
-    mPointSize = 8.0f;
-    mParticleAlpha = 0.5f;
+    mPointSize = 4.0f;
+    mParticleAlpha = 0.45f;
     
     mDamping = 1.0f;
     mGravity = 100.0f;
+    mEps = mFormationRadius * 0.5f;
     
     mEnableGravityNodes = true;
     mNumNodes = 3;
+    resetGravityNodes(NODE_FORMATION_BLACKHOLE_STAR);
     
-    //TODO: extensions are not supported, is there an alternative?
+    
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
     {
-        mScalePointsByDistance = false;
+        mScalePointsByDistance = true;
     }
     else
     {
-        mScalePointsByDistance = false;
+        // it works anyway
+        mScalePointsByDistance = true;
     }
     
 	initOpenCl();
@@ -110,6 +114,7 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
     params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
     params.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
+    params.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
     
     params.addParam("Point Size", &mPointSize, "");
     params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
@@ -129,125 +134,180 @@ void Graviton::initParticles()
     
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        double x = 0.0f;
-        double y = 0.0f;
-        double z = 0.0f;
-        
-        double rho = 0.0f;
-        double theta = 0.0f;
-        
-        const float maxMass = 50.0f;
-        float mass = Rand::randFloat(1.0f,maxMass);
-        
-        switch( mInitialFormation )
-        {
-            case FORMATION_SPHERE:
-            {
-                rho = Utils::randDouble() * (M_PI * 2.0);
-                theta = Utils::randDouble() * (M_PI * 2.0);
-                
-                const float d = Rand::randFloat(1.0f, r);
-                x = d * cos(rho) * sin(theta);
-                y = d * sin(rho) * sin(theta);
-                z = d * cos(theta);
-            }
-                break;
-                
-            case FORMATION_SPHERE_SHELL:
-            {
-                rho = Utils::randDouble() * (M_PI * 2.0);
-                theta = Utils::randDouble() * (M_PI * 2.0);
-                
-                x = r * cos(rho) * sin(theta);
-                y = r * sin(rho) * sin(theta);
-                z = r * cos(theta);
-            }
-                break;
-                
-            case FORMATION_DISC:
-            {
-                rho = r * pow(Utils::randDouble(), 0.75);
-                theta = Utils::randDouble() * (M_PI * 2.0);
-                theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-                
-                const float thickness = 1.0f;
-                
-                x = rho * cos(theta);
-                y = rho * sin(theta);
-                z = thickness * 2.0 * Utils::randDouble() - 1.0;
-            }
-                break;
-                
-            case FORMATION_GALAXY:
-            {
-                rho = r * pow(Utils::randDouble(), 0.75);
-                theta = Utils::randDouble() * (M_PI * 2.0);
-                theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-                
-                x = rho * cos(theta);
-                y = rho * sin(theta);
-                
-                const float dist = sqrt(x*x + y*y);
-                const float maxThickness = r / 8.0f;
-                const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / r);
-                const float thickness =  maxThickness * coreDistanceRatio;
-                
-                z = thickness * (2.0 * Utils::randDouble() - 1.0);
-                
-                mass = maxMass * coreDistanceRatio;
-            }
-                break;
-                
-            default:
-                break;
-        }
-        
         if( mEnableGravityNodes && i < mNumNodes)
         {
-            switch(i)
+            mPosAndMass[i].x = mGravityNodes[i].mPos.x;
+            mPosAndMass[i].y = mGravityNodes[i].mPos.y;
+            mPosAndMass[i].z = mGravityNodes[i].mPos.z;
+            mPosAndMass[i].w = 1.0f;
+            
+            mVel[i].x = mGravityNodes[i].mVel.x;
+            mVel[i].x = mGravityNodes[i].mVel.y;
+            mVel[i].x = mGravityNodes[i].mVel.z;
+            mVel[i].w = mGravityNodes[i].mMass;
+            
+            mColor[i].x = 1.0f;
+            mColor[i].y = 1.0f;
+            mColor[i].z = 1.0f;
+            mColor[i].w = 1.0f;
+        }
+        else
+        {
+            double x = 0.0f;
+            double y = 0.0f;
+            double z = 0.0f;
+            
+            double rho = 0.0f;
+            double theta = 0.0f;
+            
+            const float maxMass = 50.0f;
+            float mass = Rand::randFloat(1.0f,maxMass);
+            
+            switch( mInitialFormation )
             {
-                case 0:
-                    x = 0.0f;
-                    y = 0.0f;
-                    z = 0.0f;
+                case FORMATION_SPHERE:
+                {
+                    rho = Utils::randDouble() * (M_PI * 2.0);
+                    theta = Utils::randDouble() * (M_PI * 2.0);
+                    
+                    const float d = Rand::randFloat(1.0f, r);
+                    x = d * cos(rho) * sin(theta);
+                    y = d * sin(rho) * sin(theta);
+                    z = d * cos(theta);
+                }
                     break;
                     
-                case 1:
+                case FORMATION_SPHERE_SHELL:
+                {
+                    rho = Utils::randDouble() * (M_PI * 2.0);
+                    theta = Utils::randDouble() * (M_PI * 2.0);
                     
-                    x = r*0.5f;
-                    y = -r*0.5f;
-                    z = r / 4.0f;
+                    x = r * cos(rho) * sin(theta);
+                    y = r * sin(rho) * sin(theta);
+                    z = r * cos(theta);
+                }
                     break;
-                case 2:
-                    x = -r*0.5f;
-                    y = r*0.5f;
-                    z = -r / 4.0f;
+                    
+                case FORMATION_DISC:
+                {
+                    rho = r * pow(Utils::randDouble(), 0.75);
+                    theta = Utils::randDouble() * (M_PI * 2.0);
+                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+                    
+                    const float thickness = 1.0f;
+                    
+                    x = rho * cos(theta);
+                    y = rho * sin(theta);
+                    z = thickness * 2.0 * Utils::randDouble() - 1.0;
+                }
+                    break;
+                    
+                case FORMATION_GALAXY:
+                {
+                    rho = r * pow(Utils::randDouble(), 0.75);
+                    theta = Utils::randDouble() * (M_PI * 2.0);
+                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+                    
+                    x = rho * cos(theta);
+                    y = rho * sin(theta);
+                    
+                    const float dist = sqrt(x*x + y*y);
+                    const float maxThickness = r / 8.0f;
+                    const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / r);
+                    const float thickness =  maxThickness * coreDistanceRatio;
+                    
+                    z = thickness * (2.0 * Utils::randDouble() - 1.0);
+                    
+                    mass = maxMass * coreDistanceRatio;
+                }
+                    break;
+                    
+                default:
                     break;
             }
             
-            mass = 10000.f;
+            // pos
+            mPosAndMass[i].x = x;
+            mPosAndMass[i].y = y;
+            mPosAndMass[i].z = z;
+            mPosAndMass[i].w = 1.0f; //scale??
+            
+            // vel
+            const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
+            mVel[i].x = -a * sin(theta);
+            mVel[i].y = a * cos(theta);
+            mVel[i].z = 0.0f;
+            mVel[i].w = mass;
+            
+            // color
+            mColor[i].x = 1.0f;
+            mColor[i].y = 1.0f;
+            mColor[i].z = 1.0f;
+            mColor[i].w = 1.0f;
         }
-        
-        // pos
-        mPosAndMass[i].x = x;
-        mPosAndMass[i].y = y;
-        mPosAndMass[i].z = z;
-        mPosAndMass[i].w = 1.0f; //scale??
-        
-        // vel
-        const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-        mVel[i].x = -a * sin(theta);
-        mVel[i].y = a * cos(theta);
-        mVel[i].z = 0.0f;
-        mVel[i].w = mass;
-        
-        // color
-        mColor[i].x = 1.0f;
-        mColor[i].y = 1.0f;
-        mColor[i].z = 1.0f;
-        mColor[i].w = 1.0f;
     }
 }
+                              
+void Graviton::resetGravityNodes(const eNodeFormation formation)
+{
+    mGravityNodes.clear();
+    
+    switch( formation )
+    {
+        case NODE_FORMATION_SYMMETRY:
+        {
+            mNumNodes = 3;
+            const float r = mFormationRadius;
+            
+            for(int i = 0; i < mNumNodes; ++i )
+            {
+                Vec3f pos;
+                
+                switch(i)
+                {
+                    case 0:
+                        pos.x = 0.0f;
+                        pos.y = 0.0f;
+                        pos.z = 0.0f;
+                        break;
+                        
+                    case 1:
+                        
+                        pos.x = r*0.5f;
+                        pos.y = -r*0.5f;
+                        pos.z = r / 4.0f;
+                        break;
+                    case 2:
+                        pos.x = -r*0.5f;
+                        pos.y = r*0.5f;
+                        pos.z = -r / 4.0f;
+                        break;
+                }
+                
+                const float mass = 10000.f;
+                mGravityNodes.push_back( tGravityNode( pos, Vec3f::zero(), mass ) );
+            }
+        } break;
+            
+            
+        case NODE_FORMATION_BLACKHOLE_STAR:
+        {
+            mNumNodes = 1;
+            
+            const float mass = 10000.f;
+            const float d = mFormationRadius * 3.0f;
+            
+            //Vec3f pos( d, d, d );
+            Vec3f pos(0,0,0);
+            mGravityNodes.push_back( tGravityNode( pos, Vec3f::zero(), mass ) );
+        } break;
+            
+        default:
+            break;
+    }
+
+}
+                              
 
 void Graviton::initOpenCl()
 {
@@ -351,6 +411,9 @@ void Graviton::update(double dt)
     mKernel->setArg(ARG_DAMPING, mDamping);
     mKernel->setArg(ARG_GRAVITY, mGravity);
     mKernel->setArg(ARG_ALPHA, mParticleAlpha);
+    
+    //mEps = Rand::randFloat(mFormationRadius/3.0f,mFormationRadius);
+    mKernel->setArg(ARG_EPS, mEps);
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
@@ -477,7 +540,21 @@ void Graviton::draw()
 {
     glPushMatrix();
     
-    gl::setMatrices( mApp->getMayaCam() );
+    const bool orbiterCam = false;
+    
+    if( orbiterCam )
+    {
+        Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
+        
+        if( orbiterScene && orbiterScene->isActive() )
+        {
+            gl::setMatrices( orbiterScene->getCamera() );
+        }
+    }
+    else
+    {
+        gl::setMatrices( mApp->getMayaCam() );
+    }
     
     //gl::enableDepthWrite( false );
 	//gl::enableDepthRead( false );

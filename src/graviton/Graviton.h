@@ -47,23 +47,11 @@ public:
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
 
-    
 private:
-    void updateAudioResponse();
-    
-    void initParticles();
-    void initOpenCl();
-    void updateParams();
-        
-    void preRender();
-    void drawParticles();
-     
-private:
-    
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (512 * kStep),
+        kNumParticles =         (256 * kStep),
     };
     
 #if defined (FREEOCL_VERSION)
@@ -81,7 +69,7 @@ private:
         ARG_GRAVITY,
         ARG_ALPHA,
         ARG_FLAGS,
-        //ARG_EPS
+        ARG_EPS
         
     };
 #else
@@ -106,9 +94,29 @@ private:
         
         FORMATION_COUNT
     };
-    eFormation              mInitialFormation;
     
+    enum eNodeFormation
+    {
+        NODE_FORMATION_SYMMETRY,
+        NODE_FORMATION_BLACKHOLE_STAR,
+        NODE_FORMATION_COUNT
+    };
+    
+    struct tGravityNode
+    {
+        tGravityNode(const Vec3f& pos, const Vec3f& vel, const float mass)
+        : mPos(pos), mVel(vel), mMass(mass)
+        {}
+        
+        Vec3f   mPos;
+        Vec3f   mVel;
+        float   mMass;
+    };
+    
+    eFormation              mInitialFormation;
     float                   mFormationRadius;
+    
+    vector<tGravityNode>    mGravityNodes;
     
     bool                    mIsMousePressed;
     float2                  mMousePos;
@@ -139,70 +147,71 @@ private:
     cl_float                mTimeStep;
     cl_float                mDamping;
     cl_float                mGravity;
+    cl_float                mEps;
     cl_uint                 mFlags;
     
-//    clNode              mNodes[kMaxNodes];
-//    MSA::OpenCLBuffer	mClBufNodes;
+    //    clNode              mNodes[kMaxNodes];
+    //    MSA::OpenCLBuffer	mClBufNodes;
     cl_int                  mNumNodes;
-//    
-//    bool                    mNodesNeedUpdating;
-//    
-//    float4              mColor;
-//    float2              mRenderDimensions;
-//    
+    //    
+    //    bool                    mNodesNeedUpdating;
+    //    
+    //    float4              mColor;
+    //    float2              mRenderDimensions;
+    //    
     
-//    
-//    clParticle			mParticles[kNumParticles];
-//    MSA::OpenCLBuffer	mClBufParticles;		// stores above data
-//    
-//    // contains info for rendering (VBO data) first pos, then oldPos
-//    float2              mPosBuffer[kNumParticles * kMaxTrailLength];
-//    MSA::OpenCLBuffer	mClBufPosBuffer;
-//    
-//    // contains info for rendering (VBO data)
-//    float4				mColorBuffer[kNumParticles * kMaxTrailLength];
-//    MSA::OpenCLBuffer	mClBufColorBuffer;
-//    
-//    GLuint              mIndices[kNumParticles * kMaxTrailLength];
-//    
+    //    
+    //    clParticle			mParticles[kNumParticles];
+    //    MSA::OpenCLBuffer	mClBufParticles;		// stores above data
+    //    
+    //    // contains info for rendering (VBO data) first pos, then oldPos
+    //    float2              mPosBuffer[kNumParticles * kMaxTrailLength];
+    //    MSA::OpenCLBuffer	mClBufPosBuffer;
+    //    
+    //    // contains info for rendering (VBO data)
+    //    float4				mColorBuffer[kNumParticles * kMaxTrailLength];
+    //    MSA::OpenCLBuffer	mClBufColorBuffer;
+    //    
+    //    GLuint              mIndices[kNumParticles * kMaxTrailLength];
+    //    
     gl::Texture         mParticleTexture;
-//    GLuint				mVbo[2];
-//
-//    float               mSpreadMin;
-//    float               mSpreadMax;
-//    float               mNodeAttractMin;
-//    float               mNodeAttractMax;
-//    float				mWaveFreqMin;
-//    float				mWaveFreqMax;
-//    float				mWaveAmpMin;
-//    float				mWaveAmpMax;
-//    float				mCenterDeviation;
-//    float				mCenterDeviationMin;
-//    float				mCenterDeviationMax;
-//    
-//    cl_float			mColorTaper;
-//    cl_float			mMomentum;
-//    cl_float			mDieSpeed;
-//    cl_float			mAnimTime;
-//    cl_float			mTimeSpeed;
-//    cl_float			mWavePosMult;
-//    cl_float			mWaveVelMult;
-//    cl_float			mMassMin;
+    //    GLuint				mVbo[2];
+    //
+    //    float               mSpreadMin;
+    //    float               mSpreadMax;
+    //    float               mNodeAttractMin;
+    //    float               mNodeAttractMax;
+    //    float				mWaveFreqMin;
+    //    float				mWaveFreqMax;
+    //    float				mWaveAmpMin;
+    //    float				mWaveAmpMax;
+    //    float				mCenterDeviation;
+    //    float				mCenterDeviationMin;
+    //    float				mCenterDeviationMax;
+    //    
+    //    cl_float			mColorTaper;
+    //    cl_float			mMomentum;
+    //    cl_float			mDieSpeed;
+    //    cl_float			mAnimTime;
+    //    cl_float			mTimeSpeed;
+    //    cl_float			mWavePosMult;
+    //    cl_float			mWaveVelMult;
+    //    cl_float			mMassMin;
     float					mPointSize;
     float					mLineWidth;
     float                   mParticleAlpha;
-//    cl_int				mNumParticles;
-//    int					mNumParticlesPower;
-//    float				mFadeSpeed;
-//    float				mNodeRadius;
-//    float				mNodeBrightness;
-//    
-//    // rendering / fx
+    //    cl_int				mNumParticles;
+    //    int					mNumParticlesPower;
+    //    float				mFadeSpeed;
+    //    float				mNodeRadius;
+    //    float				mNodeBrightness;
+    //    
+    //    // rendering / fx
     bool				mEnableBlending;
     bool				mAdditiveBlending;
-//    bool				mDoDrawLines;
-//    bool				mDoDrawPoints;
-//    bool				mDoDrawNodes;
+    //    bool				mDoDrawLines;
+    //    bool				mDoDrawPoints;
+    //    bool				mDoDrawNodes;
     bool				mEnableLineSmoothing;
     bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
@@ -210,26 +219,41 @@ private:
     bool                mUseInvSquareCalc;
     
     bool                mEnableGravityNodes;
-//    
-//    gl::Fbo             mFboNew;
-//    gl::Fbo             mFboComp;
-//    gl::Fbo             mFboBlur;
+    //    
+    //    gl::Fbo             mFboNew;
+    //    gl::Fbo             mFboComp;
+    //    gl::Fbo             mFboBlur;
     gl::GlslProg        mBlurShader;
-//    
-//    bool                mUseFbo;
-//    bool                mDoBlur;
-//    int                 mBlurAmount;
-//    float               mTrailBrightness;
-//    float               mTrailAudioDistortMin;
-//    float               mTrailAudioDistortMax;
-//    float               mTrailWaveFreqMin;
-//    float               mTrailWaveFreqMax;
-//    bool                mTrailDistanceAffectsWave;
-//    //int				mBlurIterations		= 1;
-//    //float             mBlurAlpha			= 0;
-//    //float             mBlurCenterWeight	= 10;
-//    //float             mOrigAlpha			= 1;
-//    int                 mFboScaleDown;
+    //    
+    //    bool                mUseFbo;
+    //    bool                mDoBlur;
+    //    int                 mBlurAmount;
+    //    float               mTrailBrightness;
+    //    float               mTrailAudioDistortMin;
+    //    float               mTrailAudioDistortMax;
+    //    float               mTrailWaveFreqMin;
+    //    float               mTrailWaveFreqMax;
+    //    bool                mTrailDistanceAffectsWave;
+    //    //int				mBlurIterations		= 1;
+    //    //float             mBlurAlpha			= 0;
+    //    //float             mBlurCenterWeight	= 10;
+    //    //float             mOrigAlpha			= 1;
+    //    int                 mFboScaleDown;
+
+private:
+    void updateAudioResponse();
+    
+    void initParticles();
+    void initOpenCl();
+    void updateParams();
+        
+    void preRender();
+    void drawParticles();
+    
+    void resetGravityNodes(const eNodeFormation formation);
+     
+private:
+    
     
 };
 
