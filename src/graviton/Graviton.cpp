@@ -157,6 +157,10 @@ void Graviton::initParticles()
             double y = 0.0f;
             double z = 0.0f;
             
+            double vx = 0.0f;
+            double vy = 0.0f;
+            double vz = 0.0f;
+            
             double rho = 0.0f;
             double theta = 0.0f;
             
@@ -170,7 +174,7 @@ void Graviton::initParticles()
                     rho = Utils::randDouble() * (M_PI * 2.0);
                     theta = Utils::randDouble() * (M_PI * 2.0);
                     
-                    const float d = Rand::randFloat(1.0f, r);
+                    const float d = Rand::randFloat(10.0f, r);
                     x = d * cos(rho) * sin(theta);
                     y = d * sin(rho) * sin(theta);
                     z = d * cos(theta);
@@ -190,7 +194,7 @@ void Graviton::initParticles()
                     
                 case FORMATION_DISC:
                 {
-                    rho = r * pow(Utils::randDouble(), 0.75);
+                    rho = r * Utils::randDouble();//pow(Utils::randDouble(), 0.75);
                     theta = Utils::randDouble() * (M_PI * 2.0);
                     theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
                     
@@ -199,6 +203,11 @@ void Graviton::initParticles()
                     x = rho * cos(theta);
                     y = rho * sin(theta);
                     z = thickness * 2.0 * Utils::randDouble() - 1.0;
+                    
+                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
+                    vx = -a * sin(theta);
+                    vy = a * cos(theta);
+                    vz = 0.0f;
                 }
                     break;
                     
@@ -218,6 +227,11 @@ void Graviton::initParticles()
                     
                     z = thickness * (2.0 * Utils::randDouble() - 1.0);
                     
+                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
+                    vx = -a * sin(theta);
+                    vy = a * cos(theta);
+                    vz = 0.0f;
+                    
                     mass = maxMass * coreDistanceRatio;
                 }
                     break;
@@ -233,10 +247,10 @@ void Graviton::initParticles()
             mPosAndMass[i].w = 1.0f; //scale??
             
             // vel
-            const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-            mVel[i].x = -a * sin(theta);
-            mVel[i].y = a * cos(theta);
-            mVel[i].z = 0.0f;
+            
+            mVel[i].x = vx;
+            mVel[i].y = vy;
+            mVel[i].z = vz;
             mVel[i].w = mass;
             
             // color

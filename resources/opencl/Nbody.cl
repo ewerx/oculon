@@ -101,8 +101,9 @@ __kernel void gravity(__global const float4 *in_pos,
         
         if( flags & PARTICLE_FLAGS_INVSQR )
         {
-            float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
-            float f = /*in_vel[i].w */ gravity * in_vel[j].w * invr*invr;
+            const float d2 = d.x*d.x + d.y*d.y + d.z*d.z + eps;
+            //float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
+            float f = /*in_vel[i].w */ gravity * in_vel[j].w / d2;//* invr*invr*invr;
             a += f*d;
         }
         else
