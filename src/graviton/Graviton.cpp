@@ -50,7 +50,7 @@ void Graviton::setup()
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
-    mPointSize = 4.0f;
+    mPointSize = 2.0f;
     mParticleAlpha = 0.45f;
     
     mDamping = 1.0f;
@@ -360,6 +360,7 @@ void Graviton::initOpenCl()
     mClBufVel0.initBuffer( size, CL_MEM_READ_WRITE );
     mClBufVel1.initBuffer( size, CL_MEM_READ_ONLY );
     mClBufColor.initFromGLObject(mVbo[1]);
+    mClBufFft.initBuffer( sizeof(cl_float)*kFftBands, CL_MEM_READ_WRITE );
 
 }
 
@@ -389,6 +390,7 @@ void Graviton::reset()
     mKernel->setArg(ARG_VEL_IN, mClBufVel0.getCLMem());
     mKernel->setArg(ARG_VEL_OUT, mClBufVel1.getCLMem());
     mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
+    mKernel->setArg(ARG_FFT, mClBufFft.getCLMem());
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
 #else
@@ -496,6 +498,8 @@ void Graviton::update(double dt)
     char buf[256];
     snprintf(buf, 256, "particles: %d", mNumParticles);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
+    snprintf(buf, 256, "massives: %d", mStep);
+    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
 }
 
 //
@@ -544,12 +548,19 @@ void Graviton::updateAudioResponse()
     AudioInput& audioInput = mApp->getAudioInput();
     std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
     
-    //unsigned int bandCount = audioInput.getFftBandCount();
-    //float* fftBuffer = fftDataRef.get();
+    unsigned int bandCount = audioInput.getFftBandCount();
+    float* fftBuffer = fftDataRef.get();
     
-    //int bodyIndex = 0;
+    if( fftBuffer )
+    {
+    //for( int i = 0; i < bandCount; ++i )
+    {
+        
+    }
     
-    //TODO
+        mClBufFft.write( fftBuffer, 0, sizeof(cl_float) * bandCount );
+        mKernel->setArg( ARG_FFT, mClBufFft.getCLMem() );
+    }
 }
 
 void Graviton::draw()
@@ -604,6 +615,7 @@ void Graviton::preRender()
     {
         if( mScalePointsByDistance )
         {
+            glPointSize(mPointSize);
             float quadratic[] =  { 0.0f, 0.0f, 0.00001f };
             float sizes[] = { 3.0f, mPointSize };
             glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes);

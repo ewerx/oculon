@@ -214,8 +214,8 @@ void OculonApp::setupScenes()
     addScene( new Graviton(), true );
     
     // AudioTest
-    //console() << ++sceneId << ": AudioTest\n";
-    //addScene( new AudioTest() );
+    console() << ++sceneId << ": AudioTest\n";
+    addScene( new AudioTest() );
     
     // MovieTest
     //console() << ++sceneId << ": MovieTest\n";

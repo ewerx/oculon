@@ -52,6 +52,7 @@ private:
     {
         kStep =                 1024,
         kNumParticles =         (256 * kStep),
+        kFftBands =             512,
     };
     
 #if defined (FREEOCL_VERSION)
@@ -62,6 +63,7 @@ private:
         ARG_VEL_IN,
         ARG_VEL_OUT,
         ARG_COLOR,
+        ARG_FFT,
         ARG_COUNT,
         ARG_STEP,
         ARG_DT,
@@ -132,6 +134,7 @@ private:
     MSA::OpenCLBuffer       mClBufVel0;
     MSA::OpenCLBuffer       mClBufVel1;
     MSA::OpenCLBuffer       mClBufColor;
+    MSA::OpenCLBuffer       mClBufFft;
     bool                    mSwap;
     
     MSA::OpenCLBuffer       mClBufPos;
@@ -139,6 +142,7 @@ private:
     float4                  mPosAndMass[kNumParticles];
     float4                  mVel[kNumParticles];
     float4                  mColor[kNumParticles];
+    cl_float                mAudioFft[kFftBands];
     
     cl_uint                 mStep;
     cl_uint                 mNumParticles;
