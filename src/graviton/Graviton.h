@@ -97,6 +97,7 @@ private:
     
     enum eNodeFormation
     {
+        NODE_FORMATION_NONE,
         NODE_FORMATION_SYMMETRY,
         NODE_FORMATION_BLACKHOLE_STAR,
         NODE_FORMATION_COUNT
@@ -116,6 +117,7 @@ private:
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
+    eNodeFormation          mGravityNodeFormation;
     vector<tGravityNode>    mGravityNodes;
     
     bool                    mIsMousePressed;

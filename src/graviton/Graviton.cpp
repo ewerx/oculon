@@ -55,11 +55,10 @@ void Graviton::setup()
     
     mDamping = 1.0f;
     mGravity = 100.0f;
-    mEps = mFormationRadius * 0.5f;
+    mEps = 0.01f;//mFormationRadius * 0.5f;
     
-    mEnableGravityNodes = true;
     mNumNodes = 3;
-    resetGravityNodes(NODE_FORMATION_BLACKHOLE_STAR);
+    mGravityNodeFormation = NODE_FORMATION_NONE;
     
     
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
@@ -110,7 +109,8 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addText( "graviton", "label=`Graviton`" );
     params.addParam("Inv Square", &mUseInvSquareCalc );
     params.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=4" );
+    params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=3");//"enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}' " );
+    params.addParam("Node Formation", (int*)(&mGravityNodeFormation), "min=0 max=2");
     params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
     params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
     params.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
@@ -134,7 +134,7 @@ void Graviton::initParticles()
     
     for( size_t i = 0; i < kNumParticles; ++i )
     {
-        if( mEnableGravityNodes && i < mNumNodes)
+        if( (NODE_FORMATION_NONE != mGravityNodeFormation) && i < mNumNodes)
         {
             mPosAndMass[i].x = mGravityNodes[i].mPos.x;
             mPosAndMass[i].y = mGravityNodes[i].mPos.y;
@@ -351,6 +351,7 @@ void Graviton::initOpenCl()
 
 void Graviton::reset()
 {
+    resetGravityNodes(mGravityNodeFormation);
     initParticles();
     
     const size_t size = sizeof(float4) * kNumParticles;
@@ -403,7 +404,8 @@ void Graviton::update(double dt)
     //mAnimTime += mTimeSpeed;
     //mKernelUpdate->setArg(ARG_TIME, mAnimTime);
     
-    mStep = mEnableGravityNodes ? mNumNodes : (mNumParticles / kStep);
+    // mStep = # of particles that act as gravitational attractors
+    mStep = (NODE_FORMATION_NONE != mGravityNodeFormation) ? mNumNodes : (mNumParticles / kStep) / 4;
 
     mKernel->setArg(ARG_DT, mTimeStep);
     mKernel->setArg(ARG_COUNT, mNumParticles);
