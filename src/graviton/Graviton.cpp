@@ -577,6 +577,10 @@ void Graviton::draw()
         {
             gl::setMatrices( orbiterScene->getCamera() );
         }
+        else
+        {
+            gl::setMatrices( mApp->getMayaCam() );
+        }
     }
     else
     {
@@ -669,6 +673,8 @@ void Graviton::preRender()
 	}
     
 	glLineWidth(mLineWidth);
+    
+    gl::disableDepthWrite();
     
 }
 
