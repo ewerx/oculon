@@ -57,7 +57,7 @@ void Graviton::setup()
     mGravity = 100.0f;
     mEps = 0.01f;//mFormationRadius * 0.5f;
     
-    mNumNodes = 3;
+    mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_NONE;
     
     
@@ -567,7 +567,7 @@ void Graviton::draw()
 {
     glPushMatrix();
     
-    const bool orbiterCam = false;
+    const bool orbiterCam = true;
     
     if( orbiterCam )
     {
@@ -750,4 +750,26 @@ void Graviton::drawParticles()
     
     glPopMatrix();	
  */
+}
+
+void Graviton::drawDebug()
+{
+    if( NODE_FORMATION_NONE != mGravityNodeFormation )
+    {
+        gl::pushMatrices();
+    
+        CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+        gl::setMatrices(textCam);
+    
+    
+        for( int i = 0; i < mNumNodes; ++i )
+        {
+            Vec3f worldCoords( mPosAndMass[i].x, mPosAndMass[i].y, mPosAndMass[i].z );
+            Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getWindowWidth(), mApp->getWindowHeight());
+            
+            gl::drawString(toString(mGravityNodes[i].mMass),textCoords,ColorAf(1.0,1.0,1.0,0.4));
+        }
+    }
+    
+    gl::popMatrices();
 }

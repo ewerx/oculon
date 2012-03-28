@@ -195,7 +195,7 @@ void OculonApp::setupScenes()
     
     // Orbiter
     console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter() );
+    addScene( new Orbiter(), autoStart );
     
     // Binned
     //console() << ++sceneId << ": Binned\n";
@@ -211,7 +211,7 @@ void OculonApp::setupScenes()
     
     // Graviton
     console() << ++sceneId << ": Graviton\n";
-    addScene( new Graviton(), true );
+    //addScene( new Graviton() );
     
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
