@@ -109,8 +109,8 @@ void InfoPanel::render( Vec2f aWindowDim )
         gl::popMatrices();
         
         glDisable( GL_TEXTURE_2D );
-        //gl::enableDepthRead();
-        //gl::enableDepthWrite();
+        gl::enableDepthRead();
+        gl::enableDepthWrite();
     }
 }
 

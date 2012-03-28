@@ -400,6 +400,8 @@ void Orbiter::updateAudioResponse()
 
 void Orbiter::draw()
 {
+    gl::enableDepthWrite();
+    
     gl::pushMatrices();
     
     Matrix44d matrix = Matrix44d::identity();
@@ -606,6 +608,8 @@ void Orbiter::updateHud()
 void Orbiter::drawHud()
 {
     gl::pushMatrices();
+    
+    gl::enableAlphaBlending();
     
     CameraOrtho textCam(0.0f, mApp->getWindowWidth(), mApp->getWindowHeight(), 0.0f, 0.0f, 50.f);
     gl::setMatrices(textCam);
