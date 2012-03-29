@@ -12,6 +12,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
+#include "cinder/Timeline.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
 #include <vector>
@@ -246,18 +247,45 @@ private:
     //    //float             mBlurCenterWeight	= 10;
     //    //float             mOrigAlpha			= 1;
     //    int                 mFboScaleDown;
+    
+    CameraPersp         mCam;
+    
+    //Vec3f               mCamPosition;
+    enum eCamType
+    {
+        CAM_MAYA,
+        CAM_ORBITER,
+        CAM_SPIRAL,
+        
+        CAM_COUNT
+    };
+    eCamType            mCamType;
+    float               mCamRadius;
+    double              mCamAngle;
+    double              mCamLateralPosition;
+    double              mCamTurnRate;
+    float               mCamTranslateRate;
+    float               mCamMaxDistance;
+    Vec3f               mCamTarget;
+    
+    
+    
+    //Quatf               mCameraRotation;
 
 private:
-    void updateAudioResponse();
-    
     void initParticles();
     void initOpenCl();
+    
+    void resetGravityNodes(const eNodeFormation formation);
+    
     void updateParams();
+    void updateAudioResponse();
+    void updateCamera(const double dt);
         
     void preRender();
     void drawParticles();
     
-    void resetGravityNodes(const eNodeFormation formation);
+    
      
 private:
     

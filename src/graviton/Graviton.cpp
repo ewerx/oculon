@@ -60,6 +60,16 @@ void Graviton::setup()
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_NONE;
     
+    // camera
+    mCamRadius = mFormationRadius * 3.0f;
+    mCamAngle = 0.0f;
+    mCamMaxDistance = mFormationRadius * 3.0f;
+    mCamLateralPosition = -mCamMaxDistance;
+    mCamTarget = Vec3f::zero();
+    mCamTurnRate = 0.25f;
+    mCamTranslateRate = 10.f;
+    mCamType = CAM_SPIRAL;
+    
     
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
     {
@@ -115,6 +125,12 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
     params.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
     params.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
+    
+    params.addParam("Cam Type", (int*)(&mCamType), "min=0 max=2");
+    params.addParam("Cam Radius", &mCamRadius, "min=1.0");
+    params.addParam("Cam Distance", &mCamMaxDistance, "min=0.0");
+    params.addParam("Cam Turn Rate", &mCamTurnRate, "step=0.01");
+    params.addParam("Cam Slide Rate", &mCamTranslateRate, "");
     
     params.addParam("Point Size", &mPointSize, "");
     params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
@@ -401,6 +417,13 @@ void Graviton::reset()
 #endif
     
     mSwap = false;
+    
+    // camera
+    mCamAngle = 0.0f;
+    mCamLateralPosition = -mCamMaxDistance;
+    mCamTarget = Vec3f::zero();
+    mCam.setFov(60.0f);
+    mCam.setAspectRatio(mApp->getWindowAspectRatio());
 }
 
 void Graviton::resize()
@@ -492,6 +515,8 @@ void Graviton::update(double dt)
 	//mKernelUpdate->setArg(3, mDimensions);
 	//mKernelUpdate->run1D(kNumParticles);
     
+    updateCamera(dt);
+    
     //updateHud();
     
     // debug info
@@ -553,38 +578,61 @@ void Graviton::updateAudioResponse()
     
     if( fftBuffer )
     {
-    //for( int i = 0; i < bandCount; ++i )
-    {
-        
-    }
-    
         mClBufFft.write( fftBuffer, 0, sizeof(cl_float) * bandCount );
         mKernel->setArg( ARG_FFT, mClBufFft.getCLMem() );
     }
 }
 
+void Graviton::updateCamera(const double dt)
+{
+    mCamAngle += dt * mCamTurnRate;
+    mCamLateralPosition += dt * mCamTranslateRate;
+    if( ( (mCamLateralPosition > mCamMaxDistance) && mCamTranslateRate > 0.0f ) ||
+        ( (mCamLateralPosition < -mCamMaxDistance) && mCamTranslateRate < 0.0f ) )
+    {
+        mCamTranslateRate = -mCamTranslateRate;
+    }
+
+    Vec3f pos(mCamRadius * cos(mCamAngle),
+              mCamRadius * sin(mCamAngle),
+              mCamLateralPosition );
+    
+    Vec3f up( pos.x, pos.y, 0.0f );
+    up.normalize();
+    mCam.lookAt( pos, mCamTarget, up );
+    
+}
+
+//
+// MARK: Render
+//
 void Graviton::draw()
 {
     glPushMatrix();
     
-    const bool orbiterCam = true;
-    
-    if( orbiterCam )
+    switch( mCamType )
     {
-        Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
-        
-        if( orbiterScene && orbiterScene->isActive() )
+        case CAM_SPIRAL:
+            gl::setMatrices( mCam );
+            break;
+            
+        case CAM_ORBITER:
         {
-            gl::setMatrices( orbiterScene->getCamera() );
+            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
+            
+            if( orbiterScene && orbiterScene->isActive() )
+            {
+                gl::setMatrices( orbiterScene->getCamera() );
+            }
+            else
+            {
+                gl::setMatrices( mApp->getMayaCam() );
+            }
         }
-        else
-        {
+            break;
+            
+        default:
             gl::setMatrices( mApp->getMayaCam() );
-        }
-    }
-    else
-    {
-        gl::setMatrices( mApp->getMayaCam() );
     }
     
     //gl::enableDepthWrite( false );
