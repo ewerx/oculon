@@ -12,7 +12,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
-#include "Kiss.h"
+#include "KissFFT.h"
 
 using namespace ci;
 
@@ -33,7 +33,7 @@ public:
     unsigned int getFftBandCount() const { return mFftBandCount; }
     void setFftBandCount(const unsigned int count) { mFftBandCount = count; }
     
-    Kiss::Kiss& getFft() { return mFft; }
+    KissRef getFft() { return mFft; }
     
 private:
     audio::Input* mInput;
@@ -42,9 +42,9 @@ private:
     std::shared_ptr<float> mFftDataRef;
     unsigned int mFftBandCount;
     
-    // Analyzer
-	bool mFftInit;
-	Kiss::Kiss mFft;
+    // Kiss Analyzer
+	bool    mFftInit;
+	KissRef mFft;
     
 	// Data
 	int32_t mDataSize;

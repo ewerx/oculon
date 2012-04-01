@@ -50,6 +50,8 @@ void AudioInput::setup()
 	//initialize the audio Input, using the default input device
     //TODO: specify audio input, change at run-time
 	mInput = new audio::Input( /*devices.front()*/ );
+    
+    mFftInit = false;
 }
 
 void AudioInput::shutdown()
@@ -64,12 +66,12 @@ void AudioInput::shutdown()
 //
 void AudioInput::update()
 {
-    if( !mInput )
+    if( !mInput)
     {
         return;
     }
     
-    if( !mInput->isCapturing())
+    if( !mInput->isCapturing() )
     {
         //tell the input to start capturing audio
         mInput->start();
@@ -87,19 +89,19 @@ void AudioInput::update()
         
         //KISS
         {
-            if (mPcmBuffer->getInterleavedData())
+            if ( mPcmBuffer->getInterleavedData() )
             {
                 
                 // Get sample count
-                uint32_t mSampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
-                if (mSampleCount > 0)
-                {
+                uint32_t sampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
+                if ( sampleCount > 0 ) {
                     
-                    // Initialize analyzer, if needed
-                    if (!mFftInit)
+                    // Kiss is not initialized
+                    if ( !mFftInit ) 
                     {
+                        // Initialize analyzer
                         mFftInit = true;
-                        mFft.setDataSize(mSampleCount);
+                        mFft = Kiss::create( sampleCount );
                     }
                     
                     // Analyze data
@@ -107,12 +109,12 @@ void AudioInput::update()
                     {
                         mInputData = mPcmBuffer->getInterleavedData()->mData;
                         mInputSize = mPcmBuffer->getInterleavedData()->mSampleCount;
-                        mFft.setData(mInputData);
+                        mFft->setData( mInputData );
                     }
                     
                     // Get data
-                    mTimeData = mFft.getData();
-                    mDataSize = mFft.getDataSize();
+                    mTimeData = mFft->getData();
+					mDataSize = mFft->getBinSize();
 
                 }
             }

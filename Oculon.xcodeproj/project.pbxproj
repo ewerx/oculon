@@ -94,9 +94,6 @@
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
 		7C922869151C066400FB3773 /* BlobTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C922867151C066400FB3773 /* BlobTracker.cpp */; };
 		7C922870151C098D00FB3773 /* KinectController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C92286E151C098D00FB3773 /* KinectController.cpp */; };
-		7C94796415196481003F133E /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C94795F15196481003F133E /* kiss_fft.c */; };
-		7C94796515196481003F133E /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C94796115196481003F133E /* kiss_fftr.c */; };
-		7C9479681519648B003F133E /* Kiss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9479671519648B003F133E /* Kiss.cpp */; };
 		7C947969151965C5003F133E /* Nbody.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C560DE81506C4D2000B91B0 /* Nbody.cl */; };
 		7C94796A151965CA003F133E /* Nbody2.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8B6EF4150C3B9B004AE472 /* Nbody2.cl */; };
 		7C948F4D14B3A1E7003A3DA8 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */; };
@@ -116,6 +113,9 @@
 		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
 		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
+		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
+		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
+		7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C715290F49001391C9 /* KissFFT.cpp */; };
 		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
 		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
 /* End PBXBuildFile section */
@@ -349,13 +349,6 @@
 		7C922868151C066400FB3773 /* BlobTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobTracker.h; sourceTree = "<group>"; };
 		7C92286E151C098D00FB3773 /* KinectController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectController.cpp; sourceTree = "<group>"; };
 		7C92286F151C098D00FB3773 /* KinectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectController.h; sourceTree = "<group>"; };
-		7C94795E15196481003F133E /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
-		7C94795F15196481003F133E /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
-		7C94796015196481003F133E /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
-		7C94796115196481003F133E /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
-		7C94796215196481003F133E /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
-		7C94796315196481003F133E /* Kiss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kiss.h; sourceTree = "<group>"; };
-		7C9479671519648B003F133E /* Kiss.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Kiss.cpp; sourceTree = "<group>"; };
 		7C948F4414B3A1E7003A3DA8 /* earthmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earthmap1k.jpg; sourceTree = "<group>"; };
 		7C948F4514B3A1E7003A3DA8 /* jupitermap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupitermap.jpg; sourceTree = "<group>"; };
 		7C948F4614B3A1E7003A3DA8 /* marsmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marsmap1k.jpg; sourceTree = "<group>"; };
@@ -376,6 +369,13 @@
 		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
+		7CEB32C215290F49001391C9 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
+		7CEB32C315290F49001391C9 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
+		7CEB32C415290F49001391C9 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
+		7CEB32C515290F49001391C9 /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
+		7CEB32C615290F49001391C9 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
+		7CEB32C715290F49001391C9 /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
+		7CEB32C815290F49001391C9 /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
 		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
 		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
 		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
@@ -872,10 +872,10 @@
 			isa = PBXGroup;
 			children = (
 				7CF235E9151AE76600445AD8 /* Kinect */,
+				7CEB32C015290F49001391C9 /* KissFFT */,
 				7CF235A0151AE35700445AD8 /* OpenCV */,
 				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7C3738F814F7364300B24851 /* msalibs */,
-				7CD0B84514B6B68E002505C5 /* kiss */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 				7C52DFB314CCFC2F008507D3 /* osc */,
 			);
@@ -1010,35 +1010,6 @@
 			path = bps;
 			sourceTree = "<group>";
 		};
-		7C94795C15196481003F133E /* include */ = {
-			isa = PBXGroup;
-			children = (
-				7C94795D15196481003F133E /* kiss */,
-				7C94796315196481003F133E /* Kiss.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		7C94795D15196481003F133E /* kiss */ = {
-			isa = PBXGroup;
-			children = (
-				7C94795E15196481003F133E /* _kiss_fft_guts.h */,
-				7C94795F15196481003F133E /* kiss_fft.c */,
-				7C94796015196481003F133E /* kiss_fft.h */,
-				7C94796115196481003F133E /* kiss_fftr.c */,
-				7C94796215196481003F133E /* kiss_fftr.h */,
-			);
-			path = kiss;
-			sourceTree = "<group>";
-		};
-		7C9479661519648B003F133E /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7C9479671519648B003F133E /* Kiss.cpp */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
 		7C948F4314B3A1E7003A3DA8 /* orbiter */ = {
 			isa = PBXGroup;
 			children = (
@@ -1092,14 +1063,37 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		7CD0B84514B6B68E002505C5 /* kiss */ = {
+		7CEB32C015290F49001391C9 /* KissFFT */ = {
 			isa = PBXGroup;
 			children = (
-				7C9479661519648B003F133E /* src */,
-				7C94795C15196481003F133E /* include */,
+				7CEB32C115290F49001391C9 /* kiss */,
+				7CEB32C715290F49001391C9 /* KissFFT.cpp */,
+				7CEB32C815290F49001391C9 /* KissFFT.h */,
 			);
-			name = kiss;
-			path = ../sdks/cinder/blocks/kiss;
+			name = KissFFT;
+			path = ../sdks/cinder/blocks/KissFft/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		7CEB32C115290F49001391C9 /* kiss */ = {
+			isa = PBXGroup;
+			children = (
+				7CEB32C215290F49001391C9 /* _kiss_fft_guts.h */,
+				7CEB32C315290F49001391C9 /* kiss_fft.c */,
+				7CEB32C415290F49001391C9 /* kiss_fft.h */,
+				7CEB32C515290F49001391C9 /* kiss_fftr.c */,
+				7CEB32C615290F49001391C9 /* kiss_fftr.h */,
+			);
+			path = kiss;
+			sourceTree = "<group>";
+		};
+		7CEF0F791528FEBB000DF027 /* SimpleGUI */ = {
+			isa = PBXGroup;
+			children = (
+				7CEF0F7A1528FEBB000DF027 /* include */,
+				7CEF0FC31528FEBB000DF027 /* src */,
+			);
+			name = SimpleGUI;
+			path = ../sdks/cinder/blocks/MowaLibs/SimpleGUI;
 			sourceTree = SOURCE_ROOT;
 		};
 		7CF235A0151AE35700445AD8 /* OpenCV */ = {
@@ -1315,13 +1309,14 @@
 				7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */,
 				7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */,
 				7C560DEE1506E22F000B91B0 /* Graviton.cpp in Sources */,
-				7C94796415196481003F133E /* kiss_fft.c in Sources */,
-				7C94796515196481003F133E /* kiss_fftr.c in Sources */,
-				7C9479681519648B003F133E /* Kiss.cpp in Sources */,
 				7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */,
 				7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */,
 				7C922869151C066400FB3773 /* BlobTracker.cpp in Sources */,
 				7C922870151C098D00FB3773 /* KinectController.cpp in Sources */,
+				7CEF0FE71528FEBB000DF027 /* SimpleGUI.cpp in Sources */,
+				7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */,
+				7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */,
+				7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1380,7 +1375,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\"";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\"";
 			};
 			name = Debug;
 		};
@@ -1410,7 +1405,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/BanTheRewind/blocks/kiss/include $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\"";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\"";
 			};
 			name = Release;
 		};

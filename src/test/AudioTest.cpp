@@ -10,6 +10,7 @@
 #include "OculonApp.h"//TODO: fix this dependency
 #include "AudioInput.h"
 #include "AudioTest.h"
+#include "KissFFT.h"
 
 //AudioTest::AudioTest()
 //{
@@ -63,9 +64,9 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     if( useKiss )
     {
         // Get data
-		float * mFreqData = audioInput.getFft().getAmplitude();
-		float * mTimeData = audioInput.getFft().getData();
-		int32_t mDataSize = audioInput.getFft().getBinSize();
+		float * mFreqData = audioInput.getFft()->getAmplitude();
+		float * mTimeData = audioInput.getFft()->getData();
+		int32_t mDataSize = audioInput.getFft()->getBinSize();
         
 		// Get dimensions
 		float mScale = ((float)getWindowWidth() - 20.0f) / (float)mDataSize;
