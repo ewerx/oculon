@@ -19,6 +19,7 @@
 		7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
 		7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
+		7C232C5A152831FA00B671A5 /* OpenNI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C232C58152831F900B671A5 /* OpenNI.cpp */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
 		7C3738F514F7359B00B24851 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738EA14F7359B00B24851 /* Color.cpp */; };
@@ -186,6 +187,8 @@
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
 		7C1C5CC614FB13D3002CE80B /* glitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glitter.png; sourceTree = "<group>"; };
+		7C232C58152831F900B671A5 /* OpenNI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenNI.cpp; sourceTree = SOURCE_ROOT; };
+		7C232C59152831FA00B671A5 /* OpenNI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenNI.h; sourceTree = SOURCE_ROOT; };
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
 		7C3738DA14F36A4C00B24851 /* oculon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oculon.png; sourceTree = "<group>"; };
 		7C3738E814F7359B00B24851 /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
@@ -410,6 +413,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C232C5B1528320200B671A5 /* OpenNI */ = {
+			isa = PBXGroup;
+			children = (
+				7C232C58152831F900B671A5 /* OpenNI.cpp */,
+				7C232C59152831FA00B671A5 /* OpenNI.h */,
+			);
+			name = OpenNI;
+			sourceTree = "<group>";
+		};
 		7C3738E414F7359B00B24851 /* MSACore */ = {
 			isa = PBXGroup;
 			children = (
@@ -871,6 +883,7 @@
 		7C865570148C2784000E00B6 /* blocks */ = {
 			isa = PBXGroup;
 			children = (
+				7C232C5B1528320200B671A5 /* OpenNI */,
 				7CF235E9151AE76600445AD8 /* Kinect */,
 				7CF235A0151AE35700445AD8 /* OpenCV */,
 				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
@@ -1322,6 +1335,7 @@
 				7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */,
 				7C922869151C066400FB3773 /* BlobTracker.cpp in Sources */,
 				7C922870151C098D00FB3773 /* KinectController.cpp in Sources */,
+				7C232C5A152831FA00B671A5 /* OpenNI.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
