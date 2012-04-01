@@ -18,6 +18,7 @@
 #include "Scene.h"
 #include "MidiMap.h"
 #include "BinnedParticleSystem.h"
+#include "BlobTracker.h"
 
 using namespace ci;
 using std::vector;
@@ -128,6 +129,10 @@ private:
     };
     
     std::queue<tRepulsionForce> mQueuedForces;
+    
+    //TEMP
+    bool                mEnableBlobTracker;
+    BlobTracker         mBlobTracker;
 };
 
 #endif // __MAGNETOSPHERE_H__

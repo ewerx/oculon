@@ -44,7 +44,7 @@ void Binned::setup()
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
     mBounceOffWalls = true;
-    mCircularWall = true;
+    mCircularWall = false;
 	mParticleNeighborhood = 14;
     
     mCircularWallRadius = (mApp->getViewportWidth()/2)*1.2f;
@@ -77,7 +77,10 @@ void Binned::setup()
     
     mParticleSystem.setForceColor( &mForceColor );
     
-    mIsOrbiterModeEnabled = true;
+    mIsOrbiterModeEnabled = false;
+    
+    mBlobTracker.setup( mApp->getKinectController() );
+    mEnableBlobTracker = true;
     
     reset();
 }
@@ -196,6 +199,11 @@ void Binned::setupParams(params::InterfaceGl& params)
 
 void Binned::update(double dt)
 {
+    if( mEnableBlobTracker )
+    {
+        mBlobTracker.update();
+    }
+    
 	mParticleSystem.setTimeStep(mTimeStep);
     
     // debug info
@@ -267,6 +275,17 @@ void Binned::draw()
         const float force = mMaxForce;
         
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
+    }
+    
+    if( mEnableBlobTracker )
+    {
+        const float radius = mMaxRadius;
+        const float force = mMaxForce;
+        const Vec3f& blobPosition = mBlobTracker.getTargetPosition();
+        glColor3f(ci::Color::white());
+        gl::drawSphere(blobPosition, 10.0f);
+        
+        mParticleSystem.addRepulsionForce(blobPosition.x, blobPosition.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
     
     switch (mApplyForcePattern) 
