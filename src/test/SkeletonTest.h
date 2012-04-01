@@ -26,6 +26,7 @@ public:
     
     // inherited from Scene
     void setup();
+    void resize();
     //void setupParams(params::InterfaceGl& params);
     //void reset();
     void update(double dt);
@@ -33,11 +34,13 @@ public:
     void drawDebug();
     bool handleKeyDown(const KeyEvent& keyEvent);
 
-    void handleHandBegan(HandEvent event);
-    void handleHandMoved(HandEvent event);
-    void handleHandEnded(HandEvent event);
-    void handleGestureRecognized(GestureEvent event);
-    void handleGestureProcessed(GestureEvent event);
+
+private:
+    void			drawKinectImages();
+    void			drawSkeletons(int deviceID, ci::Rectf rect);
+    void			resizeImages();
+    void			mirrorImages();
+    unsigned char*	getImageData( int deviceID, _2RealGenerator imageType, int& imageWidth, int& imageHeight, int& bytePerPixel );
     
 private:
     

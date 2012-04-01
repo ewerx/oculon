@@ -110,6 +110,7 @@ private: // members
     
     KinectController        mKinectController;
     bool                    mEnableKinect;
+    bool                    mEnableOpenNI;
     
     Vec2f                   mMousePos;
     

@@ -37,6 +37,7 @@
 #include "MovieTest.h"
 #include "ShaderTest.h"
 #include "KinectTest.h"
+#include "SkeletonTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -56,7 +57,8 @@ void OculonApp::prepareSettings( Settings *settings )
     mEnableMindWave     = false;
     mEnableOscServer    = false;
     mEnableSyphonServer = false;
-    mEnableKinect       = true;
+    mEnableKinect       = false;
+    mEnableOpenNI       = true;
 }
 
 void OculonApp::setup()
@@ -194,12 +196,12 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     // Orbiter
-    console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter(), autoStart );
+    //console() << ++sceneId << ": Orbiter\n";
+    //addScene( new Orbiter(), autoStart );
     
     // Binned
-    //console() << ++sceneId << ": Binned\n";
-    //addScene( new Binned() );
+    console() << ++sceneId << ": Binned\n";
+    addScene( new Binned() );
     
     // Pulsar
     //console() << ++sceneId << ": Pulsar\n";
@@ -210,8 +212,8 @@ void OculonApp::setupScenes()
     //addScene( new Magnetosphere() );
     
     // Graviton
-    console() << ++sceneId << ": Graviton\n";
-    addScene( new Graviton(), autoStart );
+    //console() << ++sceneId << ": Graviton\n";
+    //addScene( new Graviton(), autoStart );
     
     // AudioTest
     console() << ++sceneId << ": AudioTest\n";
@@ -228,8 +230,12 @@ void OculonApp::setupScenes()
     if( mEnableKinect )
     {
         // KinectTest
-        //console() << ++sceneId << ": KinectTest\n";
-        //addScene( new KinectTest(), autoStart );
+        console() << ++sceneId << ": KinectTest\n";
+        addScene( new KinectTest(), autoStart );
+    }
+    if( mEnableOpenNI )
+    {
+        addScene( new SkeletonTest(), autoStart );
     }
     
     if( mEnableMindWave )
