@@ -377,7 +377,6 @@
 		7CEB32C615290F49001391C9 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
 		7CEB32C715290F49001391C9 /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
 		7CEB32C815290F49001391C9 /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
-		7CEF0F7B1528FEBB000DF027 /* GLQuadRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLQuadRender.h; sourceTree = "<group>"; };
 		7CEF0F7C1528FEBB000DF027 /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
 		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
@@ -617,9 +616,9 @@
 		7C39956315240B5A000CAF97 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7C39956C15240B5B000CAF97 /* libcinder.a */,
-				7C39956E15240B5B000CAF97 /* libcinder-iphone.a */,
-				7C39957015240B5B000CAF97 /* libcinder-iphone-sim.a */,
+				7C39956C15240B5B000CAF97 /* libcinder_d.a */,
+				7C39956E15240B5B000CAF97 /* libcinder-iphone_d.a */,
+				7C39957015240B5B000CAF97 /* libcinder-iphone-sim_d.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1104,7 +1103,6 @@
 		7CEF0F7A1528FEBB000DF027 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				7CEF0F7B1528FEBB000DF027 /* GLQuadRender.h */,
 				7CEF0F7C1528FEBB000DF027 /* SimpleGUI.h */,
 			);
 			path = include;
@@ -1207,21 +1205,21 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		7C39956C15240B5B000CAF97 /* libcinder.a */ = {
+		7C39956C15240B5B000CAF97 /* libcinder_d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libcinder_d.a;
 			remoteRef = 7C39956B15240B5B000CAF97 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		7C39956E15240B5B000CAF97 /* libcinder-iphone.a */ = {
+		7C39956E15240B5B000CAF97 /* libcinder-iphone_d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libcinder-iphone_d.a";
 			remoteRef = 7C39956D15240B5B000CAF97 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		7C39957015240B5B000CAF97 /* libcinder-iphone-sim.a */ = {
+		7C39957015240B5B000CAF97 /* libcinder-iphone-sim_d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libcinder-iphone-sim_d.a";
