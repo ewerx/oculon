@@ -116,6 +116,7 @@
 		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
 		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
 		7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C715290F49001391C9 /* KissFFT.cpp */; };
+		7CEF0FE71528FEBB000DF027 /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */; };
 		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
 		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
 /* End PBXBuildFile section */
@@ -376,6 +377,9 @@
 		7CEB32C615290F49001391C9 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
 		7CEB32C715290F49001391C9 /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
 		7CEB32C815290F49001391C9 /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
+		7CEF0F7B1528FEBB000DF027 /* GLQuadRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLQuadRender.h; sourceTree = "<group>"; };
+		7CEF0F7C1528FEBB000DF027 /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
+		7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
 		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
 		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
 		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
@@ -871,13 +875,14 @@
 		7C865570148C2784000E00B6 /* blocks */ = {
 			isa = PBXGroup;
 			children = (
+				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
+				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7CF235E9151AE76600445AD8 /* Kinect */,
 				7CEB32C015290F49001391C9 /* KissFFT */,
 				7CF235A0151AE35700445AD8 /* OpenCV */,
-				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7C3738F814F7364300B24851 /* msalibs */,
-				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 				7C52DFB314CCFC2F008507D3 /* osc */,
+				7CEF0F791528FEBB000DF027 /* SimpleGUI */,
 			);
 			name = blocks;
 			sourceTree = "<group>";
@@ -1095,6 +1100,23 @@
 			name = SimpleGUI;
 			path = ../sdks/cinder/blocks/MowaLibs/SimpleGUI;
 			sourceTree = SOURCE_ROOT;
+		};
+		7CEF0F7A1528FEBB000DF027 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				7CEF0F7B1528FEBB000DF027 /* GLQuadRender.h */,
+				7CEF0F7C1528FEBB000DF027 /* SimpleGUI.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		7CEF0FC31528FEBB000DF027 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
 		};
 		7CF235A0151AE35700445AD8 /* OpenCV */ = {
 			isa = PBXGroup;
