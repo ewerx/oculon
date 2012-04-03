@@ -116,6 +116,10 @@
 		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
 		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
 		7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C715290F49001391C9 /* KissFFT.cpp */; };
+		7CEB3317152ACC1A001391C9 /* motionBlur.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB3315152ACC1A001391C9 /* motionBlur.frag */; };
+		7CEB3318152ACC1A001391C9 /* passThru.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB3316152ACC1A001391C9 /* passThru.vert */; };
+		7CEB3319152AD7D1001391C9 /* motionBlur.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB3315152ACC1A001391C9 /* motionBlur.frag */; };
+		7CEB331A152AD7D1001391C9 /* passThru.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB3316152ACC1A001391C9 /* passThru.vert */; };
 		7CEF0FE71528FEBB000DF027 /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */; };
 		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
 		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
@@ -377,6 +381,8 @@
 		7CEB32C615290F49001391C9 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
 		7CEB32C715290F49001391C9 /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
 		7CEB32C815290F49001391C9 /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
+		7CEB3315152ACC1A001391C9 /* motionBlur.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = motionBlur.frag; sourceTree = "<group>"; };
+		7CEB3316152ACC1A001391C9 /* passThru.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThru.vert; sourceTree = "<group>"; };
 		7CEF0F7C1528FEBB000DF027 /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
 		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
@@ -955,6 +961,8 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7CEB3315152ACC1A001391C9 /* motionBlur.frag */,
+				7CEB3316152ACC1A001391C9 /* passThru.vert */,
 				7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */,
 				7C1749BB1505DA2800BFC351 /* gaussianBlur_frag.glsl */,
 				7C1749581505ADF600BFC351 /* process_frag.glsl */,
@@ -1233,6 +1241,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CEB3319152AD7D1001391C9 /* motionBlur.frag in Resources */,
+				7CEB331A152AD7D1001391C9 /* passThru.vert in Resources */,
 				7C947969151965C5003F133E /* Nbody.cl in Resources */,
 				7C94796A151965CA003F133E /* Nbody2.cl in Resources */,
 				7C1C5CC814FC618B002CE80B /* blur2_frag.glsl in Resources */,
@@ -1337,6 +1347,8 @@
 				7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */,
 				7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */,
 				7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */,
+				7CEB3317152ACC1A001391C9 /* motionBlur.frag in Sources */,
+				7CEB3318152ACC1A001391C9 /* passThru.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

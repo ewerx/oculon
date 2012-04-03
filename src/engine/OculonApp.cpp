@@ -75,11 +75,6 @@ void OculonApp::setup()
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
-    // render
-    //gl::enableDepthWrite();
-	//gl::enableDepthRead();
-	//gl::enableAlphaBlending();
-    //glDisable( GL_TEXTURE_2D );
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
@@ -94,25 +89,7 @@ void OculonApp::setup()
     // params
     mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
     //mParams.setOptions("","position='10 600'");
-    //mParams.addParam( "Cube Color", &mColor, "" );
-    //mParams.addSeparator();	
-	//mParams.addParam( "Light Direction", &mLightDirection, "" );
-    
-    //mParams.addText( "text", "label=`Temp`" );
-    //mParams.addParam( "Cube Size", &mObjSize, "min=0.1 max=20.5 step=0.5 keyIncr=z keyDecr=Z" );
-    //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
-    //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
-    //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
-    //mParams.hide();
-    
-    // load assets
-    //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
-	//gl::Texture earthNormal		= gl::Texture( loadImage( loadResource( RES_EARTHNORMAL ) ) );
-	//gl::Texture earthMask		= gl::Texture( loadImage( loadResource( RES_EARTHMASK ) ) );
-	//earthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
-	//earthNormal.setWrap( GL_REPEAT, GL_REPEAT );
-	//earthMask.setWrap( GL_REPEAT, GL_REPEAT );
-    //mSphereShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_EARTH_FRAG ) );
+
     
     // audio input
     mAudioInput.setup();
@@ -121,7 +98,7 @@ void OculonApp::setup()
     {
         mMindWave.setup();
     }
-    mMidiInput.setEnabled(false);
+    mMidiInput.setEnabled(false);//TODO: refactor
     
     if( mEnableOscServer )
     {
@@ -180,7 +157,7 @@ void OculonApp::addScene(Scene* scene, bool startActive)
         scene->toggleActiveVisible();
     }
 }
-
+// TODO: Scenes
 void OculonApp::setupScenes()
 {
     console() << "[main] creating scenes...\n";
@@ -194,8 +171,8 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     // Orbiter
-    console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter(), autoStart );
+    //console() << ++sceneId << ": Orbiter\n";
+    //addScene( new Orbiter(), autoStart );
     
     // Binned
     //console() << ++sceneId << ": Binned\n";
@@ -222,8 +199,8 @@ void OculonApp::setupScenes()
     //addScene( new MovieTest() );
     
     // ShaderTest
-    //console() << ++sceneId << ": ShaderTest\n";
-    //addScene( new ShaderTest() );
+    console() << ++sceneId << ": ShaderTest\n";
+    addScene( new ShaderTest() );
     
     if( mEnableKinect )
     {
