@@ -102,13 +102,21 @@ __kernel void gravity(__global const float4 *in_pos,
         
         if( flags & PARTICLE_FLAGS_INVSQR )
         {
-            const float d2 = d.x*d.x + d.y*d.y + d.z*d.z + eps;
-            //float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
-            float f = /*in_vel[i].w */ gravity * in_vel[j].w / d2;//* invr*invr*invr;
+            // inverse sqrt
+            float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
+            float f = /*in_vel[i].w */ gravity * in_vel[j].w * (invr*invr*invr);
+            
             a += f*d;
         }
         else
         {
+            // distance squared
+            const float d2 = d.x*d.x + d.y*d.y + d.z*d.z + eps;
+            float f = /*in_vel[i].w */ gravity * in_vel[j].w / d2;
+            a += f*d;
+            
+            // this is very slow
+            /*
             d.w = 0.0f;
             float d2 = dot(d, d);
             d /= sqrt(d2);
@@ -117,6 +125,7 @@ __kernel void gravity(__global const float4 *in_pos,
             d.w = 0.0f;
             d2 = max(d2, 1e0f);
             a += (1.0f / d2) * d;
+            */
         }
 	}
     
