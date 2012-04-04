@@ -69,17 +69,13 @@ void OculonApp::setup()
     mIsCapturingFrames = false;
     mSaveNextFrame = false;
     mIsCapturingHighRes = false;
+    mCaptureDebugOutput = false;
     static const int FBO_WIDTH = 2240;
     static const int FBO_HEIGHT = 2240;
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
-    // render
-    //gl::enableDepthWrite();
-	//gl::enableDepthRead();
-	//gl::enableAlphaBlending();
-    //glDisable( GL_TEXTURE_2D );
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
@@ -94,25 +90,7 @@ void OculonApp::setup()
     // params
     mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
     //mParams.setOptions("","position='10 600'");
-    //mParams.addParam( "Cube Color", &mColor, "" );
-    //mParams.addSeparator();	
-	//mParams.addParam( "Light Direction", &mLightDirection, "" );
-    
-    //mParams.addText( "text", "label=`Temp`" );
-    //mParams.addParam( "Cube Size", &mObjSize, "min=0.1 max=20.5 step=0.5 keyIncr=z keyDecr=Z" );
-    //mParams.addParam( "Gravity Constant", &Orbiter::sGravityConstant, "min=1.0 max=9999999999.0 step=1.0 keyIncr=g keyDecr=G" );
-    //mParams.addParam( "Mass Ratio", &mOrbiter.mMassRatio, "min=1.0 max=9999999999.0 step=1.0 keyIncr=m keyDecr=M" );
-    //mParams.addParam( "Escape Velocity", &mOrbiter.mEscapeVelocity, "min=-99999999999.0 max=9999999999.0 step=0.1 keyIncr=e keyDecr=E" );
-    //mParams.hide();
-    
-    // load assets
-    //gl::Texture earthDiffuse	= gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
-	//gl::Texture earthNormal		= gl::Texture( loadImage( loadResource( RES_EARTHNORMAL ) ) );
-	//gl::Texture earthMask		= gl::Texture( loadImage( loadResource( RES_EARTHMASK ) ) );
-	//earthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
-	//earthNormal.setWrap( GL_REPEAT, GL_REPEAT );
-	//earthMask.setWrap( GL_REPEAT, GL_REPEAT );
-    //mSphereShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_EARTH_FRAG ) );
+
     
     // audio input
     mAudioInput.setup();
@@ -121,7 +99,7 @@ void OculonApp::setup()
     {
         mMindWave.setup();
     }
-    mMidiInput.setEnabled(false);
+    mMidiInput.setEnabled(false);//TODO: refactor
     
     if( mEnableOscServer )
     {
@@ -135,9 +113,6 @@ void OculonApp::setup()
     
     // syphon
     mScreenSyphon.setName("Oculon");
-    
-    // debug
-	//glDisable( GL_TEXTURE_2D );
     
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
@@ -180,7 +155,7 @@ void OculonApp::addScene(Scene* scene, bool startActive)
         scene->toggleActiveVisible();
     }
 }
-
+// TODO: Scenes
 void OculonApp::setupScenes()
 {
     console() << "[main] creating scenes...\n";
@@ -194,8 +169,8 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     // Orbiter
-    console() << ++sceneId << ": Orbiter\n";
-    addScene( new Orbiter(), autoStart );
+    //console() << ++sceneId << ": Orbiter\n";
+    //addScene( new Orbiter(), autoStart );
     
     // Binned
     //console() << ++sceneId << ": Binned\n";
@@ -222,8 +197,8 @@ void OculonApp::setupScenes()
     //addScene( new MovieTest() );
     
     // ShaderTest
-    //console() << ++sceneId << ": ShaderTest\n";
-    //addScene( new ShaderTest() );
+    console() << ++sceneId << ": ShaderTest\n";
+    addScene( new ShaderTest() );
     
     if( mEnableKinect )
     {
@@ -517,22 +492,47 @@ void OculonApp::update()
     mInfoPanel.update();
 }
 
-void OculonApp::draw()
+void OculonApp::drawToScreen()
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    drawScenes();
+}
+
+void OculonApp::drawToFbo()
+{
+    Area prevViewport = gl::getViewport();
+    // bind the framebuffer - now everything we draw will go there
+    mFbo.bindFramebuffer();
     
-    if( mIsCapturingHighRes )
-    {
-        // bind the framebuffer - now everything we draw will go there
-        mFbo.bindFramebuffer();
-        
-        // setup the viewport to match the dimensions of the FBO
-        gl::setViewport( mFbo.getBounds() );
-        
-        gl::clear( Color(0.0f,0.0f,0.0f) );
-    }
+    // setup the viewport to match the dimensions of the FBO
+    gl::setViewport( mFbo.getBounds() );
+    gl::clear( Color(0.0f,0.0f,0.0f) );
     
-    // render scenes
+    drawScenes();
+    
+    mFbo.unbindFramebuffer();
+    
+    gl::setViewport( prevViewport );
+    
+}
+
+void OculonApp::drawFromFbo()
+{
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
+    gl::pushMatrices();
+    glEnable(GL_TEXTURE_2D);
+    // draw the captured texture back to screen
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
+    float width = getWindowWidth();
+    float height = getWindowHeight();
+    gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
+    gl::popMatrices();
+
+}
+
+void OculonApp::drawScenes()
+{
     glPushMatrix();
     {
         // render scenes
@@ -549,10 +549,24 @@ void OculonApp::draw()
         }
     }
     glPopMatrix();
+}
+
+void OculonApp::draw()
+{
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     if( mIsCapturingHighRes )
     {
-        mFbo.unbindFramebuffer();
+        drawToFbo();
+    }
+    else
+    {
+        drawToScreen();
+        
+        if( mCaptureDebugOutput ) 
+        {
+            drawDebug();
+        }
     }
     
     // capture video
@@ -564,58 +578,18 @@ void OculonApp::draw()
     // capture frames
     if( mIsCapturingFrames )
     {
-        ++mFrameCaptureCount;
-        
-        if( mIsCapturingHighRes )
-        {
-#ifdef TILED_RENDER
-            //HACKHACK
-            mIsCapturingFrames = false;
-            
-            gl::TileRender tr( 2200, 2200 );
-            //CameraPersp cam;
-            //cam.lookAt( mCam.getEyePoint(), mCam.getPos() );
-            //cam.setPerspective( 60.0f, tr.getImageAspectRatio(), 1, 20000 );
-            tr.setMatricesWindowPersp( getWindowWidth(), getWindowHeight() );
-            while( tr.nextTile() )
-            {
-                draw();
-            }
-            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", tr.getSurface() );
-            
-            //HACKHACK
-            mIsCapturingFrames = true;
-#endif
-            //mFbo.unbindFramebuffer();
-            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
-        }
-        else
-        {
-            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
-        }
+        captureFrames();
     }
     
     // screenshot
     if( mSaveNextFrame )
     {
-        mSaveNextFrame = false;
-        fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
-		writeImage( p, copyWindowSurface() );
+        saveScreenshot();
 	}
     
     if( mIsCapturingHighRes )
     {
-        gl::enableDepthRead();
-        gl::enableDepthWrite();
-        gl::pushMatrices();
-        glEnable(GL_TEXTURE_2D);
-        // draw the captured texture back to screen
-        glColor4f(1.0f,1.0f,1.0f,1.0f);
-        gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
-        float width = getWindowWidth();
-        float height = getWindowHeight();
-        gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
-        gl::popMatrices();
+        drawFromFbo();
     }
     
     if( mEnableSyphonServer )
@@ -623,9 +597,14 @@ void OculonApp::draw()
         mScreenSyphon.publishScreen(); //publish the screen
     }
     
-    //TODO: option to capture debug output
-    // debug
-    // render scenes
+    if( !mCaptureDebugOutput )
+    {
+        drawDebug();
+    }
+}
+
+void OculonApp::drawDebug()
+{
     gl::pushMatrices();
     gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
     for (SceneList::iterator sceneIt = mScenes.begin(); 
@@ -646,6 +625,53 @@ void OculonApp::draw()
     {
         params::InterfaceGl::draw();
         mParams.draw();
+    }
+}
+
+void OculonApp::captureFrames()
+{
+    ++mFrameCaptureCount;
+    
+    if( mIsCapturingHighRes )
+    {
+#ifdef TILED_RENDER
+        //HACKHACK
+        mIsCapturingFrames = false;
+        
+        gl::TileRender tr( 2200, 2200 );
+        //CameraPersp cam;
+        //cam.lookAt( mCam.getEyePoint(), mCam.getPos() );
+        //cam.setPerspective( 60.0f, tr.getImageAspectRatio(), 1, 20000 );
+        tr.setMatricesWindowPersp( getWindowWidth(), getWindowHeight() );
+        while( tr.nextTile() )
+        {
+            draw();
+        }
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", tr.getSurface() );
+        
+        //HACKHACK
+        mIsCapturingFrames = true;
+#endif
+        
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
+    }
+    else
+    {
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+    }
+}
+
+void OculonApp::saveScreenshot()
+{
+    mSaveNextFrame = false;
+    fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
+    if( mIsCapturingHighRes )
+    {
+        writeImage( p, mFbo.getTexture() );
+    }
+    else
+    {
+        writeImage( p, copyWindowSurface() );
     }
 }
 
