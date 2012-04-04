@@ -22,6 +22,7 @@
 #define RES_BLUR_FRAG               CINDER_RESOURCE( ../resources/shaders/, gaussianBlur_frag.glsl, 129, GLSL )
 
 #define RES_MOTIONBLUR_FRAG         CINDER_RESOURCE( ../resources/shaders/, motionBlur.frag, 129, GLSL )
+#define RES_PASSTHRU2_VERT          CINDER_RESOURCE( ../resources/shaders/, passThru.vert, 129, GLSL )
 
 // orbiter textures
 #define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )

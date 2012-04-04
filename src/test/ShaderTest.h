@@ -15,6 +15,7 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
+#include "MotionBlurRenderer.h"
 
 //
 // Audio input tests
@@ -32,6 +33,9 @@ public:
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
+    //void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
+	void handleMouseDrag( const ci::app::MouseEvent& event );
+    
     
 private:
     void updateBlur();
@@ -55,6 +59,8 @@ private:
     bool                mUseFbo;
     float               mBlurAmount;
     gl::Texture         mTexture;
+    
+    MotionBlurRenderer  mMotionBlurRenderer;
     
 };
 

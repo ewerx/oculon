@@ -27,13 +27,15 @@ ShaderTest::~ShaderTest()
 
 void ShaderTest::setup()
 {
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &ShaderTest::drawScene, this ) );
+    
     mUseFbo = false;
     // setup FBO
     gl::Fbo::Format format;
     //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     const int fboWidth = mApp->getWindowWidth();
     const int fboHeight = mApp->getWindowHeight();
-    format.enableMipmapping(false);
+    //format.enableMipmapping(false);
     format.enableDepthBuffer(false);
 	format.setCoverageSamples(8);
 	format.setSamples(4);
@@ -50,7 +52,7 @@ void ShaderTest::setup()
     {
 		//mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
         //mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_BLUR_FRAG ) );
-        mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_MOTIONBLUR_FRAG ) );
+        mShader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_MOTIONBLUR_FRAG ) );
 	}
 	catch( gl::GlslProgCompileExc &exc ) 
     {
@@ -84,7 +86,7 @@ void ShaderTest::setup()
 
 void ShaderTest::update(double dt)
 {
-    mPos += mVel * dt;
+    //mPos += mVel * dt;
     
     if( mPos.x > (mApp->getWindowWidth()-100) || mPos.x < 0.0f )
     {
@@ -190,11 +192,12 @@ void ShaderTest::draw()
         gl::disableDepthRead();
         gl::disableDepthWrite();
         
+        /*
         Area viewport = gl::getViewport();
         //gl::setMatricesWindow(getWindowSize());
         //gl::setViewport(getWindowBounds());
         
-        /****** DRAW SCENE ONTO FBO ******/
+        // ****** DRAW SCENE ONTO FBO ******
         
         // Bind FBO to draw on it
         gl::setViewport(mFbo[mFboIndex].getBounds());
@@ -211,7 +214,7 @@ void ShaderTest::draw()
         // Advance FBO index
         mFboIndex = (mFboIndex + 1) % FBO_COUNT;
         
-        /****** DRAW GLSL MOTION BLUR ******/
+        // ****** DRAW GLSL MOTION BLUR ******
         
         // Set up window
         gl::clear(ColorAf::black());
@@ -239,6 +242,9 @@ void ShaderTest::draw()
             mFbo[i].unbindTexture();
         }
         gl::setViewport( viewport );
+        */
+        
+        mMotionBlurRenderer.draw();
     }
     else
     {
@@ -250,7 +256,7 @@ void ShaderTest::draw()
 
 void ShaderTest::drawScene()
 {
-    gl::setMatricesWindow(getWindowSize());
+    gl::setMatricesWindowPersp(getWindowSize());
     glColor4f(1.0f,0.0f,0.0f,1.0f);
     const float radius = 100.f;
     gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + radius, mPos.y + radius) );
@@ -271,4 +277,9 @@ bool ShaderTest::handleKeyDown(const KeyEvent& keyEvent)
     }
     
     return handled;    
+}
+
+void ShaderTest::handleMouseDrag( const ci::app::MouseEvent& event )
+{
+    mPos = event.getPos();
 }

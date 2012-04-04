@@ -112,6 +112,7 @@
 		7C96934E14970B3F00C0E1E6 /* normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934A14970B3F00C0E1E6 /* normal.png */; };
 		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
 		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
+		7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
 		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
 		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
@@ -371,6 +372,8 @@
 		7C96934A14970B3F00C0E1E6 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
 		7C96934B14970B3F00C0E1E6 /* emitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emitter.png; sourceTree = "<group>"; };
 		7C96934C14970B3F00C0E1E6 /* bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bump.png; sourceTree = "<group>"; };
+		7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionBlurRenderer.cpp; sourceTree = "<group>"; };
+		7CA51EFC152BE62C004AF8FD /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
 		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
@@ -824,6 +827,8 @@
 				7C74556D148C259C009C0356 /* Behavior.h */,
 				7C74556E148C259C009C0356 /* Entity.cpp */,
 				7C74556F148C259C009C0356 /* Entity.h */,
+				7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */,
+				7CA51EFC152BE62C004AF8FD /* MotionBlurRenderer.h */,
 				7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */,
 				7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */,
 				7C745570148C259C009C0356 /* Particle.cpp */,
@@ -1349,6 +1354,7 @@
 				7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */,
 				7CEB3317152ACC1A001391C9 /* motionBlur.frag in Sources */,
 				7CEB3318152ACC1A001391C9 /* passThru.vert in Sources */,
+				7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
