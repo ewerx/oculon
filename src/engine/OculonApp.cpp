@@ -69,6 +69,7 @@ void OculonApp::setup()
     mIsCapturingFrames = false;
     mSaveNextFrame = false;
     mIsCapturingHighRes = false;
+    mCaptureDebugOutput = false;
     static const int FBO_WIDTH = 2240;
     static const int FBO_HEIGHT = 2240;
     gl::Fbo::Format format;
@@ -112,9 +113,6 @@ void OculonApp::setup()
     
     // syphon
     mScreenSyphon.setName("Oculon");
-    
-    // debug
-	//glDisable( GL_TEXTURE_2D );
     
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
@@ -494,22 +492,47 @@ void OculonApp::update()
     mInfoPanel.update();
 }
 
-void OculonApp::draw()
+void OculonApp::drawToScreen()
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    drawScenes();
+}
+
+void OculonApp::drawToFbo()
+{
+    Area prevViewport = gl::getViewport();
+    // bind the framebuffer - now everything we draw will go there
+    mFbo.bindFramebuffer();
     
-    if( mIsCapturingHighRes )
-    {
-        // bind the framebuffer - now everything we draw will go there
-        mFbo.bindFramebuffer();
-        
-        // setup the viewport to match the dimensions of the FBO
-        gl::setViewport( mFbo.getBounds() );
-        
-        gl::clear( Color(0.0f,0.0f,0.0f) );
-    }
+    // setup the viewport to match the dimensions of the FBO
+    gl::setViewport( mFbo.getBounds() );
+    gl::clear( Color(0.0f,0.0f,0.0f) );
     
-    // render scenes
+    drawScenes();
+    
+    mFbo.unbindFramebuffer();
+    
+    gl::setViewport( prevViewport );
+    
+}
+
+void OculonApp::drawFromFbo()
+{
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
+    gl::pushMatrices();
+    glEnable(GL_TEXTURE_2D);
+    // draw the captured texture back to screen
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
+    float width = getWindowWidth();
+    float height = getWindowHeight();
+    gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
+    gl::popMatrices();
+
+}
+
+void OculonApp::drawScenes()
+{
     glPushMatrix();
     {
         // render scenes
@@ -526,10 +549,24 @@ void OculonApp::draw()
         }
     }
     glPopMatrix();
+}
+
+void OculonApp::draw()
+{
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     if( mIsCapturingHighRes )
     {
-        mFbo.unbindFramebuffer();
+        drawToFbo();
+    }
+    else
+    {
+        drawToScreen();
+        
+        if( mCaptureDebugOutput ) 
+        {
+            drawDebug();
+        }
     }
     
     // capture video
@@ -541,58 +578,18 @@ void OculonApp::draw()
     // capture frames
     if( mIsCapturingFrames )
     {
-        ++mFrameCaptureCount;
-        
-        if( mIsCapturingHighRes )
-        {
-#ifdef TILED_RENDER
-            //HACKHACK
-            mIsCapturingFrames = false;
-            
-            gl::TileRender tr( 2200, 2200 );
-            //CameraPersp cam;
-            //cam.lookAt( mCam.getEyePoint(), mCam.getPos() );
-            //cam.setPerspective( 60.0f, tr.getImageAspectRatio(), 1, 20000 );
-            tr.setMatricesWindowPersp( getWindowWidth(), getWindowHeight() );
-            while( tr.nextTile() )
-            {
-                draw();
-            }
-            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", tr.getSurface() );
-            
-            //HACKHACK
-            mIsCapturingFrames = true;
-#endif
-            //mFbo.unbindFramebuffer();
-            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
-        }
-        else
-        {
-            writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
-        }
+        captureFrames();
     }
     
     // screenshot
     if( mSaveNextFrame )
     {
-        mSaveNextFrame = false;
-        fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
-		writeImage( p, copyWindowSurface() );
+        saveScreenshot();
 	}
     
     if( mIsCapturingHighRes )
     {
-        gl::enableDepthRead();
-        gl::enableDepthWrite();
-        gl::pushMatrices();
-        glEnable(GL_TEXTURE_2D);
-        // draw the captured texture back to screen
-        glColor4f(1.0f,1.0f,1.0f,1.0f);
-        gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
-        float width = getWindowWidth();
-        float height = getWindowHeight();
-        gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
-        gl::popMatrices();
+        drawFromFbo();
     }
     
     if( mEnableSyphonServer )
@@ -600,9 +597,14 @@ void OculonApp::draw()
         mScreenSyphon.publishScreen(); //publish the screen
     }
     
-    //TODO: option to capture debug output
-    // debug
-    // render scenes
+    if( !mCaptureDebugOutput )
+    {
+        drawDebug();
+    }
+}
+
+void OculonApp::drawDebug()
+{
     gl::pushMatrices();
     gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
     for (SceneList::iterator sceneIt = mScenes.begin(); 
@@ -623,6 +625,53 @@ void OculonApp::draw()
     {
         params::InterfaceGl::draw();
         mParams.draw();
+    }
+}
+
+void OculonApp::captureFrames()
+{
+    ++mFrameCaptureCount;
+    
+    if( mIsCapturingHighRes )
+    {
+#ifdef TILED_RENDER
+        //HACKHACK
+        mIsCapturingFrames = false;
+        
+        gl::TileRender tr( 2200, 2200 );
+        //CameraPersp cam;
+        //cam.lookAt( mCam.getEyePoint(), mCam.getPos() );
+        //cam.setPerspective( 60.0f, tr.getImageAspectRatio(), 1, 20000 );
+        tr.setMatricesWindowPersp( getWindowWidth(), getWindowHeight() );
+        while( tr.nextTile() )
+        {
+            draw();
+        }
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", tr.getSurface() );
+        
+        //HACKHACK
+        mIsCapturingFrames = true;
+#endif
+        
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
+    }
+    else
+    {
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+    }
+}
+
+void OculonApp::saveScreenshot()
+{
+    mSaveNextFrame = false;
+    fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
+    if( mIsCapturingHighRes )
+    {
+        writeImage( p, mFbo.getTexture() );
+    }
+    else
+    {
+        writeImage( p, copyWindowSurface() );
     }
 }
 

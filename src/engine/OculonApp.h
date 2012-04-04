@@ -88,6 +88,14 @@ public: // new
     
 protected: // new
     
+    void drawToScreen();
+    void drawToFbo();
+    void drawFromFbo();
+    void drawScenes();
+    void drawDebug();
+    void captureFrames();
+    void saveScreenshot();
+    
     void setupScenes();
     void addScene(Scene* newScene, bool startActive =false);
     void setPresentationMode( bool enabled );
@@ -139,6 +147,7 @@ private: // members
     gl::Fbo                 mFbo;
     
     bool                    mSaveNextFrame;
+    bool                    mCaptureDebugOutput;
     
     syphonServer            mScreenSyphon;
     bool                    mEnableSyphonServer;
