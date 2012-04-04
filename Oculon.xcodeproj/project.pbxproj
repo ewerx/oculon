@@ -373,7 +373,7 @@
 		7C96934B14970B3F00C0E1E6 /* emitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emitter.png; sourceTree = "<group>"; };
 		7C96934C14970B3F00C0E1E6 /* bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bump.png; sourceTree = "<group>"; };
 		7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionBlurRenderer.cpp; sourceTree = "<group>"; };
-		7CA51EFC152BE62C004AF8FD /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
+		7CA51EFC152BE62C004AF8FD /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
 		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };

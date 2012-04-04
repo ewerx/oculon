@@ -20,11 +20,7 @@
 #include "MSAOpenCL.h"
 
 #include "Scene.h"
-#include "ParticleController.h"
-#include "MidiMap.h"
-
-using namespace ci;
-using std::vector;
+#include "MotionBlurRenderer.h"
 
 
 #define FREEOCL_VERSION
@@ -44,7 +40,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
@@ -224,8 +220,9 @@ private:
     bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
     bool                mScalePointsByDistance;
-    bool                mUseInvSquareCalc;
+    bool                mUseMotionBlur;
     
+    bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
     //    
     //    gl::Fbo             mFboNew;
@@ -268,7 +265,7 @@ private:
     float               mCamMaxDistance;
     Vec3f               mCamTarget;
     
-    
+    MotionBlurRenderer  mMotionBlurRenderer;
     
     //Quatf               mCameraRotation;
 

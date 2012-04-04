@@ -137,6 +137,7 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addParam("Point Sprites", &mUseImageForPoints, "");
     params.addParam("Point Scaling", &mScalePointsByDistance, "");
     params.addParam("Additive Blending", &mAdditiveBlending, "");
+    params.addParam("Motion Blur", &mUseMotionBlur);
     params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
 
 }
@@ -424,10 +425,13 @@ void Graviton::reset()
     mCamTarget = Vec3f::zero();
     mCam.setFov(60.0f);
     mCam.setAspectRatio(mApp->getWindowAspectRatio());
+    
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Graviton::drawParticles, this ) );
 }
 
 void Graviton::resize()
 {
+    mMotionBlurRenderer.resize(mApp->getWindowSize());
 }
 
 void Graviton::update(double dt)
@@ -610,6 +614,38 @@ void Graviton::draw()
 {
     glPushMatrix();
     
+    //gl::enableDepthWrite( false );
+	//gl::enableDepthRead( false );
+	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	/*
+    glColor3f(1.0f, 1.0f, 1.0f);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
+#ifdef USE_OPENGL_CONTEXT
+	mOpenCl.finish();
+#else	
+	mOpencl.readBuffer(sizeof(Vec2f) * NUM_PARTICLES, mClMemPosVBO, mParticlesPos);
+	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(Vec2f) * NUM_PARTICLES, mParticlesPos);
+#endif	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, 0, 0);
+	glDrawArrays(GL_POINTS, 0, kNumParticles);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    */
+    
+    if( mUseMotionBlur )
+    {
+        mMotionBlurRenderer.draw();
+    }
+    else
+    {
+        drawParticles();
+    }
+    
+    glPopMatrix();
+}
+
+void Graviton::preRender() 
+{
     switch( mCamType )
     {
         case CAM_SPIRAL:
@@ -634,34 +670,6 @@ void Graviton::draw()
         default:
             gl::setMatrices( mApp->getMayaCam() );
     }
-    
-    //gl::enableDepthWrite( false );
-	//gl::enableDepthRead( false );
-	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	/*
-    glColor3f(1.0f, 1.0f, 1.0f);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-#ifdef USE_OPENGL_CONTEXT
-	mOpenCl.finish();
-#else	
-	mOpencl.readBuffer(sizeof(Vec2f) * NUM_PARTICLES, mClMemPosVBO, mParticlesPos);
-	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(Vec2f) * NUM_PARTICLES, mParticlesPos);
-#endif	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_POINTS, 0, kNumParticles);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    */
-    
-    drawParticles();
-    
-    glPopMatrix();
-}
-
-
-
-void Graviton::preRender() 
-{
     
 	if(mUseImageForPoints) 
     {
