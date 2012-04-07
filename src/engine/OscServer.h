@@ -9,11 +9,12 @@
 #ifndef __OSCSERVER_H__
 #define __OSCSERVER_H__
 
-#include "cinder/Cinder.h"
 #include "OscListener.h"
 #include <boost/thread.hpp>
+#include <boost/unordered_map.hpp>
 
-using namespace ci;
+typedef std::function<void(const ci::osc::Message&)> tOscCallback;
+typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
 
 class OscServer
 {
@@ -25,20 +26,36 @@ public:
     void shutdown();
     void update();
     
-    osc::Listener& getListener()    { return mListener; }
+    ci::osc::Listener& getListener()    { return mListener; }
+    
+    template<typename T>
+    void registerOscCallback( const std::string& address, T* obj, void (T::*callback)(const ci::osc::Message&) )
+    {
+        mCallbackMap[address] = std::bind1st( std::mem_fun(callback), obj );
+    }
+    
+    void unregisterOscCallback( const std::string& address )
+    {
+        mCallbackMap.erase(address);
+    }
     
 private:
     void threadLoop();
-    void printMessage( const osc::Message& message );
+    void processMessage(const ci::osc::Message& message);
+    void printMessage( const ci::osc::Message& message );
     
 private:
-    osc::Listener mListener;
-    int mListenPort;
+    ci::osc::Listener       mListener;
+    int                     mListenPort;
     
     // thread
     boost::thread           mThread;
     bool                    mIsListening;
     bool                    mUseThread;
+    
+    tOscMap                 mCallbackMap;
+    
+    bool                    mDebugPrint;
 };
 
 #endif

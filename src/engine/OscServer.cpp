@@ -24,7 +24,8 @@ using namespace ci::audio;
 OscServer::OscServer()
 : mListenPort(DEFAULT_PORT)
 , mIsListening(false)
-, mUseThread(false)
+, mUseThread(true)
+, mDebugPrint(true)
 {
 }
 
@@ -63,7 +64,7 @@ void OscServer::update()
             osc::Message message;
             mListener.getNextMessage(&message);
             
-            printMessage(message);
+            processMessage(message);
         }
     }
 }
@@ -77,20 +78,40 @@ void OscServer::threadLoop()
             osc::Message message;
             mListener.getNextMessage(&message);
             
-            printMessage(message);
+            processMessage(message);
+        }
+    }
+}
+
+void OscServer::processMessage(const osc::Message& message)
+{
+    if( mDebugPrint )
+    {
+        printMessage(message);
+    }
+    
+    tOscMap::iterator it = mCallbackMap.find(message.getAddress());
+    if( it != mCallbackMap.end() )
+    {
+        tOscCallback callback = it->second;
+        callback(message);
+        
+        if( mDebugPrint )
+        {
+            console() << "[osc] Callback triggered" << std::endl;
         }
     }
 }
 
 void OscServer::printMessage(const osc::Message& message)
 {
-    console() << "New message received" << std::endl;
-    console() << "Address: " << message.getAddress() << std::endl;
-    console() << "Num Arg: " << message.getNumArgs() << std::endl;
+    console() << "[osc] New message received" << std::endl;
+    console() << "[osc] Address: " << message.getAddress() << std::endl;
+    console() << "[osc] Num Arg: " << message.getNumArgs() << std::endl;
     for (int i = 0; i < message.getNumArgs(); i++) 
     {
-        console() << "-- Argument " << i << std::endl;
-        console() << "---- type: " << message.getArgTypeName(i) << std::endl;
+        console() << "[osc] -- Argument " << i << std::endl;
+        console() << "[osc] ---- type: " << message.getArgTypeName(i) << std::endl;
         
         switch(message.getArgType(i))
         {
@@ -98,11 +119,11 @@ void OscServer::printMessage(const osc::Message& message)
             {
                 try 
                 {
-                    console() << "------ value: "<< message.getArgAsInt32(i) << std::endl;
+                    console() << "[osc] ------ value: "<< message.getArgAsInt32(i) << std::endl;
                 }
                 catch (...) 
                 {
-                    console() << "Exception reading argument as int32" << std::endl;
+                    console() << "[osc] Exception reading argument as int32" << std::endl;
                 }
                 
             }
@@ -112,11 +133,11 @@ void OscServer::printMessage(const osc::Message& message)
             {
                 try 
                 {
-                    console() << "------ value: " << message.getArgAsFloat(i) << std::endl;
+                    console() << "[osc] ------ value: " << message.getArgAsFloat(i) << std::endl;
                 }
                 catch (...) 
                 {
-                    console() << "Exception reading argument as float" << std::endl;
+                    console() << "[osc] Exception reading argument as float" << std::endl;
                 }
             }
                 break;
@@ -125,17 +146,17 @@ void OscServer::printMessage(const osc::Message& message)
             {
                 try 
                 {
-                    console() << "------ value: " << message.getArgAsString(i).c_str() << std::endl;
+                    console() << "[osc] ------ value: " << message.getArgAsString(i).c_str() << std::endl;
                 }
                 catch (...) 
                 {
-                    console() << "Exception reading argument as string" << std::endl;
+                    console() << "[osc] Exception reading argument as string" << std::endl;
                 }
             }
                 break;
                 
             default:
-                console() << "Unhandled argument type: " << message.getArgType(i) << std::endl;
+                console() << "[osc] Unhandled argument type: " << message.getArgType(i) << std::endl;
                 break;
         }
     }
