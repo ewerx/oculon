@@ -12,8 +12,9 @@
 #include "OscListener.h"
 #include <boost/thread.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/bind.hpp>
 
-typedef std::function<void(const ci::osc::Message&)> tOscCallback;
+typedef boost::function<void(const ci::osc::Message&)> tOscCallback;
 typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
 
 class OscServer
@@ -29,12 +30,12 @@ public:
     ci::osc::Listener& getListener()    { return mListener; }
     
     template<typename T>
-    void registerOscCallback( const std::string& address, T* obj, void (T::*callback)(const ci::osc::Message&) )
+    void registerCallback( std::string address, T* obj, void (T::*callback)(const ci::osc::Message&) )
     {
-        mCallbackMap[address] = std::bind1st( std::mem_fun(callback), obj );
+        mCallbackMap[address] = boost::bind( callback, obj, boost::arg<1>() );//std::bind1st( std::mem_fun(callback), obj );
     }
     
-    void unregisterOscCallback( const std::string& address )
+    void unregisterCallback( const std::string& address )
     {
         mCallbackMap.erase(address);
     }
