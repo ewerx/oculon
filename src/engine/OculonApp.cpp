@@ -54,9 +54,9 @@ void OculonApp::prepareSettings( Settings *settings )
     mUseMayaCam         = true;
     
     mEnableMindWave     = false;
-    mEnableOscServer    = false;
+    mEnableOscServer    = true;
     mEnableSyphonServer = false;
-    mEnableKinect       = true;
+    mEnableKinect       = false;
 }
 
 void OculonApp::setup()

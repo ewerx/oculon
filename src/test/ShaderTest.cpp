@@ -82,6 +82,10 @@ void ShaderTest::setup()
     
     //mEnableShader = false;
     mBlurAmount = 8.0f / getWindowWidth();
+    
+    
+    // OSC TEST
+    mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
 }
 
 void ShaderTest::update(double dt)
@@ -282,4 +286,20 @@ bool ShaderTest::handleKeyDown(const KeyEvent& keyEvent)
 void ShaderTest::handleMouseDrag( const ci::app::MouseEvent& event )
 {
     mPos = event.getPos();
+}
+
+void ShaderTest::handleOscMessage( const ci::osc::Message& message )
+{
+    if( message.getNumArgs() == 2 ) 
+    {
+        if( osc::TYPE_FLOAT == message.getArgType(0) )
+        {
+            mPos.x = message.getArgAsFloat(0) * mApp->getWindowWidth();
+        }
+        if( osc::TYPE_FLOAT == message.getArgType(1) )
+        {
+            mPos.y = message.getArgAsFloat(1) * mApp->getWindowHeight();
+        }        
+        console() << "[osc test] x: " << mPos.x << " y: " << mPos.y;
+    }
 }

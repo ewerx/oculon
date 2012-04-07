@@ -16,6 +16,7 @@
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
+#include "OscMessage.h"
 
 //
 // Audio input tests
@@ -35,7 +36,7 @@ public:
     bool handleKeyDown(const KeyEvent& keyEvent);
     //void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseDrag( const ci::app::MouseEvent& event );
-    
+    void handleOscMessage( const ci::osc::Message& message );
     
 private:
     void updateBlur();

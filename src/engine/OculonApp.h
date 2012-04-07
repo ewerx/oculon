@@ -68,6 +68,7 @@ public: // new
     inline MidiInput& getMidiInput()                 { return mMidiInput; }
     inline MindWave& getMindWave()                   { return mMindWave; }
     inline KinectController& getKinectController()   { return mKinectController; }
+    inline OscServer& getOscServer()                 { return mOscServer; }
     
     inline const Vec2f& getMousePos()          { return mMousePos; }
     inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
