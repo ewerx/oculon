@@ -94,10 +94,15 @@ void ShaderTest::setup()
                          .minValue(0.0f)
                          .maxValue(1.0f)
                          .defaultValue(1.0f)
-                         .oscReceiver("/1/fader1")
-                         .oscSender("/1/fader1"));
+                         .oscReceiver("/1/fader1"));
+                         //.oscSender("/1/fader1"));
     
     
+    mInterface->addParam(CreateIntParam( "Radius", &mRadius )
+                         .minValue(1)
+                         .maxValue(300)
+                         .defaultValue(100)
+                         .oscReceiver("/1/fader2"));
 }
 
 void ShaderTest::update(double dt)
@@ -279,8 +284,7 @@ void ShaderTest::drawScene()
 {
     gl::setMatricesWindowPersp(getWindowSize());
     glColor4f(mRed,0.0f,0.0f,1.0f);
-    const float radius = 100.f;
-    gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + radius, mPos.y + radius) );
+    gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + mRadius, mPos.y + mRadius) );
     
     if( mInterface )
     {

@@ -21,6 +21,8 @@ public:
     virtual ~Interface();
     
     OscFloatParam* addParam( const CreateFloatParam& param );
+    OscIntParam* addParam( const CreateIntParam& param );
+    OscBoolParam* addParam( const CreateBoolParam& param );
     
     void update();
     void draw();

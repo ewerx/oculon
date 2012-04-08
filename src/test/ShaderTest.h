@@ -68,6 +68,7 @@ private:
     //TEST
     Interface*          mInterface;
     float               mRed;
+    int                 mRadius;
 };
 
 #endif // __MOVIETEST_H__

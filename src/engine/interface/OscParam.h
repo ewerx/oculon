@@ -38,8 +38,70 @@ protected:
     //TODO: change callback
 };
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------- 
+class OscFloatParam : public OscParam
+{
+public:
+    OscFloatParam(mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
 
+    void setOscMessage( osc::Message& message );
+    void handleOscMessage( const osc::Message& message );
+    
+protected:
+    mowa::sgui::FloatVarControl* mControl;
+    
+};
+
+//-----------------------------------------------------------------------------                              
+class OscIntParam : public OscParam
+{
+public:
+    OscIntParam(mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
+    
+    void setOscMessage( osc::Message& message );
+    void handleOscMessage( const osc::Message& message );
+    
+protected:
+    mowa::sgui::IntVarControl* mControl;
+    
+};
+
+//----------------------------------------------------------------------------- 
+class OscBoolParam : public OscParam
+{
+public:
+    OscBoolParam(mowa::sgui::BoolVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
+    
+    void setOscMessage( osc::Message& message );
+    void handleOscMessage( const osc::Message& message );
+    
+protected:
+    mowa::sgui::BoolVarControl* mControl;
+    
+};
+
+//-----------------------------------------------------------------------------
+class OscTriggerParam : public OscParam
+{
+public:
+    OscTriggerParam(mowa::sgui::ButtonControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
+    
+    void setOscMessage( osc::Message& message );
+    void handleOscMessage( const osc::Message& message );
+    
+protected:
+    mowa::sgui::ButtonControl* mControl;
+};
+
+//-----------------------------------------------------------------------------
 class Interface;
 
 template<typename T>
@@ -83,58 +145,8 @@ private:
     std::string _recvAddr;
 };
 
-typedef CreateParam<float> CreateFloatParam;
+typedef CreateParam<float>                  CreateFloatParam;
+typedef CreateParam<int32_t>                CreateIntParam;
+typedef CreateParam<bool>                   CreateBoolParam;
+//TODO: trigger param
 
-class OscFloatParam : public OscParam
-{
-public:
-    OscFloatParam(mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
-    
-    mowa::sgui::Control* getControl()   { return mControl; }
-
-    void setOscMessage( osc::Message& message );
-    void handleOscMessage( const osc::Message& message );
-    
-protected:
-    mowa::sgui::FloatVarControl* mControl;
-    
-};
-
-//-----------------------------------------------------------------------------                            
-/*          
-class OscIntParam : public OscParam
-{
-public:
-    Control* getControl()   { return mControl; }
-    
-protected:
-    IntVarControl* mControl;
-};
-
-class OscBoolParam : public OscParam
-{
-public:
-    Control* getControl()   { return mControl; }
-    
-protected:
-    BoolVarControl* mControl;
-};
-
-//-----------------------------------------------------------------------------
-
-class OscTriggerParam : public OscParam
-{
-public:
-    Control* getControl()   { return mControl; }
-    
-protected:
-    ButtonVarControl* mControl;
-};
-*/
-/*
-class CreateParam 
-{
-public:
-    friend class Parameter
-};
-*/

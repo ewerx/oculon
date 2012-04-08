@@ -47,6 +47,30 @@ OscFloatParam* Interface::addParam( const CreateFloatParam& param )
     return oscParam;
 }
 
+OscIntParam* Interface::addParam( const CreateIntParam& param )
+{
+    mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
+    
+    OscIntParam* oscParam = new OscIntParam( control, param._recvAddr, param._sendAddr );
+    mOsc->registerCallback( param._recvAddr, oscParam, &OscIntParam::handleOscMessage );
+    
+    mParams.push_back(oscParam);
+    
+    return oscParam;
+}
+
+OscBoolParam* Interface::addParam( const CreateBoolParam& param )
+{
+    mowa::sgui::BoolVarControl* control = mGui->addParam( param._name, param._var, param._default );
+    
+    OscBoolParam* oscParam = new OscBoolParam( control, param._recvAddr, param._sendAddr );
+    mOsc->registerCallback( param._recvAddr, oscParam, &OscBoolParam::handleOscMessage );
+    
+    mParams.push_back(oscParam);
+    
+    return oscParam;
+}
+
 void Interface::update()
 {
     // sending all values every frame
