@@ -16,7 +16,9 @@
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
+
 #include "OscMessage.h"
+#include "Interface.h"
 
 //
 // Audio input tests
@@ -63,6 +65,9 @@ private:
     
     MotionBlurRenderer  mMotionBlurRenderer;
     
+    //TEST
+    Interface*          mInterface;
+    float               mRed;
 };
 
 #endif // __MOVIETEST_H__

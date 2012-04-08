@@ -13,7 +13,8 @@
 #include <iostream>
 #include <vector>
 
-#define DEFAULT_PORT 8889
+#define DEFAULT_LISTEN_PORT 8889
+#define DEFAULT_SEND_PORT 8080
 
 using namespace ci;
 using namespace ci::app;
@@ -22,9 +23,10 @@ using namespace ci::audio;
 // constructor
 //
 OscServer::OscServer()
-: mListenPort(DEFAULT_PORT)
+: mListenPort(DEFAULT_LISTEN_PORT)
 , mIsListening(false)
 , mUseThread(true)
+, mIsSending(false)
 , mDebugPrint(true)
 {
 }
@@ -47,6 +49,8 @@ void OscServer::setup()
     {
         mThread = boost::thread(&OscServer::threadLoop, this);
     }
+    
+    setDestination( "192.168.1.148", 8888 );
 }
 
 void OscServer::shutdown()
@@ -54,6 +58,8 @@ void OscServer::shutdown()
     mIsListening = false;
     mListener.shutdown();
 }
+
+#pragma MARK Listener
 
 void OscServer::update()
 {
@@ -87,7 +93,7 @@ void OscServer::processMessage(const osc::Message& message)
 {
     if( mDebugPrint )
     {
-        printMessage(message);
+        printMessage(message, false);
     }
     
     tOscMap::iterator it = mCallbackMap.find(message.getAddress());
@@ -103,9 +109,16 @@ void OscServer::processMessage(const osc::Message& message)
     }
 }
 
-void OscServer::printMessage(const osc::Message& message)
+void OscServer::printMessage(const osc::Message& message, const bool sent)
 {
-    console() << "[osc] New message received" << std::endl;
+    if( sent )
+    {
+        console() << "[osc] Message sent" << std::endl;
+    }
+    else
+    {
+        console() << "[osc] Message received" << std::endl;
+    }
     console() << "[osc] Address: " << message.getAddress() << std::endl;
     console() << "[osc] Num Arg: " << message.getNumArgs() << std::endl;
     for (int i = 0; i < message.getNumArgs(); i++) 
@@ -158,6 +171,27 @@ void OscServer::printMessage(const osc::Message& message)
             default:
                 console() << "[osc] Unhandled argument type: " << message.getArgType(i) << std::endl;
                 break;
+        }
+    }
+}
+
+#pragma MARK Sender
+
+void OscServer::setDestination( const std::string& host, const int port )
+{
+    mSender.setup( host, port );
+    mIsSending = true;
+    console() << "[osc] send destination: " << host << ":" << port << std::endl;
+}
+
+void OscServer::sendMessage( ci::osc::Message& message )
+{
+    if( mIsSending )
+    {
+        mSender.sendMessage( message );
+        if( mDebugPrint )
+        {
+            printMessage(message, true);
         }
     }
 }

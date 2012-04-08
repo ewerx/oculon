@@ -86,6 +86,18 @@ void ShaderTest::setup()
     
     // OSC TEST
     mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
+    
+    // INTERFACE TEST
+    mInterface = new Interface( mApp, &mApp->getOscServer() );
+    
+    mInterface->addParam(CreateFloatParam( "Red", &mRed )
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .defaultValue(1.0f)
+                         .oscReceiver("/1/fader1")
+                         .oscSender("/1/fader1"));
+    
+    
 }
 
 void ShaderTest::update(double dt)
@@ -96,7 +108,12 @@ void ShaderTest::update(double dt)
     {
         mVel.x *= -1.0f;
     }
-         
+    
+    if( mInterface )
+    {
+        mInterface->update();
+    }
+
 }
 
 void ShaderTest::updateBlur()
@@ -261,9 +278,14 @@ void ShaderTest::draw()
 void ShaderTest::drawScene()
 {
     gl::setMatricesWindowPersp(getWindowSize());
-    glColor4f(1.0f,0.0f,0.0f,1.0f);
+    glColor4f(mRed,0.0f,0.0f,1.0f);
     const float radius = 100.f;
     gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + radius, mPos.y + radius) );
+    
+    if( mInterface )
+    {
+        mInterface->draw();
+    }
 }
 
 bool ShaderTest::handleKeyDown(const KeyEvent& keyEvent)
@@ -300,6 +322,6 @@ void ShaderTest::handleOscMessage( const ci::osc::Message& message )
         {
             mPos.y = message.getArgAsFloat(1) * mApp->getWindowHeight();
         }        
-        console() << "[osc test] x: " << mPos.x << " y: " << mPos.y;
+        console() << "[osc test] x: " << mPos.x << " y: " << mPos.y << std::endl;
     }
 }

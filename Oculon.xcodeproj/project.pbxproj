@@ -75,6 +75,7 @@
 		7C745598148C259C009C0356 /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745580148C259C009C0356 /* Sun.cpp */; };
 		7C745599148C259C009C0356 /* AudioTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745583148C259C009C0356 /* AudioTest.cpp */; };
 		7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745585148C259C009C0356 /* MindWaveTest.cpp */; };
+		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C865591148C2980000E00B6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C865590148C2980000E00B6 /* CoreMIDI.framework */; };
 		7C86560D148C2A97000E00B6 /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8655BD148C2A97000E00B6 /* RtMidi.cpp */; };
 		7C86563E148C2A97000E00B6 /* MidiHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C86560A148C2A97000E00B6 /* MidiHub.cpp */; };
@@ -112,8 +113,10 @@
 		7C96934E14970B3F00C0E1E6 /* normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934A14970B3F00C0E1E6 /* normal.png */; };
 		7C96934F14970B3F00C0E1E6 /* emitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934B14970B3F00C0E1E6 /* emitter.png */; };
 		7C96935014970B3F00C0E1E6 /* bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C96934C14970B3F00C0E1E6 /* bump.png */; };
+		7C9A0548153121A500EB0452 /* pf_tempesta_seven.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C9A0547153121A500EB0452 /* pf_tempesta_seven.ttf */; };
 		7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
+		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
 		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
 		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
 		7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C715290F49001391C9 /* KissFFT.cpp */; };
@@ -319,6 +322,8 @@
 		7C745584148C259C009C0356 /* AudioTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTest.h; sourceTree = "<group>"; };
 		7C745585148C259C009C0356 /* MindWaveTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MindWaveTest.cpp; sourceTree = "<group>"; };
 		7C745586148C259C009C0356 /* MindWaveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindWaveTest.h; sourceTree = "<group>"; };
+		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
+		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
 		7C865590148C2980000E00B6 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		7C8655B6148C2A97000E00B6 /* MidiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiConstants.h; sourceTree = "<group>"; };
 		7C8655B7148C2A97000E00B6 /* MidiExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiExceptions.h; sourceTree = "<group>"; };
@@ -372,10 +377,13 @@
 		7C96934A14970B3F00C0E1E6 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
 		7C96934B14970B3F00C0E1E6 /* emitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emitter.png; sourceTree = "<group>"; };
 		7C96934C14970B3F00C0E1E6 /* bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bump.png; sourceTree = "<group>"; };
+		7C9A0547153121A500EB0452 /* pf_tempesta_seven.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pf_tempesta_seven.ttf; sourceTree = "<group>"; };
 		7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionBlurRenderer.cpp; sourceTree = "<group>"; };
 		7CA51EFC152BE62C004AF8FD /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
 		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		7CB17ECF15310B330074572D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interface.h; path = interface/Interface.h; sourceTree = "<group>"; };
+		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
 		7CEB32C215290F49001391C9 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		7CEB32C315290F49001391C9 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
@@ -793,6 +801,7 @@
 		7C74555A148C259C009C0356 /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				7C7A5D65152EC23E009C0DA0 /* interface */,
 				7C74555B148C259C009C0356 /* AudioInput.cpp */,
 				7C74555C148C259C009C0356 /* AudioInput.h */,
 				7C922867151C066400FB3773 /* BlobTracker.cpp */,
@@ -880,6 +889,17 @@
 				7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */,
 			);
 			path = test;
+			sourceTree = "<group>";
+		};
+		7C7A5D65152EC23E009C0DA0 /* interface */ = {
+			isa = PBXGroup;
+			children = (
+				7C7A5D67152EC2AC009C0DA0 /* OscParam.h */,
+				7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */,
+				7CB17ECF15310B330074572D /* Interface.h */,
+				7CB17ED015310B550074572D /* Interface.cpp */,
+			);
+			name = interface;
 			sourceTree = "<group>";
 		};
 		7C865570148C2784000E00B6 /* blocks */ = {
@@ -1063,6 +1083,14 @@
 			name = pulsar;
 			sourceTree = "<group>";
 		};
+		7C9A0546153121A500EB0452 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				7C9A0547153121A500EB0452 /* pf_tempesta_seven.ttf */,
+			);
+			path = resources;
+			sourceTree = "<group>";
+		};
 		7CC6214F14F73E8500B768DD /* MSAPingPong */ = {
 			isa = PBXGroup;
 			children = (
@@ -1106,6 +1134,7 @@
 		7CEF0F791528FEBB000DF027 /* SimpleGUI */ = {
 			isa = PBXGroup;
 			children = (
+				7C9A0546153121A500EB0452 /* resources */,
 				7CEF0F7A1528FEBB000DF027 /* include */,
 				7CEF0FC31528FEBB000DF027 /* src */,
 			);
@@ -1282,6 +1311,7 @@
 				7C17495B1505ADF600BFC351 /* render_frag.glsl in Resources */,
 				7C1749BC1505DA2800BFC351 /* gaussianBlur_frag.glsl in Resources */,
 				7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */,
+				7C9A0548153121A500EB0452 /* pf_tempesta_seven.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1355,6 +1385,8 @@
 				7CEB3317152ACC1A001391C9 /* motionBlur.frag in Sources */,
 				7CEB3318152ACC1A001391C9 /* passThru.vert in Sources */,
 				7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */,
+				7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */,
+				7CB17ED115310B550074572D /* Interface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

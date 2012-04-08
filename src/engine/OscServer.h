@@ -10,6 +10,7 @@
 #define __OSCSERVER_H__
 
 #include "OscListener.h"
+#include "OscSender.h"
 #include <boost/thread.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/bind.hpp>
@@ -27,8 +28,7 @@ public:
     void shutdown();
     void update();
     
-    ci::osc::Listener& getListener()    { return mListener; }
-    
+    // listener
     template<typename T>
     void registerCallback( std::string address, T* obj, void (T::*callback)(const ci::osc::Message&) )
     {
@@ -40,21 +40,29 @@ public:
         mCallbackMap.erase(address);
     }
     
+    // sender
+    void setDestination( const std::string& host, const int port );
+    void sendMessage( ci::osc::Message& message );
+    
 private:
     void threadLoop();
     void processMessage(const ci::osc::Message& message);
-    void printMessage( const ci::osc::Message& message );
+    void printMessage( const ci::osc::Message& message, const bool sent );
     
 private:
     ci::osc::Listener       mListener;
     int                     mListenPort;
-    
-    // thread
-    boost::thread           mThread;
     bool                    mIsListening;
+    tOscMap                 mCallbackMap;
+    
+    boost::thread           mThread;
     bool                    mUseThread;
     
-    tOscMap                 mCallbackMap;
+    //TODO: multiple destinations
+    ci::osc::Sender         mSender;
+    std::string             mSendHost;
+    int                     mSendPort;
+    bool                    mIsSending;
     
     bool                    mDebugPrint;
 };
