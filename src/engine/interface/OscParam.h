@@ -24,7 +24,7 @@ public:
     bool isSender() const                           { return mIsSender; }
     
     virtual mowa::sgui::Control* getControl() = 0;
-    virtual void setOscMessage( osc::Message& message ) = 0;
+    virtual void prepOscSend( osc::Message& message ) = 0;
     virtual void handleOscMessage(const osc::Message& message) = 0;
     
 protected:
@@ -46,7 +46,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
 
-    void setOscMessage( osc::Message& message );
+    void prepOscSend( osc::Message& message );
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -62,7 +62,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void setOscMessage( osc::Message& message );
+    void prepOscSend( osc::Message& message );
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -78,7 +78,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void setOscMessage( osc::Message& message );
+    void prepOscSend( osc::Message& message );
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -94,7 +94,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void setOscMessage( osc::Message& message );
+    void prepOscSend( osc::Message& message );
     void handleOscMessage( const osc::Message& message );
     
 protected:

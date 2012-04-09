@@ -83,7 +83,7 @@ void Interface::update()
         if( param->isSender() )
         {
             osc::Message message;
-            param->setOscMessage( message );
+            param->prepOscSend( message );
             mOsc->sendMessage( message );
         }
     }

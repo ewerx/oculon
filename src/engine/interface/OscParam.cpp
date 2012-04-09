@@ -45,7 +45,7 @@ void OscFloatParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscFloatParam::setOscMessage( osc::Message& message )
+void OscFloatParam::prepOscSend( osc::Message& message )
 {
     message.addFloatArg( mControl->getNormalizedValue() );
     message.setAddress( mOscSendAddress );
@@ -72,7 +72,7 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscIntParam::setOscMessage( osc::Message& message )
+void OscIntParam::prepOscSend( osc::Message& message )
 {
     message.addIntArg( mControl->getNormalizedValue() );
     message.setAddress( mOscSendAddress );
@@ -112,7 +112,7 @@ void OscBoolParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscBoolParam::setOscMessage( osc::Message& message )
+void OscBoolParam::prepOscSend( osc::Message& message )
 {
     message.addIntArg( (*(mControl->var)) ? 1 : 0 );
     message.setAddress( mOscSendAddress );
