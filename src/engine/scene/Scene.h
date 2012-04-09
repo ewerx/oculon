@@ -19,6 +19,7 @@
 
 // fwd decl
 class OculonApp;
+class Interface;
 
 using namespace ci;
 
@@ -36,6 +37,7 @@ public:
     virtual void resize() {}
     virtual void update(double dt);
     virtual void draw() {}
+    virtual void drawInterface();
     virtual void drawDebug() {}
     
     virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
@@ -76,8 +78,9 @@ protected:
     bool        mIsActive;
     bool        mIsVisible;
     
-    
     bool        mEnableFrustumCulling;
+    
+    Interface*  mInterface;
     
 private:
     // frustum culling

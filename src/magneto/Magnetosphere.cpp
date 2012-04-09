@@ -284,8 +284,6 @@ void Magnetosphere::setupParams(params::InterfaceGl& params)
 
 void Magnetosphere::update(double dt)
 {
-    Scene::update(dt);
-    
 	//mDimensions.x = mApp->getViewportWidth();
 	//mDimensions.y = mApp->getViewportHeight();
     
@@ -311,6 +309,8 @@ void Magnetosphere::update(double dt)
     char buf[256];
     snprintf(buf, 256, "particles: %d", mNumParticles);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
+    
+    Scene::update(dt);
 }
 
 //

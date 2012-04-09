@@ -66,7 +66,7 @@ private:
     MotionBlurRenderer  mMotionBlurRenderer;
     
     //TEST
-    Interface*          mInterface;
+    
     float               mRed;
     int                 mRadius;
 };

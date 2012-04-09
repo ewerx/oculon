@@ -436,8 +436,6 @@ void Graviton::resize()
 
 void Graviton::update(double dt)
 {
-    Scene::update(dt);
-    
 	//mDimensions.x = mApp->getViewportWidth();
 	//mDimensions.y = mApp->getViewportHeight();
     
@@ -529,6 +527,8 @@ void Graviton::update(double dt)
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
     snprintf(buf, 256, "massives: %d", mStep);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
+    
+    Scene::update(dt);
 }
 
 //

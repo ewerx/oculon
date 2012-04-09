@@ -92,8 +92,7 @@ void Interface::update()
 
 void Interface::draw()
 {
-    if( mGui )
-    {
-        mGui->draw();
-    }
+    assert( mGui != NULL );
+    
+    mGui->draw();
 }

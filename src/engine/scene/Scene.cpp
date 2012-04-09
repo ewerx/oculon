@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 #include "OculonApp.h"
+#include "Interface.h"
 
 Scene::Scene()
 : mApp(NULL)
@@ -28,11 +29,13 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+    delete mInterface;
 }
 
 void Scene::init(OculonApp* app)
 {
     mApp = app;
+    mInterface = new Interface( mApp, &mApp->getOscServer() );
     setup();
     setupParams(app->getParams());
 }
@@ -44,8 +47,17 @@ void Scene::update(double dt)
         mIsFrustumPlaneCached = false;
         calcNearAndFarClipCoordinates( getCamera() );
     }
+    
+    assert(mInterface);
+    mInterface->update();
 }
 
+void Scene::drawInterface()
+{
+    mInterface->draw();
+}
+
+#pragma MARK: Frustum Culling
 void Scene::calcNearAndFarClipCoordinates( const Camera &cam )
 {
 	Vec3f ntl, ntr, nbl, nbr;

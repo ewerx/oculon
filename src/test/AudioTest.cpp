@@ -24,8 +24,9 @@ void AudioTest::setup()
 {
 }
 
-void AudioTest::update(double /*dt*/)
+void AudioTest::update(double dt)
 {
+    Scene::update(dt);
 }
 
 void AudioTest::draw()

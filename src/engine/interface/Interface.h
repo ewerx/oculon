@@ -20,9 +20,9 @@ public:
     Interface(ci::app::App* app, OscServer* osc);
     virtual ~Interface();
     
-    OscFloatParam* addParam( const CreateFloatParam& param );
-    OscIntParam* addParam( const CreateIntParam& param );
-    OscBoolParam* addParam( const CreateBoolParam& param );
+    OscFloatParam*  addParam( const CreateFloatParam& param );
+    OscIntParam*    addParam( const CreateIntParam& param );
+    OscBoolParam*   addParam( const CreateBoolParam& param );
     
     void update();
     void draw();

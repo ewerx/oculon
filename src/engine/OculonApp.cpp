@@ -615,6 +615,7 @@ void OculonApp::drawDebug()
         assert( scene != NULL );
         if( scene && scene->isVisible() )
         {
+            scene->drawInterface();
             scene->drawDebug();
         }
     }

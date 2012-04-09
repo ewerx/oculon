@@ -88,7 +88,7 @@ void ShaderTest::setup()
     mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
     
     // INTERFACE TEST
-    mInterface = new Interface( mApp, &mApp->getOscServer() );
+    
     
     mInterface->addParam(CreateFloatParam( "Red", &mRed )
                          .minValue(0.0f)
@@ -114,11 +114,7 @@ void ShaderTest::update(double dt)
         mVel.x *= -1.0f;
     }
     
-    if( mInterface )
-    {
-        mInterface->update();
-    }
-
+    Scene::update(dt);
 }
 
 void ShaderTest::updateBlur()
@@ -285,11 +281,6 @@ void ShaderTest::drawScene()
     gl::setMatricesWindowPersp(getWindowSize());
     glColor4f(mRed,0.0f,0.0f,1.0f);
     gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + mRadius, mPos.y + mRadius) );
-    
-    if( mInterface )
-    {
-        mInterface->draw();
-    }
 }
 
 bool ShaderTest::handleKeyDown(const KeyEvent& keyEvent)

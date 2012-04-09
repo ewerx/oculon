@@ -97,6 +97,8 @@ void MovieTest::update(double dt)
     {
         assert(false && "active movie out of range");
     }
+    
+    Scene::update(dt);
 }
 
 void MovieTest::draw()

@@ -36,6 +36,8 @@ void KinectTest::setup()
 void KinectTest::update(double dt)
 {
     mBlobTracker.update();
+    
+    Scene::update(dt);
 }
 
 void KinectTest::draw()
