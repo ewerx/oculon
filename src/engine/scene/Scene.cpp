@@ -15,8 +15,9 @@ Scene::Scene()
 : mApp(NULL)
 , mIsActive(false)
 , mIsVisible(false)
-, mIsFrustumPlaneCached(false)
 , mEnableFrustumCulling(false)
+, mInterface(NULL)
+, mIsFrustumPlaneCached(false)
 {
     // frustum culling
 	for( int i=0; i<SIDE_COUNT; i++ )
@@ -38,6 +39,7 @@ void Scene::init(OculonApp* app)
     mInterface = new Interface( mApp, &mApp->getOscServer() );
     setup();
     setupParams(app->getParams());
+    setupInterface();
 }
 
 void Scene::update(double dt)
@@ -55,6 +57,24 @@ void Scene::update(double dt)
 void Scene::drawInterface()
 {
     mInterface->draw();
+}
+
+const Camera& Scene::getCamera() const
+{
+    return mApp->getMayaCam();
+}
+
+void Scene::setActive(bool active)
+{ 
+    mIsActive = active;
+}
+
+void Scene::setVisible(bool visible)
+{
+    mIsVisible = visible;
+    
+    assert(mInterface);
+    mInterface->gui()->setEnabled(visible);
 }
 
 #pragma MARK: Frustum Culling
@@ -162,9 +182,4 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
 	}
 	
 	return( result );
-}
-
-const Camera& Scene::getCamera() const
-{
-    return mApp->getMayaCam();
 }

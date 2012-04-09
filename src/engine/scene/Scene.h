@@ -51,10 +51,10 @@ public:
     bool isActive() const           { return mIsActive; }
     bool isVisible() const          { return mIsVisible; }
     
-    virtual void setActive(bool active)     { mIsActive = active; }
-    virtual void setVisible(bool visible)   { mIsVisible = visible; }
+    virtual void setActive(bool active);
+    virtual void setVisible(bool visible);
     
-    void toggleActiveVisible()      { mIsActive = !mIsActive; mIsVisible = !mIsVisible; }
+    void toggleActiveVisible()      { setActive(!mIsActive); setVisible(!mIsVisible); }
     
     // frustum culling
     bool isFrustumCullingEnabled()  { return mEnableFrustumCulling; }
@@ -67,6 +67,7 @@ protected:
     
     virtual void setup() {}
     virtual void setupParams(ci::params::InterfaceGl& params) {}
+    virtual void setupInterface() {}
     
     // frustum culling
     void calcFrustumPlane( Vec3f &fNormal, Vec3f& fPoint, float& fDist, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3 );

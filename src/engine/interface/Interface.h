@@ -20,6 +20,8 @@ public:
     Interface(ci::app::App* app, OscServer* osc);
     virtual ~Interface();
     
+    mowa::sgui::SimpleGUI*  gui() { return mGui; }
+    
     OscFloatParam*  addParam( const CreateFloatParam& param );
     OscIntParam*    addParam( const CreateIntParam& param );
     OscBoolParam*   addParam( const CreateBoolParam& param );
