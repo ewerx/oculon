@@ -24,6 +24,7 @@
 #include "AudioInput.h"
 #include "InfoPanel.h"
 #include "Utils.h"
+#include "Interface.h"
 
 // scenes
 #include "Orbiter.h"
@@ -90,6 +91,7 @@ void OculonApp::setup()
     // params
     mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
     //mParams.setOptions("","position='10 600'");
+    setupInterface();
 
     
     // audio input
@@ -146,70 +148,91 @@ void OculonApp::shutdown()
     mAudioInput.shutdown();
 }
 
+void OculonApp::setupInterface()
+{
+    mInterface = new Interface(this, &mOscServer);
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("OCULON");
+    mInterface->gui()->addSeparator();
+}
+
 void OculonApp::addScene(Scene* scene, bool startActive)
 {
     scene->init(this);
-    mScenes.push_back(scene);
     if( startActive )
     {
-        scene->toggleActiveVisible();
+        scene->setRunning(true);
+        scene->setVisible(true);
     }
+    mScenes.push_back(scene);
+    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel(scene->getName());
+    mInterface->gui()->addButton("Toggle")->registerClick( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
+    mInterface->gui()->addButton("Interface")->registerClick( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
+    mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible))
+                         .defaultValue(scene->mIsVisible));
+    
+    console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }
-// TODO: Scenes
+
+bool OculonApp::toggleScene(const int sceneId)
+{
+    if( sceneId > 0 && sceneId <= mScenes.size() )
+    {
+        mScenes[sceneId-1]->toggleActiveVisible();
+    }
+    
+    return false;
+}
+
+bool OculonApp::showInterface(const int sceneId)
+{
+    if( sceneId == 0 )
+    {
+        for (SceneList::iterator sceneIt = mScenes.begin(); 
+             sceneIt != mScenes.end();
+             ++sceneIt )
+        {
+            Scene* scene = (*sceneIt);
+            scene->showInterface(false);
+        }
+        mInterface->gui()->setEnabled(true);
+    }
+    else if( sceneId <= mScenes.size() )
+    {
+        mScenes[sceneId-1]->showInterface(true);
+        mInterface->gui()->setEnabled(false);
+    }
+    
+    return false;
+}
+
 void OculonApp::setupScenes()
 {
     console() << "[main] creating scenes...\n";
     
     mScenes.clear(); 
     
-    int sceneId = 0;
-    
-    //TODO: serialization    
-    
+    //TODO: serialization
     const bool autoStart = true;
     
-    // Orbiter
-    //console() << ++sceneId << ": Orbiter\n";
     //addScene( new Orbiter(), autoStart );
-    
-    // Binned
-    //console() << ++sceneId << ": Binned\n";
     //addScene( new Binned() );
-    
-    // Pulsar
-    //console() << ++sceneId << ": Pulsar\n";
     //addScene( new Pulsar() );
-    
-    // Magnetosphere
-    //console() << ++sceneId << ": Magneto\n";
     //addScene( new Magnetosphere() );
+    addScene( new Graviton() );
     
-    // Graviton
-    console() << ++sceneId << ": Graviton\n";
-    addScene( new Graviton(), autoStart );
-    
-    // AudioTest
-    console() << ++sceneId << ": AudioTest\n";
+    // Test Scenes
     addScene( new AudioTest() );
-    
-    // MovieTest
-    //console() << ++sceneId << ": MovieTest\n";
     //addScene( new MovieTest() );
-    
-    // ShaderTest
-    console() << ++sceneId << ": ShaderTest\n";
     addScene( new ShaderTest() );
-    
     if( mEnableKinect )
     {
-        // KinectTest
-        //console() << ++sceneId << ": KinectTest\n";
         //addScene( new KinectTest(), autoStart );
     }
-    
     if( mEnableMindWave )
     {
-        console() << "\t" << sceneId << ": MindWave\n";
         addScene( new MindWaveTest() );
     }
 }
@@ -225,7 +248,7 @@ void OculonApp::resize( ResizeEvent event )
         ++sceneIt )
     {
         Scene* scene = (*sceneIt);
-        if( scene && scene->isActive() )
+        if( scene && scene->isRunning() )
         {
             scene->resize();
         }
@@ -248,7 +271,7 @@ void OculonApp::mouseDown( MouseEvent event )
          ++sceneIt )
     {
         Scene* scene = (*sceneIt);
-        if( scene && scene->isActive() )
+        if( scene && scene->isRunning() )
         {
             scene->handleMouseDown(event);
         }
@@ -266,7 +289,7 @@ void OculonApp::mouseDrag( MouseEvent event )
          ++sceneIt )
     {
         Scene* scene = (*sceneIt);
-        if( scene && scene->isActive() )
+        if( scene && scene->isRunning() )
         {
             scene->handleMouseDrag(event);
         }
@@ -280,7 +303,7 @@ void OculonApp::mouseUp( MouseEvent event)
          ++sceneIt )
     {
         Scene* scene = (*sceneIt);
-        if( scene && scene->isActive() )
+        if( scene && scene->isRunning() )
         {
             scene->handleMouseUp(event);
         }
@@ -304,7 +327,7 @@ void OculonApp::keyDown( KeyEvent event )
                 assert( scene != NULL );
                 if( scene )
                 {
-                    scene->setActive( !scene->isActive() );
+                    scene->setRunning( !scene->isRunning() );
                 }
             }
             break;
@@ -423,7 +446,7 @@ void OculonApp::keyDown( KeyEvent event )
              ++sceneIt )
         {
             Scene* scene = (*sceneIt);
-            if( scene && scene->isActive() )
+            if( scene && scene->isRunning() )
             {
                 if( scene->handleKeyDown(event) )
                 {
@@ -483,12 +506,13 @@ void OculonApp::update()
          ++sceneIt )
     {
         Scene* scene = (*sceneIt);
-        if( scene && scene->isActive() )
+        if( scene && scene->isRunning() )
         {
             scene->update(mElapsedSecondsThisFrame);
         }
     }
     
+    mInterface->update();
     mInfoPanel.update();
 }
 
@@ -613,13 +637,18 @@ void OculonApp::drawDebug()
     {
         Scene* scene = (*sceneIt);
         assert( scene != NULL );
-        if( scene && scene->isVisible() )
+        if( scene )
         {
             scene->drawInterface();
-            scene->drawDebug();
+            if( scene->isVisible() )
+            {
+                scene->drawDebug();
+            }
         }
     }
     gl::popMatrices();
+    
+    mInterface->draw();
     
     mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
     if( !mIsPresentationMode )
@@ -628,6 +657,8 @@ void OculonApp::drawDebug()
         mParams.draw();
     }
 }
+
+#pragma MARK Capture
 
 void OculonApp::captureFrames()
 {
@@ -726,7 +757,7 @@ void OculonApp::stopVideoCapture()
     mIsCapturingVideo = false;
 }
 
-void OculonApp::enableFrameCapture( bool enable )
+void OculonApp::enableFrameCapture( const bool enable )
 {
     mIsCapturingFrames = enable;
     

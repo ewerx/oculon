@@ -27,7 +27,7 @@ using namespace ci::app;
 
 
 Graviton::Graviton()
-: Scene()
+: Scene("Graviton")
 {
 }
 
@@ -656,7 +656,7 @@ void Graviton::preRender()
         {
             Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
             
-            if( orbiterScene && orbiterScene->isActive() )
+            if( orbiterScene && orbiterScene->isRunning() )
             {
                 gl::setMatrices( orbiterScene->getCamera() );
             }

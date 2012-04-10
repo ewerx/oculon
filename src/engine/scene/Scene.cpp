@@ -10,10 +10,13 @@
 #include "Scene.h"
 #include "OculonApp.h"
 #include "Interface.h"
+#include "SimpleGUI.h"
+#include <string>
 
-Scene::Scene()
-: mApp(NULL)
-, mIsActive(false)
+Scene::Scene(const std::string& name)
+: mName(name)
+, mApp(NULL)
+, mIsRunning(false)
 , mIsVisible(false)
 , mEnableFrustumCulling(false)
 , mInterface(NULL)
@@ -37,6 +40,12 @@ void Scene::init(OculonApp* app)
 {
     mApp = app;
     mInterface = new Interface( mApp, &mApp->getOscServer() );
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addButton("MASTER")->registerClick(boost::bind( &OculonApp::showInterface, mApp, 0) );
+    mInterface->gui()->addSeparator();
+    mInterface->gui()->addLabel(mName);
+    mInterface->gui()->setEnabled(false); // always start hidden
+    
     setup();
     setupParams(app->getParams());
     setupInterface();
@@ -64,17 +73,22 @@ const Camera& Scene::getCamera() const
     return mApp->getMayaCam();
 }
 
-void Scene::setActive(bool active)
+void Scene::setRunning(bool running)
 { 
-    mIsActive = active;
+    mIsRunning = running;
+    handleSetActive(running);
 }
 
 void Scene::setVisible(bool visible)
 {
     mIsVisible = visible;
-    
+    handleSetVisible(visible);
+}
+
+void Scene::showInterface(bool show)
+{
     assert(mInterface);
-    mInterface->gui()->setEnabled(visible);
+    mInterface->gui()->setEnabled(show);
 }
 
 #pragma MARK: Frustum Culling

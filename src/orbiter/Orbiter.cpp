@@ -15,6 +15,7 @@
 #include "Sun.h"
 #include "TextEntity.h"
 #include "Resources.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace boost;
@@ -48,7 +49,7 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04
 // Orbiter
 //
 Orbiter::Orbiter()
-: Scene()
+: Scene("Orbiter")
 , mSun(NULL)
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
@@ -147,6 +148,13 @@ void Orbiter::setupParams(params::InterfaceGl& params)
     //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
     //params.addSeparator();
     //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+}
+
+void Orbiter::setupInterface()
+{
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("ORBITER");
+    //mInterface->addParam("Gravity", &mGravityConstant
 }
 
 void Orbiter::reset()

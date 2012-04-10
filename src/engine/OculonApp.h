@@ -28,6 +28,7 @@
 
 // fwd decl
 class Scene;
+class Interface;
 
 using namespace ci;
 using namespace ci::app;
@@ -85,7 +86,10 @@ public: // new
     //TODO: hack
     Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     
-    void enableFrameCapture( bool enable );
+    void enableFrameCapture( const bool enable );
+    
+    bool toggleScene(const int sceneId);
+    bool showInterface(const int sceneId);
     
 protected: // new
     
@@ -97,6 +101,7 @@ protected: // new
     void captureFrames();
     void saveScreenshot();
     
+    void setupInterface();
     void setupScenes();
     void addScene(Scene* newScene, bool startActive =false);
     void setPresentationMode( bool enabled );
@@ -136,6 +141,7 @@ private: // members
     InfoPanel               mInfoPanel;
     params::InterfaceGl		mParams;
     
+    Interface*              mInterface;
     bool                    mIsPresentationMode;
     
     bool                    mIsCapturingVideo;

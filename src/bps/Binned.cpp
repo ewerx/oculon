@@ -23,7 +23,8 @@ using namespace ci::app;
 using namespace bps;
 
 Binned::Binned()
-: mMode(MODE_BOTH)
+: Scene("Binned")
+, mMode(MODE_BOTH)
 , mTopBottom(false)
 , mForceScaleX(1.0f)
 , mForceScaleY(1.0f)

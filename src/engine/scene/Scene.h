@@ -27,7 +27,7 @@ using namespace ci;
 class Scene
 {
 public:
-    Scene();
+    Scene(const std::string& name);
     virtual ~Scene();
     
     void init(OculonApp* app);
@@ -41,20 +41,26 @@ public:
     virtual void drawDebug() {}
     
     virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
-    virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { return; }
-	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { return; }
-	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { return; }
+    virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { }
+	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { }
+	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { }
+    virtual void handleSetActive(bool active)                               { }
+    virtual void handleSetVisible(bool visible)                             { }
     
-    OculonApp* getApp() { return mApp; }
     virtual const Camera& getCamera() const;
     
-    bool isActive() const           { return mIsActive; }
+    const std::string& getName()    { return mName; }
+    
+    bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
     
-    virtual void setActive(bool active);
-    virtual void setVisible(bool visible);
+    void setRunning(bool running);
+    void setVisible(bool visible);
+    void toggleActiveVisible()      { setRunning(!mIsRunning); setVisible(!mIsVisible); }
     
-    void toggleActiveVisible()      { setActive(!mIsActive); setVisible(!mIsVisible); }
+    void showInterface(bool show);
+    //bool* getVisiblePointer()       { return &mIsVisible; }
+    //bool* getRunningPointer()       {
     
     // frustum culling
     bool isFrustumCullingEnabled()  { return mEnableFrustumCulling; }
@@ -74,9 +80,12 @@ protected:
 	void calcNearAndFarClipCoordinates( const Camera& cam );	
 
 protected:
-    OculonApp* mApp;//TODO: fix this dependency
+    friend class OculonApp;
+    OculonApp* mApp;
     
-    bool        mIsActive;
+    std::string mName;
+    
+    bool        mIsRunning;
     bool        mIsVisible;
     
     bool        mEnableFrustumCulling;

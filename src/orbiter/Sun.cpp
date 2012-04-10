@@ -117,7 +117,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             //TODO: hack, use a message
             Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene(1));
             
-            if( binnedScene && binnedScene->isActive() )
+            if( binnedScene && binnedScene->isRunning() )
             {
                 Vec3d screenCoords = transform * mPosition;
                 Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());

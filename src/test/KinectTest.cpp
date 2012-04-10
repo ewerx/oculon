@@ -20,6 +20,7 @@
 using namespace ci;
 
 KinectTest::KinectTest()
+: Scene("KinectTest")
 {
 }
 

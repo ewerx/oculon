@@ -32,7 +32,7 @@ public:
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
-    void setActive(bool active);
+    void handleSetActive(bool active);
     
 private:
     //MoviePlayer mMoviePlayer1;

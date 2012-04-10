@@ -20,7 +20,7 @@
 class MindWaveTest : public Scene
 {
 public:
-    MindWaveTest() {}
+    MindWaveTest() : Scene("MindWaveTest") {}
     virtual ~MindWaveTest() {}
     
     // inherited from Scene

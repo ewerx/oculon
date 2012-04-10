@@ -16,7 +16,8 @@
 using namespace ci;
 
 MovieTest::MovieTest()
-: mActiveMovie(0)
+: Scene("MovieTest")
+, mActiveMovie(0)
 , mCycleDuration(0.0f)
 , mCycleTimer(0.0f)
 {
@@ -59,10 +60,8 @@ void MovieTest::setup()
     
 }
 
-void MovieTest::setActive(bool active)
+void MovieTest::handleSetActive(bool active)
 {
-    Scene::setActive(active);
-    
     for( int i=0; i < NUM_MOVIES; ++i )
     {
         if( mMoviePlayers[i]->isPlaying() && !active )

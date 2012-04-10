@@ -32,7 +32,7 @@ public:
     template<typename T>
     void registerCallback( std::string address, T* obj, void (T::*callback)(const ci::osc::Message&) )
     {
-        mCallbackMap[address] = boost::bind( callback, obj, boost::arg<1>() );//std::bind1st( std::mem_fun(callback), obj );
+        mCallbackMap[address] = boost::bind( callback, obj, boost::arg<1>() );
     }
     
     void unregisterCallback( const std::string& address )

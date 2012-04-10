@@ -36,6 +36,7 @@ public:
     // inherited from Scene
     void setup();
     void setupParams(params::InterfaceGl& params);
+    void setupInterface();
     void reset();
     void resize();
     void update(double dt);

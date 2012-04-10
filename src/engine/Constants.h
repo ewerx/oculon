@@ -11,3 +11,6 @@ static const float kCaptureHeight	= 480.0f;
 static const ci::Color kClearColor	= ci::Color(0.0f, 0.0f, 0.0f);
 
 static const float kCaptureFramerate = 25.0f;
+
+
+#define DEV_MODE
