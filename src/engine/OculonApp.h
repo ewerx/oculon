@@ -10,6 +10,7 @@
 #ifndef __OCULONAPP_H__
 #define __OCULONAPP_H__
 
+#include <vector>
 #include "cinder/app/AppBasic.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
@@ -17,14 +18,13 @@
 #include "cinder/MayaCamUI.h"
 #include "cinder/qtime/MovieWriter.h"
 #include "cinder/gl/Fbo.h"
+#include "cinderSyphon.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
 #include "OscServer.h"
 #include "KinectController.h"
 #include "InfoPanel.h"
-#include <vector>
-#include "cinderSyphon.h"
 
 // fwd decl
 class Scene;

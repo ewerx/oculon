@@ -98,9 +98,7 @@ void Body::update(double dt)
     
     if( mRadiusMultiplier > 1.0f && mRadiusAnimTime < 3.0f)
     {
-        //TODO: fix this hack
-        OculonApp* oculon = static_cast<OculonApp*>(App::get());
-        mRadiusAnimTime += (float)(oculon->getElapsedSecondsThisFrame());
+        mRadiusAnimTime += (float)(mParentScene->getApp()->getElapsedSecondsThisFrame());
         mEaseFactor = easeOutQuad(mRadiusAnimTime);
         mRadiusMultiplier = 1.0f + mEaseFactor * (mPeakRadiusMultiplier - 1.0f);
         //mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
@@ -158,7 +156,6 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
             gl::setMatrices(textCam);
         
-            OculonApp* app = static_cast<OculonApp*>(App::get());
             Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
             glTranslatef(textCoords.x, textCoords.y, 0.0f);
 
@@ -167,7 +164,6 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             const bool binned = true;
             if( binned )
             {
-                //OculonApp* oculon = static_cast<OculonApp*>(App::get());
                 //TODO: hack, use a message
                 Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene(1));
                 
@@ -291,8 +287,7 @@ void Body::resetTrail()
 
 void Body::applyFftBandValue( float fftBandValue )
 {
-    OculonApp* oculon = static_cast<OculonApp*>(App::get());
-    mRadiusAnimTime += (float)(oculon->getElapsedSecondsThisFrame());
+    mRadiusAnimTime += (float)(mParentScene->getApp()->getElapsedSecondsThisFrame());
     
     int framesToAvgFft = Orbiter::sNumFramesToAvgFft;
     if( mLastFftValues.size() > framesToAvgFft )

@@ -12,6 +12,9 @@
 #include "AudioTest.h"
 #include "KissFFT.h"
 
+using namespace ci;
+using namespace ci::app;
+
 //AudioTest::AudioTest()
 //{
 //}

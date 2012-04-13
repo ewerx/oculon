@@ -41,9 +41,8 @@ void Scene::init(OculonApp* app)
     mApp = app;
     mInterface = new Interface( mApp, &mApp->getOscServer() );
     mInterface->gui()->addColumn();
-    mInterface->gui()->addButton("MASTER")->registerClick(boost::bind( &OculonApp::showInterface, mApp, 0) );
+    mInterface->gui()->addButton(mName)->registerClick(boost::bind( &OculonApp::showInterface, mApp, 0) );
     mInterface->gui()->addSeparator();
-    mInterface->gui()->addLabel(mName);
     mInterface->gui()->setEnabled(false); // always start hidden
     
     setup();

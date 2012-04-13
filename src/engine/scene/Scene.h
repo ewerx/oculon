@@ -49,6 +49,7 @@ public:
     
     virtual const Camera& getCamera() const;
     
+    OculonApp* getApp() const       { return mApp; }
     const std::string& getName()    { return mName; }
     
     bool isRunning() const          { return mIsRunning; }

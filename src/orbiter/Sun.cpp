@@ -113,7 +113,6 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         const bool binned = true;
         if( binned )
         {
-            OculonApp* app = static_cast<OculonApp*>(App::get());
             //TODO: hack, use a message
             Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene(1));
             

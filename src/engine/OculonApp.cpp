@@ -166,12 +166,14 @@ void OculonApp::addScene(Scene* scene, bool startActive)
     }
     mScenes.push_back(scene);
     
+    // interface
     mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel(scene->getName());
+    mInterface->gui()->addButton(scene->getName())->registerClick( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
     mInterface->gui()->addButton("Toggle")->registerClick( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
-    mInterface->gui()->addButton("Interface")->registerClick( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
     mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible))
                          .defaultValue(scene->mIsVisible));
+    mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning))
+                         .defaultValue(scene->mIsRunning));
     
     console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }
@@ -217,16 +219,16 @@ void OculonApp::setupScenes()
     //TODO: serialization
     const bool autoStart = true;
     
-    //addScene( new Orbiter(), autoStart );
-    //addScene( new Binned() );
+    addScene( new Orbiter() );
+    addScene( new Binned() );
     //addScene( new Pulsar() );
-    //addScene( new Magnetosphere() );
+    addScene( new Magnetosphere() );
     addScene( new Graviton() );
     
     // Test Scenes
     addScene( new AudioTest() );
     //addScene( new MovieTest() );
-    addScene( new ShaderTest() );
+    //addScene( new ShaderTest() );
     if( mEnableKinect )
     {
         //addScene( new KinectTest(), autoStart );
