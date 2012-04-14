@@ -16,8 +16,6 @@
 using namespace ci;
 using namespace ci::app;
 
-/*static*/ int Magnetosphere::sOldNodeHistory = 10;
-
 
 Magnetosphere::Magnetosphere()
 : Scene("Magneto")
@@ -30,284 +28,185 @@ Magnetosphere::~Magnetosphere()
 
 void Magnetosphere::setup()
 {
+    // init params
+    mTimeStep = 0.00075f;
     
-    mEnableBlending = true;
+    mUseInvSquareCalc = false;
+    mFlags = PARTICLE_FLAGS_NONE;
+        
     mAdditiveBlending = true;
-    
-    mNodeRadius = 2.0f; //100
-    mDoDrawNodes = true;
-    
-    mPointSize = 2.0f;//20
-    mDoDrawPoints = true;
+    mEnableLineSmoothing = false;
+    mEnablePointSmoothing = false;
     mUseImageForPoints = true;
+    mScalePointsByDistance = false;
+    mPointSize = 2.0f;
+    mLineWidth = 1.0f;
+    mParticleAlpha = 1.0f;
     
-    mDoDrawLines = false;
-    mLineWidth = 1.0f;//20
+    mDamping = 1.0f;
+    //mEps = 0.01f;//mFormationRadius * 0.5f;
     
-    mNumParticlesPower = 1;
-    mNumParticles = 100;
+    mDimensions.x = mApp->getViewportWidth();
+    mDimensions.y = mApp->getViewportHeight();
     
-    mTimeSpeed = 1.0f;
-    mDieSpeed = 0.0f;
-    mMassMin = 0.0f;
-    mMomentum = 0.01f;
-    mSpreadMin = 0.0f;
-    mSpreadMax = 1.0f;
-    mNodeAttractMin = 0.0f;
-    mNodeAttractMax = 1.0f;
-    mWaveAmpMin = 0.0f;
-    mWaveAmpMax = 1.0f;
-    mWaveFreqMin = 0.0f;
-    mWaveFreqMax = 1.0f;
-    mWavePosMult = 1.0f;//10
-    mWaveVelMult = 1.0f;//10
-    
-    mColor.set(1.0f,1.0f,1.0f,1.0f);
-    mColorTaper = 0.5f;
-    
-    mNodeBrightness = 1.0f;
-    
-    // trail
-    mUseFbo = false;
-    mDoBlur = false;
-    //mOldNodeHistory = 1;
-    mFboScaleDown = 1.0f;//8
-    mBlurAmount = 0.0f;//50
-    mTrailBrightness = 0.5f;
-    mTrailAudioDistortMin = 0.0f;
-    mTrailAudioDistortMax = 5.0f;//10
-    mTrailWaveFreqMin = 0.0f;
-    mTrailWaveFreqMax = 1.0f;
-    mTrailDistanceAffectsWave = false;
-    
-    mFadeSpeed = 0.001f;
-    
-    gl::Fbo::Format format;
-    //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-    const int fboWidth = mApp->getWindowWidth();
-    const int fboHeight = mApp->getWindowHeight();
-    mFboNew = gl::Fbo( fboWidth, fboHeight, format );
-    mFboComp = gl::Fbo( fboWidth, fboHeight, format );
-    mFboBlur = gl::Fbo( fboWidth, fboHeight, format );
-    
-    mFboBlur.bindFramebuffer();
-    {
-        gl::setMatricesWindow( mFboNew.getSize(), false );
-        gl::setViewport( mFboNew.getBounds() );
-        gl::clear( ColorA(0,0,0,0) );
-    }
-    mFboBlur.unbindFramebuffer();
-    
-    /*
-    for(int i=0; i < kMagnetoNumParticles; i++) 
-    {
-		clParticle &p = mParticles[i];
-		p.vel.set(0, 0);
-		p.mass = Rand::randFloat(0.5f, 1.0f);		
-		mPosBuffer[i].set(Rand::randFloat(mApp->getViewportWidth()), Rand::randFloat(mApp->getViewportHeight()));
-	}
-    */
-    //int rowCount = sqrtf(kMagnetoNumParticles);
-	//int colCount = kMagnetoNumParticles / rowCount;
-	
-	for(int i=0; i<kMagnetoNumParticles; i++) 
-    {
-		mIndices[i*2]	= i;
-		mIndices[i*2+1]	= i + kMagnetoNumParticles;
-		
-		clParticle &p = mParticles[i];
-		p.vel.x = Rand::randFloat();
-		p.vel.y = Rand::randFloat();
-		
-		//		p.homePos.x = Rand::randFloat();//(i%colCount) * 1.0f/rowCount;//;
-		//		p.homePos.y = Rand::randFloat();//(i/colCount) * 1.0f/rowCount;//Rand::randFloat();
-		
-		p.mass = Rand::randFloat(mMassMin, 1.0f);
-		
-		p.life = Rand::randFloat();
-		
-		mPosBuffer[i].x = Rand::randFloat(mApp->getViewportWidth());
-		mPosBuffer[i].y = Rand::randFloat(mApp->getViewportHeight());	
-	}
-    
-	initOpenCl();
-	
-	glPointSize(1);
+    initOpenCl();
     
     mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
-    //mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
-    
-    // blur shader
-    try 
-    {
-		mBlurShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
-	}
-	catch( gl::GlslProgCompileExc &exc ) 
-    {
-		std::cout << "Shader compile error: " << std::endl;
-		std::cout << exc.what();
-	}
-	catch( ... ) 
-    {
-		std::cout << "Unable to load shader" << std::endl;
-	}
+    mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
     reset();
+    
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Magnetosphere::drawParticles, this ) );
 }
 
 void Magnetosphere::initOpenCl()
 {
     mOpenCl.setupFromOpenGL();
     
-	glGenBuffersARB(2, mVbo);
+    const size_t posBufSize = kMaxParticles * sizeof(float2) * kParticleTrailSize;
+    const size_t colBufSize = kMaxParticles * sizeof(float4) * kParticleTrailSize;
+
+    // init VBO
+    //
+    glGenBuffersARB(2, mVbo); // 2 VBOs, color and position
 	
+    // use VBO for position
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofPosBuffer, mPosBuffer, GL_STREAM_COPY_ARB);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, posBufSize, mPosBuffer, GL_STREAM_COPY_ARB);
 	glVertexPointer(2, GL_FLOAT, 0, 0);
 	
+    // use VBO for color
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, kMagnetoSizeofColBuffer, mColorBuffer, GL_STREAM_COPY_ARB);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, colBufSize, mColorBuffer, GL_STREAM_COPY_ARB);
 	glColorPointer(4, GL_FLOAT, 0, 0);
 	
-    
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     
-    fs::path clPath = App::getResourcePath("WaveParticle.cl");
+    // init CL kernel
+    //
+    fs::path clPath = App::getResourcePath("Particle.cl");
 	mOpenCl.loadProgramFromFile(clPath.string());
-	mKernelUpdate = mOpenCl.loadKernel("updateParticle");
+	mKernel = mOpenCl.loadKernel("magnetoParticle");
 	
-	
-	//mClBufParticles.initBuffer(sizeof(clParticle) * kMagnetoNumParticles, CL_MEM_READ_WRITE, mParticles);
-    mClBufParticles.initBuffer(sizeof(clParticle) * kMagnetoNumParticles, CL_MEM_READ_WRITE, mParticles);
-    mClBufNodes.initBuffer(sizeof(clNode) * kMagnetoMaxNodes, CL_MEM_READ_ONLY, NULL);
+	// init CL buffers
+    //
+    mClBufParticles.initBuffer(sizeof(tParticle) * kMaxParticles, CL_MEM_READ_WRITE);
+    mClBufNodes.initBuffer(sizeof(tNode) * kMaxNodes, CL_MEM_READ_ONLY, NULL);
     
-    mClBufPosBuffer.initFromGLObject(mVbo[0]);
-	mClBufColorBuffer.initFromGLObject(mVbo[1]);
-	
-	mKernelUpdate->setArg(ARG_PARTICLES, mClBufParticles.getCLMem());
-    mKernelUpdate->setArg(ARG_POS_BUFFER, mClBufPosBuffer.getCLMem());
-    mKernelUpdate->setArg(ARG_COLOR_BUFFER, mClBufColorBuffer.getCLMem());
+    mClBufPos.initFromGLObject(mVbo[0]);
+	mClBufColor.initFromGLObject(mVbo[1]);
+    mClBufFft.initBuffer( sizeof(cl_float)*kFftBands, CL_MEM_READ_WRITE );
 }
 
 void Magnetosphere::reset()
 {
-    updateParams();
-    updateNodes();
+    initParticles();
+    
+    const size_t posBufSize = kMaxParticles * sizeof(float2) * kParticleTrailSize;
+    const size_t colBufSize = kMaxParticles * sizeof(float4) * kParticleTrailSize;
+
+    // recreate the buffers (afaik there's no leak here)
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, posBufSize, mPosBuffer, GL_STREAM_COPY_ARB);
+	glVertexPointer(2, GL_FLOAT, 0, 0);
+	
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, colBufSize, mColorBuffer, GL_STREAM_COPY_ARB);
+	glColorPointer(4, GL_FLOAT, 0, 0);
+    
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+    mClBufParticles.write( mParticles, 0, sizeof(tParticle) * kMaxParticles );
+    mClBufNodes.write( mNodes, 0, sizeof(tNode) * kMaxNodes );
+    
+    mKernel->setArg(ARG_PARTICLES, mClBufParticles.getCLMem());
+    mKernel->setArg(ARG_NODES, mClBufNodes.getCLMem());
+    mKernel->setArg(ARG_POS, mClBufPos.getCLMem());
+    mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
+    mKernel->setArg(ARG_FFT, mClBufFft.getCLMem());
+    mKernel->setArg(ARG_NUM_PARTICLES, mNumParticles);
+    mKernel->setArg(ARG_DIMENSIONS, mDimensions);
 }
 
 void Magnetosphere::resize()
 {
-    if(mUseFbo) 
-    {
-		mRenderDimensions.x = mFboNew.getWidth();
-		mRenderDimensions.y = mFboNew.getHeight();
-	} 
-    else 
-    {
-		mRenderDimensions.x = mApp->getViewportWidth();
-		mRenderDimensions.y = mApp->getViewportHeight();
-	}
+    mDimensions.x = mApp->getViewportWidth();
+    mDimensions.y = mApp->getViewportHeight();
+    mKernel->setArg(ARG_DIMENSIONS, mDimensions);
+    mMotionBlurRenderer.resize(mApp->getWindowSize());
 }
-
-//void Magnetosphere::setupMidiMapping()
-//{
-    // setup MIDI inputs for learning
-    //mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    //mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    //mMidiMap.beginLearning();
-    // ... or load a MIDI mapping
-    //mMidiInput.setMidiKey("gravity", channel, note);
-//}
 
 void Magnetosphere::setupParams(params::InterfaceGl& params)
 {
-    params.addText( "magneto", "label=`Magnetosphere`" );
-    params.addParam("Blending", &mEnableBlending, "");
-    params.addParam("Additive Blending", &mAdditiveBlending, "");
-
-    params.addParam("Node Radius", &mNodeRadius, "");
-    params.addParam("Draw Nodes", &mDoDrawNodes, "");
+    params.addText( "magneto", "label=`Magneto`" );
+    params.addParam("Inv Square", &mUseInvSquareCalc );
+    params.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
+    params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
     
     params.addParam("Point Size", &mPointSize, "");
-    params.addParam("Draw Points", &mDoDrawPoints, "");
+    params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
     params.addParam("Point Sprites", &mUseImageForPoints, "");
+    params.addParam("Point Scaling", &mScalePointsByDistance, "");
+    params.addParam("Additive Blending", &mAdditiveBlending, "");
+    params.addParam("Motion Blur", &mUseMotionBlur);
+    params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
+
+}
+
+void Magnetosphere::initParticles()
+{
+    mNumParticles = kMaxParticles;
+ 
+    for (int i=0; i < kMaxParticles; ++i) 
+    {
+		tParticle &p = mParticles[i];
+		p.mVel.set(0.0f,0.0f);
+		p.mMass = Rand::randFloat(0.5f, 1.0f);
+        p.mLife = Rand::randFloat();
+		mPosBuffer[i].x = Rand::randFloat(mApp->getViewportWidth());
+        mPosBuffer[i].y = Rand::randFloat(mApp->getViewportHeight());
+	}
     
-    params.addParam("DrawLines", &mDoDrawLines, "");
-    params.addParam("Line Width", &mLineWidth, "");
-    //params.addParam("K Particles", &mNumParticles, "");
-    
-    params.addParam("Time Speed", &mTimeSpeed, "step=0.01 min=0.0 max=1.0");
-    params.addParam("Die Speed", &mDieSpeed, "step=0.01 min=0.0 max=1.0");
-    params.addParam("Mass Min", &mMassMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("Momentum", &mMomentum, "step=0.01 min=0.0 max=1.0");
-    params.addParam("SpreadMin", &mSpreadMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("SpreadMax", &mSpreadMax, "step=0.01 min=0.0 max=1.0");
-    params.addParam("NodeAttractMin", &mNodeAttractMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("NodeAttractMax", &mNodeAttractMax, "step=0.01 min=0.0 max=1.0");
-    params.addParam("WaveAmpMin", &mWaveAmpMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("WaveAmpMax", &mWaveAmpMax, "step=0.01 min=0.0 max=1.0");
-    params.addParam("WaveFreqMin", &mWaveFreqMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("WaveFreqMax", &mWaveFreqMax, "step=0.01 min=0.0 max=1.0");
-    params.addParam("WavePosMult", &mWavePosMult, "step=0.01 min=0.0 max=10.0");
-    params.addParam("WaveVelMult", &mWaveVelMult, "step=0.01 min=0.0 max=10.0");
-    
-    params.addParam("Color Taper", &mColorTaper, "step=0.01 min=0.0 max=1.0");
-    //TODO:color
-    
-    params.addParam("NodeBrightness", &mNodeBrightness, "step=0.01 min=0.0 max=1.0");
-    
-    // trail
-    params.addParam("mUseFbo", &mUseFbo, "");
-    params.addParam("DoBlur", &mDoBlur, "");
-    
-    params.addParam("mFboScaleDown", &mFboScaleDown, "step=0.01 min=1.0 max=8.0");
-    params.addParam("mBlurAmount", &mBlurAmount, "min=1 max=50");
-    params.addParam("mTrailAudioDistortMin", &mTrailAudioDistortMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("mTrailAudioDistortMax", &mTrailAudioDistortMax, "step=0.01 min=0.0 max=10.0");
-    params.addParam("mTrailWaveFreqMin", &mTrailWaveFreqMin, "step=0.01 min=0.0 max=1.0");
-    params.addParam("mTrailWaveFreqMax", &mTrailWaveFreqMax, "step=0.01 min=0.0 max=1.0");
-    params.addParam("mTrailDistanceAffectsWave", &mTrailDistanceAffectsWave, "");
-    params.addParam("mFadeSpeed", &mFadeSpeed, "step=0.01 min=0.0 max=1.0");
-    
-    //params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    //params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
-    //params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    //params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
-    //params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
-    //params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
-    //params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
-    //params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
-    //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //params.addSeparator();
-    //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+    mNumNodes = kMaxNodes;
+    for (int i=0; i < kMaxNodes; ++i) 
+    {
+		tNode &node = mNodes[i];
+		node.mPos.x = Rand::randFloat(mApp->getViewportWidth());
+        node.mPos.y = Rand::randFloat(mApp->getViewportHeight());
+        node.mMass = Rand::randFloat(0.5f, 1.0f);
+        node.mCharge = Rand::randFloat(-1.0f, 1.0f);
+	}
 }
 
 void Magnetosphere::update(double dt)
 {
-	//mDimensions.x = mApp->getViewportWidth();
-	//mDimensions.y = mApp->getViewportHeight();
-    
     updateAudioResponse();
+    //updateNodes();
     
-    mAnimTime += mTimeSpeed;
-    mKernelUpdate->setArg(ARG_TIME, mAnimTime);
-    
-    //		updateParams();
-    
-    //		if(nodesNeedUpdating) 
-    updateNodes();
-    
-    mKernelUpdate->run1D(mNumParticles);
+    mKernel->setArg(ARG_DT, mTimeStep);
+    mKernel->setArg(ARG_NUM_PARTICLES, mNumParticles);
+    mKernel->setArg(ARG_DAMPING, mDamping);
+    mKernel->setArg(ARG_ALPHA, mParticleAlpha);
+    mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
+    mKernel->setArg(ARG_NUM_NODES, mNumNodes);
+    //mKernel->setArg(ARG_NODES, mClBufNodes.getCLMem());
+    mKernel->setArg(ARG_MOUSEPOS, mMousePos);
 	
-	//mKernelUpdate->setArg(2, mMousePos);
-	//mKernelUpdate->setArg(3, mDimensions);
-	//mKernelUpdate->run1D(kMagnetoNumParticles);
+	// update flags // TODO: cleanup
+    mFlags = PARTICLE_FLAGS_SHOW_MASS;
+    //mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
+    if( mUseInvSquareCalc ) {
+        mFlags |= PARTICLE_FLAGS_INVSQR;
+    }
+    mKernel->setArg(ARG_FLAGS, mFlags);
+    
+    mKernel->run1D(mNumParticles);
     
     //updateHud();
     
     // debug info
     char buf[256];
-    snprintf(buf, 256, "particles: %d", mNumParticles);
+    snprintf(buf, 256, "m/particles: %d", mNumParticles);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
     
     Scene::update(dt);
@@ -325,12 +224,6 @@ bool Magnetosphere::handleKeyDown(const KeyEvent& keyEvent)
         case ' ':
             reset();
             break;
-        case 'g':
-            //generateParticles();
-            break;
-        case 'q':
-            //mParticleController.toggleParticleDrawMode();
-            break;
         default:
             handled = false;
             break;
@@ -344,23 +237,17 @@ void Magnetosphere::handleMouseDown( const MouseEvent& event )
 	mIsMousePressed = true;
 	mMousePos.x = event.getPos().x;
     mMousePos.y = event.getPos().y;
-    
-    mNodesNeedUpdating = true;
 }
 
 void Magnetosphere::handleMouseUp( const MouseEvent& event )
 {
 	mIsMousePressed = false;
-    
-    mNodesNeedUpdating = true;
 }
 
 void Magnetosphere::handleMouseDrag( const MouseEvent& event )
 {
 	mMousePos.x = event.getPos().x;
     mMousePos.y = event.getPos().y;
-    
-    mNodesNeedUpdating = true;
 }
 
 //
@@ -371,65 +258,31 @@ void Magnetosphere::updateAudioResponse()
     AudioInput& audioInput = mApp->getAudioInput();
     std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
     
-    //unsigned int bandCount = audioInput.getFftBandCount();
-    //float* fftBuffer = fftDataRef.get();
-    
-    //int bodyIndex = 0;
-    
-    //TODO
+    unsigned int bandCount = audioInput.getFftBandCount();
+    float* fftBuffer = fftDataRef.get();
+ 
+    if( fftBuffer )
+    {
+        mClBufFft.write( fftBuffer, 0, sizeof(cl_float) * bandCount );
+        mKernel->setArg( ARG_FFT, mClBufFft.getCLMem() );
+    }
 }
 
+//
+// MARK: Render
+//
 void Magnetosphere::draw()
 {
     glPushMatrix();
     gl::setMatricesWindow( mApp->getWindowSize() );
-    //gl::enableDepthWrite( false );
-	//gl::enableDepthRead( false );
-	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	/*
-    glColor3f(1.0f, 1.0f, 1.0f);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-#ifdef USE_OPENGL_CONTEXT
-	mOpenCl.finish();
-#else	
-	mOpencl.readBuffer(sizeof(Vec2f) * NUM_PARTICLES, mClMemPosVBO, mParticlesPos);
-	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(Vec2f) * NUM_PARTICLES, mParticlesPos);
-#endif	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_POINTS, 0, kMagnetoNumParticles);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    */
-    
-    if(!mUseFbo)
-        drawParticles();
-    
-    if(mUseFbo) 
+
+    if( mUseMotionBlur )
     {
-		drawOffscreen();
-        //		
-        //		
-        //		if(blurAlpha) {
-        //			glColor3f(blurAlpha, blurAlpha, blurAlpha);
-        //			glEnable(GL_BLEND);
-        //			glBlendFunc(GL_ONE, GL_ONE);
-        //			fboBlur.draw(0, 0, ofGetWidth(), ofGetHeight());
-        //		}
-        //		
-        //		if(origAlpha) {
-        //			glColor3f(origAlpha, origAlpha, origAlpha);
-        //			glEnable(GL_ALPHA);
-        //			glBlendFunc(GL_ONE, GL_ONE);
-        //			fboNew.draw(0, 0, ofGetWidth(), ofGetHeight());
-        //		}
-		glColor3f( 1, 1, 1 );
-        gl::enableAdditiveBlending();
-        gl::setMatricesWindow( mApp->getWindowSize() );
-        gl::draw( mFboComp.getTexture(), getWindowBounds() );
-	}
+        mMotionBlurRenderer.draw();
+    }
     else
     {
-        drawStrokes();
+        drawParticles();
     }
 	
     glPopMatrix();
@@ -438,7 +291,7 @@ void Magnetosphere::draw()
 //
 //
 //
-
+/*
 void Magnetosphere::updateNode(clNode &n, int i) 
 {
 	float t;
@@ -520,8 +373,8 @@ void Magnetosphere::updateNodes()
     
     //	openCL.writeBuffer(sizeof(Node) * numNodes, clBufNodes, nodes, false);		// TODO, test smaller buffer write
 	mClBufNodes.write(mNodes, 0, sizeof(clNode) * mNumNodes);
-	mKernelUpdate->setArg(ARG_NODES, mClBufNodes.getCLMem());
-	mKernelUpdate->setArg(ARG_NUM_NODES, mNumNodes);
+	mKernel->setArg(ARG_NODES, mClBufNodes.getCLMem());
+	mKernel->setArg(ARG_NUM_NODES, mNumNodes);
 	
 	mNodesNeedUpdating = false;
 }
@@ -564,49 +417,49 @@ void Magnetosphere::drawNodes()
     mParticleTexture.unbind();
     glDisable( GL_TEXTURE_2D );
 }
-
-void Magnetosphere::updateParams() 
-{
-	resize();
-	
-	mKernelUpdate->setArg(ARG_COLOR, mColor);
-	mKernelUpdate->setArg(ARG_COLOR_TAPER, mColorTaper);
-	mKernelUpdate->setArg(ARG_MOMENTUM, mMomentum);
-	mKernelUpdate->setArg(ARG_DIESPEED, mDieSpeed);
-	mKernelUpdate->setArg(ARG_WAVE_POS_MULT, mWavePosMult);
-	mKernelUpdate->setArg(ARG_WAVE_VEL_MULT, mWaveVelMult);
-	mKernelUpdate->setArg(ARG_MASS_MIN, mMassMin);
-	
-	
-	//mNumParticles = 1 << mNumParticlesPower;
-    mNumParticles = kMagnetoNumParticles;
-	if(mNumParticles>kMagnetoNumParticles) mNumParticles = kMagnetoNumParticles;
-}	
-
-
+*/
 void Magnetosphere::preRender() 
 {
-    
-	if(mUseImageForPoints) 
+ 	if(mUseImageForPoints) 
     {
-		glEnable(GL_POINT_SPRITE);
-		glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+        if( mScalePointsByDistance )
+        {
+            glPointSize(mPointSize);
+            float quadratic[] =  { 0.0f, 0.0f, 0.00001f };
+            float sizes[] = { 3.0f, mPointSize };
+            glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes);
+            glDisable(GL_POINT_SPRITE);
+            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, sizes[1] );
+            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, sizes[0] );
+            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
+            glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
+            glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
+            glEnable( GL_POINT_SPRITE_ARB );
+        }
+        else
+        {
+            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, mPointSize );
+            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, mPointSize );
+            glDisable(GL_POINT_SPRITE_ARB);
+            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glEnable(GL_POINT_SPRITE);
+            glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+            glPointSize(mPointSize);
+        }
 	} 
     else 
     {
 		glDisable(GL_POINT_SPRITE);
 	}
 	
-	if(mEnableBlending || mAdditiveBlending) 
+	if(mAdditiveBlending) 
     {
-		if(mAdditiveBlending) 
-            gl::enableAdditiveBlending();
-		else 
-            gl::enableAlphaBlending();
+        gl::enableAdditiveBlending();
 	} 
     else 
     {
-		glDisable(GL_BLEND);
+		gl::enableAlphaBlending();
 	}
 	
 	if(mEnableLineSmoothing) 
@@ -627,66 +480,59 @@ void Magnetosphere::preRender()
 		glDisable(GL_POINT_SMOOTH);
 	}
     
-	
-	glPointSize(mPointSize);
 	glLineWidth(mLineWidth);
+    
+    gl::disableDepthWrite();
 }
-
-
-
-
-
 
 void Magnetosphere::drawParticles() 
 {
     preRender();
     
-    if(mDoDrawNodes) 
-    {
-        drawNodes();
-    }
-    
-    //		openCL.finish();
     mOpenCl.flush();
     
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
+    // bind particle position VBO
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
     glVertexPointer(2, GL_FLOAT, 0, 0);
     
+    // bind particle color VBO
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
     glColorPointer(4, GL_FLOAT, 0, 0);
     
-    if(mDoDrawLines) 
-    {
-        glDrawElements(GL_LINES, mNumParticles * kMagnetoMaxTrailLength, GL_UNSIGNED_INT, mIndices);
+    //TODO: trails/lines
+    //glDrawElements(GL_LINES, mNumParticles * kMagnetoMaxTrailLength, GL_UNSIGNED_INT, mIndices);
         //glDrawArrays(GL_LINES, 0, kMaxParticles);
+    //}
+    
+    if(mUseImageForPoints) 
+    {
+        glEnable(GL_TEXTURE_2D);
+        mParticleTexture.bind();
     }
     
-    if(mDoDrawPoints)
+    glDrawArrays(GL_POINTS, 0, mNumParticles);
+    
+    if(mUseImageForPoints) 
     {
-        if(mUseImageForPoints) 
-        {
-            //glEnable(GL_TEXTURE_2D);
-            mParticleTexture.bind();
-        }
-        glDrawArrays(GL_POINTS, 0, mNumParticles);
-            
-        if(mUseImageForPoints) 
-        {
-            mParticleTexture.unbind();
-            //glDisable(GL_TEXTURE_2D);
-        }
+        mParticleTexture.unbind();
+        //glDisable(GL_TEXTURE_2D);
     }
     
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
     glDisableClientState(GL_COLOR_ARRAY);
     
     glPopMatrix();	
 }
 
+void Magnetosphere::drawDebug()
+{
+}
+
+
+/*
 void Magnetosphere::drawStrokes() 
 {
 	glColor4f(mColor.x * mTrailBrightness, mColor.y * mTrailBrightness, mColor.z * mTrailBrightness, 1.0f);
@@ -826,7 +672,8 @@ void Magnetosphere::drawOffscreen()
      }
      }
      fboBlur.end();
-     */
+     *
     
     gl::setViewport( viewport );
 }
+ */
