@@ -19,12 +19,6 @@
 using namespace ci;
 using namespace ci::app;
 
-#define PARTICLE_FLAGS_NONE         0x00
-#define PARTICLE_FLAGS_INVSQR       (1 << 0)
-#define PARTICLE_FLAGS_SHOW_DARK    (1 << 1)
-#define PARTICLE_FLAGS_SHOW_SPEED   (1 << 2)
-#define PARTICLE_FLAGS_SHOW_MASS    (1 << 3)
-
 
 Graviton::Graviton()
 : Scene("Graviton")
@@ -86,33 +80,11 @@ void Graviton::setup()
     mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
-    // blur shader
-    try 
-    {
-		mBlurShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
-	}
-	catch( gl::GlslProgCompileExc &exc ) 
-    {
-		std::cout << "Shader compile error: " << std::endl;
-		std::cout << exc.what();
-	}
-	catch( ... ) 
-    {
-		std::cout << "Unable to load shader" << std::endl;
-	}
-    
     reset();
-}
+    
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Graviton::drawParticles, this ) );
 
-//void Graviton::setupMidiMapping()
-//{
-// setup MIDI inputs for learning
-//mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-//mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-//mMidiMap.beginLearning();
-// ... or load a MIDI mapping
-//mMidiInput.setMidiKey("gravity", channel, note);
-//}
+}
 
 void Graviton::setupParams(params::InterfaceGl& params)
 {
@@ -388,7 +360,7 @@ void Graviton::reset()
     
     const size_t size = sizeof(float4) * kNumParticles;
 	
-    // recreate teh buffers (afaik there's no leak here)
+    // recreate the buffers (afaik there's no leak here)
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
 	glVertexPointer(4, GL_FLOAT, 0, 0);
@@ -425,8 +397,6 @@ void Graviton::reset()
     mCamTarget = Vec3f::zero();
     mCam.setFov(60.0f);
     mCam.setAspectRatio(mApp->getWindowAspectRatio());
-    
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Graviton::drawParticles, this ) );
 }
 
 void Graviton::resize()
@@ -523,9 +493,9 @@ void Graviton::update(double dt)
     
     // debug info
     char buf[256];
-    snprintf(buf, 256, "particles: %d", mNumParticles);
+    snprintf(buf, 256, "g/particles: %d", mNumParticles);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
-    snprintf(buf, 256, "massives: %d", mStep);
+    snprintf(buf, 256, "g/massives: %d", mStep);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
     
     Scene::update(dt);
@@ -690,7 +660,10 @@ void Graviton::preRender()
         }
         else
         {
+            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, mPointSize );
+            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, mPointSize );
             glDisable(GL_POINT_SPRITE_ARB);
+            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
             glEnable(GL_POINT_SPRITE);
             glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
             glPointSize(mPointSize);
@@ -766,52 +739,6 @@ void Graviton::drawParticles()
     
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     glDisableClientState(GL_COLOR_ARRAY);
-    
-/*    
-    if(mDoDrawNodes) 
-    {
-        drawNodes();
-    }
-    
-    mOpenCl.flush();
-    
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-    glVertexPointer(2, GL_FLOAT, 0, 0);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-    glColorPointer(4, GL_FLOAT, 0, 0);
-    
-    if(mDoDrawLines) 
-    {
-        glDrawElements(GL_LINES, mNumParticles * kMaxTrailLength, GL_UNSIGNED_INT, mIndices);
-        //glDrawArrays(GL_LINES, 0, kMaxParticles);
-    }
-    
-    if(mDoDrawPoints)
-    {
-        if(mUseImageForPoints) 
-        {
-            //glEnable(GL_TEXTURE_2D);
-            mParticleTexture.bind();
-        }
-        glDrawArrays(GL_POINTS, 0, mNumParticles);
-            
-        if(mUseImageForPoints) 
-        {
-            mParticleTexture.unbind();
-            //glDisable(GL_TEXTURE_2D);
-        }
-    }
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
-    glDisableClientState(GL_COLOR_ARRAY);
-    
-    glPopMatrix();	
- */
 }
 
 void Graviton::drawDebug()

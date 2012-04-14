@@ -114,6 +114,16 @@ private:
         float   mMass;
     };
     
+    // duplicates definition in CL kernel
+    enum eParticleFlags
+    {
+        PARTICLE_FLAGS_NONE =       0x00,
+        PARTICLE_FLAGS_INVSQR =     (1 << 0),
+        PARTICLE_FLAGS_SHOW_DARK =  (1 << 1),
+        PARTICLE_FLAGS_SHOW_SPEED = (1 << 2),
+        PARTICLE_FLAGS_SHOW_MASS =  (1 << 3),
+    };
+    
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
@@ -123,6 +133,7 @@ private:
     bool                    mIsMousePressed;
     float2                  mMousePos;
     
+    // opencl
     MSA::OpenCL             mOpenCl;
     MSA::OpenCLProgram      *mClProgram;
     MSA::OpenCLKernel       *mKernel;
@@ -137,16 +148,15 @@ private:
     
     MSA::OpenCLBuffer       mClBufPos;
     
+    // opencl data
     float4                  mPosAndMass[kNumParticles];
     float4                  mVel[kNumParticles];
     float4                  mColor[kNumParticles];
     cl_float                mAudioFft[kFftBands];
     
+    // opencl params
     cl_uint                 mStep;
     cl_uint                 mNumParticles;
-    
-    GLuint                  mVbo[2];
-    
     
     cl_float                mTimeStep;
     cl_float                mDamping;
@@ -154,68 +164,16 @@ private:
     cl_float                mEps;
     cl_uint                 mFlags;
     
-    //    clNode              mNodes[kMaxNodes];
-    //    MSA::OpenCLBuffer	mClBufNodes;
     cl_int                  mNumNodes;
-    //    
-    //    bool                    mNodesNeedUpdating;
-    //    
-    //    float4              mColor;
-    //    float2              mRenderDimensions;
-    //    
-    
-    //    
-    //    clParticle			mParticles[kNumParticles];
-    //    MSA::OpenCLBuffer	mClBufParticles;		// stores above data
-    //    
-    //    // contains info for rendering (VBO data) first pos, then oldPos
-    //    float2              mPosBuffer[kNumParticles * kMaxTrailLength];
-    //    MSA::OpenCLBuffer	mClBufPosBuffer;
-    //    
-    //    // contains info for rendering (VBO data)
-    //    float4				mColorBuffer[kNumParticles * kMaxTrailLength];
-    //    MSA::OpenCLBuffer	mClBufColorBuffer;
-    //    
-    //    GLuint              mIndices[kNumParticles * kMaxTrailLength];
-    //    
+
+    // rendering
+    GLuint              mVbo[2]; // pos and color VBOs
     gl::Texture         mParticleTexture;
-    //    GLuint				mVbo[2];
-    //
-    //    float               mSpreadMin;
-    //    float               mSpreadMax;
-    //    float               mNodeAttractMin;
-    //    float               mNodeAttractMax;
-    //    float				mWaveFreqMin;
-    //    float				mWaveFreqMax;
-    //    float				mWaveAmpMin;
-    //    float				mWaveAmpMax;
-    //    float				mCenterDeviation;
-    //    float				mCenterDeviationMin;
-    //    float				mCenterDeviationMax;
-    //    
-    //    cl_float			mColorTaper;
-    //    cl_float			mMomentum;
-    //    cl_float			mDieSpeed;
-    //    cl_float			mAnimTime;
-    //    cl_float			mTimeSpeed;
-    //    cl_float			mWavePosMult;
-    //    cl_float			mWaveVelMult;
-    //    cl_float			mMassMin;
-    float					mPointSize;
-    float					mLineWidth;
-    float                   mParticleAlpha;
-    //    cl_int				mNumParticles;
-    //    int					mNumParticlesPower;
-    //    float				mFadeSpeed;
-    //    float				mNodeRadius;
-    //    float				mNodeBrightness;
-    //    
-    //    // rendering / fx
+    float				mPointSize;
+    float				mLineWidth;
+    float               mParticleAlpha;
     bool				mEnableBlending;
     bool				mAdditiveBlending;
-    //    bool				mDoDrawLines;
-    //    bool				mDoDrawPoints;
-    //    bool				mDoDrawNodes;
     bool				mEnableLineSmoothing;
     bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
@@ -224,29 +182,8 @@ private:
     
     bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
-    //    
-    //    gl::Fbo             mFboNew;
-    //    gl::Fbo             mFboComp;
-    //    gl::Fbo             mFboBlur;
-    gl::GlslProg        mBlurShader;
-    //    
-    //    bool                mUseFbo;
-    //    bool                mDoBlur;
-    //    int                 mBlurAmount;
-    //    float               mTrailBrightness;
-    //    float               mTrailAudioDistortMin;
-    //    float               mTrailAudioDistortMax;
-    //    float               mTrailWaveFreqMin;
-    //    float               mTrailWaveFreqMax;
-    //    bool                mTrailDistanceAffectsWave;
-    //    //int				mBlurIterations		= 1;
-    //    //float             mBlurAlpha			= 0;
-    //    //float             mBlurCenterWeight	= 10;
-    //    //float             mOrigAlpha			= 1;
-    //    int                 mFboScaleDown;
     
     CameraPersp         mCam;
-    
     //Vec3f               mCamPosition;
     enum eCamType
     {
@@ -264,10 +201,9 @@ private:
     float               mCamTranslateRate;
     float               mCamMaxDistance;
     Vec3f               mCamTarget;
+    //Quatf               mCameraRotation;
     
     MotionBlurRenderer  mMotionBlurRenderer;
-    
-    //Quatf               mCameraRotation;
 
 private:
     void initParticles();
@@ -275,7 +211,6 @@ private:
     
     void resetGravityNodes(const eNodeFormation formation);
     
-    void updateParams();
     void updateAudioResponse();
     void updateCamera(const double dt);
         
