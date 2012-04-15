@@ -90,6 +90,7 @@ void OculonApp::setup()
     
     // params
     mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
+    mParams.hide();
     //mParams.setOptions("","position='10 600'");
     setupInterface();
 
@@ -210,6 +211,7 @@ bool OculonApp::showInterface(const int sceneId)
     return false;
 }
 
+//MARK: Setup Scenes
 void OculonApp::setupScenes()
 {
     console() << "[main] creating scenes...\n";
@@ -321,20 +323,27 @@ void OculonApp::keyDown( KeyEvent event )
         // toggle pause-all
         case KeyEvent::KEY_p:
         {
-            for (SceneList::iterator sceneIt = mScenes.begin(); 
-                 sceneIt != mScenes.end();
-                 ++sceneIt )
+            if( event.isShiftDown() )
             {
-                Scene* scene = (*sceneIt);
-                assert( scene != NULL );
-                if( scene )
+                mParams.show( !mParams.isVisible() );
+            }
+            else
+            {
+                for (SceneList::iterator sceneIt = mScenes.begin(); 
+                     sceneIt != mScenes.end();
+                     ++sceneIt )
                 {
-                    scene->setRunning( !scene->isRunning() );
+                    Scene* scene = (*sceneIt);
+                    assert( scene != NULL );
+                    if( scene )
+                    {
+                        scene->setRunning( !scene->isRunning() );
+                    }
                 }
             }
             break;
         }
-        
+            
         // fullscreen
         case KeyEvent::KEY_f:
             setPresentationMode( !mIsPresentationMode );
