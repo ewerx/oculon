@@ -18,7 +18,6 @@
 #include "MotionBlurRenderer.h"
 
 #include "OscMessage.h"
-#include "Interface.h"
 
 //
 // Audio input tests
@@ -31,7 +30,6 @@ public:
     
     // inherited from Scene
     void setup();
-    //void setupParams(params::InterfaceGl& params);
     //void reset();
     void update(double dt);
     void draw();
@@ -39,6 +37,10 @@ public:
     //void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseDrag( const ci::app::MouseEvent& event );
     void handleOscMessage( const ci::osc::Message& message );
+    
+protected:
+    //void setupParams(params::InterfaceGl& params);
+    void setupInterface();
     
 private:
     void updateBlur();

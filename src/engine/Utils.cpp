@@ -9,11 +9,12 @@
 #include "Utils.h"
 #include "cinder/Filesystem.h"
 #include "cinder/Utilities.h"
+#include "cinder/CinderMath.h"
 
 using namespace ci;
 using namespace std;
 
-/*static*/ ci::fs::path Utils::getUniquePath( const std::string &path, const std::string &sep, int padding ) 
+/*static*/ ci::fs::path Utils::getUniquePath( const std::string &path, int padding, const std::string &sep ) 
 {
     // expand to resolve ~
 	fs::path p = expandPath( fs::path( path ) ); 
@@ -28,7 +29,7 @@ using namespace std;
 		p = parent_path / ( stem + sep + leftPaddedString( toString(count), padding ) + extension );
 		++count;
 	}
-    while ( fs::exists( p ) && count < 9999 );
+    while ( fs::exists( p ) && count < math<int>::pow(10, padding) );
     
 	return p;
 }

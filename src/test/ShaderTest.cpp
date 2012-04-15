@@ -13,7 +13,7 @@
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include <boost/format.hpp>
-
+#include "Interface.h"
 
 using namespace ci;
 
@@ -88,15 +88,16 @@ void ShaderTest::setup()
     // OSC TEST
     mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
     
-    // INTERFACE TEST
-    
-    
+}
+
+void ShaderTest::setupInterface()
+{
     mInterface->addParam(CreateFloatParam( "Red", &mRed )
                          .minValue(0.0f)
                          .maxValue(1.0f)
                          .defaultValue(1.0f)
                          .oscReceiver("/1/fader1"));
-                         //.oscSender("/1/fader1"));
+    //.oscSender("/1/fader1"));
     
     
     mInterface->addParam(CreateIntParam( "Radius", &mRadius )

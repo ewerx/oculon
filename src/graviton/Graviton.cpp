@@ -15,6 +15,7 @@
 #include "cinder/Easing.h"
 #include "Utils.h"
 #include "Orbiter.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -112,6 +113,22 @@ void Graviton::setupParams(params::InterfaceGl& params)
     params.addParam("Motion Blur", &mUseMotionBlur);
     params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
 
+}
+
+void Graviton::setupInterface()
+{
+    mInterface->addParam(CreateFloatParam( "Time Step", &mTimeStep )
+                         .minValue(0.0f)
+                         .maxValue(0.001f)
+                         .defaultValue(mTimeStep));
+                         //.oscReceiver("/1/fader1"));
+                         //.oscSender("/1/fader1"));
+    
+    mInterface->addParam(CreateFloatParam( "Gravity", &mGravity )
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .defaultValue(mGravity));
+                         //.oscReceiver("/1/fader2"));
 }
 
 void Graviton::initParticles()

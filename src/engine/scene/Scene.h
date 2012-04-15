@@ -76,6 +76,9 @@ protected:
     virtual void setupParams(ci::params::InterfaceGl& params) {}
     virtual void setupInterface() {}
     
+    bool saveInterfaceParams();
+    bool loadInterfaceParams(const int index =0);
+    
     // frustum culling
     void calcFrustumPlane( Vec3f &fNormal, Vec3f& fPoint, float& fDist, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3 );
 	void calcNearAndFarClipCoordinates( const Camera& cam );	
@@ -115,6 +118,11 @@ private:
     };
     
     tFrustumPlane mCachedFrustumPlane[SIDE_COUNT];
+    
+    // constants
+    static const char* const    kIniLocation;
+    static const char* const    kIniExt;
+    static const int            kIniDigits;
     
 };
 

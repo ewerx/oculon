@@ -152,9 +152,6 @@ void Orbiter::setupParams(params::InterfaceGl& params)
 
 void Orbiter::setupInterface()
 {
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("ORBITER");
-    //mInterface->addParam("Gravity", &mGravityConstant
 }
 
 void Orbiter::reset()

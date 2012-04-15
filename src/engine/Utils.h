@@ -16,7 +16,7 @@ class Utils
 {
 public:
     //! Returns a unique pathname, numbered sequentially to avoid conflicts with files of the same/similar name.	
-    static ci::fs::path getUniquePath( const std::string &path, const std::string &sep = "_", int padding =3 );
+    static ci::fs::path getUniquePath( const std::string &path, int padding =3, const std::string &sep = "_" );
 
     //! Returns a left-padded string based on the input string
 	static std::string leftPaddedString( const std::string &input, int padding=3, const std::string pad="0" );

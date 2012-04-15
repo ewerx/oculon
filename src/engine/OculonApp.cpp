@@ -766,7 +766,7 @@ void OculonApp::enableFrameCapture( const bool enable )
     if( mIsCapturingFrames )
     {
         mFrameCaptureCount = 0;
-        fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/capture/oculon_capture");
+        fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/ocluondata/capture/oculon_capture");
         mFrameCapturePath = outputPath.string();
         if( fs::create_directory(outputPath) )
         {

@@ -7,11 +7,16 @@
  *
  */
 
+#include <string>
 #include "Scene.h"
 #include "OculonApp.h"
 #include "Interface.h"
 #include "SimpleGUI.h"
-#include <string>
+#include "Utils.h"
+
+/*static*/const char* const Scene::kIniLocation = "/Volumes/cruxpod/oculondata/params/";
+/*static*/const char* const Scene::kIniExt = ".ini";
+/*static*/const int         Scene::kIniDigits = 2;
 
 Scene::Scene(const std::string& name)
 : mName(name)
@@ -41,7 +46,11 @@ void Scene::init(OculonApp* app)
     mApp = app;
     mInterface = new Interface( mApp, &mApp->getOscServer() );
     mInterface->gui()->addColumn();
-    mInterface->gui()->addButton(mName)->registerClick(boost::bind( &OculonApp::showInterface, mApp, 0) );
+    // bind to OculonApp::showInterface(0)
+    mInterface->gui()->addButton(mName)->registerClick( boost::bind(&OculonApp::showInterface, mApp, 0) );
+    // bind to Scene::loadInterfaceParams(0)
+    mInterface->gui()->addButton("LOAD")->registerClick( boost::bind(&Scene::loadInterfaceParams, this, 0) );
+    mInterface->gui()->addButton("SAVE")->registerClick( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
@@ -88,6 +97,22 @@ void Scene::showInterface(bool show)
 {
     assert(mInterface);
     mInterface->gui()->setEnabled(show);
+}
+
+bool Scene::saveInterfaceParams() 
+{
+    const string pathBase = kIniLocation + getName() + kIniExt;
+    fs::path filePath = Utils::getUniquePath(pathBase, kIniDigits, "");
+    mInterface->gui()->save(filePath.string());
+    return false;//callback
+}
+
+bool Scene::loadInterfaceParams(const int index)
+{
+    std::stringstream filePath;
+    filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
+    mInterface->gui()->load(filePath.str());
+    return false;//callback
 }
 
 #pragma MARK: Frustum Culling

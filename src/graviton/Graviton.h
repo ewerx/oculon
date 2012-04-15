@@ -34,7 +34,6 @@ public:
     
     // inherited from Scene
     void setup();
-    void setupParams(params::InterfaceGl& params);
     void reset();
     void resize();
     void update(double dt);
@@ -44,6 +43,10 @@ public:
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
+    
+protected:
+    void setupParams(params::InterfaceGl& params);
+    void setupInterface();
 
 private:
     enum
