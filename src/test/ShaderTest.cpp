@@ -96,15 +96,21 @@ void ShaderTest::setupInterface()
                          .minValue(0.0f)
                          .maxValue(1.0f)
                          .defaultValue(1.0f)
-                         .oscReceiver("/1/fader1"));
-    //.oscSender("/1/fader1"));
+                         .oscReceiver("/1/fader1")
+                         .oscSender("/1/fader1"));
     
     
     mInterface->addParam(CreateIntParam( "Radius", &mRadius )
                          .minValue(1)
                          .maxValue(300)
                          .defaultValue(100)
-                         .oscReceiver("/1/fader2"));
+                         .oscReceiver("/1/fader2")
+                         .oscSender("/1/fader2"));
+    
+    mInterface->addParam(CreateBoolParam( "Shader", &mUseFbo )
+                         .defaultValue(mUseFbo)
+                         .oscReceiver("/1/toggle2")
+                         .oscSender("/1/toggle2"));
 }
 
 void ShaderTest::update(double dt)

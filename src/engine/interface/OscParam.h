@@ -11,17 +11,21 @@
 #include "SimpleGUI.h"
 #include "OscMessage.h"
 
+class OscServer;
+
 class OscParam
 {
     
 public:
-    OscParam( const std::string& recvAddr, const std::string& sendAddr );
+    OscParam( OscServer* server, const std::string& recvAddr, const std::string& sendAddr );
     virtual ~OscParam() { }
         
     const std::string& getOscRecvAddress() const    { return mOscRecvAddress; }
     const std::string& getOscSendAddress() const    { return mOscSendAddress; }
     const std::string& getOscCreateCmd() const      { return mOscCreateCmd; }
     bool isSender() const                           { return mIsSender; }
+    
+    bool valueChangedCallback();
     
     virtual mowa::sgui::Control* getControl() = 0;
     virtual void prepOscSend( osc::Message& message ) = 0;
@@ -35,14 +39,14 @@ protected:
     std::string mOscSendAddress;
     std::string mOscCreateCmd;
 
-    //TODO: change callback
+    OscServer*  mOscServer;
 };
 
 //----------------------------------------------------------------------------- 
 class OscFloatParam : public OscParam
 {
 public:
-    OscFloatParam(mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscFloatParam(OscServer* server, mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
     
     mowa::sgui::Control* getControl()   { return mControl; }
 
@@ -58,7 +62,7 @@ protected:
 class OscIntParam : public OscParam
 {
 public:
-    OscIntParam(mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscIntParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -74,7 +78,7 @@ protected:
 class OscBoolParam : public OscParam
 {
 public:
-    OscBoolParam(mowa::sgui::BoolVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscBoolParam(OscServer* server, mowa::sgui::BoolVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -90,7 +94,7 @@ protected:
 class OscTriggerParam : public OscParam
 {
 public:
-    OscTriggerParam(mowa::sgui::ButtonControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscTriggerParam(OscServer* server, mowa::sgui::ButtonControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     

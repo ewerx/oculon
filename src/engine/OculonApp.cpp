@@ -169,8 +169,8 @@ void OculonApp::addScene(Scene* scene, bool startActive)
     
     // interface
     mInterface->gui()->addColumn();
-    mInterface->gui()->addButton(scene->getName())->registerClick( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
-    mInterface->gui()->addButton("Toggle")->registerClick( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
+    mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
+    mInterface->gui()->addButton("Toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
     mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible))
                          .defaultValue(scene->mIsVisible));
     mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning))

@@ -8,6 +8,7 @@
 
 #include "OscParam.h"
 #include "OscMessage.h"
+#include "OscServer.h"
 #include "SimpleGUI.h"
 
 using namespace ci;
@@ -16,28 +17,44 @@ using namespace mowa::sgui;
 #pragma MARK OscParam
 
 // constructor
-OscParam::OscParam( const std::string& recvAddr, const std::string& sendAddr )
-: mOscRecvAddress(recvAddr)
+OscParam::OscParam(OscServer* server, const std::string& recvAddr, const std::string& sendAddr)
+: mOscServer(server)
+, mOscRecvAddress(recvAddr)
 , mOscSendAddress(sendAddr)
 , mIsSender(sendAddr.length() > 0)
 {
 
 }
 
+bool OscParam::valueChangedCallback()
+{
+    if( mIsSender )
+    {
+        osc::Message message;
+        prepOscSend( message );
+        message.setAddress( mOscSendAddress );
+        mOscServer->sendMessage( message );
+    }
+    
+    return false;
+}
+
 #pragma MARK OscFloatParam
 
-OscFloatParam::OscFloatParam(FloatVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(recvAddr, sendAddr)
+OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
+: OscParam(server, recvAddr, sendAddr)
 , mControl(control)
 {
     assert(mControl != NULL);
+    server->registerCallback( recvAddr, this, &OscFloatParam::handleOscMessage );
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
 void OscFloatParam::handleOscMessage( const osc::Message& message )
 {
     if( message.getNumArgs() == 1 && osc::TYPE_FLOAT == message.getArgType(0) )
     {
-        mControl->setNormalizedValue( message.getArgAsFloat(0) );
+        mControl->setNormalizedValue( message.getArgAsFloat(0), true );
     }
     else
     {
@@ -48,23 +65,24 @@ void OscFloatParam::handleOscMessage( const osc::Message& message )
 void OscFloatParam::prepOscSend( osc::Message& message )
 {
     message.addFloatArg( mControl->getNormalizedValue() );
-    message.setAddress( mOscSendAddress );
 }
 
 #pragma MARK OscIntParam
 
-OscIntParam::OscIntParam(IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(recvAddr, sendAddr)
+OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
+: OscParam(server, recvAddr, sendAddr)
 , mControl(control)
 {
     assert(mControl != NULL);
+    server->registerCallback( recvAddr, this, &OscIntParam::handleOscMessage );
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
 void OscIntParam::handleOscMessage( const osc::Message& message )
 {
     if( message.getNumArgs() == 1 && osc::TYPE_FLOAT == message.getArgType(0) )
     {
-        mControl->setNormalizedValue( message.getArgAsFloat(0) );
+        mControl->setNormalizedValue( message.getArgAsFloat(0), true );
     }
     else
     {
@@ -74,17 +92,18 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
 
 void OscIntParam::prepOscSend( osc::Message& message )
 {
-    message.addIntArg( mControl->getNormalizedValue() );
-    message.setAddress( mOscSendAddress );
+    message.addFloatArg( mControl->getNormalizedValue() );
 }
 
 #pragma MARK OscBoolParam
 
-OscBoolParam::OscBoolParam(BoolVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(recvAddr, sendAddr)
+OscBoolParam::OscBoolParam(OscServer* server, BoolVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
+: OscParam(server, recvAddr, sendAddr)
 , mControl(control)
 {
     assert(mControl != NULL);
+    server->registerCallback( recvAddr, this, &OscBoolParam::handleOscMessage );
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
 void OscBoolParam::handleOscMessage( const osc::Message& message )
@@ -115,5 +134,4 @@ void OscBoolParam::handleOscMessage( const osc::Message& message )
 void OscBoolParam::prepOscSend( osc::Message& message )
 {
     message.addIntArg( (*(mControl->var)) ? 1 : 0 );
-    message.setAddress( mOscSendAddress );
 }

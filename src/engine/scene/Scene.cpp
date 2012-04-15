@@ -47,10 +47,10 @@ void Scene::init(OculonApp* app)
     mInterface = new Interface( mApp, &mApp->getOscServer() );
     mInterface->gui()->addColumn();
     // bind to OculonApp::showInterface(0)
-    mInterface->gui()->addButton(mName)->registerClick( boost::bind(&OculonApp::showInterface, mApp, 0) );
+    mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, 0) );
     // bind to Scene::loadInterfaceParams(0)
-    mInterface->gui()->addButton("LOAD")->registerClick( boost::bind(&Scene::loadInterfaceParams, this, 0) );
-    mInterface->gui()->addButton("SAVE")->registerClick( this, &Scene::saveInterfaceParams );
+    mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
+    mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
