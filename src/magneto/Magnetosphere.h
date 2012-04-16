@@ -14,12 +14,14 @@
 #include "cinder/Vector.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
+#include "cinder/Timeline.h"
 #include <vector>
 
 #include "MSAOpenCL.h"
 
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
+
 
 class Magnetosphere : public Scene
 {
@@ -61,7 +63,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kMaxParticles =         (1024 * kStep),
+        kMaxParticles =         (128 * kStep),
         kFftBands =             512,
         kMaxNodes =             4,
         kParticleTrailSize =    4,
@@ -102,7 +104,7 @@ private:
     void initOpenCl();
     void initParticles();
     
-    //void updateNodes();
+    void updateNodes(double dt);
     //void updateNode(clNode &n, int i);
     
     void preRender();
@@ -163,7 +165,8 @@ private:
     //TODO: purpose?
     //GLuint              mIndices[kMaxParticles * kMaxTrailSize];
 
-    
+    float               mNodeRotation;
+    float               mNodeRotationSpeed;
     
 };
 

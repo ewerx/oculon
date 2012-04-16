@@ -76,29 +76,33 @@ __kernel void magnetoParticle(__global tParticle* particles,
     
     float2 a = (float2)(0.0f, 0.0f);
     
-	float2 dist = mousePos - posBuffer[i];
-    float invDistSq = 0.0f;
-    if( flags & PARTICLE_FLAGS_INVSQR )
+    for( uint j = 0; j < num_nodes; ++j )
     {
-        invDistSq = rsqrt(dist.x*dist.x + dist.y*dist.y);
-        //invDistSq = invDistSq * invDistSq;
+        __global const tNode *node = &nodes[j];
+        float2 dist = node->mPos - posBuffer[i];
+        float invDistSq = 0.0f;
+        if( flags & PARTICLE_FLAGS_INVSQR )
+        {
+            invDistSq = rsqrt(dist.x*dist.x + dist.y*dist.y);
+            //invDistSq = invDistSq * invDistSq;
+        }
+        else
+        {
+            invDistSq = 1.0f / dot(dist, dist);
+        }
+        a += dist * particle->mMass * node->mMass * node->mCharge * invDistSq;
     }
-    else
-    {
-        invDistSq = 1.0f / dot(dist, dist);
-    }
-	a += dist * MOUSE_FORCE * invDistSq;
     
-	particle->mVel += /*(dimensions*0.5f - posBuffer[i]) * CENTER_FORCE -*/ particle->mMass * a;
+	particle->mVel += a * dt;
 	
-	float speed2 = dot(particle->mVel, particle->mVel);
-	if(speed2 < MIN_SPEED)
-    {
-        posBuffer[i] = mousePos + dist * (1 + particle->mMass);
-    }
+	//float speed2 = dot(particle->mVel, particle->mVel);
+	//if(speed2 < MIN_SPEED)
+    //{
+    //    posBuffer[i] = mousePos + dist * (1 + particle->mMass);
+    //}
     
-	posBuffer[i] += particle->mVel * dt;
 	particle->mVel *= damping;
+    posBuffer[i] += particle->mVel * dt;
 
     // color
     if( flags & PARTICLE_FLAGS_SHOW_DARK )

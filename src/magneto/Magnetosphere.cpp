@@ -29,9 +29,9 @@ Magnetosphere::~Magnetosphere()
 void Magnetosphere::setup()
 {
     // init params
-    mTimeStep = 0.00075f;
+    mTimeStep = 0.25f;
     
-    mUseInvSquareCalc = false;
+    mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
         
     mAdditiveBlending = true;
@@ -41,7 +41,10 @@ void Magnetosphere::setup()
     mScalePointsByDistance = false;
     mPointSize = 2.0f;
     mLineWidth = 1.0f;
-    mParticleAlpha = 1.0f;
+    mParticleAlpha = 0.25f;
+    
+    mNodeRotationSpeed = 0.0f;
+    mNodeRotation = 0.0f;
     
     mDamping = 1.0f;
     //mEps = 0.01f;//mFormationRadius * 0.5f;
@@ -125,6 +128,7 @@ void Magnetosphere::reset()
     mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
     mKernel->setArg(ARG_FFT, mClBufFft.getCLMem());
     mKernel->setArg(ARG_NUM_PARTICLES, mNumParticles);
+    mKernel->setArg(ARG_NUM_NODES, mNumNodes);
     mKernel->setArg(ARG_DIMENSIONS, mDimensions);
 }
 
@@ -150,6 +154,7 @@ void Magnetosphere::setupParams(params::InterfaceGl& params)
     params.addParam("Additive Blending", &mAdditiveBlending, "");
     params.addParam("Motion Blur", &mUseMotionBlur);
     params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
+    params.addParam("Node Rotate Speed", &mNodeRotationSpeed, "min=0.0 max=1.0 step=0.001");
 
 }
 
@@ -161,34 +166,38 @@ void Magnetosphere::initParticles()
     {
 		tParticle &p = mParticles[i];
 		p.mVel.set(0.0f,0.0f);
-		p.mMass = Rand::randFloat(0.5f, 1.0f);
+		p.mMass = Rand::randFloat(0.25f, 1.0f);
         p.mLife = Rand::randFloat();
 		mPosBuffer[i].x = Rand::randFloat(mApp->getViewportWidth());
         mPosBuffer[i].y = Rand::randFloat(mApp->getViewportHeight());
 	}
     
     mNumNodes = kMaxNodes;
+    const float angleIncrement = 2*M_PI / mNumNodes;
+    float angle = 0.0f;
+    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
     for (int i=0; i < kMaxNodes; ++i) 
     {
 		tNode &node = mNodes[i];
-		node.mPos.x = Rand::randFloat(mApp->getViewportWidth());
-        node.mPos.y = Rand::randFloat(mApp->getViewportHeight());
+		node.mPos.x = center.x + cos(angle)*mApp->getViewportWidth()/4.0f;
+        node.mPos.y = center.y + sin(angle)*mApp->getViewportWidth()/4.0f;
         node.mMass = Rand::randFloat(0.5f, 1.0f);
-        node.mCharge = Rand::randFloat(-1.0f, 1.0f);
+        node.mCharge = 1.0f;//Rand::randFloat(-1.0f, 1.0f);
+        angle += angleIncrement;
 	}
 }
 
 void Magnetosphere::update(double dt)
 {
     updateAudioResponse();
-    //updateNodes();
+    updateNodes(dt);
     
     mKernel->setArg(ARG_DT, mTimeStep);
     mKernel->setArg(ARG_NUM_PARTICLES, mNumParticles);
     mKernel->setArg(ARG_DAMPING, mDamping);
     mKernel->setArg(ARG_ALPHA, mParticleAlpha);
     mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
-    mKernel->setArg(ARG_NUM_NODES, mNumNodes);
+    //mKernel->setArg(ARG_NUM_NODES, mNumNodes);
     //mKernel->setArg(ARG_NODES, mClBufNodes.getCLMem());
     mKernel->setArg(ARG_MOUSEPOS, mMousePos);
 	
@@ -210,6 +219,25 @@ void Magnetosphere::update(double dt)
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
     
     Scene::update(dt);
+}
+
+void Magnetosphere::updateNodes(double dt)
+{
+    mNodeRotation += mNodeRotationSpeed*dt;
+    const float angleIncrement = 2*M_PI / mNumNodes;
+    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
+    float angle = mNodeRotation;
+    for (int i=0; i < mNumNodes; ++i) 
+    {
+		tNode &node = mNodes[i];
+		node.mPos.x = center.x + cos(angle)*mApp->getViewportWidth()/4.0f;
+        node.mPos.y = center.y + sin(angle)*mApp->getViewportWidth()/4.0f;
+        node.mMass = Rand::randFloat(0.5f, 1.0f);
+        //node.mCharge = Rand::randFloat(-1.0f, 1.0f);
+        angle += angleIncrement;
+	}
+    
+    mClBufNodes.write( mNodes, 0, sizeof(tNode) * kMaxNodes );
 }
 
 //
@@ -529,6 +557,21 @@ void Magnetosphere::drawParticles()
 
 void Magnetosphere::drawDebug()
 {
+    gl::pushMatrices();
+    
+    CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+    gl::setMatrices(textCam);
+    
+    
+    for( int i = 0; i < mNumNodes; ++i )
+    {
+        Vec2f worldCoords( mNodes[i].mPos.x, mNodes[i].mPos.y );
+        //Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getWindowWidth(), mApp->getWindowHeight());
+        
+        gl::drawString(toString(mNodes[i].mMass),worldCoords,ColorAf(1.0,1.0,1.0,0.4));
+    }
+    
+    gl::popMatrices();
 }
 
 
