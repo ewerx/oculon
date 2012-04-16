@@ -33,7 +33,6 @@ public:
     
     // inherited from Scene
     void setup();
-    void setupParams(params::InterfaceGl& params);
     void reset();
     void resize();
     void update(double dt);
@@ -46,6 +45,10 @@ public:
     
     // new
     void addRepulsionForce( const Vec2f& pos, float radius, float force );
+    
+protected:// from Scene
+    void setupInterface();
+    void setupDebugInterface();
     
 private:
     void updateAudioResponse();

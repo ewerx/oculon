@@ -23,6 +23,7 @@ Scene::Scene(const std::string& name)
 , mApp(NULL)
 , mIsRunning(false)
 , mIsVisible(false)
+, mIsDebug(false)
 , mEnableFrustumCulling(false)
 , mInterface(NULL)
 , mIsFrustumPlaneCached(false)
@@ -34,6 +35,9 @@ Scene::Scene(const std::string& name)
 		mCachedFrustumPlane[i].mPoint = Vec3f::zero();
 		mCachedFrustumPlane[i].mDistance = 0.0f;
 	}
+    
+    mDebugParams = params::InterfaceGl( name, Vec2i( 350, 400 ) );
+    mDebugParams.show(mIsDebug);
 }
 
 Scene::~Scene()
@@ -49,14 +53,16 @@ void Scene::init(OculonApp* app)
     // bind to OculonApp::showInterface(0)
     mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, 0) );
     // bind to Scene::loadInterfaceParams(0)
+    mInterface->addParam(CreateBoolParam("Debug Mode", &mIsDebug)
+                         .defaultValue(mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
     mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
     setup();
-    setupParams(app->getParams());
     setupInterface();
+    setupDebugInterface();
 }
 
 void Scene::update(double dt)
@@ -76,28 +82,66 @@ void Scene::drawInterface()
     mInterface->draw();
 }
 
+void Scene::drawDebug()
+{
+    //params::InterfaceGl::draw();
+    mDebugParams.draw();
+}
+
 const Camera& Scene::getCamera() const
 {
     return mApp->getMayaCam();
 }
 
-void Scene::setRunning(bool running)
-{ 
-    mIsRunning = running;
-    handleSetActive(running);
+void Scene::toggleActiveVisible()
+{
+    setVisible(!mIsVisible);
+    setRunning(mIsVisible);
 }
 
 void Scene::setVisible(bool visible)
 {
     mIsVisible = visible;
-    handleSetVisible(visible);
+    onVisibleChanged();
+}
+
+bool Scene::onVisibleChanged()
+{
+    mDebugParams.show(mIsDebug && mIsVisible);
+    handleVisibleChanged();
+    return false;
+}
+
+void Scene::setRunning(bool running)
+{ 
+    mIsRunning = running;
+    onRunningChanged();
+}
+
+bool Scene::onRunningChanged()
+{
+    handleRunningChanged();
+    return false;
+}
+
+void Scene::showDebug(bool show)
+{
+    mIsDebug = show;
+    onDebugChanged();
+}
+
+bool Scene::onDebugChanged()
+{
+    mDebugParams.show(mIsDebug && mIsVisible);
+    handleDebugChanged();
+    return false;
 }
 
 void Scene::showInterface(bool show)
 {
     assert(mInterface);
     mInterface->gui()->setEnabled(show);
-}
+}                                                    
 
 bool Scene::saveInterfaceParams() 
 {

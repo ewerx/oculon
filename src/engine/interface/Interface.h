@@ -22,9 +22,9 @@ public:
     
     mowa::sgui::SimpleGUI*  gui() { return mGui; }
     
-    OscFloatParam*  addParam( const CreateFloatParam& param );
-    OscIntParam*    addParam( const CreateIntParam& param );
-    OscBoolParam*   addParam( const CreateBoolParam& param );
+    mowa::sgui::FloatVarControl*  addParam( const CreateFloatParam& param );
+    mowa::sgui::IntVarControl*    addParam( const CreateIntParam& param );
+    mowa::sgui::BoolVarControl*   addParam( const CreateBoolParam& param );
     
     void update();
     void draw();

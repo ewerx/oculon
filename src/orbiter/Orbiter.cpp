@@ -130,24 +130,24 @@ void Orbiter::setupMidiMapping()
     //mMidiInput.setMidiKey("gravity", channel, note);
 }
 
-void Orbiter::setupParams(params::InterfaceGl& params)
+void Orbiter::setupDebugInterface()
 {
-    params.addText( "orbiter", "label=`Orbiter`" );
-    params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
-    //params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
-    params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
-    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
-    params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
-    params.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
-    params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
-    params.addParam("Orbit Cam", &mIsFollowCameraEnabled, "");
-    params.addParam("Binned", &mIsBinnedModeEnabled, "");
-    //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //params.addSeparator();
-    //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+    mDebugParams.addText( "orbiter", "label=`Orbiter`" );
+    mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
+    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+    mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
+    mDebugParams.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
+    mDebugParams.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
+    mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
+    mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
+    mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
+    mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
+    mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
+    mDebugParams.addParam("Orbit Cam", &mIsFollowCameraEnabled, "");
+    mDebugParams.addParam("Binned", &mIsBinnedModeEnabled, "");
+    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
+    //mDebugParams.addSeparator();
+    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
 
 void Orbiter::setupInterface()

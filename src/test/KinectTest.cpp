@@ -87,6 +87,8 @@ void KinectTest::drawDebug()
     const Vec3f& pos = mBlobTracker.getTargetPosition();
     snprintf(buf, 256, "tracking: %.1f,%.1f,%.1f", pos.x, pos.y, pos.z );
     mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.7f, 0.8f));
+    
+    Scene::drawDebug();
 }
 
 bool KinectTest::handleKeyDown(const KeyEvent& keyEvent)

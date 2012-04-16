@@ -85,7 +85,6 @@ public:
     
     // inherited from Scene
     void setup();
-    void setupParams(params::InterfaceGl& params);
     void reset();
     void resize();
     void update(double dt);
@@ -96,6 +95,9 @@ public:
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
 
+protected:// from Scene
+    void setupInterface();
+    void setupDebugInterface();
     
 private:
     void updateAudioResponse();

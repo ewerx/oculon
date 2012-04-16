@@ -44,9 +44,9 @@ public:
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
     
-protected:
-    void setupParams(params::InterfaceGl& params);
+protected:// from Scene
     void setupInterface();
+    void setupDebugInterface();
 
 private:
     enum

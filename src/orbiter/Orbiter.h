@@ -35,8 +35,6 @@ public:
     
     // inherited from Scene
     void setup();
-    void setupParams(params::InterfaceGl& params);
-    void setupInterface();
     void reset();
     void resize();
     void update(double dt);
@@ -47,6 +45,10 @@ public:
     // midi callbacks
     void handleGravityChange(MidiEvent midiEvent);
     void handleTimeScaleChange(MidiEvent midiEvent);
+    
+protected:// from Scene
+    void setupInterface();
+    void setupDebugInterface();
     
 private:
     void setupMidiMapping();

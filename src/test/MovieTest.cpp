@@ -60,15 +60,16 @@ void MovieTest::setup()
     
 }
 
-void MovieTest::handleSetActive(bool active)
+void MovieTest::handleRunningChanged()
 {
+    //TODO: is this neccessary with movie.update tied to mIsActive?
     for( int i=0; i < NUM_MOVIES; ++i )
     {
-        if( mMoviePlayers[i]->isPlaying() && !active )
+        if( mMoviePlayers[i]->isPlaying() && !mIsRunning )
         {
             mMoviePlayers[i]->getMovie().stop();
         }
-        else if( !mMoviePlayers[i]->isPlaying() && active )
+        else if( !mMoviePlayers[i]->isPlaying() && mIsRunning )
         {
             mMoviePlayers[i]->getMovie().play();
         }

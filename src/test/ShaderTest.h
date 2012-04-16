@@ -38,9 +38,9 @@ public:
 	void handleMouseDrag( const ci::app::MouseEvent& event );
     void handleOscMessage( const ci::osc::Message& message );
     
-protected:
-    //void setupParams(params::InterfaceGl& params);
+protected:// from Scene
     void setupInterface();
+    //void setupDebugInterface();
     
 private:
     void updateBlur();

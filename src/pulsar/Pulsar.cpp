@@ -83,22 +83,27 @@ void Pulsar::resize()
     //mMidiInput.setMidiKey("gravity", channel, note);
 //}
 
-void Pulsar::setupParams(params::InterfaceGl& params)
+void Pulsar::setupDebugInterface()
 {
-    params.addText( "pulsar", "label=`Pulsar`" );
-    params.addParam("Rotation Speed", &mRotationVelocity, "step=10 keyIncr=t keyDecr=y");
-    //params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    //params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    //params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
-    //params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    //params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
-    //params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
-    //params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
-    //params.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
-    //params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
-    //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //params.addSeparator();
-    //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+    mDebugParams.addText( "pulsar", "label=`Pulsar`" );
+    mDebugParams.addParam("Rotation Speed", &mRotationVelocity, "step=10 keyIncr=t keyDecr=y");
+    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+    //mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
+    //mDebugParams.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
+    //mDebugParams.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
+    //mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
+    //mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
+    //mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
+    //mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
+    //mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
+    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
+    //mDebugParams.addSeparator();
+    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+}
+
+void Pulsar::setupInterface()
+{
+    
 }
 
 void Pulsar::update(double dt)

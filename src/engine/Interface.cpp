@@ -35,34 +35,34 @@ Interface::~Interface()
     delete mGui;
 }
 
-OscFloatParam* Interface::addParam( const CreateFloatParam& param )
+mowa::sgui::FloatVarControl* Interface::addParam( const CreateFloatParam& param )
 {
     mowa::sgui::FloatVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
     
     OscFloatParam* oscParam = new OscFloatParam( mOsc, control, param._recvAddr, param._sendAddr );
     mParams.push_back(oscParam);
     
-    return oscParam;
+    return control;
 }
 
-OscIntParam* Interface::addParam( const CreateIntParam& param )
+mowa::sgui::IntVarControl* Interface::addParam( const CreateIntParam& param )
 {
     mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
     
     OscIntParam* oscParam = new OscIntParam( mOsc, control, param._recvAddr, param._sendAddr );
     mParams.push_back(oscParam);
     
-    return oscParam;
+    return control;
 }
 
-OscBoolParam* Interface::addParam( const CreateBoolParam& param )
+mowa::sgui::BoolVarControl* Interface::addParam( const CreateBoolParam& param )
 {
     mowa::sgui::BoolVarControl* control = mGui->addParam( param._name, param._var, param._default );
     
     OscBoolParam* oscParam = new OscBoolParam( mOsc, control, param._recvAddr, param._sendAddr );
     mParams.push_back(oscParam);
 
-    return oscParam;
+    return control;
 }
 
 void Interface::update()

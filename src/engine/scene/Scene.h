@@ -38,14 +38,15 @@ public:
     virtual void update(double dt);
     virtual void draw() {}
     virtual void drawInterface();
-    virtual void drawDebug() {}
+    virtual void drawDebug();
     
     virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
     virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { }
 	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { }
 	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { }
-    virtual void handleSetActive(bool active)                               { }
-    virtual void handleSetVisible(bool visible)                             { }
+    virtual void handleRunningChanged()                                     { }
+    virtual void handleVisibleChanged()                                     { }
+    virtual void handleDebugChanged()                                       { }
     
     virtual const Camera& getCamera() const;
     
@@ -54,14 +55,19 @@ public:
     
     bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
+    bool isDebug() const            { return mIsDebug; }
     
     void setRunning(bool running);
     void setVisible(bool visible);
-    void toggleActiveVisible()      { setRunning(!mIsRunning); setVisible(!mIsVisible); }
+    void toggleActiveVisible();
     
+    void showDebug(bool show);
     void showInterface(bool show);
-    //bool* getVisiblePointer()       { return &mIsVisible; }
-    //bool* getRunningPointer()       {
+    
+    // callbacks
+    bool onDebugChanged();
+    bool onVisibleChanged();
+    bool onRunningChanged();
     
     // frustum culling
     bool isFrustumCullingEnabled()  { return mEnableFrustumCulling; }
@@ -73,8 +79,8 @@ public:
 protected:
     
     virtual void setup() {}
-    virtual void setupParams(ci::params::InterfaceGl& params) {}
     virtual void setupInterface() {}
+    virtual void setupDebugInterface() {}
     
     bool saveInterfaceParams();
     bool loadInterfaceParams(const int index =0);
@@ -91,10 +97,12 @@ protected:
     
     bool        mIsRunning;
     bool        mIsVisible;
+    bool        mIsDebug;
     
     bool        mEnableFrustumCulling;
     
-    Interface*  mInterface;
+    Interface*              mInterface;
+    params::InterfaceGl		mDebugParams;
     
 private:
     // frustum culling

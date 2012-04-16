@@ -78,7 +78,7 @@ void Graviton::setup()
     
 	initOpenCl();
     
-    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
+    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE_WHITE ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
     reset();
@@ -87,32 +87,31 @@ void Graviton::setup()
 
 }
 
-void Graviton::setupParams(params::InterfaceGl& params)
+void Graviton::setupDebugInterface()
 {
-    params.addText( "graviton", "label=`Graviton`" );
-    params.addParam("Inv Square", &mUseInvSquareCalc );
-    params.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=3");//"enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}' " );
-    params.addParam("Node Formation", (int*)(&mGravityNodeFormation), "min=0 max=2");
-    params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
-    params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
-    params.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
-    params.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
+    mDebugParams.addText( "graviton", "label=`Graviton`" );
+    mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
+    mDebugParams.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
+    mDebugParams.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=3");//"enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}' " );
+    mDebugParams.addParam("Node Formation", (int*)(&mGravityNodeFormation), "min=0 max=2");
+    mDebugParams.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
+    mDebugParams.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
+    mDebugParams.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
+    mDebugParams.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
     
-    params.addParam("Cam Type", (int*)(&mCamType), "min=0 max=2");
-    params.addParam("Cam Radius", &mCamRadius, "min=1.0");
-    params.addParam("Cam Distance", &mCamMaxDistance, "min=0.0");
-    params.addParam("Cam Turn Rate", &mCamTurnRate, "step=0.01");
-    params.addParam("Cam Slide Rate", &mCamTranslateRate, "");
+    mDebugParams.addParam("Cam Type", (int*)(&mCamType), "min=0 max=2");
+    mDebugParams.addParam("Cam Radius", &mCamRadius, "min=1.0");
+    mDebugParams.addParam("Cam Distance", &mCamMaxDistance, "min=0.0");
+    mDebugParams.addParam("Cam Turn Rate", &mCamTurnRate, "step=0.01");
+    mDebugParams.addParam("Cam Slide Rate", &mCamTranslateRate, "");
     
-    params.addParam("Point Size", &mPointSize, "");
-    params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
-    params.addParam("Point Sprites", &mUseImageForPoints, "");
-    params.addParam("Point Scaling", &mScalePointsByDistance, "");
-    params.addParam("Additive Blending", &mAdditiveBlending, "");
-    params.addParam("Motion Blur", &mUseMotionBlur);
-    params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
-
+    mDebugParams.addParam("Point Size", &mPointSize, "");
+    mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
+    mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
+    mDebugParams.addParam("Point Scaling", &mScalePointsByDistance, "");
+    mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
+    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
+    mDebugParams.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
 }
 
 void Graviton::setupInterface()
@@ -500,10 +499,6 @@ void Graviton::update(double dt)
     
     mSwap = !mSwap;
     
-	//mKernelUpdate->setArg(2, mMousePos);
-	//mKernelUpdate->setArg(3, mDimensions);
-	//mKernelUpdate->run1D(kNumParticles);
-    
     updateCamera(dt);
     
     //updateHud();
@@ -775,7 +770,9 @@ void Graviton::drawDebug()
             
             gl::drawString(toString(mGravityNodes[i].mMass),textCoords,ColorAf(1.0,1.0,1.0,0.4));
         }
+        
+        gl::popMatrices();
     }
     
-    gl::popMatrices();
+    Scene::drawDebug();
 }

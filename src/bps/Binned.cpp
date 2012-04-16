@@ -168,31 +168,36 @@ void Binned::resize()
     reset();
 }
 
-void Binned::setupParams(params::InterfaceGl& params)
+void Binned::setupDebugInterface()
 {
-    params.addText( "binned", "label=`Binned`" );
-    params.addParam("Mode", &mMode, "");
-    params.addParam("Slow Motion", &mSlowMotion, "");
-    params.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
-    params.addParam("Wall Bounce", &mBounceOffWalls, "");
-    params.addParam("Random Placement", &mRandomPlacement, "");
-    params.addParam("Top/Bottom", &mTopBottom, "");
-    params.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
-    params.addParam("Damping Force", &mDamping, "step=0.01");
-    params.addParam("Wall Damping", &mWallDamping, "step=0.01");
-    params.addParam("Wall Radius", &mCircularWallRadius, "");
-    params.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
-    params.addParam("Force Scale X", &mForceScaleX, "step=0.1");
-    params.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
-    params.addParam("Min Force", &mMinForce, "");
-    params.addParam("Max Force", &mMaxForce, "");
-    params.addParam("Min Radius", &mMinRadius, "");
-    params.addParam("Max Radius", &mMaxRadius, "");
-    params.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
-    params.addParam("K Particles", &mKParticles, "min=1 max=100");
-    params.addParam("Point Color", &mPointColor, "");
-    params.addParam("Force Color", &mForceColor, "");
-    params.addParam("Particle Radius", &mParticleRadius, "min=1 max=50");
+    mDebugParams.addText( "binned", "label=`Binned`" );
+    mDebugParams.addParam("Mode", &mMode, "");
+    mDebugParams.addParam("Slow Motion", &mSlowMotion, "");
+    mDebugParams.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
+    mDebugParams.addParam("Wall Bounce", &mBounceOffWalls, "");
+    mDebugParams.addParam("Random Placement", &mRandomPlacement, "");
+    mDebugParams.addParam("Top/Bottom", &mTopBottom, "");
+    mDebugParams.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
+    mDebugParams.addParam("Damping Force", &mDamping, "step=0.01");
+    mDebugParams.addParam("Wall Damping", &mWallDamping, "step=0.01");
+    mDebugParams.addParam("Wall Radius", &mCircularWallRadius, "");
+    mDebugParams.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
+    mDebugParams.addParam("Force Scale X", &mForceScaleX, "step=0.1");
+    mDebugParams.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
+    mDebugParams.addParam("Min Force", &mMinForce, "");
+    mDebugParams.addParam("Max Force", &mMaxForce, "");
+    mDebugParams.addParam("Min Radius", &mMinRadius, "");
+    mDebugParams.addParam("Max Radius", &mMaxRadius, "");
+    mDebugParams.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
+    mDebugParams.addParam("K Particles", &mKParticles, "min=1 max=100");
+    mDebugParams.addParam("Point Color", &mPointColor, "");
+    mDebugParams.addParam("Force Color", &mForceColor, "");
+    mDebugParams.addParam("Particle Radius", &mParticleRadius, "min=1 max=50");
+}
+
+void Binned::setupInterface()
+{
+    
 }
 
 void Binned::update(double dt)
@@ -531,6 +536,8 @@ void Binned::drawDebug()
     //gl::enableDepthWrite();
     gl::enableAlphaBlending();
     //gl::popMatrices();
+    
+    Scene::drawDebug();
 }
 
 void Binned::updateAudioResponse()

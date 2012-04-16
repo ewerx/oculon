@@ -140,22 +140,26 @@ void Magnetosphere::resize()
     mMotionBlurRenderer.resize(mApp->getWindowSize());
 }
 
-void Magnetosphere::setupParams(params::InterfaceGl& params)
+void Magnetosphere::setupDebugInterface()
 {
-    params.addText( "magneto", "label=`Magneto`" );
-    params.addParam("Inv Square", &mUseInvSquareCalc );
-    params.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
+    mDebugParams.addText( "magneto", "label=`Magneto`" );
+    mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
+    mDebugParams.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
+    mDebugParams.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
     
-    params.addParam("Point Size", &mPointSize, "");
-    params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
-    params.addParam("Point Sprites", &mUseImageForPoints, "");
-    params.addParam("Point Scaling", &mScalePointsByDistance, "");
-    params.addParam("Additive Blending", &mAdditiveBlending, "");
-    params.addParam("Motion Blur", &mUseMotionBlur);
-    params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
-    params.addParam("Node Rotate Speed", &mNodeRotationSpeed, "min=0.0 max=1.0 step=0.001");
+    mDebugParams.addParam("Point Size", &mPointSize, "");
+    mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
+    mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
+    mDebugParams.addParam("Point Scaling", &mScalePointsByDistance, "");
+    mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
+    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
+    mDebugParams.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
+    mDebugParams.addParam("Node Rotate Speed", &mNodeRotationSpeed, "min=0.0 max=1.0 step=0.001");
+}
 
+void Magnetosphere::setupInterface()
+{
+    
 }
 
 void Magnetosphere::initParticles()
@@ -572,10 +576,12 @@ void Magnetosphere::drawDebug()
     }
     
     gl::popMatrices();
+    
+    Scene::drawDebug();
 }
 
 
-/*
+/*98
 void Magnetosphere::drawStrokes() 
 {
 	glColor4f(mColor.x * mTrailBrightness, mColor.y * mTrailBrightness, mColor.z * mTrailBrightness, 1.0f);
