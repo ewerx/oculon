@@ -50,7 +50,7 @@ void OscServer::setup()
         mThread = boost::thread(&OscServer::threadLoop, this);
     }
     
-    setDestination( "192.168.1.148", 8888 );
+    setDestination( "192.168.1.112", 8080 );
 }
 
 void OscServer::shutdown()

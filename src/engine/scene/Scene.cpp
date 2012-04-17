@@ -140,7 +140,11 @@ void Scene::showInterface(bool show)
 {
     assert(mInterface);
     mInterface->gui()->setEnabled(show);
-}                                                    
+    if( show )
+    {
+        mInterface->createControlInterface(mName);
+    }
+}
 
 bool Scene::saveInterfaceParams() 
 {

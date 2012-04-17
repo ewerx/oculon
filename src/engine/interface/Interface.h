@@ -29,6 +29,8 @@ public:
     void update();
     void draw();
     
+    void createControlInterface(const std::string& pageName);
+    
 private:
     mowa::sgui::SimpleGUI* mGui;
     OscServer* mOsc;

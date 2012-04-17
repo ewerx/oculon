@@ -15,15 +15,25 @@ class OscServer;
 
 class OscParam
 {
-    
 public:
-    OscParam( OscServer* server, const std::string& recvAddr, const std::string& sendAddr );
+    enum eType
+    {
+        PARAMTYPE_FLOAT,
+        PARAMTYPE_INT,
+        PARAMTYPE_BOOL,
+        PARAMTYPE_TRIGGER,
+        
+        PARAMTYPE_COUNT
+    };
+public:
+    OscParam( const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr );
     virtual ~OscParam() { }
         
     const std::string& getOscRecvAddress() const    { return mOscRecvAddress; }
     const std::string& getOscSendAddress() const    { return mOscSendAddress; }
     const std::string& getOscCreateCmd() const      { return mOscCreateCmd; }
     bool isSender() const                           { return mIsSender; }
+    eType getType() const                           { return mType; }
     
     bool valueChangedCallback();
     
@@ -32,6 +42,7 @@ public:
     virtual void handleOscMessage(const osc::Message& message) = 0;
     
 protected:
+    eType mType;
     bool mIsSender;
     //bool mCreateGui;
     
