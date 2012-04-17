@@ -123,9 +123,9 @@ bool Scene::onRunningChanged()
     return false;
 }
 
-void Scene::showDebug(bool show)
+void Scene::setDebug(bool debug)
 {
-    mIsDebug = show;
+    mIsDebug = debug;
     onDebugChanged();
 }
 

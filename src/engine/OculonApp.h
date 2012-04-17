@@ -108,6 +108,7 @@ protected: // new
     void setupScenes();
     void addScene(Scene* newScene, bool startActive =false);
     void setPresentationMode( bool enabled );
+    void toggleFullscreen();
     
     void startVideoCapture( bool useDefaultPath =true );
     void stopVideoCapture();

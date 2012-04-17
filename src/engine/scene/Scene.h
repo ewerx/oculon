@@ -59,10 +59,9 @@ public:
     
     void setRunning(bool running);
     void setVisible(bool visible);
-    void toggleActiveVisible();
-    
-    void showDebug(bool show);
+    void setDebug(bool debug);
     void showInterface(bool show);
+    void toggleActiveVisible();
     
     // callbacks
     bool onDebugChanged();

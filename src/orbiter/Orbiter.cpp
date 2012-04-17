@@ -406,7 +406,7 @@ void Orbiter::updateAudioResponse()
 void Orbiter::draw()
 {
     gl::enableDepthWrite();
-    
+    gl::enableAlphaBlending();
     gl::pushMatrices();
     
     Matrix44d matrix = Matrix44d::identity();

@@ -353,12 +353,20 @@ void OculonApp::keyDown( KeyEvent event )
             
         // fullscreen
         case KeyEvent::KEY_f:
+            toggleFullscreen();
+            break;
+            
+        case KeyEvent::KEY_i:
             setPresentationMode( !mIsPresentationMode );
             break;
 
         // info panel
         case KeyEvent::KEY_SLASH:
             mInfoPanel.toggleState();
+            break;
+            
+        case KeyEvent::KEY_0:
+            showInterface(0);
             break;
             
         // scene toggle
@@ -371,13 +379,25 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_7:
         case KeyEvent::KEY_8:
             {
-                char index = event.getChar() - '1';
+                char index = event.getCode() - KeyEvent::KEY_1;
                 
                 if( index < mScenes.size() && mScenes[index] != NULL )
                 {
                     if( event.isControlDown() )
                     {
                         mScenes[index]->setVisible( !mScenes[index]->isVisible() );
+                    }
+                    else if( event.isMetaDown() )
+                    {
+                        mScenes[index]->setRunning( !mScenes[index]->isRunning() );
+                    }
+                    else if( event.isAltDown() )
+                    {
+                        mScenes[index]->setDebug( !mScenes[index]->isDebug() );
+                    }
+                    else if( event.isShiftDown() )
+                    {
+                        showInterface(index+1);
                     }
                     else
                     {
@@ -478,8 +498,18 @@ void OculonApp::keyDown( KeyEvent event )
 void OculonApp::update()
 {
     char buf[256];
-    snprintf(buf, 256, "%.2ffps", getAverageFps());
-    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    const float fps = getAverageFps();
+    snprintf(buf, 256, "%.2ffps", fps);
+    Color fpsColor(0.5f, 0.5f, 0.5f);
+    if( fps < 20.0f )
+    {
+        fpsColor = Color(1.0f, 0.25f, 0.25f);
+    }
+    else if( fps < 30.0f )
+    {
+        fpsColor = Color(0.85f, 0.75f, 0.05f);
+    }
+    mInfoPanel.addLine( buf, fpsColor );
     snprintf(buf, 256, "%.1fs", getElapsedSeconds());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     if( mEnableSyphonServer )
@@ -660,17 +690,22 @@ void OculonApp::drawDebug()
             scene->drawInterface();
             if( scene->isVisible() && scene->isDebug() )
             {
+                gl::disableDepthRead();
+                gl::disableDepthWrite();
+                gl::enableAlphaBlending();
                 scene->drawDebug();
             }
         }
     }
+    gl::disableAlphaBlending();
+    gl::enableDepthRead();
+	gl::enableDepthWrite();
     gl::popMatrices();
-    
-    mInterface->draw();
     
     mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
     if( !mIsPresentationMode )
     {
+        mInterface->draw();
         params::InterfaceGl::draw();
         mParams.draw();
     }
@@ -727,10 +762,14 @@ void OculonApp::saveScreenshot()
 
 void OculonApp::setPresentationMode( bool enabled )
 {
-    setFullScreen(enabled);
     mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
-    if( enabled )
+}
+
+void OculonApp::toggleFullscreen()
+{
+    setFullScreen( !isFullScreen() );
+    if( isFullScreen() )
         hideCursor();
     else
         showCursor();
@@ -780,7 +819,7 @@ void OculonApp::enableFrameCapture( const bool enable )
     mIsCapturingFrames = enable;
     onFrameCaptureToggle();
 }
-    
+
 bool OculonApp::onFrameCaptureToggle()
 {
     if( mIsCapturingFrames )
