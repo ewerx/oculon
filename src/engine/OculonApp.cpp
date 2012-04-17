@@ -154,7 +154,12 @@ void OculonApp::setupInterface()
     mInterface = new Interface(this, &mOscServer);
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("OCULON");
-    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
+                         .defaultValue(mEnableSyphonServer));
+    mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames)
+                         .defaultValue(mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
+    mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput)
+                         .defaultValue(mCaptureDebugOutput));
 }
 
 void OculonApp::addScene(Scene* scene, bool startActive)
@@ -226,7 +231,7 @@ void OculonApp::setupScenes()
     addScene( new Orbiter() );
     addScene( new Binned() );
     //addScene( new Pulsar() );
-    addScene( new Magnetosphere(), autoStart );
+    addScene( new Magnetosphere() );
     addScene( new Graviton() );
     
     // Test Scenes
@@ -773,7 +778,11 @@ void OculonApp::stopVideoCapture()
 void OculonApp::enableFrameCapture( const bool enable )
 {
     mIsCapturingFrames = enable;
+    onFrameCaptureToggle();
+}
     
+bool OculonApp::onFrameCaptureToggle()
+{
     if( mIsCapturingFrames )
     {
         mFrameCaptureCount = 0;
@@ -793,6 +802,8 @@ void OculonApp::enableFrameCapture( const bool enable )
     {
         console() << "[main] frame capture stopped" << std::endl;
     }
+    
+    return false;
 }
 
 int OculonApp::getViewportWidth() const

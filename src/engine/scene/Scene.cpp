@@ -84,7 +84,6 @@ void Scene::drawInterface()
 
 void Scene::drawDebug()
 {
-    //params::InterfaceGl::draw();
     mDebugParams.draw();
 }
 

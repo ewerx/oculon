@@ -88,6 +88,9 @@ public: // new
     
     void enableFrameCapture( const bool enable );
     
+    // interface callbacks
+    bool onFrameCaptureToggle();
+    
     bool toggleScene(const int sceneId);
     bool showInterface(const int sceneId);
     
