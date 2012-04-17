@@ -43,6 +43,7 @@
 		7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C37393814F737DA00B24851 /* OpenCL.framework */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
+		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
 		7C745519148C04C6009C0356 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745518148C04C6009C0356 /* Foundation.framework */; };
@@ -267,6 +268,7 @@
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
 		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
+		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		7C745516148C04C6009C0356 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -722,6 +724,14 @@
 			name = opencl;
 			sourceTree = "<group>";
 		};
+		7C702036153BC57F0057D4EC /* macos */ = {
+			isa = PBXGroup;
+			children = (
+				7C702037153BC57F0057D4EC /* Oculon.icns */,
+			);
+			path = macos;
+			sourceTree = "<group>";
+		};
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
@@ -963,6 +973,7 @@
 		7C865644148C2BCD000E00B6 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				7C702036153BC57F0057D4EC /* macos */,
 				7C5C208E14F751B600971B41 /* opencl */,
 				7C865645148C2BCD000E00B6 /* images */,
 				7C865647148C2BCD000E00B6 /* shaders */,
@@ -1312,6 +1323,7 @@
 				7C1749BC1505DA2800BFC351 /* gaussianBlur_frag.glsl in Resources */,
 				7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */,
 				7C9A0548153121A500EB0452 /* pf_tempesta_seven.ttf in Resources */,
+				7C702038153BC57F0057D4EC /* Oculon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
