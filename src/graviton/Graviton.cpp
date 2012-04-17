@@ -63,7 +63,7 @@ void Graviton::setup()
     mCamTarget = Vec3f::zero();
     mCamTurnRate = 0.25f;
     mCamTranslateRate = 10.f;
-    mCamType = CAM_SPIRAL;
+    mCamType = CAM_SPLINE;
     
     
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
@@ -99,7 +99,7 @@ void Graviton::setupDebugInterface()
     mDebugParams.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
     mDebugParams.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
     
-    mDebugParams.addParam("Cam Type", (int*)(&mCamType), "min=0 max=2");
+    mDebugParams.addParam("Cam Type", (int*)(&mCamType), "min=0 max=3");
     mDebugParams.addParam("Cam Radius", &mCamRadius, "min=1.0");
     mDebugParams.addParam("Cam Distance", &mCamMaxDistance, "min=0.0");
     mDebugParams.addParam("Cam Turn Rate", &mCamTurnRate, "step=0.01");
@@ -324,7 +324,9 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
         default:
             break;
     }
-
+    
+    // random spline
+    setupCameraSpline();
 }
                               
 
@@ -571,22 +573,80 @@ void Graviton::updateAudioResponse()
 
 void Graviton::updateCamera(const double dt)
 {
-    mCamAngle += dt * mCamTurnRate;
-    mCamLateralPosition += dt * mCamTranslateRate;
-    if( ( (mCamLateralPosition > mCamMaxDistance) && mCamTranslateRate > 0.0f ) ||
-        ( (mCamLateralPosition < -mCamMaxDistance) && mCamTranslateRate < 0.0f ) )
+    switch( mCamType )
     {
-        mCamTranslateRate = -mCamTranslateRate;
+        case CAM_SPLINE:
+        {
+            mCamSplineValue += dt * (mCamTranslateRate*0.01f);
+            Vec3f pos = mCamSpline.getPosition( mCamSplineValue );
+            Vec3f delta = pos - mCamLastPos;
+            Vec3f up = delta.cross(pos);
+            //up.normalize();
+            mCam.lookAt( pos, mCamTarget, up );
+            mCamLastPos = pos;
+        }
+            break;
+            
+        case CAM_SPIRAL:
+        {
+            //TODO: use quaternion
+            //Quatf incQuat( normal, rotation );
+            //mQuat *= incQuat;
+            //mQuat.normalize();
+            mCamAngle += dt * mCamTurnRate;
+            mCamLateralPosition += dt * mCamTranslateRate;
+            if( ( (mCamLateralPosition > mCamMaxDistance) && mCamTranslateRate > 0.0f ) ||
+               ( (mCamLateralPosition < -mCamMaxDistance) && mCamTranslateRate < 0.0f ) )
+            {
+                mCamTranslateRate = -mCamTranslateRate;
+            }
+            
+            Vec3f pos(mCamRadius * cos(mCamAngle),
+                      mCamRadius * sin(mCamAngle),
+                      mCamLateralPosition );
+            
+            Vec3f up( pos.x, pos.y, 0.0f );
+            up.normalize();
+            mCam.lookAt( pos, mCamTarget, up );
+        }
+            break;
+            
+        default:
+            break;
     }
+    
+}
 
-    Vec3f pos(mCamRadius * cos(mCamAngle),
-              mCamRadius * sin(mCamAngle),
-              mCamLateralPosition );
+void Graviton::setupCameraSpline()
+{
+    vector<Vec3f> points;
+	int numPoints = 4 + ( Rand::randInt(4) );
+	for( int p = 0; p < numPoints; ++p )
+    {
+		points.push_back( Vec3f( Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f), Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f), Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f) ) );
+    }
+	mCamSpline = BSpline3f( points, 3, true, false );
     
-    Vec3f up( pos.x, pos.y, 0.0f );
-    up.normalize();
-    mCam.lookAt( pos, mCamTarget, up );
-    
+	mCamSplineValue = 0.0f;
+	mCamRotation = Quatf::identity();
+	mCamLastPos = mCamSpline.getPosition( 0 );
+}
+
+void Graviton::drawCamSpline()
+{
+    gl::pushMatrices();
+    gl::setMatrices( ( mCamType == CAM_MAYA ) ? mApp->getMayaCam() : mCam );
+	const int numSegments = 100;
+	gl::color( ColorA( 0.2f, 0.85f, 0.8f, 0.85f ) );
+	glLineWidth( 2.0f );
+	gl::begin( GL_LINE_STRIP );
+	for( int s = 0; s <= numSegments; ++s ) 
+    {
+		float t = s / (float)numSegments;
+		gl::vertex( mCamSpline.getPosition( t ) );
+	}
+	gl::end();
+    gl::popMatrices();
 }
 
 //
@@ -630,6 +690,7 @@ void Graviton::preRender()
 {
     switch( mCamType )
     {
+        case CAM_SPLINE:
         case CAM_SPIRAL:
             gl::setMatrices( mCam );
             break;
@@ -773,6 +834,8 @@ void Graviton::drawDebug()
         
         gl::popMatrices();
     }
+    
+    drawCamSpline();
     
     Scene::drawDebug();
 }

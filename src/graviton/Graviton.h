@@ -15,6 +15,7 @@
 #include "cinder/Timeline.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
+#include "cinder/Bspline.h"
 #include <vector>
 
 #include "MSAOpenCL.h"
@@ -52,7 +53,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (256 * kStep),
+        kNumParticles =         (128 * kStep),
         kFftBands =             512,
     };
     
@@ -193,6 +194,7 @@ private:
         CAM_MAYA,
         CAM_ORBITER,
         CAM_SPIRAL,
+        CAM_SPLINE,
         
         CAM_COUNT
     };
@@ -204,7 +206,10 @@ private:
     float               mCamTranslateRate;
     float               mCamMaxDistance;
     Vec3f               mCamTarget;
-    //Quatf               mCameraRotation;
+    Quatf               mCamRotation;
+    BSpline3f           mCamSpline;
+    float               mCamSplineValue;
+    Vec3f               mCamLastPos;
     
     MotionBlurRenderer  mMotionBlurRenderer;
 
@@ -220,6 +225,8 @@ private:
     void preRender();
     void drawParticles();
     
+    void setupCameraSpline();
+    void drawCamSpline();
     
      
 private:

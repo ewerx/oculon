@@ -179,3 +179,53 @@ __kernel void gravity(__global const float4 *in_pos,
         }
     }
 }
+
+__kernel void blackhole(__global const float4 *in_pos, 
+                      __global float4 *out_pos,
+					  __global const float4 *in_vel, 
+                      __global float4 *out_vel,
+                      __global float4 *color,
+                      __global float *fft,
+					  const uint nb_particles,
+					  const uint step,
+                      const float dt,
+                      const float damping,
+                      const float gravity,
+                      const float alpha,
+                      const uint flags,
+                      const float eps)
+{
+    const uint i = get_global_id(0);
+	if (i >= nb_particles)
+		return;
+    
+	float4 p1 = in_pos[i];
+    
+    if (p1.w == 0)
+	{
+		if (p1.z > 0.1)
+		{
+			float centrifuge = 2 * clamp(10.0f * p1.z, 0.5f, 1000.0f) * dt;
+			p1.y += (1 / centrifuge) * dt;
+			p1.z -= 1.5 * dt;
+		}
+		else
+		{
+			p1.w = 1;
+		}
+	}
+	else
+	{
+		if (p1.z < 8)
+		{
+			p1.z += 3 * dt;
+		}
+		else
+		{
+			p1.z = p1.z * 4;
+			p1.w = 0;
+		}
+	}
+    
+    out_pos[i] = p1;
+}
