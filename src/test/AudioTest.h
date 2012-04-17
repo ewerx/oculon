@@ -13,6 +13,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
 #include "Scene.h"
+#include "cinder/Timeline.h"
 
 //
 // Audio input tests
@@ -28,11 +29,14 @@ public:
     //void reset();
     void update(double dt);
     void draw();
+    void drawDebug();
     
 private:
     void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
     void drawFft        ( std::shared_ptr<float> fftDataRef );
+    void drawLines      ( std::shared_ptr<float> fftDataRef );
     
+    vector< Anim<float> > mFadeValues;
 };
 
 #endif // __AUDIOTEST_H__
