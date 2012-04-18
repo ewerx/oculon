@@ -63,7 +63,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kMaxParticles =         (128 * kStep),
+        kMaxParticles =         (64 * kStep),
         kFftBands =             512,
         kMaxNodes =             4,
         kParticleTrailSize =    4,
