@@ -15,7 +15,7 @@ using namespace bps;
 ParticleSystem::ParticleSystem() :
 	timeStep(1) 
 {
-    mParticleTexture = gl::Texture( loadImage( ci::app::loadResource( RES_PARTICLE_WHITE ) ) );
+    mParticleTexture = gl::Texture( loadImage( ci::app::loadResource( RES_GLITTER ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
 }
 
@@ -249,12 +249,16 @@ void ParticleSystem::draw(const ci::ColorAf& color, float radius)
     glEnd();
     glDisable( GL_TEXTURE_2D );
 #else
+    glEnable( GL_TEXTURE_2D );
+    mParticleTexture.bind();
 	glBegin(GL_POINTS);
 	for(int i = 0; i < n; i++)
     {
 		particles[i].draw(color, radius);
     }
 	glEnd();
+    glDisable( GL_TEXTURE_2D );
+    mParticleTexture.unbind();
 #endif
 }
 

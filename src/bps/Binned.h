@@ -81,6 +81,7 @@ private:
     ColorAf mPointColor;
     ColorAf mForceColor;
     float mParticleRadius;
+    float mLineWidth;
     
     bool mRandomPlacement;
     bool mBounceOffWalls;
@@ -95,6 +96,7 @@ private:
         PATTERN_CROSSING,
         PATTERN_RING,
         PATTERN_DISSOLVE,
+        PATTERN_WAVE,
         
     };
     eForcePattern mApplyForcePattern;
@@ -111,7 +113,7 @@ private:
     
     float mAudioSensitivity;
     
-    enum eMode
+    enum eRepulsionMode
     {
         MODE_RADIUS,
         MODE_FORCE,
@@ -119,7 +121,17 @@ private:
         
         MODE_COUNT
     };
-    int mMode;
+    int mRepulsionMode;
+    
+    enum eInitialFormation
+    {
+        FORMATION_NONE,
+        FORMATION_RING,
+        FORMATION_WAVE,
+        
+        FORMATION_COUNT
+    };
+    int mInitialFormation;
     
     bool mTopBottom;
     
