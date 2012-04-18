@@ -90,6 +90,7 @@ public: // new
     
     // interface callbacks
     bool onFrameCaptureToggle();
+    bool onHighResToggle();
     
     bool toggleScene(const int sceneId);
     bool showInterface(const int sceneId);
@@ -156,6 +157,7 @@ private: // members
     int                     mFrameCaptureCount;
     bool                    mIsCapturingHighRes;
     gl::Fbo                 mFbo;
+    float                   mCaptureDuration;
     
     bool                    mSaveNextFrame;
     bool                    mCaptureDebugOutput;

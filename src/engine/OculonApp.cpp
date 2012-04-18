@@ -25,6 +25,7 @@
 #include "InfoPanel.h"
 #include "Utils.h"
 #include "Interface.h"
+#include "Constants.h"
 
 // scenes
 #include "Orbiter.h"
@@ -68,6 +69,7 @@ void OculonApp::setup()
     mFrameCaptureCount = 0;
     mIsCapturingVideo = false;
     mIsCapturingFrames = false;
+    mCaptureDuration = 60.0f;
     mSaveNextFrame = false;
     mIsCapturingHighRes = false;
     mCaptureDebugOutput = false;
@@ -160,15 +162,22 @@ void OculonApp::setupInterface()
                          .defaultValue(mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput)
                          .defaultValue(mCaptureDebugOutput));
+    mInterface->addParam(CreateBoolParam("High-Res Capture", &mIsCapturingHighRes)
+                         .defaultValue(mIsCapturingHighRes))->registerCallback( this, &OculonApp::onHighResToggle );
+    mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
+                         .minValue(1.0f)
+                         .maxValue(600.0f)
+                         .defaultValue(mCaptureDuration));
 }
 
-void OculonApp::addScene(Scene* scene, bool startActive)
+void OculonApp::addScene(Scene* scene, bool autoStart)
 {
     scene->init(this);
-    if( startActive )
+    if( autoStart )
     {
         scene->setRunning(true);
         scene->setVisible(true);
+        scene->setDebug(true);
     }
     mScenes.push_back(scene);
     
@@ -198,7 +207,7 @@ bool OculonApp::toggleScene(const int sceneId)
 
 bool OculonApp::showInterface(const int sceneId)
 {
-    if( sceneId == 0 )
+    if( sceneId <= 0 )
     {
         for (SceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
@@ -207,7 +216,7 @@ bool OculonApp::showInterface(const int sceneId)
             Scene* scene = (*sceneIt);
             scene->showInterface(false);
         }
-        mInterface->gui()->setEnabled(true);
+        mInterface->gui()->setEnabled( (sceneId == 0) );
     }
     else if( sceneId <= mScenes.size() )
     {
@@ -455,14 +464,7 @@ void OculonApp::keyDown( KeyEvent event )
             break;
         case KeyEvent::KEY_h:
             mIsCapturingHighRes = !mIsCapturingHighRes;
-            if( mIsCapturingHighRes )
-            {
-                resize( ResizeEvent(mFbo.getSize()) );
-            }
-            else
-            {
-                resize( ResizeEvent(getWindowSize()) );
-            }
+            onHighResToggle();
             break;
         case KeyEvent::KEY_o://pass-thru
         case KeyEvent::KEY_b:
@@ -497,6 +499,9 @@ void OculonApp::keyDown( KeyEvent event )
 
 void OculonApp::update()
 {
+    mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
+    mLastElapsedSeconds = getElapsedSeconds();
+    
     char buf[256];
     const float fps = getAverageFps();
     snprintf(buf, 256, "%.2ffps", fps);
@@ -510,7 +515,7 @@ void OculonApp::update()
         fpsColor = Color(0.85f, 0.75f, 0.05f);
     }
     mInfoPanel.addLine( buf, fpsColor );
-    snprintf(buf, 256, "%.1fs", getElapsedSeconds());
+    snprintf(buf, 256, "%.1fs", mLastElapsedSeconds);
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     if( mEnableSyphonServer )
     {
@@ -524,13 +529,33 @@ void OculonApp::update()
     
     if( mIsCapturingFrames )
     {
-        const float videoFps = 25.0f;
-        snprintf(buf, 64, "CAPTURING #%d (%ds)", mFrameCaptureCount, (int)(mFrameCaptureCount/videoFps));
+        snprintf(buf, 64, "CAPTURING #%d", mFrameCaptureCount);
+        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+        
+        snprintf(buf, 256, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
+        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+        
+        float time = (mCaptureDuration*kCaptureFramerate - mFrameCaptureCount) * mElapsedSecondsThisFrame;
+        if( time > 60.f )
+        {
+            const int min = time / 60;
+            snprintf(buf, 256, "-- finish in %dm%ds", min, mod((int)time,60));
+        }
+        else
+        {
+            snprintf(buf, 256, "-- finish in %.0fs", time);
+        }
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
     
-    mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
-    mLastElapsedSeconds = getElapsedSeconds();
+    if( mIsCapturingFrames )
+    {
+        const float elapsed = (mFrameCaptureCount/kCaptureFramerate);
+        if( elapsed >= mCaptureDuration )
+        {
+            enableFrameCapture(false);
+        }
+    }
     
     mAudioInput.update();
     mMidiInput.update();
@@ -762,8 +787,9 @@ void OculonApp::saveScreenshot()
 
 void OculonApp::setPresentationMode( bool enabled )
 {
-    mInfoPanel.setVisible(!enabled);
+    //mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
+    showInterface( mIsPresentationMode ? -1 : 0 );
 }
 
 void OculonApp::toggleFullscreen()
@@ -825,7 +851,7 @@ bool OculonApp::onFrameCaptureToggle()
     if( mIsCapturingFrames )
     {
         mFrameCaptureCount = 0;
-        fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/ocluondata/capture/oculon_capture");
+        fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/oculondata/capture/oculon_capture");
         mFrameCapturePath = outputPath.string();
         if( fs::create_directory(outputPath) )
         {
@@ -840,6 +866,22 @@ bool OculonApp::onFrameCaptureToggle()
     else
     {
         console() << "[main] frame capture stopped" << std::endl;
+    }
+    
+    return false;
+}
+
+bool OculonApp::onHighResToggle()
+{
+    if( mIsCapturingHighRes )
+    {
+        //TODO: this doesn't work
+        setWindowSize( 860, 860 );
+        resize( ResizeEvent(mFbo.getSize()) );
+    }
+    else
+    {
+        resize( ResizeEvent(getWindowSize()) );
     }
     
     return false;
