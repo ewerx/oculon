@@ -38,14 +38,14 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 20;
+    mKParticles = 24;
     
     mParticleRadius = 6.0f;
     mLineWidth = 2.0f;
     
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
-    mBounceOffWalls = true;
+    mBounceOffWalls = false;
     mCircularWall = false;
 	mParticleNeighborhood = 14;
     
@@ -53,8 +53,8 @@ void Binned::setup()
     
     mInitialFormation = FORMATION_WAVE;
     
-	mParticleRepulsion = 1.5;
-	mCenterAttraction = 0.03f;//0.05;
+	mParticleRepulsion = 0.5f;//1.5;
+	mCenterAttraction = 0.08f;//0.05;
     
     mDamping = 0.0f;//0.01f;
     mWallDamping = 0.8f;//0.3f;
@@ -176,6 +176,29 @@ void Binned::reset()
                 float yv = Rand::randFloat(-maxVelocity*10.0f, maxVelocity*10.0f);
                 Particle particle(x, y, xv, yv);
                 mParticleSystem.add(particle);
+            }
+        }
+            break;
+            
+        case FORMATION_MULTIWAVE:
+        {
+            const float thickness = mApp->getViewportWidth() * 0.05f;
+            const int numWaves = 4;
+            const int ppw = (mKParticles * 1024) / numWaves;
+            const float waveDist = thickness * 36.0f;
+            float pos = 0;
+            for(int w = 0; w < numWaves; ++w)
+            {
+                for(int i = w*ppw; i < (w+1)*ppw; ++i) 
+                {
+                    float x = Rand::randFloat(pos, pos+thickness);
+                    float y = Rand::randFloat(0, mApp->getViewportHeight());
+                    float xv = Rand::randFloat(800, 1000);
+                    float yv = Rand::randFloat(-maxVelocity*10.0f, maxVelocity*10.0f);
+                    Particle particle(x, y, xv, yv);
+                    mParticleSystem.add(particle);
+                }
+                pos -= waveDist;
             }
         }
             break;

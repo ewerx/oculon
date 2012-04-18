@@ -128,10 +128,13 @@ private:
         FORMATION_NONE,
         FORMATION_RING,
         FORMATION_WAVE,
+        FORMATION_MULTIWAVE,
         
         FORMATION_COUNT
     };
     int mInitialFormation;
+    
+    // multiwave
     
     bool mTopBottom;
     

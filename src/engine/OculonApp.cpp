@@ -47,7 +47,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1024, 768 );
+	settings->setWindowSize( 860, 860 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -73,8 +73,8 @@ void OculonApp::setup()
     mSaveNextFrame = false;
     mIsCapturingHighRes = false;
     mCaptureDebugOutput = false;
-    static const int FBO_WIDTH = 2240;
-    static const int FBO_HEIGHT = 2240;
+    static const int FBO_WIDTH = 2600;
+    static const int FBO_HEIGHT = 2600;
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
@@ -238,7 +238,7 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     addScene( new Orbiter() );
-    addScene( new Binned() );
+    addScene( new Binned(), autoStart );
     //addScene( new Pulsar() );
     addScene( new Magnetosphere() );
     addScene( new Graviton() );
@@ -547,7 +547,7 @@ void OculonApp::update()
         }
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
-    
+
     if( mIsCapturingFrames )
     {
         const float elapsed = (mFrameCaptureCount/kCaptureFramerate);
