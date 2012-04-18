@@ -12,6 +12,7 @@
 #include "AudioTest.h"
 #include "KissFFT.h"
 #include "cinder/Rand.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -26,6 +27,14 @@ using namespace ci::app;
 
 void AudioTest::setup()
 {
+    mUseMotionBlur = false;
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioTest::drawLines, this ) );
+}
+
+void AudioTest::setupInterface()
+{
+    mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
+                         .defaultValue(mUseMotionBlur));
 }
 
 void AudioTest::update(double dt)
@@ -37,9 +46,14 @@ void AudioTest::draw()
 {
     glPushMatrix();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
-    
-    drawLines( mApp->getAudioInput().getFftDataRef() );
-
+    if( mUseMotionBlur )
+    {
+        mMotionBlurRenderer.draw();
+    }
+    else
+    {
+        drawLines();
+    }
     glPopMatrix();
 }
 
@@ -169,7 +183,7 @@ void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
     glPopMatrix();
 }
 
-void AudioTest::drawLines( std::shared_ptr<float> fftDataRef )
+void AudioTest::drawLines()
 {
     AudioInput& audioInput = mApp->getAudioInput();
 	

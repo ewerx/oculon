@@ -14,6 +14,7 @@
 #include "cinder/audio/Input.h"
 #include "Scene.h"
 #include "cinder/Timeline.h"
+#include "MotionBlurRenderer.h"
 
 //
 // Audio input tests
@@ -31,12 +32,16 @@ public:
     void draw();
     void drawDebug();
     
+protected:
+    void setupInterface();
+    
 private:
     void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
     void drawFft        ( std::shared_ptr<float> fftDataRef );
-    void drawLines      ( std::shared_ptr<float> fftDataRef );
+    void drawLines      ();
     
-    vector< Anim<float> > mFadeValues;
+    MotionBlurRenderer  mMotionBlurRenderer;
+    bool                mUseMotionBlur;
 };
 
 #endif // __AUDIOTEST_H__
