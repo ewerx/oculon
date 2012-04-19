@@ -17,6 +17,8 @@ class OscServer;
 class Interface
 {
 public:
+    typedef std::vector<OscParam*>::const_iterator const_iterator;
+public:
     Interface(ci::app::App* app, OscServer* osc);
     virtual ~Interface();
     
@@ -30,6 +32,9 @@ public:
     void draw();
     
     void createControlInterface(const std::string& pageName);
+    
+    const_iterator paramsBegin()    { return mParams.begin(); }
+    const_iterator paramsEnd()      { return mParams.end(); }
     
 private:
     mowa::sgui::SimpleGUI* mGui;

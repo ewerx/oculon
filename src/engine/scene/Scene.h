@@ -79,7 +79,7 @@ protected:
     
     virtual void setup() {}
     virtual void setupInterface() {}
-    virtual void setupDebugInterface() {}
+    virtual void setupDebugInterface();
     
     bool saveInterfaceParams();
     bool loadInterfaceParams(const int index =0);
