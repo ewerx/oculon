@@ -82,12 +82,19 @@ void Scene::setupDebugInterface()
         {
             case Control::FLOAT_VAR:
                 mDebugParams.addParam( control->name, static_cast<FloatVarControl*>(control)->var );
+                break;
             case Control::DOUBLE_VAR:
                 mDebugParams.addParam( control->name, static_cast<DoubleVarControl*>(control)->var );
+                break;
             case Control::INT_VAR:
                 mDebugParams.addParam( control->name, static_cast<IntVarControl*>(control)->var );
+                break;
             case Control::BOOL_VAR:
                 mDebugParams.addParam( control->name, static_cast<BoolVarControl*>(control)->var );
+                break;
+            case Control::SEPARATOR:
+                mDebugParams.addSeparator();
+                break;
             default:
                 break;
         }
