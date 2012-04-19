@@ -178,6 +178,10 @@ __kernel void gravity(__global const float4 *in_pos,
             color[i].w *= 2.0f;
         }
     }
+    else
+    {
+        color[i].w = alpha;//; + fft[fftIdx];
+    }
 }
 
 __kernel void blackhole(__global const float4 *in_pos, 

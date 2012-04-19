@@ -45,12 +45,13 @@ void Graviton::setup()
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
-    mPointSize = 2.0f;
-    mParticleAlpha = 0.45f;
+    mPointSize = 4.0f;
+    mParticleAlpha = 0.5f;
+    mUseMotionBlur = false;
     
     mDamping = 1.0f;
     mGravity = 100.0f;
-    mEps = 0.01f;//mFormationRadius * 0.5f;
+    mEps = 0.001f;//mFormationRadius * 0.5f;
     
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_NONE;
@@ -62,7 +63,7 @@ void Graviton::setup()
     mCamLateralPosition = -mCamMaxDistance;
     mCamTarget = Vec3f::zero();
     mCamTurnRate = 0.25f;
-    mCamTranslateRate = 10.f;
+    mCamTranslateRate = 1.0f;
     mCamType = CAM_SPLINE;
     
     
@@ -486,7 +487,7 @@ void Graviton::update(double dt)
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
-    mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
+    //mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
     if( mUseInvSquareCalc ) mFlags |= PARTICLE_FLAGS_INVSQR;
         
     mKernel->setArg(ARG_FLAGS, mFlags);
