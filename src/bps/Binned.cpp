@@ -17,6 +17,7 @@
 #include "cinder/Easing.h"
 #include "OculonApp.h"
 #include "Constants.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -38,7 +39,7 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 24;
+    mKParticles = 16;
     
     mParticleRadius = 6.0f;
     mLineWidth = 2.0f;
@@ -51,7 +52,7 @@ void Binned::setup()
     
     mCircularWallRadius = (mApp->getViewportWidth()/2)*1.2f;
     
-    mInitialFormation = FORMATION_WAVE;
+    mInitialFormation = FORMATION_DISC;
     
 	mParticleRepulsion = 0.5f;//1.5;
 	mCenterAttraction = 0.08f;//0.05;
@@ -151,6 +152,23 @@ void Binned::reset()
             }
         }
             break;
+            
+        case FORMATION_DISC:
+        {
+            const float centerX = mApp->getViewportWidth()/2.0f;
+            const float centerY = mApp->getViewportHeight()/2.0f;
+            const float radius = mApp->getViewportWidth() * 0.5f;
+            for(int i = 0; i < mKParticles * 1024; i++) 
+            {
+                float r = Rand::randFloat(0.0f,M_PI*4.0f);
+                float x = centerX + sin(r)*Rand::randFloat(radius);
+                float y = centerY + cos(r)*Rand::randFloat(radius);
+                float xv = Rand::randFloat(-maxVelocity*mForceScaleX, maxVelocity*mForceScaleX);
+                float yv = Rand::randFloat(-maxVelocity*mForceScaleY, maxVelocity*mForceScaleY);
+                mParticleSystem.add(Particle(x, y, xv, yv));
+            }
+        }
+            break;
         case FORMATION_NONE:
         {
             for(int i = 0; i < mKParticles * 1024; i++) 
@@ -220,6 +238,8 @@ void Binned::resize()
 
 void Binned::setupDebugInterface()
 {
+    Scene::setupDebugInterface(); // add all interface params
+    
     mDebugParams.addParam("Mode", &mRepulsionMode, "");
     mDebugParams.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
     mDebugParams.addParam("Wall Bounce", &mBounceOffWalls, "");
@@ -247,7 +267,9 @@ void Binned::setupDebugInterface()
 
 void Binned::setupInterface()
 {
-    
+    mInterface->addParam(CreateIntParam("Initial Formation", &mInitialFormation)
+                         .minValue(0)
+                         .maxValue(FORMATION_COUNT-1));
 }
 
 void Binned::update(double dt)
@@ -502,7 +524,7 @@ void Binned::draw()
                 }
                 alternate = !alternate;
                 
-                mApplyForcePattern = PATTERN_NONE;
+                //mApplyForcePattern = PATTERN_NONE;
             }
             break;
         }

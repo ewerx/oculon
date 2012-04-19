@@ -98,6 +98,7 @@ private:
         PATTERN_DISSOLVE,
         PATTERN_WAVE,
         
+        PATTERN_COUNT
     };
     eForcePattern mApplyForcePattern;
     float mBpmBounceTime;
@@ -126,6 +127,7 @@ private:
     enum eInitialFormation
     {
         FORMATION_NONE,
+        FORMATION_DISC,
         FORMATION_RING,
         FORMATION_WAVE,
         FORMATION_MULTIWAVE,
