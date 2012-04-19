@@ -580,6 +580,7 @@ void OculonApp::update()
         mKinectController.update();
     }
     
+    const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
@@ -587,7 +588,7 @@ void OculonApp::update()
         Scene* scene = (*sceneIt);
         if( scene && scene->isRunning() )
         {
-            scene->update(mElapsedSecondsThisFrame);
+            scene->update(dt);
         }
     }
     
