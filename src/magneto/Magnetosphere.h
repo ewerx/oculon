@@ -150,7 +150,7 @@ private:
     
     // rendering
     GLuint				mVbo[2]; // pos and color VBOs
-    gl::Texture         mParticleTexture;
+    ci::gl::Texture     mParticleTexture;
     float				mPointSize;
     float				mLineWidth;
     float               mParticleAlpha;

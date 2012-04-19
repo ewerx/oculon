@@ -21,8 +21,6 @@
 class OculonApp;
 class Interface;
 
-using namespace ci;
-
 
 class Scene
 {
@@ -48,7 +46,7 @@ public:
     virtual void handleVisibleChanged()                                     { }
     virtual void handleDebugChanged()                                       { }
     
-    virtual const Camera& getCamera() const;
+    virtual const ci::Camera& getCamera() const;
     
     OculonApp* getApp() const       { return mApp; }
     const std::string& getName()    { return mName; }
@@ -71,22 +69,22 @@ public:
     // frustum culling
     bool isFrustumCullingEnabled()  { return mEnableFrustumCulling; }
     void setFrustumCulling( bool enabled ) { mEnableFrustumCulling = enabled; }
-    bool isPointInFrustum( const Vec3f &loc );
-	bool isSphereInFrustum( const Vec3f &loc, float radius );
-	bool isBoxInFrustum( const Vec3f &loc, const Vec3f &size );
+    bool isPointInFrustum( const ci::Vec3f &loc );
+	bool isSphereInFrustum( const ci::Vec3f &loc, float radius );
+	bool isBoxInFrustum( const ci::Vec3f &loc, const ci::Vec3f &size );
     
 protected:
     
     virtual void setup() {}
     virtual void setupInterface() {}
-    virtual void setupDebugInterface() {}
+    virtual void setupDebugInterface();
     
     bool saveInterfaceParams();
     bool loadInterfaceParams(const int index =0);
     
     // frustum culling
-    void calcFrustumPlane( Vec3f &fNormal, Vec3f& fPoint, float& fDist, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3 );
-	void calcNearAndFarClipCoordinates( const Camera& cam );	
+    void calcFrustumPlane( ci::Vec3f &fNormal, ci::Vec3f& fPoint, float& fDist, const ci::Vec3f& v1, const ci::Vec3f& v2, const ci::Vec3f& v3 );
+	void calcNearAndFarClipCoordinates( const ci::Camera& cam );	
 
 protected:
     friend class OculonApp;
@@ -101,7 +99,7 @@ protected:
     bool        mEnableFrustumCulling;
     
     Interface*              mInterface;
-    params::InterfaceGl		mDebugParams;
+    ci::params::InterfaceGl mDebugParams;
     
 private:
     // frustum culling
@@ -119,8 +117,8 @@ private:
     bool        mIsFrustumPlaneCached;
     struct tFrustumPlane
     {
-        Vec3f mNormal;
-        Vec3f mPoint;
+        ci::Vec3f mNormal;
+        ci::Vec3f mPoint;
         float mDistance;
     };
     

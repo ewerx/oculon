@@ -26,8 +26,8 @@ public:
     MotionBlurRenderer();
     virtual ~MotionBlurRenderer();
     
-    void setup(const Vec2i& windowSize, tDrawCallback drawCallback);
-    void resize(const Vec2i& windowSize);
+    void setup(const ci::Vec2i& windowSize, tDrawCallback drawCallback);
+    void resize(const ci::Vec2i& windowSize);
     void draw();
     
 private:

@@ -128,7 +128,7 @@ public:
     , _var(var)
     , _min(0)
     , _max(1)
-    , _default(0)
+    , _default(*var)
     , _sendAddr("")
     , _recvAddr("")
     { }

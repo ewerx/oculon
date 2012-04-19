@@ -17,6 +17,7 @@
 #include "cinder/Easing.h"
 #include "OculonApp.h"
 #include "Constants.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -25,10 +26,8 @@ using namespace bps;
 Binned::Binned()
 : Scene("Binned")
 , mRepulsionMode(MODE_BOTH)
-, mTopBottom(false)
 , mForceScaleX(1.0f)
 , mForceScaleY(1.0f)
-, mRandomPlacement(true)
 {
 }
 
@@ -38,23 +37,24 @@ Binned::~Binned()
 
 void Binned::setup()
 {
-    mKParticles = 20;
+    mKParticles = 16;
+    mParticleNeighborhood = 14;
     
-    mParticleRadius = 6.0f;
+    mPointSize = 6.0f;
     mLineWidth = 2.0f;
     
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
-    mBounceOffWalls = true;
+    mBounceOffWalls = false;
     mCircularWall = false;
-	mParticleNeighborhood = 14;
+    mWallPadding = 0.0f;
     
     mCircularWallRadius = (mApp->getViewportWidth()/2)*1.2f;
     
-    mInitialFormation = FORMATION_WAVE;
+    mInitialFormation = FORMATION_NONE;
     
-	mParticleRepulsion = 1.5;
-	mCenterAttraction = 0.03f;//0.05;
+	mParticleRepulsion = 0.5f;//1.5;
+	mCenterAttraction = 0.08f;//0.05;
     
     mDamping = 0.0f;//0.01f;
     mWallDamping = 0.8f;//0.3f;
@@ -68,6 +68,7 @@ void Binned::setup()
     mIsMousePressed = false;
     mApplyForcePattern = PATTERN_NONE;
     mPatternDuration = 0.0f;
+    mAudioPattern = AUDIO_PATTERN_SEGMENTS;
     
     mPointColor.r = 1.0f;
     mPointColor.g = 1.0f;
@@ -82,6 +83,10 @@ void Binned::setup()
     mParticleSystem.setForceColor( &mForceColor );
     
     mIsOrbiterModeEnabled = false;
+    
+    // deepfield
+    mNumSegments = 4;
+    mSegmentWidth = mApp->getViewportWidth()/4.0f;
     
     reset();
 }
@@ -151,6 +156,23 @@ void Binned::reset()
             }
         }
             break;
+            
+        case FORMATION_DISC:
+        {
+            const float centerX = mApp->getViewportWidth()/2.0f;
+            const float centerY = mApp->getViewportHeight()/2.0f;
+            const float radius = mApp->getViewportWidth() * 0.5f;
+            for(int i = 0; i < mKParticles * 1024; i++) 
+            {
+                float r = Rand::randFloat(0.0f,M_PI*4.0f);
+                float x = centerX + sin(r)*Rand::randFloat(radius);
+                float y = centerY + cos(r)*Rand::randFloat(radius);
+                float xv = Rand::randFloat(-maxVelocity*mForceScaleX, maxVelocity*mForceScaleX);
+                float yv = Rand::randFloat(-maxVelocity*mForceScaleY, maxVelocity*mForceScaleY);
+                mParticleSystem.add(Particle(x, y, xv, yv));
+            }
+        }
+            break;
         case FORMATION_NONE:
         {
             for(int i = 0; i < mKParticles * 1024; i++) 
@@ -180,6 +202,29 @@ void Binned::reset()
         }
             break;
             
+        case FORMATION_MULTIWAVE:
+        {
+            const float thickness = mApp->getViewportWidth() * 0.05f;
+            const int numWaves = 4;
+            const int ppw = (mKParticles * 1024) / numWaves;
+            const float waveDist = thickness * 36.0f;
+            float pos = 0;
+            for(int w = 0; w < numWaves; ++w)
+            {
+                for(int i = w*ppw; i < (w+1)*ppw; ++i) 
+                {
+                    float x = Rand::randFloat(pos, pos+thickness);
+                    float y = Rand::randFloat(0, mApp->getViewportHeight());
+                    float xv = Rand::randFloat(800, 1000);
+                    float yv = Rand::randFloat(-maxVelocity*10.0f, maxVelocity*10.0f);
+                    Particle particle(x, y, xv, yv);
+                    mParticleSystem.add(particle);
+                }
+                pos -= waveDist;
+            }
+        }
+            break;
+            
         default:
             break;
     }
@@ -197,11 +242,11 @@ void Binned::resize()
 
 void Binned::setupDebugInterface()
 {
-    mDebugParams.addParam("Mode", &mRepulsionMode, "");
+    Scene::setupDebugInterface(); // add all interface params
+    
+    mDebugParams.addSeparator();
     mDebugParams.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
     mDebugParams.addParam("Wall Bounce", &mBounceOffWalls, "");
-    mDebugParams.addParam("Random Placement", &mRandomPlacement, "");
-    mDebugParams.addParam("Top/Bottom", &mTopBottom, "");
     mDebugParams.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
     mDebugParams.addParam("Damping Force", &mDamping, "step=0.01");
     mDebugParams.addParam("Wall Damping", &mWallDamping, "step=0.01");
@@ -217,14 +262,38 @@ void Binned::setupDebugInterface()
     mDebugParams.addParam("K Particles", &mKParticles, "min=1 max=100");
     mDebugParams.addParam("Point Color", &mPointColor, "");
     mDebugParams.addParam("Force Color", &mForceColor, "");
-    mDebugParams.addParam("Particle Radius", &mParticleRadius, "min=1 max=20");
-    mDebugParams.addParam("Line Width", &mLineWidth, "min=1 max=10");
+    
     
 }
 
 void Binned::setupInterface()
 {
+    mInterface->addParam(CreateIntParam("Initial Formation", &mInitialFormation)
+                         .minValue(0)
+                         .maxValue(FORMATION_COUNT-1));
+    mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
+                         .minValue(-10.0f)
+                         .maxValue(50.0f));
     
+    
+    mDebugParams.addParam("Mode", &mRepulsionMode, "");
+    mDebugParams.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
+    
+    mDebugParams.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
+    
+    mDebugParams.addParam("Force Scale X", &mForceScaleX, "step=0.1");
+    mDebugParams.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
+    mDebugParams.addParam("Min Force", &mMinForce, "");
+    mDebugParams.addParam("Max Force", &mMaxForce, "");
+    mDebugParams.addParam("Min Radius", &mMinRadius, "");
+    mDebugParams.addParam("Max Radius", &mMaxRadius, "");
+
+    
+    mDebugParams.addParam("Wall Bounce", &mBounceOffWalls, "");
+    mDebugParams.addParam("Point Size", &mPointSize, "min=1 max=20");
+    mDebugParams.addParam("Line Width", &mLineWidth, "min=1 max=10");
+    
+
 }
 
 void Binned::update(double dt)
@@ -253,11 +322,15 @@ void Binned::draw()
     glDisable(GL_LIGHTING);
 	gl::enableAdditiveBlending();
 	//glColor4f(1.0f, 1.0f, 1.0f, mLineOpacity);
+    glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, mPointSize );
+    glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, mPointSize );
+    glDisable(GL_POINT_SPRITE_ARB);
+    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
     glEnable(GL_POINT_SPRITE);
     glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
-    glPointSize(mParticleRadius);
+    glPointSize(mPointSize);
     glLineWidth(mLineWidth);
 	
 	mParticleSystem.setupForces();
@@ -281,8 +354,7 @@ void Binned::draw()
                 }
                 else
                 {
-                    const float padding = 50;
-                    cur.bounceOffWalls(0-padding, 0-padding, mApp->getViewportWidth()+padding, mApp->getViewportHeight()+padding, mWallDamping);
+                    cur.bounceOffWalls(0-mWallPadding, 0-mWallPadding, mApp->getViewportWidth()+mWallPadding, mApp->getViewportHeight()+mWallPadding, mWallDamping);
                 }
             }
         }
@@ -479,7 +551,7 @@ void Binned::draw()
                 }
                 alternate = !alternate;
                 
-                mApplyForcePattern = PATTERN_NONE;
+                //mApplyForcePattern = PATTERN_NONE;
             }
             break;
         }
@@ -508,22 +580,21 @@ void Binned::draw()
         }
         
         case PATTERN_NONE:
+            if( mIsOrbiterModeEnabled )
+            {
+                applyQueuedForces();
+            }
+            else
+            {
+                updateAudioResponse();
+            }
         default:
             break;
     }
     
-    if( mIsOrbiterModeEnabled )
-    {
-        applyQueuedForces();
-    }
-    else
-    {
-        updateAudioResponse();
-    }
-    
 	mParticleSystem.update();
 	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw( mPointColor, mParticleRadius );
+	mParticleSystem.draw( mPointColor, mPointSize );
     
     gl::enableDepthRead();
     gl::enableAlphaBlending();
@@ -570,86 +641,120 @@ void Binned::updateAudioResponse()
     {
         return;
     }
-    
-    // audio response
     AudioInput& audioInput = mApp->getAudioInput();
-    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
+    float * freqData = audioInput.getFft()->getAmplitude();
+    //float * timeData = audioInput.getFft()->getData();
+    int32_t dataSize = audioInput.getFft()->getBinSize();
     
-    unsigned int bandCount = audioInput.getFftBandCount();
-    float* fftBuffer = fftDataRef.get();
+    const float width = mApp->getViewportWidth();
+    const float height = mApp->getViewportHeight();
+    const float centerX = width/2.0f;
+    const float centerY = height/2.0f;
+    const int horizSpacing = (width / dataSize) * 2;
     
-    int spacing = mApp->getViewportWidth() / bandCount;
-    spacing *=2;
-    int x1 = mApp->getViewportWidth() / 2;
-    int x2 = x1;
-    //int numBandsPerBody = 1;
-    
-    if( fftBuffer )
+    // audio data
+    for (int32_t i = 0; i < dataSize; ++i) 
     {
-        for( int i = 0; i < bandCount; ++i) 
+        // logarithmic plotting for frequency domain
+        double logSize = log((double)dataSize);
+        const float normalizedFreq = (float)(log((double)i) / logSize);
+        const float freq = normalizedFreq * (double)dataSize;
+        const float amp = mAudioSensitivity * math<float>::clamp(freqData[i] * (freq / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
+        
+        float radius = mMinRadius;
+        float force = mMinForce;
+        
+        switch( mRepulsionMode )
         {
-            float avgFft = fftBuffer[i] / bandCount;
-            //avgFft /= (float)(numBandsPerBody);
-            avgFft *= mAudioSensitivity;
-            
-            x1 += spacing;
-            x2 -= spacing;
-            
-            float radius = mMinRadius;
-            float force = mMinForce;
-            
-            switch( mRepulsionMode )
+            case MODE_RADIUS:
+                radius += mMaxRadius * amp;
+                force = mMaxForce / 2.0f;
+                break;
+            case MODE_FORCE:
+                radius = mMinRadius * 5.0f;
+                force += mMaxForce * amp;
+                break;
+            case MODE_BOTH:
+                radius += mMaxRadius * amp;
+                force += mMaxForce * amp;
+                break;
+            default:
+                assert(false && "invalid mode");
+                break;
+        }
+        
+        const float magX = force * mForceScaleX;
+        const float magY = force * mForceScaleY;
+        
+        switch( mAudioPattern )
+        {
+            case AUDIO_PATTERN_LINE:
             {
-                case MODE_RADIUS:
-                    radius += mMaxRadius * avgFft;
-                    force = mMaxForce / 2.0f;
-                    break;
-                case MODE_FORCE:
-                    radius = mMinRadius * 5.0f;
-                    force += mMaxForce * avgFft;
-                    break;
-                case MODE_BOTH:
-                    radius += mMaxRadius * avgFft;
-                    force += mMaxForce * avgFft;
-                    break;
-                default:
-                    assert(false && "invalid mode");
-                    break;
-            }
-            
-            if( mRandomPlacement )
-            {
-                x1 = Rand::randFloat(0,mApp->getViewportWidth());
-                x2 = Rand::randFloat(0,mApp->getViewportWidth());
-            }
-            const float magX = force * mForceScaleX;
-            const float magY = force * mForceScaleY;
-            const float centerY = mRandomPlacement ? Rand::randFloat(0,mApp->getViewportHeight()) :(mApp->getViewportHeight()/2.0f);
-            
-            if( mTopBottom )
-            {
-                mParticleSystem.addRepulsionForce(x1, 0, radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, 0, radius, magX, magY);
-            
-                mParticleSystem.addRepulsionForce(x1, mApp->getViewportHeight(), radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, mApp->getViewportHeight(), radius, magX, magY);
-            }
-            else
-            {
+                const float x1 = centerX + i*horizSpacing;
+                const float x2 = centerX - i*horizSpacing;
                 mParticleSystem.addRepulsionForce(x1, centerY, radius, magX, magY);
                 mParticleSystem.addRepulsionForce(x2, centerY, radius, magX, magY);
             }
-            
-            bool debug = false;
-            if( debug )
+                break;
+            case AUDIO_PATTERN_TOPBOTTOM:
             {
-                const float maxRadius = 50.0f;
+                const float x1 = centerX + i*horizSpacing;
+                const float x2 = centerX - i*horizSpacing;
                 
-                glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
-                gl::drawSolidCircle(Vec2f(x1, centerY), maxRadius * avgFft);
-                gl::drawSolidCircle(Vec2f(x2, centerY), maxRadius * avgFft);
+                mParticleSystem.addRepulsionForce(x1, 0, radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, 0, radius, magX, magY);
+                
+                mParticleSystem.addRepulsionForce(x1, height, radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, height, radius, magX, magY);
             }
+                break;
+                
+            case AUDIO_PATTERN_RANDOM:
+            {
+                const float x1 = Rand::randFloat(0,width);
+                const float x2 = Rand::randFloat(0,width);
+                const float y1 = Rand::randFloat(0,height);
+                const float y2 = Rand::randFloat(0,height);
+                
+                mParticleSystem.addRepulsionForce(x1, y1, radius, magX, magY);
+                mParticleSystem.addRepulsionForce(x2, y2, radius, magX, magY);
+            }
+                break;
+                
+            case AUDIO_PATTERN_SEGMENTS:
+            {
+                const int numFreqSections = (mNumSegments+1) * 2; // two sections per divider
+                const int freqSection = Rand::randInt(0,numFreqSections);
+                
+                const float x = freqSection * mSegmentWidth;
+                const float y = Rand::randFloat(0, height);
+                mParticleSystem.addRepulsionForce( x, y, radius, magX, magY );
+                
+                bool debug = true;
+                if( debug )
+                {
+                    const float maxRadius = 50.0f;
+                    
+                    glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+                    gl::drawSolidCircle(Vec2f(x, y), maxRadius * amp);
+                }
+
+            }
+                break;
+                
+            case AUDIO_PATTERN_COUNT:
+                break;
         }
+            
+//            bool debug = false;
+//            if( debug )
+//            {
+//                const float maxRadius = 50.0f;
+//                
+//                glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+//                gl::drawSolidCircle(Vec2f(x1, centerY), maxRadius * avgFft);
+//                gl::drawSolidCircle(Vec2f(x2, centerY), maxRadius * avgFft);
+//            }
     }
 }
 
@@ -664,10 +769,6 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             break;
         case 'S':
             mTimeStep *= 10.0f;
-            break;
-            
-        case 'T':
-            mTopBottom = !mTopBottom;
             break;
             
         case 'm':
@@ -698,14 +799,12 @@ bool Binned::handleKeyDown( const KeyEvent& event )
                 mAudioSensitivity = 0.0f;
                 mCircularWall = true;
                 mCenterAttraction = 0.9f;
-                mRandomPlacement = false;
             }
             else
             {
                 mAudioSensitivity = 1.0f;
                 mCircularWall = false;
                 mCenterAttraction = 0.05f;
-                mRandomPlacement = true;
             }
             reset();
             break;
@@ -718,7 +817,6 @@ bool Binned::handleKeyDown( const KeyEvent& event )
                     mAudioSensitivity = 0.8f;
                     mMaxRadius = 80.0f;
                     mCircularWall = false;
-                    mRandomPlacement = true;
                     mCenterAttraction = 0.0f;
                 }
                 else
@@ -726,7 +824,6 @@ bool Binned::handleKeyDown( const KeyEvent& event )
                     mMaxRadius = 300.0f;
                     mCircularWall = true;
                     mAudioSensitivity = 0.0f;
-                    mRandomPlacement = false;
                     mCenterAttraction = 0.9f;
                 }
                 reset();
@@ -834,3 +931,4 @@ void Binned::applyQueuedForces()
         mQueuedForces.pop();
     }
 }
+

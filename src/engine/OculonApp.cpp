@@ -73,12 +73,13 @@ void OculonApp::setup()
     mSaveNextFrame = false;
     mIsCapturingHighRes = false;
     mCaptureDebugOutput = false;
-    static const int FBO_WIDTH = 2240;
-    static const int FBO_HEIGHT = 2240;
+    static const int FBO_WIDTH = 2600;
+    static const int FBO_HEIGHT = 2600;
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
+    gl::enableVerticalSync(false);
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
@@ -121,6 +122,8 @@ void OculonApp::setup()
     
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
+    
+    console() << "[main] vsync: " << (gl::isVerticalSyncEnabled() ? "on" : "off") << std::endl;
     
     setupScenes();
 }
@@ -238,7 +241,7 @@ void OculonApp::setupScenes()
     const bool autoStart = true;
     
     addScene( new Orbiter() );
-    addScene( new Binned() );
+    addScene( new Binned(), autoStart );
     //addScene( new Pulsar() );
     addScene( new Magnetosphere() );
     addScene( new Graviton() );
@@ -502,9 +505,10 @@ void OculonApp::update()
     mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
     mLastElapsedSeconds = getElapsedSeconds();
     
-    char buf[256];
+    const int BUFSIZE = 256;
+    char buf[BUFSIZE];
     const float fps = getAverageFps();
-    snprintf(buf, 256, "%.2ffps", fps);
+    snprintf(buf, BUFSIZE, "%.2ffps", fps);
     Color fpsColor(0.5f, 0.5f, 0.5f);
     if( fps < 20.0f )
     {
@@ -515,7 +519,9 @@ void OculonApp::update()
         fpsColor = Color(0.85f, 0.75f, 0.05f);
     }
     mInfoPanel.addLine( buf, fpsColor );
-    snprintf(buf, 256, "%.1fs", mLastElapsedSeconds);
+    snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
+    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     if( mEnableSyphonServer )
     {
@@ -529,25 +535,25 @@ void OculonApp::update()
     
     if( mIsCapturingFrames )
     {
-        snprintf(buf, 64, "CAPTURING #%d", mFrameCaptureCount);
+        snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         
-        snprintf(buf, 256, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
+        snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         
         float time = (mCaptureDuration*kCaptureFramerate - mFrameCaptureCount) * mElapsedSecondsThisFrame;
         if( time > 60.f )
         {
             const int min = time / 60;
-            snprintf(buf, 256, "-- finish in %dm%ds", min, mod((int)time,60));
+            snprintf(buf, BUFSIZE, "-- finish in %dm%ds", min, mod((int)time,60));
         }
         else
         {
-            snprintf(buf, 256, "-- finish in %.0fs", time);
+            snprintf(buf, BUFSIZE, "-- finish in %.0fs", time);
         }
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
-    
+
     if( mIsCapturingFrames )
     {
         const float elapsed = (mFrameCaptureCount/kCaptureFramerate);
@@ -574,6 +580,7 @@ void OculonApp::update()
         mKinectController.update();
     }
     
+    const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
@@ -581,7 +588,7 @@ void OculonApp::update()
         Scene* scene = (*sceneIt);
         if( scene && scene->isRunning() )
         {
-            scene->update(mElapsedSecondsThisFrame);
+            scene->update(dt);
         }
     }
     

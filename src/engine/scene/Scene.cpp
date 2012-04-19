@@ -14,6 +14,9 @@
 #include "SimpleGUI.h"
 #include "Utils.h"
 
+using namespace ci;
+using namespace mowa::sgui;
+
 /*static*/const char* const Scene::kIniLocation = "/Volumes/cruxpod/oculondata/params/";
 /*static*/const char* const Scene::kIniExt = ".ini";
 /*static*/const int         Scene::kIniDigits = 2;
@@ -63,6 +66,39 @@ void Scene::init(OculonApp* app)
     setup();
     setupInterface();
     setupDebugInterface();
+}
+
+void Scene::setupDebugInterface()
+{
+    // add all interface params as debug params
+    for (Interface::const_iterator it = mInterface->paramsBegin();
+         it != mInterface->paramsEnd();
+         ++it)
+    {
+        OscParam* param = (*it);
+        Control* control = param->getControl();
+        
+        switch( control->type )
+        {
+            case Control::FLOAT_VAR:
+                mDebugParams.addParam( control->name, static_cast<FloatVarControl*>(control)->var );
+                break;
+            case Control::DOUBLE_VAR:
+                mDebugParams.addParam( control->name, static_cast<DoubleVarControl*>(control)->var );
+                break;
+            case Control::INT_VAR:
+                mDebugParams.addParam( control->name, static_cast<IntVarControl*>(control)->var );
+                break;
+            case Control::BOOL_VAR:
+                mDebugParams.addParam( control->name, static_cast<BoolVarControl*>(control)->var );
+                break;
+            case Control::SEPARATOR:
+                mDebugParams.addSeparator();
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void Scene::update(double dt)
