@@ -79,6 +79,7 @@ void OculonApp::setup()
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
+    gl::enableVerticalSync(false);
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
@@ -121,6 +122,8 @@ void OculonApp::setup()
     
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
+    
+    console() << "[main] vsync: " << (gl::isVerticalSyncEnabled() ? "on" : "off") << std::endl;
     
     setupScenes();
 }
