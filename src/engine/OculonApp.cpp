@@ -502,9 +502,10 @@ void OculonApp::update()
     mElapsedSecondsThisFrame = getElapsedSeconds() - mLastElapsedSeconds;
     mLastElapsedSeconds = getElapsedSeconds();
     
-    char buf[256];
+    const int BUFSIZE = 256;
+    char buf[BUFSIZE];
     const float fps = getAverageFps();
-    snprintf(buf, 256, "%.2ffps", fps);
+    snprintf(buf, BUFSIZE, "%.2ffps", fps);
     Color fpsColor(0.5f, 0.5f, 0.5f);
     if( fps < 20.0f )
     {
@@ -515,7 +516,9 @@ void OculonApp::update()
         fpsColor = Color(0.85f, 0.75f, 0.05f);
     }
     mInfoPanel.addLine( buf, fpsColor );
-    snprintf(buf, 256, "%.1fs", mLastElapsedSeconds);
+    snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
+    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     if( mEnableSyphonServer )
     {
@@ -529,21 +532,21 @@ void OculonApp::update()
     
     if( mIsCapturingFrames )
     {
-        snprintf(buf, 64, "CAPTURING #%d", mFrameCaptureCount);
+        snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         
-        snprintf(buf, 256, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
+        snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         
         float time = (mCaptureDuration*kCaptureFramerate - mFrameCaptureCount) * mElapsedSecondsThisFrame;
         if( time > 60.f )
         {
             const int min = time / 60;
-            snprintf(buf, 256, "-- finish in %dm%ds", min, mod((int)time,60));
+            snprintf(buf, BUFSIZE, "-- finish in %dm%ds", min, mod((int)time,60));
         }
         else
         {
-            snprintf(buf, 256, "-- finish in %.0fs", time);
+            snprintf(buf, BUFSIZE, "-- finish in %.0fs", time);
         }
         mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
