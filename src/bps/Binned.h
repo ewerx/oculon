@@ -80,17 +80,30 @@ private:
     
     ColorAf mPointColor;
     ColorAf mForceColor;
-    float mParticleRadius;
+    float mPointSize;
     float mLineWidth;
     
-    bool mRandomPlacement;
     bool mBounceOffWalls;
     bool mCircularWall;
     float mCircularWallRadius;
+    float mWallPadding;
+    
+    
+    enum eAudioPattern
+    {
+        AUDIO_PATTERN_LINE,
+        AUDIO_PATTERN_TOPBOTTOM,
+        AUDIO_PATTERN_RANDOM,
+        AUDIO_PATTERN_SEGMENTS,
+        
+        AUDIO_PATTERN_COUNT
+    };
+    eAudioPattern mAudioPattern;
     
     enum eForcePattern
     {
         PATTERN_NONE,
+        PATTERN_AUDIO,
         PATTERN_FOUR_CORNERS,
         PATTERN_BPM_BOUNCE,
         PATTERN_CROSSING,
@@ -101,6 +114,7 @@ private:
         PATTERN_COUNT
     };
     eForcePattern mApplyForcePattern;
+    
     float mBpmBounceTime;
     int mBeatCount;
     int mBpmBouncePosition;
@@ -136,9 +150,9 @@ private:
     };
     int mInitialFormation;
     
-    // multiwave
-    
-    bool mTopBottom;
+    // deepfield
+    int mNumSegments;
+    float mSegmentWidth;
     
     struct tRepulsionForce
     {
