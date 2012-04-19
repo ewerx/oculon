@@ -109,12 +109,12 @@ private:
     
     struct tGravityNode
     {
-        tGravityNode(const Vec3f& pos, const Vec3f& vel, const float mass)
+        tGravityNode(const ci::Vec3f& pos, const ci::Vec3f& vel, const float mass)
         : mPos(pos), mVel(vel), mMass(mass)
         {}
         
-        Vec3f   mPos;
-        Vec3f   mVel;
+        ci::Vec3f   mPos;
+        ci::Vec3f   mVel;
         float   mMass;
     };
     
@@ -172,7 +172,7 @@ private:
 
     // rendering
     GLuint              mVbo[2]; // pos and color VBOs
-    gl::Texture         mParticleTexture;
+    ci::gl::Texture     mParticleTexture;
     float				mPointSize;
     float				mLineWidth;
     float               mParticleAlpha;
@@ -187,8 +187,8 @@ private:
     bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
     
-    CameraPersp         mCam;
-    //Vec3f               mCamPosition;
+    ci::CameraPersp     mCam;
+    //ci::Vec3f               mCamPosition;
     enum eCamType
     {
         CAM_MAYA,
@@ -205,11 +205,11 @@ private:
     double              mCamTurnRate;
     float               mCamTranslateRate;
     float               mCamMaxDistance;
-    Vec3f               mCamTarget;
-    Quatf               mCamRotation;
-    BSpline3f           mCamSpline;
+    ci::Vec3f           mCamTarget;
+    ci::Quatf           mCamRotation;
+    ci::BSpline3f       mCamSpline;
     float               mCamSplineValue;
-    Vec3f               mCamLastPos;
+    ci::Vec3f              mCamLastPos;
     
     MotionBlurRenderer  mMotionBlurRenderer;
 
