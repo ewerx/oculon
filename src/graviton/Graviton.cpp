@@ -89,45 +89,83 @@ void Graviton::setup()
 
 void Graviton::setupDebugInterface()
 {
-    mDebugParams.addText( "graviton", "label=`Graviton`" );
+    Scene::setupDebugInterface(); // add all interface params
+    
+    mDebugParams.setOptions("Time Step", "step=0.0001 min=-1.0 max=1.0" );
+    mDebugParams.setOptions("Gravity", "step=0.1");
+    mDebugParams.setOptions("Alpha", "min=0.0 max=1.0 step=0.001");
+    
+    mDebugParams.setOptions("Initial Formation", "min=0 max=3 enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}'" );
+    mDebugParams.setOptions("Node Formation", "min=0 max=2");
+    mDebugParams.setOptions("Damping", "step=0.0001");
+    mDebugParams.setOptions("EPS", "min=0.0 step=0.001");
+    
+    mDebugParams.setOptions("Cam Type", "min=0 max=3");
+    mDebugParams.setOptions("Cam Radius", "min=1.0");
+    mDebugParams.setOptions("Cam Distance", "min=0.0");
+    mDebugParams.setOptions("Cam Turn Rate", "step=0.01");
+    mDebugParams.setOptions("Cam Slide Rate", "step=0.1");
+    
+    mDebugParams.addSeparator();
     mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
-    mDebugParams.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    mDebugParams.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=3");//"enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}' " );
-    mDebugParams.addParam("Node Formation", (int*)(&mGravityNodeFormation), "min=0 max=2");
-    mDebugParams.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
-    mDebugParams.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
-    mDebugParams.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
-    mDebugParams.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
-    
-    mDebugParams.addParam("Cam Type", (int*)(&mCamType), "min=0 max=3");
-    mDebugParams.addParam("Cam Radius", &mCamRadius, "min=1.0");
-    mDebugParams.addParam("Cam Distance", &mCamMaxDistance, "min=0.0");
-    mDebugParams.addParam("Cam Turn Rate", &mCamTurnRate, "step=0.01");
-    mDebugParams.addParam("Cam Slide Rate", &mCamTranslateRate, "");
-    
-    mDebugParams.addParam("Point Size", &mPointSize, "");
+    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
     mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
     mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
     mDebugParams.addParam("Point Scaling", &mScalePointsByDistance, "");
     mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
-    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
-    mDebugParams.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
+    
 }
 
 void Graviton::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "Time Step", &mTimeStep )
                          .minValue(0.0f)
-                         .maxValue(0.001f)
-                         .defaultValue(mTimeStep));
+                         .maxValue(0.001f));
                          //.oscReceiver("/1/fader1"));
                          //.oscSender("/1/fader1"));
-    
+    mInterface->addParam(CreateFloatParam( "Damping", &mDamping ));
+    mInterface->addParam(CreateFloatParam( "EPS", &mEps )
+                         .minValue(0.001)
+                         .maxValue(10000));
     mInterface->addParam(CreateFloatParam( "Gravity", &mGravity )
                          .minValue(0.0f)
-                         .maxValue(100.0f)
-                         .defaultValue(mGravity));
+                         .maxValue(100.0f));
                          //.oscReceiver("/1/fader2"));
+    
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateIntParam( "Particle Formation", (int*)(&mInitialFormation) )
+                         .minValue(0)
+                         .maxValue(FORMATION_COUNT-1));
+    mInterface->addParam(CreateIntParam( "Node Formation", (int*)(&mGravityNodeFormation) )
+                         .minValue(0)
+                         .maxValue(2));
+    mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
+                         .minValue(10.0f)
+                         .maxValue(1000.0f));
+    
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha ));
+    mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
+                         .minValue(1.0f)
+                         .maxValue(20.0f));
+    
+    mInterface->gui()->addColumn();
+    mInterface->addParam(CreateIntParam( "Cam Type", (int*)(&mCamType) )
+                         .minValue(0)
+                         .maxValue(3));
+    mInterface->addParam(CreateFloatParam( "Cam Radius", &mCamRadius )
+                         .minValue(1.0f)
+                         .maxValue(500.f));
+    mInterface->addParam(CreateFloatParam( "Cam Distance", &mCamMaxDistance )
+                         .minValue(0.0f)
+                         .maxValue(500.f));
+    mInterface->addParam(CreateFloatParam( "Cam Turn Rate", &mCamTurnRate )
+                         .minValue(0.0f)
+                         .maxValue(5.0f));
+    mInterface->addParam(CreateFloatParam( "Cam Slide Rate", &mCamTranslateRate )
+                         .minValue(0.0f)
+                         .maxValue(20.0f));
+    
 }
 
 void Graviton::initParticles()

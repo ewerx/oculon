@@ -202,7 +202,7 @@ private:
     float               mCamRadius;
     double              mCamAngle;
     double              mCamLateralPosition;
-    double              mCamTurnRate;
+    float               mCamTurnRate;
     float               mCamTranslateRate;
     float               mCamMaxDistance;
     ci::Vec3f           mCamTarget;
