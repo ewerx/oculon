@@ -164,6 +164,8 @@ private: // members
     
     syphonServer            mScreenSyphon;
     bool                    mEnableSyphonServer;
+    
+    float                   mFpsSendTimer;
 };
 
 #endif

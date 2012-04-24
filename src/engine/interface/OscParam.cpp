@@ -128,10 +128,12 @@ void OscBoolParam::handleOscMessage( const osc::Message& message )
         {
             case osc::TYPE_INT32:
                 *(mControl->var) = (message.getArgAsInt32(0) != 0);
+                mControl->triggerCallback();
                 break;
         
             case osc::TYPE_FLOAT:
                 *(mControl->var) = (message.getArgAsFloat(0) != 0.0f);
+                mControl->triggerCallback();
                 break;
                 
             default:
@@ -149,3 +151,51 @@ void OscBoolParam::prepOscSend( osc::Message& message )
 {
     message.addIntArg( (*(mControl->var)) ? 1 : 0 );
 }
+
+#pragma MARK OscTriggerParam
+
+OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, const std::string& recvAddr, const std::string& sendAddr)
+: OscParam(OscParam::PARAMTYPE_TRIGGER, server, recvAddr, sendAddr)
+, mControl(control)
+{
+    assert(mControl != NULL);
+    server->registerCallback( recvAddr, this, &OscTriggerParam::handleOscMessage );
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+}
+
+void OscTriggerParam::handleOscMessage( const osc::Message& message )
+{
+    if( message.getNumArgs() == 1 ) 
+    {
+        switch( message.getArgType(0) )
+        {
+            case osc::TYPE_INT32:
+                if( message.getArgAsInt32(0) > 0 )
+                {
+                    mControl->triggerCallback();
+                }
+                break;
+                
+            case osc::TYPE_FLOAT:
+                if( message.getArgAsFloat(0) > 0.0f )
+                {
+                    mControl->triggerCallback();
+                }
+                break;
+                
+            default:
+                console() << "[osc] WARNING: unexpected message format for trigger parameter" << std::endl;
+                break;
+        }
+    }
+    else
+    {
+        console() << "[osc] WARNING: unexpected message format for trigger parameter" << std::endl;
+    }
+}
+
+void OscTriggerParam::prepOscSend( osc::Message& message )
+{
+    message.addIntArg( 1 );
+}
+

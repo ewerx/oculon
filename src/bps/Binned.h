@@ -98,7 +98,7 @@ private:
         
         AUDIO_PATTERN_COUNT
     };
-    eAudioPattern mAudioPattern;
+    int mAudioPattern;
     
     enum eForcePattern
     {
@@ -113,7 +113,7 @@ private:
         
         PATTERN_COUNT
     };
-    eForcePattern mApplyForcePattern;
+    int mApplyForcePattern;
     
     float mBpmBounceTime;
     int mBeatCount;

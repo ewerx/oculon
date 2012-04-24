@@ -59,12 +59,13 @@ public:
     void setVisible(bool visible);
     void setDebug(bool debug);
     void showInterface(bool show);
-    void toggleActiveVisible();
+    bool toggleActiveVisible();
     
     // callbacks
     bool onDebugChanged();
     bool onVisibleChanged();
     bool onRunningChanged();
+    bool onReset()  { mDoReset = true; return false; }
     
     // frustum culling
     bool isFrustumCullingEnabled()  { return mEnableFrustumCulling; }
@@ -100,6 +101,9 @@ protected:
     
     Interface*              mInterface;
     ci::params::InterfaceGl mDebugParams;
+    
+    int mDummy;//HACK
+    bool mDoReset;
     
 private:
     // frustum culling

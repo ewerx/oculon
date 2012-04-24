@@ -141,6 +141,7 @@ __kernel void gravity(__global const float4 *in_pos,
         out_pos[i] += (0.5f*dt*dt*a); // what??
     }
     
+    const int fftIdx = i%512;
     if( flags & PARTICLE_FLAGS_SHOW_DARK )
     {
         if( i < n )
@@ -167,7 +168,6 @@ __kernel void gravity(__global const float4 *in_pos,
     }
     else if( flags & PARTICLE_FLAGS_SHOW_MASS )
     {
-        const int fftIdx = i%512;
         float massRatio = out_vel[i].w / MAX_MASS;
         color[i].x = massRatio*massRatio + (fft[fftIdx]/2.0f);
         color[i].y = massRatio/2.0f + (fftIdx/512);
@@ -180,7 +180,7 @@ __kernel void gravity(__global const float4 *in_pos,
     }
     else
     {
-        color[i].w = alpha;//; + fft[fftIdx];
+        color[i].w = alpha + fft[fftIdx];
     }
 }
 

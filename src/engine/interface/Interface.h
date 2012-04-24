@@ -27,6 +27,7 @@ public:
     mowa::sgui::FloatVarControl*  addParam( const CreateFloatParam& param );
     mowa::sgui::IntVarControl*    addParam( const CreateIntParam& param );
     mowa::sgui::BoolVarControl*   addParam( const CreateBoolParam& param );
+    mowa::sgui::ButtonControl*    addButton( const CreateIntParam& param );
     
     void update();
     void draw();

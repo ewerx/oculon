@@ -45,7 +45,7 @@ void Graviton::setup()
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
-    mPointSize = 4.0f;
+    mPointSize = 1.0f;
     mParticleAlpha = 0.5f;
     mUseMotionBlur = false;
     
@@ -96,7 +96,7 @@ void Graviton::setupDebugInterface()
     mDebugParams.setOptions("Gravity", "step=0.1");
     mDebugParams.setOptions("Alpha", "min=0.0 max=1.0 step=0.001");
     
-    mDebugParams.setOptions("Initial Formation", "min=0 max=3 enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}'" );
+    mDebugParams.setOptions("Particle Formation", "min=0 max=3 enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}'" );
     mDebugParams.setOptions("Node Formation", "min=0 max=2");
     mDebugParams.setOptions("Damping", "step=0.0001");
     mDebugParams.setOptions("EPS", "min=0.0 step=0.001");
@@ -121,51 +121,64 @@ void Graviton::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "Time Step", &mTimeStep )
                          .minValue(0.0f)
-                         .maxValue(0.001f));
+                         .maxValue(0.001f)
+                         .oscReceiver("/graviton/timestep"));
                          //.oscReceiver("/1/fader1"));
                          //.oscSender("/1/fader1"));
-    mInterface->addParam(CreateFloatParam( "Damping", &mDamping ));
+    mInterface->addParam(CreateFloatParam( "Damping", &mDamping )
+                         .oscReceiver("/graviton/damping"));
     mInterface->addParam(CreateFloatParam( "EPS", &mEps )
-                         .minValue(0.001)
-                         .maxValue(10000));
+                         .minValue(0.0001)
+                         .maxValue(1500)
+                         .oscReceiver("/graviton/eps"));
     mInterface->addParam(CreateFloatParam( "Gravity", &mGravity )
                          .minValue(0.0f)
-                         .maxValue(100.0f));
+                         .maxValue(100.0f)
+                         .oscReceiver("/graviton/gravity"));
                          //.oscReceiver("/1/fader2"));
     
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateIntParam( "Particle Formation", (int*)(&mInitialFormation) )
                          .minValue(0)
-                         .maxValue(FORMATION_COUNT-1));
+                         .maxValue(FORMATION_COUNT-1)
+                         .oscReceiver("/graviton/pformation"));
     mInterface->addParam(CreateIntParam( "Node Formation", (int*)(&mGravityNodeFormation) )
                          .minValue(0)
-                         .maxValue(2));
+                         .maxValue(NODE_FORMATION_COUNT-1)
+                         .oscReceiver("/graviton/nformation"));
     mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
                          .minValue(10.0f)
-                         .maxValue(1000.0f));
+                         .maxValue(1000.0f)
+                         .oscReceiver("/graviton/formradius"));
     
     mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha ));
+    mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
+                         .oscReceiver("/graviton/alpha"));
     mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
                          .minValue(1.0f)
-                         .maxValue(20.0f));
+                         .maxValue(3.0f)
+                         .oscReceiver("/graviton/psize"));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "Cam Type", (int*)(&mCamType) )
                          .minValue(0)
-                         .maxValue(3));
+                         .maxValue(3)
+                         .oscReceiver("/graviton/camtype"));
     mInterface->addParam(CreateFloatParam( "Cam Radius", &mCamRadius )
                          .minValue(1.0f)
-                         .maxValue(500.f));
+                         .maxValue(500.f)
+                         .oscReceiver("/graviton/camradius"));
     mInterface->addParam(CreateFloatParam( "Cam Distance", &mCamMaxDistance )
                          .minValue(0.0f)
                          .maxValue(500.f));
     mInterface->addParam(CreateFloatParam( "Cam Turn Rate", &mCamTurnRate )
                          .minValue(0.0f)
-                         .maxValue(5.0f));
+                         .maxValue(5.0f)
+                         .oscReceiver("/graviton/camturn"));
     mInterface->addParam(CreateFloatParam( "Cam Slide Rate", &mCamTranslateRate )
                          .minValue(0.0f)
-                         .maxValue(20.0f));
+                         .maxValue(5.0f)
+                         .oscReceiver("/graviton/camspeed"));
     
 }
 

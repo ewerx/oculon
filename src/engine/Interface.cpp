@@ -66,6 +66,16 @@ mowa::sgui::BoolVarControl* Interface::addParam( const CreateBoolParam& param )
     return control;
 }
 
+mowa::sgui::ButtonControl* Interface::addButton( const CreateIntParam& param )
+{
+    mowa::sgui::ButtonControl* control = mGui->addButton( param._name );
+    
+    OscTriggerParam* oscParam = new OscTriggerParam( mOsc, control, param._recvAddr, param._sendAddr );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
 void Interface::update()
 {
 }

@@ -35,9 +35,10 @@ Binned::~Binned()
 {
 }
 
+#pragma MARK setup
 void Binned::setup()
 {
-    mKParticles = 16;
+    mKParticles = 6;
     mParticleNeighborhood = 14;
     
     mPointSize = 6.0f;
@@ -45,7 +46,7 @@ void Binned::setup()
     
     mTimeStep = 0.005f;// 0.05
 	mSlowMotion = false;
-    mBounceOffWalls = false;
+    mBounceOffWalls = true;
     mCircularWall = false;
     mWallPadding = 0.0f;
     
@@ -54,7 +55,7 @@ void Binned::setup()
     mInitialFormation = FORMATION_NONE;
     
 	mParticleRepulsion = 0.5f;//1.5;
-	mCenterAttraction = 0.08f;//0.05;
+	mCenterAttraction = 0.0f;//0.08f;//0.05;
     
     mDamping = 0.0f;//0.01f;
     mWallDamping = 0.8f;//0.3f;
@@ -63,7 +64,7 @@ void Binned::setup()
     mMinRadius = 0.0f;
     mMaxForce = 200.0f;
     mMaxRadius = 100.0f;
-    mAudioSensitivity = 0.0f;
+    mAudioSensitivity = 1.0f;
     
     mIsMousePressed = false;
     mApplyForcePattern = PATTERN_NONE;
@@ -87,6 +88,7 @@ void Binned::setup()
     // deepfield
     mNumSegments = 4;
     mSegmentWidth = mApp->getViewportWidth()/4.0f;
+    
     
     reset();
 }
@@ -245,55 +247,76 @@ void Binned::setupDebugInterface()
     Scene::setupDebugInterface(); // add all interface params
     
     mDebugParams.addSeparator();
-    mDebugParams.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
-    mDebugParams.addParam("Wall Bounce", &mBounceOffWalls, "");
-    mDebugParams.addParam("Particle Repulsion", &mParticleRepulsion, "step=0.01");
-    mDebugParams.addParam("Damping Force", &mDamping, "step=0.01");
-    mDebugParams.addParam("Wall Damping", &mWallDamping, "step=0.01");
+    mDebugParams.setOptions("Time Step", "step=0.001 min=0.0001 max=1.0");
+    mDebugParams.setOptions("Particle Repulsion", "step=0.01");
+    mDebugParams.setOptions("Damping Force", "step=0.01");
+    mDebugParams.setOptions("Wall Damping", "step=0.01");
+
     mDebugParams.addParam("Wall Radius", &mCircularWallRadius, "");
-    mDebugParams.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
-    mDebugParams.addParam("Force Scale X", &mForceScaleX, "step=0.1");
-    mDebugParams.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
-    mDebugParams.addParam("Min Force", &mMinForce, "");
-    mDebugParams.addParam("Max Force", &mMaxForce, "");
-    mDebugParams.addParam("Min Radius", &mMinRadius, "");
-    mDebugParams.addParam("Max Radius", &mMaxRadius, "");
-    mDebugParams.addParam("Audio Sensitivity", &mAudioSensitivity, "step=0.01 min=0.0");
-    mDebugParams.addParam("K Particles", &mKParticles, "min=1 max=100");
+    mDebugParams.setOptions("Center Attraction", "step=0.01");
+    mDebugParams.setOptions("Force Scale X", "step=0.1");
+    mDebugParams.setOptions("Force Scale Y", "step=0.1");
+    mDebugParams.setOptions("Audio Sensitivity", "step=0.01 min=0.0");
+    mDebugParams.setOptions("K Particles", "min=1 max=100");
+    mDebugParams.setOptions("Reaction Style", "max=3");
     mDebugParams.addParam("Point Color", &mPointColor, "");
     mDebugParams.addParam("Force Color", &mForceColor, "");
-    
-    
 }
 
 void Binned::setupInterface()
 {
-    mInterface->addParam(CreateIntParam("Initial Formation", &mInitialFormation)
-                         .minValue(0)
-                         .maxValue(FORMATION_COUNT-1));
-    mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
-                         .minValue(-10.0f)
-                         .maxValue(50.0f));
     
+    mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
+                         .minValue(1).maxValue(100));
     
-    mDebugParams.addParam("Mode", &mRepulsionMode, "");
-    mDebugParams.addParam("Time Step", &mTimeStep, "step=0.001 min=0.0001 max=1.0");
+    mInterface->addParam(CreateIntParam("Initial_Formation", &mInitialFormation)
+                         .minValue(0).maxValue(FORMATION_COUNT-1)
+                         .oscReceiver("/binned/formation"));
+    mInterface->addParam(CreateFloatParam("Wall_Padding", &mWallPadding)
+                         .minValue(-10.0f).maxValue(50.0f));
     
-    mDebugParams.addParam("Center Attraction", &mCenterAttraction, "step=0.01");
+    mInterface->addParam(CreateIntParam("Mode", &mRepulsionMode)
+                         .minValue(0).maxValue(MODE_COUNT-1));
     
-    mDebugParams.addParam("Force Scale X", &mForceScaleX, "step=0.1");
-    mDebugParams.addParam("Force Scale Y", &mForceScaleY, "step=0.1");
-    mDebugParams.addParam("Min Force", &mMinForce, "");
-    mDebugParams.addParam("Max Force", &mMaxForce, "");
-    mDebugParams.addParam("Min Radius", &mMinRadius, "");
-    mDebugParams.addParam("Max Radius", &mMaxRadius, "");
-
+    mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
+                         .maxValue(0.1f)
+                         .oscReceiver("/binned/timestep"));
     
-    mDebugParams.addParam("Wall Bounce", &mBounceOffWalls, "");
-    mDebugParams.addParam("Point Size", &mPointSize, "min=1 max=20");
-    mDebugParams.addParam("Line Width", &mLineWidth, "min=1 max=10");
+    mInterface->addParam(CreateFloatParam("Center Attraction", &mCenterAttraction)
+                         .maxValue(10.0f)
+                         .oscReceiver("/binned/centerattract"));
     
-
+    mInterface->addParam(CreateFloatParam("Force Scale X", &mForceScaleX)
+                         .oscReceiver("/binned/forcescalex"));    
+    mInterface->addParam(CreateFloatParam("Force Scale Y", &mForceScaleY)
+                         .oscReceiver("/binned/forcescaley"));
+    mInterface->addParam(CreateFloatParam("Min Force", &mMinForce)
+                         .maxValue(100.0f)
+                         .oscReceiver("/binned/minforce"));
+    mInterface->addParam(CreateFloatParam("Max Force", &mMaxForce)
+                         .maxValue(500.0f)
+                         .oscReceiver("/binned/maxforce"));
+    mInterface->addParam(CreateFloatParam("Min Radius", &mMinRadius)
+                         .maxValue(100.0f)
+                         .oscReceiver("/binned/minradius"));
+    mInterface->addParam(CreateFloatParam("Max Radius", &mMaxRadius)
+                         .maxValue(300.0f)
+                         .oscReceiver("/binned/maxradius"));
+                                              
+    mInterface->addParam(CreateBoolParam("Wall Bounce", &mBounceOffWalls)
+                         .oscReceiver("/binned/wallbounce"));
+    mInterface->addParam(CreateFloatParam("Wall Damping", &mWallDamping)
+                         .oscReceiver("/binned/walldamping"));
+    mInterface->addParam(CreateFloatParam("Point Size", &mPointSize)
+                         .minValue(1.0f).maxValue(10.0f));
+    
+    mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
+                         .oscReceiver("/binned/audiolevel"));
+    
+    mInterface->addParam(CreateIntParam("Reaction Style", &mAudioPattern)
+                         .maxValue(AUDIO_PATTERN_COUNT-1)
+                         .oscReceiver("/binned/audioreaction"));
+    
 }
 
 void Binned::update(double dt)
@@ -310,6 +333,8 @@ void Binned::update(double dt)
     
     snprintf(buf, 256, "pattern: %d", mApplyForcePattern);
     mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
+    
+    Scene::update(dt);
 }
 
 void Binned::draw()
@@ -637,11 +662,13 @@ void Binned::drawDebug()
 
 void Binned::updateAudioResponse()
 {
-    if( mAudioSensitivity == 0.0f )
+    AudioInput& audioInput = mApp->getAudioInput();
+    //TODO: why is kiss null?
+    if( mAudioSensitivity == 0.0f || mApp->getElapsedSeconds() < 2.0f || mApp->getElapsedFrames() < 5 )
     {
         return;
     }
-    AudioInput& audioInput = mApp->getAudioInput();
+    
     float * freqData = audioInput.getFft()->getAmplitude();
     //float * timeData = audioInput.getFft()->getData();
     int32_t dataSize = audioInput.getFft()->getBinSize();

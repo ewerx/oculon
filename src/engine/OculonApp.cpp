@@ -57,13 +57,15 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mEnableMindWave     = false;
     mEnableOscServer    = true;
-    mEnableSyphonServer = false;
+    mEnableSyphonServer = true;
     mEnableKinect       = false;
 }
 
 void OculonApp::setup()
 {
     console() << "[main] initializing...\n";
+    
+    mFpsSendTimer = 0.0f;
     
     // capture
     mFrameCaptureCount = 0;
@@ -509,6 +511,17 @@ void OculonApp::update()
     char buf[BUFSIZE];
     const float fps = getAverageFps();
     snprintf(buf, BUFSIZE, "%.2ffps", fps);
+    
+    mFpsSendTimer += mElapsedSecondsThisFrame;
+    if( mFpsSendTimer >= 1.0f )
+    {
+        mFpsSendTimer = 0.0f;
+        osc::Message message;
+        message.setAddress("/1/fps");
+        message.addStringArg(buf);
+        mOscServer.sendMessage(message);
+    }
+    
     Color fpsColor(0.5f, 0.5f, 0.5f);
     if( fps < 20.0f )
     {

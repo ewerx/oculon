@@ -96,7 +96,7 @@ void ShaderTest::setupInterface()
                          .minValue(0.0f)
                          .maxValue(1.0f)
                          .defaultValue(1.0f)
-                         .oscReceiver("/1/fader1")
+                         //.oscReceiver("/1/fader1")
                          .oscSender("/1/fader1"));
     
     
