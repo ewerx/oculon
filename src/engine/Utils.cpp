@@ -60,6 +60,13 @@ using namespace std;
     return Vec2f( x, y );
 }
 
+/*static*/ Vec2f Utils::toEquirectProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight ) 
+{
+    float x = (aLong + 180) * (aMapWidth / 360);
+    float y = (90 - aLat) * (aMapHeight / 180);
+    return Vec2f( x, y );
+}
+
 /*static*/ Vec3f Utils::toGlobePosition( const float aLat, const float aLong )
 {
     float theta = toRadians( 90 - aLat );

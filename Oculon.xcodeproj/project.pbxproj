@@ -121,6 +121,12 @@
 		7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
+		7CE9C852154A6DC70057E409 /* earthDiffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C84F154A6DC70057E409 /* earthDiffuse.png */; };
+		7CE9C853154A6DC70057E409 /* earthMask.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C850154A6DC70057E409 /* earthMask.png */; };
+		7CE9C854154A6DC70057E409 /* earthNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C851154A6DC70057E409 /* earthNormal.png */; };
+		7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C855154A6DDE0057E409 /* earth_frag.glsl */; };
+		7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C856154A6DDE0057E409 /* quake_frag.glsl */; };
+		7CE9C85A154A6DDE0057E409 /* quake_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C857154A6DDE0057E409 /* quake_vert.glsl */; };
 		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
 		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
 		7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C715290F49001391C9 /* KissFFT.cpp */; };
@@ -396,6 +402,12 @@
 		7CB17ECF15310B330074572D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interface.h; path = interface/Interface.h; sourceTree = "<group>"; };
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
+		7CE9C84F154A6DC70057E409 /* earthDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earthDiffuse.png; sourceTree = "<group>"; };
+		7CE9C850154A6DC70057E409 /* earthMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earthMask.png; sourceTree = "<group>"; };
+		7CE9C851154A6DC70057E409 /* earthNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earthNormal.png; sourceTree = "<group>"; };
+		7CE9C855154A6DDE0057E409 /* earth_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earth_frag.glsl; sourceTree = "<group>"; };
+		7CE9C856154A6DDE0057E409 /* quake_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quake_frag.glsl; sourceTree = "<group>"; };
+		7CE9C857154A6DDE0057E409 /* quake_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quake_vert.glsl; sourceTree = "<group>"; };
 		7CEB32C215290F49001391C9 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		7CEB32C315290F49001391C9 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
 		7CEB32C415290F49001391C9 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
@@ -1008,6 +1020,7 @@
 		7C865645148C2BCD000E00B6 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7CE9C84E154A6DC70057E409 /* quaker */,
 				7C948F4314B3A1E7003A3DA8 /* orbiter */,
 				7C96934814970B2900C0E1E6 /* pulsar */,
 				7C1C5CC614FB13D3002CE80B /* glitter.png */,
@@ -1020,6 +1033,9 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7CE9C855154A6DDE0057E409 /* earth_frag.glsl */,
+				7CE9C856154A6DDE0057E409 /* quake_frag.glsl */,
+				7CE9C857154A6DDE0057E409 /* quake_vert.glsl */,
 				7CEB3315152ACC1A001391C9 /* motionBlur.frag */,
 				7CEB3316152ACC1A001391C9 /* passThru.vert */,
 				7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */,
@@ -1140,6 +1156,16 @@
 				7CC6215114F73E8600B768DD /* MSAPingPong.h */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		7CE9C84E154A6DC70057E409 /* quaker */ = {
+			isa = PBXGroup;
+			children = (
+				7CE9C84F154A6DC70057E409 /* earthDiffuse.png */,
+				7CE9C850154A6DC70057E409 /* earthMask.png */,
+				7CE9C851154A6DC70057E409 /* earthNormal.png */,
+			);
+			path = quaker;
 			sourceTree = "<group>";
 		};
 		7CEB32C015290F49001391C9 /* KissFFT */ = {
@@ -1347,6 +1373,12 @@
 				7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */,
 				7C9A0548153121A500EB0452 /* pf_tempesta_seven.ttf in Resources */,
 				7C702038153BC57F0057D4EC /* Oculon.icns in Resources */,
+				7CE9C852154A6DC70057E409 /* earthDiffuse.png in Resources */,
+				7CE9C853154A6DC70057E409 /* earthMask.png in Resources */,
+				7CE9C854154A6DC70057E409 /* earthNormal.png in Resources */,
+				7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */,
+				7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */,
+				7CE9C85A154A6DDE0057E409 /* quake_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

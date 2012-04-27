@@ -30,7 +30,7 @@ public:
     virtual void draw();
     
     // new methods
-
+    const QuakeEvent*   getEventData() const    { return mEventData; }
     
 protected:
     void updateLabel();

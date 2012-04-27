@@ -16,6 +16,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Timeline.h"
+#include "cinder/gl/Texture.h"
 
 #include <vector>
 
@@ -47,6 +48,9 @@ private:
     QuakeData* mData;
     typedef std::vector<Quake*> QuakeList;
     QuakeList mQuakes;
+    
+    // map
+    ci::gl::Texture mEarthDiffuse;
     
     int mCurrentIndex;
 };

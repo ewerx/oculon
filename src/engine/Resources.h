@@ -24,6 +24,14 @@
 #define RES_MOTIONBLUR_FRAG         CINDER_RESOURCE( ../resources/shaders/, motionBlur.frag, 129, GLSL )
 #define RES_PASSTHRU2_VERT          CINDER_RESOURCE( ../resources/shaders/, passThru.vert, 129, GLSL )
 
+// quaker
+#define RES_EARTH_FRAG		CINDER_RESOURCE( ../resources/shaders/, earth_frag.glsl, 128, GLSL )
+#define RES_EARTHDIFFUSE	CINDER_RESOURCE( ../resources/quaker/, earthDiffuse.png, 129, PNG )
+#define RES_EARTHMASK		CINDER_RESOURCE( ../resources/quaker/, earthMask.png, 130, PNG )
+#define RES_EARTHNORMAL		CINDER_RESOURCE( ../resources/quaker/, earthNormal.png, 131, PNG )
+#define RES_QUAKE_FRAG		CINDER_RESOURCE( ../resources/shaders/, quake_frag.glsl, 133, GLSL )
+#define RES_QUAKE_VERT		CINDER_RESOURCE( ../resources/shaders/, quake_vert.glsl, 134, GLSL )
+
 // orbiter textures
 #define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )
 #define RES_ORBITER_MERCURY         CINDER_RESOURCE( ../resources/images/orbiter/, mercurymap.jpg, 201, JPG )

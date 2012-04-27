@@ -14,6 +14,7 @@
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "Interface.h"
+#include "Resources.h"
 
 #include "cinder/Rand.h"
 
@@ -37,6 +38,9 @@ Quaker::~Quaker()
 //
 void Quaker::setup()
 {
+    mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
+
+    
     initQuakes();
     
     // params
@@ -108,9 +112,12 @@ void Quaker::draw()
     gl::pushMatrices();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
     
-    gl::enableDepthWrite();
     gl::enableAlphaBlending();
     
+    gl::color( 1.0f, 1.0f, 1.0f, 0.5f );
+    gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+    
+    gl::disableDepthRead();
     for(QuakeList::iterator it = mQuakes.begin(); 
         it != mQuakes.end();
         ++it)

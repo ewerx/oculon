@@ -39,7 +39,7 @@ Quake::Quake(Scene* scene, const QuakeEvent* data)
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
     
     // map location
-    Vec2f mapPos = Utils::toMercatorProjection( data->getLat(), data->getLong(), scene->getApp()->getViewportWidth(), scene->getApp()->getViewportHeight() );
+    Vec2f mapPos = Utils::toEquirectProjection( data->getLat(), data->getLong(), scene->getApp()->getViewportWidth(), scene->getApp()->getViewportHeight() );
     mPosition.x = mapPos.x;
     mPosition.y = mapPos.y;
     mPosition.z = 0.0f;
