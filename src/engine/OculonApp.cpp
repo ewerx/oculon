@@ -53,12 +53,14 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
     
-    mIsPresentationMode = false;
+    mIsPresentationMode = true;
+    mIsSendingFps       = false;
+    
     mUseMayaCam         = true;
     
     mEnableMindWave     = false;
     mEnableOscServer    = true;
-    mEnableSyphonServer = true;
+    mEnableSyphonServer = false;
     mEnableKinect       = false;
 }
 
@@ -512,14 +514,17 @@ void OculonApp::update()
     const float fps = getAverageFps();
     snprintf(buf, BUFSIZE, "%.2ffps", fps);
     
-    mFpsSendTimer += mElapsedSecondsThisFrame;
-    if( mFpsSendTimer >= 1.0f )
+    if( mIsSendingFps )
     {
-        mFpsSendTimer = 0.0f;
-        osc::Message message;
-        message.setAddress("/1/fps");
-        message.addStringArg(buf);
-        mOscServer.sendMessage(message);
+        mFpsSendTimer += mElapsedSecondsThisFrame;
+        if( mFpsSendTimer >= 1.0f )
+        {
+            mFpsSendTimer = 0.0f;
+            osc::Message message;
+            message.setAddress("/1/fps");
+            message.addStringArg(buf);
+            mOscServer.sendMessage(message);
+        }
     }
     
     Color fpsColor(0.5f, 0.5f, 0.5f);
