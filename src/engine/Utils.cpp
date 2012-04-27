@@ -44,3 +44,26 @@ using namespace std;
     
 	return output;
 }
+
+/*static*/ Vec2f Utils::toMercatorProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight ) 
+{
+    // mercator projection center was screen centered
+    Vec2f offset = Vec2f( aMapWidth / 2, aMapHeight / 2 );
+    /* we need to place all the earth loft exactly at window area */
+    float radius = aMapWidth / ( 2 * M_PI );
+
+    float x = radius * aLong * M_PI / 180 + offset.x;
+    
+    /* here is the black magick */
+    float y = offset.y - radius * ( log( tan( ( 90 + aLat ) * M_PI / 360 ) )  /  M_PI ) * 2.8f;
+    
+    return Vec2f( x, y );
+}
+
+/*static*/ Vec3f Utils::toGlobePosition( const float aLat, const float aLong )
+{
+    float theta = toRadians( 90 - aLat );
+    float phi	= toRadians( 180 - aLong );
+    
+	return Vec3f( sin(theta) * cos(phi), cos(theta), sin(theta) * sin(phi) );
+}

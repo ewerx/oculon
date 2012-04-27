@@ -11,13 +11,16 @@
 #define __Quaker_H__
 
 #include "Scene.h"
-#include "QuakeData.h"
 #include "MotionBlurRenderer.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Timeline.h"
 
+#include <vector>
+
+class Quake;
+class QuakeData;
 
 //
 // Audio input tests
@@ -37,11 +40,15 @@ public:
     
 protected:
     void setupInterface();
-    
-    
+    void initQuakes();
+    void clearQuakes();
     
 private:
     QuakeData* mData;
+    typedef std::vector<Quake*> QuakeList;
+    QuakeList mQuakes;
+    
+    int mCurrentIndex;
 };
 
 #endif // __Quaker_H__

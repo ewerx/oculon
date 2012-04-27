@@ -11,6 +11,7 @@
 
 #include <string>
 #include "cinder/Filesystem.h"
+#include "cinder/Vector.h"
 
 class Utils
 {
@@ -24,6 +25,10 @@ public:
     // math
     static double randDouble()  { return (double(rand()) / RAND_MAX); }
     
+    // map
+    static ci::Vec2f toMercatorProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight );
+    
+    static ci::Vec3f toGlobePosition( const float alat, const float aLong );
 };
 
 #endif

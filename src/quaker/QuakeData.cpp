@@ -23,7 +23,7 @@ using std::stringstream;
 
 // ----------------------------------------------------------------
 // 
-Quake::Quake()
+QuakeEvent::QuakeEvent()
 : mLat(0.0f)
 , mLong(0.0f)
 , mMag(0.0f)
@@ -34,25 +34,16 @@ Quake::Quake()
 
 // ----------------------------------------------------------------
 // 
-Quake::~Quake()
+QuakeEvent::QuakeEvent( float aLat, float aLong, float aMag, string aTitle )
+: mLat(aLat)
+, mLong(aLong)
+, mMag(aMag)
+, mTitle(aTitle)
 {
-    
 }
 
-// ----------------------------------------------------------------
-// 
-Quake::Quake( float aLat, float aLong, float aMag, string aTitle )
+QuakeEvent::~QuakeEvent()
 {
-	mLat	= aLat;
-	mLong	= aLong;
-	mMag	= aMag;
-	mTitle	= aTitle;
-    
-    // calculate globe location
-    //float theta = toRadians( 90 - mLat );
-    //float phi	= toRadians( 180 - mLong );
-    
-	//mLoc		= Vec3f( sin(theta) * cos(phi), cos(theta), sin(theta) * sin(phi) );
 }
 
 //
@@ -74,9 +65,9 @@ QuakeData::~QuakeData()
 
 // ----------------------------------------------------------------
 // 
-void QuakeData::addQuake( float aLat, float aLong, float aMag, std::string aTitle )
+void QuakeData::addEvent( float aLat, float aLong, float aMag, std::string aTitle )
 {
-	mQuakes.push_back( Quake( aLat, aLong, aMag, aTitle ) );
+	mQuakeEvents.push_back( QuakeEvent( aLat, aLong, aMag, aTitle ) );
     
     //console() << "Quake" << mQuakes.size() << ": " << aTitle << aMag << aLat << aLong << std::endl;
 }
@@ -104,8 +95,8 @@ void USGSQuakeData::parseData( std::string url )
 		Vec2f locationVector;
 		locationString >> locationVector.x >> locationVector.y;
 		
-		addQuake( locationVector.x, locationVector.y, magnitude, title );		
+		addEvent( locationVector.x, locationVector.y, magnitude, title );		
 	}
 	//console() << xml << std::endl;
-    console() << "[quaker] " << mQuakes.size() << " events added" << std::endl;
+    console() << "[quaker] " << mQuakeEvents.size() << " events added" << std::endl;
 }
