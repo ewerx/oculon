@@ -45,17 +45,35 @@ protected:
     void clearQuakes();
     
     void drawEarthMap();
+    void drawQuakes();
     
+    void triggerAll();
+    void triggerByBpm(double dt);
+    void triggerByTime(double dt);
     
 private:
     QuakeData* mData;
     typedef std::vector<Quake*> QuakeList;
     QuakeList mQuakes;
+    QuakeList mActiveQuakes;
     
     // map
     ci::gl::Texture mEarthDiffuse;
     
     int mCurrentIndex;
+    
+    enum eTriggerMode
+    {
+        TRIGGER_ALL,
+        TRIGGER_REALTIME,
+        TRIGGER_BPM,
+        
+        TRIGGER_COUNT
+    };
+    eTriggerMode mTriggerMode;
+    
+    float mBpmTriggerTime;
+    
 };
 
 #endif // __Quaker_H__

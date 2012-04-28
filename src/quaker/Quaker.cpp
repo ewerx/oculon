@@ -39,11 +39,11 @@ Quaker::~Quaker()
 void Quaker::setup()
 {
     mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
-
     
     initQuakes();
     
     // params
+    mTriggerMode = TRIGGER_BPM;
     
     reset();
 }
@@ -90,12 +90,33 @@ void Quaker::setupInterface()
 void Quaker::reset()
 {
     mCurrentIndex = 0;
+    mBpmTriggerTime = 60.0f / 126.0f; // 126 bpm
+    mActiveQuakes.clear();
 }
 
 // ----------------------------------------------------------------
 //
 void Quaker::update(double dt)
 {
+    switch (mTriggerMode)
+    {
+        case TRIGGER_ALL:
+            triggerAll();
+            break;
+            
+        case TRIGGER_BPM:
+            triggerByBpm(dt);
+            break;
+            
+        case TRIGGER_REALTIME:
+            triggerByTime(dt);
+            break;
+        
+        default:
+            assert(false && "invalid trigger mode");
+            break;
+    }
+    
     for(QuakeList::iterator it = mQuakes.begin(); 
         it != mQuakes.end();
         ++it)
@@ -105,6 +126,42 @@ void Quaker::update(double dt)
     
     // last
     Scene::update(dt);
+}
+
+void Quaker::triggerAll()
+{
+    if( mActiveQuakes.empty() )
+    {
+        mActiveQuakes = mQuakes;
+    }
+}
+
+void Quaker::triggerByBpm(double dt)
+{
+    mBpmTriggerTime -= mApp->getElapsedSecondsThisFrame();
+    if( mBpmTriggerTime <= 0.0f )
+    {
+        mBpmTriggerTime = 60.0f / 126.0f; // 126 bpm
+        
+        if( mCurrentIndex < mQuakes.size() )
+        {
+            //mActiveQuakes.erase(mActiveQuakes.begin());
+            mActiveQuakes.clear();
+            mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
+            console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
+        }
+        
+        ++mCurrentIndex;
+        if( mCurrentIndex >= mQuakes.size() )
+        {
+            mCurrentIndex = 0;
+        }
+    }
+}
+
+void Quaker::triggerByTime(double dt)
+{
+    
 }
 
 // ----------------------------------------------------------------
@@ -117,14 +174,7 @@ void Quaker::draw()
     gl::enableAlphaBlending();
     
     drawEarthMap();
-    
-    gl::disableDepthRead();
-    for(QuakeList::iterator it = mQuakes.begin(); 
-        it != mQuakes.end();
-        ++it)
-    {
-        (*it)->draw();
-    }
+    drawQuakes();
     
     gl::popMatrices();
 }
@@ -135,6 +185,17 @@ void Quaker::drawEarthMap()
 {
     gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
     gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+}
+
+void Quaker::drawQuakes()
+{
+    gl::disableDepthRead();
+    for(QuakeList::iterator it = mActiveQuakes.begin(); 
+        it != mActiveQuakes.end();
+        ++it)
+    {
+        (*it)->draw();
+    }
 }
 
 // ----------------------------------------------------------------
