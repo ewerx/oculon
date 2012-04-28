@@ -44,6 +44,9 @@ protected:
     void initQuakes();
     void clearQuakes();
     
+    void drawEarthMap();
+    
+    
 private:
     QuakeData* mData;
     typedef std::vector<Quake*> QuakeList;

@@ -30,6 +30,7 @@ public:
     virtual void draw();
     
     // new methods
+    void setEvent( const QuakeEvent* event );
     const QuakeEvent*   getEventData() const    { return mEventData; }
     
 protected:
@@ -41,4 +42,12 @@ protected:
     
     TextEntity mLabel;
     bool mIsLabelVisible;
+    
+    enum eState
+    {
+        STATE_INVALID,
+        STATE_IDLE,
+        STATE_ANIMATING
+    };
+    eState mState;
 };

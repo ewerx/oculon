@@ -56,11 +56,13 @@ void Quaker::initQuakes()
     
     mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
     
-    for (QuakeData::EventList::const_iterator it = mData->eventsBegin();
+    for (QuakeData::EventMap::const_iterator it = mData->eventsBegin();
          it != mData->eventsEnd();
          ++it)
     {
-        mQuakes.push_back( new Quake(this, &(*it)) );
+        const QuakeEvent* eventData = &((*it).second);
+        mQuakes.push_back( new Quake(this, eventData) );
+        console() << "Quake" << mQuakes.size() << ": " << eventData->toString() << std::endl;
     }
 }
 
@@ -114,8 +116,7 @@ void Quaker::draw()
     
     gl::enableAlphaBlending();
     
-    gl::color( 1.0f, 1.0f, 1.0f, 0.5f );
-    gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+    drawEarthMap();
     
     gl::disableDepthRead();
     for(QuakeList::iterator it = mQuakes.begin(); 
@@ -126,6 +127,14 @@ void Quaker::draw()
     }
     
     gl::popMatrices();
+}
+
+// ----------------------------------------------------------------
+//
+void Quaker::drawEarthMap()
+{
+    gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
+    gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
 }
 
 // ----------------------------------------------------------------

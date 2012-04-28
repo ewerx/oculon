@@ -12,6 +12,7 @@
 #include <string>
 #include "cinder/Filesystem.h"
 #include "cinder/Vector.h"
+#include <boost/date_time.hpp>
 
 class Utils
 {
@@ -30,6 +31,8 @@ public:
     static ci::Vec2f toEquirectProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight );
     
     static ci::Vec3f toGlobePosition( const float alat, const float aLong );
+    
+    static time_t toEpochSeconds(boost::posix_time::ptime& t);
 };
 
 #endif

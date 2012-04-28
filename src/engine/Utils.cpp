@@ -74,3 +74,14 @@ using namespace std;
     
 	return Vec3f( sin(theta) * cos(phi), cos(theta), sin(theta) * sin(phi) );
 }
+
+/*static*/ time_t Utils::toEpochSeconds(boost::posix_time::ptime& t)
+{
+    using namespace boost::posix_time;
+    ptime epoch(boost::gregorian::date(1970,1,1));
+    time_duration::sec_type x = (t - epoch).total_seconds();
+    
+    //TODO: check overflow
+    
+    return time_t(x);
+}

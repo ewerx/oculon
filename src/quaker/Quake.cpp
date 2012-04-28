@@ -31,18 +31,15 @@ using namespace std;
 Quake::Quake(Scene* scene, const QuakeEvent* data)
 : Entity<float>(scene,Vec3f::zero())
 , mLabel(scene)
-, mEventData(data)
+, mEventData(NULL)
 , mIsLabelVisible(false)
+, mState(STATE_INVALID)
 {
     mLabel.setPosition(Vec3f(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
     
-    // map location
-    Vec2f mapPos = Utils::toEquirectProjection( data->getLat(), data->getLong(), scene->getApp()->getViewportWidth(), scene->getApp()->getViewportHeight() );
-    mPosition.x = mapPos.x;
-    mPosition.y = mapPos.y;
-    mPosition.z = 0.0f;
+    setEvent(data);
 }
 
 Quake::~Quake()
@@ -51,6 +48,18 @@ Quake::~Quake()
 
 void Quake::setup()
 {
+}
+
+void Quake::setEvent( const QuakeEvent* data )
+{
+    mEventData = data;
+    mState = STATE_IDLE;
+    
+    // map location
+    Vec2f mapPos = Utils::toEquirectProjection( data->getLat(), data->getLong(), mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight() );
+    mPosition.x = mapPos.x;
+    mPosition.y = mapPos.y;
+    mPosition.z = 0.0f;
 }
 
 void Quake::update(double dt)
