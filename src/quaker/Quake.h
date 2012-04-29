@@ -12,6 +12,8 @@
 #include "Entity.h"
 #include "TextEntity.h"
 
+#include "cinder/Timeline.h"
+
 using namespace ci;
 using namespace std;
 
@@ -33,21 +35,31 @@ public:
     void setEvent( const QuakeEvent* event );
     const QuakeEvent*   getEventData() const    { return mEventData; }
     
+    void trigger(const float duration);
+    void endTrigger();
+    bool isTriggered() const                    { return( STATE_TRIGGERED == mState ); }
+    
+    void drawLabel();
+    
 protected:
     void updateLabel();
-    void drawLabel();
     
 protected:
     const QuakeEvent*    mEventData;
     
     TextEntity mLabel;
-    bool mIsLabelVisible;
+    bool mShowLabel;
+    bool mShowLatLongLines;
     
     enum eState
     {
         STATE_INVALID,
         STATE_IDLE,
-        STATE_ANIMATING
+        STATE_TRIGGERED
     };
     eState mState;
+    
+    Anim<float> mGridLinesAlpha;
+    Anim<float> mMarkerAlpha;
+    Anim<float> mMarkerSize;
 };

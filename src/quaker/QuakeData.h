@@ -20,10 +20,13 @@ public:
     QuakeEvent( float aLat, float aLong, float aMag, float aDepth, boost::posix_time::ptime& aTimeStamp, std::string aTitle );
     virtual ~QuakeEvent();
     
-    float getLat() const    { return mLat; }
-    float getLong() const   { return mLong; }
-    float getMag() const    { return mMag; }
-    const std::string& getTitle()   { return mTitle; }
+    float getLat() const                        { return mLat; }
+    float getLong() const                       { return mLong; }
+    float getMag() const                        { return mMag; }
+    float getDepth() const                      { return mDepth; }
+    boost::posix_time::ptime& getTimeStamp()    { return mTimeStamp; }
+    const std::string& getTitle() const         { return mTitle; }
+    
     std::string toString() const;
     
 protected:

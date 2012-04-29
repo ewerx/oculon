@@ -12,6 +12,7 @@
 
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
+#include "Quake.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
@@ -20,7 +21,7 @@
 
 #include <vector>
 
-class Quake;
+//class Quake;
 class QuakeData;
 
 //
@@ -38,6 +39,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     
 protected:
     void setupInterface();
@@ -57,6 +59,14 @@ private:
     QuakeList mQuakes;
     QuakeList mActiveQuakes;
     
+    struct IsTriggeredQuakeFinished
+    {
+        bool operator()(Quake* q) const
+        {
+            return( !q || !q->isTriggered() );
+        }
+    };
+    
     // map
     ci::gl::Texture mEarthDiffuse;
     
@@ -73,6 +83,7 @@ private:
     eTriggerMode mTriggerMode;
     
     float mBpmTriggerTime;
+    float mBpm;
     
 };
 

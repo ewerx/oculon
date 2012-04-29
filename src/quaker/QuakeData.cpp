@@ -101,7 +101,6 @@ void QuakeData::addEvent( float aLat, float aLong, float aMag, float aDepth, pti
 // 
 void USGSQuakeData::parseData( std::string url )
 {
-    //const char* url = "http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml";
     // format: 2012-04-28T14:33:07Z
     time_input_facet* p_facet = new time_input_facet("%Y-%m-%dT%H:%M:%SZ");
     // locale takes ownership of p_facet

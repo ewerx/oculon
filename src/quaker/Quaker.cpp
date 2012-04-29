@@ -44,6 +44,7 @@ void Quaker::setup()
     
     // params
     mTriggerMode = TRIGGER_BPM;
+    mBpm = 125.0f;
     
     reset();
 }
@@ -55,6 +56,7 @@ void Quaker::initQuakes()
     clearQuakes();
     
     mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
+    //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
     
     for (QuakeData::EventMap::const_iterator it = mData->eventsBegin();
          it != mData->eventsEnd();
@@ -90,7 +92,7 @@ void Quaker::setupInterface()
 void Quaker::reset()
 {
     mCurrentIndex = 0;
-    mBpmTriggerTime = 60.0f / 126.0f; // 126 bpm
+    mBpmTriggerTime = 60.0f / mBpm;
     mActiveQuakes.clear();
 }
 
@@ -117,8 +119,8 @@ void Quaker::update(double dt)
             break;
     }
     
-    for(QuakeList::iterator it = mQuakes.begin(); 
-        it != mQuakes.end();
+    for(QuakeList::iterator it = mActiveQuakes.begin(); 
+        it != mActiveQuakes.end();
         ++it)
     {
         (*it)->update(dt);
@@ -141,12 +143,19 @@ void Quaker::triggerByBpm(double dt)
     mBpmTriggerTime -= mApp->getElapsedSecondsThisFrame();
     if( mBpmTriggerTime <= 0.0f )
     {
-        mBpmTriggerTime = 60.0f / 126.0f; // 126 bpm
+        mBpmTriggerTime = 60.0f / mBpm;
         
         if( mCurrentIndex < mQuakes.size() )
         {
-            //mActiveQuakes.erase(mActiveQuakes.begin());
-            mActiveQuakes.clear();
+            //console() << "active quakes: " << mActiveQuakes.size();
+            //mActiveQuakes.clear();
+            mActiveQuakes.erase(std::remove_if(mActiveQuakes.begin(), mActiveQuakes.end(), IsTriggeredQuakeFinished()), mActiveQuakes.end());
+            //console() << " --> " << mActiveQuakes.size() << std::endl;
+            assert(mQuakes[mCurrentIndex] != null);
+            
+            const float durationMagnitudeMultiplier = 0.25f;
+            const float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
+            mQuakes[mCurrentIndex]->trigger(duration);
             mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
             console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
         }
@@ -172,6 +181,8 @@ void Quaker::draw()
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
     
     gl::enableAlphaBlending();
+    glEnable( GL_LINE_SMOOTH );
+    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     
     drawEarthMap();
     drawQuakes();
@@ -196,6 +207,23 @@ void Quaker::drawQuakes()
     {
         (*it)->draw();
     }
+    
+    gl::pushMatrices();
+    
+    const float width = mApp->getViewportWidth();
+    const float height = mApp->getViewportHeight();
+    
+    CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
+    gl::setMatrices(textCam);
+    
+    for(QuakeList::iterator it = mActiveQuakes.begin(); 
+        it != mActiveQuakes.end();
+        ++it)
+    {
+        (*it)->drawLabel();
+    }
+    
+    gl::popMatrices();
 }
 
 // ----------------------------------------------------------------
@@ -206,4 +234,23 @@ void Quaker::drawDebug()
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
 
     gl::popMatrices();
+}
+
+// ----------------------------------------------------------------
+//
+bool Quaker::handleKeyDown(const KeyEvent& keyEvent)
+{
+    bool handled = true;
+    
+    switch (keyEvent.getCode()) 
+    {
+        case KeyEvent::KEY_SPACE:
+            reset();
+            handled = false;
+            break;
+            
+        default:
+            handled = false;
+            break;
+    }
 }
