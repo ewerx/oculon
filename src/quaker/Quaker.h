@@ -43,9 +43,10 @@ public:
     
 protected:
     void setupInterface();
+    void setupDebugInterface();
+    
     void initQuakes();
     void clearQuakes();
-    
     void drawEarthMap();
     void drawQuakes();
     
@@ -69,6 +70,7 @@ private:
     
     // map
     ci::gl::Texture mEarthDiffuse;
+    int mLongitudeOffsetDegrees;
     
     int mCurrentIndex;
     

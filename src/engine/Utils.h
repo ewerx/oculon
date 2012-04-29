@@ -28,7 +28,7 @@ public:
     
     // map
     static ci::Vec2f toMercatorProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight );
-    static ci::Vec2f toEquirectProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight );
+    static ci::Vec2f toEquirectProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight, const int aMapOffset );
     
     static ci::Vec3f toGlobePosition( const float alat, const float aLong );
     

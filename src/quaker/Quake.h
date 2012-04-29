@@ -23,7 +23,7 @@ class QuakeEvent;
 class Quake : public Entity<float>
 {
 public:
-    Quake(Scene* scene, const QuakeEvent* data);
+    Quake(Scene* scene, const QuakeEvent* data, const int mapOffset);
     virtual ~Quake();
     
     // inherited from Entity
@@ -32,7 +32,7 @@ public:
     virtual void draw();
     
     // new methods
-    void setEvent( const QuakeEvent* event );
+    void setEvent( const QuakeEvent* event, const int mapOffset );
     const QuakeEvent*   getEventData() const    { return mEventData; }
     
     void trigger(const float duration);

@@ -39,13 +39,15 @@ Quaker::~Quaker()
 void Quaker::setup()
 {
     mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
-    
-    initQuakes();
+    mEarthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
     
     // params
     mTriggerMode = TRIGGER_BPM;
-    mBpm = 125.0f;
+    mBpm = 120.0f;
+    mLongitudeOffsetDegrees = 205; // pacific ocean centered
     
+    mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
+    //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
     reset();
 }
 
@@ -55,16 +57,13 @@ void Quaker::initQuakes()
 {
     clearQuakes();
     
-    mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
-    //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
-    
     for (QuakeData::EventMap::const_iterator it = mData->eventsBegin();
          it != mData->eventsEnd();
          ++it)
     {
         const QuakeEvent* eventData = &((*it).second);
-        mQuakes.push_back( new Quake(this, eventData) );
-        console() << "Quake" << mQuakes.size() << ": " << eventData->toString() << std::endl;
+        mQuakes.push_back( new Quake(this, eventData, mLongitudeOffsetDegrees) );
+        //console() << "Quake" << mQuakes.size() << ": " << eventData->toString() << std::endl;
     }
 }
 
@@ -87,10 +86,16 @@ void Quaker::setupInterface()
     //                     .defaultValue(mUseMotionBlur));
 }
 
+void Quaker::setupDebugInterface()
+{
+    mDebugParams.addParam("Longitude Offset", &mLongitudeOffsetDegrees );
+}
+
 // ----------------------------------------------------------------
 //
 void Quaker::reset()
 {
+    initQuakes();
     mCurrentIndex = 0;
     mBpmTriggerTime = 60.0f / mBpm;
     mActiveQuakes.clear();
@@ -135,6 +140,13 @@ void Quaker::triggerAll()
     if( mActiveQuakes.empty() )
     {
         mActiveQuakes = mQuakes;
+        
+        for(QuakeList::iterator it = mActiveQuakes.begin(); 
+            it != mActiveQuakes.end();
+            ++it)
+        {
+            (*it)->trigger(0.0f);
+        }
     }
 }
 
@@ -151,7 +163,7 @@ void Quaker::triggerByBpm(double dt)
             //mActiveQuakes.clear();
             mActiveQuakes.erase(std::remove_if(mActiveQuakes.begin(), mActiveQuakes.end(), IsTriggeredQuakeFinished()), mActiveQuakes.end());
             //console() << " --> " << mActiveQuakes.size() << std::endl;
-            assert(mQuakes[mCurrentIndex] != null);
+            assert(mQuakes[mCurrentIndex] != NULL);
             
             const float durationMagnitudeMultiplier = 0.25f;
             const float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
@@ -195,7 +207,13 @@ void Quaker::draw()
 void Quaker::drawEarthMap()
 {
     gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
-    gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+    //gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+    const float textureWidth = mEarthDiffuse.getCleanWidth();
+    const float screenWidth = mApp->getViewportWidth();
+    const float screenHeight = mApp->getViewportHeight();
+    const float textureOffset = ((float)(mLongitudeOffsetDegrees)/360.0f) * textureWidth;
+
+    gl::draw( mEarthDiffuse, Area( -textureOffset, 0, textureWidth-textureOffset, mEarthDiffuse.getCleanHeight() ), Rectf( 0, 0, screenWidth, screenHeight ) );
 }
 
 void Quaker::drawQuakes()

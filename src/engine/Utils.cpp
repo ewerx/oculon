@@ -7,11 +7,13 @@
 //
 
 #include "Utils.h"
+#include "cinder/app/AppBasic.h"
 #include "cinder/Filesystem.h"
 #include "cinder/Utilities.h"
 #include "cinder/CinderMath.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 /*static*/ ci::fs::path Utils::getUniquePath( const std::string &path, int padding, const std::string &sep ) 
@@ -44,7 +46,7 @@ using namespace std;
     
 	return output;
 }
-
+ 
 /*static*/ Vec2f Utils::toMercatorProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight ) 
 {
     // mercator projection center was screen centered
@@ -60,10 +62,17 @@ using namespace std;
     return Vec2f( x, y );
 }
 
-/*static*/ Vec2f Utils::toEquirectProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight ) 
+/*static*/ Vec2f Utils::toEquirectProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight, const int aMapOffset ) 
 {
-    float x = (aLong + 180) * (aMapWidth / 360);
+    float offsetLong = aLong + 180 + aMapOffset;
+    offsetLong = fmod(offsetLong, 360.0f);
+    float x = offsetLong * (aMapWidth / 360);
     float y = (90 - aLat) * (aMapHeight / 180);
+    if( x < 0.0f || y < 0.0f || x > aMapWidth || y > aMapHeight )
+    {
+        console() << "lat/long " << aLat << ", " << aLong << " --> " << x << ", " << y << std::endl;
+    }
+    
     return Vec2f( x, y );
 }
 

@@ -28,7 +28,7 @@ using namespace std;
 // Quake
 // 
 
-Quake::Quake(Scene* scene, const QuakeEvent* data)
+Quake::Quake(Scene* scene, const QuakeEvent* data, const int mapOffset)
 : Entity<float>(scene,Vec3f::zero())
 , mLabel(scene)
 , mEventData(NULL)
@@ -39,7 +39,7 @@ Quake::Quake(Scene* scene, const QuakeEvent* data)
     mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
     
-    setEvent(data);
+    setEvent(data, mapOffset);
 }
 
 Quake::~Quake()
@@ -50,13 +50,13 @@ void Quake::setup()
 {
 }
 
-void Quake::setEvent( const QuakeEvent* data )
+void Quake::setEvent( const QuakeEvent* data, const int mapOffset )
 {
     mEventData = data;
     mState = STATE_IDLE;
     
     // map location
-    Vec2f mapPos = Utils::toEquirectProjection( data->getLat(), data->getLong(), mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight() );
+    Vec2f mapPos = Utils::toEquirectProjection( data->getLat(), data->getLong(), mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight(), mapOffset );
     mPosition.x = mapPos.x;
     mPosition.y = mapPos.y;
     mPosition.z = 0.0f;
@@ -70,17 +70,27 @@ void Quake::trigger(const float duration)
 {
     mState = STATE_TRIGGERED;
     
-    //console() << "---- begin\n";
-    
-    mGridLinesAlpha = 0.0f;
-    mMarkerAlpha = 0.0f;
     const float maxGridLineAlpha = 0.45f;
-    timeline().apply( &mGridLinesAlpha, maxGridLineAlpha, duration*0.25f, EaseOutExpo() );
-    timeline().appendTo( &mGridLinesAlpha, maxGridLineAlpha, 0.0f, duration*0.5f, EaseInCubic() );
     
-    timeline().apply( &mMarkerAlpha, 1.0f, 0.0f, duration, EaseInCubic() )
-    .finishFn( std::bind( &Quake::endTrigger, this ) );
-    timeline().apply( &mMarkerSize, 0.0f, 1.0f, duration, EaseOutCubic() );
+    //console() << "---- begin\n";
+    if( duration > 0.0f )
+    {
+        mGridLinesAlpha = 0.0f;
+        mMarkerAlpha = 0.0f;
+        
+        timeline().apply( &mGridLinesAlpha, maxGridLineAlpha, duration*0.25f, EaseOutExpo() );
+        timeline().appendTo( &mGridLinesAlpha, maxGridLineAlpha, 0.0f, duration*0.5f, EaseInCubic() );
+        
+        timeline().apply( &mMarkerAlpha, 1.0f, 0.0f, duration, EaseInCubic() )
+        .finishFn( std::bind( &Quake::endTrigger, this ) );
+        timeline().apply( &mMarkerSize, 0.0f, 1.0f, duration, EaseOutCubic() );
+    }
+    else
+    {
+        mGridLinesAlpha = 0.1f;
+        mMarkerAlpha = 0.65f;
+        mMarkerSize = 0.5f;
+    }
     
 }
 
@@ -175,7 +185,8 @@ void Quake::drawLabel()
     if( mShowLabel )
     {
         //Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, width, height);
-        mLabel.setTextColor(ColorA(1.0f,1.0f,1.0f,mGridLinesAlpha));
+        const float minAlpha = 0.45f;
+        mLabel.setTextColor(ColorA(1.0f,1.0f,1.0f,mGridLinesAlpha+minAlpha));
         mLabel.draw();
     }
 }
