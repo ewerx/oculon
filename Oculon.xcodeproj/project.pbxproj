@@ -77,7 +77,7 @@
 		7C745599148C259C009C0356 /* AudioTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745583148C259C009C0356 /* AudioTest.cpp */; };
 		7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745585148C259C009C0356 /* MindWaveTest.cpp */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
-		7C832E771547AD6700CF488D /* Quaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Quaker.cpp */; };
+		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
 		7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7B1547B00600CF488D /* QuakeData.cpp */; };
 		7C832E7F154A4E0200CF488D /* Quake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7D154A4E0200CF488D /* Quake.cpp */; };
 		7C865591148C2980000E00B6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C865590148C2980000E00B6 /* CoreMIDI.framework */; };
@@ -335,8 +335,8 @@
 		7C745586148C259C009C0356 /* MindWaveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindWaveTest.h; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
 		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
-		7C832E751547AD6700CF488D /* Quaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quaker.cpp; sourceTree = "<group>"; };
-		7C832E761547AD6700CF488D /* Quaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quaker.h; sourceTree = "<group>"; };
+		7C832E751547AD6700CF488D /* Tectonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tectonic.cpp; sourceTree = "<group>"; };
+		7C832E761547AD6700CF488D /* Tectonic.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Tectonic.h; sourceTree = "<group>"; };
 		7C832E7A1547AFEC00CF488D /* QuakeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuakeData.h; sourceTree = "<group>"; };
 		7C832E7B1547B00600CF488D /* QuakeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuakeData.cpp; sourceTree = "<group>"; };
 		7C832E7D154A4E0200CF488D /* Quake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quake.cpp; sourceTree = "<group>"; };
@@ -939,8 +939,8 @@
 			children = (
 				7C832E7D154A4E0200CF488D /* Quake.cpp */,
 				7C832E7E154A4E0200CF488D /* Quake.h */,
-				7C832E751547AD6700CF488D /* Quaker.cpp */,
-				7C832E761547AD6700CF488D /* Quaker.h */,
+				7C832E751547AD6700CF488D /* Tectonic.cpp */,
+				7C832E761547AD6700CF488D /* Tectonic.h */,
 				7C832E7A1547AFEC00CF488D /* QuakeData.h */,
 				7C832E7B1547B00600CF488D /* QuakeData.cpp */,
 			);
@@ -1454,7 +1454,7 @@
 				7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */,
 				7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */,
 				7CB17ED115310B550074572D /* Interface.cpp in Sources */,
-				7C832E771547AD6700CF488D /* Quaker.cpp in Sources */,
+				7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */,
 				7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */,
 				7C832E7F154A4E0200CF488D /* Quake.cpp in Sources */,
 			);

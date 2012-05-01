@@ -33,7 +33,7 @@
 #include "Pulsar.h"
 #include "Binned.h"
 #include "Graviton.h"
-#include "Quaker.h"
+#include "Tectonic.h"
 // test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
@@ -248,7 +248,7 @@ void OculonApp::setupScenes()
     //addScene( new Pulsar() );
     //addScene( new Magnetosphere() );
     //addScene( new Graviton() );
-    addScene( new Quaker(), true );
+    addScene( new Tectonic(), true );
     
     // Test Scenes
     addScene( new AudioTest() );

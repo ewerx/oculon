@@ -17,7 +17,7 @@
 using namespace ci;
 using namespace std;
 
-class Quaker;
+class Tectonic;
 class QuakeEvent;
 
 class Quake : public Entity<float>

@@ -1,5 +1,5 @@
 /*
- *  Quaker.h
+ *  Tectonic.h
  *  Oculon
  *
  *  Created by Ehsan on 11-10-27.
@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __Quaker_H__
-#define __Quaker_H__
+#ifndef __Tectonic_H__
+#define __Tectonic_H__
 
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
@@ -23,23 +23,28 @@
 
 //class Quake;
 class QuakeData;
+class TextEntity;
 
 //
 // Audio input tests
 //
-class Quaker : public Scene
+class Tectonic : public Scene
 {
 public:
-    Quaker();
-    virtual ~Quaker();
+    Tectonic();
+    virtual ~Tectonic();
     
     // inherited from Scene
     void setup();
     void reset();
+    void resize();
     void update(double dt);
     void draw();
     void drawDebug();
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
+    
+    // callbacks
+    bool triggerNextQuake();
     
 protected:
     void setupInterface();
@@ -49,6 +54,7 @@ protected:
     void clearQuakes();
     void drawEarthMap();
     void drawQuakes();
+    void drawHud();
     
     void triggerAll();
     void triggerByBpm(double dt);
@@ -77,6 +83,7 @@ private:
     enum eTriggerMode
     {
         TRIGGER_ALL,
+        TRIGGER_MANUAL,
         TRIGGER_REALTIME,
         TRIGGER_BPM,
         
@@ -87,6 +94,18 @@ private:
     float mBpmTriggerTime;
     float mBpm;
     
+    // hud
+    enum eTextBoxLocations
+    {
+        TB_TOP_LEFT,
+        TB_TOP_RIGHT,
+        TB_BOT_LEFT,
+        TB_BOT_RIGHT,
+        
+        TB_COUNT
+    };
+    TextEntity*     mTextBox[TB_COUNT];
+    
 };
 
-#endif // __Quaker_H__
+#endif // __Tectonic_H__

@@ -1,5 +1,5 @@
 /*
- *  Quaker.cpp
+ *  Tectonic.cpp
  *  Oculon
  *
  *  Created by Ehsan on 11-10-27.
@@ -7,9 +7,10 @@
  *
  */
 
-#include "Quaker.h"
+#include "Tectonic.h"
 #include "Quake.h"
 #include "QuakeData.h"
+#include "TextEntity.h"
 
 #include "OculonApp.h"
 #include "AudioInput.h"
@@ -22,21 +23,38 @@
 using namespace ci;
 using namespace ci::app;
 
-Quaker::Quaker()
-: Scene("Quaker")
+// ----------------------------------------------------------------
+//
+Tectonic::Tectonic()
+: Scene("Tectonic")
 {
     mData = new USGSQuakeData();
+    
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i] = new TextEntity(this);
+        assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
+    }
 }
 
-Quaker::~Quaker()
+// ----------------------------------------------------------------
+//
+Tectonic::~Tectonic()
 {
     clearQuakes();
+    
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        delete mTextBox[i];
+        mTextBox[i] = NULL;
+    }
+    
     delete mData;
 }
 
 // ----------------------------------------------------------------
 //
-void Quaker::setup()
+void Tectonic::setup()
 {
     mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
     mEarthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
@@ -53,7 +71,7 @@ void Quaker::setup()
 
 // ----------------------------------------------------------------
 //
-void Quaker::initQuakes()
+void Tectonic::initQuakes()
 {
     clearQuakes();
     
@@ -67,7 +85,9 @@ void Quaker::initQuakes()
     }
 }
 
-void Quaker::clearQuakes()
+// ----------------------------------------------------------------
+//
+void Tectonic::clearQuakes()
 {
     for(QuakeList::iterator it = mQuakes.begin(); 
         it != mQuakes.end();
@@ -80,20 +100,22 @@ void Quaker::clearQuakes()
 
 // ----------------------------------------------------------------
 //
-void Quaker::setupInterface()
+void Tectonic::setupInterface()
 {
     //mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
     //                     .defaultValue(mUseMotionBlur));
 }
 
-void Quaker::setupDebugInterface()
+// ----------------------------------------------------------------
+//
+void Tectonic::setupDebugInterface()
 {
     mDebugParams.addParam("Longitude Offset", &mLongitudeOffsetDegrees );
 }
 
 // ----------------------------------------------------------------
 //
-void Quaker::reset()
+void Tectonic::reset()
 {
     initQuakes();
     mCurrentIndex = 0;
@@ -103,7 +125,17 @@ void Quaker::reset()
 
 // ----------------------------------------------------------------
 //
-void Quaker::update(double dt)
+void Tectonic::resize()
+{
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->resize();
+    }
+}
+
+// ----------------------------------------------------------------
+//
+void Tectonic::update(double dt)
 {
     switch (mTriggerMode)
     {
@@ -119,6 +151,9 @@ void Quaker::update(double dt)
             triggerByTime(dt);
             break;
         
+        case TRIGGER_MANUAL:
+            break;
+            
         default:
             assert(false && "invalid trigger mode");
             break;
@@ -135,7 +170,9 @@ void Quaker::update(double dt)
     Scene::update(dt);
 }
 
-void Quaker::triggerAll()
+// ----------------------------------------------------------------
+//
+void Tectonic::triggerAll()
 {
     if( mActiveQuakes.empty() )
     {
@@ -150,7 +187,9 @@ void Quaker::triggerAll()
     }
 }
 
-void Quaker::triggerByBpm(double dt)
+// ----------------------------------------------------------------
+//
+void Tectonic::triggerByBpm(double dt)
 {
     mBpmTriggerTime -= mApp->getElapsedSecondsThisFrame();
     if( mBpmTriggerTime <= 0.0f )
@@ -180,14 +219,14 @@ void Quaker::triggerByBpm(double dt)
     }
 }
 
-void Quaker::triggerByTime(double dt)
+void Tectonic::triggerByTime(double dt)
 {
     
 }
 
 // ----------------------------------------------------------------
 //
-void Quaker::draw()
+void Tectonic::draw()
 {
     gl::pushMatrices();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
@@ -196,15 +235,16 @@ void Quaker::draw()
     glEnable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     
-    drawEarthMap();
+    //drawEarthMap();
     drawQuakes();
+    drawHud();
     
     gl::popMatrices();
 }
 
 // ----------------------------------------------------------------
 //
-void Quaker::drawEarthMap()
+void Tectonic::drawEarthMap()
 {
     gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
     //gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
@@ -216,7 +256,9 @@ void Quaker::drawEarthMap()
     gl::draw( mEarthDiffuse, Area( -textureOffset, 0, textureWidth-textureOffset, mEarthDiffuse.getCleanHeight() ), Rectf( 0, 0, screenWidth, screenHeight ) );
 }
 
-void Quaker::drawQuakes()
+// ----------------------------------------------------------------
+//
+void Tectonic::drawQuakes()
 {
     gl::disableDepthRead();
     for(QuakeList::iterator it = mActiveQuakes.begin(); 
@@ -225,14 +267,20 @@ void Quaker::drawQuakes()
     {
         (*it)->draw();
     }
-    
+    gl::enableDepthRead();
+}
+
+// ----------------------------------------------------------------
+//
+void Tectonic::drawHud()
+{
     gl::pushMatrices();
     
     const float width = mApp->getViewportWidth();
     const float height = mApp->getViewportHeight();
     
-    CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
-    gl::setMatrices(textCam);
+    //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
+    //gl::setMatrices(textCam);
     
     for(QuakeList::iterator it = mActiveQuakes.begin(); 
         it != mActiveQuakes.end();
@@ -246,7 +294,7 @@ void Quaker::drawQuakes()
 
 // ----------------------------------------------------------------
 //
-void Quaker::drawDebug()
+void Tectonic::drawDebug()
 {
     gl::pushMatrices();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
@@ -256,7 +304,7 @@ void Quaker::drawDebug()
 
 // ----------------------------------------------------------------
 //
-bool Quaker::handleKeyDown(const KeyEvent& keyEvent)
+bool Tectonic::handleKeyDown(const KeyEvent& keyEvent)
 {
     bool handled = true;
     
