@@ -84,6 +84,10 @@ void Interface::draw()
 {
     assert( mGui != NULL );
     
+    gl::disableAlphaBlending();
+    gl::enableDepthRead();
+	gl::enableDepthWrite();
+    
     mGui->draw();
 }
 

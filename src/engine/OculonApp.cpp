@@ -243,11 +243,11 @@ void OculonApp::setupScenes()
     mScenes.clear(); 
     
     //TODO: serialization
-    //addScene( new Orbiter() );
-    //addScene( new Binned() );
+    addScene( new Orbiter() );
+    addScene( new Binned() );
     //addScene( new Pulsar() );
-    //addScene( new Magnetosphere() );
-    //addScene( new Graviton() );
+    addScene( new Magnetosphere() );
+    addScene( new Graviton() );
     addScene( new Tectonic(), true );
     
     // Test Scenes

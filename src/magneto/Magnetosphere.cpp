@@ -142,7 +142,6 @@ void Magnetosphere::resize()
 
 void Magnetosphere::setupDebugInterface()
 {
-    mDebugParams.addText( "magneto", "label=`Magneto`" );
     mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
     mDebugParams.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
     mDebugParams.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
