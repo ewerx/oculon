@@ -56,16 +56,19 @@ Tectonic::~Tectonic()
 //
 void Tectonic::setup()
 {
-    mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
-    mEarthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
-    
     // params
     mTriggerMode = TRIGGER_BPM;
     mBpm = 120.0f;
     mLongitudeOffsetDegrees = 205; // pacific ocean centered
+    mShowMap = false;
+    mShowLabels = false;
     
-    mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
-    //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
+    // assets
+    mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
+    mEarthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    //mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
+    mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
     reset();
 }
 
@@ -110,6 +113,8 @@ void Tectonic::setupInterface()
 //
 void Tectonic::setupDebugInterface()
 {
+    mDebugParams.addParam("Show Map", &mShowMap );
+    mDebugParams.addParam("Show Labels", &mShowLabels );
     mDebugParams.addParam("Longitude Offset", &mLongitudeOffsetDegrees );
 }
 
@@ -235,7 +240,7 @@ void Tectonic::draw()
     glEnable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     
-    //drawEarthMap();
+    drawEarthMap();
     drawQuakes();
     drawHud();
     
@@ -246,14 +251,17 @@ void Tectonic::draw()
 //
 void Tectonic::drawEarthMap()
 {
-    gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
-    //gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
-    const float textureWidth = mEarthDiffuse.getCleanWidth();
-    const float screenWidth = mApp->getViewportWidth();
-    const float screenHeight = mApp->getViewportHeight();
-    const float textureOffset = ((float)(mLongitudeOffsetDegrees)/360.0f) * textureWidth;
-
-    gl::draw( mEarthDiffuse, Area( -textureOffset, 0, textureWidth-textureOffset, mEarthDiffuse.getCleanHeight() ), Rectf( 0, 0, screenWidth, screenHeight ) );
+    if( mShowMap )
+    {
+        gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
+        //gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+        const float textureWidth = mEarthDiffuse.getCleanWidth();
+        const float screenWidth = mApp->getViewportWidth();
+        const float screenHeight = mApp->getViewportHeight();
+        const float textureOffset = ((float)(mLongitudeOffsetDegrees)/360.0f) * textureWidth;
+        
+        gl::draw( mEarthDiffuse, Area( -textureOffset, 0, textureWidth-textureOffset, mEarthDiffuse.getCleanHeight() ), Rectf( 0, 0, screenWidth, screenHeight ) );
+    }
 }
 
 // ----------------------------------------------------------------
@@ -267,7 +275,7 @@ void Tectonic::drawQuakes()
     {
         (*it)->draw();
     }
-    gl::enableDepthRead();
+    //gl::enableDepthRead();
 }
 
 // ----------------------------------------------------------------
@@ -282,11 +290,14 @@ void Tectonic::drawHud()
     //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
     //gl::setMatrices(textCam);
     
-    for(QuakeList::iterator it = mActiveQuakes.begin(); 
-        it != mActiveQuakes.end();
-        ++it)
+    if( mShowLabels )
     {
-        (*it)->drawLabel();
+        for(QuakeList::iterator it = mActiveQuakes.begin(); 
+            it != mActiveQuakes.end();
+            ++it)
+        {
+            (*it)->drawLabel();
+        }
     }
     
     gl::popMatrices();
@@ -296,10 +307,10 @@ void Tectonic::drawHud()
 //
 void Tectonic::drawDebug()
 {
-    gl::pushMatrices();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    //gl::pushMatrices();
+    //gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
 
-    gl::popMatrices();
+    //gl::popMatrices();
 }
 
 // ----------------------------------------------------------------

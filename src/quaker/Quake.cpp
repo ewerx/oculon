@@ -118,22 +118,9 @@ void Quake::draw()
         return;
     }
     
-    const float MARKER_SIZE_FACTOR = 2.0f;
-    const int num_circles = (int)(mEventData->getMag());
-    const float spacing = 5.0f;
-    const float colorRamp = 0.075f;
-    for( int i = 0; i < num_circles; ++i )
-    {
-        glColor4f(1.0f, 0.0f, 0.0f, mMarkerAlpha - i*colorRamp);
-        const float radius = mMarkerSize * (mEventData->getMag()*MARKER_SIZE_FACTOR + i*spacing);
-        if( i == 0 ) {
-            gl::drawSolidCircle(Vec2f(mPosition.x, mPosition.y), radius);
-        }
-        else {
-            gl::drawStrokedCircle(Vec2f(mPosition.x, mPosition.y), radius);
-        }
-    }
+    //gl::disableDepthRead();
     
+    // lines
     const float screenWidth = mParentScene->getApp()->getViewportWidth();
     const float screenHeight = mParentScene->getApp()->getViewportHeight();
     //const float width = 1.0f;
@@ -154,7 +141,24 @@ void Quake::draw()
     glVertex2f( mPosition.x + width, screenHeight );
     glVertex2f( mPosition.x, screenHeight );
     glEnd();
-     */
+    */
+    
+    // marker
+    const float MARKER_SIZE_FACTOR = 2.0f;
+    const int num_circles = (int)(mEventData->getMag());
+    const float spacing = 5.0f;
+    const float colorRamp = 0.075f;
+    for( int i = 0; i < num_circles; ++i )
+    {
+        glColor4f(1.0f, 0.0f, 0.0f, mMarkerAlpha - i*colorRamp);
+        const float radius = mMarkerSize * (mEventData->getMag()*MARKER_SIZE_FACTOR + i*spacing);
+        if( i == 0 ) {
+            gl::drawSolidCircle(Vec2f(mPosition.x, mPosition.y), radius);
+        }
+        else {
+            gl::drawStrokedCircle(Vec2f(mPosition.x, mPosition.y), radius);
+        }
+    }
     
     //drawLabel();
 }

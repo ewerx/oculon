@@ -76,8 +76,13 @@ private:
     
     // map
     ci::gl::Texture mEarthDiffuse;
-    int mLongitudeOffsetDegrees;
     
+    // rendering
+    bool mShowMap;
+    bool mShowLabels;
+    
+    // simulation
+    int mLongitudeOffsetDegrees;
     int mCurrentIndex;
     
     enum eTriggerMode
