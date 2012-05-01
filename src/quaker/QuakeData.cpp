@@ -137,5 +137,5 @@ void USGSQuakeData::parseData( std::string url )
         }
 	}
 	//console() << xml << std::endl;
-    console() << "[quaker] " << mQuakeEvents.size() << " events added" << std::endl;
+    console() << "[tectonic] " << mQuakeEvents.size() << " events added" << std::endl;
 }
