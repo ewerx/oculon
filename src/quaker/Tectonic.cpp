@@ -27,6 +27,7 @@ using namespace ci::app;
 //
 Tectonic::Tectonic()
 : Scene("Tectonic")
+, mDisplayListPoints(0)
 {
     mData = new USGSQuakeData();
     
@@ -61,7 +62,8 @@ void Tectonic::setup()
     mBpm = 120.0f;
     mLongitudeOffsetDegrees = 205; // pacific ocean centered
     mShowMap = false;
-    mShowLabels = false;
+    mShowLabels = true;
+    mShowAllPoints = false;
     
     // assets
     mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -69,6 +71,9 @@ void Tectonic::setup()
     
     //mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
     mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
+    
+    initQuakes();
+    
     reset();
 }
 
@@ -86,6 +91,20 @@ void Tectonic::initQuakes()
         mQuakes.push_back( new Quake(this, eventData, mLongitudeOffsetDegrees) );
         //console() << "Quake" << mQuakes.size() << ": " << eventData->toString() << std::endl;
     }
+    
+    // points display list
+    mDisplayListPoints = glGenLists(1);
+    glNewList(mDisplayListPoints, GL_COMPILE);
+    glBegin(GL_POINTS);
+    for(QuakeList::iterator it = mQuakes.begin(); 
+        it != mQuakes.end();
+        ++it)
+    {
+        const Vec3f& pos = (*it)->getPosition();
+        glVertex2f(pos.x, pos.y);
+    }
+    glEnd();
+    glEndList();
 }
 
 // ----------------------------------------------------------------
@@ -99,6 +118,11 @@ void Tectonic::clearQuakes()
         delete (*it);
     }
     mQuakes.clear();
+    
+    if( mDisplayListPoints != 0 )
+    {
+        glDeleteLists(mDisplayListPoints, 1);
+    }
 }
 
 // ----------------------------------------------------------------
@@ -115,6 +139,7 @@ void Tectonic::setupDebugInterface()
 {
     mDebugParams.addParam("Show Map", &mShowMap );
     mDebugParams.addParam("Show Labels", &mShowLabels );
+    mDebugParams.addParam("Show All Points", &mShowAllPoints );
     mDebugParams.addParam("Longitude Offset", &mLongitudeOffsetDegrees );
 }
 
@@ -122,7 +147,6 @@ void Tectonic::setupDebugInterface()
 //
 void Tectonic::reset()
 {
-    initQuakes();
     mCurrentIndex = 0;
     mBpmTriggerTime = 60.0f / mBpm;
     mActiveQuakes.clear();
@@ -241,6 +265,7 @@ void Tectonic::draw()
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     
     drawEarthMap();
+    drawPoints();
     drawQuakes();
     drawHud();
     
@@ -276,6 +301,16 @@ void Tectonic::drawQuakes()
         (*it)->draw();
     }
     //gl::enableDepthRead();
+}
+
+// ----------------------------------------------------------------
+//
+void Tectonic::drawPoints()
+{
+    if( mShowAllPoints )
+    {
+        glCallList(mDisplayListPoints);
+    }
 }
 
 // ----------------------------------------------------------------

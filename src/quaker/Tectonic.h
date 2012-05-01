@@ -53,6 +53,7 @@ protected:
     void initQuakes();
     void clearQuakes();
     void drawEarthMap();
+    void drawPoints();
     void drawQuakes();
     void drawHud();
     
@@ -80,6 +81,10 @@ private:
     // rendering
     bool mShowMap;
     bool mShowLabels;
+    bool mShowAllPoints;
+    
+    // points
+    GLuint mDisplayListPoints;
     
     // simulation
     int mLongitudeOffsetDegrees;
