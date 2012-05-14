@@ -38,7 +38,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     
 protected:// from Scene
     void setupInterface();

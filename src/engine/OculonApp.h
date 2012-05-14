@@ -119,7 +119,9 @@ private: // members
     
     // input
     AudioInput              mAudioInput;
+    
     MidiInput               mMidiInput;
+    bool                    mEnableMidi;
     
     MindWave                mMindWave;
     bool                    mEnableMindWave;

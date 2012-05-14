@@ -38,7 +38,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );

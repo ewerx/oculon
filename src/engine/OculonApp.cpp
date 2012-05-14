@@ -106,15 +106,19 @@ void OculonApp::setup()
     // audio input
     mAudioInput.setup();
     
-    if( mEnableMindWave )
+    if( mEnableMidi )
     {
-        mMindWave.setup();
+        mMidiInput.setup();
     }
-    mMidiInput.setEnabled(false);//TODO: refactor
-    
+ 
     if( mEnableOscServer )
     {
         mOscServer.setup();
+    }
+    
+    if( mEnableMindWave )
+    {
+        mMindWave.setup();
     }
     
     if( mEnableKinect )
@@ -248,7 +252,7 @@ void OculonApp::setupScenes()
     //addScene( new Pulsar() );
     addScene( new Magnetosphere() );
     addScene( new Graviton() );
-    addScene( new Tectonic(), true );
+    addScene( new Tectonic() );
     
     // Test Scenes
     addScene( new AudioTest() );
@@ -582,7 +586,11 @@ void OculonApp::update()
     }
     
     mAudioInput.update();
-    mMidiInput.update();
+    
+    if( mEnableMidi )
+    {
+        mMidiInput.update();
+    }
     if( mEnableMindWave )
     {
         mMindWave.update();

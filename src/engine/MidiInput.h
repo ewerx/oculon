@@ -16,15 +16,12 @@
 #include "MidiConstants.h"
 #include "MidiHub.h"
 
-using namespace ci;
-using namespace ci::app;
-
 #define DEBUG_MIDI 1
 
 //
 // MidiEvent for Midi callbacks
 //
-class MidiEvent : public Event
+class MidiEvent : public ci::app::Event
 {
 public:
     enum eEventType 
@@ -34,8 +31,8 @@ public:
         TYPE_VALUE_CHANGE = MIDI_CONTROL_CHANGE,
     };
 public:
-    MidiEvent(const midi::Message& midiMsg)
-        : Event(), mMessage(midiMsg) 
+    MidiEvent(const ci::midi::Message& midiMsg)
+    : ci::app::Event(), mMessage(midiMsg) 
     {}
     
     int getChannel() const      { return mMessage.channel; }
@@ -45,7 +42,7 @@ public:
     float getValueRatio() const { return( mMessage.byteTwo / 127.f ); }
     
 private:
-    const midi::Message& mMessage;
+    const ci::midi::Message& mMessage;
 };
 
 //
@@ -57,27 +54,25 @@ public:
     MidiInput();
     virtual ~MidiInput();
     
+    void setup();
     void update();
-    inline void setEnabled(bool enabled) { mEnabled = enabled; }
-    inline bool isEnabled() const { return mEnabled; }
+    inline bool isEnabled() const { return( mMidiHub != NULL ); }
     
     template<typename T>
-    CallbackId registerMidiCallback( T* obj, bool (T::*callback)(MidiEvent) )
+    ci::CallbackId registerMidiCallback( T* obj, bool (T::*callback)(MidiEvent) )
     {
         return mCallbacksMidi.registerCb( std::bind1st( std::mem_fun(callback), obj) );
     }
 
-    void unregisterMidiCallback( CallbackId id ) { mCallbacksMidi.unregisterCb( id ); }
+    void unregisterMidiCallback( ci::CallbackId id ) { mCallbacksMidi.unregisterCb( id ); }
     
     
 
 private:
     
-    midi::Hub   mMidiHub;
+    ci::midi::Hub*  mMidiHub;
                     
-    CallbackMgr<bool(MidiEvent)> mCallbacksMidi;
-    
-    bool        mEnabled;
+    ci::CallbackMgr<bool(MidiEvent)> mCallbacksMidi;
     
     //queue<tMidiKey*>    mLearningQueue;
     //vector<tMidiKey*>   mKnownKeys;

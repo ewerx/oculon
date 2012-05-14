@@ -17,7 +17,6 @@
 #include "Scene.h"
 #include "MidiMap.h"
 
-using namespace ci;
 using std::vector;
 
 class Body;
@@ -39,7 +38,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     const Camera& getCamera() const;
     
     // midi callbacks

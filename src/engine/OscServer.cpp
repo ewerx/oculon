@@ -41,7 +41,16 @@ OscServer::~OscServer()
 //
 void OscServer::setup()
 {
-    mListener.setup(mListenPort);
+    try 
+    {
+        mListener.setup(mListenPort);
+    }
+    catch (...) 
+    {
+        console() << "[osc] ERROR listening on port " << mListenPort << std::endl;
+        return;
+    }
+    
     mIsListening = true;
     console() << "[osc] listening on port " << mListenPort << std::endl;
     
