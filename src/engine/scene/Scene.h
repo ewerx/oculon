@@ -60,6 +60,7 @@ public:
     void setDebug(bool debug);
     void showInterface(bool show);
     bool toggleActiveVisible();
+    bool setRunningByVisibleState();
     
     // callbacks
     bool onDebugChanged();
@@ -102,7 +103,6 @@ protected:
     Interface*              mInterface;
     ci::params::InterfaceGl mDebugParams;
     
-    int mDummy;//HACK
     bool mDoReset;
     
 private:

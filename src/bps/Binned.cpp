@@ -24,7 +24,7 @@ using namespace ci::app;
 using namespace bps;
 
 Binned::Binned()
-: Scene("Binned")
+: Scene("binned")
 , mRepulsionMode(MODE_BOTH)
 , mForceScaleX(1.0f)
 , mForceScaleY(1.0f)

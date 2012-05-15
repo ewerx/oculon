@@ -91,6 +91,7 @@ public: // new
     // interface callbacks
     bool onFrameCaptureToggle();
     bool onHighResToggle();
+    bool syncInterface();
     
     bool toggleScene(const int sceneId);
     bool showInterface(const int sceneId);

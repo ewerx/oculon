@@ -26,7 +26,7 @@ using namespace ci::app;
 // ----------------------------------------------------------------
 //
 Tectonic::Tectonic()
-: Scene("Tectonic")
+: Scene("tectonic")
 , mDisplayListPoints(0)
 {
     mData = new USGSQuakeData();

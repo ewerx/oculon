@@ -16,7 +16,7 @@
 using namespace ci;
 
 MovieTest::MovieTest()
-: Scene("MovieTest")
+: Scene("video")
 , mActiveMovie(0)
 , mCycleDuration(0.0f)
 , mCycleTimer(0.0f)

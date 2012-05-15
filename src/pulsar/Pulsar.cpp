@@ -18,7 +18,7 @@
 using namespace ci;
 
 Pulsar::Pulsar()
-: Scene("Pulsar")
+: Scene("pulsar")
 {
 }
 

@@ -18,7 +18,7 @@ using namespace ci::app;
 
 
 Magnetosphere::Magnetosphere()
-: Scene("Magneto")
+: Scene("magneto")
 {
 }
 

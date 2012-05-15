@@ -57,15 +57,15 @@ void Scene::init(OculonApp* app)
     // bind to OculonApp::showInterface(0)
     mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, 0) );
     // bind to Scene::loadInterfaceParams(0)
-    mInterface->addButton(CreateIntParam("Toggle", &mDummy)
-                          .oscReceiver("/" + mName + "/toggle"))->registerCallback( this, &Scene::toggleActiveVisible );
-    mInterface->addButton(CreateIntParam("Reset", &mDummy)
-                          .oscReceiver("/" + mName + "/reset"))->registerCallback( this, &Scene::onReset );
-    mInterface->addParam(CreateBoolParam("Visible", &mIsVisible)
-                         .oscReceiver("/" + mName + "/active"))->registerCallback( this, &Scene::onVisibleChanged );
-    mInterface->addParam(CreateBoolParam("Running", &mIsRunning)
-                         .oscReceiver("/" + mName + "/active"))->registerCallback( this, &Scene::onRunningChanged );
-    mInterface->addParam(CreateBoolParam("Debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
+    mInterface->addParam(CreateBoolParam("active", &mIsVisible)
+                          .oscReceiver(mName,"toggle"))->registerCallback( this, &Scene::setRunningByVisibleState );
+    mInterface->addButton(CreateTriggerParam("reset", NULL)
+                          .oscReceiver(mName))->registerCallback( this, &Scene::onReset );
+    mInterface->addParam(CreateBoolParam("visible", &mIsVisible)
+                         .oscReceiver(mName))->registerCallback( this, &Scene::onVisibleChanged );
+    mInterface->addParam(CreateBoolParam("running", &mIsRunning)
+                         .oscReceiver(mName))->registerCallback( this, &Scene::onRunningChanged );
+    mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
     mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
@@ -144,6 +144,14 @@ const Camera& Scene::getCamera() const
 bool Scene::toggleActiveVisible()
 {
     setVisible(!mIsVisible);
+    setRunning(mIsVisible);
+    
+    return false;
+}
+
+bool Scene::setRunningByVisibleState()
+{
+    setVisible(mIsVisible);
     setRunning(mIsVisible);
     
     return false;

@@ -49,7 +49,7 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04
 // Orbiter
 //
 Orbiter::Orbiter()
-: Scene("Orbiter")
+: Scene("orbiter")
 , mSun(NULL)
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)

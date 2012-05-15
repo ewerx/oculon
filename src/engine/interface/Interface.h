@@ -27,12 +27,13 @@ public:
     mowa::sgui::FloatVarControl*  addParam( const CreateFloatParam& param );
     mowa::sgui::IntVarControl*    addParam( const CreateIntParam& param );
     mowa::sgui::BoolVarControl*   addParam( const CreateBoolParam& param );
-    mowa::sgui::ButtonControl*    addButton( const CreateIntParam& param );
+    mowa::sgui::ButtonControl*    addButton( const CreateTriggerParam& param );
     
     void update();
     void draw();
     
     void createControlInterface(const std::string& pageName);
+    void sendAll();
     
     const_iterator paramsBegin()    { return mParams.begin(); }
     const_iterator paramsEnd()      { return mParams.end(); }

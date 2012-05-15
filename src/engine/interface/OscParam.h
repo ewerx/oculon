@@ -128,10 +128,12 @@ public:
     , _var(var)
     , _min(0)
     , _max(1)
-    , _default(*var)
+    , _default(0)
     , _sendAddr("")
     , _recvAddr("")
-    { }
+    {
+        if( var != NULL ) _default = *var;
+    }
     
     inline CreateParam& minValue( const T& min ) 
     { _min = min; return *this; }
@@ -142,8 +144,16 @@ public:
     inline CreateParam& defaultValue( const T& defaultValue )
     { _default = defaultValue; return *this; }
     
-    inline CreateParam& oscReceiver( const std::string& address )
-    { _recvAddr = address; return *this; }
+    inline CreateParam& oscReceiver( const std::string& sceneName )
+    {
+        return oscReceiver( sceneName, _name );
+    }
+    
+    inline CreateParam& oscReceiver( const std::string& sceneName, const std::string& paramName )
+    {
+        _recvAddr = "/oculon/" + sceneName + '/' + paramName; 
+        return *this; 
+    }
     
     inline CreateParam& oscSender( const std::string& address )
     { _sendAddr = address; return *this; }
@@ -163,5 +173,5 @@ private:
 typedef CreateParam<float>                  CreateFloatParam;
 typedef CreateParam<int32_t>                CreateIntParam;
 typedef CreateParam<bool>                   CreateBoolParam;
-//TODO: trigger param
+typedef CreateParam<char>                   CreateTriggerParam;
 

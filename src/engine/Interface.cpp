@@ -66,7 +66,7 @@ mowa::sgui::BoolVarControl* Interface::addParam( const CreateBoolParam& param )
     return control;
 }
 
-mowa::sgui::ButtonControl* Interface::addButton( const CreateIntParam& param )
+mowa::sgui::ButtonControl* Interface::addButton( const CreateTriggerParam& param )
 {
     mowa::sgui::ButtonControl* control = mGui->addButton( param._name );
     
@@ -89,6 +89,27 @@ void Interface::draw()
 	gl::enableDepthWrite();
     
     mGui->draw();
+}
+
+void Interface::sendAll()
+{
+    osc::Message message;
+    
+    for (vector<OscParam*>::iterator it = mParams.begin(); 
+         it != mParams.end();
+         ++it )
+    {
+        OscParam* param = (*it);
+        message.clear();
+        
+        const std::string& address = param->getOscRecvAddress();
+        if( param->getType() != OscParam::PARAMTYPE_TRIGGER && address.length() > 0 )
+        {
+            param->prepOscSend( message );
+            message.setAddress( param->getOscRecvAddress() );
+            mOsc->sendMessage( message );
+        }
+    }
 }
 
 void Interface::createControlInterface(const std::string& sceneName)

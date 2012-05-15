@@ -22,7 +22,7 @@ using namespace ci::app;
 
 
 Graviton::Graviton()
-: Scene("Graviton")
+: Scene("graviton")
 {
 }
 
@@ -122,63 +122,63 @@ void Graviton::setupInterface()
     mInterface->addParam(CreateFloatParam( "Time Step", &mTimeStep )
                          .minValue(0.0f)
                          .maxValue(0.001f)
-                         .oscReceiver("/graviton/timestep"));
+                         .oscReceiver(getName(), "timestep"));
                          //.oscReceiver("/1/fader1"));
                          //.oscSender("/1/fader1"));
     mInterface->addParam(CreateFloatParam( "Damping", &mDamping )
-                         .oscReceiver("/graviton/damping"));
+                         .oscReceiver(getName(), "damping"));
     mInterface->addParam(CreateFloatParam( "EPS", &mEps )
                          .minValue(0.0001)
                          .maxValue(1500)
-                         .oscReceiver("/graviton/eps"));
+                         .oscReceiver(getName(), "eps"));
     mInterface->addParam(CreateFloatParam( "Gravity", &mGravity )
                          .minValue(0.0f)
                          .maxValue(100.0f)
-                         .oscReceiver("/graviton/gravity"));
+                         .oscReceiver(getName(), "gravity"));
                          //.oscReceiver("/1/fader2"));
     
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateIntParam( "Particle Formation", (int*)(&mInitialFormation) )
                          .minValue(0)
                          .maxValue(FORMATION_COUNT-1)
-                         .oscReceiver("/graviton/pformation"));
+                         .oscReceiver(getName(), "pformation"));
     mInterface->addParam(CreateIntParam( "Node Formation", (int*)(&mGravityNodeFormation) )
                          .minValue(0)
                          .maxValue(NODE_FORMATION_COUNT-1)
-                         .oscReceiver("/graviton/nformation"));
+                         .oscReceiver(getName(), "nformation"));
     mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
                          .minValue(10.0f)
                          .maxValue(1000.0f)
-                         .oscReceiver("/graviton/formradius"));
+                         .oscReceiver(getName(), "formradius"));
     
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
-                         .oscReceiver("/graviton/alpha"));
+                         .oscReceiver(getName(), "alpha"));
     mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
                          .minValue(1.0f)
                          .maxValue(3.0f)
-                         .oscReceiver("/graviton/psize"));
+                         .oscReceiver(getName(), "psize"));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "Cam Type", (int*)(&mCamType) )
                          .minValue(0)
                          .maxValue(3)
-                         .oscReceiver("/graviton/camtype"));
+                         .oscReceiver(getName(), "camtype"));
     mInterface->addParam(CreateFloatParam( "Cam Radius", &mCamRadius )
                          .minValue(1.0f)
                          .maxValue(500.f)
-                         .oscReceiver("/graviton/camradius"));
+                         .oscReceiver(getName(), "camradius"));
     mInterface->addParam(CreateFloatParam( "Cam Distance", &mCamMaxDistance )
                          .minValue(0.0f)
                          .maxValue(500.f));
     mInterface->addParam(CreateFloatParam( "Cam Turn Rate", &mCamTurnRate )
                          .minValue(0.0f)
                          .maxValue(5.0f)
-                         .oscReceiver("/graviton/camturn"));
+                         .oscReceiver(getName(), "camturn"));
     mInterface->addParam(CreateFloatParam( "Cam Slide Rate", &mCamTranslateRate )
                          .minValue(0.0f)
                          .maxValue(5.0f)
-                         .oscReceiver("/graviton/camspeed"));
+                         .oscReceiver(getName(), "camspeed"));
     
 }
 

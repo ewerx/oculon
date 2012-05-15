@@ -54,7 +54,7 @@ void OculonApp::prepareSettings( Settings *settings )
     settings->enableSecondaryDisplayBlanking(false);
     
     mIsPresentationMode = true;
-    mIsSendingFps       = false;
+    mIsSendingFps       = true;
     
     mUseMayaCam         = true;
     
@@ -168,18 +168,29 @@ void OculonApp::setupInterface()
     mInterface = new Interface(this, &mOscServer);
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("OCULON");
+    mInterface->addButton(CreateTriggerParam("sync", NULL)
+                          .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
-                         .defaultValue(mEnableSyphonServer));
-    mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames)
-                         .defaultValue(mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
-    mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput)
-                         .defaultValue(mCaptureDebugOutput));
-    mInterface->addParam(CreateBoolParam("High-Res Capture", &mIsCapturingHighRes)
-                         .defaultValue(mIsCapturingHighRes))->registerCallback( this, &OculonApp::onHighResToggle );
+                         .oscReceiver("master", "syphon"));
+    mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
+    mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
+    mInterface->addParam(CreateBoolParam("High-Res Capture", &mIsCapturingHighRes))->registerCallback( this, &OculonApp::onHighResToggle );
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
                          .minValue(1.0f)
-                         .maxValue(600.0f)
-                         .defaultValue(mCaptureDuration));
+                         .maxValue(600.0f));
+}
+
+bool OculonApp::syncInterface()
+{
+    mInterface->sendAll();
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        scene->mInterface->sendAll();
+    }
+    return false;
 }
 
 void OculonApp::addScene(Scene* scene, bool autoStart)
@@ -525,8 +536,8 @@ void OculonApp::update()
         {
             mFpsSendTimer = 0.0f;
             osc::Message message;
-            message.setAddress("/1/fps");
-            message.addStringArg(buf);
+            message.setAddress("/oculon/master/fps");
+            message.addFloatArg(fps);
             mOscServer.sendMessage(message);
         }
     }

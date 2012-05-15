@@ -18,7 +18,7 @@
 using namespace ci;
 
 ShaderTest::ShaderTest()
-: Scene("ShaderTest")
+: Scene("shadertest")
 {
 }
 

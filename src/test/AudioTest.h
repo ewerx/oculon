@@ -22,7 +22,7 @@
 class AudioTest : public Scene
 {
 public:
-    AudioTest() : Scene("AudioTest") {}
+    AudioTest() : Scene("audio") {}
     virtual ~AudioTest() {}
     
     // inherited from Scene
