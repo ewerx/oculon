@@ -17,12 +17,12 @@ using namespace mowa::sgui;
 #pragma MARK OscParam
 
 // constructor
-OscParam::OscParam(const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr)
+OscParam::OscParam(const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
 : mType(type)
 , mOscServer(server)
 , mOscRecvAddress(recvAddr)
 , mOscSendAddress(sendAddr)
-, mIsSender(sendAddr.length() > 0)
+, mIsSender(sendsFeedback)
 {
 }
 
@@ -41,8 +41,8 @@ bool OscParam::valueChangedCallback()
 
 #pragma MARK OscFloatParam
 
-OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(OscParam::PARAMTYPE_FLOAT, server, recvAddr, sendAddr)
+OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_FLOAT, server, recvAddr, sendAddr, sendsFeedback)
 , mControl(control)
 {
     assert(mControl != NULL);
@@ -69,8 +69,8 @@ void OscFloatParam::prepOscSend( osc::Message& message )
 
 #pragma MARK OscIntParam
 
-OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(OscParam::PARAMTYPE_INT, server, recvAddr, sendAddr)
+OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_INT, server, recvAddr, sendAddr, sendsFeedback)
 , mControl(control)
 {
     assert(mControl != NULL);
@@ -111,8 +111,8 @@ void OscIntParam::prepOscSend( osc::Message& message )
 
 #pragma MARK OscBoolParam
 
-OscBoolParam::OscBoolParam(OscServer* server, BoolVarControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(OscParam::PARAMTYPE_BOOL, server, recvAddr, sendAddr)
+OscBoolParam::OscBoolParam(OscServer* server, BoolVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_BOOL, server, recvAddr, sendAddr, sendsFeedback)
 , mControl(control)
 {
     assert(mControl != NULL);
@@ -154,8 +154,8 @@ void OscBoolParam::prepOscSend( osc::Message& message )
 
 #pragma MARK OscTriggerParam
 
-OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, const std::string& recvAddr, const std::string& sendAddr)
-: OscParam(OscParam::PARAMTYPE_TRIGGER, server, recvAddr, sendAddr)
+OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_TRIGGER, server, recvAddr, sendAddr, sendsFeedback)
 , mControl(control)
 {
     assert(mControl != NULL);

@@ -26,7 +26,7 @@ public:
         PARAMTYPE_COUNT
     };
 public:
-    OscParam( const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr );
+    OscParam( const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback );
     virtual ~OscParam() { }
         
     const std::string& getOscRecvAddress() const    { return mOscRecvAddress; }
@@ -57,7 +57,7 @@ protected:
 class OscFloatParam : public OscParam
 {
 public:
-    OscFloatParam(OscServer* server, mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscFloatParam(OscServer* server, mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
     
     mowa::sgui::Control* getControl()   { return mControl; }
 
@@ -73,7 +73,7 @@ protected:
 class OscIntParam : public OscParam
 {
 public:
-    OscIntParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscIntParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -89,7 +89,7 @@ protected:
 class OscBoolParam : public OscParam
 {
 public:
-    OscBoolParam(OscServer* server, mowa::sgui::BoolVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscBoolParam(OscServer* server, mowa::sgui::BoolVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -105,7 +105,7 @@ protected:
 class OscTriggerParam : public OscParam
 {
 public:
-    OscTriggerParam(OscServer* server, mowa::sgui::ButtonControl* guiControl, const std::string& recvAddr, const std::string& sendAddr);
+    OscTriggerParam(OscServer* server, mowa::sgui::ButtonControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -131,6 +131,7 @@ public:
     , _default(0)
     , _sendAddr("")
     , _recvAddr("")
+    , _feedback(false)
     {
         if( var != NULL ) _default = *var;
     }
@@ -152,11 +153,15 @@ public:
     inline CreateParam& oscReceiver( const std::string& sceneName, const std::string& paramName )
     {
         _recvAddr = "/oculon/" + sceneName + '/' + paramName; 
+        _sendAddr = _recvAddr; // default to send to same address
         return *this; 
     }
     
     inline CreateParam& oscSender( const std::string& address )
     { _sendAddr = address; return *this; }
+    
+    inline CreateParam& sendFeedback( const bool feedback =true )
+    { _feedback = feedback; return *this; }
     
 private:
     friend class Interface;
@@ -168,6 +173,7 @@ private:
     T           _default;
     std::string _sendAddr;
     std::string _recvAddr;
+    bool        _feedback;
 };
 
 typedef CreateParam<float>                  CreateFloatParam;

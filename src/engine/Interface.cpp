@@ -40,7 +40,7 @@ mowa::sgui::FloatVarControl* Interface::addParam( const CreateFloatParam& param 
 {
     mowa::sgui::FloatVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
     
-    OscFloatParam* oscParam = new OscFloatParam( mOsc, control, param._recvAddr, param._sendAddr );
+    OscFloatParam* oscParam = new OscFloatParam( mOsc, control, param._recvAddr, param._sendAddr, param._feedback );
     mParams.push_back(oscParam);
     
     return control;
@@ -50,7 +50,7 @@ mowa::sgui::IntVarControl* Interface::addParam( const CreateIntParam& param )
 {
     mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
     
-    OscIntParam* oscParam = new OscIntParam( mOsc, control, param._recvAddr, param._sendAddr );
+    OscIntParam* oscParam = new OscIntParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback);
     mParams.push_back(oscParam);
     
     return control;
@@ -60,7 +60,7 @@ mowa::sgui::BoolVarControl* Interface::addParam( const CreateBoolParam& param )
 {
     mowa::sgui::BoolVarControl* control = mGui->addParam( param._name, param._var, param._default );
     
-    OscBoolParam* oscParam = new OscBoolParam( mOsc, control, param._recvAddr, param._sendAddr );
+    OscBoolParam* oscParam = new OscBoolParam( mOsc, control, param._recvAddr, param._sendAddr, param._feedback );
     mParams.push_back(oscParam);
 
     return control;
@@ -70,7 +70,7 @@ mowa::sgui::ButtonControl* Interface::addButton( const CreateTriggerParam& param
 {
     mowa::sgui::ButtonControl* control = mGui->addButton( param._name );
     
-    OscTriggerParam* oscParam = new OscTriggerParam( mOsc, control, param._recvAddr, param._sendAddr );
+    OscTriggerParam* oscParam = new OscTriggerParam( mOsc, control, param._recvAddr, param._sendAddr, param._feedback );
     mParams.push_back(oscParam);
     
     return control;
