@@ -11,6 +11,7 @@
 
 #include "OscListener.h"
 #include "OscSender.h"
+#include "Constants.h"
 #include <boost/thread.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/bind.hpp>
@@ -20,6 +21,15 @@ typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
 
 class OscServer
 {
+public:
+    enum eDestination
+    {
+        DEST_INTERFACE,
+        DEST_RESOLUME,
+        
+        DEST_ALL,
+        DEST_COUNT = DEST_ALL
+    };
 public:
     OscServer();
     ~OscServer();
@@ -41,13 +51,20 @@ public:
     }
     
     // sender
-    void setDestination( const std::string& host, const int port );
-    void sendMessage( ci::osc::Message& message );
+    void setDestination( const eDestination index, const std::string& host, const int port );
+    void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_VERBOSE );
     
 private:
+    enum eMessageType
+    {
+        MSG_SENT,
+        MSG_RECV,
+        MSG_RELAY
+    };
+    
     void threadLoop();
-    void processMessage(const ci::osc::Message& message);
-    void printMessage( const ci::osc::Message& message, const bool sent );
+    void processMessage(ci::osc::Message& message);
+    void printMessage( const ci::osc::Message& message, const eMessageType type, const eLogLevel loglevel );
     
 private:
     ci::osc::Listener       mListener;
@@ -59,12 +76,18 @@ private:
     bool                    mUseThread;
     
     //TODO: multiple destinations
-    ci::osc::Sender         mSender;
+    ci::osc::Sender         mSender[DEST_COUNT];
     std::string             mSendHost;
     int                     mSendPort;
     bool                    mIsSending;
     
     bool                    mDebugPrint;
+    
+    static const int    LISTEN_PORT;
+    static const char*  INTERFACE_IP;
+    static const int    INTERFACE_PORT;
+    static const char*  LOCALHOST_IP;
+    static const int    RESOLUME_PORT;
 };
 
 #endif

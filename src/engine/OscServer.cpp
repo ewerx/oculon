@@ -13,22 +13,26 @@
 #include <iostream>
 #include <vector>
 
-#define DEFAULT_LISTEN_PORT 8889
-#define DEFAULT_SEND_PORT 8080
-
 using namespace ci;
 using namespace ci::app;
 using namespace ci::audio;
 
+// statics
+const int   OscServer::LISTEN_PORT      = 8889;
+const char* OscServer::INTERFACE_IP     = "192.168.1.103";
+const int   OscServer::INTERFACE_PORT   = 8080;
+const char* OscServer::LOCALHOST_IP     = "192.168.1.140";
+const int   OscServer::RESOLUME_PORT    = 9080;
+
 // constructor
 //
 OscServer::OscServer()
-: mListenPort(DEFAULT_LISTEN_PORT)
-, mIsListening(false)
+: mIsListening(false)
 , mUseThread(true)
 , mIsSending(false)
 , mDebugPrint(true)
 {
+    mListenPort = OscServer::LISTEN_PORT;
 }
 
 // destructor
@@ -59,7 +63,8 @@ void OscServer::setup()
         mThread = boost::thread(&OscServer::threadLoop, this);
     }
     
-    setDestination( "192.168.1.103", 8080 );
+    setDestination( DEST_INTERFACE, INTERFACE_IP, INTERFACE_PORT );
+    setDestination( DEST_RESOLUME, LOCALHOST_IP, RESOLUME_PORT );
 }
 
 void OscServer::shutdown()
@@ -98,11 +103,11 @@ void OscServer::threadLoop()
     }
 }
 
-void OscServer::processMessage(const osc::Message& message)
+void OscServer::processMessage(osc::Message& message)
 {
     if( mDebugPrint )
     {
-        printMessage(message, false);
+        printMessage(message, MSG_RECV, LOGLEVEL_VERBOSE);
     }
     
     tOscMap::iterator it = mCallbackMap.find(message.getAddress());
@@ -116,91 +121,124 @@ void OscServer::processMessage(const osc::Message& message)
             console() << "[osc] Callback triggered" << std::endl;
         }
     }
-}
-
-void OscServer::printMessage(const osc::Message& message, const bool sent)
-{
-    if( sent )
-    {
-        console() << "[osc] Message sent" << std::endl;
-    }
     else
     {
-        console() << "[osc] Message received" << std::endl;
+        // relay
+        sendMessage(message, DEST_RESOLUME, LOGLEVEL_QUIET);
+    }
+}
+
+void OscServer::printMessage(const osc::Message& message, const eMessageType msgType, const eLogLevel loglevel)
+{
+    if( loglevel == LOGLEVEL_SILENT )
+    {
+        return;
+    }
+    
+    switch(msgType)
+    {
+        case MSG_SENT:
+            console() << "[osc] === SENT ===" << std::endl;
+            break;
+        case MSG_RECV:
+            console() << "[osc] === RECEIVED ===" << std::endl;
+            break;
+            
+        case MSG_RELAY:
+            console() << "[osc] === RELAYED ===" << std::endl;
+            break;
     }
     console() << "[osc] Address: " << message.getAddress() << std::endl;
-    console() << "[osc] Num Arg: " << message.getNumArgs() << std::endl;
-    for (int i = 0; i < message.getNumArgs(); i++) 
+    
+    if( loglevel == LOGLEVEL_VERBOSE )
     {
-        console() << "[osc] -- Argument " << i << std::endl;
-        console() << "[osc] ---- type: " << message.getArgTypeName(i) << std::endl;
-        
-        switch(message.getArgType(i))
+        console() << "[osc] Num Arg: " << message.getNumArgs() << std::endl;
+        for (int i = 0; i < message.getNumArgs(); i++) 
         {
-            case osc::TYPE_INT32:
+            console() << "[osc] -- Argument " << i << std::endl;
+            console() << "[osc] ---- type: " << message.getArgTypeName(i) << std::endl;
+            
+            switch(message.getArgType(i))
             {
-                try 
+                case osc::TYPE_INT32:
                 {
-                    console() << "[osc] ------ value: "<< message.getArgAsInt32(i) << std::endl;
+                    try 
+                    {
+                        console() << "[osc] ------ value: "<< message.getArgAsInt32(i) << std::endl;
+                    }
+                    catch (...) 
+                    {
+                        console() << "[osc] Exception reading argument as int32" << std::endl;
+                    }
+                    
                 }
-                catch (...) 
+                    break;
+                    
+                case osc::TYPE_FLOAT:
                 {
-                    console() << "[osc] Exception reading argument as int32" << std::endl;
+                    try 
+                    {
+                        console() << "[osc] ------ value: " << message.getArgAsFloat(i) << std::endl;
+                    }
+                    catch (...) 
+                    {
+                        console() << "[osc] Exception reading argument as float" << std::endl;
+                    }
                 }
-                
+                    break;
+                    
+                case osc::TYPE_STRING:
+                {
+                    try 
+                    {
+                        console() << "[osc] ------ value: " << message.getArgAsString(i).c_str() << std::endl;
+                    }
+                    catch (...) 
+                    {
+                        console() << "[osc] Exception reading argument as string" << std::endl;
+                    }
+                }
+                    break;
+                    
+                default:
+                    console() << "[osc] Unhandled argument type: " << message.getArgType(i) << std::endl;
+                    break;
             }
-                break;
-                
-            case osc::TYPE_FLOAT:
-            {
-                try 
-                {
-                    console() << "[osc] ------ value: " << message.getArgAsFloat(i) << std::endl;
-                }
-                catch (...) 
-                {
-                    console() << "[osc] Exception reading argument as float" << std::endl;
-                }
-            }
-                break;
-                
-            case osc::TYPE_STRING:
-            {
-                try 
-                {
-                    console() << "[osc] ------ value: " << message.getArgAsString(i).c_str() << std::endl;
-                }
-                catch (...) 
-                {
-                    console() << "[osc] Exception reading argument as string" << std::endl;
-                }
-            }
-                break;
-                
-            default:
-                console() << "[osc] Unhandled argument type: " << message.getArgType(i) << std::endl;
-                break;
         }
     }
 }
 
 #pragma MARK Sender
 
-void OscServer::setDestination( const std::string& host, const int port )
+void OscServer::setDestination( const eDestination index, const std::string& host, const int port )
 {
-    mSender.setup( host, port );
-    mIsSending = true;
-    console() << "[osc] send destination: " << host << ":" << port << std::endl;
+    if( index < DEST_COUNT )
+    {
+        mSender[index].setup( host, port );
+        mIsSending = true;
+        console() << "[osc] send destination " << (int)(index) << ": " << host << ":" << port << std::endl;
+    }
 }
 
-void OscServer::sendMessage( ci::osc::Message& message )
+void OscServer::sendMessage( ci::osc::Message& message, const eDestination dest, const eLogLevel loglevel )
 {
     if( mIsSending )
     {
-        mSender.sendMessage( message );
+        if( dest < DEST_ALL )
+        {
+            mSender[dest].sendMessage( message );
+        }
+        else
+        {
+            for( int i=0; i < DEST_COUNT; ++i )
+            {
+                mSender[i].sendMessage( message );
+            }
+        }
+        
         if( mDebugPrint )
         {
-            printMessage(message, true);
+            printMessage(message, MSG_SENT, loglevel);
         }
     }
 }

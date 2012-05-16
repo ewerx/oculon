@@ -538,7 +538,7 @@ void OculonApp::update()
             osc::Message message;
             message.setAddress("/oculon/master/fps");
             message.addFloatArg(fps);
-            mOscServer.sendMessage(message);
+            mOscServer.sendMessage(message, OscServer::DEST_INTERFACE, LOGLEVEL_SILENT);
         }
     }
     

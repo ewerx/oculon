@@ -13,4 +13,11 @@ static const ci::Color kClearColor	= ci::Color(0.0f, 0.0f, 0.0f);
 static const float kCaptureFramerate = 25.0f;
 
 
+enum eLogLevel
+{
+    LOGLEVEL_SILENT,
+    LOGLEVEL_QUIET,
+    LOGLEVEL_VERBOSE,
+};
+
 #define DEV_MODE
