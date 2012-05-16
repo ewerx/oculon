@@ -157,6 +157,12 @@ public:
         return *this; 
     }
     
+    inline CreateParam& oscSender( const std::string& sceneName, const std::string& paramName )
+    { 
+        _sendAddr = "/oculon/" + sceneName + '/' + paramName; 
+        return *this; 
+    }
+    
     inline CreateParam& oscSender( const std::string& address )
     { _sendAddr = address; return *this; }
     

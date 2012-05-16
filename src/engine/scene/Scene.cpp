@@ -58,8 +58,7 @@ void Scene::init(OculonApp* app)
     mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, 0) );
     // bind to Scene::loadInterfaceParams(0)
     mInterface->addParam(CreateBoolParam("active", &mIsVisible)
-                         .oscReceiver(mName,"toggle")
-                         .oscSender("/oculon/" + mName + "/visible").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );
+                         .oscReceiver(mName,"toggle").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );
     mInterface->addButton(CreateTriggerParam("reset", NULL)
                           .oscReceiver(mName))->registerCallback( this, &Scene::onReset );
     mInterface->addParam(CreateBoolParam("visible", &mIsVisible)
