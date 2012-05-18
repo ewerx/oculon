@@ -76,6 +76,16 @@ mowa::sgui::ButtonControl* Interface::addButton( const CreateTriggerParam& param
     return control;
 }
 
+mowa::sgui::IntVarControl* Interface::addEnum( const CreateEnumParam& param )
+{
+    mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max-1, param._default );
+    
+    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._vertical );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
 void Interface::update()
 {
 }

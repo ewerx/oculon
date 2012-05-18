@@ -12,6 +12,7 @@ static const ci::Color kClearColor	= ci::Color(0.0f, 0.0f, 0.0f);
 
 static const float kCaptureFramerate = 25.0f;
 
+static const int OSC_ADDRESS_SIZE   = 256;
 
 enum eLogLevel
 {

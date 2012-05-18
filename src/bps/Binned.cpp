@@ -269,14 +269,14 @@ void Binned::setupInterface()
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
                          .minValue(1).maxValue(100));
     
-    mInterface->addParam(CreateIntParam("Initial_Formation", &mInitialFormation)
-                         .minValue(0).maxValue(FORMATION_COUNT-1)
-                         .oscReceiver("/binned/formation"));
-    mInterface->addParam(CreateFloatParam("Wall_Padding", &mWallPadding)
+    mInterface->addEnum(CreateEnumParam("Initial Formation", &mInitialFormation)
+                         .maxValue(FORMATION_COUNT)
+                         .oscReceiver(mName,"formation"));
+    mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
                          .minValue(-10.0f).maxValue(50.0f));
     
-    mInterface->addParam(CreateIntParam("Mode", &mRepulsionMode)
-                         .minValue(0).maxValue(MODE_COUNT-1));
+    mInterface->addEnum(CreateEnumParam("Mode", &mRepulsionMode)
+                         .maxValue(MODE_COUNT));
     
     mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
                          .maxValue(0.1f)
@@ -313,9 +313,10 @@ void Binned::setupInterface()
     mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
                          .oscReceiver("/binned/audiolevel"));
     
-    mInterface->addParam(CreateIntParam("Reaction Style", &mAudioPattern)
-                         .maxValue(AUDIO_PATTERN_COUNT-1)
-                         .oscReceiver("/binned/audioreaction"));
+    mInterface->addEnum(CreateEnumParam("Reaction Style", &mAudioPattern)
+                        .maxValue(AUDIO_PATTERN_COUNT)
+                        .oscReceiver(mName,"audioreaction")
+                        .isVertical());
     
 }
 

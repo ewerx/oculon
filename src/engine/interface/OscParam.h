@@ -22,6 +22,7 @@ public:
         PARAMTYPE_INT,
         PARAMTYPE_BOOL,
         PARAMTYPE_TRIGGER,
+        PARAMTYPE_ENUM,
         
         PARAMTYPE_COUNT
     };
@@ -39,7 +40,7 @@ public:
     
     virtual mowa::sgui::Control* getControl() = 0;
     virtual void prepOscSend( osc::Message& message ) = 0;
-    virtual void handleOscMessage(const osc::Message& message) = 0;
+    //virtual void handleOscMessage(const osc::Message& message) = 0;
     
 protected:
     eType mType;
@@ -116,6 +117,22 @@ protected:
     mowa::sgui::ButtonControl* mControl;
 };
 
+//-----------------------------------------------------------------------------                              
+class OscEnumParam : public OscParam
+{
+public:
+    OscEnumParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isVertical);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
+    
+    void prepOscSend( osc::Message& message );
+    void handleOscMessage( const osc::Message& message, int index );
+    
+protected:
+    mowa::sgui::IntVarControl* mControl;
+    bool mIsVertical;
+};
+
 //-----------------------------------------------------------------------------
 class Interface;
 
@@ -132,6 +149,7 @@ public:
     , _sendAddr("")
     , _recvAddr("")
     , _feedback(false)
+    , _vertical(false)
     {
         if( var != NULL ) _default = *var;
     }
@@ -169,7 +187,10 @@ public:
     inline CreateParam& sendFeedback( const bool feedback =true )
     { _feedback = feedback; return *this; }
     
-private:
+    inline CreateParam& isVertical( const bool vertical =true )
+    { _vertical = vertical; return *this; }
+    
+protected:
     friend class Interface;
     
     std::string _name;
@@ -180,10 +201,12 @@ private:
     std::string _sendAddr;
     std::string _recvAddr;
     bool        _feedback;
+    bool        _vertical;
 };
 
 typedef CreateParam<float>                  CreateFloatParam;
 typedef CreateParam<int32_t>                CreateIntParam;
 typedef CreateParam<bool>                   CreateBoolParam;
 typedef CreateParam<char>                   CreateTriggerParam;
+typedef CreateParam<int>                    CreateEnumParam;
 

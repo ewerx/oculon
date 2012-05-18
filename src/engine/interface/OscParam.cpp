@@ -10,9 +10,11 @@
 #include "OscMessage.h"
 #include "OscServer.h"
 #include "SimpleGUI.h"
+#include <sstream>
 
 using namespace ci;
 using namespace mowa::sgui;
+using std::ostringstream;
 
 #pragma MARK OscParam
 
@@ -46,7 +48,10 @@ OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const 
 , mControl(control)
 {
     assert(mControl != NULL);
-    server->registerCallback( recvAddr, this, &OscFloatParam::handleOscMessage );
+    if( recvAddr.length() > 0 )
+    {
+        server->registerCallback( recvAddr, this, &OscFloatParam::handleOscMessage );
+    }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
@@ -74,7 +79,10 @@ OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const std::s
 , mControl(control)
 {
     assert(mControl != NULL);
-    server->registerCallback( recvAddr, this, &OscIntParam::handleOscMessage );
+    if( recvAddr.length() > 0 )
+    {
+        server->registerCallback( recvAddr, this, &OscIntParam::handleOscMessage );
+    }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
@@ -116,7 +124,10 @@ OscBoolParam::OscBoolParam(OscServer* server, BoolVarControl* control, const std
 , mControl(control)
 {
     assert(mControl != NULL);
-    server->registerCallback( recvAddr, this, &OscBoolParam::handleOscMessage );
+    if( recvAddr.length() > 0 )
+    {
+        server->registerCallback( recvAddr, this, &OscBoolParam::handleOscMessage );
+    }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
@@ -159,7 +170,10 @@ OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, cons
 , mControl(control)
 {
     assert(mControl != NULL);
-    server->registerCallback( recvAddr, this, &OscTriggerParam::handleOscMessage );
+    if( recvAddr.length() > 0 )
+    {
+        server->registerCallback( recvAddr, this, &OscTriggerParam::handleOscMessage );
+    }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
@@ -198,4 +212,63 @@ void OscTriggerParam::prepOscSend( osc::Message& message )
 {
     message.addIntArg( 1 );
 }
+
+#pragma MARK OscEnumParam
+
+OscEnumParam::OscEnumParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isVertical)
+: OscParam(OscParam::PARAMTYPE_ENUM, server, recvAddr, sendAddr, sendsFeedback)
+, mControl(control)
+, mIsVertical(isVertical)
+{
+    assert(mControl != NULL);
+    
+    if( recvAddr.length() > 0 )
+    {
+        const int enum_count = control->max + 1; // gui max is count-1
+        char buf[OSC_ADDRESS_SIZE];
+        for( int i = 0; i < enum_count; ++i )
+        {
+            // enum index is 0-based, osc address is 1-based
+            const int row = isVertical ? (enum_count - i) : 1;
+            const int col = isVertical ? 1 : i+1;
+            snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d/%d", recvAddr.c_str(), row, col );
+            server->registerCallback( buf, boost::bind( &OscEnumParam::handleOscMessage, this, _1, i) );
+        }
+    }
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+}
+
+void OscEnumParam::handleOscMessage( const osc::Message& message, int index )
+{
+    if( message.getNumArgs() == 1 )
+    {
+        switch( message.getArgType(0) )
+        {
+            case osc::TYPE_FLOAT:
+                if( message.getArgAsFloat(0) == 1.0f )
+                {
+                    console() << "[osc] multi-toggle mapped to index: " << index << std::endl;
+                    *(mControl->var) = index;
+                }
+                break;
+                
+            default:
+                console() << "[osc] WARNING: unexpected message format for bool parameter" << std::endl;
+                break;
+        }
+        
+    }
+    else
+    {
+        console() << "[osc] WARNING: unexpected message format for int parameter" << std::endl;
+    }
+}
+
+void OscEnumParam::prepOscSend( osc::Message& message )
+{
+    message.addIntArg( mIsVertical ? ((mControl->max+1) - (*(mControl->var))) : 1 );
+    message.addIntArg( mIsVertical ? 1 : (*(mControl->var))+1 );
+    message.addIntArg( 1 );
+}
+
 

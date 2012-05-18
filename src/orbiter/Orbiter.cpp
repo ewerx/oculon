@@ -152,6 +152,7 @@ void Orbiter::setupDebugInterface()
 
 void Orbiter::setupInterface()
 {
+    
 }
 
 void Orbiter::reset()

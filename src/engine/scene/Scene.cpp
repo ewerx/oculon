@@ -201,7 +201,7 @@ void Scene::showInterface(bool show)
     mInterface->gui()->setEnabled(show);
     if( show )
     {
-        mInterface->createControlInterface(mName);
+        //mInterface->createControlInterface(mName);
     }
 }
 

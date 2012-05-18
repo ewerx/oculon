@@ -45,6 +45,11 @@ public:
         mCallbackMap[address] = boost::bind( callback, obj, boost::arg<1>() );
     }
     
+    void registerCallback( std::string address, tOscCallback callback )
+    {
+        mCallbackMap[address] = callback;
+    }
+    
     void unregisterCallback( const std::string& address )
     {
         mCallbackMap.erase(address);
