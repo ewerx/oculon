@@ -111,6 +111,9 @@ void ShaderTest::setupInterface()
                          .defaultValue(mUseFbo)
                          .oscReceiver("/1/toggle2")
                          .oscSender("/1/toggle2"));
+    
+    mInterface->gui()->addParam("pos", &mPos, Vec2f::zero(), Vec2f(mApp->getViewportWidth(),mApp->getViewportHeight()));
+    mInterface->gui()->addParam("vel", &mVel);
 }
 
 void ShaderTest::update(double dt)

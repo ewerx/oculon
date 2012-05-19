@@ -103,22 +103,12 @@ void Interface::draw()
 
 void Interface::sendAll()
 {
-    osc::Message message;
-    
     for (vector<OscParam*>::iterator it = mParams.begin(); 
          it != mParams.end();
          ++it )
     {
         OscParam* param = (*it);
-        message.clear();
-        
-        const std::string& address = param->getOscRecvAddress();
-        if( param->getType() != OscParam::PARAMTYPE_TRIGGER && address.length() > 0 )
-        {
-            param->prepOscSend( message );
-            message.setAddress( param->getOscRecvAddress() );
-            mOsc->sendMessage( message );
-        }
+        param->sendValue();
     }
 }
 

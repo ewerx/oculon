@@ -23,6 +23,7 @@ public:
         PARAMTYPE_BOOL,
         PARAMTYPE_TRIGGER,
         PARAMTYPE_ENUM,
+        PARAMTYPE_VECTOR,
         
         PARAMTYPE_COUNT
     };
@@ -39,8 +40,7 @@ public:
     bool valueChangedCallback();
     
     virtual mowa::sgui::Control* getControl() = 0;
-    virtual void prepOscSend( osc::Message& message ) = 0;
-    //virtual void handleOscMessage(const osc::Message& message) = 0;
+    virtual void sendValue() = 0;
     
 protected:
     eType mType;
@@ -62,7 +62,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
 
-    void prepOscSend( osc::Message& message );
+    void sendValue();
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -78,7 +78,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void prepOscSend( osc::Message& message );
+    void sendValue();
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -94,7 +94,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void prepOscSend( osc::Message& message );
+    void sendValue();
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -110,7 +110,7 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void prepOscSend( osc::Message& message );
+    void sendValue();
     void handleOscMessage( const osc::Message& message );
     
 protected:
@@ -125,13 +125,32 @@ public:
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
-    void prepOscSend( osc::Message& message );
+    void sendValue();
     void handleOscMessage( const osc::Message& message, int index );
     
 protected:
     mowa::sgui::IntVarControl* mControl;
     bool mIsVertical;
 };
+
+//-----------------------------------------------------------------------------
+template<typename T, unsigned int _size> 
+class OscVectorParam : public OscParam
+{
+    OscVectorParam(OscServer* server, mowa::sgui::VectorVarControl<T,_size>* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
+    
+    void sendValue();
+    void handleOscMessage( const osc::Message& message, int index );
+    
+protected:
+    mowa::sgui::VectorVarControl<T,_size>* mControl;
+};
+
+typedef OscVectorParam<float,2>     OscVec2fParam;
+typedef OscVectorParam<float,3>     OscVec3fParam;
+typedef OscVectorParam<float,4>     OscVec4fParam;
 
 //-----------------------------------------------------------------------------
 class Interface;

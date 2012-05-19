@@ -32,10 +32,7 @@ bool OscParam::valueChangedCallback()
 {
     if( mIsSender )
     {
-        osc::Message message;
-        prepOscSend( message );
-        message.setAddress( mOscSendAddress );
-        mOscServer->sendMessage( message );
+        sendValue();
     }
     
     return false;
@@ -67,9 +64,15 @@ void OscFloatParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscFloatParam::prepOscSend( osc::Message& message )
+void OscFloatParam::sendValue()
 {
+    if( mOscSendAddress.empty() )
+        return;
+    
+    osc::Message message;
+    message.setAddress( mOscSendAddress );
     message.addFloatArg( mControl->getNormalizedValue() );
+    mOscServer->sendMessage( message );
 }
 
 #pragma MARK OscIntParam
@@ -101,7 +104,7 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
                 break;
                 
             default:
-                console() << "[osc] WARNING: unexpected message format for bool parameter" << std::endl;
+                console() << "[osc] WARNING: unexpected message format for int parameter" << std::endl;
                 break;
         }
         
@@ -112,9 +115,15 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscIntParam::prepOscSend( osc::Message& message )
+void OscIntParam::sendValue()
 {
+    if( mOscSendAddress.empty() )
+        return;
+    
+    osc::Message message;
+    message.setAddress( mOscSendAddress );
     message.addFloatArg( mControl->getNormalizedValue() );
+    mOscServer->sendMessage( message );
 }
 
 #pragma MARK OscBoolParam
@@ -158,9 +167,15 @@ void OscBoolParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscBoolParam::prepOscSend( osc::Message& message )
+void OscBoolParam::sendValue()
 {
+    if( mOscSendAddress.empty() )
+        return;
+    
+    osc::Message message;
+    message.setAddress( mOscSendAddress );
     message.addIntArg( (*(mControl->var)) ? 1 : 0 );
+    mOscServer->sendMessage( message );
 }
 
 #pragma MARK OscTriggerParam
@@ -208,9 +223,12 @@ void OscTriggerParam::handleOscMessage( const osc::Message& message )
     }
 }
 
-void OscTriggerParam::prepOscSend( osc::Message& message )
+void OscTriggerParam::sendValue()
 {
-    message.addIntArg( 1 );
+    //osc::Message message;
+    //message.setAddress( mOscSendAddress );
+    //message.addIntArg( 1 );
+    //mOscServer->sendMessage( message );
 }
 
 #pragma MARK OscEnumParam
@@ -253,7 +271,69 @@ void OscEnumParam::handleOscMessage( const osc::Message& message, int index )
                 break;
                 
             default:
-                console() << "[osc] WARNING: unexpected message format for bool parameter" << std::endl;
+                console() << "[osc] WARNING: unexpected message format for enum parameter" << std::endl;
+                break;
+        }
+        
+    }
+    else
+    {
+        console() << "[osc] WARNING: unexpected message format for enum parameter" << std::endl;
+    }
+}
+
+void OscEnumParam::sendValue()
+{
+    if( mOscSendAddress.empty() )
+        return;
+    
+    osc::Message message;
+    message.setAddress( mOscSendAddress );
+    message.addIntArg( mIsVertical ? ((mControl->max+1) - (*(mControl->var))) : 1 );
+    message.addIntArg( mIsVertical ? 1 : (*(mControl->var))+1 );
+    message.addIntArg( 1 );
+    mOscServer->sendMessage( message );
+    
+}
+
+#pragma MARK OscVectorParam
+
+template <typename T, unsigned int _size>
+OscVectorParam<T,_size>::OscVectorParam(OscServer* server, VectorVarControl<T,_size>* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_ENUM, server, recvAddr, sendAddr, sendsFeedback)
+, mControl(control)
+{
+    assert(mControl != NULL);
+    
+    if( recvAddr.length() > 0 )
+    {
+        char buf[OSC_ADDRESS_SIZE];
+        for( int i = 0; i < _size; ++i )
+        {
+            // osc address is 1-based
+            snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", recvAddr.c_str(), i+1 );
+            server->registerCallback( buf, boost::bind( &OscEnumParam::handleOscMessage, this, _1, i) );
+        }
+    }
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+}
+
+template <typename T, unsigned int _size>
+void OscVectorParam<T,_size>::handleOscMessage( const osc::Message& message, int index )
+{
+    if( message.getNumArgs() == 1 )
+    {
+        switch( message.getArgType(0) )
+        {
+            case osc::TYPE_FLOAT:
+                if( message.getArgAsFloat(0) == 1.0f )
+                {
+                    mControl->setNormalizedValue( index, message.getArgAsFloat(0), true );
+                }
+                break;
+                
+            default:
+                console() << "[osc] WARNING: unexpected message format for vector parameter" << std::endl;
                 break;
         }
         
@@ -264,11 +344,18 @@ void OscEnumParam::handleOscMessage( const osc::Message& message, int index )
     }
 }
 
-void OscEnumParam::prepOscSend( osc::Message& message )
+template <typename T, unsigned int _size>
+void OscVectorParam<T,_size>::sendValue()
 {
-    message.addIntArg( mIsVertical ? ((mControl->max+1) - (*(mControl->var))) : 1 );
-    message.addIntArg( mIsVertical ? 1 : (*(mControl->var))+1 );
-    message.addIntArg( 1 );
+    if( mOscSendAddress.empty() )
+        return;
+    
+    for( int i = 0; i < _size; ++i )
+    {
+        osc::Message message;
+        message.setAddress( mOscSendAddress + "/" + (i+1) );
+        message.addFloatArg( mControl->getNormalizedValue(i) );
+        mOscServer->sendMessage( message );
+    }
 }
-
 
