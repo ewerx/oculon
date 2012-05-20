@@ -40,14 +40,16 @@ bool OscParam::valueChangedCallback()
 
 #pragma MARK OscFloatParam
 
-OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
-: OscParam(OscParam::PARAMTYPE_FLOAT, server, recvAddr, sendAddr, sendsFeedback)
+OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const CreateFloatParam& param)
+: OscParam(OscParam::PARAMTYPE_FLOAT, server, param._recvAddr, param._sendAddr, param._feedback)
 , mControl(control)
+, mIsEncoder(param._altstyle)
+, mStep(param._step)
 {
     assert(mControl != NULL);
-    if( recvAddr.length() > 0 )
+    if( param._recvAddr.length() > 0 )
     {
-        server->registerCallback( recvAddr, this, &OscFloatParam::handleOscMessage );
+        server->registerCallback( param._recvAddr, this, &OscFloatParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
@@ -56,7 +58,15 @@ void OscFloatParam::handleOscMessage( const osc::Message& message )
 {
     if( message.getNumArgs() == 1 && osc::TYPE_FLOAT == message.getArgType(0) )
     {
-        mControl->setNormalizedValue( message.getArgAsFloat(0), true );
+        if( mIsEncoder )
+        {
+            *(mControl->var) += mStep * (message.getArgAsFloat(0) > 0.0f ? 1.0f : -1.0f);
+            mControl->triggerCallback();
+        }
+        else
+        {
+            mControl->setNormalizedValue( message.getArgAsFloat(0), true );
+        }
     }
     else
     {
@@ -71,20 +81,22 @@ void OscFloatParam::sendValue()
     
     osc::Message message;
     message.setAddress( mOscSendAddress );
-    message.addFloatArg( mControl->getNormalizedValue() );
+    message.addFloatArg( mIsEncoder ? *(mControl->var) : mControl->getNormalizedValue() );
     mOscServer->sendMessage( message );
 }
 
 #pragma MARK OscIntParam
 
-OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
-: OscParam(OscParam::PARAMTYPE_INT, server, recvAddr, sendAddr, sendsFeedback)
+OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const CreateIntParam& param)
+: OscParam(OscParam::PARAMTYPE_INT, server, param._recvAddr, param._sendAddr, param._feedback)
 , mControl(control)
+, mIsEncoder(param._altstyle)
+, mStep(param._step)
 {
     assert(mControl != NULL);
-    if( recvAddr.length() > 0 )
+    if( param._recvAddr.length() > 0 )
     {
-        server->registerCallback( recvAddr, this, &OscIntParam::handleOscMessage );
+        server->registerCallback( param._recvAddr, this, &OscIntParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
@@ -100,7 +112,15 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
                 break;
                 
             case osc::TYPE_FLOAT:
-                mControl->setNormalizedValue( message.getArgAsFloat(0), /*silent*/true );
+                if( mIsEncoder )
+                {
+                    *(mControl->var) += mStep * (message.getArgAsFloat(0) > 0.0f ? 1 : -1);
+                    mControl->triggerCallback();
+                }
+                else
+                {
+                    mControl->setNormalizedValue( message.getArgAsFloat(0), /*silent*/true );
+                }
                 break;
                 
             default:
@@ -122,7 +142,7 @@ void OscIntParam::sendValue()
     
     osc::Message message;
     message.setAddress( mOscSendAddress );
-    message.addFloatArg( mControl->getNormalizedValue() );
+    message.addFloatArg( mIsEncoder ? *(mControl->var) : mControl->getNormalizedValue() );
     mOscServer->sendMessage( message );
 }
 

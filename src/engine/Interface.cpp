@@ -21,7 +21,7 @@ mowa::sgui::FloatVarControl* Interface::addParam( const CreateFloatParam& param 
 {
     mowa::sgui::FloatVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, *(param._var) );
     
-    OscFloatParam* oscParam = new OscFloatParam( mOsc, control, param._recvAddr, param._sendAddr, param._feedback );
+    OscFloatParam* oscParam = new OscFloatParam( mOsc, control, param );
     mParams.push_back(oscParam);
     
     return control;
@@ -31,7 +31,7 @@ mowa::sgui::IntVarControl* Interface::addParam( const CreateIntParam& param )
 {
     mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, *(param._var) );
     
-    OscIntParam* oscParam = new OscIntParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback);
+    OscIntParam* oscParam = new OscIntParam( mOsc, control, param );
     mParams.push_back(oscParam);
     
     return control;

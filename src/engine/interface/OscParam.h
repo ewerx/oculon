@@ -12,6 +12,18 @@
 #include "OscMessage.h"
 
 class OscServer;
+template<typename T>
+class CreateParam;
+typedef CreateParam<float>      CreateFloatParam;
+typedef CreateParam<int32_t>    CreateIntParam;
+typedef CreateParam<bool>       CreateBoolParam;
+typedef CreateParam<char>       CreateTriggerParam;
+typedef CreateParam<int>        CreateEnumParam;
+typedef CreateParam<ColorA>     CreateColorParam;
+typedef CreateParam<Vec2f>      CreateVec2fParam;
+typedef CreateParam<Vec3f>      CreateVec3fParam;
+typedef CreateParam<Vec4f>      CreateVec4fParam;
+
 
 class OscParam
 {
@@ -59,7 +71,7 @@ protected:
 class OscFloatParam : public OscParam
 {
 public:
-    OscFloatParam(OscServer* server, mowa::sgui::FloatVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
+    OscFloatParam(OscServer* server, mowa::sgui::FloatVarControl* guiControl, const CreateFloatParam& param);
     
     mowa::sgui::Control* getControl()   { return mControl; }
 
@@ -68,14 +80,15 @@ public:
     
 protected:
     mowa::sgui::FloatVarControl* mControl;
-    
+    bool mIsEncoder;
+    float mStep;
 };
 
 //-----------------------------------------------------------------------------                              
 class OscIntParam : public OscParam
 {
 public:
-    OscIntParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
+    OscIntParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const CreateIntParam& param);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -84,7 +97,8 @@ public:
     
 protected:
     mowa::sgui::IntVarControl* mControl;
-    
+    bool mIsEncoder;
+    int32_t mStep;
 };
 
 //----------------------------------------------------------------------------- 
@@ -187,6 +201,7 @@ public:
     , _recvAddr("")
     , _feedback(false)
     , _altstyle(false)
+    , _step(0)
     {
     }
     
@@ -241,9 +256,15 @@ public:
     inline CreateParam& isGrouped()
     { _altstyle = true; return *this; }
     
-protected:
-    friend class Interface;
+    inline CreateParam& isEncoder( const T& step )
+    {
+        _feedback = true;
+        _altstyle = true; 
+        _step = step;
+        return *this; 
+    }
     
+public:
     std::string _name;
     T*          _var;
     T           _min;
@@ -252,15 +273,6 @@ protected:
     std::string _recvAddr;
     bool        _feedback;
     bool        _altstyle;
+    T           _step;
 };
-
-typedef CreateParam<float>                  CreateFloatParam;
-typedef CreateParam<int32_t>                CreateIntParam;
-typedef CreateParam<bool>                   CreateBoolParam;
-typedef CreateParam<char>                   CreateTriggerParam;
-typedef CreateParam<int>                    CreateEnumParam;
-typedef CreateParam<ColorA>                 CreateColorParam;
-typedef CreateParam<Vec2f>                  CreateVec2fParam;
-typedef CreateParam<Vec3f>                  CreateVec3fParam;
-typedef CreateParam<Vec4f>                  CreateVec4fParam;
 
