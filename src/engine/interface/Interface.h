@@ -29,6 +29,10 @@ public:
     mowa::sgui::BoolVarControl*   addParam( const CreateBoolParam& param );
     mowa::sgui::ButtonControl*    addButton( const CreateTriggerParam& param );
     mowa::sgui::IntVarControl*    addEnum( const CreateEnumParam& param );
+    mowa::sgui::ColorVarControl*  addParam( const CreateColorParam& param );
+    mowa::sgui::Vec2fVarControl*  addParam( const CreateVec2fParam& param );
+    mowa::sgui::Vec3fVarControl*  addParam( const CreateVec3fParam& param );
+    mowa::sgui::Vec4fVarControl*  addParam( const CreateVec4fParam& param );
     
     void update();
     void draw();

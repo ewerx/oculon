@@ -23,6 +23,7 @@ public:
         PARAMTYPE_BOOL,
         PARAMTYPE_TRIGGER,
         PARAMTYPE_ENUM,
+        PARAMTYPE_COLOR,
         PARAMTYPE_VECTOR,
         
         PARAMTYPE_COUNT
@@ -133,11 +134,28 @@ protected:
     bool mIsVertical;
 };
 
+//-----------------------------------------------------------------------------                              
+class OscColorParam : public OscParam
+{
+public:
+    OscColorParam(OscServer* server, mowa::sgui::ColorVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isGrouped);
+    
+    mowa::sgui::Control* getControl()   { return mControl; }
+    
+    void sendValue();
+    void handleOscMessage( const osc::Message& message, int index );
+    
+protected:
+    mowa::sgui::ColorVarControl* mControl;
+    bool mIsGrouped;
+};
+
 //-----------------------------------------------------------------------------
 template<typename T, unsigned int _size> 
 class OscVectorParam : public OscParam
 {
-    OscVectorParam(OscServer* server, mowa::sgui::VectorVarControl<T,_size>* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
+public:
+    OscVectorParam(OscServer* server, mowa::sgui::VectorVarControl<T,_size>* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isGrouped);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -146,6 +164,7 @@ class OscVectorParam : public OscParam
     
 protected:
     mowa::sgui::VectorVarControl<T,_size>* mControl;
+    bool mIsGrouped;
 };
 
 typedef OscVectorParam<float,2>     OscVec2fParam;
@@ -164,13 +183,23 @@ public:
     , _var(var)
     , _min(0)
     , _max(1)
-    , _default(0)
     , _sendAddr("")
     , _recvAddr("")
     , _feedback(false)
-    , _vertical(false)
+    , _altstyle(false)
     {
-        if( var != NULL ) _default = *var;
+    }
+    
+    inline CreateParam( const std::string& name, T* var, T min, T max )
+    : _name(name)
+    , _var(var)
+    , _min(min)
+    , _max(max)
+    , _sendAddr("")
+    , _recvAddr("")
+    , _feedback(false)
+    , _altstyle(false)
+    {
     }
     
     inline CreateParam& minValue( const T& min ) 
@@ -178,10 +207,7 @@ public:
     
     inline CreateParam& maxValue( const T& max ) 
     { _max = max; return *this; }
-    
-    inline CreateParam& defaultValue( const T& defaultValue )
-    { _default = defaultValue; return *this; }
-    
+        
     inline CreateParam& oscReceiver( const std::string& sceneName )
     {
         return oscReceiver( sceneName, _name );
@@ -206,8 +232,14 @@ public:
     inline CreateParam& sendFeedback( const bool feedback =true )
     { _feedback = feedback; return *this; }
     
-    inline CreateParam& isVertical( const bool vertical =true )
-    { _vertical = vertical; return *this; }
+    inline CreateParam& isXYPad()
+    { _altstyle = true; return *this; }
+    
+    inline CreateParam& isVertical()
+    { _altstyle = true; return *this; }
+    
+    inline CreateParam& isGrouped()
+    { _altstyle = true; return *this; }
     
 protected:
     friend class Interface;
@@ -216,11 +248,10 @@ protected:
     T*          _var;
     T           _min;
     T           _max;
-    T           _default;
     std::string _sendAddr;
     std::string _recvAddr;
     bool        _feedback;
-    bool        _vertical;
+    bool        _altstyle;
 };
 
 typedef CreateParam<float>                  CreateFloatParam;
@@ -228,4 +259,8 @@ typedef CreateParam<int32_t>                CreateIntParam;
 typedef CreateParam<bool>                   CreateBoolParam;
 typedef CreateParam<char>                   CreateTriggerParam;
 typedef CreateParam<int>                    CreateEnumParam;
+typedef CreateParam<ColorA>                 CreateColorParam;
+typedef CreateParam<Vec2f>                  CreateVec2fParam;
+typedef CreateParam<Vec3f>                  CreateVec3fParam;
+typedef CreateParam<Vec4f>                  CreateVec4fParam;
 

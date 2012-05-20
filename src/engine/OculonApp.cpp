@@ -208,12 +208,9 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mInterface->gui()->addColumn();
     mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
     mInterface->gui()->addButton("Toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
-    mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible))
-                         .defaultValue(scene->mIsVisible))->registerCallback( scene, &Scene::onVisibleChanged );
-    mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning))
-                         .defaultValue(scene->mIsRunning))->registerCallback( scene, &Scene::onRunningChanged );
-    mInterface->addParam(CreateBoolParam("Debug", &(scene->mIsDebug))
-                         .defaultValue(scene->mIsDebug))->registerCallback( scene, &Scene::onDebugChanged );
+    mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible)))->registerCallback( scene, &Scene::onVisibleChanged );
+    mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning)))->registerCallback( scene, &Scene::onRunningChanged );
+    mInterface->addParam(CreateBoolParam("Debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
     
     console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }

@@ -15,30 +15,11 @@ using namespace std;
 using namespace ci;
 using namespace mowa::sgui;
 
-// constructor
-Interface::Interface(app::App* app, OscServer* osc)
-: mGui(NULL)
-, mOsc(osc)
-{
-    mGui = new SimpleGUI(app);
-}
-
-Interface::~Interface()
-{
-    for (vector<OscParam*>::iterator it = mParams.begin(); 
-         it != mParams.end();
-         ++it )
-    {
-        OscParam* param = (*it);
-        delete param;
-    }
-    
-    delete mGui;
-}
+#pragma MARK Controls
 
 mowa::sgui::FloatVarControl* Interface::addParam( const CreateFloatParam& param )
 {
-    mowa::sgui::FloatVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
+    mowa::sgui::FloatVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, *(param._var) );
     
     OscFloatParam* oscParam = new OscFloatParam( mOsc, control, param._recvAddr, param._sendAddr, param._feedback );
     mParams.push_back(oscParam);
@@ -48,7 +29,7 @@ mowa::sgui::FloatVarControl* Interface::addParam( const CreateFloatParam& param 
 
 mowa::sgui::IntVarControl* Interface::addParam( const CreateIntParam& param )
 {
-    mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, param._default );
+    mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max, *(param._var) );
     
     OscIntParam* oscParam = new OscIntParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback);
     mParams.push_back(oscParam);
@@ -58,7 +39,7 @@ mowa::sgui::IntVarControl* Interface::addParam( const CreateIntParam& param )
 
 mowa::sgui::BoolVarControl* Interface::addParam( const CreateBoolParam& param )
 {
-    mowa::sgui::BoolVarControl* control = mGui->addParam( param._name, param._var, param._default );
+    mowa::sgui::BoolVarControl* control = mGui->addParam( param._name, param._var, *(param._var) );
     
     OscBoolParam* oscParam = new OscBoolParam( mOsc, control, param._recvAddr, param._sendAddr, param._feedback );
     mParams.push_back(oscParam);
@@ -78,12 +59,75 @@ mowa::sgui::ButtonControl* Interface::addButton( const CreateTriggerParam& param
 
 mowa::sgui::IntVarControl* Interface::addEnum( const CreateEnumParam& param )
 {
-    mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max-1, param._default );
+    mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max-1, *(param._var) );
     
-    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._vertical );
+    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
     mParams.push_back(oscParam);
     
     return control;
+}
+
+mowa::sgui::ColorVarControl* Interface::addParam( const CreateColorParam& param )
+{
+    mowa::sgui::ColorVarControl* control = mGui->addParam( param._name, param._var );
+    
+    OscColorParam* oscParam = new OscColorParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
+mowa::sgui::Vec2fVarControl* Interface::addParam( const CreateVec2fParam& param )
+{
+    mowa::sgui::Vec2fVarControl* control = mGui->addParam( param._name, param._var->ptr(), param._min, param._max );
+    
+    OscVec2fParam* oscParam = new OscVec2fParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
+mowa::sgui::Vec3fVarControl* Interface::addParam( const CreateVec3fParam& param )
+{
+    mowa::sgui::Vec3fVarControl* control = mGui->addParam( param._name, param._var->ptr(), param._min, param._max );
+    
+    OscVec3fParam* oscParam = new OscVec3fParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
+mowa::sgui::Vec4fVarControl* Interface::addParam( const CreateVec4fParam& param )
+{
+    mowa::sgui::Vec4fVarControl* control = mGui->addParam( param._name, param._var->ptr(), param._min, param._max );
+    
+    OscVec4fParam* oscParam = new OscVec4fParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
+#pragma MARK Interface
+
+// constructor
+Interface::Interface(app::App* app, OscServer* osc)
+: mGui(NULL)
+, mOsc(osc)
+{
+    mGui = new SimpleGUI(app);
+}
+
+Interface::~Interface()
+{
+    for (vector<OscParam*>::iterator it = mParams.begin(); 
+         it != mParams.end();
+         ++it )
+    {
+        OscParam* param = (*it);
+        delete param;
+    }
+    
+    delete mGui;
 }
 
 void Interface::update()

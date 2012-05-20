@@ -296,23 +296,105 @@ void OscEnumParam::sendValue()
     
 }
 
-#pragma MARK OscVectorParam
+#pragma MARK OscColorParam
 
-template <typename T, unsigned int _size>
-OscVectorParam<T,_size>::OscVectorParam(OscServer* server, VectorVarControl<T,_size>* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
-: OscParam(OscParam::PARAMTYPE_ENUM, server, recvAddr, sendAddr, sendsFeedback)
+OscColorParam::OscColorParam(OscServer* server, ColorVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isGrouped)
+: OscParam(OscParam::PARAMTYPE_COLOR, server, recvAddr, sendAddr, sendsFeedback)
 , mControl(control)
+, mIsGrouped(isGrouped)
 {
     assert(mControl != NULL);
     
     if( recvAddr.length() > 0 )
     {
         char buf[OSC_ADDRESS_SIZE];
-        for( int i = 0; i < _size; ++i )
+        for( int i = 0; i < 4; ++i )
         {
             // osc address is 1-based
             snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", recvAddr.c_str(), i+1 );
-            server->registerCallback( buf, boost::bind( &OscEnumParam::handleOscMessage, this, _1, i) );
+            server->registerCallback( buf, boost::bind( &OscColorParam::handleOscMessage, this, _1, i+1) );
+        }
+    }
+    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+}
+
+void OscColorParam::handleOscMessage( const osc::Message& message, int index )
+{
+    if( message.getNumArgs() == 1 )
+    {
+        switch( message.getArgType(0) )
+        {
+            case osc::TYPE_FLOAT:
+                mControl->setValueForElement( index, message.getArgAsFloat(0), true );
+                break;
+                
+            default:
+                console() << "[osc] WARNING: unexpected message format for enum parameter" << std::endl;
+                break;
+        }
+        
+    }
+    else
+    {
+        console() << "[osc] WARNING: unexpected message format for enum parameter" << std::endl;
+    }
+}
+
+void OscColorParam::sendValue()
+{
+    if( mOscSendAddress.empty() )
+        return;
+    
+    if( mIsGrouped )
+    {
+        osc::Message message;
+        message.setAddress( mOscSendAddress );
+        for( int i = 0; i < 4; ++i )
+        {
+            message.addFloatArg( mControl->getValueForElement(i) );
+        }
+        mOscServer->sendMessage( message );
+    }
+    else
+    {
+        for( int i = 0; i < 4; ++i )
+        {
+            osc::Message message;
+            ostringstream ss;
+            ss << mOscSendAddress << "/" << (i+1);
+            message.setAddress( ss.str() );
+            message.addFloatArg( mControl->getValueForElement(i) );
+            mOscServer->sendMessage( message );
+        }
+    }
+}
+
+#pragma MARK OscVectorParam
+
+template <typename T, unsigned int _size>
+OscVectorParam<T,_size>::OscVectorParam(OscServer* server, VectorVarControl<T,_size>* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isGrouped)
+: OscParam(OscParam::PARAMTYPE_VECTOR, server, recvAddr, sendAddr, sendsFeedback)
+, mControl(control)
+, mIsGrouped(isGrouped)
+{
+    assert(mControl != NULL);
+    
+    if( recvAddr.length() > 0 )
+    {
+        if( mIsGrouped && _size == 2 )
+        {
+            // special case for XY pad
+            server->registerCallback( recvAddr, boost::bind( &OscVectorParam::handleOscMessage, this, _1, 0) );
+        }
+        else
+        {
+            char buf[OSC_ADDRESS_SIZE];
+            for( int i = 0; i < _size; ++i )
+            {
+                // osc address is 1-based
+                snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", recvAddr.c_str(), i+1 );
+                server->registerCallback( buf, boost::bind( &OscVectorParam::handleOscMessage, this, _1, i) );
+            }
         }
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
@@ -326,10 +408,7 @@ void OscVectorParam<T,_size>::handleOscMessage( const osc::Message& message, int
         switch( message.getArgType(0) )
         {
             case osc::TYPE_FLOAT:
-                if( message.getArgAsFloat(0) == 1.0f )
-                {
-                    mControl->setNormalizedValue( index, message.getArgAsFloat(0), true );
-                }
+                mControl->setNormalizedValue( index, message.getArgAsFloat(0), true );
                 break;
                 
             default:
@@ -337,6 +416,23 @@ void OscVectorParam<T,_size>::handleOscMessage( const osc::Message& message, int
                 break;
         }
         
+    }
+    else if( mIsGrouped && message.getNumArgs() > 1 )
+    {
+        // XY pad 
+        for (int i=0; i < message.getNumArgs(); ++i)
+        {
+            switch( message.getArgType(i) )
+            {
+                case osc::TYPE_FLOAT:
+                    mControl->setNormalizedValue( (message.getNumArgs()-1)-i, message.getArgAsFloat(i), true );
+                    break;
+                    
+                default:
+                    console() << "[osc] WARNING: unexpected message format for vector parameter" << std::endl;
+                    break;
+            }
+        }
     }
     else
     {
@@ -350,12 +446,32 @@ void OscVectorParam<T,_size>::sendValue()
     if( mOscSendAddress.empty() )
         return;
     
-    for( int i = 0; i < _size; ++i )
+    if( mIsGrouped )
     {
         osc::Message message;
-        message.setAddress( mOscSendAddress + "/" + (i+1) );
-        message.addFloatArg( mControl->getNormalizedValue(i) );
+        message.setAddress( mOscSendAddress );
+        for( int i = 0; i < _size; ++i )
+        {
+            message.addFloatArg( mControl->getNormalizedValue(i) );
+        }
         mOscServer->sendMessage( message );
+    }
+    else
+    {
+        for( int i = 0; i < _size; ++i )
+        {
+            osc::Message message;
+            ostringstream ss;
+            ss << mOscSendAddress << "/" << (i+1);
+            message.setAddress( ss.str() );
+            message.addFloatArg( mControl->getNormalizedValue(i) );
+            mOscServer->sendMessage( message );
+        }
     }
 }
 
+// needed for definining template base class functions in cpp
+// see: http://stackoverflow.com/questions/312115/c-linking-errors-undefined-symbols-using-a-templated-class
+template class OscVectorParam<float,2>;
+template class OscVectorParam<float,3>;
+template class OscVectorParam<float,4>;
