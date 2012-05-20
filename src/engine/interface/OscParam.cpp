@@ -369,7 +369,7 @@ void OscColorParam::sendValue()
     {
         osc::Message message;
         message.setAddress( mOscSendAddress );
-        for( int i = 0; i < 4; ++i )
+        for( int i = 1; i <= 4; ++i )
         {
             message.addFloatArg( mControl->getValueForElement(i) );
         }
@@ -377,11 +377,11 @@ void OscColorParam::sendValue()
     }
     else
     {
-        for( int i = 0; i < 4; ++i )
+        for( int i = 1; i <= 4; ++i )
         {
             osc::Message message;
             ostringstream ss;
-            ss << mOscSendAddress << "/" << (i+1);
+            ss << mOscSendAddress << "/" << i;
             message.setAddress( ss.str() );
             message.addFloatArg( mControl->getValueForElement(i) );
             mOscServer->sendMessage( message );

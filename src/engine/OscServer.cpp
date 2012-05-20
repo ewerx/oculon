@@ -107,19 +107,18 @@ void OscServer::processMessage(osc::Message& message)
 {
     if( mDebugPrint )
     {
-        printMessage(message, MSG_RECV, LOGLEVEL_VERBOSE);
+        printMessage(message, MSG_RECV, LOGLEVEL_QUIET);
     }
     
     tOscMap::iterator it = mCallbackMap.find(message.getAddress());
     if( it != mCallbackMap.end() )
     {
-        tOscCallback callback = it->second;
-        callback(message);
-        
         if( mDebugPrint )
         {
-            console() << "[osc] Callback triggered" << std::endl;
+            console() << "[osc] callback triggered" << std::endl;
         }
+        tOscCallback callback = it->second;
+        callback(message);
     }
     else
     {
@@ -138,20 +137,21 @@ void OscServer::printMessage(const osc::Message& message, const eMessageType msg
     switch(msgType)
     {
         case MSG_SENT:
-            console() << "[osc] === SENT ===" << std::endl;
+            console() << "[osc] SENT: ";
             break;
         case MSG_RECV:
-            console() << "[osc] === RECEIVED ===" << std::endl;
+            console() << "[osc] RECV: ";
             break;
             
         case MSG_RELAY:
-            console() << "[osc] === RELAYED ===" << std::endl;
+            console() << "[osc] FWD: ";
             break;
     }
-    console() << "[osc] Address: " << message.getAddress() << std::endl;
+    console() << message.getAddress();
     
     if( loglevel == LOGLEVEL_VERBOSE )
     {
+        console() << std::endl;
         console() << "[osc] Num Arg: " << message.getNumArgs() << std::endl;
         for (int i = 0; i < message.getNumArgs(); i++) 
         {
@@ -206,6 +206,30 @@ void OscServer::printMessage(const osc::Message& message, const eMessageType msg
             }
         }
     }
+    else
+    {
+        for (int i = 0; i < message.getNumArgs(); i++) 
+        {
+            switch(message.getArgType(i))
+            {
+                case osc::TYPE_INT32:
+                    console() << " " << message.getArgAsInt32(i);
+                            break;
+                    
+                case osc::TYPE_FLOAT:
+                    console() << " " << message.getArgAsFloat(i);
+                    break;
+                    
+                case osc::TYPE_STRING:
+                    console() << " " << message.getArgAsString(i).c_str();                    break;
+                    
+                default:
+                    console() << " <" << message.getArgType(i) << ">";
+                    break;
+            }
+        }
+        console() << std::endl;
+    }
 }
 
 #pragma MARK Sender
@@ -238,7 +262,7 @@ void OscServer::sendMessage( ci::osc::Message& message, const eDestination dest,
         
         if( mDebugPrint )
         {
-            printMessage(message, MSG_SENT, loglevel);
+            printMessage(message, (dest == DEST_RESOLUME) ? MSG_RELAY : MSG_SENT, loglevel);
         }
     }
 }

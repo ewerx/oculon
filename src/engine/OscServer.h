@@ -57,7 +57,7 @@ public:
     
     // sender
     void setDestination( const eDestination index, const std::string& host, const int port );
-    void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_VERBOSE );
+    void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_QUIET );
     
 private:
     enum eMessageType
