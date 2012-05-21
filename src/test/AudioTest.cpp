@@ -33,8 +33,7 @@ void AudioTest::setup()
 
 void AudioTest::setupInterface()
 {
-    mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
-                         .defaultValue(mUseMotionBlur));
+    mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur ));
 }
 
 void AudioTest::update(double dt)

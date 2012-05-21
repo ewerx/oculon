@@ -9,6 +9,8 @@ static const float kCaptureWidth	= 640.0f;
 static const float kCaptureHeight	= 480.0f;
 
 static const ci::Color kClearColor	= ci::Color(0.0f, 0.0f, 0.0f);
+static const ci::ColorA kMinColor   = ci::ColorA(0.0f,0.0f,0.0f,0.0f);
+static const ci::ColorA kMaxColor   = ci::ColorA(1.0f,1.0f,1.0f,1.0f);
 
 static const float kCaptureFramerate = 25.0f;
 

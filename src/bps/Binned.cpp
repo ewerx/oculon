@@ -259,8 +259,6 @@ void Binned::setupDebugInterface()
     mDebugParams.setOptions("Audio Sensitivity", "step=0.01 min=0.0");
     mDebugParams.setOptions("K Particles", "min=1 max=100");
     mDebugParams.setOptions("Reaction Style", "max=3");
-    mDebugParams.addParam("Point Color", &mPointColor, "");
-    mDebugParams.addParam("Force Color", &mForceColor, "");
 }
 
 void Binned::setupInterface()
@@ -270,8 +268,10 @@ void Binned::setupInterface()
                          .minValue(1).maxValue(100));
     
     mInterface->addEnum(CreateEnumParam("Initial Formation", &mInitialFormation)
-                         .maxValue(FORMATION_COUNT)
-                         .oscReceiver(mName,"formation"));
+                        .maxValue(FORMATION_COUNT)
+                        .isVertical()
+                        .oscReceiver(mName,"formation"));
+    
     mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
                          .minValue(-10.0f).maxValue(50.0f));
     
@@ -280,44 +280,60 @@ void Binned::setupInterface()
     
     mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
                          .maxValue(0.1f)
-                         .oscReceiver("/binned/timestep"));
+                         .oscReceiver(mName,"timestep"));
     
     mInterface->addParam(CreateFloatParam("Center Attraction", &mCenterAttraction)
                          .maxValue(10.0f)
-                         .oscReceiver("/binned/centerattract"));
+                         .oscReceiver(mName,"centerattract"));
     
     mInterface->addParam(CreateFloatParam("Force Scale X", &mForceScaleX)
-                         .oscReceiver("/binned/forcescalex"));    
+                         .oscReceiver(mName,"forcescalex"));    
     mInterface->addParam(CreateFloatParam("Force Scale Y", &mForceScaleY)
-                         .oscReceiver("/binned/forcescaley"));
+                         .oscReceiver(mName,"forcescaley"));
     mInterface->addParam(CreateFloatParam("Min Force", &mMinForce)
                          .maxValue(100.0f)
-                         .oscReceiver("/binned/minforce"));
+                         .oscReceiver(mName,"minforce"));
     mInterface->addParam(CreateFloatParam("Max Force", &mMaxForce)
                          .maxValue(500.0f)
-                         .oscReceiver("/binned/maxforce"));
+                         .oscReceiver(mName,"maxforce"));
     mInterface->addParam(CreateFloatParam("Min Radius", &mMinRadius)
                          .maxValue(100.0f)
-                         .oscReceiver("/binned/minradius"));
+                         .oscReceiver(mName,"minradius"));
     mInterface->addParam(CreateFloatParam("Max Radius", &mMaxRadius)
                          .maxValue(300.0f)
-                         .oscReceiver("/binned/maxradius"));
+                         .oscReceiver(mName,"maxradius")
+                         .isEncoder(1.0f));
                                               
     mInterface->addParam(CreateBoolParam("Wall Bounce", &mBounceOffWalls)
-                         .oscReceiver("/binned/wallbounce"));
+                         .oscReceiver(mName,"wallbounce"));
     mInterface->addParam(CreateFloatParam("Wall Damping", &mWallDamping)
-                         .oscReceiver("/binned/walldamping"));
+                         .oscReceiver(mName,"walldamping"));
     mInterface->addParam(CreateFloatParam("Point Size", &mPointSize)
                          .minValue(1.0f).maxValue(10.0f));
     
     mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
-                         .oscReceiver("/binned/audiolevel"));
+                         .oscReceiver(mName,"audiolevel"));
     
     mInterface->addEnum(CreateEnumParam("Reaction Style", &mAudioPattern)
                         .maxValue(AUDIO_PATTERN_COUNT)
                         .oscReceiver(mName,"audioreaction")
                         .isVertical());
     
+    mInterface->addParam(CreateColorParam("Point Color", &mPointColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName,"pointcolor"));
+    
+    mInterface->addParam(CreateColorParam("Force Color", &mForceColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName,"forcecolor")
+                         .isGrouped());
+    
+    
+    const int maxTouches = 5;
+    char buf[OSC_ADDRESS_SIZE];
+    for( int i=1; i <= maxTouches; ++i )
+    {
+        snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", "/oculon/binned/touchforce", i );
+        mApp->getOscServer().registerCallback( buf, this, &Binned::handleOscMultiTouch );
+    }
 }
 
 void Binned::update(double dt)
@@ -606,11 +622,8 @@ void Binned::draw()
         }
         
         case PATTERN_NONE:
-            if( mIsOrbiterModeEnabled )
-            {
-                applyQueuedForces();
-            }
-            else
+            applyQueuedForces();
+            if( !mIsOrbiterModeEnabled )
             {
                 updateAudioResponse();
             }
@@ -960,3 +973,13 @@ void Binned::applyQueuedForces()
     }
 }
 
+void Binned::handleOscMultiTouch( const ci::osc::Message& message )
+{
+    if( message.getNumArgs() == 2 )
+    {
+        const float radius = mMaxRadius*0.5f;
+        const float force = mMaxForce*0.5f;
+        Vec2f pos( message.getArgAsFloat(1)*mApp->getViewportWidth(), message.getArgAsFloat(0)*mApp->getViewportHeight() );
+        addRepulsionForce(pos, radius, force); 
+    }
+}

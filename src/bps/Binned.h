@@ -18,6 +18,7 @@
 #include "Scene.h"
 #include "MidiMap.h"
 #include "BinnedParticleSystem.h"
+#include "OscMessage.h"
 
 using namespace ci;
 using std::vector;
@@ -45,6 +46,8 @@ public:
     
     // new
     void addRepulsionForce( const Vec2f& pos, float radius, float force );
+    
+    void handleOscMultiTouch( const ci::osc::Message& message );
     
 protected:// from Scene
     void setupInterface();

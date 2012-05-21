@@ -60,6 +60,7 @@ private:
     
     Vec2f               mPos;
     Vec2f               mVel;
+    ColorA              mColor;
 
     bool                mUseFbo;
     float               mBlurAmount;
@@ -68,8 +69,6 @@ private:
     MotionBlurRenderer  mMotionBlurRenderer;
     
     //TEST
-    
-    float               mRed;
     int                 mRadius;
 };
 

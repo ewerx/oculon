@@ -80,6 +80,7 @@ void ShaderTest::setup()
     
     mVel = Vec2f(100.0f,0.0f);
     mPos = Vec2f(0.0f,mApp->getWindowHeight()/2.0f);
+    mColor = ColorA(1.0f,0.0f,0.0f,1.0f);
     
     //mEnableShader = false;
     mBlurAmount = 8.0f / getWindowWidth();
@@ -92,28 +93,28 @@ void ShaderTest::setup()
 
 void ShaderTest::setupInterface()
 {
-    mInterface->addParam(CreateFloatParam( "Red", &mRed )
-                         .minValue(0.0f)
-                         .maxValue(1.0f)
-                         .defaultValue(1.0f)
-                         //.oscReceiver("/1/fader1")
-                         .oscSender("/1/fader1"));
-    
-    
     mInterface->addParam(CreateIntParam( "Radius", &mRadius )
                          .minValue(1)
                          .maxValue(300)
-                         .defaultValue(100)
                          .oscReceiver("/1/fader2")
                          .oscSender("/1/fader2"));
     
     mInterface->addParam(CreateBoolParam( "Shader", &mUseFbo )
-                         .defaultValue(mUseFbo)
                          .oscReceiver("/1/toggle2")
                          .oscSender("/1/toggle2"));
     
-    mInterface->gui()->addParam("pos", &mPos, Vec2f::zero(), Vec2f(mApp->getViewportWidth(),mApp->getViewportHeight()));
-    mInterface->gui()->addParam("vel", &mVel);
+    
+    //mInterface->gui()->addParam("pos", mPos.ptr(), Vec2f::zero(), Vec2f(mApp->getViewportWidth(),mApp->getViewportHeight()));
+    
+    mInterface->addParam(CreateVec2fParam("pos", &mPos, Vec2f::zero(), Vec2f(mApp->getViewportWidth(),mApp->getViewportHeight()))
+                         .oscReceiver(mName)
+                         .isXYPad());
+    //mInterface->gui()->addParam("vel", mVel.ptr(), Vec2f::zero());
+    
+    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName));
+
+    mRadius = 100.0f;
 }
 
 void ShaderTest::update(double dt)
@@ -290,7 +291,7 @@ void ShaderTest::draw()
 void ShaderTest::drawScene()
 {
     gl::setMatricesWindowPersp(getWindowSize());
-    glColor4f(mRed,0.0f,0.0f,1.0f);
+    glColor4f(mColor);
     gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + mRadius, mPos.y + mRadius) );
 }
 
