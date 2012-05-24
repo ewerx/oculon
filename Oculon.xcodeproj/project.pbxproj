@@ -944,8 +944,7 @@
 				7C832E7A1547AFEC00CF488D /* QuakeData.h */,
 				7C832E7B1547B00600CF488D /* QuakeData.cpp */,
 			);
-			name = tectonic;
-			path = quaker;
+			path = tectonic;
 			sourceTree = "<group>";
 		};
 		7C865570148C2784000E00B6 /* blocks */ = {
