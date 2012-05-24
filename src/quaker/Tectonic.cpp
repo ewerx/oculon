@@ -150,6 +150,8 @@ void Tectonic::reset()
     mCurrentIndex = 0;
     mBpmTriggerTime = 60.0f / mBpm;
     mActiveQuakes.clear();
+    mIsCapturing = false;
+    
 }
 
 // ----------------------------------------------------------------
@@ -220,29 +222,39 @@ void Tectonic::triggerAll()
 //
 void Tectonic::triggerByBpm(double dt)
 {
-    mBpmTriggerTime -= mApp->getElapsedSecondsThisFrame();
+    mBpmTriggerTime -= dt;
     if( mBpmTriggerTime <= 0.0f )
     {
         mBpmTriggerTime = 60.0f / mBpm;
         
         if( mCurrentIndex < mQuakes.size() )
         {
-            //console() << "active quakes: " << mActiveQuakes.size();
-            //mActiveQuakes.clear();
-            mActiveQuakes.erase(std::remove_if(mActiveQuakes.begin(), mActiveQuakes.end(), IsTriggeredQuakeFinished()), mActiveQuakes.end());
-            //console() << " --> " << mActiveQuakes.size() << std::endl;
-            assert(mQuakes[mCurrentIndex] != NULL);
-            
-            const float durationMagnitudeMultiplier = 0.25f;
-            const float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
-            mQuakes[mCurrentIndex]->trigger(duration);
-            mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
-            console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
+            if( !mIsCapturing || (60.0f-mApp->getFrameCaptureCount()/kCaptureFramerate > 5.0f) )
+            {
+                //console() << "active quakes: " << mActiveQuakes.size();
+                //mActiveQuakes.clear();
+                mActiveQuakes.erase(std::remove_if(mActiveQuakes.begin(), mActiveQuakes.end(), IsTriggeredQuakeFinished()), mActiveQuakes.end());
+                //console() << " --> " << mActiveQuakes.size() << std::endl;
+                assert(mQuakes[mCurrentIndex] != NULL);
+                
+                const float durationMagnitudeMultiplier = 0.25f;
+                float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
+                if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
+                mQuakes[mCurrentIndex]->trigger(duration);
+                mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
+                console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
+            }
         }
         
         ++mCurrentIndex;
         if( mCurrentIndex >= mQuakes.size() )
         {
+            if( mIsCapturing )
+            {
+                mApp->enableFrameCapture( false );
+                mIsCapturing = false;
+                return;
+            }
             mCurrentIndex = 0;
         }
     }
@@ -361,8 +373,21 @@ bool Tectonic::handleKeyDown(const KeyEvent& keyEvent)
             handled = false;
             break;
             
+        case KeyEvent::KEY_n:
+            if( keyEvent.isShiftDown() )
+            {
+                mApp->enableFrameCapture( false );
+                mIsCapturing = true;
+                mApp->setCaptureDuration( 60.0f );
+                mApp->enableFrameCapture( mIsCapturing );
+                mCurrentIndex = 0;
+            }
+            break;
+            
         default:
             handled = false;
             break;
     }
+    
+    return handled;
 }

@@ -116,6 +116,9 @@ private:
     };
     TextEntity*     mTextBox[TB_COUNT];
     
+    // capture
+    bool mIsCapturing;
+    
 };
 
 #endif // __Tectonic_H__

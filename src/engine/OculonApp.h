@@ -87,6 +87,8 @@ public: // new
     Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     
     void enableFrameCapture( const bool enable );
+    void setCaptureDuration( const float duration ) { mCaptureDuration = duration; }
+    int getFrameCaptureCount() const { return mFrameCaptureCount; }
     
     // interface callbacks
     bool onFrameCaptureToggle();
