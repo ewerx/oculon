@@ -100,6 +100,8 @@
 		7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3231500784E0009FF26 /* syphonServer.mm */; };
 		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
+		7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C90D66D156F21CD00685CB4 /* SolFrame.cpp */; };
+		7C90D673156F2B4900685CB4 /* TextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C90D671156F2B4900685CB4 /* TextureManager.cpp */; };
 		7C922869151C066400FB3773 /* BlobTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C922867151C066400FB3773 /* BlobTracker.cpp */; };
 		7C922870151C098D00FB3773 /* KinectController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C92286E151C098D00FB3773 /* KinectController.cpp */; };
 		7C947969151965C5003F133E /* Nbody.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C560DE81506C4D2000B91B0 /* Nbody.cl */; };
@@ -124,6 +126,7 @@
 		7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
+		7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB39D31156DCDD10093A8ED /* Sol.cpp */; };
 		7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C855154A6DDE0057E409 /* earth_frag.glsl */; };
 		7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C856154A6DDE0057E409 /* quake_frag.glsl */; };
 		7CE9C85A154A6DDE0057E409 /* quake_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C857154A6DDE0057E409 /* quake_vert.glsl */; };
@@ -376,6 +379,10 @@
 		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
 		7C8F207914D79C7500AC2D64 /* Binned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Binned.cpp; sourceTree = "<group>"; };
 		7C8F207A14D79C7500AC2D64 /* Binned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Binned.h; sourceTree = "<group>"; };
+		7C90D66D156F21CD00685CB4 /* SolFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SolFrame.cpp; sourceTree = "<group>"; };
+		7C90D66F156F21F800685CB4 /* SolFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SolFrame.h; sourceTree = "<group>"; };
+		7C90D671156F2B4900685CB4 /* TextureManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureManager.cpp; path = ../sdks/cinder/blocks/TextureManager/TextureManager.cpp; sourceTree = SOURCE_ROOT; };
+		7C90D672156F2B4900685CB4 /* TextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureManager.h; path = ../sdks/cinder/blocks/TextureManager/TextureManager.h; sourceTree = SOURCE_ROOT; };
 		7C922867151C066400FB3773 /* BlobTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobTracker.cpp; sourceTree = "<group>"; };
 		7C922868151C066400FB3773 /* BlobTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobTracker.h; sourceTree = "<group>"; };
 		7C92286E151C098D00FB3773 /* KinectController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectController.cpp; sourceTree = "<group>"; };
@@ -404,6 +411,8 @@
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		7CB17ECF15310B330074572D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interface.h; path = interface/Interface.h; sourceTree = "<group>"; };
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
+		7CB39D31156DCDD10093A8ED /* Sol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sol.cpp; sourceTree = "<group>"; };
+		7CB39D32156DCDD10093A8ED /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
 		7CE9C855154A6DDE0057E409 /* earth_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earth_frag.glsl; sourceTree = "<group>"; };
 		7CE9C856154A6DDE0057E409 /* quake_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quake_frag.glsl; sourceTree = "<group>"; };
@@ -824,6 +833,7 @@
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
 				7C9693401496FFC400C0E1E6 /* pulsar */,
+				7CB39D30156DCDD10093A8ED /* sol */,
 				7C832E741547AD6700CF488D /* tectonic */,
 				7C745582148C259C009C0356 /* test */,
 			);
@@ -958,6 +968,7 @@
 				7C3738F814F7364300B24851 /* msalibs */,
 				7C52DFB314CCFC2F008507D3 /* osc */,
 				7CEF0F791528FEBB000DF027 /* SimpleGUI */,
+				7C90D670156F2B1700685CB4 /* TextureManager */,
 			);
 			name = blocks;
 			sourceTree = "<group>";
@@ -1097,6 +1108,16 @@
 			path = bps;
 			sourceTree = "<group>";
 		};
+		7C90D670156F2B1700685CB4 /* TextureManager */ = {
+			isa = PBXGroup;
+			children = (
+				7C90D671156F2B4900685CB4 /* TextureManager.cpp */,
+				7C90D672156F2B4900685CB4 /* TextureManager.h */,
+			);
+			name = TextureManager;
+			path = ../sdks/cinder/blocks/TextureManager;
+			sourceTree = SOURCE_ROOT;
+		};
 		7C948F4314B3A1E7003A3DA8 /* orbiter */ = {
 			isa = PBXGroup;
 			children = (
@@ -1139,6 +1160,17 @@
 				7C9A0547153121A500EB0452 /* pf_tempesta_seven.ttf */,
 			);
 			path = resources;
+			sourceTree = "<group>";
+		};
+		7CB39D30156DCDD10093A8ED /* sol */ = {
+			isa = PBXGroup;
+			children = (
+				7CB39D31156DCDD10093A8ED /* Sol.cpp */,
+				7CB39D32156DCDD10093A8ED /* Sol.h */,
+				7C90D66D156F21CD00685CB4 /* SolFrame.cpp */,
+				7C90D66F156F21F800685CB4 /* SolFrame.h */,
+			);
+			path = sol;
 			sourceTree = "<group>";
 		};
 		7CC6214F14F73E8500B768DD /* MSAPingPong */ = {
@@ -1458,6 +1490,9 @@
 				7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */,
 				7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */,
 				7C832E7F154A4E0200CF488D /* Quake.cpp in Sources */,
+				7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */,
+				7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */,
+				7C90D673156F2B4900685CB4 /* TextureManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
