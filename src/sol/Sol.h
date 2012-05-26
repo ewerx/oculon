@@ -48,15 +48,17 @@ protected:
     
     void drawHud();
     
-    void loadTextures();
+    void initFrames();
     
 private:
     //std::vector<ci::gl::Texture*> mTextures;
-    std::vector<SolFrame*> mFrames;
+    typedef std::vector<SolFrame*> FrameList;
+    FrameList mFrames;
     int mIndex;
     float mFrameRate;
     float mFrameTime;
     int mCurrentSource;
+    int mBufferSize;
 };
 
 #endif // __Sol_H__

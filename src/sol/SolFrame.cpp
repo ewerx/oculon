@@ -9,6 +9,7 @@
 #include "SolFrame.h"
 #include "cinder/app/AppBasic.h"
 #include "cinder/Utilities.h"
+#include "TextureManager.h"
 
 using namespace boost::posix_time;
 using namespace ci;
@@ -24,12 +25,13 @@ SolFrame::SolFrame()
 {
     for (int i=0; i < SOURCE_COUNT; ++i)
     {
-        mTexture[i] = gl::Texture();
+        mTextures[i] = gl::Texture();
     }
 }
 
-bool SolFrame::addImage( const std::string& filename, ci::gl::Texture texture )
+bool SolFrame::init( const fs::path& filePath )
 {
+    string filename = filePath.filename().string();
     // e.g.
     // date...._time.._res._src.
     // 20120518_234611_1024_0131
@@ -50,9 +52,11 @@ bool SolFrame::addImage( const std::string& filename, ci::gl::Texture texture )
     eImageSource src = getSourceByName(srcname);
     if( src < SOURCE_COUNT )
     {
-        if( mTexture[src] == gl::Texture() )
+        if( mTexturePaths[src].empty() )
         {
-            mTexture[src] = texture;
+            console() << filePath.string() << std::endl;
+            mTexturePaths[src] = filePath;
+            mTextures[src] = ph::TextureManager::getInstance().fetch( filePath.string(), ci::gl::Texture::Format(), true );
             if( timeStamp < mTimeStampFirst )
             {
                 mTimeStampFirst = timeStamp;
@@ -62,15 +66,14 @@ bool SolFrame::addImage( const std::string& filename, ci::gl::Texture texture )
                 mTimeStampLast = timeStamp;
             }
             imageAdded = true;
-            console() << "[sol] Image [" << srcname << "/" << (int)src << "] " << timeStamp << " added (" << texture.getWidth() << "x" << texture.getHeight() << ")" << std::endl;
         }
         else
         {
-            console() << "[sol] Image [" << srcname << "] already exists in this frame." << std::endl;
+            //console() << "[sol] Image [" << srcname << "] already exists in this frame." << std::endl;
             // sanity check
             for (int i=0; i < SOURCE_COUNT; ++i)
             {
-                if( mTexture[i] == gl::Texture() )
+                if( mTexturePaths[i].empty() )
                 {
                     console() << "[sol] WARNING: frame missing image source " << i << std::endl;
                 }
@@ -79,10 +82,42 @@ bool SolFrame::addImage( const std::string& filename, ci::gl::Texture texture )
     }
     else
     {
-        console() << "[sol] ERROR: unknown source type from string: " << src << std::endl;
+        console() << "[sol] WARNING: unknown source type from string: " << srcname << std::endl;
+        imageAdded = true; // pretend we added it
     }
     
     return imageAdded;
+}
+
+bool SolFrame::loadTextures()
+{
+    for( int i=0; i < SOURCE_COUNT; ++i )
+    {
+        if( !mTexturePaths[i].empty() )
+        {
+            mTextures[i] = ph::TextureManager::getInstance().fetch( mTexturePaths[i].string(), ci::gl::Texture::Format(), true );
+        }
+    }
+    
+    return true;
+}
+
+void SolFrame::unloadTextures()
+{
+    for( int i=0; i < SOURCE_COUNT; ++i )
+    {
+        //console() << "[sol] clearing " << mTexturePaths[i].string() << " state: ";
+        if( ph::TextureManager::getInstance().isLoading( mTexturePaths[i].string() ) )
+            console() << "[sol] WARNING: texture is still queued for loading" << std::endl;//"LOADING";
+        //else if( ph::TextureManager::getInstance().isLoaded( mTexturePaths[i].string() ) )
+        //    console() << "LOADED";
+        //else 
+        //    console() << "NONE";
+        //console() << std::endl;
+        
+        mTextures[i].reset();
+        ph::TextureManager::getInstance().removeTexture( mTexturePaths[i].string() );
+    }
 }
 
 int SolFrame::getImageCount() const
@@ -90,7 +125,7 @@ int SolFrame::getImageCount() const
     int count = 0;
     for (int i=0; i < SOURCE_COUNT; ++i)
     {
-        if( mTexture[i] != gl::Texture() )
+        if( mTextures[i] != gl::Texture() )
         {
             ++count;
         }
@@ -104,22 +139,22 @@ SolFrame::eImageSource SolFrame::getSourceByName( const std::string& name )
     const uint32_t srcNumeric = fromString<uint32_t>(name);
     switch( srcNumeric )
     {
-        case 94:
-            return SOURCE_0094;
+        //case 94:
+        //    return SOURCE_0094;
         case 131:
             return SOURCE_0131;
         case 171:
             return SOURCE_0171;
         case 193:
             return SOURCE_0193;
-        case 211:
-            return SOURCE_0211;
+        //case 211:
+        //    return SOURCE_0211;
         case 304:
             return SOURCE_0304;
         case 335:
             return SOURCE_0335;
-        case 1600:
-            return SOURCE_1600;
+        //case 1600:
+        //    return SOURCE_1600;
         case 1700:
             return SOURCE_1700;
         default:
@@ -127,11 +162,15 @@ SolFrame::eImageSource SolFrame::getSourceByName( const std::string& name )
     }
 }
 
-ci::gl::Texture SolFrame::getTexture( const SolFrame::eImageSource src ) const
+ci::gl::Texture SolFrame::getTexture( const SolFrame::eImageSource src )
 {
     if( src < SOURCE_COUNT )
     {
-        return mTexture[src];
+        if( mTextures[src] == gl::Texture() && !mTexturePaths[src].empty() )
+        {
+            mTextures[src] = ph::TextureManager::getInstance().fetch( mTexturePaths[src].string(), ci::gl::Texture::Format(), true );
+        }
+        return mTextures[src];
     }
     
     return gl::Texture();

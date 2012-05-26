@@ -16,6 +16,7 @@
 #include "Resources.h"
 //#include "AssetManager.h"
 #include "TextureManager.h"
+#include "cinder/Filesystem.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -37,15 +38,18 @@ Sol::~Sol()
 //
 void Sol::setup()
 {
-    mCurrentSource = SolFrame::SOURCE_0094;
+    mBufferSize = 10;
+    
+    mFrameRate = 1.0f;
+    mCurrentSource = 0;
     //AssetManager::getInstance()->setup();
-    loadTextures();
+    initFrames();
     reset();
 }
 
 // ----------------------------------------------------------------
 //
-void Sol::loadTextures()
+void Sol::initFrames()
 {
     //mTextures = AssetManager::getInstance()->getTextureListFromDir( "/Volumes/cruxpod/Downloads/_images/eit171test/" );
     
@@ -64,17 +68,21 @@ void Sol::loadTextures()
             string filename = it->path().filename().string();
             if( it->path().extension().string().compare( ".jpg" ) == 0 )
             {
-                gl::Texture tex = ph::TextureManager::getInstance().load( it->path().string() );
+                // frame.init
+                // move texture load handling to frame
+                // outside this loop: another for loop to pre-load buffersize frames
+                // clean up last frame and preload next after each frame change
+                //gl::Texture tex = ph::TextureManager::getInstance().load( it->path().string() );
                 bool added = false;
                 if( index < mFrames.size() && mFrames[index] != NULL )
                 {
-                    added = mFrames[index]->addImage( filename, tex );
+                    added = mFrames[index]->init( it->path() );
                     if( !added )
                     {
                         // next frame
                         ++index;
-                        if( index > 10 )
-                            break;
+                        //if( index > 20 )
+                            //break;
                     }
                 }
                 
@@ -82,19 +90,24 @@ void Sol::loadTextures()
                 {
                     if( index > 0 )
                     {
-                        console() << "[sol] Frame " << index-1 << " completed with " << mFrames[index-1]->getImageCount() << " images." << std::endl;
+                        //console() << "[sol] Frame " << index-1 << " completed with " << mFrames[index-1]->getImageCount() << " images." << std::endl;
                     }
                     
                     if( index == mFrames.size() )
                     {
                         console() << "[sol] Frame " << index << " created" << std::endl;
                         mFrames.push_back( new SolFrame() );
-                        mFrames[index]->addImage( filename, tex );
+                        mFrames[index]->init( it->path() );
                     }
                 }
             }
         }
     }
+    
+    //for( int i=0; i < mBufferSize; ++i )
+    //{
+        //mFrames[i]->loadTextures();
+    //}
 }
 
 // ----------------------------------------------------------------
@@ -122,7 +135,6 @@ void Sol::reset()
 {
     mIndex = 0;
     mFrameTime = 0;
-    mFrameRate = 25.0f;
 }
 
 // ----------------------------------------------------------------
@@ -141,12 +153,22 @@ void Sol::update(double dt)
     if( mFrameTime > (1.0f/mFrameRate) )
     {
         mFrameTime = 0.0f;
+        
+        console() << "[sol] unloading frame " << mIndex << std::endl;
+        mFrames[mIndex]->unloadTextures();
+        int nextToBuffer = mIndex + mBufferSize;
+        if( nextToBuffer >= mFrames.size() )
+        {
+            nextToBuffer = nextToBuffer - mFrames.size();
+        }
         ++mIndex;
         if( mIndex >= mFrames.size() )
         {
             mIndex = 0;
         }
-        console() << "[sol] drawing frame " << mIndex << " / source " << mCurrentSource << std::endl;
+        
+        console() << "[sol] loading frame " << nextToBuffer << std::endl;
+        //mFrames[nextToBuffer]->loadTextures();
     }
     
     // last
@@ -166,6 +188,10 @@ void Sol::draw()
         if( tex != gl::Texture() )
         {
             gl::draw( tex );
+        }
+        else
+        {
+            console() << "[sol] texture not ready. index: " << mIndex << " src: " << mCurrentSource << std::endl;
         }
     }
     
@@ -204,6 +230,10 @@ bool Sol::handleKeyDown(const KeyEvent& keyEvent)
         case KeyEvent::KEY_SPACE:
             reset();
             handled = false;
+            break;
+            
+        case KeyEvent::KEY_m:
+            if( ++mCurrentSource >= SolFrame::SOURCE_COUNT ) mCurrentSource = 0;
             break;
             
         default:
