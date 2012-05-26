@@ -180,14 +180,24 @@ void Sol::update(double dt)
 void Sol::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    
+    const float width = mApp->getViewportWidth();
+    const float height = mApp->getViewportHeight();
+    
+    const float texSize = 512;
+    const float x = (width - texSize)/2.0f;
+    const float y = (height - texSize)/2.0f;
+    
+    Rectf rect( x, y, x+texSize, y+texSize );
+    
+    gl::setMatricesWindow( width, height );
     
     if( mFrames.size() > 0 && mIndex < mFrames.size() )
     {
         gl::Texture tex = mFrames[mIndex]->getTexture((SolFrame::eImageSource)mCurrentSource);
         if( tex != gl::Texture() )
         {
-            gl::draw( tex );
+            gl::draw( tex, rect );
         }
         else
         {
