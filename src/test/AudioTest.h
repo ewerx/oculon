@@ -34,14 +34,29 @@ public:
     
 protected:
     void setupInterface();
+    void setupDebugInterface();
     
 private:
     void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
     void drawFft        ( std::shared_ptr<float> fftDataRef );
-    void drawLines      ();
+    void drawVerticalLines      ();
+    void drawMultiWaveform();
+    
+    bool setFilter();
+    bool removeFilter();
     
     MotionBlurRenderer  mMotionBlurRenderer;
     bool                mUseMotionBlur;
+    
+    // kiss
+    int mFilter;
+    float mFilterFrequency;
+    
+    bool mIsVerticalOn;
+    
+    // multiwave
+    bool mIsMultiWaveOn;
+    float mFalloff;
 };
 
 #endif // __AUDIOTEST_H__

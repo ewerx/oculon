@@ -23,6 +23,7 @@ using namespace ci::audio;
 AudioInput::AudioInput()
 : mInput(NULL)
 , mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
+, mFftLogPlot(Kiss::DEFAULT_DATASIZE)
 {
 }
 
@@ -99,9 +100,15 @@ void AudioInput::update()
                     // Kiss is not initialized
                     if ( !mFftInit ) 
                     {
+                        console() << "[audio] KISS initialized (" << sampleCount << " bands)" << std::endl;
                         // Initialize analyzer
                         mFftInit = true;
                         mFft = Kiss::create( sampleCount );
+                        
+                        for( int i=0; i < sampleCount; ++i )
+                        {
+                            mFftLogPlot.push_back(Vec2f::zero());
+                        }
                     }
                     
                     // Analyze data
@@ -112,10 +119,9 @@ void AudioInput::update()
                         mFft->setData( mInputData );
                     }
                     
-                    // Get data
-                    mTimeData = mFft->getData();
-					mDataSize = mFft->getBinSize();
+                    analyzeKissFft();
 
+                    
                 }
             }
         }
@@ -126,5 +132,21 @@ void AudioInput::update()
             //mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
             mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( CHANNEL_FRONT_LEFT ), mFftBandCount );
         }
+    }
+}
+
+void AudioInput::analyzeKissFft()
+{
+    // Get data
+    float * freqData = mFft->getAmplitude();
+    int32_t dataSize = mFft->getBinSize();
+    
+    // Iterate through data
+    for (int32_t i = 0; i < dataSize; i++) 
+    {
+        // Do logarithmic plotting for frequency domain
+        double mLogSize = log((double)dataSize);
+        mFftLogPlot[i].x = (float)(log((double)i) / mLogSize) * (double)dataSize;
+        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
     }
 }

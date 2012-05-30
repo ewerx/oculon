@@ -28,12 +28,37 @@ using namespace ci::app;
 void AudioTest::setup()
 {
     mUseMotionBlur = false;
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioTest::drawLines, this ) );
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioTest::drawVerticalLines, this ) );
+    
+    // multiwave
+    mFalloff = 0.9999f;
+    
+    mFilter = 0;
+    mFilterFrequency = 0.0f;
+    
+    mIsVerticalOn = false;
+    mIsMultiWaveOn = false;
 }
 
 void AudioTest::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur ));
+    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mIsVerticalOn ));
+    mInterface->addParam(CreateBoolParam( "MultiWaveform", &mIsMultiWaveOn )
+                         .oscReceiver(mName,"filter"));
+    mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
+                         .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioTest::setFilter );;
+    mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
+                        .maxValue(Kiss::Filter::NOTCH+1)
+                        .isVertical()
+                        .oscReceiver(mName,"filter"))->registerCallback( this, &AudioTest::setFilter );
+    mInterface->addButton(CreateTriggerParam("Remove Filter", NULL)
+                          .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioTest::removeFilter );
+}
+
+void AudioTest::setupDebugInterface()
+{
+    mDebugParams.addParam("Falloff", &mFalloff, "step=0.001");
 }
 
 void AudioTest::update(double dt)
@@ -51,7 +76,11 @@ void AudioTest::draw()
     }
     else
     {
-        drawLines();
+        if( mIsVerticalOn )
+            drawVerticalLines();
+        
+        if( mIsMultiWaveOn )
+            drawMultiWaveform();
     }
     glPopMatrix();
 }
@@ -84,13 +113,39 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     if( useKiss )
     {
         // Get data
-		float * freqData = audioInput.getFft()->getAmplitude();
+        int32_t dataSize = audioInput.getFft()->getBinSize();
 		float * timeData = audioInput.getFft()->getData();
-		int32_t dataSize = audioInput.getFft()->getBinSize();
+        
+        int32_t	binSize = audioInput.getFft()->getBinSize();
+        float * amplitude = audioInput.getFft()->getAmplitude();
+        float *	imaginary = audioInput.getFft()->getImaginary();
+        float *	phase = audioInput.getFft()->getPhase();
+        float *	real = audioInput.getFft()->getReal();
+        
+        const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
         
 		// Get dimensions
-		float scale = ((float)getWindowWidth() - 20.0f) / (float)dataSize;
-		float mWindowHeight = (float)getWindowHeight();
+        const float border = 10.0f;
+		float scaleX = ((float)getWindowWidth() - border*2.0f) / (float)binSize;
+		float windowHeight = (float)getWindowHeight();
+        float scaleY = (windowHeight - border*2.0f) * 0.25f;
+        float yOffset = (windowHeight * 0.25f + border);
+        
+        PolyLine<Vec2f> ampLine;
+        PolyLine<Vec2f> phaseLine;
+        PolyLine<Vec2f> imgLine;
+        PolyLine<Vec2f> realLine;
+        
+        for( int32_t i=0; i < binSize; ++i ) 
+        {
+			// Plot points on lines
+			ampLine.push_back(Vec2f(i * scaleX + border, amplitude[i] * (i+1) * scaleY + yOffset + (windowHeight*0.1f)));
+			phaseLine.push_back(Vec2f(i * scaleX + border, phase[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*2.0f)));
+            imgLine.push_back(Vec2f(i * scaleX + border, imaginary[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*3.0f)));
+            realLine.push_back(Vec2f(i * scaleX + border, real[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*4.0f)));
+        }
+        
+        scaleX = ((float)getWindowWidth() - border*2.0f) / (float)dataSize;
         
 		// Use polylines to depict time and frequency domains
 		PolyLine<Vec2f> freqLine;
@@ -101,19 +156,29 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 		{
             
 			// Do logarithmic plotting for frequency domain
-			double mLogSize = log((double)dataSize);
-			float x = (float)(log((double)i) / mLogSize) * (double)dataSize;
-			float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
+			//double mLogSize = log((double)dataSize);
+			//float x = (float)(log((double)i) / mLogSize) * (double)dataSize;
+			//float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
+            float x = fftLogData[i].x;
+            float y = fftLogData[i].y;
             
 			// Plot points on lines
-			freqLine.push_back(Vec2f(x * scale + 10.0f,           -y * (mWindowHeight - 20.0f) * 0.25f + (mWindowHeight - 10.0f)));
-			timeLine.push_back(Vec2f(i * scale + 10.0f, timeData[i] * (mWindowHeight - 20.0f) * 0.25f + (mWindowHeight * 0.25 + 10.0f)));
+			freqLine.push_back(Vec2f(x * scaleX + border, -y * scaleY + (windowHeight - border)));
+			timeLine.push_back(Vec2f(i * scaleX + border, timeData[i] * scaleY + (windowHeight * 0.25 + border)));
             
 		}
         
 		// Draw signals
 		gl::draw(freqLine);
 		gl::draw(timeLine);
+        gl::color( Color( 0.5f, 0.5f, 1.0f ) );
+        gl::draw(ampLine);
+        //gl::color( Color( 0.5f, 1.0f, 0.5f ) );
+        //gl::draw(phaseLine);
+        gl::color( Color( 1.0f, 0.75f, 0.5f ) );
+        gl::draw(imgLine);
+        gl::color( Color( 1.0f, 0.5f, 0.75f ) );
+        gl::draw(realLine);
     }
     else
     {
@@ -182,7 +247,7 @@ void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
     glPopMatrix();
 }
 
-void AudioTest::drawLines()
+void AudioTest::drawVerticalLines()
 {
     AudioInput& audioInput = mApp->getAudioInput();
 	
@@ -190,6 +255,7 @@ void AudioTest::drawLines()
     float * freqData = audioInput.getFft()->getAmplitude();
     //float * timeData = audioInput.getFft()->getData();
     int32_t dataSize = audioInput.getFft()->getBinSize();
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
     // Get dimensions
     //float scale = ((float)getWindowWidth() - 20.0f) / (float)dataSize;
@@ -211,9 +277,11 @@ void AudioTest::drawLines()
     {
         
         // Do logarithmic plotting for frequency domain
-        double logSize = log((double)dataSize);
-        float x = (float)(log((double)i) / logSize) * (double)dataSize;
-        float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);	
+        //double logSize = log((double)dataSize);
+        //float x = (float)(log((double)i) / logSize) * (double)dataSize;
+        //float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
+        float x = fftLogData[i].x;
+        float y = fftLogData[i].y;
     
         const float threshold = 0.025f;
         const float minAlpha = 0.25f;
@@ -237,4 +305,199 @@ void AudioTest::drawLines()
 	}
     gl::enableAlphaBlending();
     glPopMatrix();
+}
+
+void AudioTest::drawMultiWaveform()
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+    
+    // Get data
+    float * timeData = audioInput.getFft()->getData();
+    float * amplitude = audioInput.getFft()->getAmplitude();
+	int32_t	binSize = audioInput.getFft()->getBinSize();
+	float *	imaginary = audioInput.getFft()->getImaginary();
+	float *	phase = audioInput.getFft()->getPhase();
+	float *	real = audioInput.getFft()->getReal();
+    int32_t dataSize = audioInput.getFft()->getBinSize();
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    
+    // Get dimensions
+    float windowHeight = mApp->getViewportHeight();
+    float windowWidth = mApp->getViewportWidth();
+    float lineWidth = windowWidth * 0.60f;
+    float scaleX = lineWidth / (float)dataSize;
+    float xOffset = (windowWidth - lineWidth) / 2.0f; 
+    
+    const int numLines = 6;
+    const float gap = windowHeight / (numLines+1);
+    float scaleY = gap * 50.0f;
+    float yOffset = windowHeight - gap;
+    
+    glColor3f( 1.0f, 1.0f, 1.0f );
+    
+    
+    
+    gl::enable( GL_LINE_SMOOTH );
+	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+	gl::enable( GL_POLYGON_SMOOTH );
+	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+	gl::color( ColorAf::white() );
+    
+    
+    /*
+    int startIndex = 0;
+    int numPoints = 0;
+    const float threshold = 0.0000015f;
+    
+    const int center = dataSize / 2;
+    
+    float weights[dataSize];
+    
+    int bandOrder[numLines][dataSize];
+    for( int i=0; i < numLines; ++i )
+    {
+        int centerOffset = 1;
+        int edgeOffset = 0;
+        bool centerFlip = false;
+        bool edgeFlip = false;
+        
+        bandOrder[i][center] = -1;
+        
+        //int startOffset = Rand::randInt(dataSize/2);
+        for( int j=0; j < dataSize; j++ )
+        {
+            if( fftLogData[j].y > threshold )
+            {
+                numPoints++;
+                if( centerOffset == 1 )
+                {
+                    bandOrder[i][center] = j;
+                }
+                int index = centerFlip ? (center + centerOffset) : (center - centerOffset);
+                bandOrder[i][index] = j;
+                centerFlip = !centerFlip;
+                if( !centerFlip )
+                {
+                    centerOffset++;
+                }
+            }
+            else
+            {
+                int index = edgeFlip ? ((dataSize-1) - edgeOffset) : edgeOffset;
+                bandOrder[i][index] = j;
+                edgeFlip = !edgeFlip;
+                if( !edgeFlip )
+                    edgeOffset++;
+            }
+        }
+        
+        if( bandOrder[i][center] == -1 )
+        {
+            bandOrder[i][center] = bandOrder[i][0];
+        }
+    }
+    
+    //float prevY[dataSize];
+    float oldY[dataSize]; // terrible naming
+    for( int i=0; i < dataSize; ++i )
+    {
+        //prevY[i] = yOffset;
+        oldY[i] = 0.0f;
+        if( i < center )
+        {
+            weights[i] = easeInBounce((float)i/center);
+        }
+        else
+        {
+            weights[i] = easeOutBounce(1.0f-(float)(i-center)/center);
+        }
+        //console() << i << " => " << weights[i] << std::endl;
+    }
+    
+    for( int lineIndex = numLines-1;  lineIndex >= 0; lineIndex-- )
+    {
+        PolyLine<Vec2f> freqLine;
+        //PolyLine<Vec2f> timeLine;
+        
+        //console() << "line " << lineIndex << ": ";
+        
+        int pointIndex = 0;
+        
+        // Iterate through data
+        for (int32_t bandIndex = 0; bandIndex < dataSize; bandIndex++) 
+        {
+            /*
+            int orderedIndex = bandOrder[lineIndex][bandIndex];
+            if( orderedIndex < 0 || orderedIndex >= dataSize )
+            {
+                console() << "bad value " << lineIndex << "/" << bandIndex << ": " << orderedIndex << std::endl;
+                continue;
+            }
+            //float x = fftLogData[bandIndex].x;
+            float y = fftLogData[bandOrder[lineIndex][bandIndex]].y;
+             **
+            
+            float y = timeData[bandIndex];// * weights[bandIndex];
+            
+            //console() << x << "," << y << " ";
+            
+            if( lineIndex > 0 )
+            {
+                //y = Math<float>::max( 
+            }
+            
+            
+            if( y > threshold )
+            {
+                pointIndex++;
+            }
+            else
+            {
+                y = 0.0f;
+            }
+            
+            if( lineIndex==0 && ( bandIndex == center ))
+            {
+                console() << bandIndex << ": y = " << y << " | " << oldY[bandIndex] << " ==> ";
+            }
+            
+            y = math<float>::max( y, oldY[bandIndex]*mFalloff );
+            oldY[bandIndex] = y;
+            
+            if( lineIndex==0 && ( bandIndex == center ))
+            {
+                console() << y << " | " << oldY[bandIndex] << std::endl;
+            }
+            // Plot points on lines
+            float absoluteY = -y * scaleY + yOffset;//math<float>::min( prevY[bandIndex], -y * scaleY + yOffset );
+            //prevY[bandIndex] = absoluteY;
+            freqLine.push_back(Vec2f(bandIndex * scaleX + xOffset, absoluteY));
+            //timeLine.push_back(Vec2f(i * scaleX + 10.0f, timeData[i] * (windowHeight - 20.0f) * 0.25f + (windowHeight * 0.25 + 10.0f)));
+            
+        }
+        
+        // Draw signals
+        gl::draw(freqLine);
+        //gl::draw(timeLine);
+        
+        yOffset -= gap;
+        
+        //console() << std::endl;
+    }
+    */
+    
+}
+
+bool AudioTest::setFilter()
+{
+    mApp->getAudioInput().getFft()->setFilter( mFilterFrequency, mFilter );
+    return false;
+}
+
+bool AudioTest::removeFilter()
+{
+    mFilter = Kiss::Filter::NONE;
+    mFilterFrequency = 0.0f;
+    mApp->getAudioInput().getFft()->removeFilter();
+    return false;
 }
