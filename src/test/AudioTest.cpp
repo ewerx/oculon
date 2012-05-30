@@ -13,9 +13,11 @@
 #include "KissFFT.h"
 #include "cinder/Rand.h"
 #include "Interface.h"
+#include <algorithm>
 
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 
 //AudioTest::AudioTest()
 //{
@@ -37,7 +39,7 @@ void AudioTest::setup()
     mFilterFrequency = 0.0f;
     
     mIsVerticalOn = false;
-    mIsMultiWaveOn = false;
+    mIsMultiWaveOn = true;
 }
 
 void AudioTest::setupInterface()
@@ -324,18 +326,21 @@ void AudioTest::drawMultiWaveform()
     // Get dimensions
     float windowHeight = mApp->getViewportHeight();
     float windowWidth = mApp->getViewportWidth();
-    float lineWidth = windowWidth * 0.60f;
+    float lineWidth = windowWidth;
     float scaleX = lineWidth / (float)dataSize;
     float xOffset = (windowWidth - lineWidth) / 2.0f; 
     
-    const int numLines = 6;
+    const int numLines = 60;
     const float gap = windowHeight / (numLines+1);
-    float scaleY = gap * 50.0f;
+    float scaleY = gap * 10.0f;
+    float cap = gap * 2.75f;
     float yOffset = windowHeight - gap;
+    float falloff = 0.99f;
     
     glColor3f( 1.0f, 1.0f, 1.0f );
     
-    
+    //vector<float> sortedAmp(amplitude, amplitude+binSize);
+    //sort(sortedAmp.begin(), sortedAmp.end());
     
     gl::enable( GL_LINE_SMOOTH );
 	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
@@ -343,149 +348,98 @@ void AudioTest::drawMultiWaveform()
 	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
 	gl::color( ColorAf::white() );
     
+    glEnable(GL_POINT_SPRITE);
+    glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+    glPointSize(3.0f);
     
-    /*
-    int startIndex = 0;
-    int numPoints = 0;
+    
+    if( mMultiWaveLines.size() != numLines )
+    {
+        mMultiWaveLines = vector<tLine>( numLines, tLine(binSize) );
+    }
+    
+    float dampingMin = 0.5f;
+    float dampingMax = 0.8f;
+    
+    Rand indexRand;
+    float adjacentY[numLines][binSize];
     const float threshold = 0.0000015f;
     
-    const int center = dataSize / 2;
-    
-    float weights[dataSize];
-    
-    int bandOrder[numLines][dataSize];
-    for( int i=0; i < numLines; ++i )
+    for( int lineIndex=0; lineIndex < numLines; ++lineIndex )
     {
-        int centerOffset = 1;
-        int edgeOffset = 0;
-        bool centerFlip = false;
-        bool edgeFlip = false;
+        PolyLine<Vec2f> line;
+        PolyLine<Vec2f> testLine;
         
-        bandOrder[i][center] = -1;
-        
-        //int startOffset = Rand::randInt(dataSize/2);
-        for( int j=0; j < dataSize; j++ )
+        if( mMultiWaveLines[lineIndex].mValue.size() != binSize )
         {
-            if( fftLogData[j].y > threshold )
-            {
-                numPoints++;
-                if( centerOffset == 1 )
-                {
-                    bandOrder[i][center] = j;
-                }
-                int index = centerFlip ? (center + centerOffset) : (center - centerOffset);
-                bandOrder[i][index] = j;
-                centerFlip = !centerFlip;
-                if( !centerFlip )
-                {
-                    centerOffset++;
-                }
-            }
-            else
-            {
-                int index = edgeFlip ? ((dataSize-1) - edgeOffset) : edgeOffset;
-                bandOrder[i][index] = j;
-                edgeFlip = !edgeFlip;
-                if( !edgeFlip )
-                    edgeOffset++;
-            }
+            mMultiWaveLines[lineIndex].mValue = vector<float>( binSize, 0.0f );
         }
         
-        if( bandOrder[i][center] == -1 )
-        {
-            bandOrder[i][center] = bandOrder[i][0];
-        }
-    }
-    
-    //float prevY[dataSize];
-    float oldY[dataSize]; // terrible naming
-    for( int i=0; i < dataSize; ++i )
-    {
-        //prevY[i] = yOffset;
-        oldY[i] = 0.0f;
-        if( i < center )
-        {
-            weights[i] = easeInBounce((float)i/center);
-        }
-        else
-        {
-            weights[i] = easeOutBounce(1.0f-(float)(i-center)/center);
-        }
-        //console() << i << " => " << weights[i] << std::endl;
-    }
-    
-    for( int lineIndex = numLines-1;  lineIndex >= 0; lineIndex-- )
-    {
-        PolyLine<Vec2f> freqLine;
-        //PolyLine<Vec2f> timeLine;
+        int signalType = Rand::randInt(SIGNAL_COUNT);
         
-        //console() << "line " << lineIndex << ": ";
-        
-        int pointIndex = 0;
-        
-        // Iterate through data
-        for (int32_t bandIndex = 0; bandIndex < dataSize; bandIndex++) 
+        for( int32_t i=0; i < binSize; ++i ) 
         {
-            /*
-            int orderedIndex = bandOrder[lineIndex][bandIndex];
-            if( orderedIndex < 0 || orderedIndex >= dataSize )
+            float scaleFactor = ((binSize/2) - math<float>::abs( (binSize/2) - i )) / (binSize/2);
+            
+            int bandIndex = Rand::randInt(binSize);
+            
+            float signal = amplitude[bandIndex];
+            switch(signalType)
             {
-                console() << "bad value " << lineIndex << "/" << bandIndex << ": " << orderedIndex << std::endl;
-                continue;
-            }
-            //float x = fftLogData[bandIndex].x;
-            float y = fftLogData[bandOrder[lineIndex][bandIndex]].y;
-             **
-            
-            float y = timeData[bandIndex];// * weights[bandIndex];
-            
-            //console() << x << "," << y << " ";
-            
-            if( lineIndex > 0 )
-            {
-                //y = Math<float>::max( 
+                case SIGNAL_IMG:
+                    signal = imaginary[bandIndex];
+                    break;
+                    
+                case SIGNAL_REAL:
+                    signal = real[bandIndex];
+                    break;
             }
             
+            float y = signal * scaleFactor * scaleY;
             
-            if( y > threshold )
+            float min = 0.0f;
+            if( i > 0 && i < binSize-1)
             {
-                pointIndex++;
+                min = mMultiWaveLines[lineIndex].mValue[i] * falloff;
+                
+                // dampen height of point to the left
+                float damp = mMultiWaveLines[lineIndex].mValue[i-1] * Rand::randFloat(dampingMin,dampingMax);
+                
+                min = math<float>::max( min, damp );
             }
-            else
+            y = math<float>::clamp( y, min, cap );
+            
+            float absY = yOffset - y;
+            
+            // compare to line below, keep from crossing over
+            if( lineIndex > 0 && adjacentY[lineIndex-1][i] < (absY-5) )
             {
-                y = 0.0f;
+                absY = adjacentY[lineIndex-1][i];
+                y = mMultiWaveLines[lineIndex-1].mValue[i];
             }
             
-            if( lineIndex==0 && ( bandIndex == center ))
-            {
-                console() << bandIndex << ": y = " << y << " | " << oldY[bandIndex] << " ==> ";
-            }
-            
-            y = math<float>::max( y, oldY[bandIndex]*mFalloff );
-            oldY[bandIndex] = y;
-            
-            if( lineIndex==0 && ( bandIndex == center ))
-            {
-                console() << y << " | " << oldY[bandIndex] << std::endl;
-            }
-            // Plot points on lines
-            float absoluteY = -y * scaleY + yOffset;//math<float>::min( prevY[bandIndex], -y * scaleY + yOffset );
-            //prevY[bandIndex] = absoluteY;
-            freqLine.push_back(Vec2f(bandIndex * scaleX + xOffset, absoluteY));
-            //timeLine.push_back(Vec2f(i * scaleX + 10.0f, timeData[i] * (windowHeight - 20.0f) * 0.25f + (windowHeight * 0.25 + 10.0f)));
-            
+            mMultiWaveLines[lineIndex].mValue[i] = y;
+            adjacentY[lineIndex][i] = absY;
         }
         
-        // Draw signals
-        gl::draw(freqLine);
-        //gl::draw(timeLine);
+        //indexRand.seed(lineIndex);
+        for( int32_t i=0; i < binSize; ++i ) 
+        {
+            // dampen height of point to the right
+            float damp = mMultiWaveLines[lineIndex].mValue[i+1] * Rand::randFloat(dampingMin,dampingMax);
+            
+            mMultiWaveLines[lineIndex].mValue[i] = math<float>::max( mMultiWaveLines[lineIndex].mValue[i], damp );
+            
+            float absY = yOffset - mMultiWaveLines[lineIndex].mValue[i];
+			line.push_back(Vec2f(i * scaleX + xOffset, absY));
+        }
         
+        //gl::color( Color(1.0f,1.0f,1.0f) );
+        gl::draw(line);
+        //gl::color( Color(1.0f,0.0f,0.0f) );
+        //gl::draw(testLine);
         yOffset -= gap;
-        
-        //console() << std::endl;
-    }
-    */
-    
+    }    
 }
 
 bool AudioTest::setFilter()

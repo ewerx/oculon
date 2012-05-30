@@ -57,6 +57,21 @@ private:
     // multiwave
     bool mIsMultiWaveOn;
     float mFalloff;
+    struct tLine
+    {
+        tLine( const int size ) : mValue( size, 0.0f ) {}
+        std::vector<float> mValue;
+    };
+    std::vector<tLine> mMultiWaveLines;
+    enum eSignalType
+    {
+        SIGNAL_AMP,
+        SIGNAL_IMG,
+        SIGNAL_REAL,
+        //SIGNAL_FFT,
+        //SIGNAL_TIME,
+        SIGNAL_COUNT
+    };
 };
 
 #endif // __AUDIOTEST_H__

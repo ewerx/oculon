@@ -103,7 +103,7 @@ void AudioInput::update()
                         console() << "[audio] KISS initialized (" << sampleCount << " bands)" << std::endl;
                         // Initialize analyzer
                         mFftInit = true;
-                        mFft = Kiss::create( sampleCount );
+                        mFft = Kiss::create( /*sampleCount*/ );
                         
                         for( int i=0; i < sampleCount; ++i )
                         {
