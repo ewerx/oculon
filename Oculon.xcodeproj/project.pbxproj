@@ -94,6 +94,7 @@
 		7C8C0C1D154F764F006C35DA /* earthNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C1B154F764F006C35DA /* earthNormal.png */; };
 		7C8C236B15007D960009FF26 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
 		7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
+		7C8C4CEF1575F4A600453067 /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8C4CED1575F4A600453067 /* SignalScope.cpp */; };
 		7C8CD29614FFAA3E0009FF26 /* ShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */; };
 		7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */; };
 		7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3211500784E0009FF26 /* syphonClient.mm */; };
@@ -364,6 +365,8 @@
 		7C8C0C18154F7648006C35DA /* earthDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthDiffuse.png; path = resources/images/tectonic/earthDiffuse.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1A154F764F006C35DA /* earthMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthMask.png; path = resources/images/tectonic/earthMask.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1B154F764F006C35DA /* earthNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthNormal.png; path = resources/images/tectonic/earthNormal.png; sourceTree = SOURCE_ROOT; };
+		7C8C4CED1575F4A600453067 /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SignalScope.cpp; sourceTree = "<group>"; };
+		7C8C4CEE1575F4A600453067 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
 		7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderTest.cpp; sourceTree = "<group>"; };
 		7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTest.h; sourceTree = "<group>"; };
 		7C8CD31A1500784E0009FF26 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
@@ -919,6 +922,8 @@
 		7C745582148C259C009C0356 /* test */ = {
 			isa = PBXGroup;
 			children = (
+				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
+				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
 				7C745583148C259C009C0356 /* AudioTest.cpp */,
 				7C745584148C259C009C0356 /* AudioTest.h */,
 				7CF23588151ADE7600445AD8 /* KinectTest.cpp */,
@@ -1493,6 +1498,7 @@
 				7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */,
 				7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */,
 				7C90D673156F2B4900685CB4 /* TextureManager.cpp in Sources */,
+				7C8C4CEF1575F4A600453067 /* SignalScope.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

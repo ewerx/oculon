@@ -16,14 +16,16 @@
 #include "cinder/Timeline.h"
 #include "MotionBlurRenderer.h"
 
+class SignalScope;
+
 //
 // Audio input tests
 //
 class AudioTest : public Scene
 {
 public:
-    AudioTest() : Scene("audio") {}
-    virtual ~AudioTest() {}
+    AudioTest();
+    virtual ~AudioTest();
     
     // inherited from Scene
     void setup();
@@ -40,7 +42,6 @@ private:
     void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
     void drawFft        ( std::shared_ptr<float> fftDataRef );
     void drawVerticalLines      ();
-    void drawMultiWaveform();
     
     bool setFilter();
     bool removeFilter();
@@ -55,23 +56,9 @@ private:
     bool mIsVerticalOn;
     
     // multiwave
-    bool mIsMultiWaveOn;
-    float mFalloff;
-    struct tLine
-    {
-        tLine( const int size ) : mValue( size, 0.0f ) {}
-        std::vector<float> mValue;
-    };
-    std::vector<tLine> mMultiWaveLines;
-    enum eSignalType
-    {
-        SIGNAL_AMP,
-        SIGNAL_IMG,
-        SIGNAL_REAL,
-        //SIGNAL_FFT,
-        //SIGNAL_TIME,
-        SIGNAL_COUNT
-    };
+    SignalScope* mSignalScope;
+    bool mEnableSignalScope;
+   
 };
 
 #endif // __AUDIOTEST_H__

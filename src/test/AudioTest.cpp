@@ -7,47 +7,51 @@
  *
  */
 
-#include "OculonApp.h"//TODO: fix this dependency
+#include "OculonApp.h"
 #include "AudioInput.h"
 #include "AudioTest.h"
+#include "Interface.h"
+#include "SignalScope.h"
+
 #include "KissFFT.h"
 #include "cinder/Rand.h"
-#include "Interface.h"
 #include <algorithm>
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-//AudioTest::AudioTest()
-//{
-//}
-//
-//AudioTest::~AudioTest()
-//{
-//}
+AudioTest::AudioTest()
+: Scene("audio")
+{
+}
+
+AudioTest::~AudioTest()
+{
+    delete mSignalScope;
+}
 
 void AudioTest::setup()
 {
     mUseMotionBlur = false;
     mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioTest::drawVerticalLines, this ) );
     
-    // multiwave
-    mFalloff = 0.9999f;
-    
     mFilter = 0;
     mFilterFrequency = 0.0f;
     
     mIsVerticalOn = false;
-    mIsMultiWaveOn = true;
+    mEnableSignalScope = true;
+    
+    mSignalScope = new SignalScope(this);
+    mSignalScope->setup();
 }
 
 void AudioTest::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur ));
     mInterface->addParam(CreateBoolParam( "Vertical Lines", &mIsVerticalOn ));
-    mInterface->addParam(CreateBoolParam( "MultiWaveform", &mIsMultiWaveOn )
-                         .oscReceiver(mName,"filter"));
+    mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
+                         .oscReceiver(mName,"signalscope"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioTest::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -56,16 +60,23 @@ void AudioTest::setupInterface()
                         .oscReceiver(mName,"filter"))->registerCallback( this, &AudioTest::setFilter );
     mInterface->addButton(CreateTriggerParam("Remove Filter", NULL)
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioTest::removeFilter );
+    
+    mSignalScope->setupInterface();
 }
 
 void AudioTest::setupDebugInterface()
 {
-    mDebugParams.addParam("Falloff", &mFalloff, "step=0.001");
+    mSignalScope->setupDebugInterface();
 }
 
 void AudioTest::update(double dt)
 {
     Scene::update(dt);
+    
+    if( mEnableSignalScope )
+    {
+        mSignalScope->update(dt);
+    }
 }
 
 void AudioTest::draw()
@@ -81,8 +92,10 @@ void AudioTest::draw()
         if( mIsVerticalOn )
             drawVerticalLines();
         
-        if( mIsMultiWaveOn )
-            drawMultiWaveform();
+        if( mEnableSignalScope )
+        {
+            mSignalScope->draw();
+        }
     }
     glPopMatrix();
 }
@@ -307,139 +320,6 @@ void AudioTest::drawVerticalLines()
 	}
     gl::enableAlphaBlending();
     glPopMatrix();
-}
-
-void AudioTest::drawMultiWaveform()
-{
-    AudioInput& audioInput = mApp->getAudioInput();
-    
-    // Get data
-    float * timeData = audioInput.getFft()->getData();
-    float * amplitude = audioInput.getFft()->getAmplitude();
-	int32_t	binSize = audioInput.getFft()->getBinSize();
-	float *	imaginary = audioInput.getFft()->getImaginary();
-	float *	phase = audioInput.getFft()->getPhase();
-	float *	real = audioInput.getFft()->getReal();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    // Get dimensions
-    float windowHeight = mApp->getViewportHeight();
-    float windowWidth = mApp->getViewportWidth();
-    float lineWidth = windowWidth;
-    float scaleX = lineWidth / (float)dataSize;
-    float xOffset = (windowWidth - lineWidth) / 2.0f; 
-    
-    const int numLines = 60;
-    const float gap = windowHeight / (numLines+1);
-    float scaleY = gap * 10.0f;
-    float cap = gap * 2.75f;
-    float yOffset = windowHeight - gap;
-    float falloff = 0.99f;
-    
-    glColor3f( 1.0f, 1.0f, 1.0f );
-    
-    //vector<float> sortedAmp(amplitude, amplitude+binSize);
-    //sort(sortedAmp.begin(), sortedAmp.end());
-    
-    gl::enable( GL_LINE_SMOOTH );
-	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-	gl::enable( GL_POLYGON_SMOOTH );
-	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-	gl::color( ColorAf::white() );
-    
-    glEnable(GL_POINT_SPRITE);
-    glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-    glPointSize(3.0f);
-    
-    
-    if( mMultiWaveLines.size() != numLines )
-    {
-        mMultiWaveLines = vector<tLine>( numLines, tLine(binSize) );
-    }
-    
-    float dampingMin = 0.5f;
-    float dampingMax = 0.8f;
-    
-    Rand indexRand;
-    float adjacentY[numLines][binSize];
-    const float threshold = 0.0000015f;
-    
-    for( int lineIndex=0; lineIndex < numLines; ++lineIndex )
-    {
-        PolyLine<Vec2f> line;
-        PolyLine<Vec2f> testLine;
-        
-        if( mMultiWaveLines[lineIndex].mValue.size() != binSize )
-        {
-            mMultiWaveLines[lineIndex].mValue = vector<float>( binSize, 0.0f );
-        }
-        
-        int signalType = Rand::randInt(SIGNAL_COUNT);
-        
-        for( int32_t i=0; i < binSize; ++i ) 
-        {
-            float scaleFactor = ((binSize/2) - math<float>::abs( (binSize/2) - i )) / (binSize/2);
-            
-            int bandIndex = Rand::randInt(binSize);
-            
-            float signal = amplitude[bandIndex];
-            switch(signalType)
-            {
-                case SIGNAL_IMG:
-                    signal = imaginary[bandIndex];
-                    break;
-                    
-                case SIGNAL_REAL:
-                    signal = real[bandIndex];
-                    break;
-            }
-            
-            float y = signal * scaleFactor * scaleY;
-            
-            float min = 0.0f;
-            if( i > 0 && i < binSize-1)
-            {
-                min = mMultiWaveLines[lineIndex].mValue[i] * falloff;
-                
-                // dampen height of point to the left
-                float damp = mMultiWaveLines[lineIndex].mValue[i-1] * Rand::randFloat(dampingMin,dampingMax);
-                
-                min = math<float>::max( min, damp );
-            }
-            y = math<float>::clamp( y, min, cap );
-            
-            float absY = yOffset - y;
-            
-            // compare to line below, keep from crossing over
-            if( lineIndex > 0 && adjacentY[lineIndex-1][i] < (absY-5) )
-            {
-                absY = adjacentY[lineIndex-1][i];
-                y = mMultiWaveLines[lineIndex-1].mValue[i];
-            }
-            
-            mMultiWaveLines[lineIndex].mValue[i] = y;
-            adjacentY[lineIndex][i] = absY;
-        }
-        
-        //indexRand.seed(lineIndex);
-        for( int32_t i=0; i < binSize; ++i ) 
-        {
-            // dampen height of point to the right
-            float damp = mMultiWaveLines[lineIndex].mValue[i+1] * Rand::randFloat(dampingMin,dampingMax);
-            
-            mMultiWaveLines[lineIndex].mValue[i] = math<float>::max( mMultiWaveLines[lineIndex].mValue[i], damp );
-            
-            float absY = yOffset - mMultiWaveLines[lineIndex].mValue[i];
-			line.push_back(Vec2f(i * scaleX + xOffset, absY));
-        }
-        
-        //gl::color( Color(1.0f,1.0f,1.0f) );
-        gl::draw(line);
-        //gl::color( Color(1.0f,0.0f,0.0f) );
-        //gl::draw(testLine);
-        yOffset -= gap;
-    }    
 }
 
 bool AudioTest::setFilter()

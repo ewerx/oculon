@@ -51,6 +51,9 @@ public:
     OculonApp* getApp() const       { return mApp; }
     const std::string& getName()    { return mName; }
     
+    Interface* getInterface()                       { return mInterface; }
+    ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
+    
     bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
     bool isDebug() const            { return mIsDebug; }
