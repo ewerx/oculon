@@ -54,7 +54,7 @@ void Sol::initFrames()
     //mTextures = AssetManager::getInstance()->getTextureListFromDir( "/Volumes/cruxpod/Downloads/_images/eit171test/" );
     
     int index = 0;
-    std::string srcDir("/Volumes/cruxpod/Downloads/_images/sdo_20120518/");
+    std::string srcDir("/Volumes/cruxpod/Downloads/_images/sdo_20120524/");
     fs::path p(srcDir);
     
     if( !fs::is_directory(p) && !fs::exists(p) )
@@ -126,7 +126,7 @@ void Sol::setupDebugInterface()
 {
     mDebugParams.addParam("Framerate", &mFrameRate );
     mDebugParams.addParam("Index", &mIndex, "readonly" );
-    mDebugParams.setOptions("Source", "max=8");
+    mDebugParams.addParam("Source", &mCurrentSource, "min=0 max=5");
 }
 
 // ----------------------------------------------------------------

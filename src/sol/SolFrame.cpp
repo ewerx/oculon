@@ -36,7 +36,7 @@ bool SolFrame::init( const fs::path& filePath )
     // date...._time.._res._src.
     // 20120518_234611_1024_0131
     string datetime = filename.substr(0,15);
-    string srcname = filename.substr(21,4);
+    string srcname = filename.substr(20,4); // 21 for 1024
     
     // format: 2010518_234611
     time_input_facet* p_facet = new time_input_facet("%Y%m%d_%H%M%S");
