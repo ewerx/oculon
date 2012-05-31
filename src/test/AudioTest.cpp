@@ -51,7 +51,7 @@ void AudioTest::setupInterface()
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur ));
     mInterface->addParam(CreateBoolParam( "Vertical Lines", &mIsVerticalOn ));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
-                         .oscReceiver(mName,"signalscope"));
+                         .oscReceiver(mName,"signal"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioTest::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -105,8 +105,8 @@ void AudioTest::drawDebug()
     glPushMatrix();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
     
-    drawWaveform( mApp->getAudioInput().getPcmBuffer() );
-    drawFft( mApp->getAudioInput().getFftDataRef() );
+    //drawWaveform( mApp->getAudioInput().getPcmBuffer() );
+    //drawFft( mApp->getAudioInput().getFftDataRef() );
     
     glPopMatrix();
 }

@@ -35,7 +35,6 @@ private:
     int mNumLines;
     
     float mLineWidth;
-    float mScale;
     float mFallOffMin;
     float mFallOffMax;
     float mHorizSmoothingMin;

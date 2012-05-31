@@ -53,7 +53,7 @@ private:
     enum
     {
         kStep =                 1024,
-        kNumParticles =         (24 * kStep),
+        kNumParticles =         (48 * kStep),
         kFftBands =             512,
     };
     

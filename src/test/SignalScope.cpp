@@ -57,22 +57,25 @@ void SignalScope::setup()
 
 void SignalScope::setupInterface()
 {
-    const string name("Signal");
+    const string name("signal");
     mParentScene->getInterface()->gui()->addColumn();
     mParentScene->getInterface()->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
                                            .oscReceiver(name,"randomize"));
     mParentScene->getInterface()->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                                            .minValue(0.0f)
                                            .maxValue(10.0f)
-                                           .oscReceiver(name,"randomsignal"));
+                                           .oscReceiver(name,"scale")
+                                           .sendFeedback());
     mParentScene->getInterface()->addParam(CreateFloatParam("Signal Cap", &mSignalMaxRatio)
                                            .minValue(1.0f)
                                            .maxValue(10.0f)
-                                           .oscReceiver(name,"cap"));
+                                           .oscReceiver(name,"cap")
+                                           .sendFeedback());
     mParentScene->getInterface()->addParam(CreateIntParam("Center Bias Range", &mCenterBiasRange)
                                            .minValue(1)
                                            .maxValue(NUM_POINTS/2)
-                                           .oscReceiver(name,"centerrange"));
+                                           .oscReceiver(name,"biasrange")
+                                           .sendFeedback());
     mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Min", &mHorizSmoothingMin)
                                            .oscReceiver(name,"smoothingmin"));
     mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Max", &mHorizSmoothingMax)

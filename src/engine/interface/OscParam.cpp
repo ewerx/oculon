@@ -81,7 +81,12 @@ void OscFloatParam::sendValue()
     
     osc::Message message;
     message.setAddress( mOscSendAddress );
-    message.addFloatArg( mIsEncoder ? *(mControl->var) : mControl->getNormalizedValue() );
+    message.addFloatArg( mControl->getNormalizedValue() );
+    mOscServer->sendMessage( message );
+    
+    message.clear();
+    message.setAddress( mOscSendAddress + "/val" );
+    message.addFloatArg( *(mControl->var) );
     mOscServer->sendMessage( message );
 }
 
@@ -142,7 +147,12 @@ void OscIntParam::sendValue()
     
     osc::Message message;
     message.setAddress( mOscSendAddress );
-    message.addFloatArg( mIsEncoder ? *(mControl->var) : mControl->getNormalizedValue() );
+    message.addFloatArg( mControl->getNormalizedValue() );
+    mOscServer->sendMessage( message );
+    
+    message.clear();
+    message.setAddress( mOscSendAddress + "/val" );
+    message.addFloatArg( *(mControl->var) );
     mOscServer->sendMessage( message );
 }
 
