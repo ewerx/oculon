@@ -17,6 +17,7 @@
 #include "MotionBlurRenderer.h"
 
 class SignalScope;
+class Metropolis;
 
 //
 // Audio input tests
@@ -58,6 +59,9 @@ private:
     // multiwave
     SignalScope* mSignalScope;
     bool mEnableSignalScope;
+    
+    Metropolis* mMetropolis;
+    bool mEnableMetropolis;
    
 };
 

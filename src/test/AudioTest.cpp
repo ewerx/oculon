@@ -12,6 +12,7 @@
 #include "AudioTest.h"
 #include "Interface.h"
 #include "SignalScope.h"
+#include "Metropolis.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -28,6 +29,7 @@ AudioTest::AudioTest()
 
 AudioTest::~AudioTest()
 {
+    delete mMetropolis;
     delete mSignalScope;
 }
 
@@ -40,10 +42,14 @@ void AudioTest::setup()
     mFilterFrequency = 0.0f;
     
     mIsVerticalOn = false;
-    mEnableSignalScope = true;
     
+    mEnableSignalScope = false;
     mSignalScope = new SignalScope(this);
     mSignalScope->setup();
+    
+    mEnableMetropolis = true;
+    mMetropolis = new Metropolis(this);
+    mMetropolis->setup();
 }
 
 void AudioTest::setupInterface()
@@ -62,11 +68,13 @@ void AudioTest::setupInterface()
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioTest::removeFilter );
     
     mSignalScope->setupInterface();
+    mMetropolis->setupInterface();
 }
 
 void AudioTest::setupDebugInterface()
 {
     mSignalScope->setupDebugInterface();
+    mMetropolis->setupDebugInterface();
 }
 
 void AudioTest::update(double dt)
@@ -76,6 +84,11 @@ void AudioTest::update(double dt)
     if( mEnableSignalScope )
     {
         mSignalScope->update(dt);
+    }
+    
+    if( mEnableMetropolis )
+    {
+        mMetropolis->update(dt);
     }
 }
 
@@ -95,6 +108,11 @@ void AudioTest::draw()
         if( mEnableSignalScope )
         {
             mSignalScope->draw();
+        }
+        
+        if( mEnableMetropolis )
+        {
+            mMetropolis->draw();
         }
     }
     glPopMatrix();

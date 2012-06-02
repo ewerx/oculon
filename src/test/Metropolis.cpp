@@ -1,5 +1,5 @@
 /*
- *  SignalScope.cpp
+ *  Metropolis.cpp
  *  Oculon
  *
  *  Created by Ehsan on 11-10-22.
@@ -8,7 +8,7 @@
  */
 
 
-#include "SignalScope.h"
+#include "Metropolis.h"
 #include "Utils.h"
 #include "Scene.h"
 #include "OculonApp.h"
@@ -24,19 +24,19 @@ using namespace std;
 
 
 //
-// SignalScope
+// Metropolis
 // 
 
-SignalScope::SignalScope(Scene* scene)
+Metropolis::Metropolis(Scene* scene)
 : mParentScene(scene)
 {
 }
 
-SignalScope::~SignalScope()
+Metropolis::~Metropolis()
 {
 }
 
-void SignalScope::setup()
+void Metropolis::setup()
 {
     mNumLines = 50;
     mHorizSmoothingMin = 0.4f;
@@ -52,12 +52,14 @@ void SignalScope::setup()
     
     mLineWidth = mParentScene->getApp()->getViewportWidth();
     
+    mTestBackground = ci::loadImage( ci::loadFile( "/Users/ehsan/Desktop/mutek_metropolis_canvas.png" ) ); 
+    
     reset();
 }
 
-void SignalScope::setupInterface()
+void Metropolis::setupInterface()
 {
-    const string name("signal");
+    const string name("metropolis");
     mParentScene->getInterface()->gui()->addColumn();
     mParentScene->getInterface()->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
                                            .oscReceiver(name,"randomize"));
@@ -86,7 +88,7 @@ void SignalScope::setupInterface()
                                            .oscReceiver(name,"falloffmax"));
 }
 
-void SignalScope::setupDebugInterface()
+void Metropolis::setupDebugInterface()
 {
     mParentScene->getDebugInterface()->addSeparator("Signal Scope");
     mParentScene->getDebugInterface()->setOptions("Falloff Min", "step=0.001");
@@ -99,17 +101,17 @@ void SignalScope::setupDebugInterface()
     mParentScene->getDebugInterface()->setOptions("Signal Scale", "step=0.01");
 }
 
-void SignalScope::reset()
+void Metropolis::reset()
 {
     mLines = vector<tLine>( mNumLines, tLine() );
 }
 
-void SignalScope::resize()
+void Metropolis::resize()
 {
     
 }
 
-void SignalScope::update(double dt)
+void Metropolis::update(double dt)
 {
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
     
@@ -139,6 +141,7 @@ void SignalScope::update(double dt)
     
     
     
+    /*
     Rand indexRand;
     float adjacentY[mNumLines][binSize];
     //const float threshold = 0.0000015f;
@@ -221,9 +224,10 @@ void SignalScope::update(double dt)
         //gl::draw(testLine);
         yOffset -= gap;
     } 
+     */
 }
 
-void SignalScope::draw()
+void Metropolis::draw()
 {
     gl::enable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
@@ -231,13 +235,119 @@ void SignalScope::draw()
     glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
     gl::color( ColorAf::white() );
     
-    //glEnable(GL_POINT_SPRITE);
-    //glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-    //glPointSize(3.0f);
     
+    const float windowHeight = mParentScene->getApp()->getViewportHeight();
+    const float windowWidth = mParentScene->getApp()->getViewportWidth();
+    
+    const float centerX = windowWidth/2.0f;
+    const float centerY = windowHeight/2.0f;
+    
+    // grid
+    const int numSegs = 14;
+    const float segWidth = windowWidth / numSegs;
+    
+    /*
+    glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
+    gl::drawLine( Vec2f(0.0f, windowHeight/3.0f), Vec2f(windowWidth, windowHeight/3.0f) );
+    gl::drawLine( Vec2f(0.0f, windowHeight*2.0f/3.0f), Vec2f(windowWidth, windowHeight*2.0f/3.0f) );
+    
+    float x = segWidth / 2.0f;
+    
+    for( int i=0; i < numSegs; ++i )
+    {
+        gl::drawLine( Vec2f(x, 0.0f), Vec2f(x, windowHeight) );
+        x += segWidth;
+    }
+    */
+    gl::enableAdditiveBlending();
+    gl::disableDepthWrite();
+    gl::disableDepthRead();
+    glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+    gl::draw( mTestBackground );
+    
+    glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+    
+    gl::drawLine( Vec2f(centerX, 0.0f), Vec2f(centerX, windowHeight) );
+    gl::drawLine( Vec2f(0.0f, centerY), Vec2f(windowWidth, centerY) );
+    
+    const float c1 = 5.2f*segWidth;
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c1, 0.0f) );
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c1, 0.0f) );
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c1, windowHeight) );
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c1, windowHeight) );
+    
+    const float c2 = 1.7f*segWidth;
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c2, 0.0f) );
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c2, 0.0f) );
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c2, windowHeight) );
+    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c2, windowHeight) );
+    
+    glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+    
+    const float s1 = 0.0f - segWidth*0.8f;
+    const float s2 = windowWidth + segWidth*0.8f;
+    
+    const float ps1 = 6.15*segWidth;
+    const float ps2 = 4.9f*segWidth;
+    const float ps3 = 2.7f*segWidth;
+    const float ps4 = -3.3f*segWidth;
+    
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps1, 0.0f) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps1, 0.0f) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps2, 0.0f) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps2, 0.0f) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps3, 0.0f) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps3, 0.0f) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps4, 0.0f) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps4, 0.0f) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps1, windowHeight) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps1, windowHeight) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps2, windowHeight) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps2, windowHeight) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps3, windowHeight) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps3, windowHeight) );
+    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps4, windowHeight) );
+    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps4, windowHeight) );
+    
+    glColor4f(1.0f, 1.0f, 0.0f, 0.75f);
+    
+    const float v1 = 3.925f*segWidth;
+    gl::drawLine( Vec2f(centerX+v1, 0.0f), Vec2f(centerX+v1, windowHeight) );
+    gl::drawLine( Vec2f(centerX-v1, 0.0f), Vec2f(centerX-v1, windowHeight) );
+    const float v2 = 0.2f*segWidth;
+    gl::drawLine( Vec2f(v2, 0.0f), Vec2f(v2, windowHeight) );
+    gl::drawLine( Vec2f(windowWidth-v2, 0.0f), Vec2f(windowWidth-v2, windowHeight) );
+    
+    const float m1 = windowHeight / 6.2f;
+    const float pm1 = 4.95f*segWidth;
+    const float pm2 = 2.8f*segWidth;
+    const float pm3 = -0.15f*segWidth;
+    gl::drawLine( Vec2f(v2, -m1), Vec2f(centerX - pm1, windowHeight) );
+    gl::drawLine( Vec2f(v2, -m1), Vec2f(centerX - pm2, windowHeight) );
+    gl::drawLine( Vec2f(v2, -m1), Vec2f(centerX - pm3, windowHeight) );
+    
+    gl::drawLine( Vec2f(v2, windowHeight+m1), Vec2f(centerX - pm1, 0.0f) );
+    gl::drawLine( Vec2f(v2, windowHeight+m1), Vec2f(centerX - pm2, 0.0f) );
+    gl::drawLine( Vec2f(v2, windowHeight+m1), Vec2f(centerX - pm3, 0.0f) );
+    
+    gl::drawLine( Vec2f(windowWidth-v2, -m1), Vec2f(centerX + pm1, windowHeight) );
+    gl::drawLine( Vec2f(windowWidth-v2, -m1), Vec2f(centerX + pm2, windowHeight) );
+    gl::drawLine( Vec2f(windowWidth-v2, -m1), Vec2f(centerX + pm3, windowHeight) );
+    
+    gl::drawLine( Vec2f(windowWidth-v2, windowHeight+m1), Vec2f(centerX + pm1, 0.0f) );
+    gl::drawLine( Vec2f(windowWidth-v2, windowHeight+m1), Vec2f(centerX + pm2, 0.0f) );
+    gl::drawLine( Vec2f(windowWidth-v2, windowHeight+m1), Vec2f(centerX + pm3, 0.0f) );
+    
+    const float pm4 = 1.3f*segWidth;
+    const float pm5 = 2.875f*segWidth;
+    gl::drawLine( Vec2f(centerX-pm5, 0.0f), Vec2f(centerX - pm4, windowHeight) );
+    gl::drawLine( Vec2f(centerX-pm4, 0.0f), Vec2f(centerX - pm5, windowHeight) );
+    gl::drawLine( Vec2f(centerX+pm5, 0.0f), Vec2f(centerX + pm4, windowHeight) );
+    gl::drawLine( Vec2f(centerX+pm4, 0.0f), Vec2f(centerX + pm5, windowHeight) );
+    /*
     for( int lineIndex=0; lineIndex < mNumLines; ++lineIndex )
     {
         gl::draw(mLines[lineIndex].mPolyLine);
     }
-
+     */
 }

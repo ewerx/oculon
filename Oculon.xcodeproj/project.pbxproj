@@ -141,6 +141,7 @@
 		7CEF0FE71528FEBB000DF027 /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */; };
 		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
 		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
+		7CF4F39D157A028E003E5A3C /* Metropolis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF4F39B157A028E003E5A3C /* Metropolis.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -435,6 +436,8 @@
 		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
 		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
 		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
+		7CF4F39B157A028E003E5A3C /* Metropolis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Metropolis.cpp; sourceTree = "<group>"; };
+		7CF4F39C157A028E003E5A3C /* Metropolis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Metropolis.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -922,6 +925,8 @@
 		7C745582148C259C009C0356 /* test */ = {
 			isa = PBXGroup;
 			children = (
+				7CF4F39B157A028E003E5A3C /* Metropolis.cpp */,
+				7CF4F39C157A028E003E5A3C /* Metropolis.h */,
 				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
 				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
 				7C745583148C259C009C0356 /* AudioTest.cpp */,
@@ -1499,6 +1504,7 @@
 				7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */,
 				7C90D673156F2B4900685CB4 /* TextureManager.cpp in Sources */,
 				7C8C4CEF1575F4A600453067 /* SignalScope.cpp in Sources */,
+				7CF4F39D157A028E003E5A3C /* Metropolis.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
