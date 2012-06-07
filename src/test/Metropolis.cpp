@@ -54,6 +54,8 @@ void Metropolis::setup()
     
     mTestBackground = ci::loadImage( ci::loadFile( "/Users/ehsan/Desktop/mutek_metropolis_canvas.png" ) ); 
     
+    mMetropolis.init( mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight() );
+    
     reset();
 }
 
@@ -113,6 +115,13 @@ void Metropolis::resize()
 
 void Metropolis::update(double dt)
 {
+    gl::enable( GL_LINE_SMOOTH );
+    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+    gl::enable( GL_POLYGON_SMOOTH );
+    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+    gl::color( ColorAf::white() );
+    glLineWidth(2.0f);
+    
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
     
     // Get data
@@ -139,102 +148,23 @@ void Metropolis::update(double dt)
     float cap = gap * mSignalMaxRatio;
     float yOffset = windowHeight - gap;
     
-    
-    
-    /*
-    Rand indexRand;
-    float adjacentY[mNumLines][binSize];
-    //const float threshold = 0.0000015f;
-    
-    for( int lineIndex=0; lineIndex < mNumLines; ++lineIndex )
-    {
-        mLines[lineIndex].mPolyLine.getPoints().clear();
-        
-        int signalType = Rand::randInt(SIGNAL_COUNT);
-        
-        int center = (binSize/2) + mCenterBiasRange * Rand::randFloat(-1.0f,1.0f);
-        
-        float falloff = Rand::randFloat(mFallOffMin,mFallOffMax);
-        float horizSmoothing = Rand::randFloat(mHorizSmoothingMin,mHorizSmoothingMax);
-        
-        indexRand.seed(lineIndex);
-        for( int32_t i=0; i < binSize; ++i ) 
-        {
-            // center bias
-            float centerRatio = (center - math<float>::abs( center - i )) / center;
-            float centerBias = easeInExpo(centerRatio);
-            float scaleFactor = centerBias * mSignalScale;
-            
-            int bandIndex = mRandomizeSignal ? Rand::randInt(binSize) : indexRand.nextInt(binSize);
-            
-            float signal = 0.0f;
-            switch(signalType)
-            {
-                case SIGNAL_AMPLITUDE:
-                    signal = amplitude[bandIndex];
-                    break;
-                case SIGNAL_IMAGINARY:
-                    signal = imaginary[bandIndex];
-                    break;
-                case SIGNAL_REAL:
-                    signal = real[bandIndex];
-                    break;
-            }
-            
-            float y = signal * scaleFactor * scaleY;
-            
-            float min = 0.0f;
-            if( i > 0 && i < binSize-1)
-            {
-                min = mLines[lineIndex].mValue[i] * falloff;
-                
-                // smooth height diff of point to the left
-                float damp = mLines[lineIndex].mValue[i-1] * horizSmoothing;
-                
-                min = math<float>::max( min, damp );
-            }
-            y = math<float>::clamp( y, min, cap );
-            
-            mLines[lineIndex].mValue[i] = y;
-        }
-        
-        for( int32_t i=0; i < binSize; ++i ) 
-        {
-            // smoothen height diff of point to the right
-            float damp = mLines[lineIndex].mValue[i+1] * horizSmoothing;
-            
-            mLines[lineIndex].mValue[i] = math<float>::clamp( mLines[lineIndex].mValue[i], damp, cap );
-            
-            float absY = yOffset - mLines[lineIndex].mValue[i];
-            
-            // compare to line below, keep from crossing over
-            if( lineIndex > 0 && adjacentY[lineIndex-1][i] < absY )
-            {
-                absY = adjacentY[lineIndex-1][i];
-                //y = mLines[lineIndex-1].mValue[i];
-            }
-            adjacentY[lineIndex][i] = absY;
-            
-            mLines[lineIndex].mPolyLine.push_back(Vec2f(i * scaleX + xOffset, absY));
-        }
-        
-        //gl::color( Color(1.0f,1.0f,1.0f) );
-        
-        //gl::color( Color(1.0f,0.0f,0.0f) );
-        //gl::draw(testLine);
-        yOffset -= gap;
-    } 
-     */
 }
+
+//void Metropolis::drawTriangle( const Vec2f& origin, const Vec2f& farPoint
 
 void Metropolis::draw()
 {
+    AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
+    const float * amplitude = audioInput.getFft()->getAmplitude();
+    const int32_t	binSize = audioInput.getFft()->getBinSize();
+
+    
     gl::enable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     gl::enable( GL_POLYGON_SMOOTH );
     glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
     gl::color( ColorAf::white() );
-    
+    glLineWidth(4.0f);
     
     const float windowHeight = mParentScene->getApp()->getViewportHeight();
     const float windowWidth = mParentScene->getApp()->getViewportWidth();
@@ -262,82 +192,179 @@ void Metropolis::draw()
     gl::enableAdditiveBlending();
     gl::disableDepthWrite();
     gl::disableDepthRead();
-    glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-    gl::draw( mTestBackground );
+    //glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+    //gl::draw( mTestBackground );
     
     glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
     
     gl::drawLine( Vec2f(centerX, 0.0f), Vec2f(centerX, windowHeight) );
     gl::drawLine( Vec2f(0.0f, centerY), Vec2f(windowWidth, centerY) );
     
+    // fixed points
+    const float centerSidePointX = mMetropolis.centerSidePointX;
+    const float topBotSidePointX = mMetropolis.centerSidePointX;
+    const float topBotSidePointY = mMetropolis.topBotSidePointY;
+    const Vec2f p0(mMetropolis.p0); // center
+    const Vec2f p1(mMetropolis.p1); // left side
+    const Vec2f p2(windowWidth - centerSidePointX, centerY); // right side
+    const Vec2f p3(topBotSidePointX, topBotSidePointY); // top left
+    const Vec2f p4(topBotSidePointX, windowHeight - topBotSidePointY); // bottom left
+    const Vec2f p5(windowWidth - topBotSidePointX, topBotSidePointY); // top right
+    const Vec2f p6(windowWidth - topBotSidePointX, windowHeight - topBotSidePointY); // bottom right
+    
+    
+    // p0
+    const float c0 = centerX;
     const float c1 = 5.2f*segWidth;
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c1, 0.0f) );
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c1, 0.0f) );
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c1, windowHeight) );
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c1, windowHeight) );
-    
     const float c2 = 1.7f*segWidth;
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c2, 0.0f) );
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c2, 0.0f) );
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX + c2, windowHeight) );
-    gl::drawLine( Vec2f(centerX, centerY), Vec2f(centerX - c2, windowHeight) );
+    const float c3 = FLT_MAX;
+    gl::drawLine( p0, Vec2f(centerX + c1, 0.0f) );
+    gl::drawLine( p0, Vec2f(centerX - c1, 0.0f) );
+    gl::drawLine( p0, Vec2f(centerX + c1, windowHeight) );
+    gl::drawLine( p0, Vec2f(centerX - c1, windowHeight) );
     
+    gl::drawLine( p0, Vec2f(centerX + c2, 0.0f) );
+    gl::drawLine( p0, Vec2f(centerX - c2, 0.0f) );
+    gl::drawLine( p0, Vec2f(centerX + c2, windowHeight) );
+    gl::drawLine( p0, Vec2f(centerX - c2, windowHeight) );
+    
+    float points[3];
+    points[0] = Rand::randFloat(0.0f,c2);
+    points[1] = Rand::randFloat(c2,c1);
+    points[2] = Rand::randFloat(c1,c3);
+    //points[3] = Rand::randFloat(-FLT_MAX,ps4);
+    
+    
+    for( int i=0; i < 3; ++i )
+    {
+        /*
+        glBegin(GL_TRIANGLES);
+        glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+        glVertex2f( p0.x, p0.y );
+        glVertex2f( p0.x, 0.0f );
+        glColor4f(0.0f,0.0f,0.0f,0.0f);
+        glVertex2f( centerX - points[i], 0.0f );
+        glEnd();
+        
+        glBegin(GL_TRIANGLES);
+        glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+        glVertex2f( p0.x, p0.y );
+        glVertex2f( p0.x, 0.0f );
+        glColor4f(0.0f,0.0f,0.0f,0.0f);
+        glVertex2f( centerX + points[i], 0.0f );
+        glEnd();
+        
+        glBegin(GL_TRIANGLES);
+        glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+        glVertex2f( p0.x, p0.y );
+        glVertex2f( p0.x, windowHeight );
+        glColor4f(0.0f,0.0f,0.0f,0.0f);
+        glVertex2f( centerX - points[i], windowHeight );
+        //glEnd();
+        
+        glBegin(GL_TRIANGLES);
+        glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+        glVertex2f( p0.x, p0.y );
+        glVertex2f( p0.x, windowHeight );
+        glColor4f(0.0f,0.0f,0.0f,0.0f);
+        glVertex2f( centerX + points[i], windowHeight );
+        glEnd();
+        */
+        gl::drawLine( p0, Vec2f(centerX - points[i], 0.0f) );
+        gl::drawLine( p0, Vec2f(centerX + points[i], 0.0f) );
+        gl::drawLine( p0, Vec2f(centerX - points[i], windowHeight) );
+        gl::drawLine( p0, Vec2f(centerX + points[i], windowHeight) );
+    }
+    
+    // p1 + p2
     glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
     
-    const float s1 = 0.0f - segWidth*0.8f;
-    const float s2 = windowWidth + segWidth*0.8f;
     
     const float ps1 = 6.15*segWidth;
     const float ps2 = 4.9f*segWidth;
     const float ps3 = 2.7f*segWidth;
     const float ps4 = -3.3f*segWidth;
     
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps1, 0.0f) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps1, 0.0f) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps2, 0.0f) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps2, 0.0f) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps3, 0.0f) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps3, 0.0f) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps4, 0.0f) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps4, 0.0f) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps1, windowHeight) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps1, windowHeight) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps2, windowHeight) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps2, windowHeight) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps3, windowHeight) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps3, windowHeight) );
-    gl::drawLine( Vec2f(s2, centerY), Vec2f(centerX + ps4, windowHeight) );
-    gl::drawLine( Vec2f(s1, centerY), Vec2f(centerX - ps4, windowHeight) );
     
-    glColor4f(1.0f, 1.0f, 0.0f, 0.75f);
+    //float points[3];
+    points[0] = Rand::randFloat(ps1,ps2);
+    points[1] = Rand::randFloat(ps2,ps3);
+    points[2] = Rand::randFloat(ps4,ps3);
+    points[3] = Rand::randFloat(-FLT_MAX,ps4);
     
-    const float v1 = 3.925f*segWidth;
-    gl::drawLine( Vec2f(centerX+v1, 0.0f), Vec2f(centerX+v1, windowHeight) );
-    gl::drawLine( Vec2f(centerX-v1, 0.0f), Vec2f(centerX-v1, windowHeight) );
-    const float v2 = 0.2f*segWidth;
-    gl::drawLine( Vec2f(v2, 0.0f), Vec2f(v2, windowHeight) );
-    gl::drawLine( Vec2f(windowWidth-v2, 0.0f), Vec2f(windowWidth-v2, windowHeight) );
+    for( int i=0; i < 3; ++i )
+    {
+        gl::drawLine( p1, Vec2f(centerX - points[i], 0.0f) );
+        gl::drawLine( p2, Vec2f(centerX + points[i], 0.0f) );
+        gl::drawLine( p1, Vec2f(centerX - points[i], windowHeight) );
+        gl::drawLine( p2, Vec2f(centerX + points[i], windowHeight) );
+    }
     
-    const float m1 = windowHeight / 6.2f;
+    gl::drawLine( p2, Vec2f(centerX + ps1, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps1, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps2, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps2, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps3, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps3, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps4, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps4, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps1, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps1, windowHeight) );
+    gl::drawLine( p2, Vec2f(centerX + ps2, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps2, windowHeight) );
+    gl::drawLine( p2, Vec2f(centerX + ps3, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps3, windowHeight) );
+    gl::drawLine( p2, Vec2f(centerX + ps4, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps4, windowHeight) );
+    
+    /*
+    gl::drawLine( p2, Vec2f(centerX + ps1, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps1, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps2, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps2, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps3, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps3, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps4, 0.0f) );
+    gl::drawLine( p1, Vec2f(centerX - ps4, 0.0f) );
+    gl::drawLine( p2, Vec2f(centerX + ps1, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps1, windowHeight) );
+    gl::drawLine( p2, Vec2f(centerX + ps2, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps2, windowHeight) );
+    gl::drawLine( p2, Vec2f(centerX + ps3, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps3, windowHeight) );
+    gl::drawLine( p2, Vec2f(centerX + ps4, windowHeight) );
+    gl::drawLine( p1, Vec2f(centerX - ps4, windowHeight) );
+     */
+    
+    glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
+    // p3-p6
     const float pm1 = 4.95f*segWidth;
     const float pm2 = 2.8f*segWidth;
     const float pm3 = -0.15f*segWidth;
-    gl::drawLine( Vec2f(v2, -m1), Vec2f(centerX - pm1, windowHeight) );
-    gl::drawLine( Vec2f(v2, -m1), Vec2f(centerX - pm2, windowHeight) );
-    gl::drawLine( Vec2f(v2, -m1), Vec2f(centerX - pm3, windowHeight) );
+    gl::drawLine( p3, Vec2f(centerX - pm1, windowHeight) );
+    gl::drawLine( p3, Vec2f(centerX - pm2, windowHeight) );
+    gl::drawLine( p3, Vec2f(centerX - pm3, windowHeight) );
+    gl::drawLine( p3, p4 );
     
-    gl::drawLine( Vec2f(v2, windowHeight+m1), Vec2f(centerX - pm1, 0.0f) );
-    gl::drawLine( Vec2f(v2, windowHeight+m1), Vec2f(centerX - pm2, 0.0f) );
-    gl::drawLine( Vec2f(v2, windowHeight+m1), Vec2f(centerX - pm3, 0.0f) );
+    gl::drawLine( p4, Vec2f(centerX - pm1, 0.0f) );
+    gl::drawLine( p4, Vec2f(centerX - pm2, 0.0f) );
+    gl::drawLine( p4, Vec2f(centerX - pm3, 0.0f) );
+    gl::drawLine( p4, p3 );
     
-    gl::drawLine( Vec2f(windowWidth-v2, -m1), Vec2f(centerX + pm1, windowHeight) );
-    gl::drawLine( Vec2f(windowWidth-v2, -m1), Vec2f(centerX + pm2, windowHeight) );
-    gl::drawLine( Vec2f(windowWidth-v2, -m1), Vec2f(centerX + pm3, windowHeight) );
+    gl::drawLine( p5, Vec2f(centerX + pm1, windowHeight) );
+    gl::drawLine( p5, Vec2f(centerX + pm2, windowHeight) );
+    gl::drawLine( p5, Vec2f(centerX + pm3, windowHeight) );
+    gl::drawLine( p5, p6 );
     
-    gl::drawLine( Vec2f(windowWidth-v2, windowHeight+m1), Vec2f(centerX + pm1, 0.0f) );
-    gl::drawLine( Vec2f(windowWidth-v2, windowHeight+m1), Vec2f(centerX + pm2, 0.0f) );
-    gl::drawLine( Vec2f(windowWidth-v2, windowHeight+m1), Vec2f(centerX + pm3, 0.0f) );
+    gl::drawLine( p6, Vec2f(centerX + pm1, 0.0f) );
+    gl::drawLine( p6, Vec2f(centerX + pm2, 0.0f) );
+    gl::drawLine( p6, Vec2f(centerX + pm3, 0.0f) );
+    gl::drawLine( p6, p5 );
     
+    // p7-p10
+    const float v1 = 3.925f*segWidth;
+    gl::drawLine( Vec2f(centerX+v1, 0.0f), Vec2f(centerX+v1, windowHeight) );
+    gl::drawLine( Vec2f(centerX-v1, 0.0f), Vec2f(centerX-v1, windowHeight) );
     const float pm4 = 1.3f*segWidth;
     const float pm5 = 2.875f*segWidth;
     gl::drawLine( Vec2f(centerX-pm5, 0.0f), Vec2f(centerX - pm4, windowHeight) );

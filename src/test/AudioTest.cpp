@@ -43,21 +43,25 @@ void AudioTest::setup()
     
     mIsVerticalOn = false;
     
-    mEnableSignalScope = false;
+    mEnableSignalScope = true;
     mSignalScope = new SignalScope(this);
     mSignalScope->setup();
     
-    mEnableMetropolis = true;
+    mEnableMetropolis = false;
     mMetropolis = new Metropolis(this);
     mMetropolis->setup();
 }
 
 void AudioTest::setupInterface()
 {
-    mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur ));
-    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mIsVerticalOn ));
+    mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
+                         .oscReceiver(mName,"blur"));
+    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mIsVerticalOn )
+                         .oscReceiver(mName,"lines"));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
                          .oscReceiver(mName,"signal"));
+    mInterface->addParam(CreateBoolParam( "Metropolis", &mEnableMetropolis )
+                         .oscReceiver(mName,"metropolis"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioTest::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)

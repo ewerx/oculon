@@ -92,10 +92,10 @@ private:
     
     enum eTriggerMode
     {
-        TRIGGER_ALL,
         TRIGGER_MANUAL,
-        TRIGGER_REALTIME,
         TRIGGER_BPM,
+        TRIGGER_REALTIME,
+        TRIGGER_ALL,
         
         TRIGGER_COUNT
     };

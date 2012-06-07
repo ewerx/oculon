@@ -111,6 +111,13 @@ void SignalScope::resize()
 
 void SignalScope::update(double dt)
 {
+    gl::disable( GL_LINE_SMOOTH );
+    //glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+    //gl::enable( GL_POLYGON_SMOOTH );
+    //glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+    gl::color( ColorAf::white() );
+    glLineWidth(2.0f);
+    
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
     
     // Get data
@@ -225,11 +232,7 @@ void SignalScope::update(double dt)
 
 void SignalScope::draw()
 {
-    gl::enable( GL_LINE_SMOOTH );
-    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-    gl::enable( GL_POLYGON_SMOOTH );
-    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-    gl::color( ColorAf::white() );
+    
     
     //glEnable(GL_POINT_SPRITE);
     //glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);

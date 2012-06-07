@@ -106,7 +106,7 @@ void USGSQuakeData::parseData( std::string url )
     // locale takes ownership of p_facet
     locale timeStampLocale(locale(""), p_facet);
     
-    const XmlTree xml( loadUrl( Url( url ) ) );
+    const XmlTree xml( loadFile( url ) );//loadUrl( Url( url ) ) );
 	for( XmlTree::ConstIter itemIter = xml.begin( "feed/entry" ); itemIter != xml.end(); ++itemIter ) 
     {
         try 

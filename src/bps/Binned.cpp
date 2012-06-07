@@ -89,6 +89,7 @@ void Binned::setup()
     mNumSegments = 4;
     mSegmentWidth = mApp->getViewportWidth()/4.0f;
     
+    mMetropolis.init( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     reset();
 }
@@ -312,11 +313,17 @@ void Binned::setupInterface()
                          .minValue(1.0f).maxValue(10.0f));
     
     mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
+                         .maxValue(2.0f)
                          .oscReceiver(mName,"audiolevel"));
     
     mInterface->addEnum(CreateEnumParam("Reaction Style", &mAudioPattern)
                         .maxValue(AUDIO_PATTERN_COUNT)
                         .oscReceiver(mName,"audioreaction")
+                        .isVertical());
+    
+    mInterface->addEnum(CreateEnumParam("Force Pattern", &mAudioPattern)
+                        .maxValue(PATTERN_COUNT)
+                        .oscReceiver(mName,"forcepattern")
                         .isVertical());
     
     mInterface->addParam(CreateColorParam("Point Color", &mPointColor, kMinColor, kMaxColor)
@@ -417,16 +424,16 @@ void Binned::draw()
     {
         case PATTERN_FOUR_CORNERS:
             {
-            Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
+            //Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
             const float radius = mMaxRadius;
             const float force = mMaxForce;
-            float d = radius;
+            //float d = radius;
             
-            mParticleSystem.addRepulsionForce(center.x+d, center.y+d, radius, force*mForceScaleX, force*mForceScaleY);
-            mParticleSystem.addRepulsionForce(center.x-d, center.y-d, radius, force*mForceScaleX, force*mForceScaleY);
+            mParticleSystem.addRepulsionForce(mMetropolis.p3.x, mMetropolis.p3.y, radius, force*mForceScaleX, force*mForceScaleY);
+            mParticleSystem.addRepulsionForce(mMetropolis.p4.x, mMetropolis.p4.y, radius, force*mForceScaleX, force*mForceScaleY);
             
-            mParticleSystem.addRepulsionForce(center.x+d, center.y-d, radius, force*mForceScaleX, force*mForceScaleY);
-            mParticleSystem.addRepulsionForce(center.x-d, center.y+d, radius, force*mForceScaleX, force*mForceScaleY);
+            mParticleSystem.addRepulsionForce(mMetropolis.p5.x, mMetropolis.p5.y, radius, force*mForceScaleX, force*mForceScaleY);
+            mParticleSystem.addRepulsionForce(mMetropolis.p6.x, mMetropolis.p6.y, radius, force*mForceScaleX, force*mForceScaleY);
             }
             break;
             
@@ -780,6 +787,18 @@ void Binned::updateAudioResponse()
                     gl::drawSolidCircle(Vec2f(x, y), maxRadius * amp);
                 }
 
+            }
+                break;
+                
+            case AUDIO_PATTERN_METROPOLIS1:
+            {
+                mParticleSystem.addRepulsionForce( mMetropolis.p0.x, mMetropolis.p0.y, radius, magX, magY );
+                mParticleSystem.addRepulsionForce( mMetropolis.p1.x, mMetropolis.p1.y, radius, magX, magY );
+                mParticleSystem.addRepulsionForce( mMetropolis.p2.x, mMetropolis.p2.y, radius, magX, magY );
+                mParticleSystem.addRepulsionForce( mMetropolis.p3.x, mMetropolis.p3.y, radius, magX, magY );
+                mParticleSystem.addRepulsionForce( mMetropolis.p4.x, mMetropolis.p4.y, radius, magX, magY );
+                mParticleSystem.addRepulsionForce( mMetropolis.p5.x, mMetropolis.p5.y, radius, magX, magY );
+                mParticleSystem.addRepulsionForce( mMetropolis.p6.x, mMetropolis.p6.y, radius, magX, magY );
             }
                 break;
                 

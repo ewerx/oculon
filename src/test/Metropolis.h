@@ -12,6 +12,7 @@
 #include "cinder/Timeline.h"
 #include "cinder/PolyLine.h"
 #include "cinder/gl/Texture.h"
+#include "Constants.h"
 
 class Scene;
 
@@ -72,5 +73,7 @@ private:
     ci::gl::Texture mTestBackground;
     
     Scene*  mParentScene;
+    
+    tMetropolisPattern mMetropolis;
 
 };

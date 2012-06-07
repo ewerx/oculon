@@ -49,7 +49,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1280, 960 );
+	settings->setWindowSize( 1680, 720 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -61,7 +61,7 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mEnableMindWave     = false;
     mEnableOscServer    = true;
-    mEnableSyphonServer = false;
+    mEnableSyphonServer = true;
     mEnableKinect       = false;
 }
 
@@ -77,15 +77,15 @@ void OculonApp::setup()
     mIsCapturingFrames = false;
     mCaptureDuration = 60.0f;
     mSaveNextFrame = false;
-    mIsCapturingHighRes = false;
+    mIsCapturingHighRes = true;
     mCaptureDebugOutput = false;
-    static const int FBO_WIDTH = 2600;
-    static const int FBO_HEIGHT = 2600;
+    static const int FBO_WIDTH = 1680;
+    static const int FBO_HEIGHT = 720;
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
-    gl::enableVerticalSync(false);
+    gl::enableVerticalSync(true);
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
@@ -256,18 +256,18 @@ void OculonApp::setupScenes()
     mScenes.clear(); 
     
     //TODO: serialization
-    addScene( new Orbiter() );
+    //addScene( new Orbiter() );
     addScene( new Binned() );
     //addScene( new Pulsar() );
     addScene( new Magnetosphere() );
     addScene( new Graviton() );
     addScene( new Tectonic() );
-    addScene( new Sol() );
+    //addScene( new Sol() );
     
     // Test Scenes
     addScene( new AudioTest() );
     //addScene( new MovieTest() );
-    addScene( new ShaderTest() );
+    //addScene( new ShaderTest() );
     if( mEnableKinect )
     {
         //addScene( new KinectTest(), autoStart );
@@ -553,7 +553,14 @@ void OculonApp::update()
     mInfoPanel.addLine( buf, fpsColor );
     snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
-    snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
+    if( mIsCapturingHighRes )
+    {
+        snprintf(buf, BUFSIZE, "%d x %d (FBO)", getViewportWidth(), getViewportHeight());
+    }
+    else
+    {
+        snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
+    }
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
     if( mEnableSyphonServer )
     {
@@ -666,7 +673,8 @@ void OculonApp::drawFromFbo()
     gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
     float width = getWindowWidth();
     float height = getWindowHeight();
-    gl::draw( mFbo.getTexture(0), Rectf( 0, 0, width, height ) );
+    // flip
+    gl::draw( mFbo.getTexture(0), Rectf( 0, height, width, 0 ) );
     gl::popMatrices();
 
 }
@@ -733,8 +741,15 @@ void OculonApp::draw()
     }
     
     if( mEnableSyphonServer )
-    {    
-        mScreenSyphon.publishScreen(); //publish the screen
+    {
+        if( mIsCapturingHighRes )
+        {
+            mScreenSyphon.publishTexture(&mFbo.getTexture());
+        }
+        else
+        {
+            mScreenSyphon.publishScreen(); //publish the screen
+        }
     }
     
     if( !mCaptureDebugOutput )
@@ -918,8 +933,7 @@ bool OculonApp::onHighResToggle()
 {
     if( mIsCapturingHighRes )
     {
-        //TODO: this doesn't work
-        setWindowSize( 860, 860 );
+        setWindowSize( 1680, 720 );//860, 860 );
         resize( ResizeEvent(mFbo.getSize()) );
     }
     else
@@ -955,4 +969,4 @@ int OculonApp::getViewportHeight() const
 }
 
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_4) )
+CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_2) )

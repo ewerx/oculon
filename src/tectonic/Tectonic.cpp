@@ -70,7 +70,8 @@ void Tectonic::setup()
     mEarthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
     
     //mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
-    mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
+    //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
+    mData->parseData("/Volumes/cruxpod/oculondata/month.xhtml");
     
     initQuakes();
     
@@ -129,8 +130,17 @@ void Tectonic::clearQuakes()
 //
 void Tectonic::setupInterface()
 {
-    //mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
-    //                     .defaultValue(mUseMotionBlur));
+    mInterface->addEnum(CreateEnumParam( "Trigger Mode", (int*)(&mTriggerMode) )
+                        .maxValue(TRIGGER_COUNT)
+                        .isVertical()
+                        .oscReceiver(mName,"triggermode"));
+    mInterface->addParam(CreateFloatParam("BPM", &mBpm)
+                         .minValue(60.0f)
+                         .maxValue(150.0f)
+                         .oscReceiver(mName,"bpm")
+                         .sendFeedback());    
+    mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)
+                          .oscReceiver(mName,"quaketrigger"))->registerCallback( this, &Tectonic::triggerNextQuake );
 }
 
 // ----------------------------------------------------------------
@@ -225,44 +235,53 @@ void Tectonic::triggerByBpm(double dt)
     mBpmTriggerTime -= dt;
     if( mBpmTriggerTime <= 0.0f )
     {
-        mBpmTriggerTime = 60.0f / mBpm;
+        //mBpmTriggerTime = 60.0f / mBpm;
         
-        if( mCurrentIndex < mQuakes.size() )
-        {
-            if( !mIsCapturing || (60.0f-mApp->getFrameCaptureCount()/kCaptureFramerate > 5.0f) )
-            {
-                //console() << "active quakes: " << mActiveQuakes.size();
-                //mActiveQuakes.clear();
-                mActiveQuakes.erase(std::remove_if(mActiveQuakes.begin(), mActiveQuakes.end(), IsTriggeredQuakeFinished()), mActiveQuakes.end());
-                //console() << " --> " << mActiveQuakes.size() << std::endl;
-                assert(mQuakes[mCurrentIndex] != NULL);
-                
-                const float durationMagnitudeMultiplier = 0.25f;
-                float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
-                if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
-                mQuakes[mCurrentIndex]->trigger(duration);
-                mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
-                console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
-            }
-        }
-        
-        ++mCurrentIndex;
-        if( mCurrentIndex >= mQuakes.size() )
-        {
-            if( mIsCapturing )
-            {
-                mApp->enableFrameCapture( false );
-                mIsCapturing = false;
-                return;
-            }
-            mCurrentIndex = 0;
-        }
+        triggerNextQuake();
     }
 }
 
 void Tectonic::triggerByTime(double dt)
 {
     
+}
+
+bool Tectonic::triggerNextQuake()
+{
+    mBpmTriggerTime = 60.0f / mBpm;
+    
+    if( mCurrentIndex < mQuakes.size() )
+    {
+        if( !mIsCapturing || (60.0f-mApp->getFrameCaptureCount()/kCaptureFramerate > 5.0f) )
+        {
+            //console() << "active quakes: " << mActiveQuakes.size();
+            //mActiveQuakes.clear();
+            mActiveQuakes.erase(std::remove_if(mActiveQuakes.begin(), mActiveQuakes.end(), IsTriggeredQuakeFinished()), mActiveQuakes.end());
+            //console() << " --> " << mActiveQuakes.size() << std::endl;
+            assert(mQuakes[mCurrentIndex] != NULL);
+            
+            const float durationMagnitudeMultiplier = 0.25f;
+            float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
+            if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
+            mQuakes[mCurrentIndex]->trigger(duration);
+            mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
+            console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
+        }
+    }
+    
+    ++mCurrentIndex;
+    if( mCurrentIndex >= mQuakes.size() )
+    {
+        if( mIsCapturing )
+        {
+            mApp->enableFrameCapture( false );
+            mIsCapturing = false;
+            return false;
+        }
+        mCurrentIndex = 0;
+    }
+    
+    return false;
 }
 
 // ----------------------------------------------------------------

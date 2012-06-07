@@ -19,9 +19,9 @@ using namespace ci::audio;
 
 // statics
 const int   OscServer::LISTEN_PORT      = 8889;
-const char* OscServer::INTERFACE_IP     = "192.168.1.103";
+const char* OscServer::INTERFACE_IP     = "169.254.164.16";//"192.168.1.103";
 const int   OscServer::INTERFACE_PORT   = 8080;
-const char* OscServer::LOCALHOST_IP     = "192.168.1.140";
+const char* OscServer::LOCALHOST_IP     = "169.254.97.116";//"192.168.1.140";
 const int   OscServer::RESOLUME_PORT    = 9080;
 
 // constructor

@@ -20,6 +20,9 @@
 #include "BinnedParticleSystem.h"
 #include "OscMessage.h"
 
+#include "Constants.h"
+#include "cinder/Timeline.h"
+
 using namespace ci;
 using std::vector;
 
@@ -98,6 +101,8 @@ private:
         AUDIO_PATTERN_TOPBOTTOM,
         AUDIO_PATTERN_RANDOM,
         AUDIO_PATTERN_SEGMENTS,
+        AUDIO_PATTERN_METROPOLIS1,
+        AUDIO_PATTERN_METROPOLIS2,
         
         AUDIO_PATTERN_COUNT
     };
@@ -113,6 +118,7 @@ private:
         PATTERN_RING,
         PATTERN_DISSOLVE,
         PATTERN_WAVE,
+        PATTERN_METROPOLIS,
         
         PATTERN_COUNT
     };
@@ -165,6 +171,11 @@ private:
     };
     
     std::queue<tRepulsionForce> mQueuedForces;
+    
+    // metropolis
+    tMetropolisPattern mMetropolis;
+    Anim<float> mTraverse;
+    
 };
 
 #endif // __MAGNETOSPHERE_H__

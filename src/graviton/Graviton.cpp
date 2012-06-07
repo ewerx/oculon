@@ -138,14 +138,14 @@ void Graviton::setupInterface()
                          //.oscReceiver("/1/fader2"));
     
     mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateIntParam( "Particle Formation", (int*)(&mInitialFormation) )
-                         .minValue(0)
-                         .maxValue(FORMATION_COUNT-1)
-                         .oscReceiver(getName(), "pformation"));
-    mInterface->addParam(CreateIntParam( "Node Formation", (int*)(&mGravityNodeFormation) )
-                         .minValue(0)
-                         .maxValue(NODE_FORMATION_COUNT-1)
-                         .oscReceiver(getName(), "nformation"));
+    mInterface->addEnum(CreateEnumParam( "Particle Formation", (int*)(&mInitialFormation) )
+                         .maxValue(FORMATION_COUNT)
+                         .oscReceiver(getName(), "pformation")
+                         .isVertical());
+    mInterface->addEnum(CreateEnumParam( "Node Formation", (int*)(&mGravityNodeFormation) )
+                         .maxValue(NODE_FORMATION_COUNT)
+                         .oscReceiver(getName(), "nformation")
+                         .isVertical());
     mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
                          .minValue(10.0f)
                          .maxValue(1000.0f)
@@ -160,10 +160,10 @@ void Graviton::setupInterface()
                          .oscReceiver(getName(), "psize"));
     
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateIntParam( "Cam Type", (int*)(&mCamType) )
-                         .minValue(0)
-                         .maxValue(3)
-                         .oscReceiver(getName(), "camtype"));
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                         .maxValue(CAM_COUNT)
+                         .oscReceiver(getName(), "camtype")
+                         .isVertical());
     mInterface->addParam(CreateFloatParam( "Cam Radius", &mCamRadius )
                          .minValue(1.0f)
                          .maxValue(500.f)
