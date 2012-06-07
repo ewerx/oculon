@@ -218,10 +218,17 @@ public:
     }
     
     inline CreateParam& minValue( const T& min ) 
-    { _min = min; return *this; }
+    { 
+        _min = min;
+        _feedback = true;
+        return *this; 
+    }
     
     inline CreateParam& maxValue( const T& max ) 
-    { _max = max; return *this; }
+    { 
+        _max = max;
+        _feedback = true;
+        return *this; }
         
     inline CreateParam& oscReceiver( const std::string& sceneName )
     {

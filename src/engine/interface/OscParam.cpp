@@ -65,7 +65,7 @@ void OscFloatParam::handleOscMessage( const osc::Message& message )
         }
         else
         {
-            mControl->setNormalizedValue( message.getArgAsFloat(0), true );
+            mControl->setNormalizedValue( message.getArgAsFloat(0), !mIsSender );
         }
     }
     else
@@ -113,7 +113,7 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
         switch( message.getArgType(0) )
         {
             case osc::TYPE_INT32:
-                mControl->setNormalizedValue( message.getArgAsInt32(0), /*silent*/true );
+                mControl->setNormalizedValue( message.getArgAsInt32(0), /*silent*/!mIsSender );
                 break;
                 
             case osc::TYPE_FLOAT:
@@ -124,7 +124,7 @@ void OscIntParam::handleOscMessage( const osc::Message& message )
                 }
                 else
                 {
-                    mControl->setNormalizedValue( message.getArgAsFloat(0), /*silent*/true );
+                    mControl->setNormalizedValue( message.getArgAsFloat(0), /*silent*/!mIsSender );
                 }
                 break;
                 
