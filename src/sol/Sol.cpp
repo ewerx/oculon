@@ -14,7 +14,6 @@
 #include "AudioInput.h"
 #include "Interface.h"
 #include "Resources.h"
-//#include "AssetManager.h"
 #include "TextureManager.h"
 #include "cinder/Filesystem.h"
 
@@ -25,6 +24,7 @@ using namespace ci::app;
 //
 Sol::Sol()
 : Scene("sol")
+, mIndex(0)
 {
 }
 
@@ -40,9 +40,8 @@ void Sol::setup()
 {
     mBufferSize = 10;
     
-    mFrameRate = 1.0f;
+    mFrameRate = 10.0f;
     mCurrentSource = 0;
-    //AssetManager::getInstance()->setup();
     initFrames();
     reset();
 }
@@ -54,7 +53,8 @@ void Sol::initFrames()
     //mTextures = AssetManager::getInstance()->getTextureListFromDir( "/Volumes/cruxpod/Downloads/_images/eit171test/" );
     
     int index = 0;
-    std::string srcDir("/Volumes/cruxpod/Downloads/_images/sdo_20120524/");
+    int framesMissing = 0;
+    std::string srcDir("/Volumes/cruxpod/Downloads/_images/sdo_20120605/");
     fs::path p(srcDir);
     
     if( !fs::is_directory(p) && !fs::exists(p) )
@@ -68,11 +68,6 @@ void Sol::initFrames()
             string filename = it->path().filename().string();
             if( it->path().extension().string().compare( ".jpg" ) == 0 )
             {
-                // frame.init
-                // move texture load handling to frame
-                // outside this loop: another for loop to pre-load buffersize frames
-                // clean up last frame and preload next after each frame change
-                //gl::Texture tex = ph::TextureManager::getInstance().load( it->path().string() );
                 bool added = false;
                 if( index < mFrames.size() && mFrames[index] != NULL )
                 {
@@ -81,6 +76,8 @@ void Sol::initFrames()
                     {
                         // next frame
                         ++index;
+                        
+                        // TESTING: limit frames
                         //if( index > 20 )
                             //break;
                     }
@@ -88,11 +85,8 @@ void Sol::initFrames()
                 
                 if( !added )
                 {
-                    if( index > 0 )
-                    {
-                        //console() << "[sol] Frame " << index-1 << " completed with " << mFrames[index-1]->getImageCount() << " images." << std::endl;
-                    }
-                    
+                    // file did not belond to the frame
+                    // or there are no frames, so make a new frame
                     if( index == mFrames.size() )
                     {
                         console() << "[sol] Frame " << index << " created" << std::endl;
@@ -103,11 +97,6 @@ void Sol::initFrames()
             }
         }
     }
-    
-    //for( int i=0; i < mBufferSize; ++i )
-    //{
-        //mFrames[i]->loadTextures();
-    //}
 }
 
 // ----------------------------------------------------------------
@@ -147,14 +136,12 @@ void Sol::resize()
 //
 void Sol::update(double dt)
 {
-    //AssetManager::getInstance()->update();
-    
     mFrameTime += dt;
     if( mFrameTime > (1.0f/mFrameRate) )
     {
         mFrameTime = 0.0f;
         
-        console() << "[sol] unloading frame " << mIndex << std::endl;
+        //console() << "[sol] unloading frame " << mIndex << std::endl;
         mFrames[mIndex]->unloadTextures();
         int nextToBuffer = mIndex + mBufferSize;
         if( nextToBuffer >= mFrames.size() )
@@ -166,9 +153,6 @@ void Sol::update(double dt)
         {
             mIndex = 0;
         }
-        
-        console() << "[sol] loading frame " << nextToBuffer << std::endl;
-        //mFrames[nextToBuffer]->loadTextures();
     }
     
     // last

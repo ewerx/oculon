@@ -22,6 +22,8 @@ using std::locale;
 
 
 SolFrame::SolFrame()
+: mTimeStampFirst(pos_infin)
+, mTimeStampLast(neg_infin)
 {
     for (int i=0; i < SOURCE_COUNT; ++i)
     {
@@ -56,6 +58,7 @@ bool SolFrame::init( const fs::path& filePath )
         {
             console() << filePath.string() << std::endl;
             mTexturePaths[src] = filePath;
+            // async load
             mTextures[src] = ph::TextureManager::getInstance().fetch( filePath.string(), ci::gl::Texture::Format(), true );
             if( timeStamp < mTimeStampFirst )
             {
@@ -69,8 +72,10 @@ bool SolFrame::init( const fs::path& filePath )
         }
         else
         {
-            //console() << "[sol] Image [" << srcname << "] already exists in this frame." << std::endl;
-            // sanity check
+            // if we already have an image from this source, this image is for the next frame
+            // don't add it
+
+            // sanity check for missing images in this frame
             for (int i=0; i < SOURCE_COUNT; ++i)
             {
                 if( mTexturePaths[i].empty() )
@@ -83,7 +88,7 @@ bool SolFrame::init( const fs::path& filePath )
     else
     {
         console() << "[sol] WARNING: unknown source type from string: " << srcname << std::endl;
-        imageAdded = true; // pretend we added it
+        imageAdded = true; // pretend we added it to continue on this frame
     }
     
     return imageAdded;
