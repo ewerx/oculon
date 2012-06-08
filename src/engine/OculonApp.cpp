@@ -49,7 +49,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1680, 720 );
+	settings->setWindowSize( 1280, 720 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -79,7 +79,7 @@ void OculonApp::setup()
     mSaveNextFrame = false;
     mIsCapturingHighRes = true;
     mCaptureDebugOutput = false;
-    static const int FBO_WIDTH = 1680;
+    static const int FBO_WIDTH = 1280;
     static const int FBO_HEIGHT = 720;
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
@@ -256,13 +256,13 @@ void OculonApp::setupScenes()
     mScenes.clear(); 
     
     //TODO: serialization
-    //addScene( new Orbiter() );
+    addScene( new Orbiter() );
     addScene( new Binned() );
-    //addScene( new Pulsar() );
+    addScene( new Pulsar() );
     addScene( new Magnetosphere() );
     addScene( new Graviton() );
     addScene( new Tectonic() );
-    //addScene( new Sol() );
+    addScene( new Sol() );
     
     // Test Scenes
     addScene( new AudioTest() );
