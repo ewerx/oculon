@@ -19,9 +19,9 @@ using namespace ci::audio;
 
 // statics
 const int   OscServer::LISTEN_PORT      = 8889;
-const char* OscServer::INTERFACE_IP     = "169.254.164.16";//"192.168.1.103";
+const char* OscServer::INTERFACE_IP     = "192.168.1.103";
 const int   OscServer::INTERFACE_PORT   = 8080;
-const char* OscServer::LOCALHOST_IP     = "169.254.97.116";//"192.168.1.140";
+const char* OscServer::LOCALHOST_IP     = "192.168.1.140";
 const int   OscServer::RESOLUME_PORT    = 9080;
 
 // constructor
@@ -71,20 +71,35 @@ void OscServer::shutdown()
 {
     mIsListening = false;
     mListener.shutdown();
+    while( !mIncomingCallbackQueue.empty() )
+        mIncomingCallbackQueue.pop();
 }
 
 #pragma MARK Listener
 
 void OscServer::update()
 {
-    if( mIsListening && !mUseThread )
+    // main loop
+    if( mIsListening )
     {
-        while (mListener.hasWaitingMessages()) 
+        if( mUseThread )
         {
-            osc::Message message;
-            mListener.getNextMessage(&message);
-            
-            processMessage(message);
+            while( !mIncomingCallbackQueue.empty() )
+            {
+                tIncomingCommand& cmd = mIncomingCallbackQueue.front();
+                cmd.second( cmd.first );
+                mIncomingCallbackQueue.pop();
+            }
+        }
+        else
+        {
+            while( mListener.hasWaitingMessages() ) 
+            {
+                osc::Message message;
+                mListener.getNextMessage(&message);
+                
+                processMessage(message);
+            }
         }
     }
 }
@@ -113,16 +128,28 @@ void OscServer::processMessage(osc::Message& message)
     tOscMap::iterator it = mCallbackMap.find(message.getAddress());
     if( it != mCallbackMap.end() )
     {
-        if( mDebugPrint )
-        {
-            console() << "[osc] callback triggered" << std::endl;
-        }
         tOscCallback callback = it->second;
-        callback(message);
+        
+        if( mUseThread )
+        {
+            if( mDebugPrint )
+            {
+                console() << "[osc] callback queued" << std::endl;
+            }
+            mIncomingCallbackQueue.push( tIncomingCommand(message,callback) );
+        }
+        else
+        {
+            if( mDebugPrint )
+            {
+                console() << "[osc] callback triggered" << std::endl;
+            }
+            callback(message);
+        }
     }
     else
     {
-        // relay
+        // relay to resolume
         sendMessage(message, DEST_RESOLUME, LOGLEVEL_QUIET);
     }
 }

@@ -15,6 +15,7 @@
 #include <boost/thread.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/bind.hpp>
+#include <queue>
 
 typedef boost::function<void(const ci::osc::Message&)> tOscCallback;
 typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
@@ -60,6 +61,8 @@ public:
     void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_QUIET );
     
 private:
+    typedef std::pair<ci::osc::Message,tOscCallback> tIncomingCommand;
+    
     enum eMessageType
     {
         MSG_SENT,
@@ -72,10 +75,11 @@ private:
     void printMessage( const ci::osc::Message& message, const eMessageType type, const eLogLevel loglevel );
     
 private:
-    ci::osc::Listener       mListener;
-    int                     mListenPort;
-    bool                    mIsListening;
-    tOscMap                 mCallbackMap;
+    ci::osc::Listener               mListener;
+    int                             mListenPort;
+    bool                            mIsListening;
+    tOscMap                         mCallbackMap;
+    std::queue<tIncomingCommand>    mIncomingCallbackQueue;
     
     boost::thread           mThread;
     bool                    mUseThread;
