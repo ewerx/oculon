@@ -60,7 +60,7 @@ std::string QuakeEvent::toString() const
     ss << mTitle << "," 
     << mMag << "," 
     << mDepth << "m,"
-    << mTimeStamp << ","
+    << to_simple_string(mTimeStamp) << ","
     << mLat << "," << mLong;
     
     return ss.str();
