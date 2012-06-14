@@ -26,11 +26,14 @@
 
 // tectonic
 #define RES_EARTH_FRAG		CINDER_RESOURCE( ../resources/shaders/, earth_frag.glsl, 128, GLSL )
-#define RES_EARTHDIFFUSE	CINDER_RESOURCE( ../resources/tectonic/, earthDiffuse.png, 129, PNG )
-#define RES_EARTHMASK		CINDER_RESOURCE( ../resources/tectonic/, earthMask.png, 130, PNG )
-#define RES_EARTHNORMAL		CINDER_RESOURCE( ../resources/tectonic/, earthNormal.png, 131, PNG )
+#define RES_EARTHDIFFUSE	CINDER_RESOURCE( ../resources/images/tectonic/, earthDiffuse.png, 129, PNG )
+#define RES_EARTHMASK		CINDER_RESOURCE( ../resources/images/tectonic/, earthMask.png, 130, PNG )
+#define RES_EARTHNORMAL		CINDER_RESOURCE( ../resources/images/tectonic/, earthNormal.png, 131, PNG )
 #define RES_QUAKE_FRAG		CINDER_RESOURCE( ../resources/shaders/, quake_frag.glsl, 133, GLSL )
 #define RES_QUAKE_VERT		CINDER_RESOURCE( ../resources/shaders/, quake_vert.glsl, 134, GLSL )
+
+// sol
+#define RES_SOLMASK         CINDER_RESOURCE( ../resources/images/sol/, solmask.png, 129, PNG )
 
 // orbiter textures
 #define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )
@@ -42,3 +45,15 @@
 #define RES_ORBITER_SATURN          CINDER_RESOURCE( ../resources/images/orbiter/, saturnmap.jpg, 206, JPG )
 #define RES_ORBITER_URANUS          CINDER_RESOURCE( ../resources/images/orbiter/, uranusmap.jpg, 207, JPG )
 #define RES_ORBITER_NEPTUNE         CINDER_RESOURCE( ../resources/images/orbiter/, neptunemap.jpg, 208, JPG )
+
+// catalog
+#define RES_BRIGHT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/, brightStars.vert, 100, GLSL )
+#define RES_BRIGHT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/, brightStars.frag, 100, GLSL )
+#define RES_FAINT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/, faintStars.vert, 100, GLSL )
+#define RES_FAINT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/, faintStars.frag, 100, GLSL )
+
+#define RES_CATALOG_MILKYWAY        CINDER_RESOURCE( ../resources/images/catalog/, milkyWay.jpg, 200, JPG )
+#define RES_CATALOG_STAR            CINDER_RESOURCE( ../resources/images/catalog/, star.png, 200, PNG )
+#define RES_CATALOG_STARGLOW        CINDER_RESOURCE( ../resources/images/catalog/, starGlow.png, 200, PNG )
+#define RES_CATALOG_DARKSTAR        CINDER_RESOURCE( ../resources/images/catalog/, darkStar.png, 200, PNG )
+#define RES_CATALOG_SPECTRUM        CINDER_RESOURCE( ../resources/images/catalog/, spectrum.png, 200, PNG )

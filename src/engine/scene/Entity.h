@@ -39,6 +39,6 @@ protected:
 };
 
 typedef Entity<float> Entityf;
-typedef Entity<double> Entityd;
+typedef Entity<double> Entityd; 
 
 #endif // __ENTITY_H__

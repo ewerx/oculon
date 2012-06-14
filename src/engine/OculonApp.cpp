@@ -35,6 +35,7 @@
 #include "Graviton.h"
 #include "Tectonic.h"
 #include "Sol.h"
+#include "Catalog.h"
 // test scenes
 #include "AudioTest.h"
 #include "MindWaveTest.h"
@@ -263,6 +264,7 @@ void OculonApp::setupScenes()
     addScene( new Graviton() );
     addScene( new Tectonic() );
     addScene( new Sol() );
+    addScene( new Catalog() );
     
     // Test Scenes
     addScene( new AudioTest() );
