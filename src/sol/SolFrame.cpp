@@ -80,7 +80,9 @@ bool SolFrame::init( const fs::path& filePath )
             {
                 if( mTexturePaths[i].empty() )
                 {
-                    console() << "[sol] WARNING: frame missing image source " << i << std::endl;
+                    char buf[256];
+                    snprintf(buf, 256, "%s_xxxxxx_512_%s.jpg", datetime.c_str(), getSourceNameByType(static_cast<eImageSource>(i)));
+                    console() << "[sol] WARNING: frame missing: " << buf << std::endl;
                 }
             }
         }
@@ -130,7 +132,7 @@ int SolFrame::getImageCount() const
     int count = 0;
     for (int i=0; i < SOURCE_COUNT; ++i)
     {
-        if( mTextures[i] != gl::Texture() )
+        if( mTextures[i] )
         {
             ++count;
         }
@@ -150,14 +152,14 @@ SolFrame::eImageSource SolFrame::getSourceByName( const std::string& name )
             return SOURCE_0131;
         case 171:
             return SOURCE_0171;
-        case 193:
-            return SOURCE_0193;
+        //case 193:
+        //    return SOURCE_0193;
         //case 211:
         //    return SOURCE_0211;
         case 304:
             return SOURCE_0304;
-        case 335:
-            return SOURCE_0335;
+        //case 335:
+        //    return SOURCE_0335;
         //case 1600:
         //    return SOURCE_1600;
         case 1700:
@@ -167,11 +169,32 @@ SolFrame::eImageSource SolFrame::getSourceByName( const std::string& name )
     }
 }
 
+const char* SolFrame::getSourceNameByType( const SolFrame::eImageSource srcType )
+{
+    switch( srcType )
+    {
+        case SOURCE_0131:
+            return "0131";
+        case SOURCE_0171:
+            return "0171";
+        //case SOURCE_0193:
+        //    return "0193";
+        case SOURCE_0304:
+            return "0304";
+        //case SOURCE_0335:
+        //    return "0335";
+        case SOURCE_1700:
+            return "1700";
+        default:
+            return "<unknown>";
+    }
+}
+
 ci::gl::Texture SolFrame::getTexture( const SolFrame::eImageSource src )
 {
     if( src < SOURCE_COUNT )
     {
-        if( mTextures[src] == gl::Texture() && !mTexturePaths[src].empty() )
+        if( !mTextures[src] && !mTexturePaths[src].empty() )
         {
             mTextures[src] = ph::TextureManager::getInstance().fetch( mTexturePaths[src].string(), ci::gl::Texture::Format(), true );
         }
@@ -179,4 +202,43 @@ ci::gl::Texture SolFrame::getTexture( const SolFrame::eImageSource src )
     }
     
     return gl::Texture();
+}
+
+bool SolFrame::drawFrame( const eImageSource src, const float width, const float height )
+{
+    gl::Texture tex = getTexture(src);
+    
+    if( !tex )
+    {
+        // use first available texture from another source
+        for( int i=src; i < SOURCE_COUNT; ++i )
+        {
+            tex = getTexture( (eImageSource)(i) );
+            if( tex )
+                break;
+        }
+        
+        if( !tex )
+        {
+            for( int i=0; i < src; ++i )
+            {
+                tex = getTexture( (eImageSource)(i) );
+                if( tex )
+                    break;
+            }
+        }
+    }
+    
+    if( tex )
+    {
+        const float texSize = tex.getWidth();
+        const float x = (width - texSize)/2.0f;
+        const float y = (height - texSize)/2.0f;
+        gl::draw( tex, Rectf( x, y, x+texSize, y+texSize ) );
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

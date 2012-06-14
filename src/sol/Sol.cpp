@@ -26,12 +26,22 @@ Sol::Sol()
 : Scene("sol")
 , mIndex(0)
 {
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i] = new TextEntity(this);
+        assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
+    }
 }
 
 // ----------------------------------------------------------------
 //
 Sol::~Sol()
 {
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        delete mTextBox[i];
+        mTextBox[i] = NULL;
+    }
 }
 
 // ----------------------------------------------------------------
@@ -40,8 +50,14 @@ void Sol::setup()
 {
     mBufferSize = 10;
     
-    mFrameRate = 10.0f;
+    mFrameRate = 25.0f;
     mCurrentSource = 0;
+    
+    mMaskTexture = gl::Texture( loadImage( loadResource( RES_SOLMASK ) ) );
+    mDrawMask = true;
+    
+    setupHud();
+    
     initFrames();
     reset();
 }
@@ -53,7 +69,7 @@ void Sol::initFrames()
     //mTextures = AssetManager::getInstance()->getTextureListFromDir( "/Volumes/cruxpod/Downloads/_images/eit171test/" );
     
     int index = 0;
-    int framesMissing = 0;
+    //int framesMissing = 0;
     std::string srcDir("/Volumes/cruxpod/Downloads/_images/sdo_20120605/");
     fs::path p(srcDir);
     
@@ -113,9 +129,13 @@ void Sol::setupInterface()
 //
 void Sol::setupDebugInterface()
 {
+    Scene::setupDebugInterface();
+    
     mDebugParams.addParam("Framerate", &mFrameRate );
+    mDebugParams.addParam("Draw Mask", &mDrawMask );
     mDebugParams.addParam("Index", &mIndex, "readonly" );
-    mDebugParams.addParam("Source", &mCurrentSource, "min=0 max=5");
+    
+    mDebugParams.setOptions("Source", "min=0 max=5");
 }
 
 // ----------------------------------------------------------------
@@ -130,6 +150,10 @@ void Sol::reset()
 //
 void Sol::resize()
 {
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->resize();
+    }
 }
 
 // ----------------------------------------------------------------
@@ -164,42 +188,37 @@ void Sol::update(double dt)
 void Sol::draw()
 {
     gl::pushMatrices();
+
+    //gl::clear(ColorA(1,1,1,0.0f));
+    gl::enableAlphaBlending();
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
     
     const float width = mApp->getViewportWidth();
     const float height = mApp->getViewportHeight();
-    
-    const float texSize = 512;
-    const float x = (width - texSize)/2.0f;
-    const float y = (height - texSize)/2.0f;
-    
-    Rectf rect( x, y, x+texSize, y+texSize );
     
     gl::setMatricesWindow( width, height );
     
     if( mFrames.size() > 0 && mIndex < mFrames.size() )
     {
-        gl::Texture tex = mFrames[mIndex]->getTexture((SolFrame::eImageSource)mCurrentSource);
-        if( tex != gl::Texture() )
+        bool drawn = mFrames[mIndex]->drawFrame( static_cast<SolFrame::eImageSource>(mCurrentSource), width, height );
+        if( !drawn )
         {
-            gl::draw( tex, rect );
+            console() << "[sol] WARNING: frame " << mIndex << " missing textures for all sources!" << std::endl;
         }
-        else
-        {
-            console() << "[sol] texture not ready. index: " << mIndex << " src: " << mCurrentSource << std::endl;
-        }
+    }
+    
+    // mask
+    if( mDrawMask )
+    {
+        const float maskSize = mMaskTexture.getWidth();
+        const float x = (width - maskSize)/2.0f;
+        const float y = (height - maskSize)/2.0f;
+        gl::draw( mMaskTexture, Rectf( x, y, x+maskSize, y+maskSize ) );
     }
     
     drawHud();
     
-    gl::popMatrices();
-}
-
-// ----------------------------------------------------------------
-//
-void Sol::drawHud()
-{
-    gl::pushMatrices();
-        
     gl::popMatrices();
 }
 
@@ -236,4 +255,130 @@ bool Sol::handleKeyDown(const KeyEvent& keyEvent)
     }
     
     return handled;
+}
+
+#pragma mark - HUD
+
+// ----------------------------------------------------------------
+//
+void Sol::setupHud()
+{
+    const float margin = 120.0f;
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->setFont("Menlo", 13.0f);
+        mTextBox[i]->setTextColor( ColorA(1.0f,1.0f,1.0f,1.0f) );
+        
+        switch(i)
+        {
+            case TB_TOP_LEFT:
+                mTextBox[i]->setPosition( Vec3f(margin, margin, 0.0f) );
+                break;
+            case TB_TOP_RIGHT:
+                mTextBox[i]->setPosition( Vec3f(0.0f, margin+40.f, 0.0f) );
+                mTextBox[i]->setRightJustify( true, margin );
+                mTextBox[i]->setFont("Menlo", 10.0f);
+                //mTextBox[i]->setTextColor( ColorA(1.0f,1.0f,1.0f,1.0f));
+                break;
+            case TB_BOT_LEFT:
+                mTextBox[i]->setPosition( Vec3f(margin, 0.0f, 0.0f) );
+                mTextBox[i]->setBottomJustify( true, margin );
+                break;
+            case TB_BOT_RIGHT:
+                mTextBox[i]->setRightJustify( true, margin );
+                mTextBox[i]->setBottomJustify( true, margin );
+                break;
+            default:
+                break;
+                
+        }
+    }
+}
+
+// ----------------------------------------------------------------
+//
+void Sol::updateHud()
+{
+    // TOP LEFT
+    ostringstream oss1;
+    
+    // Satellite: SDO = Solar Dynamics Observatory
+    // Telescope: AIA = Atmospheric Imaging Assembly
+    /*
+    format satelliteFormat("SOLAR DYNAMICS OBSERVATORY");
+    int days = (int)(mElapsedTime / 86400.0f); 
+    int hours = (int)(ci::math<double>::fmod(mElapsedTime,86400.0f) / 3600.f);
+    int mins = (int)(ci::math<double>::fmod(mElapsedTime,3600.0f) / 60);
+    double secs = ci::math<double>::fmod(mElapsedTime,60.0f) + (mElapsedTime - (int)(mElapsedTime));
+    timeFormat % days % hours % mins % secs;
+    
+    format params("TIME SCALE: %-6g : 1\nG CONSTANT: %-8g\nPROJECTION SCALE: 1 / %-8g\n");
+    params % mTimeScale % mGravityConstant % mDrawScale;
+    
+    oss1 << timeFormat << endl << params;
+    
+    //snprintf(buf, 256, "SIMULATION TIME: %02d:%02d:%02d:%04.1f", days,hours,mins,secs);
+    mTextBox[TB_TOP_LEFT]->setText(oss1.str());
+    
+    // BOTTOM RIGHT
+    ostringstream oss2;
+    
+    if( mFollowTarget )
+    {
+        format followCamInfo("%s\nOr: %.4e km\nOv: %6.1f m/s\nM: %.6e kg");
+        followCamInfo % (mFollowTarget->getName()) % (mFollowTarget->getPosition().length() / 1000.0f) % (mFollowTarget->getVelocity().length()) % (mFollowTarget->getMass());
+        
+        oss2 << followCamInfo;
+        
+        mTextBox[TB_BOT_RIGHT]->setText(oss2.str());
+    }
+    
+    // TOP RIGHT
+    ostringstream oss3;
+    format planetInfo("%.8e\n%.8e\n");
+    
+    
+    //    for(BodyList::iterator bodyIt = mBodies.begin(); 
+    //        bodyIt != mBodies.end();
+    //        ++bodyIt)
+    //    {
+    //        Body* body = (*bodyIt);
+    for( int i=0; i < NUM_PLANETS; ++i )
+    {
+        Body* body = mBodies[i];
+        if( body )
+        {
+            oss3 << format(planetInfo) % body->getAcceleration() % body->getPosition().length();
+        }
+    }
+    
+    mTextBox[TB_TOP_RIGHT]->setText(oss3.str());
+     */
+}
+
+// ----------------------------------------------------------------
+//
+void Sol::drawHud()
+{
+    gl::pushMatrices();
+    
+    gl::enableAlphaBlending();
+    
+    CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportWidth(), 0.0f, 0.0f, 50.f);
+    gl::setMatrices(textCam);
+    
+    for( int i = 0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i]->draw();
+    }
+    
+    const float width = 200.0f;
+    const float height = 100.0f;
+    const float space = 10.0f;
+    const float left = 20.0f;
+    const float top = mApp->getViewportHeight() - 20.0f - (height*2.0f) - space;
+    //drawHudWaveformAnalyzer(0.0f,100.0f,getWindowWidth(),height);
+    //drawHudSpectrumAnalyzer(left,top+height+space,width,height);
+    
+    gl::popMatrices();
 }

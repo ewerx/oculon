@@ -46,6 +46,8 @@ protected:
     void setupInterface();
     void setupDebugInterface();
     
+    void setupHud();
+    void updateHud();
     void drawHud();
     
     void initFrames();
@@ -59,6 +61,21 @@ private:
     float mFrameTime;
     int mCurrentSource;
     int mBufferSize;
+    
+    ci::gl::Texture mMaskTexture;
+    bool mDrawMask;
+    
+    // hud
+    enum eTextBoxLocations
+    {
+        TB_TOP_LEFT,
+        TB_TOP_RIGHT,
+        TB_BOT_LEFT,
+        TB_BOT_RIGHT,
+        
+        TB_COUNT
+    };
+    TextEntity*     mTextBox[TB_COUNT];
 };
 
 #endif // __Sol_H__

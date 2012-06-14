@@ -18,15 +18,16 @@ class SolFrame
 public:
     enum eImageSource
     {
+        // this order is used for substituting missing frames
         //SOURCE_0094,
-        SOURCE_0131,
         SOURCE_0171,
-        SOURCE_0193,
+        //SOURCE_0193,
         //SOURCE_0211,
         SOURCE_0304,
-        SOURCE_0335,
         //SOURCE_1600,
         SOURCE_1700,
+        //SOURCE_0335,
+        SOURCE_0131,
         
         SOURCE_COUNT
     };
@@ -40,8 +41,11 @@ public:
     int getImageCount() const;
     ci::gl::Texture getTexture( const eImageSource src );
     
+    bool drawFrame( const eImageSource src, const float width, const float height );
+    
 private:
     eImageSource getSourceByName( const std::string& name );
+    const char* getSourceNameByType( const eImageSource srcType );
 private:
     
     

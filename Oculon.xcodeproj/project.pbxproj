@@ -89,6 +89,7 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8BE8CE158515D1003B36DE /* solmask.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8BE8CD158515D1003B36DE /* solmask.png */; };
 		7C8C0C19154F7648006C35DA /* earthDiffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C18154F7648006C35DA /* earthDiffuse.png */; };
 		7C8C0C1C154F764F006C35DA /* earthMask.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C1A154F764F006C35DA /* earthMask.png */; };
 		7C8C0C1D154F764F006C35DA /* earthNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C1B154F764F006C35DA /* earthNormal.png */; };
@@ -363,6 +364,7 @@
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
 		7C8B6EF4150C3B9B004AE472 /* Nbody2.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = Nbody2.cl; path = resources/Nbody2.cl; sourceTree = SOURCE_ROOT; };
+		7C8BE8CD158515D1003B36DE /* solmask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = solmask.png; sourceTree = "<group>"; };
 		7C8C0C18154F7648006C35DA /* earthDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthDiffuse.png; path = resources/images/tectonic/earthDiffuse.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1A154F764F006C35DA /* earthMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthMask.png; path = resources/images/tectonic/earthMask.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1B154F764F006C35DA /* earthNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthNormal.png; path = resources/images/tectonic/earthNormal.png; sourceTree = SOURCE_ROOT; };
@@ -1041,6 +1043,7 @@
 		7C865645148C2BCD000E00B6 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7C8BE8CC158515D1003B36DE /* sol */,
 				7CE9C84E154A6DC70057E409 /* tectonic */,
 				7C948F4314B3A1E7003A3DA8 /* orbiter */,
 				7C96934814970B2900C0E1E6 /* pulsar */,
@@ -1071,6 +1074,14 @@
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C8BE8CC158515D1003B36DE /* sol */ = {
+			isa = PBXGroup;
+			children = (
+				7C8BE8CD158515D1003B36DE /* solmask.png */,
+			);
+			path = sol;
 			sourceTree = "<group>";
 		};
 		7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */ = {
