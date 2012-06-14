@@ -132,6 +132,8 @@ void Orbiter::setupMidiMapping()
 
 void Orbiter::setupDebugInterface()
 {
+    Scene::setupDebugInterface();
+    
     mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
     //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
     mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");

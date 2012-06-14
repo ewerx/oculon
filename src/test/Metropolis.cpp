@@ -63,44 +63,10 @@ void Metropolis::setupInterface()
 {
     const string name("metropolis");
     mParentScene->getInterface()->gui()->addColumn();
-    mParentScene->getInterface()->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
-                                           .oscReceiver(name,"randomize"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
-                                           .minValue(0.0f)
-                                           .maxValue(10.0f)
-                                           .oscReceiver(name,"scale")
-                                           .sendFeedback());
-    mParentScene->getInterface()->addParam(CreateFloatParam("Signal Cap", &mSignalMaxRatio)
-                                           .minValue(1.0f)
-                                           .maxValue(10.0f)
-                                           .oscReceiver(name,"cap")
-                                           .sendFeedback());
-    mParentScene->getInterface()->addParam(CreateIntParam("Center Bias Range", &mCenterBiasRange)
-                                           .minValue(1)
-                                           .maxValue(NUM_POINTS/2)
-                                           .oscReceiver(name,"biasrange")
-                                           .sendFeedback());
-    mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Min", &mHorizSmoothingMin)
-                                           .oscReceiver(name,"smoothingmin"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Max", &mHorizSmoothingMax)
-                                           .oscReceiver(name,"smoothingmax"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Falloff Min", &mFallOffMin)
-                                           .oscReceiver(name,"falloffmin"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Falloff Max", &mFallOffMax)
-                                           .oscReceiver(name,"falloffmax"));
 }
 
 void Metropolis::setupDebugInterface()
 {
-    mParentScene->getDebugInterface()->addSeparator("Signal Scope");
-    mParentScene->getDebugInterface()->setOptions("Falloff Min", "step=0.001");
-    mParentScene->getDebugInterface()->setOptions("Falloff Max", "step=0.001");
-    mParentScene->getDebugInterface()->setOptions("Smoothing Min", "step=0.001");
-    mParentScene->getDebugInterface()->setOptions("Smoothing Max", "step=0.001");
-    
-    mParentScene->getDebugInterface()->setOptions("Center Bias Range", "max=128");
-    mParentScene->getDebugInterface()->setOptions("Signal Cap", "");
-    mParentScene->getDebugInterface()->setOptions("Signal Scale", "step=0.01");
 }
 
 void Metropolis::reset()

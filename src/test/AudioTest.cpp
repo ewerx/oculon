@@ -77,6 +77,8 @@ void AudioTest::setupInterface()
 
 void AudioTest::setupDebugInterface()
 {
+    Scene::setupDebugInterface();
+    
     mSignalScope->setupDebugInterface();
     mMetropolis->setupDebugInterface();
 }
