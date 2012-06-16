@@ -51,6 +51,10 @@ public:
     void draw();
     void drawDebug();
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
+    void handleMouseDown( const ci::app::MouseEvent& event );
+    void handleMouseUp( const ci::app::MouseEvent& event );
+    void handleMouseDrag( const ci::app::MouseEvent& event );
+    void handleMouseMove( const ci::app::MouseEvent& event );
     
     // callbacks
     

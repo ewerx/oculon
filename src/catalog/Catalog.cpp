@@ -30,6 +30,11 @@ const int Catalog::FBO_HEIGHT = 78;
 Catalog::Catalog()
 : Scene("Catalog")
 {
+    for( int i=0; i < TB_COUNT; ++i )
+    {
+        mTextBox[i] = new TextEntity(this);
+        assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
+    }
 }
 
 // ----------------------------------------------------------------
@@ -86,11 +91,11 @@ void Catalog::setup()
 	mTextureFontL	= gl::TextureFont::create( mFontBlackL );
 	
 	// ROOM
-	gl::Fbo::Format roomFormat;
-	roomFormat.setColorInternalFormat( GL_RGB );
+	//gl::Fbo::Format roomFormat;
+	//roomFormat.setColorInternalFormat( GL_RGB );
 	//mRoomFbo			= gl::Fbo( APP_WIDTH/ROOM_FBO_RES, APP_HEIGHT/ROOM_FBO_RES, roomFormat );
-	bool isPowerOn		= false;
-	bool isGravityOn	= true;
+	//bool isPowerOn		= false;
+	//bool isGravityOn	= true;
 	//mRoom				= Room( Vec3f( 350.0f, 200.0f, 350.0f ), isPowerOn, isGravityOn );	
 	//mRoom.init();
 	
@@ -219,7 +224,7 @@ void Catalog::update(double dt)
 	
 	//mRoom.update();
 	
-	//if( mRoom.isPowerOn() ) mScaleDest -= ( mScaleDest - mMaxScale ) * 0.05f;
+	mScaleDest -= ( mScaleDest - mMaxScale ) * 0.05f;
 	mScale -= ( mScale - mScaleDest ) * 0.02f;
 	mScalePer = mScale/mMaxScale;
 	
@@ -270,9 +275,9 @@ void Catalog::draw()
 	// DRAW ROOM
 	mRoomFbo.bindTexture();
 	gl::drawSolidRect( getWindowBounds() );
-	
-	gl::setMatricesWindow( getWindowSize(), true );
 	*/
+	gl::setMatricesWindow( getWindowSize(), true );
+	
 	float power = 1.0f;//mRoom.getPower();
 	gl::color( Color( power, power, power ) );
 	if( power < 0.5f ){
@@ -384,7 +389,7 @@ void Catalog::draw()
 	
     /*
 	if( getElapsedFrames()%60 == 59 ){
-		std::cout << "FPS: " << getAverageFps() << std::endl;
+		console() << "[catalog] FPS: " << getAverageFps() << std::endl;
 	}
      */
     //
@@ -456,6 +461,32 @@ bool Catalog::handleKeyDown(const KeyEvent& keyEvent)
     }
     
     return handled;
+}
+
+void Catalog::handleMouseDown( const MouseEvent& event )
+{
+	mMouseTimePressed = getElapsedSeconds();
+	mMouseDownPos = event.getPos();
+	mMousePressed = true;
+	mMouseOffset = Vec2f::zero();
+}
+
+void Catalog::handleMouseUp( const MouseEvent& event )
+{
+	mMouseTimeReleased	= getElapsedSeconds();
+	mMousePressed = false;
+	mMouseOffset = Vec2f::zero();
+}
+
+void Catalog::handleMouseMove( const MouseEvent& event )
+{
+    mMousePos = event.getPos();
+}
+
+void Catalog::handleMouseDrag( const MouseEvent& event )
+{
+	handleMouseMove( event );
+	mMouseOffset = ( mMousePos - mMouseDownPos ) * 0.4f;
 }
 
 ////////------------------------------------------------------
@@ -600,7 +631,7 @@ void Catalog::parseData( const fs::path &path )
 		}
 		
 		myfile.close();
-	} else std::cout << "Unable to open file";
+	} else console() << "[catalog] ERROR: unable to read data file";
 }
 
 void Catalog::createStar( const std::string &text, int lineNumber )
@@ -688,7 +719,7 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 		
 		if( name == "Sol" || name == "Sirius" || name == "Vega" || name == "Gliese 581" ){
 			mTouringStars.push_back( star );
-			std::cout << "ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
+			console() << "[catalog] ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
 		}
 	}
 }
@@ -708,7 +739,7 @@ Vec3f Catalog::convertToCartesian( double ra, double dec, double dist )
 
 void Catalog::selectStar( bool wasRightClick )
 {
-	std::cout << "select star" << std::endl;
+	console() << "[catalog] select star" << std::endl;
 	Star *touchedStar = NULL;
 	float closestDist = 100000.0f;
 	BOOST_FOREACH( Star* &s, mBrightStars ){
@@ -724,7 +755,7 @@ void Catalog::selectStar( bool wasRightClick )
 		if( wasRightClick ){
 			mHomeStar = touchedStar;
 		} else {
-			std::cout << "TOUCHED " << touchedStar->mName << std::endl;
+			console() << "[catalog] TOUCHED " << touchedStar->mName << std::endl;
 			if( mDestStar ){
 				mDestStar->mIsSelected = false;
 			}

@@ -71,7 +71,6 @@ public: // new
     inline KinectController& getKinectController()   { return mKinectController; }
     inline OscServer& getOscServer()                 { return mOscServer; }
     
-    inline const Vec2f& getMousePos()          { return mMousePos; }
     inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
     inline params::InterfaceGl& getParams()    { return mParams; }
     
@@ -134,8 +133,6 @@ private: // members
     
     KinectController        mKinectController;
     bool                    mEnableKinect;
-    
-    Vec2f                   mMousePos;
     
     // render
     double                  mLastElapsedSeconds;

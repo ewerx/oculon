@@ -60,10 +60,11 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mUseMayaCam         = true;
     
-    mEnableMindWave     = false;
     mEnableOscServer    = true;
-    mEnableSyphonServer = true;
+    mEnableSyphonServer = false;
+    mIsCapturingHighRes = false;
     mEnableKinect       = false;
+    mEnableMindWave     = false;
 }
 
 void OculonApp::setup()
@@ -78,7 +79,6 @@ void OculonApp::setup()
     mIsCapturingFrames = false;
     mCaptureDuration = 60.0f;
     mSaveNextFrame = false;
-    mIsCapturingHighRes = true;
     mCaptureDebugOutput = false;
     static const int FBO_WIDTH = 1280;
     static const int FBO_HEIGHT = 720;
@@ -299,9 +299,17 @@ void OculonApp::resize( ResizeEvent event )
 }
 
 void OculonApp::mouseMove( MouseEvent event )
-{
-	mMousePos.x = event.getX() - getWindowWidth() * 0.5f;
-	mMousePos.y = getWindowHeight() * 0.5f - event.getY();
+{    
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        if( scene && scene->isRunning() )
+        {
+            scene->handleMouseMove(event);
+        }
+    }
 }
 
 void OculonApp::mouseDown( MouseEvent event )
@@ -703,7 +711,7 @@ void OculonApp::drawScenes()
 
 void OculonApp::draw()
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    gl::clear();
     
     if( mIsCapturingHighRes )
     {

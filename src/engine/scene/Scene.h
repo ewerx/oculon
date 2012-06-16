@@ -42,6 +42,7 @@ public:
     virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { }
 	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { }
 	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { }
+    virtual void handleMouseMove( const ci::app::MouseEvent& event )        { }
     virtual void handleRunningChanged()                                     { }
     virtual void handleVisibleChanged()                                     { }
     virtual void handleDebugChanged()                                       { }
