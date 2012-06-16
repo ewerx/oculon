@@ -62,7 +62,7 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mEnableOscServer    = true;
     mEnableSyphonServer = false;
-    mIsCapturingHighRes = false;
+    mIsCapturingHighRes = true;
     mEnableKinect       = false;
     mEnableMindWave     = false;
 }
@@ -943,7 +943,7 @@ bool OculonApp::onHighResToggle()
 {
     if( mIsCapturingHighRes )
     {
-        setWindowSize( 1680, 720 );//860, 860 );
+        //setWindowSize( 1280, 720 );//860, 860 );
         resize( ResizeEvent(mFbo.getSize()) );
     }
     else
@@ -979,4 +979,4 @@ int OculonApp::getViewportHeight() const
 }
 
 
-CINDER_APP_BASIC( OculonApp, RendererGl(RendererGl::AA_MSAA_2) )
+CINDER_APP_BASIC( OculonApp, RendererGl(0) )

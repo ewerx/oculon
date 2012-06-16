@@ -239,7 +239,7 @@ void Orbiter::reset()
                                radius, 
                                0.0000000001f,
                                mass, 
-                               ColorA(0.5f, 0.55f, 0.525f));
+                               ColorA(0.5f, 0.55f, 0.925f));
         body->setup();
         mBodies.push_back(body);
     }

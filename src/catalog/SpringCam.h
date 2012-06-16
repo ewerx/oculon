@@ -56,8 +56,8 @@ class SpringCam {
 	void update( float timeDelta );
 	void dragCam( const ci::Vec2f &posOffset, float distFromCenter );
 	void draw();
-	ci::CameraPersp getCam(){ return mCam; }
-	ci::Vec3f getEye(){ return mCam.getEyePoint(); }
+	ci::CameraPersp& getCam(){ return mCam; }
+	ci::Vec3f getEye() { return mCam.getEyePoint(); }
 	void setEye( const ci::Vec3f &v );
 	void setCenter( const ci::Vec3f &v );
 	

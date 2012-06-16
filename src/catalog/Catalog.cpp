@@ -14,6 +14,8 @@
 #include "Interface.h"
 #include "Resources.h"
 
+#include "Orbiter.h"
+
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
@@ -28,7 +30,7 @@ const int Catalog::FBO_HEIGHT = 78;
 // ----------------------------------------------------------------
 //
 Catalog::Catalog()
-: Scene("Catalog")
+: Scene("catalog")
 {
     for( int i=0; i < TB_COUNT; ++i )
     {
@@ -49,6 +51,7 @@ void Catalog::setup()
 {
     // params
     mShowLabels = true;
+    mCamType = CAM_SPRING;
     
     // assets
     
@@ -81,14 +84,10 @@ void Catalog::setup()
 	mSpectrumTex	= gl::Texture( loadImage( loadResource( RES_CATALOG_SPECTRUM ) ) );
 	
 	// FONTS
-	mFontBlackT		= Font( "Arial", 8 );
-	mFontBlackS		= Font( "Arial", 12 );
-	mFontBlackM		= Font( "Arial", 20 );
-	mFontBlackL		= Font( "Arial", 64 );
-	mTextureFontT	= gl::TextureFont::create( mFontBlackT );
-	mTextureFontS	= gl::TextureFont::create( mFontBlackS );
-	mTextureFontM	= gl::TextureFont::create( mFontBlackM );
-	mTextureFontL	= gl::TextureFont::create( mFontBlackL );
+	mFontBlackT		= Font( "Menlo", 8 );
+	mFontBlackS		= Font( "Menlo", 12 );
+	//mTextureFontT	= gl::TextureFont::create( mFontBlackT );
+	//mTextureFontS	= gl::TextureFont::create( mFontBlackS );
 	
 	// ROOM
 	//gl::Fbo::Format roomFormat;
@@ -172,11 +171,18 @@ void Catalog::initStars()
 //
 void Catalog::setupInterface()
 {
+    
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camtype")
+                        .isVertical());
+    mInterface->addParam(CreateBoolParam( "show names", &mRenderNames )
+                        .oscReceiver(getName(), "shownames"));
+    mInterface->addParam(CreateBoolParam( "show faint", &mRenderFaintStars )
+                         .oscReceiver(getName(), "showfaint"));
+    mInterface->addParam(CreateBoolParam( "show bright", &mRenderBrightStars )
+                         .oscReceiver(getName(), "showbright"));
     /*
-    mInterface->addEnum(CreateEnumParam( "Trigger Mode", (int*)(&mTriggerMode) )
-                        .maxValue(TRIGGER_COUNT)
-                        .isVertical()
-                        .oscReceiver(mName,"triggermode"));
     mInterface->addParam(CreateFloatParam("BPM", &mBpm)
                          .minValue(60.0f)
                          .maxValue(150.0f)
@@ -242,7 +248,7 @@ void Catalog::update(double dt)
 	mSpringCam.update( 0.25f );
 	
 	BOOST_FOREACH( Star* &s, mBrightStars ){
-		s->update( mSpringCam.getCam(), mScale );
+		s->update( getCam(), mScale );
 	}
     //
     ////////------------------------------------------------------
@@ -259,7 +265,7 @@ void Catalog::draw()
     
     ////////------------------------------------------------------
     //
-    gl::clear( Color( 0, 0, 0 ) );
+    //gl::clear( Color( 0, 0, 0 ) );
 	gl::color( ColorA( 1, 1, 1, 1 ) );
     
 	gl::setMatricesWindow( getWindowSize(), false );
@@ -286,7 +292,7 @@ void Catalog::draw()
 		gl::enableAdditiveBlending();
 	}
     
-	gl::setMatrices( mSpringCam.getCam() );
+	gl::setMatrices( getCam() );
 	
     /*
 	// DRAW PANEL
@@ -302,7 +308,7 @@ void Catalog::draw()
 	// DRAW MILKYWAY
 	if( power > 0.01f ){
 		gl::pushMatrices();
-		gl::translate( mSpringCam.getCam().getEyePoint() );
+		gl::translate( getCam().getEyePoint() );
 		gl::rotate( Vec3f( 75.0f, 0.0f, 0.0f ) );
 		gl::color( ColorA( 1.0f, 1.0f, 1.0f, power * mScalePer ) );
 		mMilkyWayTex.bind();
@@ -351,8 +357,8 @@ void Catalog::draw()
 		mBrightStarsShader.uniform( "scale", mScale );
 		mBrightStarsShader.uniform( "power", 1.0f );//mRoom.getPower() );
 		mBrightStarsShader.uniform( "roomDims", 1.0f);//mRoom.getDims() );
-		mBrightStarsShader.uniform( "mvMatrix", mSpringCam.mCam.getModelViewMatrix() );
-		mBrightStarsShader.uniform( "eyePos", mSpringCam.mCam.getEyePoint() );
+		mBrightStarsShader.uniform( "mvMatrix", getCam().getModelViewMatrix() );
+		mBrightStarsShader.uniform( "eyePos", getCam().getEyePoint() );
 		if( power > 0.5f ){
 			mBrightStarsShader.uniform( "texScale", 0.5f );
 			gl::draw( mBrightVbo );
@@ -465,6 +471,12 @@ bool Catalog::handleKeyDown(const KeyEvent& keyEvent)
 
 void Catalog::handleMouseDown( const MouseEvent& event )
 {
+    if( event.isRight() ){
+        //		mArcball.mouseDown( event.getPos() );
+		mWasRightButtonLastClicked = true;
+	} else {
+		mWasRightButtonLastClicked = false;
+	}
 	mMouseTimePressed = getElapsedSeconds();
 	mMouseDownPos = event.getPos();
 	mMousePressed = true;
@@ -767,3 +779,29 @@ void Catalog::selectStar( bool wasRightClick )
 
 //
 ////////------------------------------------------------------
+
+const Camera& Catalog::getCam()
+{
+    switch( mCamType )
+    {
+        case CAM_SPRING:
+            return mSpringCam.getCam();
+            
+        case CAM_ORBITER:
+        {
+            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
+            
+            if( orbiterScene && orbiterScene->isRunning() )
+            {
+                return orbiterScene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+        
+        default:
+            return mSpringCam.getCam();
+    }
+}

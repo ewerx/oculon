@@ -77,6 +77,8 @@ protected:
     void        selectStar( bool wasRightClick );
     //
     ////////------------------------------------------------------
+    
+    const ci::Camera& getCam();
         
 private:
     
@@ -107,8 +109,8 @@ private:
 	gl::Fbo				mPositionFbo;
 	
 	// FONT
-	Font				mFontBlackT, mFontBlackS, mFontBlackM, mFontBlackL;
-	gl::TextureFontRef	mTextureFontT, mTextureFontS, mTextureFontM, mTextureFontL;
+	Font				mFontBlackT, mFontBlackS;
+	gl::TextureFontRef	mTextureFontT, mTextureFontS;
 	
 	// MOUSE
 	Vec2f				mMousePos, mMouseDownPos, mMouseOffset;
@@ -151,6 +153,15 @@ private:
     
     // rendering
     bool mShowLabels;
+    
+    enum eCamType
+    {
+        CAM_SPRING,
+        CAM_ORBITER,
+        
+        CAM_COUNT
+    };
+    eCamType mCamType;
     
     // display list
     //GLuint mDisplayListPoints;
