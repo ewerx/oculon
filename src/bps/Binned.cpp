@@ -240,6 +240,7 @@ void Binned::reset()
 
 void Binned::resize()
 {
+    Scene::resize();
     reset();
 }
 

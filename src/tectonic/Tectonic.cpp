@@ -168,6 +168,7 @@ void Tectonic::reset()
 //
 void Tectonic::resize()
 {
+    Scene::resize();
     for( int i = 0; i < TB_COUNT; ++i )
     {
         mTextBox[i]->resize();

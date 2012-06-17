@@ -134,6 +134,7 @@ void Magnetosphere::reset()
 
 void Magnetosphere::resize()
 {
+    Scene::resize();
     mDimensions.x = mApp->getViewportWidth();
     mDimensions.y = mApp->getViewportHeight();
     mKernel->setArg(ARG_DIMENSIONS, mDimensions);

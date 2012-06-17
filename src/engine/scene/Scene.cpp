@@ -52,6 +52,12 @@ Scene::~Scene()
 void Scene::init(OculonApp* app)
 {
     mApp = app;
+    
+    // setup FBO
+    setupFbo();
+    mSyphon.setName(mName);
+    
+    // setup master interface
     mInterface = new Interface( mApp, &mApp->getOscServer() );
     mInterface->gui()->addColumn();
     // bind to OculonApp::showInterface(0)
@@ -74,6 +80,22 @@ void Scene::init(OculonApp* app)
     setup();
     setupInterface();
     setupDebugInterface();
+}
+
+void Scene::setupFbo()
+{
+    gl::Fbo::Format format;
+    //format.enableMipmapping(false);
+    //format.enableDepthBuffer(false);
+	//format.setCoverageSamples(8);
+	format.setSamples(4); // 4x AA
+    
+    mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+}
+
+void Scene::resize()
+{
+    setupFbo();
 }
 
 void Scene::setupDebugInterface()
@@ -124,6 +146,25 @@ void Scene::update(double dt)
     
     assert(mInterface);
     mInterface->update();
+}
+
+void Scene::drawToFbo()
+{
+    // bind FBO
+    gl::setViewport(mFbo.getBounds());
+    mFbo.bindFramebuffer();
+    
+    // draw scene
+    gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 0.0f), true);
+    //gl::clear( Color(0.0f,0.0f,0.0f) );
+    draw();
+    
+    mFbo.unbindFramebuffer();
+}
+
+void Scene::publishToSyphon()
+{
+    mSyphon.publishTexture(&mFbo.getTexture());
 }
 
 void Scene::drawInterface()

@@ -29,7 +29,7 @@ AudioTest::AudioTest()
 
 AudioTest::~AudioTest()
 {
-    delete mMetropolis;
+    //delete mMetropolis;
     delete mSignalScope;
 }
 
@@ -48,8 +48,8 @@ void AudioTest::setup()
     mSignalScope->setup();
     
     mEnableMetropolis = false;
-    mMetropolis = new Metropolis(this);
-    mMetropolis->setup();
+    //mMetropolis = new Metropolis(this);
+    //mMetropolis->setup();
 }
 
 void AudioTest::setupInterface()
@@ -72,7 +72,7 @@ void AudioTest::setupInterface()
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioTest::removeFilter );
     
     mSignalScope->setupInterface();
-    mMetropolis->setupInterface();
+    //mMetropolis->setupInterface();
 }
 
 void AudioTest::setupDebugInterface()
@@ -80,7 +80,7 @@ void AudioTest::setupDebugInterface()
     Scene::setupDebugInterface();
     
     mSignalScope->setupDebugInterface();
-    mMetropolis->setupDebugInterface();
+    //mMetropolis->setupDebugInterface();
 }
 
 void AudioTest::update(double dt)

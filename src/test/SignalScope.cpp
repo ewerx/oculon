@@ -106,7 +106,6 @@ void SignalScope::reset()
 
 void SignalScope::resize()
 {
-    
 }
 
 void SignalScope::update(double dt)

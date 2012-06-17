@@ -71,6 +71,7 @@ void Pulsar::reset()
 
 void Pulsar::resize()
 {
+    Scene::resize();
 }
 
 //void Pulsar::setupMidiMapping()

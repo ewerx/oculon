@@ -211,6 +211,7 @@ void Catalog::reset()
 //
 void Catalog::resize()
 {
+    Scene::resize();
     for( int i = 0; i < TB_COUNT; ++i )
     {
         mTextBox[i]->resize();
@@ -261,6 +262,8 @@ void Catalog::update(double dt)
 //
 void Catalog::draw()
 {
+    glDisable(GL_TEXTURE_2D);
+    
     gl::pushMatrices();
     
     ////////------------------------------------------------------

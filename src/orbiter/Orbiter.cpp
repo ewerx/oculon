@@ -107,6 +107,7 @@ void Orbiter::setup()
 
 void Orbiter::resize()
 {
+    Scene::resize();
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
         ++bodyIt)

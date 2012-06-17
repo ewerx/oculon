@@ -63,6 +63,7 @@ public: // cinder interface
     
     int getViewportWidth() const;                 
     int getViewportHeight() const;
+    Area getViewportBounds() const;
     
 public: // new
     inline AudioInput& getAudioInput()               { return mAudioInput; }
@@ -103,6 +104,7 @@ protected: // new
     void drawToFbo();
     void drawFromFbo();
     void drawScenes();
+    void renderScenes();
     void drawDebug();
     void captureFrames();
     void saveScreenshot();
@@ -140,9 +142,10 @@ private: // members
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     
-    // temp
+    // scenes
     typedef vector<Scene*>  SceneList;
     SceneList               mScenes;
+    bool                    mRenderScenesToFbo;
     
     // debug
     InfoPanel               mInfoPanel;

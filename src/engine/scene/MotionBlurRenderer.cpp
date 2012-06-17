@@ -28,13 +28,12 @@ void MotionBlurRenderer::setup(const Vec2i& windowSize, MotionBlurRenderer::tDra
     
     // setup FBO
     gl::Fbo::Format format;
-    //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     const int fboWidth = windowSize.x;
     const int fboHeight = windowSize.y;
     //format.enableMipmapping(false);
     format.enableDepthBuffer(false);
 	format.setCoverageSamples(8);
-	format.setSamples(4);
+	format.setSamples(4); // 4x AA
     
     mFboIndex = 0;
     

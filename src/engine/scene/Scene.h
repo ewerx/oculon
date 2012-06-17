@@ -13,9 +13,11 @@
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/Camera.h"
+#include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
 #include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
+#include "cinderSyphon.h"
 
 // fwd decl
 class OculonApp;
@@ -32,7 +34,7 @@ public:
     
     virtual void reset() {}
     virtual void shutdown() {}
-    virtual void resize() {}
+    virtual void resize();
     virtual void update(double dt);
     virtual void draw() {}
     virtual void drawInterface();
@@ -48,6 +50,10 @@ public:
     virtual void handleDebugChanged()                                       { }
     
     virtual const ci::Camera& getCamera() const;
+    
+    void drawToFbo();
+    void publishToSyphon();
+    ci::gl::Fbo& getFbo()           { return mFbo; }
     
     OculonApp* getApp() const       { return mApp; }
     const std::string& getName()    { return mName; }
@@ -84,6 +90,7 @@ protected:
     virtual void setup() {}
     virtual void setupInterface() {}
     virtual void setupDebugInterface();
+    void setupFbo();
     
     bool saveInterfaceParams();
     bool loadInterfaceParams(const int index =0);
@@ -110,6 +117,10 @@ protected:
     bool mDoReset;
     
 private:
+    // fbo
+    ci::gl::Fbo             mFbo;
+    syphonServer            mSyphon;
+    
     // frustum culling
     enum
     { 

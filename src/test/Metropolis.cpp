@@ -76,7 +76,6 @@ void Metropolis::reset()
 
 void Metropolis::resize()
 {
-    
 }
 
 void Metropolis::update(double dt)

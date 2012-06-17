@@ -60,9 +60,11 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mUseMayaCam         = true;
     
-    mEnableOscServer    = true;
-    mEnableSyphonServer = false;
+    mEnableSyphonServer = true;
     mIsCapturingHighRes = true;
+    mRenderScenesToFbo  = false;
+    
+    mEnableOscServer    = true;
     mEnableKinect       = false;
     mEnableMindWave     = false;
 }
@@ -177,6 +179,7 @@ void OculonApp::setupInterface()
     mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
     mInterface->addParam(CreateBoolParam("High-Res Capture", &mIsCapturingHighRes))->registerCallback( this, &OculonApp::onHighResToggle );
+    mInterface->addParam(CreateBoolParam("Scene FBOs", &mRenderScenesToFbo));
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
                          .minValue(1.0f)
                          .maxValue(600.0f));
@@ -213,6 +216,8 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible)))->registerCallback( scene, &Scene::onVisibleChanged );
     mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning)))->registerCallback( scene, &Scene::onRunningChanged );
     mInterface->addParam(CreateBoolParam("Debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
+    
+    //mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture()));
     
     console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }
@@ -572,6 +577,10 @@ void OculonApp::update()
         snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
     }
     mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+    if( mRenderScenesToFbo )
+    {
+        mInfoPanel.addLine( "SCENE FBOs", Color(0.5f, 0.5f, 0.5f) );
+    }
     if( mEnableSyphonServer )
     {
         mInfoPanel.addLine( "SYPHON", Color(0.3f, 0.3f, 1.0f) );
@@ -651,18 +660,38 @@ void OculonApp::update()
 
 void OculonApp::drawToScreen()
 {
+    if( mRenderScenesToFbo )
+    {
+        renderScenes();
+    }
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    gl::enableAlphaBlending();
+    gl::clear( ColorA(0.0f,0.0f,0.0f,1.0f) );
+    gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
     drawScenes();
 }
 
 void OculonApp::drawToFbo()
 {
+    if( mRenderScenesToFbo )
+    {
+        renderScenes();
+    }
+    
     Area prevViewport = gl::getViewport();
     // bind the framebuffer - now everything we draw will go there
     mFbo.bindFramebuffer();
     
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
+    gl::disableAlphaBlending();
+    //gl::enableAdditiveBlending();
+    glEnable(GL_TEXTURE_2D);
     // setup the viewport to match the dimensions of the FBO
     gl::setViewport( mFbo.getBounds() );
-    gl::clear( Color(0.0f,0.0f,0.0f) );
+    gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
+    gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
     
     drawScenes();
     
@@ -676,16 +705,35 @@ void OculonApp::drawFromFbo()
 {
     gl::enableDepthRead();
     gl::enableDepthWrite();
-    gl::pushMatrices();
+    gl::disableAlphaBlending();
+    //gl::pushMatrices();
     glEnable(GL_TEXTURE_2D);
     // draw the captured texture back to screen
-    glColor4f(1.0f,1.0f,1.0f,1.0f);
-    gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
     float width = getWindowWidth();
     float height = getWindowHeight();
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    gl::setMatricesWindow( Vec2i( width, height ) );
+    
     // flip
-    gl::draw( mFbo.getTexture(0), Rectf( 0, height, width, 0 ) );
-    gl::popMatrices();
+    gl::draw( mFbo.getTexture(), Rectf( 0, height, width, 0 ) );
+    //gl::popMatrices();
+
+}
+
+void OculonApp::renderScenes()
+{
+    // render scenes to FBO
+    for (SceneList::iterator sceneIt = mScenes.begin(); 
+         sceneIt != mScenes.end();
+         ++sceneIt )
+    {
+        Scene* scene = (*sceneIt);
+        assert( scene != NULL );
+        if( scene && scene->isVisible() )
+        {
+            scene->drawToFbo();
+        }
+    }
 
 }
 
@@ -693,16 +741,42 @@ void OculonApp::drawScenes()
 {
     glPushMatrix();
     {
-        // render scenes
-        for (SceneList::iterator sceneIt = mScenes.begin(); 
-             sceneIt != mScenes.end();
-             ++sceneIt )
+        if( mRenderScenesToFbo )
         {
-            Scene* scene = (*sceneIt);
-            assert( scene != NULL );
-            if( scene && scene->isVisible() )
+            // draw scene FBO textures
+            gl::enableDepthRead();
+            gl::enableDepthWrite();
+            gl::disableAlphaBlending();
+            //gl::enableAdditiveBlending();
+            glEnable(GL_TEXTURE_2D);
+            gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
+            gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+            for (SceneList::iterator sceneIt = mScenes.begin(); 
+                 sceneIt != mScenes.end();
+                 ++sceneIt )
             {
-                scene->draw();
+                Scene* scene = (*sceneIt);
+                assert( scene != NULL );
+                if( scene && scene->isVisible() )
+                {
+                    gl::Fbo& fbo = scene->getFbo();
+                    gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
+                }
+            }
+        }
+        else
+        {
+            // draw scenes directly
+            for (SceneList::iterator sceneIt = mScenes.begin(); 
+                 sceneIt != mScenes.end();
+                 ++sceneIt )
+            {
+                Scene* scene = (*sceneIt);
+                assert( scene != NULL );
+                if( scene && scene->isVisible() )
+                {
+                    scene->draw();
+                }
             }
         }
     }
@@ -752,13 +826,31 @@ void OculonApp::draw()
     
     if( mEnableSyphonServer )
     {
-        if( mIsCapturingHighRes )
+        if( mRenderScenesToFbo )
         {
-            mScreenSyphon.publishTexture(&mFbo.getTexture());
+            // publish each scene separately
+            for (SceneList::iterator sceneIt = mScenes.begin(); 
+                 sceneIt != mScenes.end();
+                 ++sceneIt )
+            {
+                Scene* scene = (*sceneIt);
+                assert( scene != NULL );
+                if( scene && scene->isVisible() )
+                {
+                    scene->publishToSyphon();
+                }
+            }
         }
         else
         {
-            mScreenSyphon.publishScreen(); //publish the screen
+            if( mIsCapturingHighRes )
+            {
+                mScreenSyphon.publishTexture(&mFbo.getTexture());
+            }
+            else
+            {
+                mScreenSyphon.publishScreen(); //publish the screen
+            }
         }
     }
     
@@ -978,5 +1070,17 @@ int OculonApp::getViewportHeight() const
     }
 }
 
+Area OculonApp::getViewportBounds() const
+{
+    if( mIsCapturingHighRes ) 
+    {
+        return Area( 0, 0, mFbo.getWidth(), mFbo.getHeight() ) ;
+    }
+    else
+    {
+        return getWindowBounds();
+    }
+    
+}
 
 CINDER_APP_BASIC( OculonApp, RendererGl(0) )

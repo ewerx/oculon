@@ -471,6 +471,7 @@ void Graviton::reset()
 
 void Graviton::resize()
 {
+    Scene::resize();
     mMotionBlurRenderer.resize(mApp->getWindowSize());
 }
 
