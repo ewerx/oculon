@@ -155,8 +155,8 @@ void Scene::drawToFbo()
     mFbo.bindFramebuffer();
     
     // draw scene
-    gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 0.0f), true);
-    //gl::clear( Color(0.0f,0.0f,0.0f) );
+    //gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 0.0f), true);
+    gl::clear( Color(0.0f,0.0f,0.0f) );
     draw();
     
     mFbo.unbindFramebuffer();

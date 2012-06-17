@@ -264,15 +264,15 @@ void OculonApp::setupScenes()
     //TODO: serialization
     addScene( new Orbiter() );
     addScene( new Binned() );
-    addScene( new Pulsar() );
-    addScene( new Magnetosphere() );
+    //addScene( new Pulsar() );
+    //addScene( new Magnetosphere() );
     addScene( new Graviton() );
-    addScene( new Tectonic() );
-    addScene( new Sol() );
-    addScene( new Catalog() );
+    //addScene( new Tectonic() );
+    //addScene( new Sol() );
+    //addScene( new Catalog() );
     
     // Test Scenes
-    addScene( new AudioTest() );
+    //addScene( new AudioTest() );
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
     if( mEnableKinect )
