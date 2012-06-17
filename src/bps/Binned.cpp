@@ -280,7 +280,8 @@ void Binned::setupInterface()
                          .maxValue(MODE_COUNT));
     
     mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
-                         .maxValue(0.1f)
+                         .maxValue(0.01f)
+                         .minValue(0.0001f)
                          .oscReceiver(mName,"timestep"));
     
     mInterface->addParam(CreateFloatParam("Center Attraction", &mCenterAttraction)

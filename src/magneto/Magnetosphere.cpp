@@ -10,6 +10,7 @@
 #include "Magnetosphere.h"
 #include "Resources.h"
 #include "AudioInput.h" // compile errors if this is not before App.h
+#include "Interface.h"
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
 
@@ -29,7 +30,7 @@ Magnetosphere::~Magnetosphere()
 void Magnetosphere::setup()
 {
     // init params
-    mTimeStep = 0.25f;
+    mTimeStep = 0.075f;
     
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
@@ -39,11 +40,11 @@ void Magnetosphere::setup()
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
     mScalePointsByDistance = false;
-    mPointSize = 2.0f;
+    mPointSize = 4.0f;
     mLineWidth = 1.0f;
-    mParticleAlpha = 0.25f;
+    mParticleAlpha = 0.35f;
     
-    mNodeRotationSpeed = 0.0f;
+    mNodeRotationSpeed = 0.5f;
     mNodeRotation = 0.0f;
     
     mDamping = 1.0f;
@@ -144,23 +145,40 @@ void Magnetosphere::setupDebugInterface()
 {
     Scene::setupDebugInterface();
     
-    mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
-    mDebugParams.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    mDebugParams.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
+    mDebugParams.setOptions("Time Step", "step=0.0001 min=0.0 max=1.0" );
+    mDebugParams.setOptions("Damping", "min=0.0 step=0.0001");
     
-    mDebugParams.addParam("Point Size", &mPointSize, "");
     mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
     mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
     mDebugParams.addParam("Point Scaling", &mScalePointsByDistance, "");
-    mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
-    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
-    mDebugParams.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
-    mDebugParams.addParam("Node Rotate Speed", &mNodeRotationSpeed, "min=0.0 max=1.0 step=0.001");
+    mDebugParams.setOptions("Alpha", "min=0.0 max=1.0 step=0.001");
+    mDebugParams.setOptions("Node Rotate Speed", "min=0.0 max=1.0 step=0.001");
 }
 
 void Magnetosphere::setupInterface()
 {
+    mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
+                         .maxValue(1.0f)
+                         .minValue(0.001f)
+                         .oscReceiver(mName,"timestep"));
+    mInterface->addParam(CreateFloatParam( "Damping", &mDamping )
+                         .oscReceiver(getName(), "damping"));
+    mInterface->addParam(CreateFloatParam( "Node Rotate Speed", &mNodeRotationSpeed )
+                         .oscReceiver(getName(), "rotatespeed"));
     
+    mInterface->addParam(CreateFloatParam("Point Size", &mPointSize)
+                         .minValue(1.0f)
+                         .maxValue(8.0f)
+                         .oscReceiver(getName(), "psize"));
+    
+    mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
+                         .oscReceiver(getName(), "alpha"));
+    mInterface->addParam(CreateBoolParam( "Additive Blending", &mAdditiveBlending )
+                         .oscReceiver(getName(), "additiveblending"));
+    mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
+                         .oscReceiver(getName(), "blur"));
+    mInterface->addParam(CreateBoolParam( "Inv Square" )
+                         .oscReceiver(getName(), "invsqr"));
 }
 
 void Magnetosphere::initParticles()

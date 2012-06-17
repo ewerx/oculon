@@ -50,7 +50,7 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1280, 720 );
+	settings->setWindowSize( 1280, 800 );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -61,7 +61,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mUseMayaCam         = true;
     
     mEnableOscServer    = true;
-    mEnableSyphonServer = false;
+    mEnableSyphonServer = true;
     mIsCapturingHighRes = true;
     mEnableKinect       = false;
     mEnableMindWave     = false;
@@ -81,7 +81,7 @@ void OculonApp::setup()
     mSaveNextFrame = false;
     mCaptureDebugOutput = false;
     static const int FBO_WIDTH = 1280;
-    static const int FBO_HEIGHT = 720;
+    static const int FBO_HEIGHT = 800;
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );

@@ -53,8 +53,7 @@ Orbiter::Orbiter()
 , mSun(NULL)
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
-, mIsFollowCameraEnabled(true)
-, mIsBinnedModeEnabled(false)
+, mCamType(CAM_FOLLOW)
 {
     mEnableFrustumCulling = true; // Scene
     
@@ -144,8 +143,6 @@ void Orbiter::setupDebugInterface()
     mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
     mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
     mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
-    mDebugParams.addParam("Orbit Cam", &mIsFollowCameraEnabled, "");
-    mDebugParams.addParam("Binned", &mIsBinnedModeEnabled, "");
     //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
     //mDebugParams.addSeparator();
     //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
@@ -153,7 +150,15 @@ void Orbiter::setupDebugInterface()
 
 void Orbiter::setupInterface()
 {
+    mInterface->addEnum(CreateEnumParam("Camera", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camera")
+                        .isVertical());
     
+    mInterface->addButton(CreateTriggerParam("Next Target", NULL)
+                          .oscReceiver(mName,"nexttarget"))->registerCallback( this, &Orbiter::nextTarget );
+    mInterface->addButton(CreateTriggerParam("Prev Target", NULL)
+                          .oscReceiver(mName,"prevtarget"))->registerCallback( this, &Orbiter::prevTarget );
 }
 
 void Orbiter::reset()
@@ -281,8 +286,8 @@ void Orbiter::update(double dt)
 
     // debug info
     char buf[256];
-    snprintf(buf, 256, "orbiter cam: %s", mIsBinnedModeEnabled ? "locked 2D" : (mIsFollowCameraEnabled ? "follow" : "manual" ) );
-    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.75f));
+    //snprintf(buf, 256, "orbiter cam: %d", mCamType );
+    //mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.75f));
     
     bool simulate = true;
     bool symmetric = true;
@@ -344,20 +349,18 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
             handled = false;
             break;
         case 'c':
-            mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
-            mApp->setUseMayaCam( !mIsBinnedModeEnabled&& !mIsFollowCameraEnabled );
+            mCamType = (mCamType == CAM_FOLLOW) ? CAM_MANUAL : CAM_FOLLOW;
+            mApp->setUseMayaCam( mCamType == CAM_MANUAL );
             break;
         case '[':
-            if( --mFollowTargetIndex < 4 )
-                mFollowTargetIndex = mBodies.size()-1;
+            prevTarget();
             break;
         case ']':
-            if( ++mFollowTargetIndex == mBodies.size() )
-                mFollowTargetIndex = 4;
+            nextTarget();
             break;
         case 'b':
-            mIsBinnedModeEnabled = !mIsBinnedModeEnabled;
-            mApp->setUseMayaCam( !mIsBinnedModeEnabled && !mIsFollowCameraEnabled );
+            mCamType = (mCamType == CAM_FOLLOW) ? CAM_BINNED : CAM_FOLLOW;
+            mApp->setUseMayaCam( false );
             handled = false;
             break;
         case 'o':
@@ -370,6 +373,20 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
     }
     
     return handled;
+}
+
+bool Orbiter::prevTarget()
+{
+    if( --mFollowTargetIndex < 4 )
+        mFollowTargetIndex = mBodies.size()-1;
+    
+    return false;
+}
+
+bool Orbiter::nextTarget()
+{
+    if( ++mFollowTargetIndex == mBodies.size() )
+        mFollowTargetIndex = 4;
 }
 
 //
@@ -416,12 +433,12 @@ void Orbiter::draw()
                        mDrawScale * getWindowHeight() / 2.0f,
                        mDrawScale * getWindowHeight() / 2.0f));
 
-    if( mIsBinnedModeEnabled )
+    if( CAM_BINNED == mCamType )
     {
         mCam.lookAt( Vec3d(0,6000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
         gl::setMatrices(mCam);
     }
-    else if( mIsFollowCameraEnabled )
+    else if( CAM_FOLLOW == mCamType )
     {
         Body* cameraLookingAt = mSun;
         Body* cameraAttachedTo = mFollowTarget;
@@ -734,7 +751,7 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
 
 const Camera& Orbiter::getCamera() const
 {
-    if( mIsBinnedModeEnabled || mIsFollowCameraEnabled )
+    if( mCamType != CAM_MANUAL )
     {
         return mCam;
     }

@@ -179,7 +179,8 @@ void Graviton::setupInterface()
                          .minValue(0.0f)
                          .maxValue(5.0f)
                          .oscReceiver(getName(), "camspeed"));
-    
+    mInterface->addButton(CreateTriggerParam("Reset Spline", NULL)
+                          .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );    
 }
 
 void Graviton::initParticles()
@@ -669,7 +670,7 @@ void Graviton::updateCamera(const double dt)
     
 }
 
-void Graviton::setupCameraSpline()
+bool Graviton::setupCameraSpline()
 {
     vector<Vec3f> points;
 	int numPoints = 4 + ( Rand::randInt(4) );
@@ -682,6 +683,8 @@ void Graviton::setupCameraSpline()
 	mCamSplineValue = 0.0f;
 	mCamRotation = Quatf::identity();
 	mCamLastPos = mCamSpline.getPosition( 0 );
+    
+    return false;
 }
 
 void Graviton::drawCamSpline()

@@ -51,7 +51,7 @@ void Catalog::setup()
 {
     // params
     mShowLabels = true;
-    mCamType = CAM_SPRING;
+    mCamType = CAM_ORBITER;
     
     // assets
     
@@ -174,7 +174,7 @@ void Catalog::setupInterface()
     
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camtype")
+                        .oscReceiver(getName(), "camera")
                         .isVertical());
     mInterface->addParam(CreateBoolParam( "show names", &mRenderNames )
                         .oscReceiver(getName(), "shownames"));
@@ -718,6 +718,7 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 	
 	// THIS FEELS WRONG. ASK ABOUT THE RIGHT WAY TO DO THIS.
 	Star *star = new Star( pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
+    if( name != "Sol" ) {
 	mStars.push_back( *star );
 	
 	if( appMag < 6.0f || name.length() > 1 ){
@@ -725,7 +726,7 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 	} else {
 		mFaintStars.push_back( star );
 	}
-	
+	}
 	if( name.length() > 1 ){
 		mNamedStars.push_back( star );
 		

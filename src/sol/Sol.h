@@ -41,6 +41,7 @@ public:
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     
     // callbacks
+    bool nextSource();
     
 protected:
     void setupInterface();
