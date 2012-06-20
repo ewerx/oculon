@@ -177,7 +177,7 @@ void Magnetosphere::setupInterface()
                          .oscReceiver(getName(), "additiveblending"));
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(getName(), "blur"));
-    mInterface->addParam(CreateBoolParam( "Inv Square" )
+    mInterface->addParam(CreateBoolParam( "Inv Square", &mUseInvSquareCalc )
                          .oscReceiver(getName(), "invsqr"));
 }
 

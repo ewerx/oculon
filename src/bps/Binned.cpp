@@ -266,7 +266,8 @@ void Binned::setupInterface()
 {
     
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
-                         .minValue(1).maxValue(100));
+                         .minValue(1).maxValue(64)
+                         .oscReceiver(mName,"kparticles"));
     
     mInterface->addEnum(CreateEnumParam("Initial Formation", &mInitialFormation)
                         .maxValue(FORMATION_COUNT)
