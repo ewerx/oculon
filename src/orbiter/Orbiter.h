@@ -41,9 +41,11 @@ public:
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     const Camera& getCamera() const;
     
-    // midi callbacks
+    // callbacks
     void handleGravityChange(MidiEvent midiEvent);
     void handleTimeScaleChange(MidiEvent midiEvent);
+    bool prevTarget();
+    bool nextTarget();
     
 protected:// from Scene
     void setupInterface();
@@ -62,8 +64,6 @@ private:
     
     void removeBodies();
     
-    void enableBinnedMode( bool enable = true ) { mIsBinnedModeEnabled = enable; }
-    
 private:
     //Vec3f           mLightDirection;
     
@@ -76,9 +76,17 @@ private:
     Sun*                mSun;
     int                 mFollowTargetIndex;
     Body*               mFollowTarget;
-    bool                mIsFollowCameraEnabled;
-    bool                mIsBinnedModeEnabled;
     CameraPersp         mCam;
+    
+    enum eCamType 
+    {
+        CAM_MANUAL,
+        CAM_FOLLOW,
+        CAM_BINNED,
+        
+        CAM_COUNT
+    };
+    eCamType        mCamType;
     
     double          mElapsedTime;
     double          mTimeScale;

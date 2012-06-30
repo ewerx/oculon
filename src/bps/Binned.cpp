@@ -267,7 +267,8 @@ void Binned::setupInterface()
 {
     
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
-                         .minValue(1).maxValue(100));
+                         .minValue(1).maxValue(64)
+                         .oscReceiver(mName,"kparticles"));
     
     mInterface->addEnum(CreateEnumParam("Initial Formation", &mInitialFormation)
                         .maxValue(FORMATION_COUNT)
@@ -281,7 +282,8 @@ void Binned::setupInterface()
                          .maxValue(MODE_COUNT));
     
     mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
-                         .maxValue(0.1f)
+                         .maxValue(0.01f)
+                         .minValue(0.0001f)
                          .oscReceiver(mName,"timestep"));
     
     mInterface->addParam(CreateFloatParam("Center Attraction", &mCenterAttraction)

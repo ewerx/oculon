@@ -225,7 +225,7 @@ private:
     void preRender();
     void drawParticles();
     
-    void setupCameraSpline();
+    bool setupCameraSpline();
     void drawCamSpline();
     
      

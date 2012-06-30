@@ -11,11 +11,11 @@
 #include "Quake.h"
 #include "QuakeData.h"
 #include "TextEntity.h"
-
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "Interface.h"
 #include "Resources.h"
+#include "Binned.h"
 
 #include "cinder/Rand.h"
 
@@ -64,6 +64,7 @@ void Tectonic::setup()
     mShowMap = false;
     mShowLabels = true;
     mShowAllPoints = false;
+    mSendToBinned = true;
     
     // assets
     mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
@@ -264,9 +265,26 @@ bool Tectonic::triggerNextQuake()
             const float durationMagnitudeMultiplier = 0.25f;
             float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
             if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
+            
             mQuakes[mCurrentIndex]->trigger(duration);
             mActiveQuakes.push_back( mQuakes[mCurrentIndex] );
             console() << mCurrentIndex << ": " << mQuakes[mCurrentIndex]->getEventData()->toString() << std::endl;
+            
+            if( mSendToBinned )
+            {
+                Binned* binnedScene = static_cast<Binned*>(mApp->getScene(1));
+                
+                if( binnedScene && binnedScene->isRunning() )
+                {
+                    const float radMult = 20.0f;
+                    const Vec3f& pos = mQuakes[mCurrentIndex]->getPosition();
+                    const QuakeEvent* event = mQuakes[mCurrentIndex]->getEventData();
+                    const float forceMult = 0.5f;
+                    binnedScene->addRepulsionForce(Vec2f( pos.x, pos.y ), 
+                                                   20.0f + event->getMag()*radMult, 
+                                                   100.0f + event->getDepth()*forceMult);
+                }
+            }
         }
     }
     

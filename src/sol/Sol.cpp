@@ -122,7 +122,11 @@ void Sol::setupInterface()
     //mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
     //                     .defaultValue(mUseMotionBlur));
     mInterface->addEnum(CreateEnumParam("Source", &mCurrentSource)
-                        .maxValue(SolFrame::SOURCE_COUNT));
+                        .maxValue(SolFrame::SOURCE_COUNT)
+                        .oscReceiver(mName,"source"));
+    
+    mInterface->addButton(CreateTriggerParam("Next Source", NULL)
+                          .oscReceiver(mName,"nextsource"))->registerCallback( this, &Sol::nextSource );
 }
 
 // ----------------------------------------------------------------
@@ -246,7 +250,7 @@ bool Sol::handleKeyDown(const KeyEvent& keyEvent)
             break;
             
         case KeyEvent::KEY_m:
-            if( ++mCurrentSource >= SolFrame::SOURCE_COUNT ) mCurrentSource = 0;
+            nextSource();
             break;
             
         default:
@@ -255,6 +259,14 @@ bool Sol::handleKeyDown(const KeyEvent& keyEvent)
     }
     
     return handled;
+}
+
+bool Sol::nextSource()
+{
+    if( ++mCurrentSource >= SolFrame::SOURCE_COUNT ) 
+        mCurrentSource = 0;
+    
+    return false;
 }
 
 #pragma mark - HUD

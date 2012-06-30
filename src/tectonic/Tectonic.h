@@ -119,6 +119,7 @@ private:
     // capture
     bool mIsCapturing;
     
+    bool mSendToBinned;
 };
 
 #endif // __Tectonic_H__
