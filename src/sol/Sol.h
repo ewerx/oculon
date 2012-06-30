@@ -52,19 +52,32 @@ protected:
     void drawHud();
     
     void initFrames();
+    void setNextFrame();
     
 private:
-    //std::vector<ci::gl::Texture*> mTextures;
+    // frames
     typedef std::vector<SolFrame*> FrameList;
     FrameList mFrames;
     int mIndex;
     float mFrameRate;
     float mFrameTime;
     int mCurrentSource;
-    int mBufferSize;
     
+    // mask
     ci::gl::Texture mMaskTexture;
     bool mDrawMask;
+    
+    // playback
+    enum ePlaybackMode
+    {
+        PLAYBACK_FORWARD,
+        PLAYBACK_REVERSE,
+        PLAYBACK_RANDOM,
+        
+        PLAYBACK_COUNT
+    };
+    ePlaybackMode mPlaybackMode;
+    bool mPingPong;
     
     // hud
     enum eTextBoxLocations

@@ -9,13 +9,14 @@
 
 #include "Sol.h"
 #include "TextEntity.h"
-
 #include "OculonApp.h"
 #include "AudioInput.h"
 #include "Interface.h"
 #include "Resources.h"
 #include "TextureManager.h"
+
 #include "cinder/Filesystem.h"
+#include "cinder/Rand.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -48,13 +49,14 @@ Sol::~Sol()
 //
 void Sol::setup()
 {
-    mBufferSize = 10;
-    
     mFrameRate = 25.0f;
     mCurrentSource = 0;
     
     mMaskTexture = gl::Texture( loadImage( loadResource( RES_SOLMASK ) ) );
     mDrawMask = true;
+    
+    mPlaybackMode = PLAYBACK_FORWARD;
+    mPingPong = false;
     
     setupHud();
     
@@ -127,6 +129,17 @@ void Sol::setupInterface()
     
     mInterface->addButton(CreateTriggerParam("Next Source", NULL)
                           .oscReceiver(mName,"nextsource"))->registerCallback( this, &Sol::nextSource );
+    
+    mInterface->addEnum(CreateEnumParam("PlaybackMode", (int*)(&mPlaybackMode))
+                        .maxValue(PLAYBACK_COUNT)
+                        .oscReceiver(mName,"playback"));
+    
+    mInterface->addParam(CreateBoolParam("PingPong", &mPingPong)
+                         .oscReceiver(mName,"pingpong"));
+    
+    mInterface->addParam(CreateFloatParam("Framerate", &mFrameRate)
+                         .maxValue(60.0f)
+                         .oscReceiver(mName,"framerate"));
 }
 
 // ----------------------------------------------------------------
@@ -135,7 +148,6 @@ void Sol::setupDebugInterface()
 {
     Scene::setupDebugInterface();
     
-    mDebugParams.addParam("Framerate", &mFrameRate );
     mDebugParams.addParam("Draw Mask", &mDrawMask );
     mDebugParams.addParam("Index", &mIndex, "readonly" );
     
@@ -171,20 +183,59 @@ void Sol::update(double dt)
         
         //console() << "[sol] unloading frame " << mIndex << std::endl;
         mFrames[mIndex]->unloadTextures();
-        int nextToBuffer = mIndex + mBufferSize;
-        if( nextToBuffer >= mFrames.size() )
-        {
-            nextToBuffer = nextToBuffer - mFrames.size();
-        }
-        ++mIndex;
-        if( mIndex >= mFrames.size() )
-        {
-            mIndex = 0;
-        }
+
+        setNextFrame();
     }
     
     // last
     Scene::update(dt);
+}
+
+// ----------------------------------------------------------------
+//
+void Sol::setNextFrame()
+{
+    switch( mPlaybackMode )
+    {
+        case PLAYBACK_FORWARD:
+            ++mIndex;
+            if( mIndex >= mFrames.size() )
+            {
+                if( mPingPong )
+                {
+                    mIndex -= 2;
+                    mPlaybackMode = PLAYBACK_REVERSE;
+                }
+                else
+                {
+                    mIndex = 0;
+                }
+            }
+            break;
+            
+        case PLAYBACK_REVERSE:
+            --mIndex;
+            if( mIndex < 0 )
+            {
+                if( mPingPong )
+                {
+                    mIndex = 1;
+                    mPlaybackMode = PLAYBACK_FORWARD;
+                }
+                else
+                {
+                    mIndex = mFrames.size()-1;
+                }
+            }
+            break;
+            
+        case PLAYBACK_RANDOM:
+            mIndex = Rand::randInt( mFrames.size() );
+            break;
+            
+        default:
+            break;
+    }
 }
 
 // ----------------------------------------------------------------
