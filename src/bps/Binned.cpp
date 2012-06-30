@@ -71,6 +71,10 @@ void Binned::setup()
     mPatternDuration = 0.0f;
     mAudioPattern = AUDIO_PATTERN_SEGMENTS;
     
+    mShowForceIndicators = true;
+    mForceIndicatorScale = 0.25f;
+    mForceIndicatorColor = ColorAf(1.0f, 0.0f, 0.0f, 0.5f);
+    
     mPointColor.r = 1.0f;
     mPointColor.g = 1.0f;
     mPointColor.b = 1.0f;
@@ -265,7 +269,7 @@ void Binned::setupDebugInterface()
 
 void Binned::setupInterface()
 {
-    
+    // appearance
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
                          .minValue(1).maxValue(64)
                          .oscReceiver(mName,"kparticles"));
@@ -275,12 +279,17 @@ void Binned::setupInterface()
                         .isVertical()
                         .oscReceiver(mName,"formation"));
     
-    mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
-                         .minValue(-10.0f).maxValue(50.0f));
+    mInterface->addParam(CreateColorParam("Point Color", &mPointColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName,"pointcolor"));
     
-    mInterface->addEnum(CreateEnumParam("Mode", &mRepulsionMode)
-                         .maxValue(MODE_COUNT));
+    mInterface->addParam(CreateColorParam("Force Color", &mForceColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName,"forcecolor")
+                         .isGrouped());
+    mInterface->addParam(CreateFloatParam("Point Size", &mPointSize)
+                         .minValue(1.0f).maxValue(10.0f));
     
+    // simluation
+    mInterface->gui()->addColumn();
     mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
                          .maxValue(0.01f)
                          .minValue(0.0001f)
@@ -312,31 +321,37 @@ void Binned::setupInterface()
                          .oscReceiver(mName,"wallbounce"));
     mInterface->addParam(CreateFloatParam("Wall Damping", &mWallDamping)
                          .oscReceiver(mName,"walldamping"));
-    mInterface->addParam(CreateFloatParam("Point Size", &mPointSize)
-                         .minValue(1.0f).maxValue(10.0f));
+    mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
+                         .minValue(-10.0f).maxValue(50.0f));
     
+    // audio patterns
+    mInterface->gui()->addColumn();
     mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
                          .maxValue(2.0f)
                          .oscReceiver(mName,"audiolevel"));
+    
+    // TODO: refactor "Mode"
+    mInterface->addEnum(CreateEnumParam("Mode", &mRepulsionMode)
+                        .maxValue(MODE_COUNT));
     
     mInterface->addEnum(CreateEnumParam("Reaction Style", &mAudioPattern)
                         .maxValue(AUDIO_PATTERN_COUNT)
                         .oscReceiver(mName,"audioreaction")
                         .isVertical());
     
+    mInterface->addParam(CreateBoolParam("Show Indicators", &mShowForceIndicators)
+                         .oscReceiver(mName,"indicatorshow"));
+    mInterface->addParam(CreateFloatParam("Indicator Scale", &mForceIndicatorScale)
+                         .oscReceiver(mName,"indicatorscale"));
+    mInterface->addParam(CreateColorParam("Indicator Color", &mForceIndicatorColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName,"indicatorcolor"));
+    
     mInterface->addEnum(CreateEnumParam("Force Pattern", &mAudioPattern)
                         .maxValue(PATTERN_COUNT)
                         .oscReceiver(mName,"forcepattern")
                         .isVertical());
     
-    mInterface->addParam(CreateColorParam("Point Color", &mPointColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName,"pointcolor"));
-    
-    mInterface->addParam(CreateColorParam("Force Color", &mForceColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName,"forcecolor")
-                         .isGrouped());
-    
-    
+    // TouchOSC XY-pad
     const int maxTouches = 5;
     char buf[OSC_ADDRESS_SIZE];
     for( int i=1; i <= maxTouches; ++i )
@@ -734,6 +749,8 @@ void Binned::updateAudioResponse()
                 break;
         }
         
+        vector<tForce> forces;
+        
         const float magX = force * mForceScaleX;
         const float magY = force * mForceScaleY;
         
@@ -743,8 +760,8 @@ void Binned::updateAudioResponse()
             {
                 const float x1 = centerX + i*horizSpacing;
                 const float x2 = centerX - i*horizSpacing;
-                mParticleSystem.addRepulsionForce(x1, centerY, radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, centerY, radius, magX, magY);
+                forces.push_back( tForce(x1, centerY, radius, magX, magY) );
+                forces.push_back( tForce(x2, centerY, radius, magX, magY) );
             }
                 break;
             case AUDIO_PATTERN_TOPBOTTOM:
@@ -752,11 +769,11 @@ void Binned::updateAudioResponse()
                 const float x1 = centerX + i*horizSpacing;
                 const float x2 = centerX - i*horizSpacing;
                 
-                mParticleSystem.addRepulsionForce(x1, 0, radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, 0, radius, magX, magY);
+                forces.push_back( tForce(x1, 0, radius, magX, magY) );
+                forces.push_back( tForce(x2, 0, radius, magX, magY) );
                 
-                mParticleSystem.addRepulsionForce(x1, height, radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, height, radius, magX, magY);
+                forces.push_back( tForce(x1, height, radius, magX, magY) );
+                forces.push_back( tForce(x2, height, radius, magX, magY) );
             }
                 break;
                 
@@ -767,8 +784,8 @@ void Binned::updateAudioResponse()
                 const float y1 = Rand::randFloat(0,height);
                 const float y2 = Rand::randFloat(0,height);
                 
-                mParticleSystem.addRepulsionForce(x1, y1, radius, magX, magY);
-                mParticleSystem.addRepulsionForce(x2, y2, radius, magX, magY);
+                forces.push_back( tForce(x1, y1, radius, magX, magY) );
+                forces.push_back( tForce(x2, y2, radius, magX, magY) );
             }
                 break;
                 
@@ -779,46 +796,41 @@ void Binned::updateAudioResponse()
                 
                 const float x = freqSection * mSegmentWidth;
                 const float y = Rand::randFloat(0, height);
-                mParticleSystem.addRepulsionForce( x, y, radius, magX, magY );
-                
-                bool debug = true;
-                if( debug )
-                {
-                    const float maxRadius = 50.0f;
-                    
-                    glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
-                    gl::drawSolidCircle(Vec2f(x, y), maxRadius * amp);
-                }
-
+                forces.push_back( tForce( x, y, radius, magX, magY ) );
             }
                 break;
                 
             case AUDIO_PATTERN_METROPOLIS1:
             {
-                mParticleSystem.addRepulsionForce( mMetropolis.p0.x, mMetropolis.p0.y, radius, magX, magY );
-                mParticleSystem.addRepulsionForce( mMetropolis.p1.x, mMetropolis.p1.y, radius, magX, magY );
-                mParticleSystem.addRepulsionForce( mMetropolis.p2.x, mMetropolis.p2.y, radius, magX, magY );
-                mParticleSystem.addRepulsionForce( mMetropolis.p3.x, mMetropolis.p3.y, radius, magX, magY );
-                mParticleSystem.addRepulsionForce( mMetropolis.p4.x, mMetropolis.p4.y, radius, magX, magY );
-                mParticleSystem.addRepulsionForce( mMetropolis.p5.x, mMetropolis.p5.y, radius, magX, magY );
-                mParticleSystem.addRepulsionForce( mMetropolis.p6.x, mMetropolis.p6.y, radius, magX, magY );
+                forces.push_back( tForce( mMetropolis.p0.x, mMetropolis.p0.y, radius, magX, magY ) );
+                forces.push_back( tForce( mMetropolis.p1.x, mMetropolis.p1.y, radius, magX, magY ) );
+                forces.push_back( tForce( mMetropolis.p2.x, mMetropolis.p2.y, radius, magX, magY ) );
+                forces.push_back( tForce( mMetropolis.p3.x, mMetropolis.p3.y, radius, magX, magY ) );
+                forces.push_back( tForce( mMetropolis.p4.x, mMetropolis.p4.y, radius, magX, magY ) );
+                forces.push_back( tForce( mMetropolis.p5.x, mMetropolis.p5.y, radius, magX, magY ) );
+                forces.push_back( tForce( mMetropolis.p6.x, mMetropolis.p6.y, radius, magX, magY ) );
             }
                 break;
                 
             case AUDIO_PATTERN_COUNT:
                 break;
         }
+        
+        for( int i = 0; i < forces.size(); ++i )
+        {
+            tForce& force = forces[i];
+            mParticleSystem.addRepulsionForce( force._x, force._y, force._radius, force._magX, force._magY );
             
-//            bool debug = false;
-//            if( debug )
-//            {
-//                const float maxRadius = 50.0f;
-//                
-//                glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
-//                gl::drawSolidCircle(Vec2f(x1, centerY), maxRadius * avgFft);
-//                gl::drawSolidCircle(Vec2f(x2, centerY), maxRadius * avgFft);
-//            }
+            if( mShowForceIndicators )
+            {
+                gl::color( mForceIndicatorColor );
+                gl::drawSolidCircle(Vec2f(force._x, force._y), force._radius * mForceIndicatorScale);
+            }
+        }
+        
     }
+                                 
+                                 
 }
 
 bool Binned::handleKeyDown( const KeyEvent& event )

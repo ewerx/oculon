@@ -129,6 +129,9 @@ private:
     int mBpmBouncePosition;
     int mFrameCounter;
     float mPatternDuration;
+    bool mShowForceIndicators;
+    float mForceIndicatorScale;
+    ColorAf mForceIndicatorColor;
     
     Vec2i mCrossForcePoint[4];
     
@@ -146,6 +149,19 @@ private:
         MODE_COUNT
     };
     int mRepulsionMode;
+    
+    struct tForce
+    {
+        float _x;
+        float _y;
+        float _radius;
+        float _magX;
+        float _magY;
+    
+        tForce( float x, float y, float radius, float magX, float magY )
+        : _x(x), _y(y), _radius(radius), _magX(magX), _magY(magY) {}
+        
+    };
     
     enum eInitialFormation
     {
