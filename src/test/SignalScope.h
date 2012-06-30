@@ -11,6 +11,7 @@
 
 #include "cinder/Timeline.h"
 #include "cinder/PolyLine.h"
+#include "cinder/Color.h"
 
 class Scene;
 
@@ -43,6 +44,9 @@ private:
     float mSignalMaxRatio;
     int mCenterBiasRange;
     bool mRandomizeSignal;
+    bool mSmoothLines;
+    float mThickness;
+    ci::ColorAf mColor;
     
     enum eSignal
     {

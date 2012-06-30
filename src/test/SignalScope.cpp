@@ -43,6 +43,9 @@ void SignalScope::setup()
     mHorizSmoothingMax = 0.8f;
     mFallOffMin = 0.75f;
     mFallOffMax = 0.99f;
+    mSmoothLines = false;
+    mThickness = 2.0f;
+    mColor = ColorAf::white();
     
     mCenterBiasRange = 30;
     mSignalScale = 2.0f;
@@ -84,6 +87,14 @@ void SignalScope::setupInterface()
                                            .oscReceiver(name,"falloffmin"));
     mParentScene->getInterface()->addParam(CreateFloatParam("Falloff Max", &mFallOffMax)
                                            .oscReceiver(name,"falloffmax"));
+    mParentScene->getInterface()->addParam(CreateBoolParam("Render Smooth", &mSmoothLines)
+                                           .oscReceiver(name,"rendersmooth"));
+    mParentScene->getInterface()->addParam(CreateFloatParam("Thickness", &mThickness)
+                                           .minValue(1.0f)
+                                           .maxValue(6.0f)
+                                           .oscReceiver(name,"thickness"));
+    mParentScene->getInterface()->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
+                                           .oscReceiver(name,"color"));
 }
 
 void SignalScope::setupDebugInterface()
@@ -110,24 +121,17 @@ void SignalScope::resize()
 
 void SignalScope::update(double dt)
 {
-    gl::disable( GL_LINE_SMOOTH );
-    //glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-    //gl::enable( GL_POLYGON_SMOOTH );
-    //glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-    gl::color( ColorAf::white() );
-    glLineWidth(2.0f);
-    
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
     
     // Get data
-    const float * timeData = audioInput.getFft()->getData();
+    //const float * timeData = audioInput.getFft()->getData();
     const float * amplitude = audioInput.getFft()->getAmplitude();
     const int32_t	binSize = audioInput.getFft()->getBinSize();
     const float *	imaginary = audioInput.getFft()->getImaginary();
-    const float *	phase = audioInput.getFft()->getPhase();
+    //const float *	phase = audioInput.getFft()->getPhase();
     const float *	real = audioInput.getFft()->getReal();
     const int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    //const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
     assert( binSize < NUM_POINTS );
     
@@ -220,22 +224,25 @@ void SignalScope::update(double dt)
             
             mLines[lineIndex].mPolyLine.push_back(Vec2f(i * scaleX + xOffset, absY));
         }
-        
-        //gl::color( Color(1.0f,1.0f,1.0f) );
-        
-        //gl::color( Color(1.0f,0.0f,0.0f) );
-        //gl::draw(testLine);
+
         yOffset -= gap;
     } 
 }
 
 void SignalScope::draw()
 {
+    if( mSmoothLines )
+    {
+        gl::enable( GL_LINE_SMOOTH );
+        glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+    }
+    else
+    {
+        gl::disable( GL_LINE_SMOOTH );
+    }
+    glLineWidth(mThickness);
     
-    
-    //glEnable(GL_POINT_SPRITE);
-    //glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-    //glPointSize(3.0f);
+    gl::color( mColor );
     
     for( int lineIndex=0; lineIndex < mNumLines; ++lineIndex )
     {
