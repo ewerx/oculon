@@ -235,7 +235,6 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
                     const Vec3f& point = (*it);
                     glVertex3f(point.x,point.y,point.z);
                 }
-                glLineWidth(1.0f);
             }
             glEnd();
             //glDisable(GL_MULTISAMPLE_ARB );
@@ -250,7 +249,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         }
     }
     glPopMatrix();
-    glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHTING);
 }
 
 void Body::applyForceFromBody(Body& otherBody, double dt, double gravConst)
