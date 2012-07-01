@@ -61,7 +61,7 @@ void Scene::init(OculonApp* app)
     mInterface = new Interface( mApp, &mApp->getOscServer() );
     mInterface->gui()->addColumn();
     // bind to OculonApp::showInterface(0)
-    mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, 0) );
+    mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
     // bind to Scene::loadInterfaceParams(0)
     mInterface->addParam(CreateBoolParam("active", &mIsVisible)
                          .oscReceiver(mName,"toggle").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );

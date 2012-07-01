@@ -62,6 +62,7 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mEnableSyphonServer = true;
     mDrawToScreen       = true;
+    mDrawOnlyLastScene  = true;
     mOutputMode         = OUTPUT_MULTIFBO;
     
     mEnableOscServer    = true;
@@ -85,6 +86,7 @@ void OculonApp::setup()
     gl::enableVerticalSync(true);
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    mLastActiveScene    = -1;
     
     // capture
     mFrameCaptureCount = 0;
@@ -216,22 +218,25 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     
     // interface
     mInterface->gui()->addColumn();
-    mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
+    mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
     // scene thumbnails
     mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
-    mInterface->gui()->addButton("Toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
-    mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible)))->registerCallback( scene, &Scene::onVisibleChanged );
-    mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning)))->registerCallback( scene, &Scene::onRunningChanged );
-    mInterface->addParam(CreateBoolParam("Debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
+    mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
+    mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
+    mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
     
     console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }
 
 bool OculonApp::toggleScene(const int sceneId)
 {
-    if( sceneId > 0 && sceneId <= mScenes.size() )
+    if( sceneId >= 0 && sceneId < mScenes.size() )
     {
-        mScenes[sceneId-1]->toggleActiveVisible();
+        mScenes[sceneId]->toggleActiveVisible();
+        if( mScenes[sceneId]->isVisible() )
+        {
+            mLastActiveScene = sceneId;
+        }
     }
     
     return false;
@@ -239,8 +244,9 @@ bool OculonApp::toggleScene(const int sceneId)
 
 bool OculonApp::showInterface(const int sceneId)
 {
-    if( sceneId <= 0 )
+    if( sceneId < 0 )
     {
+        // hide all scene interfaces
         for (SceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
              ++sceneIt )
@@ -248,12 +254,13 @@ bool OculonApp::showInterface(const int sceneId)
             Scene* scene = (*sceneIt);
             scene->showInterface(false);
         }
-        mInterface->gui()->setEnabled( (sceneId == 0) );
+        mInterface->gui()->setEnabled( (sceneId == INTERFACE_MAIN) );
     }
-    else if( sceneId <= mScenes.size() )
+    else if( sceneId < mScenes.size() )
     {
-        mScenes[sceneId-1]->showInterface(true);
+        mScenes[sceneId]->showInterface(true);
         mInterface->gui()->setEnabled(false);
+        mLastActiveScene = sceneId;
     }
     
     return false;
@@ -419,7 +426,7 @@ void OculonApp::keyDown( KeyEvent event )
             break;
             
         case KeyEvent::KEY_0:
-            showInterface(0);
+            showInterface(INTERFACE_MAIN);
             break;
             
         // scene toggle
@@ -450,11 +457,15 @@ void OculonApp::keyDown( KeyEvent event )
                     }
                     else if( event.isShiftDown() )
                     {
-                        showInterface(index+1);
+                        showInterface(index);
                     }
                     else
                     {
                         mScenes[index]->toggleActiveVisible();
+                        if( mScenes[index]->isVisible() )
+                        {
+                            mLastActiveScene = index;
+                        }
                     }
                 }
             }
@@ -769,16 +780,31 @@ void OculonApp::drawScenes()
             glEnable(GL_TEXTURE_2D);
             //gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
             gl::color( ColorA(1.0f,1.0f,1.0f,0.9f) );
-            for (SceneList::iterator sceneIt = mScenes.begin(); 
-                 sceneIt != mScenes.end();
-                 ++sceneIt )
+            if( mDrawOnlyLastScene )
             {
-                Scene* scene = (*sceneIt);
-                assert( scene != NULL );
-                if( scene && scene->isVisible() )
+                if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
                 {
-                    gl::Fbo& fbo = scene->getFbo();
-                    gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
+                    Scene* scene = mScenes[mLastActiveScene];
+                    if( scene && scene->isVisible() )
+                    {
+                        gl::Fbo& fbo = scene->getFbo();
+                        gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
+                    }
+                }
+            }
+            else
+            {
+                for (SceneList::iterator sceneIt = mScenes.begin(); 
+                     sceneIt != mScenes.end();
+                     ++sceneIt )
+                {
+                    Scene* scene = (*sceneIt);
+                    assert( scene != NULL );
+                    if( scene && scene->isVisible() )
+                    {
+                        gl::Fbo& fbo = scene->getFbo();
+                        gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
+                    }
                 }
             }
         }
@@ -948,7 +974,7 @@ void OculonApp::setPresentationMode( bool enabled )
 {
     //mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
-    showInterface( mIsPresentationMode ? -1 : 0 );
+    showInterface( mIsPresentationMode ? INTERFACE_NONE : INTERFACE_MAIN );
 }
 
 void OculonApp::toggleFullscreen()

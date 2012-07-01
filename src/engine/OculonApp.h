@@ -47,6 +47,12 @@ public:
         SCENE_BINNED
     };
     
+    enum eSpecialSceneIndex
+    {
+        INTERFACE_MAIN = -1,
+        INTERFACE_NONE = -2
+    };
+    
 public: // cinder interface
     void prepareSettings( Settings *settings );
 	void setup();
@@ -158,6 +164,8 @@ private: // members
     typedef vector<Scene*>  SceneList;
     SceneList               mScenes;
     bool                    mDrawToScreen;
+    bool                    mDrawOnlyLastScene;
+    int                     mLastActiveScene;
     
     // ui
     InfoPanel               mInfoPanel;
