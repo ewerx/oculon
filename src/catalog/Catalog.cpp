@@ -323,6 +323,12 @@ void Catalog::draw()
 	
 	// FAINT STARS
 	if( mRenderFaintStars ){
+        glDisable(GL_POINT_SPRITE_ARB);
+        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+        glEnable(GL_POINT_SPRITE);
+        glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+        glPointSize(1.0f);
+        
 		if( power < 0.5f )
 			gl::enableAlphaBlending();
 		else
