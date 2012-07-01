@@ -484,7 +484,7 @@ void Orbiter::draw()
         gl::setMatrices(mApp->getMayaCam());
     }
     
-    //glEnable( GL_MULTISAMPLE_ARB );
+    glEnable( GL_POLYGON_SMOOTH );
     glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
 	
@@ -493,6 +493,7 @@ void Orbiter::draw()
     
     
     // frustum culling
+    BodyList visibleBodies;
     int culled = 0;
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
@@ -518,9 +519,22 @@ void Orbiter::draw()
     
     //mApp->console() << "culled " << culled << std::endl;
     
-    gl::popMatrices();
-    glDisable( GL_LIGHTING );
 	glDisable( GL_LIGHT0 );
+    glDisable( GL_LIGHTING );
+    
+    glEnable( GL_LINE_SMOOTH );
+    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+    glLineWidth(Orbiter::sTrailWidth);
+    
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+       bodyIt != mBodies.end();
+       ++bodyIt)
+    {
+        (*bodyIt)->drawTrail();
+    }
+    
+    gl::popMatrices();
     
     drawHud();
 }
@@ -726,7 +740,6 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     }
     
     glPushMatrix();
-    glDisable(GL_LIGHTING);
     glTranslatef(left,top,0.0f);
     float * fftBuffer = fftDataRef.get();
     

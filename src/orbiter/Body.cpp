@@ -113,14 +113,25 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
     //static const int minTrailLength = 64;
     //static const double scale = 6e-12 * 1.f;
     Vec3d screenCoords = transform * mPosition;
-    double distanceFactor = mPosition.length() / 108000000000.f;
+    
+    // update trail
+    const double distanceFactor = mPosition.length() / 108000000000.f;
     const int trailLength = Orbiter::sMinTrailLength + Orbiter::sMinTrailLength*(int)(distanceFactor) + (int)(mRadius*2);
+    
+    if( mMotionTrail.size() > trailLength )
+    {
+        for( int i = 0; i < mMotionTrail.size() - trailLength; ++i )
+            mMotionTrail.getPoints().erase(mMotionTrail.begin());
+    }
+    //float audioOffset = (mRadiusMultiplier*10.f); 
+    Vec3f trailPoint = screenCoords;//screenCoords + Vec3f( audioOffset*Rand::, audioOffset, audioOffset );
+    //console() << "audioOffset = " << audioOffset << std::endl;
+    mMotionTrail.push_back( trailPoint );
     
     if( drawBody )
     {
-        glPushMatrix();
-        //glEnable( GL_LIGHTING );
-        glEnable( GL_POLYGON_SMOOTH );
+        gl::pushMatrices();
+        glEnable( GL_LIGHTING );
         
         glTranslated(screenCoords.x, screenCoords.y, screenCoords.z);
         glRotated(mRotation, 0.0f, 1.0f, 0.0f);
@@ -178,78 +189,48 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
 
             gl::popMatrices();
         }
-        glPopMatrix();
+        gl::popMatrices();
     }
-    
-    glDisable(GL_LIGHTING);
-    // always draw trail
-    glPushMatrix();
+}
+
+void Body::drawTrail()
+{
+    const float lineShade = 1.0f;
+    glColor4f( lineShade, lineShade, lineShade, 0.75f );
+    if( Orbiter::sUseSmoothLines )
     {
-        if( mMotionTrail.size() > trailLength )
+        if( Orbiter::sUseTriStripLine )
         {
-            for( int i = 0; i < mMotionTrail.size() - trailLength; ++i )
-                mMotionTrail.getPoints().erase(mMotionTrail.begin());
-        }
-        const float lineShade = 1.0f;
-        glColor4f( lineShade, lineShade, lineShade, 0.75f );
-        //float audioOffset = (mRadiusMultiplier*10.f); 
-        Vec3f trailPoint = screenCoords;//screenCoords + Vec3f( audioOffset*Rand::, audioOffset, audioOffset );
-        //console() << "audioOffset = " << audioOffset << std::endl;
-        mMotionTrail.push_back( trailPoint );
-        
-        if( Orbiter::sUseSmoothLines )
-        {
-            glPushMatrix();
-            //glEnable( GL_MULTISAMPLE_ARB );
-            //glEnable(GL_BLEND); 
-            glEnable( GL_LINE_SMOOTH );
-            glEnable( GL_POLYGON_SMOOTH );
-            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//did nothing?
-            glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );//did nothing?
-            glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );//did nothing?
-            glLineWidth(Orbiter::sTrailWidth);
-            if( Orbiter::sUseTriStripLine )
+            glBegin(GL_TRIANGLE_STRIP);
+            const Vec3f& point = mMotionTrail.getPoints()[0];
+            glVertex3f(point.x,point.y,point.z);
+            for( int i = 1; i < mMotionTrail.size()-3; ++i )
             {
-                glBegin(GL_TRIANGLE_STRIP);
-                const Vec3f& point = mMotionTrail.getPoints()[0];
+                // this makes a ribbon...
+                //const Vec3f& point = mMotionTrail.getPoints()[i];//(*it);
+                const Vec3f& point2 = mMotionTrail.getPoints()[i+1];
+                //const Vec3f& point3 = mMotionTrail.getPoints()[i+2];
+                glVertex3f(point2.x,point2.y,point2.z);
+                glVertex3f(point2.x,point2.y+Orbiter::sTrailWidth,point2.z);
+                //glVertex3f(point3.x,point3.y,point3z);
+                //glVertex3f(point3.x+4,point3.y,point3z);
+            }
+        }
+        else 
+        {
+            glBegin( GL_LINE_STRIP );
+            for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
+            {
+                const Vec3f& point = (*it);
                 glVertex3f(point.x,point.y,point.z);
-                for( int i = 1; i < mMotionTrail.size()-3; ++i )
-                {
-                    // this makes a ribbon...
-                    //const Vec3f& point = mMotionTrail.getPoints()[i];//(*it);
-                    const Vec3f& point2 = mMotionTrail.getPoints()[i+1];
-                    //const Vec3f& point3 = mMotionTrail.getPoints()[i+2];
-                    glVertex3f(point2.x,point2.y,point2.z);
-                    glVertex3f(point2.x,point2.y+Orbiter::sTrailWidth,point2.z);
-                    //glVertex3f(point3.x,point3.y,point3z);
-                    //glVertex3f(point3.x+4,point3.y,point3z);
-                }
             }
-            else 
-            {
-                glLineWidth(Orbiter::sTrailWidth);
-                //gl::draw(mMotionTrail);
-                glBegin( GL_LINE_STRIP );
-                for( PolyLine<Vec3f>::iterator it = mMotionTrail.begin(); it != mMotionTrail.end(); ++it )
-                {
-                    const Vec3f& point = (*it);
-                    glVertex3f(point.x,point.y,point.z);
-                }
-            }
-            glEnd();
-            //glDisable(GL_MULTISAMPLE_ARB );
-            //glDisable(GL_BLEND); 
-            glDisable(GL_LINE_SMOOTH );
-            glDisable(GL_POLYGON_SMOOTH );
-            glPopMatrix();
         }
-        else
-        {
-            gl::draw(mMotionTrail);
-        }
+        glEnd();
     }
-    glPopMatrix();
-    //glEnable(GL_LIGHTING);
+    else
+    {
+        gl::draw(mMotionTrail);
+    }
 }
 
 void Body::applyForceFromBody(Body& otherBody, double dt, double gravConst)
@@ -321,6 +302,5 @@ void Body::drawDebugVectors()
     gl::drawVector( Vec3f::zero(), Vec3f::yAxis()*radius*2.0f );
     glColor4f( 0.0f, 0.0f, 1.0f, 1.0f );
     gl::drawVector( Vec3f::zero(), Vec3f::zAxis()*radius*2.0f );
-    glEnable(GL_LIGHTING);
 }
 
