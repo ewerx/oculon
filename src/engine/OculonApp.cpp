@@ -171,16 +171,18 @@ void OculonApp::shutdown()
 
 void OculonApp::setupInterface()
 {
+    mThumbnailControls.clear();
     mInterface = new Interface(this, &mOscServer);
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("OCULON");
     mInterface->addButton(CreateTriggerParam("sync", NULL)
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
-    mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
-                         .oscReceiver("master", "syphon"));
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
                         .maxValue(OUTPUT_COUNT))->registerCallback( this, &OculonApp::onOutputModeChange );
+    mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
+                         .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
+    mInterface->gui()->addSeparator();
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
     mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
@@ -215,13 +217,12 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     // interface
     mInterface->gui()->addColumn();
     mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()) );
+    // scene thumbnails
+    mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
     mInterface->gui()->addButton("Toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()) );
     mInterface->addParam(CreateBoolParam("Visible", &(scene->mIsVisible)))->registerCallback( scene, &Scene::onVisibleChanged );
     mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning)))->registerCallback( scene, &Scene::onRunningChanged );
     mInterface->addParam(CreateBoolParam("Debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
-    
-    // uncomment for scene thumbnails
-    //mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture()));
     
     console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }
@@ -295,6 +296,7 @@ void OculonApp::resize( ResizeEvent event )
     cam.setAspectRatio( getWindowAspectRatio() );
     mMayaCam.setCurrentCam( cam );
     
+    int index = 0;
     for (SceneList::iterator sceneIt = mScenes.begin(); 
         sceneIt != mScenes.end();
         ++sceneIt )
@@ -303,7 +305,9 @@ void OculonApp::resize( ResizeEvent event )
         if( scene && scene->isRunning() )
         {
             scene->resize();
+            mThumbnailControls[index]->resetTexture( &(scene->getFbo().getTexture()) );
         }
+        ++index;
     }
 }
 
@@ -757,13 +761,14 @@ void OculonApp::drawScenes()
         if( mOutputMode == OUTPUT_MULTIFBO )
         {
             // draw scene FBO textures
-            gl::enableDepthRead();
-            gl::enableDepthWrite();
+            gl::disableDepthRead();
+            gl::disableDepthWrite();
             gl::disableAlphaBlending();
+            //gl::enableAlphaBlending();
             //gl::enableAdditiveBlending();
             glEnable(GL_TEXTURE_2D);
-            gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-            gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+            //gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
+            gl::color( ColorA(1.0f,1.0f,1.0f,0.9f) );
             for (SceneList::iterator sceneIt = mScenes.begin(); 
                  sceneIt != mScenes.end();
                  ++sceneIt )
@@ -890,16 +895,10 @@ void OculonApp::drawDebug()
             scene->drawInterface();
             if( scene->isVisible() && scene->isDebug() )
             {
-                gl::disableDepthRead();
-                gl::disableDepthWrite();
-                gl::enableAlphaBlending();
                 scene->drawDebug();
             }
         }
     }
-    gl::disableAlphaBlending();
-    gl::enableDepthRead();
-	gl::enableDepthWrite();
     gl::popMatrices();
     
     if( mInfoPanel.isVisible() )

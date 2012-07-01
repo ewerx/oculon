@@ -174,6 +174,9 @@ void Scene::drawInterface()
 
 void Scene::drawDebug()
 {
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    gl::enableAlphaBlending();
     mDebugParams.draw();
 }
 

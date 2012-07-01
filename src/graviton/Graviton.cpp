@@ -865,6 +865,8 @@ void Graviton::drawParticles()
 
 void Graviton::drawDebug()
 {
+    Scene::drawDebug();
+    
     if( NODE_FORMATION_NONE != mGravityNodeFormation )
     {
         gl::pushMatrices();
@@ -885,6 +887,4 @@ void Graviton::drawDebug()
     }
     
     drawCamSpline();
-    
-    Scene::drawDebug();
 }

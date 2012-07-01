@@ -19,6 +19,7 @@
 #include "cinder/qtime/MovieWriter.h"
 #include "cinder/gl/Fbo.h"
 #include "cinderSyphon.h"
+#include "SimpleGUI.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
@@ -163,6 +164,7 @@ private: // members
     params::InterfaceGl		mParams;
     Interface*              mInterface;
     bool                    mIsPresentationMode;
+    std::vector<mowa::sgui::TextureVarControl*> mThumbnailControls;
     
     // capture
     bool                    mIsCapturingVideo;

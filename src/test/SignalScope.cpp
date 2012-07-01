@@ -62,6 +62,7 @@ void SignalScope::setupInterface()
 {
     const string name("signal");
     mParentScene->getInterface()->gui()->addColumn();
+    mParentScene->getInterface()->gui()->addLabel("Signal Scope");
     mParentScene->getInterface()->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
                                            .oscReceiver(name,"randomize"));
     mParentScene->getInterface()->addParam(CreateFloatParam("Signal Scale", &mSignalScale)

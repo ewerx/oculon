@@ -138,7 +138,8 @@ void Interface::draw()
 {
     assert( mGui != NULL );
     
-    gl::disableAlphaBlending();
+    glDisable( GL_TEXTURE_2D );
+    gl::enableAlphaBlending();
     gl::enableDepthRead();
 	gl::enableDepthWrite();
     
