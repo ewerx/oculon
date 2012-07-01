@@ -237,11 +237,6 @@ void Magnetosphere::update(double dt)
     
     //updateHud();
     
-    // debug info
-    char buf[256];
-    snprintf(buf, 256, "m/particles: %d", mNumParticles);
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
-    
     Scene::update(dt);
 }
 

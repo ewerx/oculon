@@ -92,7 +92,7 @@ public: // new
     
     // interface callbacks
     bool onFrameCaptureToggle();
-    bool onHighResToggle();
+    bool onOutputModeChange();
     bool syncInterface();
     
     bool toggleScene(const int sceneId);
@@ -142,34 +142,44 @@ private: // members
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     
+    enum eOutputMode
+    {
+        OUTPUT_DIRECT,
+        OUTPUT_FBO,
+        OUTPUT_MULTIFBO,
+        
+        OUTPUT_COUNT
+    };
+    eOutputMode             mOutputMode;
+    gl::Fbo                 mFbo;
+    
     // scenes
     typedef vector<Scene*>  SceneList;
     SceneList               mScenes;
-    bool                    mRenderScenesToFbo;
+    bool                    mDrawToScreen;
     
-    // debug
+    // ui
     InfoPanel               mInfoPanel;
     params::InterfaceGl		mParams;
-    
     Interface*              mInterface;
     bool                    mIsPresentationMode;
     
+    // capture
     bool                    mIsCapturingVideo;
     qtime::MovieWriter      mMovieWriter;
     
     bool                    mIsCapturingFrames;
     string                  mFrameCapturePath;
     int                     mFrameCaptureCount;
-    bool                    mIsCapturingHighRes;
-    gl::Fbo                 mFbo;
     float                   mCaptureDuration;
-    
     bool                    mSaveNextFrame;
     bool                    mCaptureDebugOutput;
     
+    // syphon
     syphonServer            mScreenSyphon;
     bool                    mEnableSyphonServer;
     
+    // fps
     bool                    mIsSendingFps;
     float                   mFpsSendTimer;
 };

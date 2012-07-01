@@ -61,8 +61,8 @@ void OculonApp::prepareSettings( Settings *settings )
     mUseMayaCam         = true;
     
     mEnableSyphonServer = true;
-    mIsCapturingHighRes = true;
-    mRenderScenesToFbo  = false;
+    mDrawToScreen       = true;
+    mOutputMode         = OUTPUT_MULTIFBO;
     
     mEnableOscServer    = true;
     mEnableKinect       = false;
@@ -75,6 +75,17 @@ void OculonApp::setup()
     
     mFpsSendTimer = 0.0f;
     
+    // render
+    const int fboWidth = getWindowWidth();//1280;
+    const int fboHeight = getWindowHeight();//768;
+    gl::Fbo::Format format;
+    format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
+    mFbo = gl::Fbo( fboWidth, fboHeight, format );
+    
+    gl::enableVerticalSync(true);
+    //wireframe
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    
     // capture
     mFrameCaptureCount = 0;
     mIsCapturingVideo = false;
@@ -82,15 +93,6 @@ void OculonApp::setup()
     mCaptureDuration = 60.0f;
     mSaveNextFrame = false;
     mCaptureDebugOutput = false;
-    static const int FBO_WIDTH = 1280;
-    static const int FBO_HEIGHT = 768;
-    gl::Fbo::Format format;
-    format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-    mFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
-    
-    gl::enableVerticalSync(true);
-    //wireframe
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
     // setup the default camera, looking down the z-axis
 	CameraPersp cam;
@@ -176,10 +178,11 @@ void OculonApp::setupInterface()
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
-    mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
+    mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
+                        .maxValue(OUTPUT_COUNT))->registerCallback( this, &OculonApp::onOutputModeChange );
+    mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
-    mInterface->addParam(CreateBoolParam("High-Res Capture", &mIsCapturingHighRes))->registerCallback( this, &OculonApp::onHighResToggle );
-    mInterface->addParam(CreateBoolParam("Scene FBOs", &mRenderScenesToFbo));
+    mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
                          .minValue(1.0f)
                          .maxValue(600.0f));
@@ -217,6 +220,7 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mInterface->addParam(CreateBoolParam("Running", &(scene->mIsRunning)))->registerCallback( scene, &Scene::onRunningChanged );
     mInterface->addParam(CreateBoolParam("Debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
     
+    // uncomment for scene thumbnails
     //mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture()));
     
     console() << mScenes.size() << ": " << scene->getName() << std::endl;
@@ -267,12 +271,12 @@ void OculonApp::setupScenes()
     //addScene( new Pulsar() );
     //addScene( new Magnetosphere() );
     addScene( new Graviton() );
-    //addScene( new Tectonic() );
-    //addScene( new Sol() );
-    //addScene( new Catalog() );
+    addScene( new Tectonic() );
+    addScene( new Sol() );
+    addScene( new Catalog() );
     
     // Test Scenes
-    //addScene( new AudioTest() );
+    addScene( new AudioTest() );
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
     if( mEnableKinect )
@@ -498,10 +502,6 @@ void OculonApp::keyDown( KeyEvent event )
                 passToScenes = true;
             }
             break;
-        case KeyEvent::KEY_h:
-            mIsCapturingHighRes = !mIsCapturingHighRes;
-            onHighResToggle();
-            break;
         case KeyEvent::KEY_o://pass-thru
         case KeyEvent::KEY_b:
             mScenes[SCENE_ORBITER]->handleKeyDown(event);
@@ -556,60 +556,68 @@ void OculonApp::update()
         }
     }
     
-    Color fpsColor(0.5f, 0.5f, 0.5f);
-    if( fps < 20.0f )
+    if( mInfoPanel.isVisible() )
     {
-        fpsColor = Color(1.0f, 0.25f, 0.25f);
-    }
-    else if( fps < 30.0f )
-    {
-        fpsColor = Color(0.85f, 0.75f, 0.05f);
-    }
-    mInfoPanel.addLine( buf, fpsColor );
-    snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
-    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
-    if( mIsCapturingHighRes )
-    {
-        snprintf(buf, BUFSIZE, "%d x %d (FBO)", getViewportWidth(), getViewportHeight());
-    }
-    else
-    {
+        Color defaultColor(0.5f, 0.5f, 0.5f);
+        Color fpsColor(0.5f, 0.5f, 0.5f);
+        if( fps < 20.0f )
+        {
+            fpsColor = Color(1.0f, 0.25f, 0.25f);
+        }
+        else if( fps < 30.0f )
+        {
+            fpsColor = Color(0.85f, 0.75f, 0.05f);
+        }
+        mInfoPanel.addLine( buf, fpsColor );
+        snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
+        mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
+        switch( mOutputMode )
+        {
+            case OUTPUT_DIRECT:
+                mInfoPanel.addLine( "DIRECT", defaultColor );
+                break;
+            case OUTPUT_FBO:
+                mInfoPanel.addLine( "FBO", defaultColor );
+                break;
+            case OUTPUT_MULTIFBO:
+                mInfoPanel.addLine( "MULTI-FBO", defaultColor );
+                break;
+            default:
+                break;
+        }
         snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
-    }
-    mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
-    if( mRenderScenesToFbo )
-    {
-        mInfoPanel.addLine( "SCENE FBOs", Color(0.5f, 0.5f, 0.5f) );
-    }
-    if( mEnableSyphonServer )
-    {
-        mInfoPanel.addLine( "SYPHON", Color(0.3f, 0.3f, 1.0f) );
-    }
-    
-    if( mIsCapturingVideo )
-    {
-        mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
-    }
-    
-    if( mIsCapturingFrames )
-    {
-        snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
-        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+        mInfoPanel.addLine( buf, defaultColor );
         
-        snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
-        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+        if( mEnableSyphonServer )
+        {
+            mInfoPanel.addLine( "SYPHON", Color(0.3f, 0.3f, 1.0f) );
+        }
         
-        float time = (mCaptureDuration*kCaptureFramerate - mFrameCaptureCount) * mElapsedSecondsThisFrame;
-        if( time > 60.f )
+        if( mIsCapturingVideo )
         {
-            const int min = time / 60;
-            snprintf(buf, BUFSIZE, "-- finish in %dm%ds", min, mod((int)time,60));
+            mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
         }
-        else
+        
+        if( mIsCapturingFrames )
         {
-            snprintf(buf, BUFSIZE, "-- finish in %.0fs", time);
+            snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
+            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+            
+            snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
+            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+            
+            float time = (mCaptureDuration*kCaptureFramerate - mFrameCaptureCount) * mElapsedSecondsThisFrame;
+            if( time > 60.f )
+            {
+                const int min = time / 60;
+                snprintf(buf, BUFSIZE, "-- finish in %dm%ds", min, mod((int)time,60));
+            }
+            else
+            {
+                snprintf(buf, BUFSIZE, "-- finish in %.0fs", time);
+            }
+            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         }
-        mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
     }
 
     if( mIsCapturingFrames )
@@ -642,15 +650,22 @@ void OculonApp::update()
         mKinectController.update();
     }
     
+    // update scenes
     const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
     for (SceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
         Scene* scene = (*sceneIt);
-        if( scene && scene->isRunning() )
+        if( scene )
         {
-            scene->update(dt);
+            Color textColor = Color(0.5f,0.5f,0.5f);
+            if( scene->isRunning() )
+            {
+                scene->update(dt);
+                textColor = Color(0.75f, 0.4f, 0.4f);
+            }
+            mInfoPanel.addLine(scene->getName(), textColor);
         }
     }
     
@@ -660,25 +675,24 @@ void OculonApp::update()
 
 void OculonApp::drawToScreen()
 {
-    if( mRenderScenesToFbo )
-    {
-        renderScenes();
-    }
-    gl::disableDepthRead();
-    gl::disableDepthWrite();
-    gl::enableAlphaBlending();
-    gl::clear( ColorA(0.0f,0.0f,0.0f,1.0f) );
-    gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
-    drawScenes();
-}
-
-void OculonApp::drawToFbo()
-{
-    if( mRenderScenesToFbo )
+    if( mOutputMode == OUTPUT_MULTIFBO )
     {
         renderScenes();
     }
     
+    if( mOutputMode != OUTPUT_MULTIFBO || mDrawToScreen )
+    {
+        gl::disableDepthRead();
+        gl::disableDepthWrite();
+        gl::enableAlphaBlending();
+        gl::clear( ColorA(0.0f,0.0f,0.0f,1.0f) );
+        gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+        drawScenes();
+    }
+}
+
+void OculonApp::drawToFbo()
+{
     Area prevViewport = gl::getViewport();
     // bind the framebuffer - now everything we draw will go there
     mFbo.bindFramebuffer();
@@ -698,7 +712,6 @@ void OculonApp::drawToFbo()
     mFbo.unbindFramebuffer();
     
     gl::setViewport( prevViewport );
-    
 }
 
 void OculonApp::drawFromFbo()
@@ -741,7 +754,7 @@ void OculonApp::drawScenes()
 {
     glPushMatrix();
     {
-        if( mRenderScenesToFbo )
+        if( mOutputMode == OUTPUT_MULTIFBO )
         {
             // draw scene FBO textures
             gl::enableDepthRead();
@@ -787,7 +800,7 @@ void OculonApp::draw()
 {
     gl::clear();
     
-    if( mIsCapturingHighRes )
+    if( mOutputMode == OUTPUT_FBO )
     {
         drawToFbo();
     }
@@ -819,38 +832,40 @@ void OculonApp::draw()
         saveScreenshot();
 	}
     
-    if( mIsCapturingHighRes )
+    if( mOutputMode == OUTPUT_FBO )
     {
         drawFromFbo();
     }
     
     if( mEnableSyphonServer )
     {
-        if( mRenderScenesToFbo )
+        switch( mOutputMode )
         {
-            // publish each scene separately
-            for (SceneList::iterator sceneIt = mScenes.begin(); 
-                 sceneIt != mScenes.end();
-                 ++sceneIt )
-            {
-                Scene* scene = (*sceneIt);
-                assert( scene != NULL );
-                if( scene && scene->isVisible() )
-                {
-                    scene->publishToSyphon();
-                }
-            }
-        }
-        else
-        {
-            if( mIsCapturingHighRes )
-            {
+            case OUTPUT_DIRECT:
+                mScreenSyphon.publishScreen();
+                break;
+                
+            case OUTPUT_FBO:
                 mScreenSyphon.publishTexture(&mFbo.getTexture());
-            }
-            else
-            {
-                mScreenSyphon.publishScreen(); //publish the screen
-            }
+                break;
+                
+            case OUTPUT_MULTIFBO:
+                // publish each scene separately
+                for (SceneList::iterator sceneIt = mScenes.begin(); 
+                     sceneIt != mScenes.end();
+                     ++sceneIt )
+                {
+                    Scene* scene = (*sceneIt);
+                    assert( scene != NULL );
+                    if( scene && scene->isVisible() )
+                    {
+                        scene->publishToSyphon();
+                    }
+                }
+                break;
+            
+            default:
+                break;
         }
     }
     
@@ -887,7 +902,11 @@ void OculonApp::drawDebug()
 	gl::enableDepthWrite();
     gl::popMatrices();
     
-    mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
+    if( mInfoPanel.isVisible() )
+    {
+        mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
+    }
+    
     if( !mIsPresentationMode )
     {
         mInterface->draw();
@@ -902,27 +921,8 @@ void OculonApp::captureFrames()
 {
     ++mFrameCaptureCount;
     
-    if( mIsCapturingHighRes )
+    if( mOutputMode == OUTPUT_FBO )
     {
-#ifdef TILED_RENDER
-        //HACKHACK
-        mIsCapturingFrames = false;
-        
-        gl::TileRender tr( 2200, 2200 );
-        //CameraPersp cam;
-        //cam.lookAt( mCam.getEyePoint(), mCam.getPos() );
-        //cam.setPerspective( 60.0f, tr.getImageAspectRatio(), 1, 20000 );
-        tr.setMatricesWindowPersp( getWindowWidth(), getWindowHeight() );
-        while( tr.nextTile() )
-        {
-            draw();
-        }
-        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", tr.getSurface() );
-        
-        //HACKHACK
-        mIsCapturingFrames = true;
-#endif
-        
         writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
     }
     else
@@ -935,7 +935,7 @@ void OculonApp::saveScreenshot()
 {
     mSaveNextFrame = false;
     fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
-    if( mIsCapturingHighRes )
+    if( mOutputMode == OUTPUT_FBO )
     {
         writeImage( p, mFbo.getTexture() );
     }
@@ -1031,11 +1031,12 @@ bool OculonApp::onFrameCaptureToggle()
     return false;
 }
 
-bool OculonApp::onHighResToggle()
+bool OculonApp::onOutputModeChange()
 {
-    if( mIsCapturingHighRes )
+    if( mOutputMode == OUTPUT_FBO )
     {
-        //setWindowSize( 1280, 720 );//860, 860 );
+        // uncomment for high-res capture
+        //setWindowSize( 860, 860 );
         resize( ResizeEvent(mFbo.getSize()) );
     }
     else
@@ -1048,7 +1049,7 @@ bool OculonApp::onHighResToggle()
 
 int OculonApp::getViewportWidth() const
 {
-    if( mIsCapturingHighRes ) 
+    if( mOutputMode == OUTPUT_FBO ) 
     {
         return mFbo.getWidth();
     }
@@ -1060,7 +1061,7 @@ int OculonApp::getViewportWidth() const
 
 int OculonApp::getViewportHeight() const
 {
-    if( mIsCapturingHighRes ) 
+    if( mOutputMode == OUTPUT_FBO ) 
     {
         return mFbo.getHeight();
     }
@@ -1072,7 +1073,7 @@ int OculonApp::getViewportHeight() const
 
 Area OculonApp::getViewportBounds() const
 {
-    if( mIsCapturingHighRes ) 
+    if( mOutputMode == OUTPUT_FBO ) 
     {
         return Area( 0, 0, mFbo.getWidth(), mFbo.getHeight() ) ;
     }

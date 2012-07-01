@@ -365,17 +365,6 @@ void Binned::update(double dt)
 {
 	mParticleSystem.setTimeStep(mTimeStep);
     
-    // debug info
-    char buf[256];
-    snprintf(buf, 256, "particles: %d", mKParticles * 1024);
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
-    
-    snprintf(buf, 256, "mode: %s", mIsOrbiterModeEnabled ? "orbiter" : ( mCircularWall ? "circular" : "random" ));
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
-    
-    snprintf(buf, 256, "pattern: %d", mApplyForcePattern);
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.75f, 0.75f));
-    
     Scene::update(dt);
 }
 
@@ -672,7 +661,6 @@ void Binned::drawDebug()
     //gl::pushMatrices();
 	//gl::setMatricesWindow( mApp->getWindowWidth(), mApp->getWindowHeight() );
     gl::disableDepthRead();
-    //gl::disableDepthWrite();
     glDisable( GL_LIGHTING );
     glDisable( GL_TEXTURE_2D );
 	gl::enableAdditiveBlending();

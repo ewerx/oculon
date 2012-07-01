@@ -119,11 +119,6 @@ void Pulsar::update(double dt)
     
     generateParticles();
     
-    // debug info   
-    char buf[256];
-    snprintf(buf, 256, "particles: %d", mParticleStream.getParticleCount());
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));    
-    
     Scene::update(dt);
 }
 
