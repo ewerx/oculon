@@ -41,7 +41,7 @@ void AudioTest::setup()
     mFilter = 0;
     mFilterFrequency = 0.0f;
     
-    mIsVerticalOn = false;
+    mEnableVerticalLines = false;
     
     mEnableSignalScope = true;
     mSignalScope = new SignalScope(this);
@@ -56,7 +56,7 @@ void AudioTest::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(mName,"blur"));
-    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mIsVerticalOn )
+    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mEnableVerticalLines )
                          .oscReceiver(mName,"lines"));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
                          .oscReceiver(mName,"signal"));
@@ -100,7 +100,7 @@ void AudioTest::update(double dt)
 
 void AudioTest::draw()
 {
-    glPushMatrix();
+    gl::pushMatrices();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
     if( mUseMotionBlur )
     {
@@ -108,8 +108,10 @@ void AudioTest::draw()
     }
     else
     {
-        if( mIsVerticalOn )
+        if( mEnableVerticalLines )
+        {
             drawVerticalLines();
+        }
         
         if( mEnableSignalScope )
         {
@@ -121,7 +123,7 @@ void AudioTest::draw()
             mMetropolis->draw();
         }
     }
-    glPopMatrix();
+    gl::popMatrices();
 }
 
 void AudioTest::drawDebug()

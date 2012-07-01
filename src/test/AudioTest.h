@@ -54,7 +54,7 @@ private:
     int mFilter;
     float mFilterFrequency;
     
-    bool mIsVerticalOn;
+    bool mEnableVerticalLines;
     
     // multiwave
     SignalScope* mSignalScope;
