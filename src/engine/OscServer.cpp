@@ -17,13 +17,6 @@ using namespace ci;
 using namespace ci::app;
 using namespace ci::audio;
 
-// statics
-const int   OscServer::LISTEN_PORT      = 8889;
-const char* OscServer::INTERFACE_IP     = "192.168.1.103";
-const int   OscServer::INTERFACE_PORT   = 8080;
-const char* OscServer::LOCALHOST_IP     = "192.168.1.140";
-const int   OscServer::RESOLUME_PORT    = 9080;
-
 // constructor
 //
 OscServer::OscServer()
@@ -32,7 +25,6 @@ OscServer::OscServer()
 , mIsSending(false)
 , mDebugPrint(true)
 {
-    mListenPort = OscServer::LISTEN_PORT;
 }
 
 // destructor
@@ -43,8 +35,9 @@ OscServer::~OscServer()
 
 // init
 //
-void OscServer::setup()
+void OscServer::setup( Config& config )
 {
+    mListenPort = config.getInt("osc_listen_port"); 
     try 
     {
         mListener.setup(mListenPort);
@@ -63,8 +56,8 @@ void OscServer::setup()
         mThread = boost::thread(&OscServer::threadLoop, this);
     }
     
-    setDestination( DEST_INTERFACE, INTERFACE_IP, INTERFACE_PORT );
-    setDestination( DEST_RESOLUME, LOCALHOST_IP, RESOLUME_PORT );
+    setDestination( DEST_INTERFACE, config.getString("osc_interface_ip"), config.getInt("osc_interface_port") );
+    setDestination( DEST_RESOLUME, config.getString("osc_resolume_ip"), config.getInt("osc_resolume_port") );
 }
 
 void OscServer::shutdown()

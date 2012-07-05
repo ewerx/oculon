@@ -1,5 +1,5 @@
 /*
- *  AudioTest.h
+ *  AudioSignal.h
  *  Oculon
  *
  *  Created by Ehsan on 11-10-27.
@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef __AUDIOTEST_H__
-#define __AUDIOTEST_H__
+#pragma once
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
@@ -22,11 +21,11 @@ class Metropolis;
 //
 // Audio input tests
 //
-class AudioTest : public Scene
+class AudioSignal : public Scene
 {
 public:
-    AudioTest();
-    virtual ~AudioTest();
+    AudioSignal();
+    virtual ~AudioSignal();
     
     // inherited from Scene
     void setup();
@@ -65,4 +64,3 @@ private:
    
 };
 
-#endif // __AUDIOTEST_H__

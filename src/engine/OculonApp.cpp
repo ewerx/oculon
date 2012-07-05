@@ -37,7 +37,7 @@
 #include "Sol.h"
 #include "Catalog.h"
 // test scenes
-#include "AudioTest.h"
+#include "AudioSignal.h"
 #include "MindWaveTest.h"
 #include "MovieTest.h"
 #include "ShaderTest.h"
@@ -50,7 +50,9 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 1280, 768 );
+    mConfig.loadXML( loadFile("/Volumes/cruxpod/oculondata/params/settings.xml") );
+    
+	settings->setWindowSize( mConfig.getInt("window_width"), mConfig.getInt("window_height") );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
@@ -66,8 +68,8 @@ void OculonApp::prepareSettings( Settings *settings )
     mOutputMode         = OUTPUT_MULTIFBO;
     
     mEnableOscServer    = true;
-    mEnableKinect       = false;
-    mEnableMindWave     = false;
+    mEnableKinect       = mConfig.getBool("kinect_enabled");
+    mEnableMindWave     = mConfig.getBool("mindwave_enabled");;
 }
 
 void OculonApp::setup()
@@ -77,8 +79,8 @@ void OculonApp::setup()
     mFpsSendTimer = 0.0f;
     
     // render
-    const int fboWidth = getWindowWidth();//1280;
-    const int fboHeight = getWindowHeight();//768;
+    const int fboWidth = mConfig.getInt("capture_width");
+    const int fboHeight = mConfig.getInt("capture_height");
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( fboWidth, fboHeight, format );
@@ -121,7 +123,7 @@ void OculonApp::setup()
  
     if( mEnableOscServer )
     {
-        mOscServer.setup();
+        mOscServer.setup( mConfig );
     }
     
     if( mEnableMindWave )
@@ -207,6 +209,8 @@ bool OculonApp::syncInterface()
 
 void OculonApp::addScene(Scene* scene, bool autoStart)
 {
+    console() << (mScenes.size()+1) << ": " << scene->getName() << std::endl;
+    
     scene->init(this);
     if( autoStart )
     {
@@ -224,8 +228,6 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
     mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
     mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
-    
-    console() << mScenes.size() << ": " << scene->getName() << std::endl;
 }
 
 bool OculonApp::toggleScene(const int sceneId)
@@ -273,27 +275,26 @@ void OculonApp::setupScenes()
     
     mScenes.clear(); 
     
-    //TODO: serialization
-    addScene( new Orbiter() );
-    addScene( new Binned() );
-    //addScene( new Pulsar() );
-    //addScene( new Magnetosphere() );
-    addScene( new Graviton() );
-    addScene( new Tectonic() );
-    addScene( new Sol() );
-    addScene( new Catalog() );
+    if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
+    if( mConfig.getBool("binned") )     addScene( new Binned() );
+    if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
+    if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
+    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
+    if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
+    if( mConfig.getBool("sol") )        addScene( new Sol() );
+    if( mConfig.getBool("catalog") )    addScene( new Catalog() );
+    if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
     
     // Test Scenes
-    addScene( new AudioTest() );
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
     if( mEnableKinect )
     {
-        //addScene( new KinectTest(), autoStart );
+        if( mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
     }
     if( mEnableMindWave )
     {
-        addScene( new MindWaveTest() );
+        if( mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );
     }
 }
 

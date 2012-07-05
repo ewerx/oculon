@@ -12,6 +12,7 @@
 #include "OscListener.h"
 #include "OscSender.h"
 #include "Constants.h"
+#include "Config.h"
 #include <boost/thread.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/bind.hpp>
@@ -35,7 +36,7 @@ public:
     OscServer();
     ~OscServer();
     
-    void setup();
+    void setup( Config& config );
     void shutdown();
     void update();
     
@@ -91,12 +92,6 @@ private:
     bool                    mIsSending;
     
     bool                    mDebugPrint;
-    
-    static const int    LISTEN_PORT;
-    static const char*  INTERFACE_IP;
-    static const int    INTERFACE_PORT;
-    static const char*  LOCALHOST_IP;
-    static const int    RESOLUME_PORT;
 };
 
 #endif

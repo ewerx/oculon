@@ -1,5 +1,5 @@
 /*
- *  AudioTest.cpp
+ *  AudioSignal.cpp
  *  Oculon
  *
  *  Created by Ehsan on 11-10-27.
@@ -9,7 +9,7 @@
 
 #include "OculonApp.h"
 #include "AudioInput.h"
-#include "AudioTest.h"
+#include "AudioSignal.h"
 #include "Interface.h"
 #include "SignalScope.h"
 #include "Metropolis.h"
@@ -22,21 +22,21 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-AudioTest::AudioTest()
+AudioSignal::AudioSignal()
 : Scene("audio")
 {
 }
 
-AudioTest::~AudioTest()
+AudioSignal::~AudioSignal()
 {
     //delete mMetropolis;
     delete mSignalScope;
 }
 
-void AudioTest::setup()
+void AudioSignal::setup()
 {
     mUseMotionBlur = false;
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioTest::drawVerticalLines, this ) );
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioSignal::drawVerticalLines, this ) );
     
     mFilter = 0;
     mFilterFrequency = 0.0f;
@@ -52,7 +52,7 @@ void AudioTest::setup()
     //mMetropolis->setup();
 }
 
-void AudioTest::setupInterface()
+void AudioSignal::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(mName,"blur"));
@@ -63,19 +63,19 @@ void AudioTest::setupInterface()
     mInterface->addParam(CreateBoolParam( "Metropolis", &mEnableMetropolis )
                          .oscReceiver(mName,"metropolis"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
-                         .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioTest::setFilter );;
+                         .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
                         .maxValue(Kiss::Filter::NOTCH+1)
                         .isVertical()
-                        .oscReceiver(mName,"filter"))->registerCallback( this, &AudioTest::setFilter );
+                        .oscReceiver(mName,"filter"))->registerCallback( this, &AudioSignal::setFilter );
     mInterface->addButton(CreateTriggerParam("Remove Filter", NULL)
-                          .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioTest::removeFilter );
+                          .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
     mSignalScope->setupInterface();
     //mMetropolis->setupInterface();
 }
 
-void AudioTest::setupDebugInterface()
+void AudioSignal::setupDebugInterface()
 {
     Scene::setupDebugInterface();
     
@@ -83,7 +83,7 @@ void AudioTest::setupDebugInterface()
     //mMetropolis->setupDebugInterface();
 }
 
-void AudioTest::update(double dt)
+void AudioSignal::update(double dt)
 {
     Scene::update(dt);
     
@@ -98,7 +98,7 @@ void AudioTest::update(double dt)
     }
 }
 
-void AudioTest::draw()
+void AudioSignal::draw()
 {
     gl::pushMatrices();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
@@ -126,7 +126,7 @@ void AudioTest::draw()
     gl::popMatrices();
 }
 
-void AudioTest::drawDebug()
+void AudioSignal::drawDebug()
 {
     glPushMatrix();
     gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
@@ -137,7 +137,7 @@ void AudioTest::drawDebug()
     glPopMatrix();
 }
 
-void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
+void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 {
     if( ! pcmBufferRef ) 
     {
@@ -254,7 +254,7 @@ void AudioTest::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     glPopMatrix();
 }
 
-void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
+void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
 {
     AudioInput& audioInput = mApp->getAudioInput();
     uint16_t bandCount = audioInput.getFftBandCount();
@@ -288,7 +288,7 @@ void AudioTest::drawFft( std::shared_ptr<float> fftDataRef )
     glPopMatrix();
 }
 
-void AudioTest::drawVerticalLines()
+void AudioSignal::drawVerticalLines()
 {
     AudioInput& audioInput = mApp->getAudioInput();
 	
@@ -348,13 +348,13 @@ void AudioTest::drawVerticalLines()
     glPopMatrix();
 }
 
-bool AudioTest::setFilter()
+bool AudioSignal::setFilter()
 {
     mApp->getAudioInput().getFft()->setFilter( mFilterFrequency, mFilter );
     return false;
 }
 
-bool AudioTest::removeFilter()
+bool AudioSignal::removeFilter()
 {
     mFilter = Kiss::Filter::NONE;
     mFilterFrequency = 0.0f;

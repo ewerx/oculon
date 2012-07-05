@@ -89,7 +89,7 @@
 		7C745596148C259C009C0356 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74557C148C259C009C0356 /* Body.cpp */; };
 		7C745597148C259C009C0356 /* Orbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74557E148C259C009C0356 /* Orbiter.cpp */; };
 		7C745598148C259C009C0356 /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745580148C259C009C0356 /* Sun.cpp */; };
-		7C745599148C259C009C0356 /* AudioTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745583148C259C009C0356 /* AudioTest.cpp */; };
+		7C745599148C259C009C0356 /* AudioSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745583148C259C009C0356 /* AudioSignal.cpp */; };
 		7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745585148C259C009C0356 /* MindWaveTest.cpp */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
@@ -162,6 +162,7 @@
 		7CEF0FE71528FEBB000DF027 /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */; };
 		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
 		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
+		7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF3DF0015A542C200CC61D2 /* Config.cpp */; };
 		7CF4F39D157A028E003E5A3C /* Metropolis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF4F39B157A028E003E5A3C /* Metropolis.cpp */; };
 /* End PBXBuildFile section */
 
@@ -365,8 +366,8 @@
 		7C74557F148C259C009C0356 /* Orbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Orbiter.h; sourceTree = "<group>"; };
 		7C745580148C259C009C0356 /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sun.cpp; sourceTree = "<group>"; };
 		7C745581148C259C009C0356 /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sun.h; sourceTree = "<group>"; };
-		7C745583148C259C009C0356 /* AudioTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTest.cpp; sourceTree = "<group>"; };
-		7C745584148C259C009C0356 /* AudioTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTest.h; sourceTree = "<group>"; };
+		7C745583148C259C009C0356 /* AudioSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioSignal.cpp; path = test/AudioSignal.cpp; sourceTree = "<group>"; };
+		7C745584148C259C009C0356 /* AudioSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioSignal.h; path = test/AudioSignal.h; sourceTree = "<group>"; };
 		7C745585148C259C009C0356 /* MindWaveTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MindWaveTest.cpp; sourceTree = "<group>"; };
 		7C745586148C259C009C0356 /* MindWaveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindWaveTest.h; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
@@ -398,8 +399,8 @@
 		7C8C0C18154F7648006C35DA /* earthDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthDiffuse.png; path = resources/images/tectonic/earthDiffuse.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1A154F764F006C35DA /* earthMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthMask.png; path = resources/images/tectonic/earthMask.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1B154F764F006C35DA /* earthNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthNormal.png; path = resources/images/tectonic/earthNormal.png; sourceTree = SOURCE_ROOT; };
-		7C8C4CED1575F4A600453067 /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SignalScope.cpp; sourceTree = "<group>"; };
-		7C8C4CEE1575F4A600453067 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
+		7C8C4CED1575F4A600453067 /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SignalScope.cpp; path = test/SignalScope.cpp; sourceTree = "<group>"; };
+		7C8C4CEE1575F4A600453067 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalScope.h; path = test/SignalScope.h; sourceTree = "<group>"; };
 		7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderTest.cpp; sourceTree = "<group>"; };
 		7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTest.h; sourceTree = "<group>"; };
 		7C8CD31A1500784E0009FF26 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
@@ -476,8 +477,10 @@
 		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
 		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
 		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
-		7CF4F39B157A028E003E5A3C /* Metropolis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Metropolis.cpp; sourceTree = "<group>"; };
-		7CF4F39C157A028E003E5A3C /* Metropolis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Metropolis.h; sourceTree = "<group>"; };
+		7CF3DF0015A542C200CC61D2 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config.cpp; sourceTree = "<group>"; };
+		7CF3DF0215A542CB00CC61D2 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		7CF4F39B157A028E003E5A3C /* Metropolis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Metropolis.cpp; path = test/Metropolis.cpp; sourceTree = "<group>"; };
+		7CF4F39C157A028E003E5A3C /* Metropolis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Metropolis.h; path = test/Metropolis.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -886,6 +889,7 @@
 			isa = PBXGroup;
 			children = (
 				7C74555A148C259C009C0356 /* engine */,
+				7CF3DF0315A559B400CC61D2 /* audiosignal */,
 				7C8F207414D79B4400AC2D64 /* binned */,
 				7C941F321589807A0099A0D3 /* catalog */,
 				7C560DEB1506E22F000B91B0 /* graviton */,
@@ -926,6 +930,8 @@
 				7CAF998814E3681200E6D9F3 /* Utils.h */,
 				7CAF998514E367FB00E6D9F3 /* Utils.cpp */,
 				7C74556B148C259C009C0356 /* scene */,
+				7CF3DF0015A542C200CC61D2 /* Config.cpp */,
+				7CF3DF0215A542CB00CC61D2 /* Config.h */,
 			);
 			path = engine;
 			sourceTree = "<group>";
@@ -978,12 +984,6 @@
 		7C745582148C259C009C0356 /* test */ = {
 			isa = PBXGroup;
 			children = (
-				7CF4F39B157A028E003E5A3C /* Metropolis.cpp */,
-				7CF4F39C157A028E003E5A3C /* Metropolis.h */,
-				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
-				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
-				7C745583148C259C009C0356 /* AudioTest.cpp */,
-				7C745584148C259C009C0356 /* AudioTest.h */,
 				7CF23588151ADE7600445AD8 /* KinectTest.cpp */,
 				7CF23589151ADE7600445AD8 /* KinectTest.h */,
 				7C745585148C259C009C0356 /* MindWaveTest.cpp */,
@@ -1386,6 +1386,19 @@
 			path = "../../sdks/cinder/blocks/Cinder-Kinect/src";
 			sourceTree = "<group>";
 		};
+		7CF3DF0315A559B400CC61D2 /* audiosignal */ = {
+			isa = PBXGroup;
+			children = (
+				7CF4F39B157A028E003E5A3C /* Metropolis.cpp */,
+				7CF4F39C157A028E003E5A3C /* Metropolis.h */,
+				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
+				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
+				7C745583148C259C009C0356 /* AudioSignal.cpp */,
+				7C745584148C259C009C0356 /* AudioSignal.h */,
+			);
+			name = audiosignal;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1554,7 +1567,7 @@
 				7C745596148C259C009C0356 /* Body.cpp in Sources */,
 				7C745597148C259C009C0356 /* Orbiter.cpp in Sources */,
 				7C745598148C259C009C0356 /* Sun.cpp in Sources */,
-				7C745599148C259C009C0356 /* AudioTest.cpp in Sources */,
+				7C745599148C259C009C0356 /* AudioSignal.cpp in Sources */,
 				7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */,
 				7C86560D148C2A97000E00B6 /* RtMidi.cpp in Sources */,
 				7C86563E148C2A97000E00B6 /* MidiHub.cpp in Sources */,
@@ -1617,6 +1630,7 @@
 				7C1344711589969A0032017E /* faintStars.frag in Sources */,
 				7C1344721589969A0032017E /* faintStars.vert in Sources */,
 				7C1344731589969A0032017E /* passThruNormals.vert in Sources */,
+				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

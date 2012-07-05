@@ -73,25 +73,25 @@ public: // cinder interface
     Area getViewportBounds() const;
     
 public: // new
-    inline AudioInput& getAudioInput()               { return mAudioInput; }
-    inline MidiInput& getMidiInput()                 { return mMidiInput; }
-    inline MindWave& getMindWave()                   { return mMindWave; }
-    inline KinectController& getKinectController()   { return mKinectController; }
-    inline OscServer& getOscServer()                 { return mOscServer; }
+    inline AudioInput& getAudioInput()                  { return mAudioInput; }
+    inline MidiInput& getMidiInput()                    { return mMidiInput; }
+    inline MindWave& getMindWave()                      { return mMindWave; }
+    inline KinectController& getKinectController()      { return mKinectController; }
+    inline OscServer& getOscServer()                    { return mOscServer; }
     
-    inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
-    inline params::InterfaceGl& getParams()    { return mParams; }
+    inline InfoPanel& getInfoPanel()                    { return mInfoPanel; }
+    inline params::InterfaceGl& getParams()             { return mParams; }
     
-    inline bool isPresentationMode() const     { return mIsPresentationMode; }
-    inline void setUseMayaCam(bool use)        { mUseMayaCam = use; }
+    inline bool isPresentationMode() const              { return mIsPresentationMode; }
+    inline void setUseMayaCam(bool use)                 { mUseMayaCam = use; }
     
     void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    inline const Camera& getMayaCam() const     { return mMayaCam.getCamera();  }
+    inline const Camera& getMayaCam() const             { return mMayaCam.getCamera();  }
     
-    inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
+    inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
     
     //TODO: hack
-    Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
+    Scene* getScene(const int index)                    { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     
     void enableFrameCapture( const bool enable );
     void setCaptureDuration( const float duration ) { mCaptureDuration = duration; }
@@ -127,6 +127,9 @@ protected: // new
     
     
 private: // members
+    
+    // settings
+    Config                  mConfig;
     
     // input
     AudioInput              mAudioInput;
