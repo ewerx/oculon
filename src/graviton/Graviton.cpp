@@ -32,6 +32,8 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
+    Scene::setup();
+    
     mTimeStep = 0.00075f;
     mGravity = 50.0f;
     

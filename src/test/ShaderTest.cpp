@@ -28,6 +28,8 @@ ShaderTest::~ShaderTest()
 
 void ShaderTest::setup()
 {
+    Scene::setup();
+    
     mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &ShaderTest::drawScene, this ) );
     
     mUseFbo = false;

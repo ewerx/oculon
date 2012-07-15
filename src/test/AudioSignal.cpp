@@ -12,7 +12,6 @@
 #include "AudioSignal.h"
 #include "Interface.h"
 #include "SignalScope.h"
-#include "Metropolis.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -25,16 +24,18 @@ using namespace std;
 AudioSignal::AudioSignal()
 : Scene("audio")
 {
+    mSignalScope = new SignalScope(this);
 }
 
 AudioSignal::~AudioSignal()
 {
-    //delete mMetropolis;
     delete mSignalScope;
 }
 
 void AudioSignal::setup()
 {
+    Scene::setup();
+    
     mUseMotionBlur = false;
     mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioSignal::drawVerticalLines, this ) );
     
@@ -44,12 +45,7 @@ void AudioSignal::setup()
     mEnableVerticalLines = false;
     
     mEnableSignalScope = true;
-    mSignalScope = new SignalScope(this);
     mSignalScope->setup();
-    
-    mEnableMetropolis = false;
-    //mMetropolis = new Metropolis(this);
-    //mMetropolis->setup();
 }
 
 void AudioSignal::setupInterface()
@@ -60,8 +56,6 @@ void AudioSignal::setupInterface()
                          .oscReceiver(mName,"lines"));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
                          .oscReceiver(mName,"signal"));
-    mInterface->addParam(CreateBoolParam( "Metropolis", &mEnableMetropolis )
-                         .oscReceiver(mName,"metropolis"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -72,7 +66,6 @@ void AudioSignal::setupInterface()
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
     mSignalScope->setupInterface();
-    //mMetropolis->setupInterface();
 }
 
 void AudioSignal::setupDebugInterface()
@@ -80,7 +73,6 @@ void AudioSignal::setupDebugInterface()
     Scene::setupDebugInterface();
     
     mSignalScope->setupDebugInterface();
-    //mMetropolis->setupDebugInterface();
 }
 
 void AudioSignal::update(double dt)
@@ -90,11 +82,6 @@ void AudioSignal::update(double dt)
     if( mEnableSignalScope )
     {
         mSignalScope->update(dt);
-    }
-    
-    if( mEnableMetropolis )
-    {
-        mMetropolis->update(dt);
     }
 }
 
@@ -116,11 +103,6 @@ void AudioSignal::draw()
         if( mEnableSignalScope )
         {
             mSignalScope->draw();
-        }
-        
-        if( mEnableMetropolis )
-        {
-            mMetropolis->draw();
         }
     }
     gl::popMatrices();

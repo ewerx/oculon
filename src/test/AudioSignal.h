@@ -16,7 +16,6 @@
 #include "MotionBlurRenderer.h"
 
 class SignalScope;
-class Metropolis;
 
 //
 // Audio input tests
@@ -55,12 +54,9 @@ private:
     
     bool mEnableVerticalLines;
     
-    // multiwave
+    // sub scenes
     SignalScope* mSignalScope;
     bool mEnableSignalScope;
-    
-    Metropolis* mMetropolis;
-    bool mEnableMetropolis;
    
 };
 

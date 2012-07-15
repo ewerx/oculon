@@ -30,6 +30,8 @@ KinectTest::~KinectTest()
 
 void KinectTest::setup()
 {
+    Scene::setup();
+    
     mBlobTracker.setup( mApp->getKinectController() );
     mKinectTilt = 0.0f;
 }

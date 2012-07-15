@@ -29,6 +29,8 @@ Magnetosphere::~Magnetosphere()
 
 void Magnetosphere::setup()
 {
+    Scene::setup();
+    
     // init params
     mTimeStep = 0.075f;
     

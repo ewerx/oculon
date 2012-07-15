@@ -169,6 +169,7 @@ private: // members
     bool                    mDrawToScreen;
     bool                    mDrawOnlyLastScene;
     int                     mLastActiveScene;
+    bool                    mSetupScenesOnStart;
     
     // ui
     InfoPanel               mInfoPanel;

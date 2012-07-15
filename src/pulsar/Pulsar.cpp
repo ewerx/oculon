@@ -28,6 +28,8 @@ Pulsar::~Pulsar()
 
 void Pulsar::setup()
 {
+    Scene::setup();
+    
     mParticleStream.setup(this);
     
     // textures

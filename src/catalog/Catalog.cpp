@@ -49,6 +49,8 @@ Catalog::~Catalog()
 //
 void Catalog::setup()
 {
+    Scene::setup();
+    
     // params
     mShowLabels = true;
     mCamType = CAM_ORBITER;

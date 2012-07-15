@@ -85,6 +85,8 @@ Orbiter::~Orbiter()
 
 void Orbiter::setup()
 {
+    Scene::setup();
+    
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
 	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );

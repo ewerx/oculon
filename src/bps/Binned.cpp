@@ -38,6 +38,8 @@ Binned::~Binned()
 #pragma MARK setup
 void Binned::setup()
 {
+    Scene::setup();
+    
     mKParticles = 6;
     mParticleNeighborhood = 14;
     

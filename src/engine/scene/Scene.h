@@ -31,7 +31,7 @@ public:
     virtual ~Scene();
     
     void init(OculonApp* app);
-    
+    virtual void setup();
     virtual void reset() {}
     virtual void shutdown() {}
     virtual void resize();
@@ -61,6 +61,7 @@ public:
     Interface* getInterface()                       { return mInterface; }
     ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
     
+    bool isSetup() const            { return mIsSetup; }
     bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
     bool isDebug() const            { return mIsDebug; }
@@ -87,7 +88,6 @@ public:
     
 protected:
     
-    virtual void setup() {}
     virtual void setupInterface() {}
     virtual void setupDebugInterface();
     void setupFbo();
@@ -105,6 +105,7 @@ protected:
     
     std::string mName;
     
+    bool        mIsSetup;
     bool        mIsRunning;
     bool        mIsVisible;
     bool        mIsDebug;

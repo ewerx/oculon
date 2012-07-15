@@ -22,6 +22,7 @@
 
 void MindWaveTest::setup()
 {
+    Scene::setup();
 }
 
 void MindWaveTest::update(double dt)

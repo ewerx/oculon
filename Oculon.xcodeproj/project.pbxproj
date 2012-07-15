@@ -163,7 +163,6 @@
 		7CF2358A151ADE7600445AD8 /* KinectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF23588151ADE7600445AD8 /* KinectTest.cpp */; };
 		7CF235EC151AE80C00445AD8 /* Kinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF235EB151AE80C00445AD8 /* Kinect.cpp */; };
 		7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF3DF0015A542C200CC61D2 /* Config.cpp */; };
-		7CF4F39D157A028E003E5A3C /* Metropolis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF4F39B157A028E003E5A3C /* Metropolis.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -479,8 +478,6 @@
 		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
 		7CF3DF0015A542C200CC61D2 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config.cpp; sourceTree = "<group>"; };
 		7CF3DF0215A542CB00CC61D2 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
-		7CF4F39B157A028E003E5A3C /* Metropolis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Metropolis.cpp; path = test/Metropolis.cpp; sourceTree = "<group>"; };
-		7CF4F39C157A028E003E5A3C /* Metropolis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Metropolis.h; path = test/Metropolis.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -907,15 +904,14 @@
 			isa = PBXGroup;
 			children = (
 				7C7A5D65152EC23E009C0DA0 /* interface */,
+				7C9F032015A5656200E75CF4 /* kinect */,
 				7C74555B148C259C009C0356 /* AudioInput.cpp */,
 				7C74555C148C259C009C0356 /* AudioInput.h */,
-				7C922867151C066400FB3773 /* BlobTracker.cpp */,
-				7C922868151C066400FB3773 /* BlobTracker.h */,
+				7CF3DF0015A542C200CC61D2 /* Config.cpp */,
+				7CF3DF0215A542CB00CC61D2 /* Config.h */,
 				7C74555D148C259C009C0356 /* Constants.h */,
 				7C74555E148C259C009C0356 /* InfoPanel.cpp */,
 				7C74555F148C259C009C0356 /* InfoPanel.h */,
-				7C92286E151C098D00FB3773 /* KinectController.cpp */,
-				7C92286F151C098D00FB3773 /* KinectController.h */,
 				7C745561148C259C009C0356 /* MidiInput.cpp */,
 				7C745562148C259C009C0356 /* MidiInput.h */,
 				7C745563148C259C009C0356 /* MidiMap.cpp */,
@@ -930,8 +926,6 @@
 				7CAF998814E3681200E6D9F3 /* Utils.h */,
 				7CAF998514E367FB00E6D9F3 /* Utils.cpp */,
 				7C74556B148C259C009C0356 /* scene */,
-				7CF3DF0015A542C200CC61D2 /* Config.cpp */,
-				7CF3DF0215A542CB00CC61D2 /* Config.h */,
 			);
 			path = engine;
 			sourceTree = "<group>";
@@ -1254,6 +1248,17 @@
 			path = resources;
 			sourceTree = "<group>";
 		};
+		7C9F032015A5656200E75CF4 /* kinect */ = {
+			isa = PBXGroup;
+			children = (
+				7C922867151C066400FB3773 /* BlobTracker.cpp */,
+				7C922868151C066400FB3773 /* BlobTracker.h */,
+				7C92286E151C098D00FB3773 /* KinectController.cpp */,
+				7C92286F151C098D00FB3773 /* KinectController.h */,
+			);
+			name = kinect;
+			sourceTree = "<group>";
+		};
 		7CAFEE60158C17F2005B338D /* data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1389,8 +1394,6 @@
 		7CF3DF0315A559B400CC61D2 /* audiosignal */ = {
 			isa = PBXGroup;
 			children = (
-				7CF4F39B157A028E003E5A3C /* Metropolis.cpp */,
-				7CF4F39C157A028E003E5A3C /* Metropolis.h */,
 				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
 				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
 				7C745583148C259C009C0356 /* AudioSignal.cpp */,
@@ -1621,7 +1624,6 @@
 				7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */,
 				7C90D673156F2B4900685CB4 /* TextureManager.cpp in Sources */,
 				7C8C4CEF1575F4A600453067 /* SignalScope.cpp in Sources */,
-				7CF4F39D157A028E003E5A3C /* Metropolis.cpp in Sources */,
 				7C941F3A158980990099A0D3 /* SpringCam.cpp in Sources */,
 				7C941F3B158980990099A0D3 /* Star.cpp in Sources */,
 				7C941F3E158981080099A0D3 /* Catalog.cpp in Sources */,

@@ -24,6 +24,7 @@ using namespace mowa::sgui;
 Scene::Scene(const std::string& name)
 : mName(name)
 , mApp(NULL)
+, mIsSetup(false)
 , mIsRunning(false)
 , mIsVisible(false)
 , mIsDebug(false)
@@ -77,9 +78,13 @@ void Scene::init(OculonApp* app)
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
-    setup();
     setupInterface();
     setupDebugInterface();
+}
+
+void Scene::setup()
+{
+    mIsSetup = true;
 }
 
 void Scene::setupFbo()

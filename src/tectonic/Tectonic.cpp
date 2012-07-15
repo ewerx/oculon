@@ -57,6 +57,8 @@ Tectonic::~Tectonic()
 //
 void Tectonic::setup()
 {
+    Scene::setup();
+    
     // params
     mTriggerMode = TRIGGER_BPM;
     mBpm = 120.0f;

@@ -57,6 +57,7 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
     
+    mSetupScenesOnStart = true;
     mIsPresentationMode = true;
     mIsSendingFps       = true;
     
@@ -212,6 +213,11 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     console() << (mScenes.size()+1) << ": " << scene->getName() << std::endl;
     
     scene->init(this);
+    if( mSetupScenesOnStart )
+    {
+        scene->setup();
+    }
+    
     if( autoStart )
     {
         scene->setRunning(true);
@@ -675,13 +681,17 @@ void OculonApp::update()
         Scene* scene = (*sceneIt);
         if( scene )
         {
-            Color textColor = Color(0.5f,0.5f,0.5f);
+            Color labelColor = Color(0.5f,0.5f,0.5f);
             if( scene->isRunning() )
             {
+                if( !scene->isSetup() )
+                {
+                    scene->setup();
+                }
                 scene->update(dt);
-                textColor = Color(0.75f, 0.4f, 0.4f);
+                labelColor = Color(0.75f, 0.4f, 0.4f);
             }
-            mInfoPanel.addLine(scene->getName(), textColor);
+            mInfoPanel.addLine(scene->getName(), labelColor);
         }
     }
     

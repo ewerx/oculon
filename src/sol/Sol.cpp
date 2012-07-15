@@ -49,6 +49,8 @@ Sol::~Sol()
 //
 void Sol::setup()
 {
+    Scene::setup();
+    
     mFrameRate = 25.0f;
     mCurrentSource = 0;
     
