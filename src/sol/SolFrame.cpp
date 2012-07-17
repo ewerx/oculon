@@ -204,14 +204,14 @@ ci::gl::Texture SolFrame::getTexture( const SolFrame::eImageSource src )
     return gl::Texture();
 }
 
-bool SolFrame::drawFrame( const eImageSource src, const float width, const float height )
+ci::gl::Texture SolFrame::getTextureWithSubstitution( const eImageSource src )
 {
     gl::Texture tex = getTexture(src);
     
     if( !tex )
     {
         // use first available texture from another source
-        for( int i=src; i < SOURCE_COUNT; ++i )
+        for( int i=src+1; i < SOURCE_COUNT; ++i )
         {
             tex = getTexture( (eImageSource)(i) );
             if( tex )
@@ -229,16 +229,5 @@ bool SolFrame::drawFrame( const eImageSource src, const float width, const float
         }
     }
     
-    if( tex )
-    {
-        const float texSize = tex.getWidth();
-        const float x = (width - texSize)/2.0f;
-        const float y = (height - texSize)/2.0f;
-        gl::draw( tex, Rectf( x, y, x+texSize, y+texSize ) );
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return tex;
 }

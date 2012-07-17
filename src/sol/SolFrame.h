@@ -40,6 +40,7 @@ public:
     void unloadTextures();
     int getImageCount() const;
     ci::gl::Texture getTexture( const eImageSource src );
+    ci::gl::Texture getTextureWithSubstitution( const eImageSource src );
     
     bool drawFrame( const eImageSource src, const float width, const float height );
     

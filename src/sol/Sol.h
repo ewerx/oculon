@@ -63,9 +63,10 @@ private:
     float mFrameTime;
     int mCurrentSource;
     
-    // mask
+    // display
     ci::gl::Texture mMaskTexture;
     bool mDrawMask;
+    bool mMultiSource;
     
     // playback
     enum ePlaybackMode

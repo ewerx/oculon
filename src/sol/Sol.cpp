@@ -56,6 +56,7 @@ void Sol::setup()
     
     mMaskTexture = gl::Texture( loadImage( loadResource( RES_SOLMASK ) ) );
     mDrawMask = true;
+    mMultiSource = true;
     
     mPlaybackMode = PLAYBACK_FORWARD;
     mPingPong = false;
@@ -142,6 +143,9 @@ void Sol::setupInterface()
     mInterface->addParam(CreateFloatParam("Framerate", &mFrameRate)
                          .maxValue(60.0f)
                          .oscReceiver(mName,"framerate"));
+    
+    mInterface->addParam(CreateBoolParam("Multisource", &mMultiSource)
+                         .oscReceiver(mName,"multisource"));
 }
 
 // ----------------------------------------------------------------
@@ -258,20 +262,80 @@ void Sol::draw()
     
     if( mFrames.size() > 0 && mIndex < mFrames.size() )
     {
-        bool drawn = mFrames[mIndex]->drawFrame( static_cast<SolFrame::eImageSource>(mCurrentSource), width, height );
-        if( !drawn )
+        if( mMultiSource )
         {
-            console() << "[sol] WARNING: frame " << mIndex << " missing textures for all sources!" << std::endl;
+            // draw 4 sources in grid
+            gl::Texture tex[SolFrame::SOURCE_COUNT];
+            Rectf frameRect[SolFrame::SOURCE_COUNT];
+            for( int i=0; i < SolFrame::SOURCE_COUNT; ++i )
+            {
+                tex[i] = mFrames[mIndex]->getTexture( static_cast<SolFrame::eImageSource>(i) );
+            }
+            
+            const float texSize = 512;
+            const float drawSize = min( texSize, height/2.5f );
+            const float x = (width - drawSize*2)/2.0f;
+            const float y = (height - drawSize*2)/2.0f;
+            
+            // TODO: move to resize
+            // 0 1
+            // 2 3
+            frameRect[0] = Rectf(x, y, x+drawSize, y+drawSize);
+            frameRect[1] = Rectf(x+drawSize, y, x+drawSize*2, y+drawSize);
+            frameRect[2] = Rectf(x, y+drawSize, x+drawSize, y+drawSize*2);
+            frameRect[3] = Rectf(x+drawSize, y+drawSize, x+drawSize*2, y+drawSize*2);
+            
+            if( tex[0] )
+            {
+                gl::draw( tex[0], frameRect[0] );
+            }
+            if( tex[1] )
+            {
+                gl::draw( tex[1], frameRect[1] );
+            }
+            if( tex[2] )
+            {
+                gl::draw( tex[2], frameRect[2] );
+            }
+            if( tex[3] )
+            {
+                gl::draw( tex[3], frameRect[3]  );
+            }
+            
+            float shade = 0.6f;
+            gl::color( ColorA(shade,shade,shade,0.6f) );
+            gl::drawStrokedRect( frameRect[0] );
+            gl::drawStrokedRect( frameRect[1] );
+            gl::drawStrokedRect( frameRect[2] );
+            gl::drawStrokedRect( frameRect[3] );
         }
-    }
-    
-    // mask
-    if( mDrawMask )
-    {
-        const float maskSize = mMaskTexture.getWidth();
-        const float x = (width - maskSize)/2.0f;
-        const float y = (height - maskSize)/2.0f;
-        gl::draw( mMaskTexture, Rectf( x, y, x+maskSize, y+maskSize ) );
+        else
+        {
+            // draw one source in the center
+            gl::Texture tex = mFrames[mIndex]->getTextureWithSubstitution( static_cast<SolFrame::eImageSource>(mCurrentSource) );
+            
+            if( tex )
+            {
+                const float texSize = tex.getWidth();
+                const float x = (width - texSize)/2.0f;
+                const float y = (height - texSize)/2.0f;
+                gl::draw( tex, Rectf(x, y, x+texSize, y+texSize) );
+            }
+            else
+            {
+                console() << "[sol] WARNING: frame " << mIndex << " missing textures for all sources!" << std::endl;
+            }
+            
+            // mask
+            if( mDrawMask )
+            {
+                const float maskSize = mMaskTexture.getWidth();
+                const float x = (width - maskSize)/2.0f;
+                const float y = (height - maskSize)/2.0f;
+                gl::draw( mMaskTexture, Rectf( x, y, x+maskSize, y+maskSize ) );
+            }
+        }
+        
     }
     
     drawHud();
