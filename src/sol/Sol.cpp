@@ -302,8 +302,8 @@ void Sol::draw()
                 gl::draw( tex[3], frameRect[3]  );
             }
             
-            float shade = 0.6f;
-            gl::color( ColorA(shade,shade,shade,0.6f) );
+            float shade = 0.75f;
+            gl::color( ColorA(shade,shade,shade,1.0f) );
             gl::drawStrokedRect( frameRect[0] );
             gl::drawStrokedRect( frameRect[1] );
             gl::drawStrokedRect( frameRect[2] );
