@@ -66,7 +66,6 @@ void Catalog::setup()
 	try {
 		mBrightStarsShader	= gl::GlslProg( loadResource( RES_BRIGHT_STARS_VERT ), loadResource( RES_BRIGHT_STARS_FRAG ) );
 		mFaintStarsShader	= gl::GlslProg( loadResource( RES_FAINT_STARS_VERT ), loadResource( RES_FAINT_STARS_FRAG ) );
-		//mRoomShader			= gl::GlslProg( loadResource( "../resources/shaders/room.vert" ), loadResource( "../resources/shaders/room.frag" ) );
 	} catch( gl::GlslProgCompileExc e ) {
 		std::cout << e.what() << std::endl;
 		//quit();
@@ -90,15 +89,6 @@ void Catalog::setup()
 	mFontBlackS		= Font( "Menlo", 12 );
 	//mTextureFontT	= gl::TextureFont::create( mFontBlackT );
 	//mTextureFontS	= gl::TextureFont::create( mFontBlackS );
-	
-	// ROOM
-	//gl::Fbo::Format roomFormat;
-	//roomFormat.setColorInternalFormat( GL_RGB );
-	//mRoomFbo			= gl::Fbo( APP_WIDTH/ROOM_FBO_RES, APP_HEIGHT/ROOM_FBO_RES, roomFormat );
-	//bool isPowerOn		= false;
-	//bool isGravityOn	= true;
-	//mRoom				= Room( Vec3f( 350.0f, 200.0f, 350.0f ), isPowerOn, isGravityOn );	
-	//mRoom.init();
 	
 	// MOUSE
 	mMousePos		= Vec2f::zero();
@@ -142,31 +132,8 @@ void Catalog::setup()
 	mRenderBrightStars		= true;
     //
     ///////--------------------------------------------------------
-        
-    initStars();
     
     reset();
-}
-
-// ----------------------------------------------------------------
-//
-void Catalog::initStars()
-{
-    // points display list
-    /*
-    mDisplayListPoints = glGenLists(1);
-    glNewList(mDisplayListPoints, GL_COMPILE);
-    glBegin(GL_POINTS);
-    for(QuakeList::iterator it = mQuakes.begin(); 
-        it != mQuakes.end();
-        ++it)
-    {
-        const Vec3f& pos = (*it)->getPosition();
-        glVertex2f(pos.x, pos.y);
-    }
-    glEnd();
-    glEndList();
-     */
 }
 
 // ----------------------------------------------------------------
@@ -367,7 +334,7 @@ void Catalog::draw()
 		mBrightStarsShader.uniform( "spectrumTex", 2 );
 		mBrightStarsShader.uniform( "scale", mScale );
 		mBrightStarsShader.uniform( "power", 1.0f );//mRoom.getPower() );
-		mBrightStarsShader.uniform( "roomDims", 1.0f);//mRoom.getDims() );
+		mBrightStarsShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ));//mRoom.getDims() );
 		mBrightStarsShader.uniform( "mvMatrix", getCam().getModelViewMatrix() );
 		mBrightStarsShader.uniform( "eyePos", getCam().getEyePoint() );
 		if( power > 0.5f ){

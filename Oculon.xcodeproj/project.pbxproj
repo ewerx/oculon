@@ -115,6 +115,29 @@
 		7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */; };
 		7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3211500784E0009FF26 /* syphonClient.mm */; };
 		7C8CD3621500784E0009FF26 /* syphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3231500784E0009FF26 /* syphonServer.mm */; };
+		7C8F150A15BB287300BAD08D /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F150415BB287300BAD08D /* Controller.cpp */; };
+		7C8F150B15BB287300BAD08D /* Flock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F150515BB287300BAD08D /* Flock.cpp */; };
+		7C8F150C15BB287300BAD08D /* Glow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F150615BB287300BAD08D /* Glow.cpp */; };
+		7C8F150D15BB287300BAD08D /* Lantern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F150715BB287300BAD08D /* Lantern.cpp */; };
+		7C8F150E15BB287300BAD08D /* Nebula.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F150815BB287300BAD08D /* Nebula.cpp */; };
+		7C8F150F15BB287300BAD08D /* Predator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F150915BB287300BAD08D /* Predator.cpp */; };
+		7C8F152715BB4AF100BAD08D /* glow.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151815BB4AF100BAD08D /* glow.frag */; };
+		7C8F152815BB4AF100BAD08D /* lantern.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151915BB4AF100BAD08D /* lantern.frag */; };
+		7C8F152915BB4AF100BAD08D /* lantern.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151A15BB4AF100BAD08D /* lantern.vert */; };
+		7C8F152A15BB4AF100BAD08D /* nebula.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151B15BB4AF100BAD08D /* nebula.frag */; };
+		7C8F152C15BB4AF100BAD08D /* P_Position.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151D15BB4AF100BAD08D /* P_Position.frag */; };
+		7C8F152D15BB4AF100BAD08D /* P_VboPos.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151E15BB4AF100BAD08D /* P_VboPos.frag */; };
+		7C8F152E15BB4AF100BAD08D /* P_VboPos.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F151F15BB4AF100BAD08D /* P_VboPos.vert */; };
+		7C8F152F15BB4AF100BAD08D /* P_Velocity.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152015BB4AF100BAD08D /* P_Velocity.frag */; };
+		7C8F153015BB4AF100BAD08D /* Position.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152115BB4AF100BAD08D /* Position.frag */; };
+		7C8F153115BB4AF100BAD08D /* room.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152215BB4AF100BAD08D /* room.frag */; };
+		7C8F153215BB4AF100BAD08D /* room.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152315BB4AF100BAD08D /* room.vert */; };
+		7C8F153315BB4AF100BAD08D /* VboPos.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152415BB4AF100BAD08D /* VboPos.frag */; };
+		7C8F153415BB4AF100BAD08D /* VboPos.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152515BB4AF100BAD08D /* VboPos.vert */; };
+		7C8F153515BB4AF100BAD08D /* Velocity.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F152615BB4AF100BAD08D /* Velocity.frag */; };
+		7C8F153A15BB4B1700BAD08D /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F153715BB4B1700BAD08D /* glow.png */; };
+		7C8F153B15BB4B1700BAD08D /* lanternGlow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F153815BB4B1700BAD08D /* lanternGlow.png */; };
+		7C8F153C15BB4B1700BAD08D /* nebula.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F153915BB4B1700BAD08D /* nebula.png */; };
 		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
 		7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C90D66D156F21CD00685CB4 /* SolFrame.cpp */; };
@@ -410,6 +433,35 @@
 		7C8CD3211500784E0009FF26 /* syphonClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonClient.mm; sourceTree = "<group>"; };
 		7C8CD3221500784E0009FF26 /* syphonServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syphonServer.h; sourceTree = "<group>"; };
 		7C8CD3231500784E0009FF26 /* syphonServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonServer.mm; sourceTree = "<group>"; };
+		7C8F150415BB287300BAD08D /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Controller.cpp; sourceTree = "<group>"; };
+		7C8F150515BB287300BAD08D /* Flock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flock.cpp; sourceTree = "<group>"; };
+		7C8F150615BB287300BAD08D /* Glow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Glow.cpp; sourceTree = "<group>"; };
+		7C8F150715BB287300BAD08D /* Lantern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lantern.cpp; sourceTree = "<group>"; };
+		7C8F150815BB287300BAD08D /* Nebula.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nebula.cpp; sourceTree = "<group>"; };
+		7C8F150915BB287300BAD08D /* Predator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Predator.cpp; sourceTree = "<group>"; };
+		7C8F151015BB2A3000BAD08D /* Flock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Flock.h; sourceTree = "<group>"; };
+		7C8F151115BB425400BAD08D /* Controller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
+		7C8F151215BB425400BAD08D /* Glow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Glow.h; sourceTree = "<group>"; };
+		7C8F151315BB425400BAD08D /* Lantern.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lantern.h; sourceTree = "<group>"; };
+		7C8F151415BB425400BAD08D /* Nebula.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nebula.h; sourceTree = "<group>"; };
+		7C8F151515BB425400BAD08D /* Predator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Predator.h; sourceTree = "<group>"; };
+		7C8F151815BB4AF100BAD08D /* glow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = glow.frag; sourceTree = "<group>"; };
+		7C8F151915BB4AF100BAD08D /* lantern.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = lantern.frag; sourceTree = "<group>"; };
+		7C8F151A15BB4AF100BAD08D /* lantern.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = lantern.vert; sourceTree = "<group>"; };
+		7C8F151B15BB4AF100BAD08D /* nebula.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = nebula.frag; sourceTree = "<group>"; };
+		7C8F151D15BB4AF100BAD08D /* P_Position.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = P_Position.frag; sourceTree = "<group>"; };
+		7C8F151E15BB4AF100BAD08D /* P_VboPos.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = P_VboPos.frag; sourceTree = "<group>"; };
+		7C8F151F15BB4AF100BAD08D /* P_VboPos.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = P_VboPos.vert; sourceTree = "<group>"; };
+		7C8F152015BB4AF100BAD08D /* P_Velocity.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = P_Velocity.frag; sourceTree = "<group>"; };
+		7C8F152115BB4AF100BAD08D /* Position.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Position.frag; sourceTree = "<group>"; };
+		7C8F152215BB4AF100BAD08D /* room.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room.frag; sourceTree = "<group>"; };
+		7C8F152315BB4AF100BAD08D /* room.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room.vert; sourceTree = "<group>"; };
+		7C8F152415BB4AF100BAD08D /* VboPos.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = VboPos.frag; sourceTree = "<group>"; };
+		7C8F152515BB4AF100BAD08D /* VboPos.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = VboPos.vert; sourceTree = "<group>"; };
+		7C8F152615BB4AF100BAD08D /* Velocity.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Velocity.frag; sourceTree = "<group>"; };
+		7C8F153715BB4B1700BAD08D /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
+		7C8F153815BB4B1700BAD08D /* lanternGlow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lanternGlow.png; sourceTree = "<group>"; };
+		7C8F153915BB4B1700BAD08D /* nebula.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nebula.png; sourceTree = "<group>"; };
 		7C8F207514D79B4400AC2D64 /* BinnedParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticle.h; sourceTree = "<group>"; };
 		7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinnedParticleSystem.cpp; sourceTree = "<group>"; };
 		7C8F207714D79B4400AC2D64 /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
@@ -889,6 +941,7 @@
 				7CF3DF0315A559B400CC61D2 /* audiosignal */,
 				7C8F207414D79B4400AC2D64 /* binned */,
 				7C941F321589807A0099A0D3 /* catalog */,
+				7C8F150315BB287300BAD08D /* flock */,
 				7C560DEB1506E22F000B91B0 /* graviton */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
@@ -1090,6 +1143,7 @@
 			isa = PBXGroup;
 			children = (
 				7C134464158992AD0032017E /* catalog */,
+				7C8F153615BB4B1700BAD08D /* flock */,
 				7C8BE8CC158515D1003B36DE /* sol */,
 				7CE9C84E154A6DC70057E409 /* tectonic */,
 				7C948F4314B3A1E7003A3DA8 /* orbiter */,
@@ -1104,6 +1158,7 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7C8F151715BB4AF100BAD08D /* flock */,
 				7C13445A158992950032017E /* brightStars.frag */,
 				7C13445B158992950032017E /* brightStars.vert */,
 				7C13445C158992950032017E /* faintStars.frag */,
@@ -1166,6 +1221,56 @@
 				7C8CD3231500784E0009FF26 /* syphonServer.mm */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		7C8F150315BB287300BAD08D /* flock */ = {
+			isa = PBXGroup;
+			children = (
+				7C8F150415BB287300BAD08D /* Controller.cpp */,
+				7C8F151115BB425400BAD08D /* Controller.h */,
+				7C8F150515BB287300BAD08D /* Flock.cpp */,
+				7C8F151015BB2A3000BAD08D /* Flock.h */,
+				7C8F150615BB287300BAD08D /* Glow.cpp */,
+				7C8F151215BB425400BAD08D /* Glow.h */,
+				7C8F150715BB287300BAD08D /* Lantern.cpp */,
+				7C8F151315BB425400BAD08D /* Lantern.h */,
+				7C8F150815BB287300BAD08D /* Nebula.cpp */,
+				7C8F151415BB425400BAD08D /* Nebula.h */,
+				7C8F150915BB287300BAD08D /* Predator.cpp */,
+				7C8F151515BB425400BAD08D /* Predator.h */,
+			);
+			path = flock;
+			sourceTree = "<group>";
+		};
+		7C8F151715BB4AF100BAD08D /* flock */ = {
+			isa = PBXGroup;
+			children = (
+				7C8F151815BB4AF100BAD08D /* glow.frag */,
+				7C8F151915BB4AF100BAD08D /* lantern.frag */,
+				7C8F151A15BB4AF100BAD08D /* lantern.vert */,
+				7C8F151B15BB4AF100BAD08D /* nebula.frag */,
+				7C8F151D15BB4AF100BAD08D /* P_Position.frag */,
+				7C8F151E15BB4AF100BAD08D /* P_VboPos.frag */,
+				7C8F151F15BB4AF100BAD08D /* P_VboPos.vert */,
+				7C8F152015BB4AF100BAD08D /* P_Velocity.frag */,
+				7C8F152115BB4AF100BAD08D /* Position.frag */,
+				7C8F152215BB4AF100BAD08D /* room.frag */,
+				7C8F152315BB4AF100BAD08D /* room.vert */,
+				7C8F152415BB4AF100BAD08D /* VboPos.frag */,
+				7C8F152515BB4AF100BAD08D /* VboPos.vert */,
+				7C8F152615BB4AF100BAD08D /* Velocity.frag */,
+			);
+			path = flock;
+			sourceTree = "<group>";
+		};
+		7C8F153615BB4B1700BAD08D /* flock */ = {
+			isa = PBXGroup;
+			children = (
+				7C8F153715BB4B1700BAD08D /* glow.png */,
+				7C8F153815BB4B1700BAD08D /* lanternGlow.png */,
+				7C8F153915BB4B1700BAD08D /* nebula.png */,
+			);
+			path = flock;
 			sourceTree = "<group>";
 		};
 		7C8F207414D79B4400AC2D64 /* binned */ = {
@@ -1542,6 +1647,9 @@
 				7C13446E158992AD0032017E /* starGlow.png in Resources */,
 				7CAFEE63158C1808005B338D /* starData.txt in Resources */,
 				7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */,
+				7C8F153A15BB4B1700BAD08D /* glow.png in Resources */,
+				7C8F153B15BB4B1700BAD08D /* lanternGlow.png in Resources */,
+				7C8F153C15BB4B1700BAD08D /* nebula.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1633,6 +1741,26 @@
 				7C1344721589969A0032017E /* faintStars.vert in Sources */,
 				7C1344731589969A0032017E /* passThruNormals.vert in Sources */,
 				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
+				7C8F150A15BB287300BAD08D /* Controller.cpp in Sources */,
+				7C8F150B15BB287300BAD08D /* Flock.cpp in Sources */,
+				7C8F150C15BB287300BAD08D /* Glow.cpp in Sources */,
+				7C8F150D15BB287300BAD08D /* Lantern.cpp in Sources */,
+				7C8F150E15BB287300BAD08D /* Nebula.cpp in Sources */,
+				7C8F150F15BB287300BAD08D /* Predator.cpp in Sources */,
+				7C8F152715BB4AF100BAD08D /* glow.frag in Sources */,
+				7C8F152815BB4AF100BAD08D /* lantern.frag in Sources */,
+				7C8F152915BB4AF100BAD08D /* lantern.vert in Sources */,
+				7C8F152A15BB4AF100BAD08D /* nebula.frag in Sources */,
+				7C8F152C15BB4AF100BAD08D /* P_Position.frag in Sources */,
+				7C8F152D15BB4AF100BAD08D /* P_VboPos.frag in Sources */,
+				7C8F152E15BB4AF100BAD08D /* P_VboPos.vert in Sources */,
+				7C8F152F15BB4AF100BAD08D /* P_Velocity.frag in Sources */,
+				7C8F153015BB4AF100BAD08D /* Position.frag in Sources */,
+				7C8F153115BB4AF100BAD08D /* room.frag in Sources */,
+				7C8F153215BB4AF100BAD08D /* room.vert in Sources */,
+				7C8F153315BB4AF100BAD08D /* VboPos.frag in Sources */,
+				7C8F153415BB4AF100BAD08D /* VboPos.vert in Sources */,
+				7C8F153515BB4AF100BAD08D /* Velocity.frag in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

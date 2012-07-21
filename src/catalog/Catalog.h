@@ -62,7 +62,6 @@ protected:
     void setupInterface();
     void setupDebugInterface();
     
-    void initStars();
     void drawHud();
     
     ////////------------------------------------------------------
@@ -96,14 +95,6 @@ private:
 	gl::Texture			mIconTex;
 	gl::Texture			mMilkyWayTex;
 	gl::Texture			mSpectrumTex;
-	
-	// ROOM
-	//Room				mRoom;
-	gl::Fbo				mRoomFbo;
-	
-	// ROOM PANEL
-	gl::Texture			mRoomNumTex;
-	gl::Texture			mRoomDescTex;
 	
 	// POSITION/VELOCITY FBOS
 	gl::Fbo				mPositionFbo;
