@@ -42,6 +42,7 @@
 		7C361A3015BC68940078C7F1 /* _2RealVector2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184B15BC68900078C7F1 /* _2RealVector2f.cpp */; };
 		7C361A3115BC68940078C7F1 /* OpenNIDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36185015BC68900078C7F1 /* OpenNIDevice.cpp */; };
 		7C361A3215BC68940078C7F1 /* OpenNIMotorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36185215BC68900078C7F1 /* OpenNIMotorController.cpp */; };
+		7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
 		7C3738F514F7359B00B24851 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738EA14F7359B00B24851 /* Color.cpp */; };
@@ -1732,6 +1733,7 @@
 				7C361A3015BC68940078C7F1 /* _2RealVector2f.cpp in Sources */,
 				7C361A3115BC68940078C7F1 /* OpenNIDevice.cpp in Sources */,
 				7C361A3215BC68940078C7F1 /* OpenNIMotorController.cpp in Sources */,
+				7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,7 +13,7 @@
 #include "Scene.h"
 #include "_2RealKinect.h"
 
-using namespace _2Real;
+using namespace _2RealKinectWrapper;
 
 //
 // Audio input tests
@@ -38,9 +38,10 @@ public:
 private:
     void			drawKinectImages();
     void			drawSkeletons(int deviceID, ci::Rectf rect);
+    void            drawCenterOfMasses(int deviceID, ci::Rectf destRect);
     void			resizeImages();
     void			mirrorImages();
-    unsigned char*	getImageData( int deviceID, _2RealGenerator imageType, int& imageWidth, int& imageHeight, int& bytePerPixel );
+    boost::shared_array<unsigned char>	getImageData( int deviceID, _2RealGenerator imageType, int& imageWidth, int& imageHeight, int& bytePerPixel );
     
 private:
     

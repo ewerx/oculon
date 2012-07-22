@@ -298,6 +298,7 @@ void OculonApp::setupScenes()
     if( mEnableKinect )
     {
         if( mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
+        if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     }
     if( mEnableMindWave )
     {
