@@ -39,6 +39,7 @@ void Graviton::setup()
     
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
+    mColorMode = COLOR_MONO;
     
     mInitialFormation = FORMATION_SPHERE;
     mFormationRadius = 50.0f;
@@ -103,6 +104,8 @@ void Graviton::setupDebugInterface()
     mDebugParams.setOptions("Damping", "step=0.0001");
     mDebugParams.setOptions("EPS", "min=0.0 step=0.001");
     
+    mDebugParams.setOptions("Color Mode", "min=0 max=2");
+    
     mDebugParams.setOptions("Cam Type", "min=0 max=3");
     mDebugParams.setOptions("Cam Radius", "min=1.0");
     mDebugParams.setOptions("Cam Distance", "min=0.0");
@@ -125,8 +128,6 @@ void Graviton::setupInterface()
                          .minValue(0.0f)
                          .maxValue(0.001f)
                          .oscReceiver(getName(), "timestep"));
-                         //.oscReceiver("/1/fader1"));
-                         //.oscSender("/1/fader1"));
     mInterface->addParam(CreateFloatParam( "Damping", &mDamping )
                          .oscReceiver(getName(), "damping"));
     mInterface->addParam(CreateFloatParam( "EPS", &mEps )
@@ -137,7 +138,6 @@ void Graviton::setupInterface()
                          .minValue(0.0f)
                          .maxValue(100.0f)
                          .oscReceiver(getName(), "gravity"));
-                         //.oscReceiver("/1/fader2"));
     
     mInterface->gui()->addSeparator();
     mInterface->addEnum(CreateEnumParam( "Particle Formation", (int*)(&mInitialFormation) )
@@ -154,6 +154,10 @@ void Graviton::setupInterface()
                          .oscReceiver(getName(), "formradius"));
     
     mInterface->gui()->addSeparator();
+    mInterface->addEnum(CreateEnumParam( "Color Mode", (int*)(&mColorMode) )
+                        .maxValue(COLOR_COUNT)
+                        .oscReceiver(getName(), "colormode")
+                        .isVertical());
     mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
                          .oscReceiver(getName(), "alpha"));
     mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
@@ -504,8 +508,19 @@ void Graviton::update(double dt)
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
-    //mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
-    if( mUseInvSquareCalc ) mFlags |= PARTICLE_FLAGS_INVSQR;
+    switch( mColorMode )
+    {
+        case COLOR_SPEED:
+            mFlags |= PARTICLE_FLAGS_SHOW_SPEED;
+            break;
+        case COLOR_MASS:
+            mFlags |= PARTICLE_FLAGS_SHOW_MASS;
+            break;
+        default:
+            break;
+    }
+    if( mUseInvSquareCalc )
+        mFlags |= PARTICLE_FLAGS_INVSQR;
         
     mKernel->setArg(ARG_FLAGS, mFlags);
     

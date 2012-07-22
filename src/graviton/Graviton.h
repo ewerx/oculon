@@ -128,6 +128,16 @@ private:
         PARTICLE_FLAGS_SHOW_MASS =  (1 << 3),
     };
     
+    enum eColorMode
+    {
+        COLOR_MONO,
+        COLOR_SPEED,
+        COLOR_MASS,
+        
+        COLOR_COUNT,
+    };
+    eColorMode              mColorMode;
+    
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
