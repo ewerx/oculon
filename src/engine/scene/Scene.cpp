@@ -56,7 +56,7 @@ void Scene::init(OculonApp* app)
     
     // setup FBO
     setupFbo();
-    mSyphon.setName(mName);
+    //mSyphon.setName(mName);
     
     // setup master interface
     mInterface = new Interface( mApp, &mApp->getOscServer() );
@@ -95,7 +95,7 @@ void Scene::setupFbo()
 	//format.setCoverageSamples(8);
 	format.setSamples(4); // 4x AA
     
-    mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+    //mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
 }
 
 void Scene::resize()

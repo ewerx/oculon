@@ -59,6 +59,7 @@ protected:// from Scene
 private:
     void updateAudioResponse();
     void applyQueuedForces();
+    void applyForcePatterns();
     
 private:
     Vec2i mMousePos;

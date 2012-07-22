@@ -429,10 +429,23 @@ void Binned::draw()
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
     
-    switch (mApplyForcePattern) 
+    applyForcePatterns();
+    
+	mParticleSystem.update();
+	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
+	mParticleSystem.draw( mPointColor, mPointSize );
+    
+    gl::popMatrices();
+    
+    ++mFrameCounter;
+}
+
+void Binned::applyForcePatterns()
+{
+    switch (mApplyForcePattern)
     {
         case PATTERN_FOUR_CORNERS:
-            {
+        {
             //Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
             const float radius = mMaxRadius;
             const float force = mMaxForce;
@@ -443,7 +456,7 @@ void Binned::draw()
             
             mParticleSystem.addRepulsionForce(mMetropolis.p5.x, mMetropolis.p5.y, radius, force*mForceScaleX, force*mForceScaleY);
             mParticleSystem.addRepulsionForce(mMetropolis.p6.x, mMetropolis.p6.y, radius, force*mForceScaleX, force*mForceScaleY);
-            }
+        }
             break;
             
         case PATTERN_BPM_BOUNCE:
@@ -458,28 +471,28 @@ void Binned::draw()
                 const float force = mMaxForce;//*0.5f;
                 //float d = radius*1.5f;
                 /*
-                switch( mBpmBouncePosition )
-                {
-                    case 0:
-                        center.x = mApp->getViewportWidth()/2 - radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 + d;
-                        break;
-                
-                    case 1:
-                        center.x = mApp->getViewportWidth()/2 + radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 + d;
-                        break;
-                        
-                    case 2:
-                        center.x = mApp->getViewportWidth()/2 - radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 - d;
-                        break;
-                        
-                    case 3:
-                        center.x = mApp->getViewportWidth()/2 + radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 - d;
-                        break;
-                }
+                 switch( mBpmBouncePosition )
+                 {
+                 case 0:
+                 center.x = mApp->getViewportWidth()/2 - radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 + d;
+                 break;
+                 
+                 case 1:
+                 center.x = mApp->getViewportWidth()/2 + radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 + d;
+                 break;
+                 
+                 case 2:
+                 center.x = mApp->getViewportWidth()/2 - radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 - d;
+                 break;
+                 
+                 case 3:
+                 center.x = mApp->getViewportWidth()/2 + radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 - d;
+                 break;
+                 }
                  */
                 center.x = mApp->getViewportWidth()/2;
                 center.y = mApp->getViewportHeight()/2;
@@ -551,15 +564,15 @@ void Binned::draw()
         case PATTERN_RING:
         {
             /*
-            const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
-            float time = elapsed_seconds / mPatternDuration;
-            if( time > 1.0f )
-            {
-                mApplyForcePattern = PATTERN_NONE;
-                mApp->enableFrameCapture( false );
-                break;
-                //mApp->quit();
-            }
+             const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
+             float time = elapsed_seconds / mPatternDuration;
+             if( time > 1.0f )
+             {
+             mApplyForcePattern = PATTERN_NONE;
+             mApp->enableFrameCapture( false );
+             break;
+             //mApp->quit();
+             }
              */
             
             bool gotime = true;
@@ -593,16 +606,16 @@ void Binned::draw()
                 bool both = Rand::randFloat(1.0f) < 0.75f;
                 if( alternate || both )
                 {
-                
+                    
                     for( theta = 0.0f; theta < (M_PI*2.0f); theta += delta )
                     {
                         mParticleSystem.addRepulsionForce(center.x+sin(theta)*radius*2.0f, center.y+cos(theta)*radius*2.0f, radius, force*mForceScaleX, force*mForceScaleY);
                         
                     }
-                }                
+                }
                 if( !alternate || both )
                 {
-                
+                    
                     const float inner_force = Rand::randFloat(0.5f*force,force*1.5f);
                     const float inner_radius = Rand::randFloat(radius*0.25f,radius);
                     mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
@@ -636,7 +649,7 @@ void Binned::draw()
             
             break;
         }
-        
+            
         case PATTERN_NONE:
             applyQueuedForces();
             if( !mIsOrbiterModeEnabled )
@@ -646,16 +659,6 @@ void Binned::draw()
         default:
             break;
     }
-    
-	mParticleSystem.update();
-	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw( mPointColor, mPointSize );
-    
-    gl::enableDepthRead();
-    gl::enableAlphaBlending();
-    gl::popMatrices();
-    
-    ++mFrameCounter;
 }
 
 void Binned::drawDebug()

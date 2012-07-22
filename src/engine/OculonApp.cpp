@@ -63,10 +63,16 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mUseMayaCam         = true;
     
-    mEnableSyphonServer = true;
+    mEnableSyphonServer = mConfig.getBool("syphon");;
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
-    mOutputMode         = OUTPUT_MULTIFBO;
+    
+    mOutputMode         = OUTPUT_FBO;
+    const int outputMode = mConfig.getInt("output_mode");
+    if( outputMode < OUTPUT_COUNT )
+    {
+        mOutputMode = (eOutputMode)outputMode;
+    }
     
     mEnableOscServer    = true;
     mEnableKinect       = mConfig.getBool("kinect_enabled");
@@ -138,7 +144,7 @@ void OculonApp::setup()
     }
     
     // syphon
-    mScreenSyphon.setName("Oculon");
+    mScreenSyphon.setName("oculon");
     
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
@@ -230,7 +236,10 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mInterface->gui()->addColumn();
     mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
     // scene thumbnails
-    mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
+    if( scene->getFbo() )
+    {
+        mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
+    }
     mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
     mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
     mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
@@ -319,7 +328,10 @@ void OculonApp::resize( ResizeEvent event )
         if( scene && scene->isRunning() )
         {
             scene->resize();
-            mThumbnailControls[index]->resetTexture( &(scene->getFbo().getTexture()) );
+            if( scene->getFbo() )
+            {
+                mThumbnailControls[index]->resetTexture( &(scene->getFbo().getTexture()) );
+            }
         }
         ++index;
     }
@@ -723,15 +735,13 @@ void OculonApp::drawToFbo()
     // bind the framebuffer - now everything we draw will go there
     mFbo.bindFramebuffer();
     
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
     gl::disableAlphaBlending();
-    //gl::enableAdditiveBlending();
-    glEnable(GL_TEXTURE_2D);
+    
     // setup the viewport to match the dimensions of the FBO
     gl::setViewport( mFbo.getBounds() );
-    gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-    gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+    gl::clear( Color(0.0f,0.0f,0.0f) );
     
     drawScenes();
     
@@ -742,20 +752,18 @@ void OculonApp::drawToFbo()
 
 void OculonApp::drawFromFbo()
 {
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
-    gl::disableAlphaBlending();
-    //gl::pushMatrices();
-    glEnable(GL_TEXTURE_2D);
+    //gl::enableDepthRead();
+    //gl::enableDepthWrite();
+    //gl::disableAlphaBlending();
+    //glEnable(GL_TEXTURE_2D);
     // draw the captured texture back to screen
     float width = getWindowWidth();
     float height = getWindowHeight();
-    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
     gl::setMatricesWindow( Vec2i( width, height ) );
     
     // flip
     gl::draw( mFbo.getTexture(), Rectf( 0, height, width, 0 ) );
-    //gl::popMatrices();
 
 }
 
@@ -778,50 +786,28 @@ void OculonApp::renderScenes()
 
 void OculonApp::drawScenes()
 {
-    glPushMatrix();
+    if( mOutputMode == OUTPUT_MULTIFBO )
     {
-        if( mOutputMode == OUTPUT_MULTIFBO )
+        // draw scene FBO textures
+        gl::disableDepthRead();
+        gl::disableDepthWrite();
+        gl::disableAlphaBlending();
+        glEnable(GL_TEXTURE_2D);
+        gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+        if( mDrawOnlyLastScene )
         {
-            // draw scene FBO textures
-            gl::disableDepthRead();
-            gl::disableDepthWrite();
-            gl::disableAlphaBlending();
-            //gl::enableAlphaBlending();
-            //gl::enableAdditiveBlending();
-            glEnable(GL_TEXTURE_2D);
-            //gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-            gl::color( ColorA(1.0f,1.0f,1.0f,0.9f) );
-            if( mDrawOnlyLastScene )
+            if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
             {
-                if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
+                Scene* scene = mScenes[mLastActiveScene];
+                if( scene && scene->isVisible() )
                 {
-                    Scene* scene = mScenes[mLastActiveScene];
-                    if( scene && scene->isVisible() )
-                    {
-                        gl::Fbo& fbo = scene->getFbo();
-                        gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
-                    }
-                }
-            }
-            else
-            {
-                for (SceneList::iterator sceneIt = mScenes.begin(); 
-                     sceneIt != mScenes.end();
-                     ++sceneIt )
-                {
-                    Scene* scene = (*sceneIt);
-                    assert( scene != NULL );
-                    if( scene && scene->isVisible() )
-                    {
-                        gl::Fbo& fbo = scene->getFbo();
-                        gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
-                    }
+                    gl::Fbo& fbo = scene->getFbo();
+                    gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
                 }
             }
         }
         else
         {
-            // draw scenes directly
             for (SceneList::iterator sceneIt = mScenes.begin(); 
                  sceneIt != mScenes.end();
                  ++sceneIt )
@@ -830,12 +816,27 @@ void OculonApp::drawScenes()
                 assert( scene != NULL );
                 if( scene && scene->isVisible() )
                 {
-                    scene->draw();
+                    gl::Fbo& fbo = scene->getFbo();
+                    gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
                 }
             }
         }
     }
-    glPopMatrix();
+    else
+    {
+        // draw scenes directly
+        for (SceneList::iterator sceneIt = mScenes.begin(); 
+             sceneIt != mScenes.end();
+             ++sceneIt )
+        {
+            Scene* scene = (*sceneIt);
+            assert( scene != NULL );
+            if( scene && scene->isVisible() )
+            {
+                scene->draw();
+            }
+        }
+    }
 }
 
 void OculonApp::draw()
