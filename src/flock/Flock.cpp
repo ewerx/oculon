@@ -46,10 +46,13 @@ Flock::~Flock()
 
 void Flock::setup()
 {
-    mCamType = CAM_MAYA;
+    mCamType = CAM_SPRING;
     
     ////////------------------------------------------------------
     //
+    // CAMERA
+	mSpringCam			= SpringCam( -420.0f, getWindowAspectRatio() );
+    
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );
 	mRgba16Format.setMinFilter( GL_NEAREST );
@@ -70,20 +73,19 @@ void Flock::setup()
 	mLanternGlowTex		= gl::Texture( loadImage( loadResource( RES_FLOCK_LANTERNGLOW_PNG ) ) );
 	mGlowTex			= gl::Texture( loadImage( loadResource( RES_FLOCK_GLOW_PNG ) ) );
 	mNebulaTex			= gl::Texture( loadImage( loadResource( RES_FLOCK_NEBULA_PNG ) ) );
-	mIconTex			= gl::Texture( loadImage( loadResource( "iconFlocking.png" ) ), mipFmt );
 	
 	// LOAD SHADERS
 	try {
-		mVelocityShader		= gl::GlslProg( loadResource( RES_PASSTHRU_VERT ),	loadResource( RES_FLOCK_VELOCITY_FRAG ) );
-		mPositionShader		= gl::GlslProg( loadResource( RES_PASSTHRU_VERT ),	loadResource( RES_FLOCK_POSITION_FRAG ) );
-		mP_VelocityShader	= gl::GlslProg( loadResource( RES_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_VELOCITY_FRAG ) );
-		mP_PositionShader	= gl::GlslProg( loadResource( RES_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_POSITION_FRAG ) );
+		mVelocityShader		= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_VELOCITY_FRAG ) );
+		mPositionShader		= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_POSITION_FRAG ) );
+		mP_VelocityShader	= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_P_VELOCITY_FRAG ) );
+		mP_PositionShader	= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_P_POSITION_FRAG ) );
 		mLanternShader		= gl::GlslProg( loadResource( RES_FLOCK_LANTERN_VERT ),	loadResource( RES_FLOCK_LANTERN_FRAG ) );
-		mRoomShader			= gl::GlslProg( loadResource( RES_FLOCK_ROOM_VERT ),		loadResource( RES_FLOCK_ROOM_FRAG ) );
+		mRoomShader			= gl::GlslProg( loadResource( RES_FLOCK_ROOM_VERT ),loadResource( RES_FLOCK_ROOM_FRAG ) );
 		mShader				= gl::GlslProg( loadResource( RES_FLOCK_VBOPOS_VERT ),	loadResource( RES_FLOCK_VBOPOS_FRAG ) );
 		mP_Shader			= gl::GlslProg( loadResource( RES_FLOCK_P_VBOPOS_VERT ),	loadResource( RES_FLOCK_P_VBOPOS_FRAG ) );
-		mGlowShader			= gl::GlslProg( loadResource( RES_PASSTHRU_VERT ),	loadResource( RES_FLOCK_GLOW_FRAG ) );
-		mNebulaShader		= gl::GlslProg( loadResource( RES_PASSTHRU_VERT ),	loadResource( RES_FLOCK_NEBULA_FRAG ) );
+		mGlowShader			= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_GLOW_FRAG ) );
+		mNebulaShader		= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_NEBULA_FRAG ) );
 	} catch( gl::GlslProgCompileExc e ) {
 		std::cout << e.what() << std::endl;
 		exit(1);
@@ -91,8 +93,14 @@ void Flock::setup()
 	
 	// CONTROLLER
 	mController			= Controller( MAX_LANTERNS );
+    
+    // MOUSE
+	mMousePos			= Vec2f::zero();
+	mMouseDownPos		= Vec2f::zero();
+	mMouseOffset		= Vec2f::zero();
+	mMousePressed		= false;
 
-	//mInitUpdateCalled	= false;
+	mInitUpdateCalled	= false;
 	
 	initialize();
 
@@ -555,9 +563,20 @@ void Flock::initPredatorVbo()
 }
 
 void Flock::update(double dt)
-{	
+{
+    if( !mInitUpdateCalled )
+        mInitUpdateCalled = true;
+    
+    dt *= 60;
+    
 	// CONTROLLER
 	mController.update(dt);
+    
+    // CAMERA
+    if( mMousePressed ){
+		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01f );
+	}
+	mSpringCam.update( 0.3f );
 	
 	gl::disableAlphaBlending();
 	gl::disableDepthRead();
@@ -568,7 +587,7 @@ void Flock::update(double dt)
 	drawIntoPositionFbo(dt);
 	drawIntoPredatorVelocityFbo(dt);
 	drawIntoPredatorPositionFbo(dt);
-	drawIntoRoomFbo();
+	//drawIntoRoomFbo();
 	drawIntoLanternsFbo();
 }
 
@@ -700,7 +719,7 @@ void Flock::drawIntoRoomFbo()
 	glCullFace( GL_BACK );
 	Matrix44f m;
 	m.setToIdentity();
-	//m.scale( Vec3f( 350.0f, 200.0f, 350.0f ) );
+	m.scale( Vec3f( 350.0f, 200.0f, 350.0f ) );
 	
 	mLanternsFbo.bindTexture();
     /*
@@ -727,6 +746,14 @@ void Flock::drawIntoRoomFbo()
 
 void Flock::draw()
 {
+    if( !mInitUpdateCalled )
+        return;
+    
+    //glDisable(GL_TEXTURE_2D);
+    gl::pushMatrices();
+    
+    ////////------------------------------------------------------
+    //
 	gl::clear( ColorA( 0.1f, 0.1f, 0.1f, 0.0f ), true );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	
@@ -736,7 +763,7 @@ void Flock::draw()
     Vec3f billboardRight;
     Vec3f billboardUp;
     getCam().getBillboardVectors( &billboardRight, &billboardUp );
-	
+    
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
 	gl::enable( GL_TEXTURE_2D );
@@ -843,6 +870,10 @@ void Flock::draw()
 	
 	mThisFbo	= ( mThisFbo + 1 ) % 2;
 	mPrevFbo	= ( mThisFbo + 1 ) % 2;
+    //
+    ////////------------------------------------------------------
+    
+    gl::popMatrices();
 }
 
 void Flock::drawGlows( const Vec3f& billboardRight, const Vec3f& billboardUp )
@@ -911,6 +942,38 @@ void Flock::drawIntoLanternsFbo()
 
 //
 ////////------------------------------------------------------
+
+void Flock::handleMouseDown( const MouseEvent& event )
+{
+    if( event.isRight() ){
+        //		mArcball.mouseDown( event.getPos() );
+		//mWasRightButtonLastClicked = true;
+	} else {
+		//mWasRightButtonLastClicked = false;
+	}
+	//mMouseTimePressed = getElapsedSeconds();
+	mMouseDownPos = event.getPos();
+	mMousePressed = true;
+	mMouseOffset = Vec2f::zero();
+}
+
+void Flock::handleMouseUp( const MouseEvent& event )
+{
+	//mMouseTimeReleased	= getElapsedSeconds();
+	mMousePressed = false;
+	mMouseOffset = Vec2f::zero();
+}
+
+void Flock::handleMouseMove( const MouseEvent& event )
+{
+    mMousePos = event.getPos();
+}
+
+void Flock::handleMouseDrag( const MouseEvent& event )
+{
+	handleMouseMove( event );
+	mMouseOffset = ( mMousePos - mMouseDownPos ) * 0.4f;
+}
 
 const Camera& Flock::getCam()
 {

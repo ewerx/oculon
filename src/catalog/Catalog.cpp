@@ -403,8 +403,8 @@ void Catalog::drawHud()
 {
     gl::pushMatrices();
     
-    const float width = mApp->getViewportWidth();
-    const float height = mApp->getViewportHeight();
+    //const float width = mApp->getViewportWidth();
+    //const float height = mApp->getViewportHeight();
     
     //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
     //gl::setMatrices(textCam);

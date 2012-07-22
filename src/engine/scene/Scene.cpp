@@ -95,7 +95,7 @@ void Scene::setupFbo()
 	//format.setCoverageSamples(8);
 	format.setSamples(4); // 4x AA
     
-    mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+    //mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
 }
 
 void Scene::resize()

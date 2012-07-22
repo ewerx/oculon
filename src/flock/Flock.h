@@ -32,6 +32,10 @@ public:
     void update(double dt);
     void draw();
     //void drawDebug();
+    void handleMouseDown( const ci::app::MouseEvent& event );
+    void handleMouseUp( const ci::app::MouseEvent& event );
+    void handleMouseDrag( const ci::app::MouseEvent& event );
+    void handleMouseMove( const ci::app::MouseEvent& event );
     
     const ci::Camera& getCam();
     
@@ -108,6 +112,12 @@ private:
 	ci::gl::Fbo			mP_PositionFbos[2];
 	ci::gl::Fbo			mP_VelocityFbos[2];
 	int					mThisFbo, mPrevFbo;
+    
+    // MOUSE
+    ci::Vec2f			mMousePos, mMouseDownPos, mMouseOffset;
+	bool				mMousePressed;
+    
+    bool                mInitUpdateCalled;
     //
     ////////------------------------------------------------------
     

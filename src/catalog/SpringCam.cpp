@@ -26,7 +26,8 @@ SpringCam::SpringCam( float camDist, float aspectRatio )
 	mCenNode		= SpringNode( mCenter );
 	mUpNode			= SpringNode( mUp );
 	
-	mCam.setPerspective( 65.0f, aspectRatio, 5.0f, 200000.0f );
+	//mCam.setPerspective( 65.0f, aspectRatio, 5.0f, 200000.0f ); // catalog
+    mCam.setPerspective( 65.0f, aspectRatio, 5.0f, 3000.0f ); // flocking
 }
 
 void SpringCam::update( float timeDelta )
@@ -37,8 +38,9 @@ void SpringCam::update( float timeDelta )
 	mEyeNode.update( timeDelta );
 	mCenNode.update( timeDelta );
 	
-	Vec3f dir		= mCenNode.mPos - mEyeNode.mPos;
-	Vec3f dirNorm	= dir.normalized();
+	//Vec3f dir		= mCenNode.mPos - mEyeNode.mPos;
+	//Vec3f dirNorm	= dir.normalized();
+    
 //	Vec3f up		= dirNorm.cross( Vec3f::xAxis() );
 //	up.normalize();
 //	Vec3f temp		= dirNorm.cross( up );
@@ -46,9 +48,11 @@ void SpringCam::update( float timeDelta )
 //	up = dirNorm.cross( temp );
 //	up.normalize();
 	
-	Vec3f newEyePos = mEyeNode.mPos + dirNorm * 10.0f;
+	//Vec3f newEyePos = mEyeNode.mPos + dirNorm * 10.0f;
+	//mCam.lookAt( newEyePos, mCenNode.mPos, mUpNode.mPos );
+    
+    mCam.lookAt( mEyeNode.mPos, mCenNode.mPos, mUpNode.mPos );
 
-	mCam.lookAt( newEyePos, mCenNode.mPos, mUpNode.mPos );
 	mMvpMatrix = mCam.getProjectionMatrix() * mCam.getModelViewMatrix();
 }
 

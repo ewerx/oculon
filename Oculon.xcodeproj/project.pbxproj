@@ -138,6 +138,20 @@
 		7C8F153A15BB4B1700BAD08D /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F153715BB4B1700BAD08D /* glow.png */; };
 		7C8F153B15BB4B1700BAD08D /* lanternGlow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F153815BB4B1700BAD08D /* lanternGlow.png */; };
 		7C8F153C15BB4B1700BAD08D /* nebula.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F153915BB4B1700BAD08D /* nebula.png */; };
+		7C8F153D15BB506100BAD08D /* glow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151815BB4AF100BAD08D /* glow.frag */; };
+		7C8F153E15BB506100BAD08D /* lantern.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151915BB4AF100BAD08D /* lantern.frag */; };
+		7C8F153F15BB506100BAD08D /* lantern.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151A15BB4AF100BAD08D /* lantern.vert */; };
+		7C8F154015BB506100BAD08D /* nebula.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151B15BB4AF100BAD08D /* nebula.frag */; };
+		7C8F154115BB506100BAD08D /* P_Position.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151D15BB4AF100BAD08D /* P_Position.frag */; };
+		7C8F154215BB506100BAD08D /* P_VboPos.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151E15BB4AF100BAD08D /* P_VboPos.frag */; };
+		7C8F154315BB506100BAD08D /* P_VboPos.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F151F15BB4AF100BAD08D /* P_VboPos.vert */; };
+		7C8F154415BB506100BAD08D /* P_Velocity.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152015BB4AF100BAD08D /* P_Velocity.frag */; };
+		7C8F154515BB506100BAD08D /* Position.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152115BB4AF100BAD08D /* Position.frag */; };
+		7C8F154615BB506100BAD08D /* room.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152215BB4AF100BAD08D /* room.frag */; };
+		7C8F154715BB506100BAD08D /* room.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152315BB4AF100BAD08D /* room.vert */; };
+		7C8F154815BB506100BAD08D /* VboPos.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152415BB4AF100BAD08D /* VboPos.frag */; };
+		7C8F154915BB506100BAD08D /* VboPos.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152515BB4AF100BAD08D /* VboPos.vert */; };
+		7C8F154A15BB506100BAD08D /* Velocity.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C8F152615BB4AF100BAD08D /* Velocity.frag */; };
 		7C8F207814D79B4400AC2D64 /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207614D79B4400AC2D64 /* BinnedParticleSystem.cpp */; };
 		7C8F207B14D79C7500AC2D64 /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F207914D79C7500AC2D64 /* Binned.cpp */; };
 		7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C90D66D156F21CD00685CB4 /* SolFrame.cpp */; };
@@ -1590,6 +1604,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C8F153D15BB506100BAD08D /* glow.frag in Resources */,
+				7C8F153E15BB506100BAD08D /* lantern.frag in Resources */,
+				7C8F153F15BB506100BAD08D /* lantern.vert in Resources */,
+				7C8F154015BB506100BAD08D /* nebula.frag in Resources */,
+				7C8F154115BB506100BAD08D /* P_Position.frag in Resources */,
+				7C8F154215BB506100BAD08D /* P_VboPos.frag in Resources */,
+				7C8F154315BB506100BAD08D /* P_VboPos.vert in Resources */,
+				7C8F154415BB506100BAD08D /* P_Velocity.frag in Resources */,
+				7C8F154515BB506100BAD08D /* Position.frag in Resources */,
+				7C8F154615BB506100BAD08D /* room.frag in Resources */,
+				7C8F154715BB506100BAD08D /* room.vert in Resources */,
+				7C8F154815BB506100BAD08D /* VboPos.frag in Resources */,
+				7C8F154915BB506100BAD08D /* VboPos.vert in Resources */,
+				7C8F154A15BB506100BAD08D /* Velocity.frag in Resources */,
 				7C134474158996BE0032017E /* brightStars.frag in Resources */,
 				7C134475158996BE0032017E /* brightStars.vert in Resources */,
 				7C134476158996BE0032017E /* faintStars.frag in Resources */,

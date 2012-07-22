@@ -36,6 +36,7 @@
 #include "Tectonic.h"
 #include "Sol.h"
 #include "Catalog.h"
+#include "Flock.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -63,10 +64,10 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mUseMayaCam         = true;
     
-    mEnableSyphonServer = true;
+    mEnableSyphonServer = false;
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
-    mOutputMode         = OUTPUT_MULTIFBO;
+    mOutputMode         = OUTPUT_DIRECT;//OUTPUT_MULTIFBO;
     
     mEnableOscServer    = true;
     mEnableKinect       = mConfig.getBool("kinect_enabled");
@@ -230,7 +231,10 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mInterface->gui()->addColumn();
     mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
     // scene thumbnails
-    mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
+    if( scene->getFbo() )
+    {
+        mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
+    }
     mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
     mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
     mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
@@ -290,6 +294,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
+    if( mConfig.getBool("flock") )      addScene( new Flock() );
     
     // Test Scenes
     //addScene( new MovieTest() );
@@ -708,11 +713,11 @@ void OculonApp::drawToScreen()
     
     if( mOutputMode != OUTPUT_MULTIFBO || mDrawToScreen )
     {
-        gl::disableDepthRead();
-        gl::disableDepthWrite();
-        gl::enableAlphaBlending();
-        gl::clear( ColorA(0.0f,0.0f,0.0f,1.0f) );
-        gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+        //gl::disableDepthRead();
+        //gl::disableDepthWrite();
+        //gl::enableAlphaBlending();
+        //gl::clear( ColorA(0.0f,0.0f,0.0f,1.0f) );
+        //gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
         drawScenes();
     }
 }
@@ -790,7 +795,7 @@ void OculonApp::drawScenes()
             //gl::enableAdditiveBlending();
             glEnable(GL_TEXTURE_2D);
             //gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-            gl::color( ColorA(1.0f,1.0f,1.0f,0.9f) );
+            gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
             if( mDrawOnlyLastScene )
             {
                 if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
@@ -940,7 +945,7 @@ void OculonApp::drawDebug()
     
     if( mInfoPanel.isVisible() )
     {
-        mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
+        //mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
     }
     
     if( !mIsPresentationMode )
