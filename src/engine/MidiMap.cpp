@@ -11,7 +11,8 @@
 #include "cinder/app/App.h"
 #include <map>
 
-
+using namespace ci;
+using namespace ci::app;
 
 MidiMap::MidiMap()
 : mMidiInput(NULL)

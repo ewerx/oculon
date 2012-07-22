@@ -20,6 +20,7 @@
 using namespace ci;
 
 KinectTest::KinectTest()
+: Scene("kinect")
 {
 }
 
@@ -29,6 +30,8 @@ KinectTest::~KinectTest()
 
 void KinectTest::setup()
 {
+    Scene::setup();
+    
     mBlobTracker.setup( mApp->getKinectController() );
     mKinectTilt = 0.0f;
 }
@@ -36,6 +39,8 @@ void KinectTest::setup()
 void KinectTest::update(double dt)
 {
     mBlobTracker.update();
+    
+    Scene::update(dt);
 }
 
 void KinectTest::draw()
@@ -81,9 +86,11 @@ void KinectTest::draw()
 void KinectTest::drawDebug()
 {
     char buf[256];
-    const Vec3f& pos = mBlobTracker.getTargetPosition();
-    snprintf(buf, 256, "tracking: %.1f,%.1f,%.1f", pos.x, pos.y, pos.z );
-    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.7f, 0.8f));
+    //const Vec3f& pos = mBlobTracker.getTargetPosition();
+    //snprintf(buf, 256, "tracking: %.1f,%.1f,%.1f", pos.x, pos.y, pos.z );
+    //mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.7f, 0.8f));
+    
+    Scene::drawDebug();
 }
 
 bool KinectTest::handleKeyDown(const KeyEvent& keyEvent)

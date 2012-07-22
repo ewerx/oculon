@@ -10,6 +10,7 @@
 #ifndef __OCULONAPP_H__
 #define __OCULONAPP_H__
 
+#include <vector>
 #include "cinder/app/AppBasic.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
@@ -17,17 +18,18 @@
 #include "cinder/MayaCamUI.h"
 #include "cinder/qtime/MovieWriter.h"
 #include "cinder/gl/Fbo.h"
+#include "cinderSyphon.h"
+#include "SimpleGUI.h"
 #include "AudioInput.h"
 #include "MidiInput.h"
 #include "MindWave.h"
 #include "OscServer.h"
 #include "KinectController.h"
 #include "InfoPanel.h"
-#include <vector>
-#include "cinderSyphon.h"
 
 // fwd decl
 class Scene;
+class Interface;
 
 using namespace ci;
 using namespace ci::app;
@@ -43,6 +45,12 @@ public:
     {
         SCENE_ORBITER,
         SCENE_BINNED
+    };
+    
+    enum eSpecialSceneIndex
+    {
+        INTERFACE_MAIN = -1,
+        INTERFACE_NONE = -2
     };
     
 public: // cinder interface
@@ -62,35 +70,57 @@ public: // cinder interface
     
     int getViewportWidth() const;                 
     int getViewportHeight() const;
+    Area getViewportBounds() const;
     
 public: // new
-    inline AudioInput& getAudioInput()               { return mAudioInput; }
-    inline MidiInput& getMidiInput()                 { return mMidiInput; }
-    inline MindWave& getMindWave()                   { return mMindWave; }
-    inline KinectController& getKinectController()   { return mKinectController; }
+    inline AudioInput& getAudioInput()                  { return mAudioInput; }
+    inline MidiInput& getMidiInput()                    { return mMidiInput; }
+    inline MindWave& getMindWave()                      { return mMindWave; }
+    inline KinectController& getKinectController()      { return mKinectController; }
+    inline OscServer& getOscServer()                    { return mOscServer; }
     
-    inline const Vec2f& getMousePos()          { return mMousePos; }
-    inline InfoPanel& getInfoPanel()           { return mInfoPanel; }
-    inline params::InterfaceGl& getParams()    { return mParams; }
+    inline InfoPanel& getInfoPanel()                    { return mInfoPanel; }
+    inline params::InterfaceGl& getParams()             { return mParams; }
     
-    inline bool isPresentationMode() const     { return mIsPresentationMode; }
-    inline void setUseMayaCam(bool use)        { mUseMayaCam = use; }
+    inline bool isPresentationMode() const              { return mIsPresentationMode; }
+    inline void setUseMayaCam(bool use)                 { mUseMayaCam = use; }
     
     void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    inline const Camera& getMayaCam() const     { return mMayaCam.getCamera();  }
+    inline const Camera& getMayaCam() const             { return mMayaCam.getCamera();  }
     
-    inline double getElapsedSecondsThisFrame() const  { return mElapsedSecondsThisFrame; }
+    inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
     
     //TODO: hack
-    Scene* getScene(const int index)            { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
+    Scene* getScene(const int index)                    { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     
-    void enableFrameCapture( bool enable );
+    void enableFrameCapture( const bool enable );
+    void setCaptureDuration( const float duration ) { mCaptureDuration = duration; }
+    int getFrameCaptureCount() const { return mFrameCaptureCount; }
+    
+    // interface callbacks
+    bool onFrameCaptureToggle();
+    bool onOutputModeChange();
+    bool syncInterface();
+    
+    bool toggleScene(const int sceneId);
+    bool showInterface(const int sceneId);
     
 protected: // new
     
+    void drawToScreen();
+    void drawToFbo();
+    void drawFromFbo();
+    void drawScenes();
+    void renderScenes();
+    void drawDebug();
+    void captureFrames();
+    void saveScreenshot();
+    
+    void setupInterface();
     void setupScenes();
     void addScene(Scene* newScene, bool startActive =false);
     void setPresentationMode( bool enabled );
+    void toggleFullscreen();
     
     void startVideoCapture( bool useDefaultPath =true );
     void stopVideoCapture();
@@ -98,9 +128,14 @@ protected: // new
     
 private: // members
     
+    // settings
+    Config                  mConfig;
+    
     // input
     AudioInput              mAudioInput;
+    
     MidiInput               mMidiInput;
+    bool                    mEnableMidi;
     
     MindWave                mMindWave;
     bool                    mEnableMindWave;
@@ -112,37 +147,56 @@ private: // members
     bool                    mEnableKinect;
     bool                    mEnableOpenNI;
     
-    Vec2f                   mMousePos;
-    
     // render
     double                  mLastElapsedSeconds;
     double                  mElapsedSecondsThisFrame;
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     
-    // temp
+    enum eOutputMode
+    {
+        OUTPUT_DIRECT,
+        OUTPUT_FBO,
+        OUTPUT_MULTIFBO,
+        
+        OUTPUT_COUNT
+    };
+    eOutputMode             mOutputMode;
+    gl::Fbo                 mFbo;
+    
+    // scenes
     typedef vector<Scene*>  SceneList;
     SceneList               mScenes;
+    bool                    mDrawToScreen;
+    bool                    mDrawOnlyLastScene;
+    int                     mLastActiveScene;
+    bool                    mSetupScenesOnStart;
     
-    // debug
+    // ui
     InfoPanel               mInfoPanel;
     params::InterfaceGl		mParams;
-    
+    Interface*              mInterface;
     bool                    mIsPresentationMode;
+    std::vector<mowa::sgui::TextureVarControl*> mThumbnailControls;
     
+    // capture
     bool                    mIsCapturingVideo;
     qtime::MovieWriter      mMovieWriter;
     
     bool                    mIsCapturingFrames;
     string                  mFrameCapturePath;
     int                     mFrameCaptureCount;
-    bool                    mIsCapturingHighRes;
-    gl::Fbo                 mFbo;
-    
+    float                   mCaptureDuration;
     bool                    mSaveNextFrame;
+    bool                    mCaptureDebugOutput;
     
+    // syphon
     syphonServer            mScreenSyphon;
     bool                    mEnableSyphonServer;
+    
+    // fps
+    bool                    mIsSendingFps;
+    float                   mFpsSendTimer;
 };
 
 #endif

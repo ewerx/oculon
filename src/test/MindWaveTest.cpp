@@ -22,9 +22,10 @@
 
 void MindWaveTest::setup()
 {
+    Scene::setup();
 }
 
-void MindWaveTest::update(double /*dt*/)
+void MindWaveTest::update(double dt)
 {
     MindWave& mindWave = mApp->getMindWave();
     
@@ -62,6 +63,8 @@ void MindWaveTest::update(double /*dt*/)
     {
         mRawValues.erase(mRawValues.begin());
     }
+    
+    Scene::update(dt);
 }
 
 void MindWaveTest::draw()

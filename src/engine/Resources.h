@@ -1,6 +1,7 @@
 #pragma once
 #include "cinder/CinderResources.h"
 
+// textures
 #define RES_PARTICLE                CINDER_RESOURCE( ../resources/images/, particle.png, 128, PNG )
 #define RES_PARTICLE_WHITE          CINDER_RESOURCE( ../resources/images/, particle_white.png, 128, PNG )
 #define RES_GLITTER                 CINDER_RESOURCE( ../resources/images/, glitter.png, 128, PNG )
@@ -8,6 +9,8 @@
 #define RES_NORMAL                  CINDER_RESOURCE( ../resources/, normal.png, 130, PNG )
 #define RES_BUMP                    CINDER_RESOURCE( ../resources/, bump.png, 131, PNG )
 #define RES_SPEC_EXPONENT           CINDER_RESOURCE( ../resources/, specExponent.png, 132, PNG )
+
+// shaders
 #define RES_SHADER_PASSTHRU			CINDER_RESOURCE( ../resources/shaders/, passthru.vsh, 133, GLSL )
 #define RES_SHADER_FRAGMENT			CINDER_RESOURCE( ../resources/shaders/, shader.fsh, 134, GLSL )
 #define RES_EMITTER_VERT			CINDER_RESOURCE( ../resources/shaders/, emitter_vert.glsl, 135, GLSL )
@@ -18,7 +21,21 @@
 #define RES_PASSTHRU_VERT           CINDER_RESOURCE( ../resources/shaders/, passThru_vert.glsl, 128, GLSL )
 #define RES_BLUR_FRAG               CINDER_RESOURCE( ../resources/shaders/, gaussianBlur_frag.glsl, 129, GLSL )
 
+#define RES_MOTIONBLUR_FRAG         CINDER_RESOURCE( ../resources/shaders/, motionBlur.frag, 129, GLSL )
+#define RES_PASSTHRU2_VERT          CINDER_RESOURCE( ../resources/shaders/, passThru.vert, 129, GLSL )
 
+// tectonic
+#define RES_EARTH_FRAG		CINDER_RESOURCE( ../resources/shaders/, earth_frag.glsl, 128, GLSL )
+#define RES_EARTHDIFFUSE	CINDER_RESOURCE( ../resources/images/tectonic/, earthDiffuse.png, 129, PNG )
+#define RES_EARTHMASK		CINDER_RESOURCE( ../resources/images/tectonic/, earthMask.png, 130, PNG )
+#define RES_EARTHNORMAL		CINDER_RESOURCE( ../resources/images/tectonic/, earthNormal.png, 131, PNG )
+#define RES_QUAKE_FRAG		CINDER_RESOURCE( ../resources/shaders/, quake_frag.glsl, 133, GLSL )
+#define RES_QUAKE_VERT		CINDER_RESOURCE( ../resources/shaders/, quake_vert.glsl, 134, GLSL )
+
+// sol
+#define RES_SOLMASK         CINDER_RESOURCE( ../resources/images/sol/, solmask.png, 129, PNG )
+
+// orbiter textures
 #define RES_ORBITER_SUN             CINDER_RESOURCE( ../resources/images/orbiter/, sunmap.jpg, 200, JPG )
 #define RES_ORBITER_MERCURY         CINDER_RESOURCE( ../resources/images/orbiter/, mercurymap.jpg, 201, JPG )
 #define RES_ORBITER_VENUS           CINDER_RESOURCE( ../resources/images/orbiter/, venusmap.jpg, 202, JPG )
@@ -28,3 +45,15 @@
 #define RES_ORBITER_SATURN          CINDER_RESOURCE( ../resources/images/orbiter/, saturnmap.jpg, 206, JPG )
 #define RES_ORBITER_URANUS          CINDER_RESOURCE( ../resources/images/orbiter/, uranusmap.jpg, 207, JPG )
 #define RES_ORBITER_NEPTUNE         CINDER_RESOURCE( ../resources/images/orbiter/, neptunemap.jpg, 208, JPG )
+
+// catalog
+#define RES_BRIGHT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/, brightStars.vert, 100, GLSL )
+#define RES_BRIGHT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/, brightStars.frag, 100, GLSL )
+#define RES_FAINT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/, faintStars.vert, 100, GLSL )
+#define RES_FAINT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/, faintStars.frag, 100, GLSL )
+
+#define RES_CATALOG_MILKYWAY        CINDER_RESOURCE( ../resources/images/catalog/, milkyWay.jpg, 200, JPG )
+#define RES_CATALOG_STAR            CINDER_RESOURCE( ../resources/images/catalog/, star.png, 200, PNG )
+#define RES_CATALOG_STARGLOW        CINDER_RESOURCE( ../resources/images/catalog/, starGlow.png, 200, PNG )
+#define RES_CATALOG_DARKSTAR        CINDER_RESOURCE( ../resources/images/catalog/, darkStar.png, 200, PNG )
+#define RES_CATALOG_SPECTRUM        CINDER_RESOURCE( ../resources/images/catalog/, spectrum.png, 200, PNG )

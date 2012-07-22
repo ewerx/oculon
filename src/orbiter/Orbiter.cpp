@@ -15,6 +15,7 @@
 #include "Sun.h"
 #include "TextEntity.h"
 #include "Resources.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace boost;
@@ -48,12 +49,11 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04
 // Orbiter
 //
 Orbiter::Orbiter()
-: Scene()
+: Scene("orbiter")
 , mSun(NULL)
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
-, mIsFollowCameraEnabled(true)
-, mIsBinnedModeEnabled(false)
+, mCamType(CAM_FOLLOW)
 {
     mEnableFrustumCulling = true; // Scene
     
@@ -85,6 +85,8 @@ Orbiter::~Orbiter()
 
 void Orbiter::setup()
 {
+    Scene::setup();
+    
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
 	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
@@ -106,6 +108,7 @@ void Orbiter::setup()
 
 void Orbiter::resize()
 {
+    Scene::resize();
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
         ++bodyIt)
@@ -129,24 +132,36 @@ void Orbiter::setupMidiMapping()
     //mMidiInput.setMidiKey("gravity", channel, note);
 }
 
-void Orbiter::setupParams(params::InterfaceGl& params)
+void Orbiter::setupDebugInterface()
 {
-    params.addText( "orbiter", "label=`Orbiter`" );
-    params.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
-    //params.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    params.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    params.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
-    params.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    params.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
-    params.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
-    params.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
-    params.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
-    params.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
-    params.addParam("Orbit Cam", &mIsFollowCameraEnabled, "");
-    params.addParam("Binned", &mIsBinnedModeEnabled, "");
-    //params.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //params.addSeparator();
-    //params.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+    Scene::setupDebugInterface();
+    
+    mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
+    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+    mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
+    mDebugParams.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
+    mDebugParams.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
+    mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
+    mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
+    mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
+    mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
+    mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
+    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
+    //mDebugParams.addSeparator();
+    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+}
+
+void Orbiter::setupInterface()
+{
+    mInterface->addEnum(CreateEnumParam("Camera", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camera")
+                        .isVertical());
+    
+    mInterface->addButton(CreateTriggerParam("Next Target", NULL)
+                          .oscReceiver(mName,"nexttarget"))->registerCallback( this, &Orbiter::nextTarget );
+    mInterface->addButton(CreateTriggerParam("Prev Target", NULL)
+                          .oscReceiver(mName,"prevtarget"))->registerCallback( this, &Orbiter::prevTarget );
 }
 
 void Orbiter::reset()
@@ -232,7 +247,7 @@ void Orbiter::reset()
                                radius, 
                                0.0000000001f,
                                mass, 
-                               ColorA(0.5f, 0.55f, 0.525f));
+                               ColorA(0.5f, 0.55f, 0.925f));
         body->setup();
         mBodies.push_back(body);
     }
@@ -274,8 +289,8 @@ void Orbiter::update(double dt)
 
     // debug info
     char buf[256];
-    snprintf(buf, 256, "orbiter cam: %s", mIsBinnedModeEnabled ? "locked 2D" : (mIsFollowCameraEnabled ? "follow" : "manual" ) );
-    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.75f));
+    //snprintf(buf, 256, "orbiter cam: %d", mCamType );
+    //mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.75f));
     
     bool simulate = true;
     bool symmetric = true;
@@ -337,20 +352,18 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
             handled = false;
             break;
         case 'c':
-            mIsFollowCameraEnabled = !mIsFollowCameraEnabled;
-            mApp->setUseMayaCam( !mIsBinnedModeEnabled&& !mIsFollowCameraEnabled );
+            mCamType = (mCamType == CAM_FOLLOW) ? CAM_MANUAL : CAM_FOLLOW;
+            mApp->setUseMayaCam( mCamType == CAM_MANUAL );
             break;
         case '[':
-            if( --mFollowTargetIndex < 4 )
-                mFollowTargetIndex = mBodies.size()-1;
+            prevTarget();
             break;
         case ']':
-            if( ++mFollowTargetIndex == mBodies.size() )
-                mFollowTargetIndex = 4;
+            nextTarget();
             break;
         case 'b':
-            mIsBinnedModeEnabled = !mIsBinnedModeEnabled;
-            mApp->setUseMayaCam( !mIsBinnedModeEnabled && !mIsFollowCameraEnabled );
+            mCamType = (mCamType == CAM_FOLLOW) ? CAM_BINNED : CAM_FOLLOW;
+            mApp->setUseMayaCam( false );
             handled = false;
             break;
         case 'o':
@@ -363,6 +376,20 @@ bool Orbiter::handleKeyDown(const KeyEvent& keyEvent)
     }
     
     return handled;
+}
+
+bool Orbiter::prevTarget()
+{
+    if( --mFollowTargetIndex < 4 )
+        mFollowTargetIndex = mBodies.size()-1;
+    
+    return false;
+}
+
+bool Orbiter::nextTarget()
+{
+    if( ++mFollowTargetIndex == mBodies.size() )
+        mFollowTargetIndex = 4;
 }
 
 //
@@ -401,7 +428,7 @@ void Orbiter::updateAudioResponse()
 void Orbiter::draw()
 {
     gl::enableDepthWrite();
-    
+    gl::enableAlphaBlending();
     gl::pushMatrices();
     
     Matrix44d matrix = Matrix44d::identity();
@@ -409,12 +436,12 @@ void Orbiter::draw()
                        mDrawScale * getWindowHeight() / 2.0f,
                        mDrawScale * getWindowHeight() / 2.0f));
 
-    if( mIsBinnedModeEnabled )
+    if( CAM_BINNED == mCamType )
     {
         mCam.lookAt( Vec3d(0,6000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
         gl::setMatrices(mCam);
     }
-    else if( mIsFollowCameraEnabled )
+    else if( CAM_FOLLOW == mCamType )
     {
         Body* cameraLookingAt = mSun;
         Body* cameraAttachedTo = mFollowTarget;
@@ -459,7 +486,7 @@ void Orbiter::draw()
         gl::setMatrices(mApp->getMayaCam());
     }
     
-    //glEnable( GL_MULTISAMPLE_ARB );
+    glEnable( GL_POLYGON_SMOOTH );
     glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
 	
@@ -468,6 +495,7 @@ void Orbiter::draw()
     
     
     // frustum culling
+    BodyList visibleBodies;
     int culled = 0;
     for(BodyList::iterator bodyIt = mBodies.begin(); 
         bodyIt != mBodies.end();
@@ -493,9 +521,22 @@ void Orbiter::draw()
     
     //mApp->console() << "culled " << culled << std::endl;
     
-    gl::popMatrices();
-    glDisable( GL_LIGHTING );
 	glDisable( GL_LIGHT0 );
+    glDisable( GL_LIGHTING );
+    
+    glEnable( GL_LINE_SMOOTH );
+    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+    glLineWidth(Orbiter::sTrailWidth);
+    
+    for(BodyList::iterator bodyIt = mBodies.begin(); 
+       bodyIt != mBodies.end();
+       ++bodyIt)
+    {
+        (*bodyIt)->drawTrail();
+    }
+    
+    gl::popMatrices();
     
     drawHud();
 }
@@ -701,7 +742,6 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     }
     
     glPushMatrix();
-    glDisable(GL_LIGHTING);
     glTranslatef(left,top,0.0f);
     float * fftBuffer = fftDataRef.get();
     
@@ -727,7 +767,7 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
 
 const Camera& Orbiter::getCamera() const
 {
-    if( mIsBinnedModeEnabled || mIsFollowCameraEnabled )
+    if( mCamType != CAM_MANUAL )
     {
         return mCam;
     }

@@ -16,7 +16,8 @@
 using namespace ci;
 
 MovieTest::MovieTest()
-: mActiveMovie(0)
+: Scene("video")
+, mActiveMovie(0)
 , mCycleDuration(0.0f)
 , mCycleTimer(0.0f)
 {
@@ -59,17 +60,16 @@ void MovieTest::setup()
     
 }
 
-void MovieTest::setActive(bool active)
+void MovieTest::handleRunningChanged()
 {
-    Scene::setActive(active);
-    
+    //TODO: is this neccessary with movie.update tied to mIsActive?
     for( int i=0; i < NUM_MOVIES; ++i )
     {
-        if( mMoviePlayers[i]->isPlaying() && !active )
+        if( mMoviePlayers[i]->isPlaying() && !mIsRunning )
         {
             mMoviePlayers[i]->getMovie().stop();
         }
-        else if( !mMoviePlayers[i]->isPlaying() && active )
+        else if( !mMoviePlayers[i]->isPlaying() && mIsRunning )
         {
             mMoviePlayers[i]->getMovie().play();
         }
@@ -97,6 +97,8 @@ void MovieTest::update(double dt)
     {
         assert(false && "active movie out of range");
     }
+    
+    Scene::update(dt);
 }
 
 void MovieTest::draw()

@@ -17,7 +17,6 @@
 #include "Scene.h"
 #include "MidiMap.h"
 
-using namespace ci;
 using std::vector;
 
 class Body;
@@ -35,17 +34,22 @@ public:
     
     // inherited from Scene
     void setup();
-    void setupParams(params::InterfaceGl& params);
     void reset();
     void resize();
     void update(double dt);
     void draw();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     const Camera& getCamera() const;
     
-    // midi callbacks
+    // callbacks
     void handleGravityChange(MidiEvent midiEvent);
     void handleTimeScaleChange(MidiEvent midiEvent);
+    bool prevTarget();
+    bool nextTarget();
+    
+protected:// from Scene
+    void setupInterface();
+    void setupDebugInterface();
     
 private:
     void setupMidiMapping();
@@ -60,8 +64,6 @@ private:
     
     void removeBodies();
     
-    void enableBinnedMode( bool enable = true ) { mIsBinnedModeEnabled = enable; }
-    
 private:
     //Vec3f           mLightDirection;
     
@@ -74,9 +76,17 @@ private:
     Sun*                mSun;
     int                 mFollowTargetIndex;
     Body*               mFollowTarget;
-    bool                mIsFollowCameraEnabled;
-    bool                mIsBinnedModeEnabled;
     CameraPersp         mCam;
+    
+    enum eCamType 
+    {
+        CAM_MANUAL,
+        CAM_FOLLOW,
+        CAM_BINNED,
+        
+        CAM_COUNT
+    };
+    eCamType        mCamType;
     
     double          mElapsedTime;
     double          mTimeScale;

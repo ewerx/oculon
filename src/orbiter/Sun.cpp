@@ -113,11 +113,10 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         const bool binned = true;
         if( binned )
         {
-            OculonApp* app = static_cast<OculonApp*>(App::get());
             //TODO: hack, use a message
             Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene(1));
             
-            if( binnedScene && binnedScene->isActive() )
+            if( binnedScene && binnedScene->isRunning() )
             {
                 Vec3d screenCoords = transform * mPosition;
                 Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());

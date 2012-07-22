@@ -12,24 +12,37 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace midi;
 
 
 MidiInput::MidiInput()
-:mEnabled(true)
+: mMidiHub(NULL)
 {
 }
 
 MidiInput::~MidiInput()
 {
+    if( mMidiHub )
+    {
+        delete mMidiHub;
+    }
+}
+
+void MidiInput::setup()
+{
+    if( mMidiHub == NULL )
+    {
+        mMidiHub = new Hub();
+    }
 }
 
 void MidiInput::update()
 {
-    if( mEnabled )
+    if( mMidiHub )
     {
         midi::Message msg;
         
-        while (mMidiHub.getNextMessage(&msg))
+        while (mMidiHub->getNextMessage(&msg))
         {
             if( DEBUG_MIDI )
             {

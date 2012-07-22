@@ -13,73 +13,115 @@
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/Camera.h"
+#include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
 #include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
+#include "cinderSyphon.h"
 
 // fwd decl
 class OculonApp;
-
-using namespace ci;
+class Interface;
 
 
 class Scene
 {
 public:
-    Scene();
+    Scene(const std::string& name);
     virtual ~Scene();
     
     void init(OculonApp* app);
-    
+    virtual void setup();
     virtual void reset() {}
     virtual void shutdown() {}
-    virtual void resize() {}
+    virtual void resize();
     virtual void update(double dt);
     virtual void draw() {}
-    virtual void drawDebug() {}
+    virtual void drawInterface();
+    virtual void drawDebug();
     
     virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
-    virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { return; }
-	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { return; }
-	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { return; }
+    virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { }
+	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { }
+	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { }
+    virtual void handleMouseMove( const ci::app::MouseEvent& event )        { }
+    virtual void handleRunningChanged()                                     { }
+    virtual void handleVisibleChanged()                                     { }
+    virtual void handleDebugChanged()                                       { }
     
-    OculonApp* getApp() { return mApp; }
-    virtual const Camera& getCamera() const;
+    virtual const ci::Camera& getCamera() const;
     
-    bool isActive() const           { return mIsActive; }
+    void drawToFbo();
+    void publishToSyphon();
+    ci::gl::Fbo& getFbo()           { return mFbo; }
+    
+    OculonApp* getApp() const       { return mApp; }
+    const std::string& getName()    { return mName; }
+    
+    Interface* getInterface()                       { return mInterface; }
+    ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
+    
+    bool isSetup() const            { return mIsSetup; }
+    bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
+    bool isDebug() const            { return mIsDebug; }
     
-    virtual void setActive(bool active)     { mIsActive = active; }
-    virtual void setVisible(bool visible)   { mIsVisible = visible; }
+    void setRunning(bool running);
+    void setVisible(bool visible);
+    void setDebug(bool debug);
+    void showInterface(bool show);
+    bool toggleActiveVisible();
+    bool setRunningByVisibleState();
     
-    void toggleActiveVisible()      { mIsActive = !mIsActive; mIsVisible = !mIsVisible; }
+    // callbacks
+    bool onDebugChanged();
+    bool onVisibleChanged();
+    bool onRunningChanged();
+    bool onReset()  { mDoReset = true; return false; }
     
     // frustum culling
     bool isFrustumCullingEnabled()  { return mEnableFrustumCulling; }
     void setFrustumCulling( bool enabled ) { mEnableFrustumCulling = enabled; }
-    bool isPointInFrustum( const Vec3f &loc );
-	bool isSphereInFrustum( const Vec3f &loc, float radius );
-	bool isBoxInFrustum( const Vec3f &loc, const Vec3f &size );
+    bool isPointInFrustum( const ci::Vec3f &loc );
+	bool isSphereInFrustum( const ci::Vec3f &loc, float radius );
+	bool isBoxInFrustum( const ci::Vec3f &loc, const ci::Vec3f &size );
     
 protected:
     
-    virtual void setup() {}
-    virtual void setupParams(ci::params::InterfaceGl& params) {}
+    virtual void setupInterface() {}
+    virtual void setupDebugInterface();
+    void setupFbo();
+    
+    bool saveInterfaceParams();
+    bool loadInterfaceParams(const int index =0);
     
     // frustum culling
-    void calcFrustumPlane( Vec3f &fNormal, Vec3f& fPoint, float& fDist, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3 );
-	void calcNearAndFarClipCoordinates( const Camera& cam );	
+    void calcFrustumPlane( ci::Vec3f &fNormal, ci::Vec3f& fPoint, float& fDist, const ci::Vec3f& v1, const ci::Vec3f& v2, const ci::Vec3f& v3 );
+	void calcNearAndFarClipCoordinates( const ci::Camera& cam );	
 
 protected:
-    OculonApp* mApp;//TODO: fix this dependency
+    friend class OculonApp;
+    OculonApp* mApp;
     
-    bool        mIsActive;
+    std::string mName;
+    
+    bool        mIsSetup;
+    bool        mIsRunning;
     bool        mIsVisible;
-    
+    bool        mIsDebug;
     
     bool        mEnableFrustumCulling;
     
+    Interface*              mInterface;
+    ci::params::InterfaceGl mDebugParams;
+    
+    bool mDoReset;
+    
 private:
+    // fbo
+    ci::gl::Fbo             mFbo;
+    syphonServer            mSyphon;
+    
     // frustum culling
     enum
     { 
@@ -95,12 +137,17 @@ private:
     bool        mIsFrustumPlaneCached;
     struct tFrustumPlane
     {
-        Vec3f mNormal;
-        Vec3f mPoint;
+        ci::Vec3f mNormal;
+        ci::Vec3f mPoint;
         float mDistance;
     };
     
     tFrustumPlane mCachedFrustumPlane[SIDE_COUNT];
+    
+    // constants
+    static const char* const    kIniLocation;
+    static const char* const    kIniExt;
+    static const int            kIniDigits;
     
 };
 

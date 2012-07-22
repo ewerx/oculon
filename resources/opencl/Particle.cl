@@ -2,7 +2,12 @@
 #define CENTER_FORCE	0.007f
 #define MOUSE_FORCE		300.0f
 #define MIN_SPEED		0.1f
+#define MAX_MASS        1.0f
 
+#define PARTICLE_FLAGS_INVSQR       (1 << 0)
+#define PARTICLE_FLAGS_SHOW_DARK    (1 << 1)
+#define PARTICLE_FLAGS_SHOW_SPEED   (1 << 2)
+#define PARTICLE_FLAGS_SHOW_MASS    (1 << 3)
 
 typedef struct
 {
@@ -11,8 +16,23 @@ typedef struct
 	float dummy;		// need this to make sure the float2 vel is aligned to a 16 byte boundary
 } clParticle;
 
+typedef struct
+{
+    float2 mVel;
+    float mMass;
+    float mLife;    
+    // make sure the float2 vel is aligned to a 16 byte boundary
+} tParticle;
 
+typedef struct 
+{
+    float2 mPos;
+    float2 mVel;
+    float mMass;
+    float mCharge;
+} tNode;
 
+// MSALibs Demo
 __kernel void updateParticle(__global clParticle* particles, __global float2* posBuffer, const float2 mousePos, const float2 dimensions)
 {
 	int id = get_global_id(0);
@@ -31,3 +51,81 @@ __kernel void updateParticle(__global clParticle* particles, __global float2* po
 	p->vel *= DAMP;
 }
 
+// Magneto
+__kernel void magnetoParticle(__global tParticle* particles, 
+                              __global tNode* nodes,
+                              __global float2* posBuffer, 
+                              __global float4 *color,
+                              __global float *fft,
+                              const uint num_particles,
+                              const uint num_nodes,
+                              const float dt,
+                              const float damping,
+                              const float alpha,
+                              const uint flags,
+                              const float2 mousePos,
+                              const float2 dimensions)
+{
+	const uint i = get_global_id(0);
+    if( i >= num_particles )
+    {
+        return;
+    }
+    
+    __global tParticle *particle = &particles[i];
+    
+    float2 a = (float2)(0.0f, 0.0f);
+    
+    for( uint j = 0; j < num_nodes; ++j )
+    {
+        __global const tNode *node = &nodes[j];
+        float2 dist = node->mPos - posBuffer[i];
+        float invDistSq = 0.0f;
+        if( flags & PARTICLE_FLAGS_INVSQR )
+        {
+            invDistSq = rsqrt(dist.x*dist.x + dist.y*dist.y);
+            //invDistSq = invDistSq * invDistSq;
+        }
+        else
+        {
+            invDistSq = 1.0f / dot(dist, dist);
+        }
+        a += dist * particle->mMass * node->mMass * node->mCharge * invDistSq;
+    }
+    
+	particle->mVel += a * dt;
+	
+	//float speed2 = dot(particle->mVel, particle->mVel);
+	//if(speed2 < MIN_SPEED)
+    //{
+    //    posBuffer[i] = mousePos + dist * (1 + particle->mMass);
+    //}
+    
+	particle->mVel *= damping;
+    posBuffer[i] += particle->mVel * dt;
+
+    // color
+    if( flags & PARTICLE_FLAGS_SHOW_DARK )
+    {
+        color[i].x = 1.0f;
+        color[i].y = 1.0f;
+        color[i].z = 1.0f;
+        color[i].w = alpha;
+    }
+    else if( flags & PARTICLE_FLAGS_SHOW_SPEED )
+    {
+        float speed = 10.0f*rsqrt(particle->mVel.x*particle->mVel.x + particle->mVel.y*particle->mVel.y);
+        color[i].y = speed;
+        color[i].z = speed;
+        color[i].w = alpha;
+    }
+    else if( flags & PARTICLE_FLAGS_SHOW_MASS )
+    {
+        const int fftIdx = i%512;
+        float massRatio = particle->mMass / MAX_MASS;
+        color[i].x = massRatio*massRatio + (fft[fftIdx]/2.0f);
+        color[i].y = massRatio/2.0f + (fftIdx/512);
+        color[i].z = massRatio - fft[fftIdx];
+        color[i].w = alpha + fft[fftIdx];
+    }
+}

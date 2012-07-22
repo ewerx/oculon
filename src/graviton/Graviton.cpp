@@ -15,19 +15,14 @@
 #include "cinder/Easing.h"
 #include "Utils.h"
 #include "Orbiter.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace ci::app;
 
-#define PARTICLE_FLAGS_NONE         0x00
-#define PARTICLE_FLAGS_INVSQR       (1 << 0)
-#define PARTICLE_FLAGS_SHOW_DARK    (1 << 1)
-#define PARTICLE_FLAGS_SHOW_SPEED   (1 << 2)
-#define PARTICLE_FLAGS_SHOW_MASS    (1 << 3)
-
 
 Graviton::Graviton()
-: Scene()
+: Scene("graviton")
 {
 }
 
@@ -37,6 +32,8 @@ Graviton::~Graviton()
 
 void Graviton::setup()
 {
+    Scene::setup();
+    
     mTimeStep = 0.00075f;
     mGravity = 50.0f;
     
@@ -50,12 +47,13 @@ void Graviton::setup()
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
-    mPointSize = 2.0f;
-    mParticleAlpha = 0.45f;
+    mPointSize = 1.0f;
+    mParticleAlpha = 0.5f;
+    mUseMotionBlur = false;
     
     mDamping = 1.0f;
     mGravity = 100.0f;
-    mEps = 0.01f;//mFormationRadius * 0.5f;
+    mEps = 0.001f;//mFormationRadius * 0.5f;
     
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_NONE;
@@ -67,8 +65,8 @@ void Graviton::setup()
     mCamLateralPosition = -mCamMaxDistance;
     mCamTarget = Vec3f::zero();
     mCamTurnRate = 0.25f;
-    mCamTranslateRate = 10.f;
-    mCamType = CAM_SPIRAL;
+    mCamTranslateRate = 1.0f;
+    mCamType = CAM_SPLINE;
     
     
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
@@ -83,62 +81,108 @@ void Graviton::setup()
     
 	initOpenCl();
     
-    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_GLITTER ) ) );
+    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE_WHITE ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
-    // blur shader
-    try 
-    {
-		mBlurShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
-	}
-	catch( gl::GlslProgCompileExc &exc ) 
-    {
-		std::cout << "Shader compile error: " << std::endl;
-		std::cout << exc.what();
-	}
-	catch( ... ) 
-    {
-		std::cout << "Unable to load shader" << std::endl;
-	}
-    
     reset();
+    
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Graviton::drawParticles, this ) );
+
 }
 
-//void Graviton::setupMidiMapping()
-//{
-// setup MIDI inputs for learning
-//mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-//mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-//mMidiMap.beginLearning();
-// ... or load a MIDI mapping
-//mMidiInput.setMidiKey("gravity", channel, note);
-//}
-
-void Graviton::setupParams(params::InterfaceGl& params)
+void Graviton::setupDebugInterface()
 {
-    params.addText( "graviton", "label=`Graviton`" );
-    params.addParam("Inv Square", &mUseInvSquareCalc );
-    params.addParam("Time Step_", &mTimeStep, "step=0.0001 min=0.0 max=1.0" );
-    params.addParam("Initial Formation", (int*)(&mInitialFormation), "min=0 max=3");//"enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}' " );
-    params.addParam("Node Formation", (int*)(&mGravityNodeFormation), "min=0 max=2");
-    params.addParam("Formation Radius", &mFormationRadius, "min=1.0" );
-    params.addParam("Damping", &mDamping, "min=0.0 step=0.0001");
-    params.addParam("Gravity", &mGravity, "min=0.0 max=1000 step=0.1");
-    params.addParam("EPS", &mEps, "min=0.01 max=1000 step=1)");
+    Scene::setupDebugInterface(); // add all interface params
     
-    params.addParam("Cam Type", (int*)(&mCamType), "min=0 max=2");
-    params.addParam("Cam Radius", &mCamRadius, "min=1.0");
-    params.addParam("Cam Distance", &mCamMaxDistance, "min=0.0");
-    params.addParam("Cam Turn Rate", &mCamTurnRate, "step=0.01");
-    params.addParam("Cam Slide Rate", &mCamTranslateRate, "");
+    mDebugParams.setOptions("Time Step", "step=0.0001 min=-1.0 max=1.0" );
+    mDebugParams.setOptions("Gravity", "step=0.1");
+    mDebugParams.setOptions("Alpha", "min=0.0 max=1.0 step=0.001");
     
-    params.addParam("Point Size", &mPointSize, "");
-    params.addParam("Point Smoothing", &mEnablePointSmoothing, "");
-    params.addParam("Point Sprites", &mUseImageForPoints, "");
-    params.addParam("Point Scaling", &mScalePointsByDistance, "");
-    params.addParam("Additive Blending", &mAdditiveBlending, "");
-    params.addParam("Alpha", &mParticleAlpha, "min=0.0 max=1.0 step=0.001");
+    mDebugParams.setOptions("Particle Formation", "min=0 max=3 enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}'" );
+    mDebugParams.setOptions("Node Formation", "min=0 max=2");
+    mDebugParams.setOptions("Damping", "step=0.0001");
+    mDebugParams.setOptions("EPS", "min=0.0 step=0.001");
+    
+    mDebugParams.setOptions("Cam Type", "min=0 max=3");
+    mDebugParams.setOptions("Cam Radius", "min=1.0");
+    mDebugParams.setOptions("Cam Distance", "min=0.0");
+    mDebugParams.setOptions("Cam Turn Rate", "step=0.01");
+    mDebugParams.setOptions("Cam Slide Rate", "step=0.1");
+    
+    mDebugParams.addSeparator();
+    mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
+    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
+    mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
+    mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
+    mDebugParams.addParam("Point Scaling", &mScalePointsByDistance, "");
+    mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
+    
+}
 
+void Graviton::setupInterface()
+{
+    mInterface->addParam(CreateFloatParam( "Time Step", &mTimeStep )
+                         .minValue(0.0f)
+                         .maxValue(0.001f)
+                         .oscReceiver(getName(), "timestep"));
+                         //.oscReceiver("/1/fader1"));
+                         //.oscSender("/1/fader1"));
+    mInterface->addParam(CreateFloatParam( "Damping", &mDamping )
+                         .oscReceiver(getName(), "damping"));
+    mInterface->addParam(CreateFloatParam( "EPS", &mEps )
+                         .minValue(0.0001)
+                         .maxValue(1500)
+                         .oscReceiver(getName(), "eps"));
+    mInterface->addParam(CreateFloatParam( "Gravity", &mGravity )
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(getName(), "gravity"));
+                         //.oscReceiver("/1/fader2"));
+    
+    mInterface->gui()->addSeparator();
+    mInterface->addEnum(CreateEnumParam( "Particle Formation", (int*)(&mInitialFormation) )
+                         .maxValue(FORMATION_COUNT)
+                         .oscReceiver(getName(), "pformation")
+                         .isVertical());
+    mInterface->addEnum(CreateEnumParam( "Node Formation", (int*)(&mGravityNodeFormation) )
+                         .maxValue(NODE_FORMATION_COUNT)
+                         .oscReceiver(getName(), "nformation")
+                         .isVertical());
+    mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
+                         .minValue(10.0f)
+                         .maxValue(1000.0f)
+                         .oscReceiver(getName(), "formradius"));
+    
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
+                         .oscReceiver(getName(), "alpha"));
+    mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
+                         .minValue(1.0f)
+                         .maxValue(3.0f)
+                         .oscReceiver(getName(), "psize"));
+    
+    mInterface->gui()->addColumn();
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                         .maxValue(CAM_COUNT)
+                         .oscReceiver(getName(), "camtype")
+                         .isVertical());
+    mInterface->addParam(CreateFloatParam( "Cam Radius", &mCamRadius )
+                         .minValue(1.0f)
+                         .maxValue(500.f)
+                         .oscReceiver(getName(), "camradius"));
+    mInterface->addParam(CreateFloatParam( "Cam Distance", &mCamMaxDistance )
+                         .minValue(0.0f)
+                         .maxValue(500.f));
+    mInterface->addParam(CreateFloatParam( "Cam Turn Rate", &mCamTurnRate )
+                         .minValue(0.0f)
+                         .maxValue(5.0f)
+                         .oscReceiver(getName(), "camturn"));
+    mInterface->addParam(CreateFloatParam( "Cam Slide Rate", &mCamTranslateRate )
+                         .minValue(0.0f)
+                         .maxValue(5.0f)
+                         .oscReceiver(getName(), "camspeed"));
+    mInterface->addButton(CreateTriggerParam("Reset Spline", NULL)
+                          .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );    
 }
 
 void Graviton::initParticles()
@@ -335,7 +379,9 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
         default:
             break;
     }
-
+    
+    // random spline
+    setupCameraSpline();
 }
                               
 
@@ -387,7 +433,7 @@ void Graviton::reset()
     
     const size_t size = sizeof(float4) * kNumParticles;
 	
-    // recreate teh buffers (afaik there's no leak here)
+    // recreate the buffers (afaik there's no leak here)
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
 	glVertexPointer(4, GL_FLOAT, 0, 0);
@@ -428,12 +474,12 @@ void Graviton::reset()
 
 void Graviton::resize()
 {
+    Scene::resize();
+    mMotionBlurRenderer.resize(mApp->getWindowSize());
 }
 
 void Graviton::update(double dt)
 {
-    Scene::update(dt);
-    
 	//mDimensions.x = mApp->getViewportWidth();
 	//mDimensions.y = mApp->getViewportHeight();
     
@@ -458,7 +504,7 @@ void Graviton::update(double dt)
     
     // update flags // TODO: cleanup
     mFlags = PARTICLE_FLAGS_NONE;
-    mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
+    //mFlags |= PARTICLE_FLAGS_SHOW_MASS;//PARTICLE_FLAGS_SHOW_SPEED;//PARTICLE_FLAGS_SHOW_DARK;
     if( mUseInvSquareCalc ) mFlags |= PARTICLE_FLAGS_INVSQR;
         
     mKernel->setArg(ARG_FLAGS, mFlags);
@@ -511,20 +557,11 @@ void Graviton::update(double dt)
     
     mSwap = !mSwap;
     
-	//mKernelUpdate->setArg(2, mMousePos);
-	//mKernelUpdate->setArg(3, mDimensions);
-	//mKernelUpdate->run1D(kNumParticles);
-    
     updateCamera(dt);
     
     //updateHud();
     
-    // debug info
-    char buf[256];
-    snprintf(buf, 256, "particles: %d", mNumParticles);
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
-    snprintf(buf, 256, "massives: %d", mStep);
-    mApp->getInfoPanel().addLine(buf, Color(0.75f, 0.5f, 0.5f));
+    Scene::update(dt);
 }
 
 //
@@ -585,22 +622,82 @@ void Graviton::updateAudioResponse()
 
 void Graviton::updateCamera(const double dt)
 {
-    mCamAngle += dt * mCamTurnRate;
-    mCamLateralPosition += dt * mCamTranslateRate;
-    if( ( (mCamLateralPosition > mCamMaxDistance) && mCamTranslateRate > 0.0f ) ||
-        ( (mCamLateralPosition < -mCamMaxDistance) && mCamTranslateRate < 0.0f ) )
+    switch( mCamType )
     {
-        mCamTranslateRate = -mCamTranslateRate;
+        case CAM_SPLINE:
+        {
+            mCamSplineValue += dt * (mCamTranslateRate*0.01f);
+            Vec3f pos = mCamSpline.getPosition( mCamSplineValue );
+            Vec3f delta = pos - mCamLastPos;
+            Vec3f up = delta.cross(pos);
+            //up.normalize();
+            mCam.lookAt( pos, mCamTarget, up );
+            mCamLastPos = pos;
+        }
+            break;
+            
+        case CAM_SPIRAL:
+        {
+            //TODO: use quaternion
+            //Quatf incQuat( normal, rotation );
+            //mQuat *= incQuat;
+            //mQuat.normalize();
+            mCamAngle += dt * mCamTurnRate;
+            mCamLateralPosition += dt * mCamTranslateRate;
+            if( ( (mCamLateralPosition > mCamMaxDistance) && mCamTranslateRate > 0.0f ) ||
+               ( (mCamLateralPosition < -mCamMaxDistance) && mCamTranslateRate < 0.0f ) )
+            {
+                mCamTranslateRate = -mCamTranslateRate;
+            }
+            
+            Vec3f pos(mCamRadius * cos(mCamAngle),
+                      mCamRadius * sin(mCamAngle),
+                      mCamLateralPosition );
+            
+            Vec3f up( pos.x, pos.y, 0.0f );
+            up.normalize();
+            mCam.lookAt( pos, mCamTarget, up );
+        }
+            break;
+            
+        default:
+            break;
     }
+    
+}
 
-    Vec3f pos(mCamRadius * cos(mCamAngle),
-              mCamRadius * sin(mCamAngle),
-              mCamLateralPosition );
+bool Graviton::setupCameraSpline()
+{
+    vector<Vec3f> points;
+	int numPoints = 4 + ( Rand::randInt(4) );
+	for( int p = 0; p < numPoints; ++p )
+    {
+		points.push_back( Vec3f( Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f), Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f), Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f) ) );
+    }
+	mCamSpline = BSpline3f( points, 3, true, false );
     
-    Vec3f up( pos.x, pos.y, 0.0f );
-    up.normalize();
-    mCam.lookAt( pos, mCamTarget, up );
+	mCamSplineValue = 0.0f;
+	mCamRotation = Quatf::identity();
+	mCamLastPos = mCamSpline.getPosition( 0 );
     
+    return false;
+}
+
+void Graviton::drawCamSpline()
+{
+    gl::pushMatrices();
+    gl::setMatrices( ( mCamType == CAM_MAYA ) ? mApp->getMayaCam() : mCam );
+	const int numSegments = 100;
+	gl::color( ColorA( 0.2f, 0.85f, 0.8f, 0.85f ) );
+	glLineWidth( 2.0f );
+	gl::begin( GL_LINE_STRIP );
+	for( int s = 0; s <= numSegments; ++s ) 
+    {
+		float t = s / (float)numSegments;
+		gl::vertex( mCamSpline.getPosition( t ) );
+	}
+	gl::end();
+    gl::popMatrices();
 }
 
 //
@@ -609,31 +706,6 @@ void Graviton::updateCamera(const double dt)
 void Graviton::draw()
 {
     glPushMatrix();
-    
-    switch( mCamType )
-    {
-        case CAM_SPIRAL:
-            gl::setMatrices( mCam );
-            break;
-            
-        case CAM_ORBITER:
-        {
-            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
-            
-            if( orbiterScene && orbiterScene->isActive() )
-            {
-                gl::setMatrices( orbiterScene->getCamera() );
-            }
-            else
-            {
-                gl::setMatrices( mApp->getMayaCam() );
-            }
-        }
-            break;
-            
-        default:
-            gl::setMatrices( mApp->getMayaCam() );
-    }
     
     //gl::enableDepthWrite( false );
 	//gl::enableDepthRead( false );
@@ -653,15 +725,45 @@ void Graviton::draw()
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     */
     
-    drawParticles();
+    if( mUseMotionBlur )
+    {
+        mMotionBlurRenderer.draw();
+    }
+    else
+    {
+        drawParticles();
+    }
     
     glPopMatrix();
 }
 
-
-
 void Graviton::preRender() 
 {
+    switch( mCamType )
+    {
+        case CAM_SPLINE:
+        case CAM_SPIRAL:
+            gl::setMatrices( mCam );
+            break;
+            
+        case CAM_ORBITER:
+        {
+            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
+            
+            if( orbiterScene && orbiterScene->isRunning() )
+            {
+                gl::setMatrices( orbiterScene->getCamera() );
+            }
+            else
+            {
+                gl::setMatrices( mApp->getMayaCam() );
+            }
+        }
+            break;
+            
+        default:
+            gl::setMatrices( mApp->getMayaCam() );
+    }
     
 	if(mUseImageForPoints) 
     {
@@ -682,7 +784,10 @@ void Graviton::preRender()
         }
         else
         {
+            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, mPointSize );
+            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, mPointSize );
             glDisable(GL_POINT_SPRITE_ARB);
+            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
             glEnable(GL_POINT_SPRITE);
             glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
             glPointSize(mPointSize);
@@ -758,56 +863,12 @@ void Graviton::drawParticles()
     
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     glDisableClientState(GL_COLOR_ARRAY);
-    
-/*    
-    if(mDoDrawNodes) 
-    {
-        drawNodes();
-    }
-    
-    mOpenCl.flush();
-    
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-    glVertexPointer(2, GL_FLOAT, 0, 0);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-    glColorPointer(4, GL_FLOAT, 0, 0);
-    
-    if(mDoDrawLines) 
-    {
-        glDrawElements(GL_LINES, mNumParticles * kMaxTrailLength, GL_UNSIGNED_INT, mIndices);
-        //glDrawArrays(GL_LINES, 0, kMaxParticles);
-    }
-    
-    if(mDoDrawPoints)
-    {
-        if(mUseImageForPoints) 
-        {
-            //glEnable(GL_TEXTURE_2D);
-            mParticleTexture.bind();
-        }
-        glDrawArrays(GL_POINTS, 0, mNumParticles);
-            
-        if(mUseImageForPoints) 
-        {
-            mParticleTexture.unbind();
-            //glDisable(GL_TEXTURE_2D);
-        }
-    }
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
-    glDisableClientState(GL_COLOR_ARRAY);
-    
-    glPopMatrix();	
- */
 }
 
 void Graviton::drawDebug()
 {
+    Scene::drawDebug();
+    
     if( NODE_FORMATION_NONE != mGravityNodeFormation )
     {
         gl::pushMatrices();
@@ -823,7 +884,9 @@ void Graviton::drawDebug()
             
             gl::drawString(toString(mGravityNodes[i].mMass),textCoords,ColorAf(1.0,1.0,1.0,0.4));
         }
+        
+        gl::popMatrices();
     }
     
-    gl::popMatrices();
+    drawCamSpline();
 }

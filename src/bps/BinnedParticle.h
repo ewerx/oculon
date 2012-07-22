@@ -9,7 +9,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Rand.h"
 
-#define BINNED_QUADS 1
+//#define BINNED_QUADS 1
 
 using namespace std;
 using namespace ci;

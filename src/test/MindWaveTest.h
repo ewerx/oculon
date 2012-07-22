@@ -20,12 +20,11 @@
 class MindWaveTest : public Scene
 {
 public:
-    MindWaveTest() {}
+    MindWaveTest() : Scene("mindwave") {}
     virtual ~MindWaveTest() {}
     
     // inherited from Scene
     void setup();
-    //void setupParams(params::InterfaceGl& params);
     //void reset();
     void update(double dt);
     void draw();

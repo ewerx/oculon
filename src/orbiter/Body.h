@@ -55,6 +55,7 @@ public:
     virtual void draw(const Matrix44d& transform, bool drawBody);
     
     // new methods
+    void drawTrail();
     const Vec3d& getVelocity() const { return mVelocity; }
     const double& getAcceleration() const { return mAcceleration; }
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);

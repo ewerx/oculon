@@ -23,6 +23,7 @@ using namespace ci::audio;
 AudioInput::AudioInput()
 : mInput(NULL)
 , mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
+, mFftLogPlot(Kiss::DEFAULT_DATASIZE)
 {
 }
 
@@ -50,6 +51,8 @@ void AudioInput::setup()
 	//initialize the audio Input, using the default input device
     //TODO: specify audio input, change at run-time
 	mInput = new audio::Input( /*devices.front()*/ );
+    
+    mFftInit = false;
 }
 
 void AudioInput::shutdown()
@@ -64,12 +67,12 @@ void AudioInput::shutdown()
 //
 void AudioInput::update()
 {
-    if( !mInput )
+    if( !mInput)
     {
         return;
     }
     
-    if( !mInput->isCapturing())
+    if( !mInput->isCapturing() )
     {
         //tell the input to start capturing audio
         mInput->start();
@@ -87,19 +90,25 @@ void AudioInput::update()
         
         //KISS
         {
-            if (mPcmBuffer->getInterleavedData())
+            if ( mPcmBuffer->getInterleavedData() )
             {
                 
                 // Get sample count
-                uint32_t mSampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
-                if (mSampleCount > 0)
-                {
+                uint32_t sampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
+                if ( sampleCount > 0 ) {
                     
-                    // Initialize analyzer, if needed
-                    if (!mFftInit)
+                    // Kiss is not initialized
+                    if ( !mFftInit ) 
                     {
+                        console() << "[audio] KISS initialized (" << sampleCount << " bands)" << std::endl;
+                        // Initialize analyzer
                         mFftInit = true;
-                        mFft.setDataSize(mSampleCount);
+                        mFft = Kiss::create( /*sampleCount*/ );
+                        
+                        for( int i=0; i < sampleCount; ++i )
+                        {
+                            mFftLogPlot.push_back(Vec2f::zero());
+                        }
                     }
                     
                     // Analyze data
@@ -107,13 +116,12 @@ void AudioInput::update()
                     {
                         mInputData = mPcmBuffer->getInterleavedData()->mData;
                         mInputSize = mPcmBuffer->getInterleavedData()->mSampleCount;
-                        mFft.setData(mInputData);
+                        mFft->setData( mInputData );
                     }
                     
-                    // Get data
-                    mTimeData = mFft.getData();
-                    mDataSize = mFft.getDataSize();
+                    analyzeKissFft();
 
+                    
                 }
             }
         }
@@ -124,5 +132,21 @@ void AudioInput::update()
             //mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
             mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( CHANNEL_FRONT_LEFT ), mFftBandCount );
         }
+    }
+}
+
+void AudioInput::analyzeKissFft()
+{
+    // Get data
+    float * freqData = mFft->getAmplitude();
+    int32_t dataSize = mFft->getBinSize();
+    
+    // Iterate through data
+    for (int32_t i = 0; i < dataSize; i++) 
+    {
+        // Do logarithmic plotting for frequency domain
+        double mLogSize = log((double)dataSize);
+        mFftLogPlot[i].x = (float)(log((double)i) / mLogSize) * (double)dataSize;
+        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
     }
 }

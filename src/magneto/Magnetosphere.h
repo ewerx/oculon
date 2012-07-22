@@ -14,310 +14,161 @@
 #include "cinder/Vector.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
+#include "cinder/Timeline.h"
 #include <vector>
 
 #include "MSAOpenCL.h"
 
 #include "Scene.h"
-#include "ParticleController.h"
-#include "MidiMap.h"
-
-using namespace ci;
-using std::vector;
-
-#define USE_OPENGL_CONTEXT
-
-#define kMagnetoNumParticles        (512*512)
-#define kMagnetoMaxNodes            8
-#define kMagnetoMaxTrailLength      2
-#define kMagnetoOldNodeHistory      200
-
-#define kMagnetoSizeofPosBuffer	(kMagnetoNumParticles * sizeof(float2) * kMagnetoMaxTrailLength)
-#define kMagnetoSizeofColBuffer	(kMagnetoNumParticles * sizeof(float4) * kMagnetoMaxTrailLength)
+#include "MotionBlurRenderer.h"
 
 
 class Magnetosphere : public Scene
 {
-public:
-    static int  sOldNodeHistory;
-    
 private:
     
     typedef struct
     {
-        float2 vel;
-        float mass;
-        float life;    // make sure the float2 vel is aligned to a 16 byte boundary
-    } clParticle;
+        float2 mVel;
+        cl_float mMass;
+        cl_float mLife;    
+        // make sure the float2 vel is aligned to a 16 byte boundary
+    } tParticle;
     
     typedef struct 
     {
-        float2 pos;
-        float spread;
-        float attractForce;
-        float waveAmp;
-        float waveFreq;
-    } clNode;
+        float2 mPos;
+        float2 mVel;
+        cl_float mMass;
+        cl_float mCharge;
+    } tNode;
     
     enum eArgs
     {
         ARG_PARTICLES,
-        ARG_POS_BUFFER,
-        ARG_COLOR_BUFFER,
         ARG_NODES,
-        ARG_NUM_NODES,
+        ARG_POS,
         ARG_COLOR,
-        ARG_COLOR_TAPER,
-        ARG_MOMENTUM,
-        ARG_DIESPEED,
-        ARG_TIME,
-        ARG_WAVE_POS_MULT,
-        ARG_WAVE_VEL_MULT,
-        ARG_MASS_MIN
+        ARG_FFT,
+        ARG_NUM_PARTICLES,
+        ARG_NUM_NODES,
+        ARG_DT,
+        ARG_DAMPING,
+        ARG_ALPHA,
+        ARG_FLAGS,
+        ARG_MOUSEPOS,
+        ARG_DIMENSIONS
     };
     
-    class OldNode
+    enum
     {
-    public:
-        Vec2f history[kMagnetoOldNodeHistory];
-        int curHead;
-        int id;
-        
-        OldNode()
-        {
-            curHead = 0;
-            id = 0;
-        }
-        
-        
-        void add(float px, float py) 
-        {
-            curHead--;
-            if(curHead<0) curHead += Magnetosphere::sOldNodeHistory;
-            history[curHead].set(px, py);
-        }
-        
-        void init(float px, float py) 
-        {
-            curHead = 0;
-            for(int i=0; i<Magnetosphere::sOldNodeHistory; i++) 
-            {
-                add(px, py);
-            }
-        }
-        
-        
-        void draw(const float trailAudioDistortMin, const float trailAudioDistortMax, const float trailWaveFreqMin, const float trailWaveFreqMax, const bool trailDistanceAffectsWave, const float trailBrightness, const float4& color, const float2& renderDimensions) 
-        {
-            		glBegin(GL_LINE_STRIP);
-            //		ofBeginShape();
-            
-            float value = Rand::randFloat(); //TODO: audio
-            // value = fft.getPeaks()[(id+1) % fft.getNumAverages()]
-            float distAmount = lerp<float>(trailAudioDistortMin, trailAudioDistortMax, value);
-            
-            value = Rand::randFloat();
-            //value = fft.getPeaks()[(id+3) % fft.getNumAverages()];
-            float trailWaveFreq = 100.0f * lerp<float>(trailWaveFreqMin, trailWaveFreqMax, value);
-            
-            float invMult = 1.0f/Magnetosphere::sOldNodeHistory;
-            for(int i=0; i<Magnetosphere::sOldNodeHistory; i++) 
-            {
-                int index = (curHead + i) % Magnetosphere::sOldNodeHistory;
-                float distRatioFromhead = i * invMult;
-                
-                Vec2f &cur = history[index];
-                Vec2f old = Vec2f::zero();
-                Vec2f old2 = Vec2f::zero();
-                Vec2f next = Vec2f::zero();
-                
-                if(i>1) 
-                {
-                    old = history[(index + Magnetosphere::sOldNodeHistory - 1) % Magnetosphere::sOldNodeHistory];
-                    
-                    Vec2f diff = cur - old;
-                    
-                    Vec2f perp = Vec2f(-diff.y, diff.x);
-                    perp.normalize();
-                    
-                    Vec2f disp = perp * distAmount * sin(trailWaveFreq * index * invMult);
-                    
-                    if(trailDistanceAffectsWave) 
-                    {
-                        disp *= 2.0f * (history[curHead] - cur).length() / renderDimensions.y;
-                    }
-                    cur += disp;
-                } 
-                else 
-                {
-                    old = cur;
-                }
-                
-                if(i>2) 
-                {
-                    old2 = history[(index + Magnetosphere::sOldNodeHistory - 2) % Magnetosphere::sOldNodeHistory];
-                } 
-                else 
-                {
-                    old2 = old;
-                }
-                
-                if(i<Magnetosphere::sOldNodeHistory-1) 
-                {
-                    next = history[(index + 1) % Magnetosphere::sOldNodeHistory];
-                } 
-                else 
-                {
-                    next = cur;
-                }
-                
-                //			ofCurveVertex(cur.x, cur.y);
-                float a = trailBrightness * (1.0f - distRatioFromhead);
-                //vector<Vec2f> points;
-                //points.push_back(old2);
-                //points.push_back(old);
-                //points.push_back(cur);
-                //points.push_back(next);
-                glColor4f(color.x * a, color.y * a, color.z * a, 1.0f);
-                //gl::draw( Path2d( BSpline2f( points, 1, /*loop*/false, /*open*/true ) ) );
-                			glVertex3f(cur.x, cur.y, 0);
-                console() << "vertex: " << cur.x << ", " << cur.y << std::endl;
-                //ofCurve(old2.x, old2.y, old.x, old.y, cur.x, cur.y, next.x, next.y);
-                
-            }
-            		glEnd();
-            //		ofEndShape(false);
-        }
+        kStep =                 1024,
+        kMaxParticles =         (64 * kStep),
+        kFftBands =             512,
+        kMaxNodes =             4,
+        kParticleTrailSize =    4,
     };
-
-
+    
+    // duplicates definition in CL kernel
+    enum eParticleFlags
+    {
+        PARTICLE_FLAGS_NONE =       0x00,
+        PARTICLE_FLAGS_INVSQR =     (1 << 0),
+        PARTICLE_FLAGS_SHOW_DARK =  (1 << 1),
+        PARTICLE_FLAGS_SHOW_SPEED = (1 << 2),
+        PARTICLE_FLAGS_SHOW_MASS =  (1 << 3),
+    };
+    
 public:
     Magnetosphere();
     virtual ~Magnetosphere();
     
     // inherited from Scene
     void setup();
-    void setupParams(params::InterfaceGl& params);
     void reset();
     void resize();
     void update(double dt);
     void draw();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    void drawDebug();
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
 
+protected:// from Scene
+    void setupInterface();
+    void setupDebugInterface();
     
 private:
     void updateAudioResponse();
     //void generateParticles();
     
     void initOpenCl();
-    void updateParams();
+    void initParticles();
     
-    void updateNodes();
-    void updateNode(clNode &n, int i);
+    void updateNodes(double dt);
+    //void updateNode(clNode &n, int i);
     
     void preRender();
-    void drawNodes();
+    //void drawNodes();
     void drawParticles();
-    void drawStrokes();
+    //void drawStrokes();
     
-    void drawOffscreen();
-     
 private:
     
     bool                mIsMousePressed;
     float2				mMousePos;
-    float2				mDimensions;
+    float2              mDimensions;
     
-    clNode              mNodes[kMagnetoMaxNodes];
-    MSA::OpenCLBuffer	mClBufNodes;
-    OldNode             mOldNodes[kMagnetoMaxNodes];
-    cl_int              mNumNodes;
-    
-    bool                mNodesNeedUpdating;
-    
-    float4              mColor;
-    float2              mRenderDimensions;
-    
+    // opencl
     MSA::OpenCL			mOpenCl;
     MSA::OpenCLProgram  *mClProgram;
-    MSA::OpenCLKernel	*mKernelUpdate;
+    MSA::OpenCLKernel	*mKernel;
     
-    clParticle			mParticles[kMagnetoNumParticles];
-    MSA::OpenCLBuffer	mClBufParticles;		// stores above data
+    MSA::OpenCLBuffer	mClBufParticles;
+    MSA::OpenCLBuffer   mClBufNodes;
+    MSA::OpenCLBuffer	mClBufPos;
+    MSA::OpenCLBuffer	mClBufColor;
+    MSA::OpenCLBuffer   mClBufFft;
     
-    // contains info for rendering (VBO data) first pos, then oldPos
-    float2              mPosBuffer[kMagnetoNumParticles * kMagnetoMaxTrailLength];
-    MSA::OpenCLBuffer	mClBufPosBuffer;
+    // opencl data
+    tParticle			mParticles[kMaxParticles];
+    tNode               mNodes[kMaxNodes];
+    float2              mPosBuffer[kMaxParticles * kParticleTrailSize];
+    float4				mColorBuffer[kMaxParticles * kParticleTrailSize];
+    cl_float            mAudioFft[kFftBands];
     
-    // contains info for rendering (VBO data)
-    float4				mColorBuffer[kMagnetoNumParticles * kMagnetoMaxTrailLength];
-    MSA::OpenCLBuffer	mClBufColorBuffer;
+    // opencl params
+    cl_uint             mNumParticles;
+    cl_uint             mNumNodes;
+    cl_float            mTimeStep;
+    cl_float            mDamping;
+    cl_uint             mFlags;
     
-    GLuint              mIndices[kMagnetoNumParticles * kMagnetoMaxTrailLength];
+    // sim params
+    bool                mUseInvSquareCalc;
     
-    gl::Texture         mParticleTexture;
-    GLuint				mVbo[2];
-
-    float               mSpreadMin;
-    float               mSpreadMax;
-    float               mNodeAttractMin;
-    float               mNodeAttractMax;
-    float				mWaveFreqMin;
-    float				mWaveFreqMax;
-    float				mWaveAmpMin;
-    float				mWaveAmpMax;
-    float				mCenterDeviation;
-    float				mCenterDeviationMin;
-    float				mCenterDeviationMax;
-    
-    cl_float			mColorTaper;
-    cl_float			mMomentum;
-    cl_float			mDieSpeed;
-    cl_float			mAnimTime;
-    cl_float			mTimeSpeed;
-    cl_float			mWavePosMult;
-    cl_float			mWaveVelMult;
-    cl_float			mMassMin;
-    int					mPointSize;
-    int					mLineWidth;
-    cl_int				mNumParticles;
-    int					mNumParticlesPower;
-    float				mFadeSpeed;
-    float				mNodeRadius;
-    float				mNodeBrightness;
-    
-    // rendering / fx
+    // rendering
+    GLuint				mVbo[2]; // pos and color VBOs
+    ci::gl::Texture     mParticleTexture;
+    float				mPointSize;
+    float				mLineWidth;
+    float               mParticleAlpha;
     bool				mEnableBlending;
     bool				mAdditiveBlending;
-    bool				mDoDrawLines;
-    bool				mDoDrawPoints;
-    bool				mDoDrawNodes;
     bool				mEnableLineSmoothing;
     bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
+    bool                mScalePointsByDistance;
+    bool                mUseMotionBlur;
     
-    gl::Fbo             mFboNew;
-    gl::Fbo             mFboComp;
-    gl::Fbo             mFboBlur;
-    gl::GlslProg        mBlurShader;
+    MotionBlurRenderer  mMotionBlurRenderer;
     
-    bool                mUseFbo;
-    bool                mDoBlur;
-    int                 mBlurAmount;
-    float               mTrailBrightness;
-    float               mTrailAudioDistortMin;
-    float               mTrailAudioDistortMax;
-    float               mTrailWaveFreqMin;
-    float               mTrailWaveFreqMax;
-    bool                mTrailDistanceAffectsWave;
-    //int				mBlurIterations		= 1;
-    //float             mBlurAlpha			= 0;
-    //float             mBlurCenterWeight	= 10;
-    //float             mOrigAlpha			= 1;
-    int                 mFboScaleDown;
+    //TODO: purpose?
+    //GLuint              mIndices[kMaxParticles * kMaxTrailSize];
+
+    float               mNodeRotation;
+    float               mNodeRotationSpeed;
     
 };
 

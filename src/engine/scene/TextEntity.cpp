@@ -60,10 +60,10 @@ void TextEntity::draw()
         //gl::draw( mTexture, Rectf( 0.0f, 0.0f, mTexture.getCleanWidth(), mTexture.getCleanHeight() ));
         gl::draw( mTextBox.render() );
         
-        glDisable( GL_TEXTURE_2D );
+        //glDisable( GL_TEXTURE_2D );
         glEnable( GL_DEPTH_TEST );
         //gl::enableAlphaBlending();
-        glEnable( GL_LIGHTING );
+        //glEnable( GL_LIGHTING );
     }
     gl::popMatrices();
 }

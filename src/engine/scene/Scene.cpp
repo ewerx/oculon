@@ -7,15 +7,31 @@
  *
  */
 
+#include <string>
 #include "Scene.h"
 #include "OculonApp.h"
+#include "Interface.h"
+#include "SimpleGUI.h"
+#include "Utils.h"
 
-Scene::Scene()
-: mApp(NULL)
-, mIsActive(false)
+using namespace ci;
+using namespace mowa::sgui;
+
+/*static*/const char* const Scene::kIniLocation = "/Volumes/cruxpod/oculondata/params/";
+/*static*/const char* const Scene::kIniExt = ".ini";
+/*static*/const int         Scene::kIniDigits = 2;
+
+Scene::Scene(const std::string& name)
+: mName(name)
+, mApp(NULL)
+, mIsSetup(false)
+, mIsRunning(false)
 , mIsVisible(false)
-, mIsFrustumPlaneCached(false)
+, mIsDebug(false)
 , mEnableFrustumCulling(false)
+, mInterface(NULL)
+, mIsFrustumPlaneCached(false)
+, mDoReset(false)
 {
     // frustum culling
 	for( int i=0; i<SIDE_COUNT; i++ )
@@ -24,28 +40,237 @@ Scene::Scene()
 		mCachedFrustumPlane[i].mPoint = Vec3f::zero();
 		mCachedFrustumPlane[i].mDistance = 0.0f;
 	}
+    
+    mDebugParams = params::InterfaceGl( name, Vec2i( 350, 400 ) );
+    mDebugParams.show(mIsDebug);
 }
 
 Scene::~Scene()
 {
+    delete mInterface;
 }
 
 void Scene::init(OculonApp* app)
 {
     mApp = app;
-    setup();
-    setupParams(app->getParams());
+    
+    // setup FBO
+    setupFbo();
+    mSyphon.setName(mName);
+    
+    // setup master interface
+    mInterface = new Interface( mApp, &mApp->getOscServer() );
+    mInterface->gui()->addColumn();
+    // bind to OculonApp::showInterface(0)
+    mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
+    // bind to Scene::loadInterfaceParams(0)
+    mInterface->addParam(CreateBoolParam("active", &mIsVisible)
+                         .oscReceiver(mName,"toggle").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );
+    mInterface->addButton(CreateTriggerParam("reset", NULL)
+                          .oscReceiver(mName))->registerCallback( this, &Scene::onReset );
+    mInterface->addParam(CreateBoolParam("visible", &mIsVisible)
+                         .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onVisibleChanged );
+    mInterface->addParam(CreateBoolParam("running", &mIsRunning)
+                         .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onRunningChanged );
+    mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
+    mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
+    mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
+    mInterface->gui()->addSeparator();
+    mInterface->gui()->setEnabled(false); // always start hidden
+    
+    setupInterface();
+    setupDebugInterface();
+}
+
+void Scene::setup()
+{
+    mIsSetup = true;
+}
+
+void Scene::setupFbo()
+{
+    gl::Fbo::Format format;
+    //format.enableMipmapping(false);
+    //format.enableDepthBuffer(false);
+	//format.setCoverageSamples(8);
+	format.setSamples(4); // 4x AA
+    
+    mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+}
+
+void Scene::resize()
+{
+    setupFbo();
+}
+
+void Scene::setupDebugInterface()
+{
+    // add all interface params as debug params
+    for (Interface::const_iterator it = mInterface->paramsBegin();
+         it != mInterface->paramsEnd();
+         ++it)
+    {
+        OscParam* param = (*it);
+        Control* control = param->getControl();
+        
+        switch( control->type )
+        {
+            case Control::FLOAT_VAR:
+                mDebugParams.addParam( control->name, static_cast<FloatVarControl*>(control)->var );
+                break;
+            case Control::DOUBLE_VAR:
+                mDebugParams.addParam( control->name, static_cast<DoubleVarControl*>(control)->var );
+                break;
+            case Control::INT_VAR:
+                mDebugParams.addParam( control->name, static_cast<IntVarControl*>(control)->var );
+                break;
+            case Control::BOOL_VAR:
+                mDebugParams.addParam( control->name, static_cast<BoolVarControl*>(control)->var );
+                break;
+            case Control::SEPARATOR:
+                mDebugParams.addSeparator();
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void Scene::update(double dt)
 {
+    if( mDoReset )
+    {
+        mDoReset = false;
+        reset();
+    }
     if( mEnableFrustumCulling )
     {
         mIsFrustumPlaneCached = false;
         calcNearAndFarClipCoordinates( getCamera() );
     }
+    
+    assert(mInterface);
+    mInterface->update();
 }
 
+void Scene::drawToFbo()
+{
+    // bind FBO
+    gl::setViewport(mFbo.getBounds());
+    mFbo.bindFramebuffer();
+    
+    // draw scene
+    //gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 0.0f), true);
+    gl::clear( Color(0.0f,0.0f,0.0f) );
+    draw();
+    
+    mFbo.unbindFramebuffer();
+}
+
+void Scene::publishToSyphon()
+{
+    mSyphon.publishTexture(&mFbo.getTexture());
+}
+
+void Scene::drawInterface()
+{
+    mInterface->draw();
+}
+
+void Scene::drawDebug()
+{
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    gl::enableAlphaBlending();
+    mDebugParams.draw();
+}
+
+const Camera& Scene::getCamera() const
+{
+    return mApp->getMayaCam();
+}
+
+bool Scene::toggleActiveVisible()
+{
+    setVisible(!mIsVisible);
+    setRunning(mIsVisible);
+    
+    return false;
+}
+
+bool Scene::setRunningByVisibleState()
+{
+    setVisible(mIsVisible);
+    setRunning(mIsVisible);
+    
+    return false;
+}
+
+void Scene::setVisible(bool visible)
+{
+    mIsVisible = visible;
+    onVisibleChanged();
+}
+
+bool Scene::onVisibleChanged()
+{
+    mDebugParams.show(mIsDebug && mIsVisible);
+    handleVisibleChanged();
+    return false;
+}
+
+void Scene::setRunning(bool running)
+{ 
+    mIsRunning = running;
+    onRunningChanged();
+}
+
+bool Scene::onRunningChanged()
+{
+    handleRunningChanged();
+    return false;
+}
+
+void Scene::setDebug(bool debug)
+{
+    mIsDebug = debug;
+    onDebugChanged();
+}
+
+bool Scene::onDebugChanged()
+{
+    mDebugParams.show(mIsDebug && mIsVisible);
+    handleDebugChanged();
+    return false;
+}
+
+void Scene::showInterface(bool show)
+{
+    assert(mInterface);
+    mInterface->gui()->setEnabled(show);
+    if( show )
+    {
+        //mInterface->createControlInterface(mName);
+    }
+}
+
+bool Scene::saveInterfaceParams() 
+{
+    const string pathBase = kIniLocation + getName() + kIniExt;
+    fs::path filePath = Utils::getUniquePath(pathBase, kIniDigits, "");
+    mInterface->gui()->save(filePath.string());
+    return false;//callback
+}
+
+bool Scene::loadInterfaceParams(const int index)
+{
+    std::stringstream filePath;
+    filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
+    mInterface->gui()->load(filePath.str());
+    return false;//callback
+}
+
+#pragma MARK: Frustum Culling
 void Scene::calcNearAndFarClipCoordinates( const Camera &cam )
 {
 	Vec3f ntl, ntr, nbl, nbr;
@@ -150,9 +375,4 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
 	}
 	
 	return( result );
-}
-
-const Camera& Scene::getCamera() const
-{
-    return mApp->getMayaCam();
 }

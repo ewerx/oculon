@@ -15,6 +15,9 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
+#include "MotionBlurRenderer.h"
+
+#include "OscMessage.h"
 
 //
 // Audio input tests
@@ -27,38 +30,46 @@ public:
     
     // inherited from Scene
     void setup();
-    //void setupParams(params::InterfaceGl& params);
     //void reset();
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
+    //void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
+	void handleMouseDrag( const ci::app::MouseEvent& event );
+    void handleOscMessage( const ci::osc::Message& message );
+    
+protected:// from Scene
+    void setupInterface();
+    //void setupDebugInterface();
     
 private:
     void updateBlur();
+    void drawScene();
     
 private:
 
     enum 
     { 
-        FBO_COUNT = 2,
-        FBO_ITERATIONS = 4
+        FBO_COUNT = 4,
     };
     
-    gl::Fbo             mFbo[FBO_COUNT];
-    gl::Fbo             mFboScene;
-    int                 mFboPing;
-    int                 mFboPong;
+    ci::gl::Fbo         mFbo[FBO_COUNT];
+    int                 mFboIndex;
     
-    gl::GlslProg        mShader;
+    ci::gl::GlslProg    mShader;
     
     Vec2f               mPos;
     Vec2f               mVel;
-    
-    bool                mEnableShader;
+    ColorA              mColor;
+
+    bool                mUseFbo;
     float               mBlurAmount;
-    
     gl::Texture         mTexture;
     
+    MotionBlurRenderer  mMotionBlurRenderer;
+    
+    //TEST
+    int                 mRadius;
 };
 
 #endif // __MOVIETEST_H__

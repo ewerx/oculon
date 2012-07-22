@@ -83,7 +83,7 @@ void InfoPanel::update()
 
 void InfoPanel::render( Vec2f aWindowDim )
 {
-    if( mOpacity > 0.01f && mTextureReady)
+    if( mOpacity > 0.01f && mTextureReady )
     {
         glDisable( GL_LIGHTING );
         

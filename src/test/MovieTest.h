@@ -27,12 +27,11 @@ public:
     
     // inherited from Scene
     void setup();
-    //void setupParams(params::InterfaceGl& params);
     //void reset();
     void update(double dt);
     void draw();
     bool handleKeyDown(const KeyEvent& keyEvent);
-    void setActive(bool active);
+    void handleRunningChanged();
     
 private:
     //MoviePlayer mMoviePlayer1;

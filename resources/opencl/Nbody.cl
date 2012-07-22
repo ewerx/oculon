@@ -102,13 +102,21 @@ __kernel void gravity(__global const float4 *in_pos,
         
         if( flags & PARTICLE_FLAGS_INVSQR )
         {
-            const float d2 = d.x*d.x + d.y*d.y + d.z*d.z + eps;
-            //float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
-            float f = /*in_vel[i].w */ gravity * in_vel[j].w / d2;//* invr*invr*invr;
+            // inverse sqrt
+            float invr = rsqrt(d.x*d.x + d.y*d.y + d.z*d.z + eps);
+            float f = /*in_vel[i].w */ gravity * in_vel[j].w * (invr*invr*invr);
+            
             a += f*d;
         }
         else
         {
+            // distance squared
+            const float d2 = d.x*d.x + d.y*d.y + d.z*d.z + eps;
+            float f = /*in_vel[i].w */ gravity * in_vel[j].w / d2;
+            a += f*d;
+            
+            // this is very slow
+            /*
             d.w = 0.0f;
             float d2 = dot(d, d);
             d /= sqrt(d2);
@@ -117,6 +125,7 @@ __kernel void gravity(__global const float4 *in_pos,
             d.w = 0.0f;
             d2 = max(d2, 1e0f);
             a += (1.0f / d2) * d;
+            */
         }
 	}
     
@@ -132,6 +141,7 @@ __kernel void gravity(__global const float4 *in_pos,
         out_pos[i] += (0.5f*dt*dt*a); // what??
     }
     
+    const int fftIdx = i%512;
     if( flags & PARTICLE_FLAGS_SHOW_DARK )
     {
         if( i < n )
@@ -158,7 +168,6 @@ __kernel void gravity(__global const float4 *in_pos,
     }
     else if( flags & PARTICLE_FLAGS_SHOW_MASS )
     {
-        const int fftIdx = i%512;
         float massRatio = out_vel[i].w / MAX_MASS;
         color[i].x = massRatio*massRatio + (fft[fftIdx]/2.0f);
         color[i].y = massRatio/2.0f + (fftIdx/512);
@@ -169,4 +178,58 @@ __kernel void gravity(__global const float4 *in_pos,
             color[i].w *= 2.0f;
         }
     }
+    else
+    {
+        color[i].w = alpha + fft[fftIdx];
+    }
+}
+
+__kernel void blackhole(__global const float4 *in_pos, 
+                      __global float4 *out_pos,
+					  __global const float4 *in_vel, 
+                      __global float4 *out_vel,
+                      __global float4 *color,
+                      __global float *fft,
+					  const uint nb_particles,
+					  const uint step,
+                      const float dt,
+                      const float damping,
+                      const float gravity,
+                      const float alpha,
+                      const uint flags,
+                      const float eps)
+{
+    const uint i = get_global_id(0);
+	if (i >= nb_particles)
+		return;
+    
+	float4 p1 = in_pos[i];
+    
+    if (p1.w == 0)
+	{
+		if (p1.z > 0.1)
+		{
+			float centrifuge = 2 * clamp(10.0f * p1.z, 0.5f, 1000.0f) * dt;
+			p1.y += (1 / centrifuge) * dt;
+			p1.z -= 1.5 * dt;
+		}
+		else
+		{
+			p1.w = 1;
+		}
+	}
+	else
+	{
+		if (p1.z < 8)
+		{
+			p1.z += 3 * dt;
+		}
+		else
+		{
+			p1.z = p1.z * 4;
+			p1.w = 0;
+		}
+	}
+    
+    out_pos[i] = p1;
 }

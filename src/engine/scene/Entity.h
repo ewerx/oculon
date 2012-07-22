@@ -29,9 +29,8 @@ public:
     virtual void update(double dt) {}
     virtual void draw() {}
     
-    inline const Vec3<T>& getPosition() const         { return mPosition; }
-    
-    void setPosition(const Vec3<T>& val)  { mPosition = val; }
+    const Vec3<T>& getPosition() const      { return mPosition; }
+    void setPosition(const Vec3<T>& val)    { mPosition = val; }
     
 protected:
     Vec3<T> mPosition;
@@ -40,6 +39,6 @@ protected:
 };
 
 typedef Entity<float> Entityf;
-typedef Entity<double> Entityd;
+typedef Entity<double> Entityd; 
 
 #endif // __ENTITY_H__
