@@ -57,6 +57,7 @@ public:
     void handleMouseMove( const ci::app::MouseEvent& event );
     
     // callbacks
+    bool setCamType();
     
 protected:
     void setupInterface();
@@ -88,7 +89,6 @@ private:
 	SpringCam			mSpringCam;
 	
 	// SHADERS
-	gl::GlslProg		mRoomShader;
 	gl::GlslProg		mBrightStarsShader;
 	gl::GlslProg		mFaintStarsShader;
 	
@@ -124,7 +124,7 @@ private:
 	gl::VboMesh			mBrightVbo;
 	gl::VboMesh			mFaintVbo;
 	
-	std::vector<Star>	mStars;
+	std::vector<Star*>	mStars;
 	std::vector<Star*>	mBrightStars;
 	std::vector<Star*>	mFaintStars;
 	std::vector<Star*>	mNamedStars;
@@ -141,6 +141,7 @@ private:
 	int					mTouringStarIndex;
 	Star				*mHomeStar;
 	Star				*mDestStar;
+    Star                *mSol;
     
 	float				mDataTimer;
 	
@@ -153,6 +154,7 @@ private:
     
     // rendering
     bool mShowLabels;
+    bool mMoreGlow;
     
     enum eCamType
     {
@@ -167,6 +169,7 @@ private:
     //GLuint mDisplayListPoints;
         
     // hud
+    /*
     enum eTextBoxLocations
     {
         TB_TOP_LEFT,
@@ -177,6 +180,7 @@ private:
         TB_COUNT
     };
     TextEntity*     mTextBox[TB_COUNT];
+    */
     
     static const int FBO_WIDTH;
     static const int FBO_HEIGHT;

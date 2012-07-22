@@ -32,17 +32,22 @@ const int Catalog::FBO_HEIGHT = 78;
 Catalog::Catalog()
 : Scene("catalog")
 {
+    /*
     for( int i=0; i < TB_COUNT; ++i )
     {
         mTextBox[i] = new TextEntity(this);
         assert(mTextBox[i] != NULL && "out of memory, how ridiculous");
     }
+    */
 }
 
 // ----------------------------------------------------------------
 //
 Catalog::~Catalog()
 {
+    BOOST_FOREACH( Star* &s, mStars ){
+		delete s;
+	}
 }
 
 // ----------------------------------------------------------------
@@ -53,6 +58,7 @@ void Catalog::setup()
     
     // params
     mShowLabels = true;
+    mMoreGlow = false;
     mCamType = CAM_ORBITER;
     
     // assets
@@ -66,10 +72,9 @@ void Catalog::setup()
 	try {
 		mBrightStarsShader	= gl::GlslProg( loadResource( RES_BRIGHT_STARS_VERT ), loadResource( RES_BRIGHT_STARS_FRAG ) );
 		mFaintStarsShader	= gl::GlslProg( loadResource( RES_FAINT_STARS_VERT ), loadResource( RES_FAINT_STARS_FRAG ) );
-		//mRoomShader			= gl::GlslProg( loadResource( "../resources/shaders/room.vert" ), loadResource( "../resources/shaders/room.frag" ) );
 	} catch( gl::GlslProgCompileExc e ) {
 		std::cout << e.what() << std::endl;
-		//quit();
+		mApp->quit();
 	}
 	
 	// TEXTURE FORMAT
@@ -126,6 +131,7 @@ void Catalog::setup()
 	mTotalTouringStars = mTouringStars.size();
 	mHomeStar	= NULL;
 	mDestStar	= NULL;
+    mSol        = NULL;
 	
 	std::cout << mStars.size() << std::endl;
     
@@ -184,6 +190,8 @@ void Catalog::setupInterface()
                          .oscReceiver(getName(), "showfaint"));
     mInterface->addParam(CreateBoolParam( "show bright", &mRenderBrightStars )
                          .oscReceiver(getName(), "showbright"));
+    mInterface->addParam(CreateBoolParam( "more glow", &mMoreGlow )
+                         .oscReceiver(getName(), "moreglow"));
     /*
     mInterface->addParam(CreateFloatParam("BPM", &mBpm)
                          .minValue(60.0f)
@@ -214,10 +222,10 @@ void Catalog::reset()
 void Catalog::resize()
 {
     Scene::resize();
-    for( int i = 0; i < TB_COUNT; ++i )
-    {
-        mTextBox[i]->resize();
-    }
+//    for( int i = 0; i < TB_COUNT; ++i )
+//    {
+//        mTextBox[i]->resize();
+//    }
 }
 
 // ----------------------------------------------------------------
@@ -375,8 +383,11 @@ void Catalog::draw()
 			gl::draw( mBrightVbo );
 			
 			// IF YOU WANT MORE GLOW AROUND MAJOR STARS, USE THESE TWO LINES
-            //			mStarGlowTex.bind( 1 );
-            //			mBrightStarsShader.uniform( "texScale", 0.1f );
+            if( mMoreGlow )
+            {
+                mStarGlowTex.bind( 1 );
+                mBrightStarsShader.uniform( "texScale", 0.1f );
+            }
 			gl::draw( mBrightVbo );
 		} else {
 			mBrightStarsShader.uniform( "texScale", 0.5f );
@@ -412,7 +423,7 @@ void Catalog::draw()
     //
     ////////------------------------------------------------------
     
-    drawHud();
+    //drawHud();
     
     gl::popMatrices();
 }
@@ -436,8 +447,8 @@ void Catalog::drawHud()
 {
     gl::pushMatrices();
     
-    const float width = mApp->getViewportWidth();
-    const float height = mApp->getViewportHeight();
+    //const float width = mApp->getViewportWidth();
+    //const float height = mApp->getViewportHeight();
     
     //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
     //gl::setMatrices(textCam);
@@ -708,8 +719,8 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 	
 	Vec3f pos = convertToCartesian( ra, dec, dist );
 	
-	float mag = ( 80 - appMag ) * 0.1f;
-	Color col = Color( mag, mag, mag );
+	//float mag = ( 80 - appMag ) * 0.1f;
+	//Color col = Color( mag, mag, mag );
 	
 	float color = constrain( colIndex, 0.0f, 1.0f );//0.0f;
     //	if( name.length() > 0 ){
@@ -729,14 +740,20 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 	
 	// THIS FEELS WRONG. ASK ABOUT THE RIGHT WAY TO DO THIS.
 	Star *star = new Star( pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
-    if( name != "Sol" ) {
-	mStars.push_back( *star );
-	
-	if( appMag < 6.0f || name.length() > 1 ){
-		mBrightStars.push_back( star );
-	} else {
-		mFaintStars.push_back( star );
-	}
+    mStars.push_back( star );
+    
+    //TODO: special rendering for Sol??
+    if( name == "Sol" )
+    {
+        mSol = star;
+    }
+    else
+    {
+        if( appMag < 6.0f || name.length() > 1 ){
+            mBrightStars.push_back( star );
+        } else {
+            mFaintStars.push_back( star );
+        }
 	}
 	if( name.length() > 1 ){
 		mNamedStars.push_back( star );
@@ -817,3 +834,19 @@ const Camera& Catalog::getCam()
             return mSpringCam.getCam();
     }
 }
+
+bool Catalog::setCamType()
+{
+    if( mCamType == CAM_ORBITER )
+    {
+        //TODO: why does Sol not line up with Orbiter???
+        //mBrightStars.erase(remove(mBrightStars.begin(), mBrightStars.end(), mSol), mBrightStars.end());
+    }
+    else
+    {
+        //mBrightStars.push_back(mSol);
+    }
+    
+    return false;
+}
+
