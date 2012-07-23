@@ -19,6 +19,8 @@ MindWave::MindWave()
 :mConnectionId(-1)
 ,mPortName("/dev/tty.MindWave")
 ,mSignalQuality(0.0f)
+,mBattery(0.0f)
+,mBlink(0.0f)
 ,mAttention(0.0f) // eSense attention
 ,mMeditation(0.0f) // eSense meditation
 ,mRaw(0.0f)
@@ -34,20 +36,18 @@ MindWave::MindWave()
 ,mIsCollectingData(false)
 ,mUseThread(false)
 ,mEnableLogging(false)
+,mEnableBlinkDetection(true)
 ,TG_GetDriverVersion(NULL)
 ,TG_GetNewConnectionId(NULL)
 ,TG_Connect(NULL) 
 ,TG_ReadPackets(NULL)
 ,TG_GetValue(NULL)
+,TG_GetValueStatus(NULL)
 ,TG_Disconnect(NULL)
 ,TG_FreeConnection(NULL)
 ,TG_SetDataLog(NULL)
+,TG_EnableBlinkDetection(NULL)
 {
-    for(int i=0; i < BAND_COUNT; ++i)
-    {
-        mBand[i] = 0.0f;
-    }
-    
     CFURLRef bundleUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("ThinkGear"), CFSTR("bundle"), CFSTR(""));
     
     mThinkGearBundle = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
@@ -63,12 +63,14 @@ MindWave::MindWave()
         TG_Connect              = (TGConnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle, CFSTR("TG_Connect"));
         TG_ReadPackets          = (TGReadPacketsPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_ReadPackets"));
         TG_GetValue             = (TGGetValuePtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_GetValue"));
+        TG_GetValueStatus       = (TGGetValueStatusPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_GetValueStatus"));
         TG_Disconnect           = (TGDisconnectPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_Disconnect"));
         TG_FreeConnection       = (TGFreeConnectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_FreeConnection"));
         TG_SetDataLog           = (TGSetDataLogPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_SetDataLog"));
+        TG_EnableBlinkDetection = (TGEnableBlinkDetectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_EnableBlinkDetection"));
         
         assert( TG_GetDriverVersion && TG_GetNewConnectionId && TG_Connect && 
-               TG_ReadPackets && TG_GetValue && TG_Disconnect && TG_FreeConnection && TG_SetDataLog );
+               TG_ReadPackets && TG_GetValue && TG_GetValueStatus && TG_Disconnect && TG_FreeConnection && TG_SetDataLog && TG_E );
     }
 }
 
@@ -129,15 +131,22 @@ int MindWave::setupNewConnection()
         }
     }
     
-    console() << "[mindwave] connecting to " << mPortName << "... ";
+    console() << "[mindwave] connecting to " << mPortName << "...\n";
     
     ret = TG_Connect(mConnectionId, mPortName, TG_BAUD_57600, TG_STREAM_PACKETS);// why was this 9600 in docs? 
     
-    console() << ((ret == 0) ? "connected.\n" : "failed.\n");
-    
     if( ret < 0 )
     {
+        console() << "[mindwave] connection failed\n";
         endConnection();
+        return ret;
+    }
+    
+    console() << "[mindwave] connected.\n";
+    
+    if( mEnableBlinkDetection )
+    {
+        TG_EnableBlinkDetection(mConnectionId, 1);
     }
     
     return ret;
@@ -165,6 +174,7 @@ void MindWave::getData()
     if( mHasData )
     {
         mSignalQuality = TG_GetValue(mConnectionId, TG_DATA_POOR_SIGNAL);
+        mBattery = TG_GetValue(mConnectionId, TG_DATA_BATTERY);
         if( mSignalQuality > 180 )
         {
             mHasData = false;
@@ -182,6 +192,14 @@ void MindWave::getData()
         mBeta2 = TG_GetValue(mConnectionId, TG_DATA_BETA2);
         mGamma1 = TG_GetValue(mConnectionId, TG_DATA_GAMMA1);
         mGamma2 = TG_GetValue(mConnectionId, TG_DATA_GAMMA2);
+        if( mEnableBlinkDetection && TG_GetValueStatus(mConnectionId, TG_DATA_BLINK_STRENGTH) > 0)
+        {
+            mBlink = TG_GetValue(mConnectionId, TG_DATA_BLINK_STRENGTH);
+        }
+        else
+        {
+            mBlink = 0.0f;
+        }
     }
     
 }

@@ -75,6 +75,10 @@ void MindWaveTest::update(double dt)
     char buf[256];
     snprintf(buf, 256, "mw signal: %.1f", mindWave.getSignalQuality());
     mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.8f*mindWave.getSignalQuality()));
+    snprintf(buf, 256, "mw battery: %.1f", mindWave.getBattery());
+    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.8f*mindWave.getBattery()));
+    snprintf(buf, 256, "mw blink: %.1f", mindWave.getBlink());
+    mApp->getInfoPanel().addLine(buf, Color(0.5f, 0.5f, 0.8f*mindWave.getBlink()));
     
     snprintf(buf, 256, "mw attn: %.1f", mindWave.getAttention());
     mApp->getInfoPanel().addLine(buf, Color(0.8f*mindWave.getAttention(), 0.5f, 0.8f));
@@ -230,6 +234,14 @@ void MindWaveTest::drawGraphs()
     // Stop drawing
 	gl::popMatrices();
     */
+    
+    MindWave& mindWave = mApp->getMindWave();
+    if( mindWave.hasData() && mindWave.getBlink() > 0.0f )
+    {
+        gl::color(ColorA(1.0f,1.0f,1.0f,0.8f));
+        gl::drawSolidRect( Rectf( getWindowBounds() ) );
+        console() << "[mindwave] blink!\n";
+    }
 
     int displaySize = getWindowWidth();
     
@@ -264,6 +276,7 @@ void MindWaveTest::drawGraphs()
         ++c;
     }
     
+    gl::pushMatrices();
     gl::translate( 0.0f, 200.0f );
     gl::color( Color( 1.0f, 0.75f, 0.5f ) );
     gl::draw( raw );
@@ -275,6 +288,7 @@ void MindWaveTest::drawGraphs()
     gl::translate( 0.0f, 200.0f );
     gl::color( Color( 0.5f, 1.0f, 0.75f ) );
     gl::draw( meditation );
+    gl::popMatrices();
     
     /*
     uint16_t bandCount = audioInput.getFftBandCount();
