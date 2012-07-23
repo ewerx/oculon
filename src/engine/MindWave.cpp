@@ -30,8 +30,10 @@ MindWave::MindWave()
 ,mBeta2(0.0f)
 ,mGamma1(0.0f)
 ,mGamma2(0.0f)
+,mHasData(false)
 ,mIsCollectingData(false)
 ,mUseThread(false)
+,mEnableLogging(false)
 ,TG_GetDriverVersion(NULL)
 ,TG_GetNewConnectionId(NULL)
 ,TG_Connect(NULL) 
@@ -116,12 +118,15 @@ int MindWave::setupNewConnection()
     int ret = -1;
     mConnectionId = TG_GetNewConnectionId();
     
-    ret = TG_SetDataLog( mConnectionId, "mw_datalog.txt" );
-    if( ret < 0 )
+    if( mEnableLogging )
     {
-        console() << "[mindwave] error setting data log path (" << ret << ")\n";
-        mConnectionId = -1;
-        return ret;
+        ret = TG_SetDataLog( mConnectionId, "mw_datalog.txt" );
+        if( ret < 0 )
+        {
+            console() << "[mindwave] error setting data log path (" << ret << ")\n";
+            mConnectionId = -1;
+            return ret;
+        }
     }
     
     console() << "[mindwave] connecting to " << mPortName << "... ";
@@ -156,10 +161,15 @@ void MindWave::getData()
 {
     int numPackets = TG_ReadPackets(mConnectionId, -1);
     //console() << "[mindwave] getData " << numPackets << " packets in stream.\n";
-    
-    if( numPackets > 0 )
+    mHasData = numPackets > 0;
+    if( mHasData )
     {
         mSignalQuality = TG_GetValue(mConnectionId, TG_DATA_POOR_SIGNAL);
+        if( mSignalQuality > 180 )
+        {
+            mHasData = false;
+        }
+        
         mAttention = TG_GetValue(mConnectionId, TG_DATA_ATTENTION);
         mMeditation = TG_GetValue(mConnectionId, TG_DATA_MEDITATION);
         

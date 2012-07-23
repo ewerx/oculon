@@ -70,6 +70,7 @@ public:
     void setup();
     void update();
     
+    bool  hasData() const           { return mHasData; }
     float getSignalQuality() const  { return mSignalQuality; }
     float getAttention() const      { return mAttention; }
 	float getMeditation() const     { return mMeditation; }
@@ -93,6 +94,7 @@ private:
 private:
     
     // data
+    bool  mHasData;
     float mSignalQuality; // poor signal status
 	float mAttention; // eSense attention
 	float mMeditation; // eSense meditation
@@ -117,6 +119,7 @@ private:
     CFBundleRef             mThinkGearBundle;
     int                     mConnectionId;
     const char*             mPortName;
+    bool                    mEnableLogging;
     
     TGFunctionPtr       TG_GetDriverVersion;
     TGFunctionPtr       TG_GetNewConnectionId; 
