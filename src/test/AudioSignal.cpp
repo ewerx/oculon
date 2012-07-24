@@ -12,6 +12,7 @@
 #include "AudioSignal.h"
 #include "Interface.h"
 #include "SignalScope.h"
+#include "VerticalLines.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -25,11 +26,13 @@ AudioSignal::AudioSignal()
 : Scene("audio")
 {
     mSignalScope = new SignalScope(this);
+    mVerticalLines = new VerticalLines(this);
 }
 
 AudioSignal::~AudioSignal()
 {
     delete mSignalScope;
+    delete mVerticalLines;
 }
 
 void AudioSignal::setup()
@@ -37,12 +40,13 @@ void AudioSignal::setup()
     Scene::setup();
     
     mUseMotionBlur = false;
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioSignal::drawVerticalLines, this ) );
+    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioSignal::drawSubScenes, this ) );
     
     mFilter = 0;
     mFilterFrequency = 0.0f;
     
     mEnableVerticalLines = false;
+    mVerticalLines->setup();
     
     mEnableSignalScope = true;
     mSignalScope->setup();
@@ -66,6 +70,7 @@ void AudioSignal::setupInterface()
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
     mSignalScope->setupInterface();
+    mVerticalLines->setupInterface();
 }
 
 void AudioSignal::setupDebugInterface()
@@ -73,6 +78,7 @@ void AudioSignal::setupDebugInterface()
     Scene::setupDebugInterface();
     
     mSignalScope->setupDebugInterface();
+    mVerticalLines->setupDebugInterface();
 }
 
 void AudioSignal::update(double dt)
@@ -82,6 +88,10 @@ void AudioSignal::update(double dt)
     if( mEnableSignalScope )
     {
         mSignalScope->update(dt);
+    }
+    if( mEnableVerticalLines )
+    {
+        mVerticalLines->update(dt);
     }
 }
 
@@ -95,17 +105,22 @@ void AudioSignal::draw()
     }
     else
     {
-        if( mEnableVerticalLines )
-        {
-            drawVerticalLines();
-        }
-        
-        if( mEnableSignalScope )
-        {
-            mSignalScope->draw();
-        }
+        drawSubScenes();
     }
     gl::popMatrices();
+}
+
+void AudioSignal::drawSubScenes()
+{
+    if( mEnableVerticalLines )
+    {
+        mVerticalLines->draw();
+    }
+    
+    if( mEnableSignalScope )
+    {
+        mSignalScope->draw();
+    }
 }
 
 void AudioSignal::drawDebug()
@@ -267,66 +282,6 @@ void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
         glVertex2f( i * space, bottom - barY );
 		glEnd();
 	}
-    glPopMatrix();
-}
-
-void AudioSignal::drawVerticalLines()
-{
-    AudioInput& audioInput = mApp->getAudioInput();
-	
-    // Get data
-    float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    // Get dimensions
-    //float scale = ((float)getWindowWidth() - 20.0f) / (float)dataSize;
-    //float mWindowHeight = (float)getWindowHeight();
-    
-    // Use polylines to depict time and frequency domains
-    PolyLine<Vec2f> freqLine;
-    PolyLine<Vec2f> timeLine;
-    
-    
-    float screenHeight = getWindowHeight();
-    float screenWidth = getWindowWidth();
-    //float bottom = getWindowHeight();
-    
-    glPushMatrix();
-    gl::enableAdditiveBlending();
-    // Iterate through data
-    for (int32_t i = 0; i < dataSize; i++) 
-    {
-        
-        // Do logarithmic plotting for frequency domain
-        //double logSize = log((double)dataSize);
-        //float x = (float)(log((double)i) / logSize) * (double)dataSize;
-        //float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
-        float x = fftLogData[i].x;
-        float y = fftLogData[i].y;
-    
-        const float threshold = 0.025f;
-        const float minAlpha = 0.25f;
-        if( y > threshold )
-        {
-            const float width = Rand::randFloat(1.0f+(x/dataSize)*7.0f, (x/dataSize)*10.0f);
-            //const float space = Rand::randFloat(1.0f, 3.0f);
-
-            float barX = Rand::randFloat(0.0f,screenWidth);
-            glBegin( GL_QUADS );
-            // bottom
-            glColor4f( 0.0f, 0.1f, 0.75f, y+minAlpha );
-            glVertex2f( barX, 0.0f );
-            glVertex2f( barX + width, 0.0f );
-            // top
-            glColor4f( 0.0f, 0.25f, 1.0f, y+minAlpha );
-            glVertex2f( barX + width, screenHeight );
-            glVertex2f( barX, screenHeight );
-            glEnd();
-        }
-	}
-    gl::enableAlphaBlending();
     glPopMatrix();
 }
 

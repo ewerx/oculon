@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C08407A15BE525600CCE6DB /* VerticalLines.cpp */; };
 		7C13446A158992AD0032017E /* darkStar.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C134465158992AD0032017E /* darkStar.png */; };
 		7C13446B158992AD0032017E /* milkyWay.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C134466158992AD0032017E /* milkyWay.jpg */; };
 		7C13446C158992AD0032017E /* spectrum.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C134467158992AD0032017E /* spectrum.png */; };
@@ -223,6 +224,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7C08407A15BE525600CCE6DB /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VerticalLines.cpp; path = test/VerticalLines.cpp; sourceTree = "<group>"; };
+		7C08407B15BE525600CCE6DB /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalLines.h; path = test/VerticalLines.h; sourceTree = "<group>"; };
 		7C13445A158992950032017E /* brightStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.frag; sourceTree = "<group>"; };
 		7C13445B158992950032017E /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C13445C158992950032017E /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
@@ -1396,6 +1399,8 @@
 			children = (
 				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
 				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
+				7C08407A15BE525600CCE6DB /* VerticalLines.cpp */,
+				7C08407B15BE525600CCE6DB /* VerticalLines.h */,
 				7C745583148C259C009C0356 /* AudioSignal.cpp */,
 				7C745584148C259C009C0356 /* AudioSignal.h */,
 			);
@@ -1633,6 +1638,7 @@
 				7C1344721589969A0032017E /* faintStars.vert in Sources */,
 				7C1344731589969A0032017E /* passThruNormals.vert in Sources */,
 				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
+				7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

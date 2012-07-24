@@ -16,6 +16,7 @@
 #include "MotionBlurRenderer.h"
 
 class SignalScope;
+class VerticalLines;
 
 //
 // Audio input tests
@@ -38,13 +39,14 @@ protected:
     void setupDebugInterface();
     
 private:
+    void drawSubScenes();
     void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
     void drawFft        ( std::shared_ptr<float> fftDataRef );
-    void drawVerticalLines      ();
     
     bool setFilter();
     bool removeFilter();
     
+private:
     MotionBlurRenderer  mMotionBlurRenderer;
     bool                mUseMotionBlur;
     
@@ -52,11 +54,11 @@ private:
     int mFilter;
     float mFilterFrequency;
     
-    bool mEnableVerticalLines;
-    
     // sub scenes
     SignalScope* mSignalScope;
     bool mEnableSignalScope;
-   
+
+    VerticalLines* mVerticalLines;
+    bool mEnableVerticalLines;
 };
 
