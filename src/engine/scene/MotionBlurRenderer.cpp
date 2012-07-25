@@ -25,6 +25,7 @@ MotionBlurRenderer::~MotionBlurRenderer()
 void MotionBlurRenderer::setup(const Vec2i& windowSize, MotionBlurRenderer::tDrawCallback drawCallback)
 {
     mDrawSceneCallback = drawCallback;
+    mWindowSize = windowSize;
     
     // setup FBO
     gl::Fbo::Format format;
@@ -92,8 +93,8 @@ void MotionBlurRenderer::draw()
     
     // Set up window
     gl::clear(ColorAf::black());
-    gl::setViewport(getWindowBounds());
-    gl::setMatricesWindow(getWindowSize(), false);
+    gl::setViewport(Area(0,0,mWindowSize.x,mWindowSize.y));
+    gl::setMatricesWindow(mWindowSize, false);
     
     // Bind and configure shader
     mShader.bind();
@@ -105,7 +106,7 @@ void MotionBlurRenderer::draw()
     
     // Draw shader output
     gl::color(Color::white());
-    gl::drawSolidRect(getWindowBounds());
+    gl::drawSolidRect(Area(0,0,mWindowSize.x,mWindowSize.y));
     
     // Unbind shader
     mShader.unbind();

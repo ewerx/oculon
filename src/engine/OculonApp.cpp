@@ -1112,13 +1112,36 @@ Area OculonApp::getViewportBounds() const
 {
     if( mOutputMode == OUTPUT_FBO ) 
     {
-        return Area( 0, 0, mFbo.getWidth(), mFbo.getHeight() ) ;
+        return Area( 0, 0, mFbo.getWidth(), mFbo.getHeight() );
     }
     else
     {
         return getWindowBounds();
     }
-    
+}
+
+Vec2i OculonApp::getViewportSize() const
+{
+    if( mOutputMode == OUTPUT_FBO )
+    {
+        return Vec2i( mFbo.getWidth(), mFbo.getHeight() );
+    }
+    else
+    {
+        return getWindowSize();
+    }
+}
+
+float OculonApp::getViewportAspectRatio() const
+{
+    if( mOutputMode == OUTPUT_FBO )
+    {
+        return (mFbo.getWidth() / (float)mFbo.getHeight());
+    }
+    else
+    {
+        return getWindowAspectRatio();
+    }
 }
 
 CINDER_APP_BASIC( OculonApp, RendererGl(0) )

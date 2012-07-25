@@ -66,7 +66,7 @@ void Catalog::setup()
     ////////------------------------------------------------------
     //
     // CAMERA	
-	mSpringCam		= SpringCam( -350.0f, getWindowAspectRatio() );
+	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio() );
     
 	// LOAD SHADERS
 	try {
@@ -281,8 +281,8 @@ void Catalog::draw()
     //gl::clear( Color( 0, 0, 0 ) );
 	gl::color( ColorA( 1, 1, 1, 1 ) );
     
-	gl::setMatricesWindow( getWindowSize(), false );
-	gl::setViewport( getWindowBounds() );
+	gl::setMatricesWindow( mApp->getViewportSize(), false );
+	gl::setViewport( mApp->getViewportBounds() );
     
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
@@ -293,9 +293,9 @@ void Catalog::draw()
     /*
 	// DRAW ROOM
 	mRoomFbo.bindTexture();
-	gl::drawSolidRect( getWindowBounds() );
+	gl::drawSolidRect( mApp->getViewportBounds() );
 	*/
-	gl::setMatricesWindow( getWindowSize(), true );
+	gl::setMatricesWindow( mApp->getViewportSize(), true );
 	
 	float power = 1.0f;//mRoom.getPower();
 	gl::color( Color( power, power, power ) );
@@ -408,7 +408,7 @@ void Catalog::draw()
 		} else {
 			gl::enableAdditiveBlending();
 		}
-		gl::setMatricesWindow( getWindowSize(), true );
+		gl::setMatricesWindow( mApp->getViewportSize(), true );
 		
 		BOOST_FOREACH( Star* &s, mNamedStars ){
 			s->drawName( mMousePos, power * mScalePer, math<float>::max( sqrt( mScalePer ) - 0.1f, 0.0f ) );
@@ -465,7 +465,7 @@ void Catalog::drawHud()
 void Catalog::drawDebug()
 {
     //gl::pushMatrices();
-    //gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    //gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
 
     //gl::popMatrices();
 }
@@ -739,7 +739,7 @@ void Catalog::createStar( const std::string &text, int lineNumber )
     //	}
 	
 	// THIS FEELS WRONG. ASK ABOUT THE RIGHT WAY TO DO THIS.
-	Star *star = new Star( pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
+	Star *star = new Star( this, pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
     mStars.push_back( star );
     
     //TODO: special rendering for Sol??

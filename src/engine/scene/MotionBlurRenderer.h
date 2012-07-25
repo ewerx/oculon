@@ -40,6 +40,7 @@ private:
     ci::gl::GlslProg    mShader;
     
     tDrawCallback       mDrawSceneCallback;
+    ci::Vec2i           mWindowSize;
     
 };
 

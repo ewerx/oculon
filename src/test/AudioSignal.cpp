@@ -40,7 +40,7 @@ void AudioSignal::setup()
     Scene::setup();
     
     mUseMotionBlur = false;
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioSignal::drawSubScenes, this ) );
+    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &AudioSignal::drawSubScenes, this ) );
     
     mFilter = 0;
     mFilterFrequency = 0.0f;
@@ -98,7 +98,7 @@ void AudioSignal::update(double dt)
 void AudioSignal::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     if( mUseMotionBlur )
     {
         mMotionBlurRenderer.draw();
@@ -126,7 +126,7 @@ void AudioSignal::drawSubScenes()
 void AudioSignal::drawDebug()
 {
     glPushMatrix();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     //drawWaveform( mApp->getAudioInput().getPcmBuffer() );
     //drawFft( mApp->getAudioInput().getFftDataRef() );
@@ -164,8 +164,8 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         
 		// Get dimensions
         const float border = 10.0f;
-		float scaleX = ((float)getWindowWidth() - border*2.0f) / (float)binSize;
-		float windowHeight = (float)getWindowHeight();
+		float scaleX = ((float)mApp->getViewportWidth() - border*2.0f) / (float)binSize;
+		float windowHeight = (float)mApp->getViewportHeight();
         float scaleY = (windowHeight - border*2.0f) * 0.25f;
         float yOffset = (windowHeight * 0.25f + border);
         
@@ -183,7 +183,7 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
             realLine.push_back(Vec2f(i * scaleX + border, real[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*4.0f)));
         }
         
-        scaleX = ((float)getWindowWidth() - border*2.0f) / (float)dataSize;
+        scaleX = ((float)mApp->getViewportWidth() - border*2.0f) / (float)dataSize;
         
 		// Use polylines to depict time and frequency domains
 		PolyLine<Vec2f> freqLine;
@@ -224,7 +224,7 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
         audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
         
-        int displaySize = getWindowWidth();
+        int displaySize = mApp->getViewportWidth();
         int endIdx = bufferSamples;
         
         //only draw the last 1024 samples or less
@@ -255,8 +255,8 @@ void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
 {
     AudioInput& audioInput = mApp->getAudioInput();
     uint16_t bandCount = audioInput.getFftBandCount();
-	float ht = getWindowHeight() * 0.70f;
-	float bottom = getWindowHeight() - 50.f;
+	float ht = mApp->getViewportHeight() * 0.70f;
+	float bottom = mApp->getViewportHeight() - 50.f;
     const float width = 2.0f;
     const float space = width + 0.0f;
 	

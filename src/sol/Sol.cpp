@@ -348,7 +348,7 @@ void Sol::draw()
 void Sol::drawDebug()
 {
     //gl::pushMatrices();
-    //gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    //gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
 
     //gl::popMatrices();
 }
@@ -506,7 +506,7 @@ void Sol::drawHud()
     const float space = 10.0f;
     const float left = 20.0f;
     const float top = mApp->getViewportHeight() - 20.0f - (height*2.0f) - space;
-    //drawHudWaveformAnalyzer(0.0f,100.0f,getWindowWidth(),height);
+    //drawHudWaveformAnalyzer(0.0f,100.0f,mApp->getViewportWidth(),height);
     //drawHudSpectrumAnalyzer(left,top+height+space,width,height);
     
     gl::popMatrices();

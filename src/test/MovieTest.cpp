@@ -45,7 +45,7 @@ void MovieTest::setup()
     for( int i=0; i < NUM_MOVIES; ++i )
     {
         mMoviePlayers[i]->setup();
-        mMoviePlayers[i]->setSize( app::getWindowWidth(), app::getWindowHeight() );
+        mMoviePlayers[i]->setSize( mApp->getViewportWidth(), mApp->getViewportHeight() );
         
         pathString = str( filenameFormat % i );
         filePath = expandPath( fs::path(pathString) );
@@ -105,10 +105,10 @@ void MovieTest::draw()
 {
     gl::pushMatrices();
     
-    //CameraOrtho cam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 1.0f);
-    //CameraPersp cam(app::getWindowWidth(), app::getWindowHeight(), 60.0f);
+    //CameraOrtho cam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 1.0f);
+    //CameraPersp cam(mApp->getViewportWidth(), mApp->getViewportHeight(), 60.0f);
     //gl::setMatrices(cam);
-    gl::setMatricesWindowPersp(app::getWindowWidth(), app::getWindowHeight(), 60.0f, -1.0f, 0.0f);
+    gl::setMatricesWindowPersp(mApp->getViewportWidth(), mApp->getViewportHeight(), 60.0f, -1.0f, 0.0f);
     
     gl::enableDepthRead(false);
     //gl::enableDepthWrite(false);

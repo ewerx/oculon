@@ -132,22 +132,22 @@ void Binned::reset()
              
              // left
              float x = Rand::randFloat(-padding*2, -padding);
-             float y = Rand::randFloat(padding, getWindowHeight() - padding);
+             float y = Rand::randFloat(padding, mApp->getViewportHeight() - padding);
              mParticleSystem.add(Particle(x, y, xv, yv));
              
              // right
-             x = Rand::randFloat(getWindowWidth()+padding, getWindowWidth()+padding*2);
-             y = Rand::randFloat(-padding, getWindowHeight() + padding);
+             x = Rand::randFloat(mApp->getViewportWidth()+padding, mApp->getViewportWidth()+padding*2);
+             y = Rand::randFloat(-padding, mApp->getViewportHeight() + padding);
              mParticleSystem.add(Particle(x, y, xv, yv));
              
              // top
-             x = Rand::randFloat(-padding, getWindowWidth() + padding);
+             x = Rand::randFloat(-padding, mApp->getViewportWidth() + padding);
              y = Rand::randFloat(-padding*2, -padding);
              mParticleSystem.add(Particle(x, y, xv, yv));
              
              // bottom
-             x = Rand::randFloat(-padding, getWindowWidth() + padding);
-             y = Rand::randFloat(getWindowHeight()+padding, getWindowHeight()+padding*2);
+             x = Rand::randFloat(-padding, mApp->getViewportWidth() + padding);
+             y = Rand::randFloat(mApp->getViewportHeight()+padding, mApp->getViewportHeight()+padding*2);
              mParticleSystem.add(Particle(x, y, xv, yv));
              }
              */
@@ -664,22 +664,22 @@ void Binned::applyForcePatterns()
 void Binned::drawDebug()
 {
     //gl::pushMatrices();
-	//gl::setMatricesWindow( mApp->getWindowWidth(), mApp->getWindowHeight() );
+	//gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     gl::disableDepthRead();
     glDisable( GL_LIGHTING );
     glDisable( GL_TEXTURE_2D );
 	gl::enableAdditiveBlending();
     //gl::enableAlphaBlending();
     
-    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
-    float scale = (float)(mApp->getWindowWidth()) / (float)(mApp->getViewportWidth()); 
+    Vec2f center( mApp->getViewportWidth()/2.0f, mApp->getViewportHeight()/2.0f );
+    float scale = (float)(mApp->getViewportWidth()) / (float)(mApp->getViewportWidth()); 
     
     glColor4f(1.0f,0.0f,0.0f,0.5f);
     gl::drawStrokedCircle(center, mMaxRadius*scale);
     glColor4f(1.0f,0.2f,0.2f,0.25f);
     gl::drawStrokedCircle(center, mMaxRadius*0.75f*scale);
     gl::drawStrokedCircle(center, mMaxRadius*1.25f*scale);
-    //gl::drawStrokedCircle(center, mApp->getWindowWidth()/3.0f);
+    //gl::drawStrokedCircle(center, mApp->getViewportWidth()/3.0f);
     
     glColor4f(0.0f,0.2f,0.5f,0.5f);
     gl::drawStrokedCircle(center, mCircularWallRadius*scale);

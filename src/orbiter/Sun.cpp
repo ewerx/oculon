@@ -119,7 +119,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             if( binnedScene && binnedScene->isRunning() )
             {
                 Vec3d screenCoords = transform * mPosition;
-                Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+                Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
                 float force = 500.f;
                 binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.5f, force*mRadiusMultiplier);
             }

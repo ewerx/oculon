@@ -164,10 +164,10 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         {
             gl::pushMatrices();
         
-            CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+            CameraOrtho textCam(0.0f, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight(), 0.0f, 0.0f, 10.f);
             gl::setMatrices(textCam);
         
-            Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+            Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
             glTranslatef(textCoords.x, textCoords.y, 0.0f);
 
             mLabel.draw();
@@ -181,7 +181,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
                 if( binnedScene && binnedScene->isRunning() )
                 {
                     Vec3d screenCoords = transform * mPosition;
-                    //Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, app::getWindowWidth(), app::getWindowHeight());
+                    //Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
                     float force = 200.f;
                     binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.35f, force*mRadiusMultiplier);
                 }

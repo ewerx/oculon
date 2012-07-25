@@ -62,7 +62,7 @@ void Magnetosphere::setup()
     
     reset();
     
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Magnetosphere::drawParticles, this ) );
+    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Magnetosphere::drawParticles, this ) );
 }
 
 void Magnetosphere::initOpenCl()
@@ -141,7 +141,7 @@ void Magnetosphere::resize()
     mDimensions.x = mApp->getViewportWidth();
     mDimensions.y = mApp->getViewportHeight();
     mKernel->setArg(ARG_DIMENSIONS, mDimensions);
-    mMotionBlurRenderer.resize(mApp->getWindowSize());
+    mMotionBlurRenderer.resize(mApp->getViewportSize());
 }
 
 void Magnetosphere::setupDebugInterface()
@@ -201,7 +201,7 @@ void Magnetosphere::initParticles()
     mNumNodes = kMaxNodes;
     const float angleIncrement = 2*M_PI / mNumNodes;
     float angle = 0.0f;
-    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
+    Vec2f center( mApp->getViewportWidth()/2.0f, mApp->getViewportHeight()/2.0f );
     for (int i=0; i < kMaxNodes; ++i) 
     {
 		tNode &node = mNodes[i];
@@ -246,7 +246,7 @@ void Magnetosphere::updateNodes(double dt)
 {
     mNodeRotation += mNodeRotationSpeed*dt;
     const float angleIncrement = 2*M_PI / mNumNodes;
-    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
+    Vec2f center( mApp->getViewportWidth()/2.0f, mApp->getViewportHeight()/2.0f );
     float angle = mNodeRotation;
     for (int i=0; i < mNumNodes; ++i) 
     {
@@ -323,7 +323,7 @@ void Magnetosphere::updateAudioResponse()
 void Magnetosphere::draw()
 {
     glPushMatrix();
-    gl::setMatricesWindow( mApp->getWindowSize() );
+    gl::setMatricesWindow( mApp->getViewportSize() );
 
     if( mUseMotionBlur )
     {
@@ -580,14 +580,14 @@ void Magnetosphere::drawDebug()
 {
     gl::pushMatrices();
     
-    CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+    CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 10.f);
     gl::setMatrices(textCam);
     
     
     for( int i = 0; i < mNumNodes; ++i )
     {
         Vec2f worldCoords( mNodes[i].mPos.x, mNodes[i].mPos.y );
-        //Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getWindowWidth(), mApp->getWindowHeight());
+        //Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getViewportWidth(), mApp->getViewportHeight());
         
         gl::drawString(toString(mNodes[i].mMass),worldCoords,ColorAf(1.0,1.0,1.0,0.4));
     }

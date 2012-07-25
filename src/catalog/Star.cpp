@@ -12,11 +12,13 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Text.h"
 #include "cinder/app/AppBasic.h"
+#include "Scene.h"
+#include "OculonApp.h"
 
 using namespace ci;
 
-Star::Star( Vec3f pos, float appMag, float absMag, float color, std::string name, std::string spectrum, const Font &fontS, const Font &fontM )
-	: mPos( pos ), mApparentMag( appMag ), mAbsoluteMag( absMag ), mColor( color ), mName( name )
+Star::Star( Scene* scene, Vec3f pos, float appMag, float absMag, float color, std::string name, std::string spectrum, const Font &fontS, const Font &fontM )
+	: mParentScene(scene), mPos( pos ), mApparentMag( appMag ), mAbsoluteMag( absMag ), mColor( color ), mName( name )
 {
 	mInitPos		= mPos;
 	mDistToMouse	= 1000.0f;
@@ -44,10 +46,10 @@ void Star::update( const Camera &cam, float scale )
 	mPos		= mInitPos * scale;
 	mSphere.setCenter( mPos );
 	
-	mScreenPos		= cam.worldToScreen( mPos, app::getWindowWidth(), app::getWindowHeight() );
+	mScreenPos		= cam.worldToScreen( mPos, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight() );
 	mDistToCam		= -cam.worldToEyeDepth( mPos );
 	mDistToCamPer	= math<float>::min( mDistToCam * 0.01f, 1.0f );
-	mScreenRadius	= cam.getScreenRadius( mSphere, app::getWindowWidth(), app::getWindowHeight() );
+	mScreenRadius	= cam.getScreenRadius( mSphere, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight() );
 }
 
 void Star::drawName( const Vec2f &mousePos, float power, float alpha )

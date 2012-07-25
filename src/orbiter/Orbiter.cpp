@@ -89,7 +89,7 @@ void Orbiter::setup()
     
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
+	mCam.setPerspective( 45.0f, mApp->getViewportAspectRatio(), 1.0f, 200000.0f );
     
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
@@ -432,9 +432,9 @@ void Orbiter::draw()
     gl::pushMatrices();
     
     Matrix44d matrix = Matrix44d::identity();
-    matrix.scale(Vec3d( mDrawScale * getWindowWidth() / 2.0f, 
-                       mDrawScale * getWindowHeight() / 2.0f,
-                       mDrawScale * getWindowHeight() / 2.0f));
+    matrix.scale(Vec3d( mDrawScale * mApp->getViewportWidth() / 2.0f, 
+                       mDrawScale * mApp->getViewportHeight() / 2.0f,
+                       mDrawScale * mApp->getViewportHeight() / 2.0f));
 
     if( CAM_BINNED == mCamType )
     {
@@ -652,7 +652,7 @@ void Orbiter::drawHud()
     
     gl::enableAlphaBlending();
     
-    CameraOrtho textCam(0.0f, mApp->getWindowWidth(), mApp->getWindowHeight(), 0.0f, 0.0f, 50.f);
+    CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 50.f);
     gl::setMatrices(textCam);
     
     for( int i = 0; i < TB_COUNT; ++i )
@@ -664,8 +664,8 @@ void Orbiter::drawHud()
     const float height = 100.0f;
     const float space = 10.0f;
     const float left = 20.0f;
-    const float top = mApp->getWindowHeight() - 20.0f - (height*2.0f) - space;
-    drawHudWaveformAnalyzer(0.0f,100.0f,getWindowWidth(),height);
+    const float top = mApp->getViewportHeight() - 20.0f - (height*2.0f) - space;
+    drawHudWaveformAnalyzer(0.0f,100.0f,mApp->getViewportWidth(),height);
     drawHudSpectrumAnalyzer(left,top+height+space,width,height);
     
     gl::popMatrices();
@@ -706,13 +706,13 @@ void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float 
         spectrum_left.push_back( Vec2f( ( c * scale ), y ) );
     }
     glPushMatrix();
-    glTranslatef(left,getWindowHeight()/6.0f,0.0f);
+    glTranslatef(left,mApp->getViewportHeight()/6.0f,0.0f);
     gl::color( ColorA( 0.0f, 0.0f, 0.0f, 0.75f ) );
     gl::draw( spectrum_right );
     glPopMatrix();
     glPushMatrix();
     //gl::color( Color( 0.75f, 0.75f, 0.75f ) );
-    glTranslatef(left,getWindowHeight()/2.0f,0.0f);
+    glTranslatef(left,mApp->getViewportHeight()/2.0f,0.0f);
     gl::draw( spectrum_left );
     glPopMatrix();
     

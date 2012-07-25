@@ -68,9 +68,11 @@ public: // cinder interface
 
 	void draw();
     
-    int getViewportWidth() const;                 
-    int getViewportHeight() const;
-    Area getViewportBounds() const;
+    int     getViewportWidth() const;                 
+    int     getViewportHeight() const;
+    Area    getViewportBounds() const;
+    Vec2i   getViewportSize() const;
+    float   getViewportAspectRatio() const;
     
 public: // new
     inline AudioInput& getAudioInput()                  { return mAudioInput; }

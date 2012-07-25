@@ -171,7 +171,7 @@ void MindWaveTest::draw()
     
     gl::pushMatrices();
     {
-        gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+        gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
         
         drawGraphs();
     }
@@ -184,10 +184,10 @@ void MindWaveTest::drawGraphs()
     // Draw a box over the entire display instead of clearing
 	// the screen. This will leave trails.
 	gl::color( ColorAf( mColorBackground, mTrails ) );
-	gl::drawSolidRect( Rectf( getWindowBounds() ) );
+	gl::drawSolidRect( Rectf( getViewportBounds() ) );
     
 	// Rotate screen around center
-	Vec2f center = getWindowCenter();
+	Vec2f center = getViewportCenter();
 	gl::pushMatrices();
 	gl::translate( center );
 	gl::rotate( mRotation );
@@ -239,11 +239,11 @@ void MindWaveTest::drawGraphs()
     if( mindWave.hasData() && mindWave.getBlink() > 0.0f )
     {
         gl::color(ColorA(1.0f,1.0f,1.0f,0.8f));
-        gl::drawSolidRect( Rectf( getWindowBounds() ) );
+        gl::drawSolidRect( Rectf( mApp->getViewportBounds() ) );
         console() << "[mindwave] blink!\n";
     }
 
-    int displaySize = getWindowWidth();
+    int displaySize = mApp->getViewportWidth();
     
     //only draw the last 1024 samples or less
     const int numSamples = 1024;

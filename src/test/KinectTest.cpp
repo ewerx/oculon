@@ -46,9 +46,9 @@ void KinectTest::update(double dt)
 void KinectTest::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindowPersp(getWindowSize());
+    gl::setMatricesWindowPersp(mApp->getViewportSize());
 
-    const int centerX = getWindowWidth() / 2;
+    const int centerX = mApp->getViewportWidth() / 2;
     
     KinectController& kinectCtrl = mApp->getKinectController();
     
@@ -64,17 +64,17 @@ void KinectTest::draw()
 		
 	if( colorTexture )
     {
-		gl::draw( colorTexture, Rectf( getWindowWidth(), 0, centerX, centerX/colorTexture.getAspectRatio() ) );
+		gl::draw( colorTexture, Rectf( mApp->getViewportWidth(), 0, centerX, centerX/colorTexture.getAspectRatio() ) );
     }
     
     if( cvTexture )
     {
-        gl::draw( cvTexture, Rectf( centerX, getWindowHeight()/2, 0, getWindowHeight() ) );
+        gl::draw( cvTexture, Rectf( centerX, mApp->getViewportHeight()/2, 0, mApp->getViewportHeight() ) );
     }
     
     if( depthSurface )
     {
-        gl::draw( depthSurface, Rectf( getWindowWidth(), getWindowHeight()/2, centerX, getWindowHeight() ) );
+        gl::draw( depthSurface, Rectf( mApp->getViewportWidth(), mApp->getViewportHeight()/2, centerX, mApp->getViewportHeight() ) );
     }
     
     gl::color(Colorf(1.0f, 0.0f, 0.0f));

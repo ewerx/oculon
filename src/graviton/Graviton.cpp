@@ -87,7 +87,7 @@ void Graviton::setup()
     
     reset();
     
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &Graviton::drawParticles, this ) );
+    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Graviton::drawParticles, this ) );
 
 }
 
@@ -473,13 +473,13 @@ void Graviton::reset()
     mCamLateralPosition = -mCamMaxDistance;
     mCamTarget = Vec3f::zero();
     mCam.setFov(60.0f);
-    mCam.setAspectRatio(mApp->getWindowAspectRatio());
+    mCam.setAspectRatio(mApp->getViewportAspectRatio());
 }
 
 void Graviton::resize()
 {
     Scene::resize();
-    mMotionBlurRenderer.resize(mApp->getWindowSize());
+    mMotionBlurRenderer.resize(mApp->getViewportSize());
 }
 
 void Graviton::update(double dt)
@@ -888,14 +888,14 @@ void Graviton::drawDebug()
     {
         gl::pushMatrices();
     
-        CameraOrtho textCam(0.0f, app::getWindowWidth(), app::getWindowHeight(), 0.0f, 0.0f, 10.f);
+        CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 10.f);
         gl::setMatrices(textCam);
     
     
         for( int i = 0; i < mNumNodes; ++i )
         {
             Vec3f worldCoords( mPosAndMass[i].x, mPosAndMass[i].y, mPosAndMass[i].z );
-            Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getWindowWidth(), mApp->getWindowHeight());
+            Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getViewportWidth(), mApp->getViewportHeight());
             
             gl::drawString(toString(mGravityNodes[i].mMass),textCoords,ColorAf(1.0,1.0,1.0,0.4));
         }
