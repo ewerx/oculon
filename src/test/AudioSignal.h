@@ -30,10 +30,11 @@ public:
     
     // inherited from Scene
     void setup();
-    //void reset();
+    void reset();
     void update(double dt);
     void draw();
     void drawDebug();
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     
 protected:
     void setupInterface();

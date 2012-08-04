@@ -58,6 +58,13 @@ void AudioSignal::setup()
     mEclipse->setup();
 }
 
+void AudioSignal::reset()
+{
+    mVerticalLines->reset();
+    mSignalScope->reset();
+    mEclipse->reset();
+}
+
 void AudioSignal::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
@@ -127,6 +134,8 @@ void AudioSignal::draw()
 
 void AudioSignal::drawSubScenes()
 {
+    gl::enableAlphaBlending();
+    
     if( mEnableVerticalLines )
     {
         mVerticalLines->draw();
@@ -316,5 +325,15 @@ bool AudioSignal::removeFilter()
     mFilter = Kiss::Filter::NONE;
     mFilterFrequency = 0.0f;
     mApp->getAudioInput().getFft()->removeFilter();
+    return false;
+}
+
+bool AudioSignal::handleKeyDown(const ci::app::KeyEvent& keyEvent)
+{
+    if( keyEvent.getCode() == KeyEvent::KEY_SPACE )
+    {
+        mEclipse->reset();
+    }
+    
     return false;
 }
