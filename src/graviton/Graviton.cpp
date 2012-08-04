@@ -10,6 +10,7 @@
 #include "Graviton.h"
 #include "Resources.h"
 #include "AudioInput.h" // compile errors if this is not before App.h
+#include "MindWave.h"
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
 #include "cinder/Easing.h"
@@ -69,6 +70,9 @@ void Graviton::setup()
     mCamTranslateRate = 1.0f;
     mCamType = CAM_SPLINE;
     
+    // neural
+    mResetCameraByBlink = false;
+    mColorByMindWave = false;
     
     if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
     {
@@ -186,7 +190,14 @@ void Graviton::setupInterface()
                          .maxValue(5.0f)
                          .oscReceiver(getName(), "camspeed"));
     mInterface->addButton(CreateTriggerParam("Reset Spline", NULL)
-                          .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );    
+                          .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );
+    
+    // mindwave
+    mInterface->gui()->addColumn();
+    mInterface->addParam(CreateBoolParam( "Reset Camera by Blink", &mResetCameraByBlink )
+                         .oscReceiver(getName(), "blinkcamera"));
+    mInterface->addParam(CreateBoolParam( "Color by Mindwave", &mColorByMindWave )
+                         .oscReceiver(getName(), "mindwavecolor"));
 }
 
 void Graviton::initParticles()
@@ -488,6 +499,7 @@ void Graviton::update(double dt)
 	//mDimensions.y = mApp->getViewportHeight();
     
     updateAudioResponse();
+    updateNeuralResponse();
 
 #if defined( FREEOCL_VERSION )
     //mAnimTime += mTimeSpeed;
@@ -632,6 +644,29 @@ void Graviton::updateAudioResponse()
     {
         mClBufFft.write( fftBuffer, 0, sizeof(cl_float) * bandCount );
         mKernel->setArg( ARG_FFT, mClBufFft.getCLMem() );
+    }
+}
+
+void Graviton::updateNeuralResponse()
+{
+    MindWave& mindWave = mApp->getMindWave();
+    if( mindWave.hasData() )
+    {
+        if( mindWave.getBlink() > 0.0f )
+        {
+            if( mResetCameraByBlink )
+            {
+                setupCameraSpline();
+            }
+        }
+        
+        if( mColorByMindWave )
+        {
+            const float attention = mindWave.getAttention();
+            const float meditation = mindWave.getMeditation();
+            
+            
+        }
     }
 }
 

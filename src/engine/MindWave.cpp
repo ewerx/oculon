@@ -70,7 +70,7 @@ MindWave::MindWave()
         TG_EnableBlinkDetection = (TGEnableBlinkDetectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_EnableBlinkDetection"));
         
         assert( TG_GetDriverVersion && TG_GetNewConnectionId && TG_Connect && 
-               TG_ReadPackets && TG_GetValue && TG_GetValueStatus && TG_Disconnect && TG_FreeConnection && TG_SetDataLog && TG_E );
+               TG_ReadPackets && TG_GetValue && TG_GetValueStatus && TG_Disconnect && TG_FreeConnection && TG_SetDataLog && TG_EnableBlinkDetection );
     }
 }
 

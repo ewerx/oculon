@@ -194,6 +194,9 @@ private:
     bool                mScalePointsByDistance;
     bool                mUseMotionBlur;
     
+    bool                mResetCameraByBlink;
+    bool                mColorByMindWave;
+    
     bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
     
@@ -230,6 +233,7 @@ private:
     void resetGravityNodes(const eNodeFormation formation);
     
     void updateAudioResponse();
+    void updateNeuralResponse();
     void updateCamera(const double dt);
         
     void preRender();
