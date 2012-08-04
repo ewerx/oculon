@@ -17,6 +17,7 @@
 
 class SignalScope;
 class VerticalLines;
+class Eclipse;
 
 //
 // Audio input tests
@@ -60,5 +61,8 @@ private:
 
     VerticalLines* mVerticalLines;
     bool mEnableVerticalLines;
+    
+    Eclipse* mEclipse;
+    bool mEnableEclipse;
 };
 

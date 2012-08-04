@@ -13,6 +13,7 @@
 #include "Interface.h"
 #include "SignalScope.h"
 #include "VerticalLines.h"
+#include "Eclipse.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -27,12 +28,14 @@ AudioSignal::AudioSignal()
 {
     mSignalScope = new SignalScope(this);
     mVerticalLines = new VerticalLines(this);
+    mEclipse = new Eclipse(this);
 }
 
 AudioSignal::~AudioSignal()
 {
     delete mSignalScope;
     delete mVerticalLines;
+    delete mEclipse;
 }
 
 void AudioSignal::setup()
@@ -48,8 +51,11 @@ void AudioSignal::setup()
     mEnableVerticalLines = false;
     mVerticalLines->setup();
     
-    mEnableSignalScope = true;
+    mEnableSignalScope = false;
     mSignalScope->setup();
+    
+    mEnableEclipse = true;
+    mEclipse->setup();
 }
 
 void AudioSignal::setupInterface()
@@ -60,6 +66,8 @@ void AudioSignal::setupInterface()
                          .oscReceiver(mName,"lines"));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
                          .oscReceiver(mName,"signal"));
+    mInterface->addParam(CreateBoolParam( "Eclipse", &mEnableEclipse )
+                         .oscReceiver(mName,"eclipse"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -71,6 +79,7 @@ void AudioSignal::setupInterface()
     
     mSignalScope->setupInterface();
     mVerticalLines->setupInterface();
+    mEclipse->setupInterface();
 }
 
 void AudioSignal::setupDebugInterface()
@@ -79,6 +88,7 @@ void AudioSignal::setupDebugInterface()
     
     mSignalScope->setupDebugInterface();
     mVerticalLines->setupDebugInterface();
+    mEclipse->setupDebugInterface();
 }
 
 void AudioSignal::update(double dt)
@@ -93,12 +103,17 @@ void AudioSignal::update(double dt)
     {
         mVerticalLines->update(dt);
     }
+    if( mEnableEclipse )
+    {
+        mEclipse->update(dt);
+    }
 }
 
 void AudioSignal::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
+    //gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
+    gl::setMatricesWindowPersp(mApp->getViewportSize());
     if( mUseMotionBlur )
     {
         mMotionBlurRenderer.draw();
@@ -120,6 +135,11 @@ void AudioSignal::drawSubScenes()
     if( mEnableSignalScope )
     {
         mSignalScope->draw();
+    }
+    
+    if( mEnableEclipse )
+    {
+        mEclipse->draw();
     }
 }
 
@@ -143,9 +163,9 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     
     AudioInput& audioInput = mApp->getAudioInput();
     
-    glPushMatrix();
+    gl::pushMatrices();
     glDisable(GL_LIGHTING);
-    glColor4f(1.0f,1.0f,1.0f,0.95f);
+    gl::color(ColorA(1.0f,1.0f,1.0f,0.95f));
 	
     bool useKiss = true;
     if( useKiss )
@@ -248,7 +268,7 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         gl::color( Color( 1.0f, 0.5f, 0.25f ) );
         gl::draw( spectrum_right );
     }
-    glPopMatrix();
+    gl::popMatrices();
 }
 
 void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )

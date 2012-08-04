@@ -366,6 +366,8 @@ void OculonApp::mouseDown( MouseEvent event )
             scene->handleMouseDown(event);
         }
     }
+    
+    console() << "[mouse] click (" << event.getPos().x << "," << event.getPos().y << ")" << std::endl;
 }
 
 void OculonApp::mouseDrag( MouseEvent event )
