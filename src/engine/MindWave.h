@@ -37,14 +37,17 @@
 #define TG_DATA_BETA2 10
 #define TG_DATA_GAMMA1 11
 #define TG_DATA_GAMMA2 12
+#define TG_DATA_BLINK_STRENGTH 37
 
 typedef int(*TGFunctionPtr)();
 typedef int(*TGConnectPtr)(int, const char*, int, int);
 typedef int(*TGReadPacketsPtr)(int,int);
 typedef float(*TGGetValuePtr)(int,int);
+typedef int(*TGGetValueStatusPtr)(int,int);
 typedef int(*TGDisconnectPtr)(int);
 typedef void(*TGFreeConnectionPtr)(int);
 typedef int(*TGSetDataLogPtr)(int, const char*);
+typedef int(*TGEnableBlinkDetectionPtr)(int,int);
 
 class MindWave
 {
@@ -70,7 +73,10 @@ public:
     void setup();
     void update();
     
+    bool  hasData() const           { return mHasData; }
     float getSignalQuality() const  { return mSignalQuality; }
+    float getBattery() const        { return mBattery; }
+    float getBlink() const          { return mBlink; }
     float getAttention() const      { return mAttention; }
 	float getMeditation() const     { return mMeditation; }
 	float getRaw() const            { return mRaw; }
@@ -93,7 +99,10 @@ private:
 private:
     
     // data
+    bool  mHasData;
     float mSignalQuality; // poor signal status
+    float mBattery; // battery level
+    float mBlink; // blink strength
 	float mAttention; // eSense attention
 	float mMeditation; // eSense meditation
 	float mRaw;
@@ -105,7 +114,7 @@ private:
 	float mBeta2;
 	float mGamma1;
 	float mGamma2;
-    float mBand[BAND_COUNT];
+    
     
     // thread
     boost::thread           mThread;
@@ -117,15 +126,19 @@ private:
     CFBundleRef             mThinkGearBundle;
     int                     mConnectionId;
     const char*             mPortName;
+    bool                    mEnableLogging;
+    bool                    mEnableBlinkDetection;
     
-    TGFunctionPtr       TG_GetDriverVersion;
-    TGFunctionPtr       TG_GetNewConnectionId; 
-    TGConnectPtr        TG_Connect;
-    TGReadPacketsPtr    TG_ReadPackets;
-    TGGetValuePtr       TG_GetValue;
-    TGDisconnectPtr     TG_Disconnect;
-    TGFreeConnectionPtr TG_FreeConnection;
-    TGSetDataLogPtr     TG_SetDataLog;
+    TGFunctionPtr               TG_GetDriverVersion;
+    TGFunctionPtr               TG_GetNewConnectionId; 
+    TGConnectPtr                TG_Connect;
+    TGReadPacketsPtr            TG_ReadPackets;
+    TGGetValuePtr               TG_GetValue;
+    TGGetValueStatusPtr         TG_GetValueStatus;
+    TGDisconnectPtr             TG_Disconnect;
+    TGFreeConnectionPtr         TG_FreeConnection;
+    TGSetDataLogPtr             TG_SetDataLog;
+    TGEnableBlinkDetectionPtr   TG_EnableBlinkDetection;
 };
 
 #endif // __MINDWAVE_H__

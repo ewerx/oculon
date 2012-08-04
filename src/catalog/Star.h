@@ -8,9 +8,12 @@
 #include "cinder/Sphere.h"
 #include <vector>
 
+class Scene;
+
 class Star {
 public:
-	Star( ci::Vec3f pos, 
+	Star( Scene* scene,
+          ci::Vec3f pos,
 		  float apparentMag,
 		  float absoluteMag, 
 		  float color, 
@@ -44,4 +47,6 @@ public:
 	float		mDistToMouse;
 	
 	bool		mIsSelected;
+    
+    Scene*      mParentScene;
 };

@@ -30,14 +30,15 @@ void ShaderTest::setup()
 {
     Scene::setup();
     
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &ShaderTest::drawScene, this ) );
+    Vec2f viewportSize( mApp->getViewportWidth(), mApp->getViewportHeight() );
+    mMotionBlurRenderer.setup( viewportSize, boost::bind( &ShaderTest::drawScene, this ) );
     
     mUseFbo = false;
     // setup FBO
     gl::Fbo::Format format;
     //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-    const int fboWidth = mApp->getWindowWidth();
-    const int fboHeight = mApp->getWindowHeight();
+    const int fboWidth = mApp->getViewportWidth();
+    const int fboHeight = mApp->getViewportHeight();
     //format.enableMipmapping(false);
     format.enableDepthBuffer(false);
 	format.setCoverageSamples(8);
@@ -81,11 +82,11 @@ void ShaderTest::setup()
     */
     
     mVel = Vec2f(100.0f,0.0f);
-    mPos = Vec2f(0.0f,mApp->getWindowHeight()/2.0f);
+    mPos = Vec2f(0.0f,mApp->getViewportHeight()/2.0f);
     mColor = ColorA(1.0f,0.0f,0.0f,1.0f);
     
     //mEnableShader = false;
-    mBlurAmount = 8.0f / getWindowWidth();
+    mBlurAmount = 8.0f / mApp->getViewportWidth();
     
     
     // OSC TEST
@@ -123,7 +124,7 @@ void ShaderTest::update(double dt)
 {
     //mPos += mVel * dt;
     
-    if( mPos.x > (mApp->getWindowWidth()-100) || mPos.x < 0.0f )
+    if( mPos.x > (mApp->getViewportWidth()-100) || mPos.x < 0.0f )
     {
         mVel.x *= -1.0f;
     }
@@ -230,8 +231,8 @@ void ShaderTest::draw()
         
         /*
         Area viewport = gl::getViewport();
-        //gl::setMatricesWindow(getWindowSize());
-        //gl::setViewport(getWindowBounds());
+        //gl::setMatricesWindow(mApp->getViewportSize());
+        //gl::setViewport(mApp->getViewportBounds());
         
         // ****** DRAW SCENE ONTO FBO ******
         
@@ -254,8 +255,8 @@ void ShaderTest::draw()
         
         // Set up window
         gl::clear(ColorAf::black());
-        gl::setViewport(getWindowBounds());
-        gl::setMatricesWindow(getWindowSize(), false);
+        gl::setViewport(mApp->getViewportBounds());
+        gl::setMatricesWindow(mApp->getViewportSize(), false);
         
         // Bind and configure shader
         mShader.bind();
@@ -267,7 +268,7 @@ void ShaderTest::draw()
         
         // Draw shader output
         gl::color(Color::white());
-        gl::drawSolidRect(getWindowBounds());
+        gl::drawSolidRect(mApp->getViewportBounds());
         
         // Unbind shader
         mShader.unbind();
@@ -292,7 +293,7 @@ void ShaderTest::draw()
 
 void ShaderTest::drawScene()
 {
-    gl::setMatricesWindowPersp(getWindowSize());
+    gl::setMatricesWindowPersp(mApp->getViewportSize());
     glColor4f(mColor);
     gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + mRadius, mPos.y + mRadius) );
 }
@@ -325,11 +326,11 @@ void ShaderTest::handleOscMessage( const ci::osc::Message& message )
     {
         if( osc::TYPE_FLOAT == message.getArgType(0) )
         {
-            mPos.x = message.getArgAsFloat(0) * mApp->getWindowWidth();
+            mPos.x = message.getArgAsFloat(0) * mApp->getViewportWidth();
         }
         if( osc::TYPE_FLOAT == message.getArgType(1) )
         {
-            mPos.y = message.getArgAsFloat(1) * mApp->getWindowHeight();
+            mPos.y = message.getArgAsFloat(1) * mApp->getViewportHeight();
         }        
         console() << "[osc test] x: " << mPos.x << " y: " << mPos.y << std::endl;
     }

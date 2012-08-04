@@ -132,22 +132,22 @@ void Binned::reset()
              
              // left
              float x = Rand::randFloat(-padding*2, -padding);
-             float y = Rand::randFloat(padding, getWindowHeight() - padding);
+             float y = Rand::randFloat(padding, mApp->getViewportHeight() - padding);
              mParticleSystem.add(Particle(x, y, xv, yv));
              
              // right
-             x = Rand::randFloat(getWindowWidth()+padding, getWindowWidth()+padding*2);
-             y = Rand::randFloat(-padding, getWindowHeight() + padding);
+             x = Rand::randFloat(mApp->getViewportWidth()+padding, mApp->getViewportWidth()+padding*2);
+             y = Rand::randFloat(-padding, mApp->getViewportHeight() + padding);
              mParticleSystem.add(Particle(x, y, xv, yv));
              
              // top
-             x = Rand::randFloat(-padding, getWindowWidth() + padding);
+             x = Rand::randFloat(-padding, mApp->getViewportWidth() + padding);
              y = Rand::randFloat(-padding*2, -padding);
              mParticleSystem.add(Particle(x, y, xv, yv));
              
              // bottom
-             x = Rand::randFloat(-padding, getWindowWidth() + padding);
-             y = Rand::randFloat(getWindowHeight()+padding, getWindowHeight()+padding*2);
+             x = Rand::randFloat(-padding, mApp->getViewportWidth() + padding);
+             y = Rand::randFloat(mApp->getViewportHeight()+padding, mApp->getViewportHeight()+padding*2);
              mParticleSystem.add(Particle(x, y, xv, yv));
              }
              */
@@ -348,11 +348,6 @@ void Binned::setupInterface()
     mInterface->addParam(CreateColorParam("Indicator Color", &mForceIndicatorColor, kMinColor, kMaxColor)
                          .oscReceiver(mName,"indicatorcolor"));
     
-    mInterface->addEnum(CreateEnumParam("Force Pattern", &mAudioPattern)
-                        .maxValue(PATTERN_COUNT)
-                        .oscReceiver(mName,"forcepattern")
-                        .isVertical());
-    
     // TouchOSC XY-pad
     const int maxTouches = 5;
     char buf[OSC_ADDRESS_SIZE];
@@ -429,10 +424,23 @@ void Binned::draw()
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
     
-    switch (mApplyForcePattern) 
+    applyForcePatterns();
+    
+	mParticleSystem.update();
+	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
+	mParticleSystem.draw( mPointColor, mPointSize );
+    
+    gl::popMatrices();
+    
+    ++mFrameCounter;
+}
+
+void Binned::applyForcePatterns()
+{
+    switch (mApplyForcePattern)
     {
         case PATTERN_FOUR_CORNERS:
-            {
+        {
             //Vec2i center(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
             const float radius = mMaxRadius;
             const float force = mMaxForce;
@@ -443,7 +451,7 @@ void Binned::draw()
             
             mParticleSystem.addRepulsionForce(mMetropolis.p5.x, mMetropolis.p5.y, radius, force*mForceScaleX, force*mForceScaleY);
             mParticleSystem.addRepulsionForce(mMetropolis.p6.x, mMetropolis.p6.y, radius, force*mForceScaleX, force*mForceScaleY);
-            }
+        }
             break;
             
         case PATTERN_BPM_BOUNCE:
@@ -458,28 +466,28 @@ void Binned::draw()
                 const float force = mMaxForce;//*0.5f;
                 //float d = radius*1.5f;
                 /*
-                switch( mBpmBouncePosition )
-                {
-                    case 0:
-                        center.x = mApp->getViewportWidth()/2 - radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 + d;
-                        break;
-                
-                    case 1:
-                        center.x = mApp->getViewportWidth()/2 + radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 + d;
-                        break;
-                        
-                    case 2:
-                        center.x = mApp->getViewportWidth()/2 - radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 - d;
-                        break;
-                        
-                    case 3:
-                        center.x = mApp->getViewportWidth()/2 + radius*2.0f;
-                        center.y = mApp->getViewportHeight()/2 - d;
-                        break;
-                }
+                 switch( mBpmBouncePosition )
+                 {
+                 case 0:
+                 center.x = mApp->getViewportWidth()/2 - radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 + d;
+                 break;
+                 
+                 case 1:
+                 center.x = mApp->getViewportWidth()/2 + radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 + d;
+                 break;
+                 
+                 case 2:
+                 center.x = mApp->getViewportWidth()/2 - radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 - d;
+                 break;
+                 
+                 case 3:
+                 center.x = mApp->getViewportWidth()/2 + radius*2.0f;
+                 center.y = mApp->getViewportHeight()/2 - d;
+                 break;
+                 }
                  */
                 center.x = mApp->getViewportWidth()/2;
                 center.y = mApp->getViewportHeight()/2;
@@ -551,15 +559,15 @@ void Binned::draw()
         case PATTERN_RING:
         {
             /*
-            const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
-            float time = elapsed_seconds / mPatternDuration;
-            if( time > 1.0f )
-            {
-                mApplyForcePattern = PATTERN_NONE;
-                mApp->enableFrameCapture( false );
-                break;
-                //mApp->quit();
-            }
+             const float elapsed_seconds = (mFrameCounter/kCaptureFramerate);
+             float time = elapsed_seconds / mPatternDuration;
+             if( time > 1.0f )
+             {
+             mApplyForcePattern = PATTERN_NONE;
+             mApp->enableFrameCapture( false );
+             break;
+             //mApp->quit();
+             }
              */
             
             bool gotime = true;
@@ -593,16 +601,16 @@ void Binned::draw()
                 bool both = Rand::randFloat(1.0f) < 0.75f;
                 if( alternate || both )
                 {
-                
+                    
                     for( theta = 0.0f; theta < (M_PI*2.0f); theta += delta )
                     {
                         mParticleSystem.addRepulsionForce(center.x+sin(theta)*radius*2.0f, center.y+cos(theta)*radius*2.0f, radius, force*mForceScaleX, force*mForceScaleY);
                         
                     }
-                }                
+                }
                 if( !alternate || both )
                 {
-                
+                    
                     const float inner_force = Rand::randFloat(0.5f*force,force*1.5f);
                     const float inner_radius = Rand::randFloat(radius*0.25f,radius);
                     mParticleSystem.addRepulsionForce(center.x, center.y, inner_radius, inner_force*mForceScaleX, inner_force*mForceScaleY);
@@ -636,7 +644,7 @@ void Binned::draw()
             
             break;
         }
-        
+            
         case PATTERN_NONE:
             applyQueuedForces();
             if( !mIsOrbiterModeEnabled )
@@ -646,37 +654,27 @@ void Binned::draw()
         default:
             break;
     }
-    
-	mParticleSystem.update();
-	//glColor4f(1.0f, 1.0f, 1.0f, mPointOpacity);
-	mParticleSystem.draw( mPointColor, mPointSize );
-    
-    gl::enableDepthRead();
-    gl::enableAlphaBlending();
-    gl::popMatrices();
-    
-    ++mFrameCounter;
 }
 
 void Binned::drawDebug()
 {
     //gl::pushMatrices();
-	//gl::setMatricesWindow( mApp->getWindowWidth(), mApp->getWindowHeight() );
+	//gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     gl::disableDepthRead();
     glDisable( GL_LIGHTING );
     glDisable( GL_TEXTURE_2D );
 	gl::enableAdditiveBlending();
     //gl::enableAlphaBlending();
     
-    Vec2f center( mApp->getWindowWidth()/2.0f, mApp->getWindowHeight()/2.0f );
-    float scale = (float)(mApp->getWindowWidth()) / (float)(mApp->getViewportWidth()); 
+    Vec2f center( mApp->getViewportWidth()/2.0f, mApp->getViewportHeight()/2.0f );
+    float scale = (float)(mApp->getViewportWidth()) / (float)(mApp->getViewportWidth()); 
     
     glColor4f(1.0f,0.0f,0.0f,0.5f);
     gl::drawStrokedCircle(center, mMaxRadius*scale);
     glColor4f(1.0f,0.2f,0.2f,0.25f);
     gl::drawStrokedCircle(center, mMaxRadius*0.75f*scale);
     gl::drawStrokedCircle(center, mMaxRadius*1.25f*scale);
-    //gl::drawStrokedCircle(center, mApp->getWindowWidth()/3.0f);
+    //gl::drawStrokedCircle(center, mApp->getViewportWidth()/3.0f);
     
     glColor4f(0.0f,0.2f,0.5f,0.5f);
     gl::drawStrokedCircle(center, mCircularWallRadius*scale);

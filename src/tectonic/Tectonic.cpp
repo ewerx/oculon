@@ -310,7 +310,7 @@ bool Tectonic::triggerNextQuake()
 void Tectonic::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     gl::enableAlphaBlending();
     glEnable( GL_LINE_SMOOTH );
@@ -395,7 +395,7 @@ void Tectonic::drawHud()
 void Tectonic::drawDebug()
 {
     //gl::pushMatrices();
-    //gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    //gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
 
     //gl::popMatrices();
 }

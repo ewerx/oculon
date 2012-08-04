@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C08407A15BE525600CCE6DB /* VerticalLines.cpp */; };
 		7C13446A158992AD0032017E /* darkStar.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C134465158992AD0032017E /* darkStar.png */; };
 		7C13446B158992AD0032017E /* milkyWay.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C134466158992AD0032017E /* milkyWay.jpg */; };
 		7C13446C158992AD0032017E /* spectrum.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C134467158992AD0032017E /* spectrum.png */; };
@@ -58,6 +59,8 @@
 		7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C37393814F737DA00B24851 /* OpenCL.framework */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
+		7C65CA7115C0AC2E00CF1197 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65CA6F15C0AC2E00CF1197 /* Eclipse.cpp */; };
+		7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */; };
 		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
@@ -260,6 +263,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7C08407A15BE525600CCE6DB /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VerticalLines.cpp; path = test/VerticalLines.cpp; sourceTree = "<group>"; };
+		7C08407B15BE525600CCE6DB /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalLines.h; path = test/VerticalLines.h; sourceTree = "<group>"; };
 		7C13445A158992950032017E /* brightStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.frag; sourceTree = "<group>"; };
 		7C13445B158992950032017E /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C13445C158992950032017E /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
@@ -350,6 +355,9 @@
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
 		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
+		7C65CA6F15C0AC2E00CF1197 /* Eclipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Eclipse.cpp; path = test/Eclipse.cpp; sourceTree = "<group>"; };
+		7C65CA7015C0AC2E00CF1197 /* Eclipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Eclipse.h; path = test/Eclipse.h; sourceTree = "<group>"; };
+		7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = eclipse_mapping_pattern.jpg; sourceTree = "<group>"; };
 		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -932,8 +940,8 @@
 			children = (
 				7C865570148C2784000E00B6 /* blocks */,
 				7C745559148C259C009C0356 /* src */,
-				7C74552F148C04C6009C0356 /* xcode */,
 				7C865644148C2BCD000E00B6 /* resources */,
+				7C74552F148C04C6009C0356 /* xcode */,
 			);
 			path = Oculon;
 			sourceTree = "<group>";
@@ -1165,6 +1173,7 @@
 				7C1C5CC614FB13D3002CE80B /* glitter.png */,
 				7C8663BF149536F0004C9558 /* particle.png */,
 				7C3738C114F03AED00B24851 /* particle_white.png */,
+				7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -1513,8 +1522,12 @@
 		7CF3DF0315A559B400CC61D2 /* audiosignal */ = {
 			isa = PBXGroup;
 			children = (
+				7C65CA6F15C0AC2E00CF1197 /* Eclipse.cpp */,
+				7C65CA7015C0AC2E00CF1197 /* Eclipse.h */,
 				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
 				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
+				7C08407A15BE525600CCE6DB /* VerticalLines.cpp */,
+				7C08407B15BE525600CCE6DB /* VerticalLines.h */,
 				7C745583148C259C009C0356 /* AudioSignal.cpp */,
 				7C745584148C259C009C0356 /* AudioSignal.h */,
 			);
@@ -1675,6 +1688,7 @@
 				7C13446E158992AD0032017E /* starGlow.png in Resources */,
 				7CAFEE63158C1808005B338D /* starData.txt in Resources */,
 				7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */,
+				7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */,
 				7C8F153A15BB4B1700BAD08D /* glow.png in Resources */,
 				7C8F153B15BB4B1700BAD08D /* lanternGlow.png in Resources */,
 				7C8F153C15BB4B1700BAD08D /* nebula.png in Resources */,
@@ -1769,6 +1783,8 @@
 				7C1344721589969A0032017E /* faintStars.vert in Sources */,
 				7C1344731589969A0032017E /* passThruNormals.vert in Sources */,
 				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
+				7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */,
+				7C65CA7115C0AC2E00CF1197 /* Eclipse.cpp in Sources */,
 				7C8F150A15BB287300BAD08D /* Controller.cpp in Sources */,
 				7C8F150B15BB287300BAD08D /* Flock.cpp in Sources */,
 				7C8F150C15BB287300BAD08D /* Glow.cpp in Sources */,

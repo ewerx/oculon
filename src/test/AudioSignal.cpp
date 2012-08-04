@@ -12,6 +12,8 @@
 #include "AudioSignal.h"
 #include "Interface.h"
 #include "SignalScope.h"
+#include "VerticalLines.h"
+#include "Eclipse.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -25,11 +27,15 @@ AudioSignal::AudioSignal()
 : Scene("audio")
 {
     mSignalScope = new SignalScope(this);
+    mVerticalLines = new VerticalLines(this);
+    mEclipse = new Eclipse(this);
 }
 
 AudioSignal::~AudioSignal()
 {
     delete mSignalScope;
+    delete mVerticalLines;
+    delete mEclipse;
 }
 
 void AudioSignal::setup()
@@ -37,15 +43,26 @@ void AudioSignal::setup()
     Scene::setup();
     
     mUseMotionBlur = false;
-    mMotionBlurRenderer.setup( mApp->getWindowSize(), boost::bind( &AudioSignal::drawVerticalLines, this ) );
+    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &AudioSignal::drawSubScenes, this ) );
     
     mFilter = 0;
     mFilterFrequency = 0.0f;
     
     mEnableVerticalLines = false;
+    mVerticalLines->setup();
     
-    mEnableSignalScope = true;
+    mEnableSignalScope = false;
     mSignalScope->setup();
+    
+    mEnableEclipse = true;
+    mEclipse->setup();
+}
+
+void AudioSignal::reset()
+{
+    mVerticalLines->reset();
+    mSignalScope->reset();
+    mEclipse->reset();
 }
 
 void AudioSignal::setupInterface()
@@ -56,6 +73,8 @@ void AudioSignal::setupInterface()
                          .oscReceiver(mName,"lines"));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
                          .oscReceiver(mName,"signal"));
+    mInterface->addParam(CreateBoolParam( "Eclipse", &mEnableEclipse )
+                         .oscReceiver(mName,"eclipse"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -66,6 +85,8 @@ void AudioSignal::setupInterface()
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
     mSignalScope->setupInterface();
+    mVerticalLines->setupInterface();
+    mEclipse->setupInterface();
 }
 
 void AudioSignal::setupDebugInterface()
@@ -73,6 +94,8 @@ void AudioSignal::setupDebugInterface()
     Scene::setupDebugInterface();
     
     mSignalScope->setupDebugInterface();
+    mVerticalLines->setupDebugInterface();
+    mEclipse->setupDebugInterface();
 }
 
 void AudioSignal::update(double dt)
@@ -83,35 +106,56 @@ void AudioSignal::update(double dt)
     {
         mSignalScope->update(dt);
     }
+    if( mEnableVerticalLines )
+    {
+        mVerticalLines->update(dt);
+    }
+    if( mEnableEclipse )
+    {
+        mEclipse->update(dt);
+    }
 }
 
 void AudioSignal::draw()
 {
     gl::pushMatrices();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    //gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
+    gl::setMatricesWindowPersp(mApp->getViewportSize());
     if( mUseMotionBlur )
     {
         mMotionBlurRenderer.draw();
     }
     else
     {
-        if( mEnableVerticalLines )
-        {
-            drawVerticalLines();
-        }
-        
-        if( mEnableSignalScope )
-        {
-            mSignalScope->draw();
-        }
+        drawSubScenes();
     }
     gl::popMatrices();
+}
+
+void AudioSignal::drawSubScenes()
+{
+    gl::enableAlphaBlending();
+    
+    if( mEnableVerticalLines )
+    {
+        mVerticalLines->draw();
+    }
+    
+    if( mEnableSignalScope )
+    {
+        mSignalScope->draw();
+    }
+    
+    if( mEnableEclipse )
+    {
+        mEclipse->draw();
+    }
 }
 
 void AudioSignal::drawDebug()
 {
     glPushMatrix();
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     //drawWaveform( mApp->getAudioInput().getPcmBuffer() );
     //drawFft( mApp->getAudioInput().getFftDataRef() );
@@ -128,9 +172,9 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     
     AudioInput& audioInput = mApp->getAudioInput();
     
-    glPushMatrix();
+    gl::pushMatrices();
     glDisable(GL_LIGHTING);
-    glColor4f(1.0f,1.0f,1.0f,0.95f);
+    gl::color(ColorA(1.0f,1.0f,1.0f,0.95f));
 	
     bool useKiss = true;
     if( useKiss )
@@ -149,8 +193,8 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         
 		// Get dimensions
         const float border = 10.0f;
-		float scaleX = ((float)getWindowWidth() - border*2.0f) / (float)binSize;
-		float windowHeight = (float)getWindowHeight();
+		float scaleX = ((float)mApp->getViewportWidth() - border*2.0f) / (float)binSize;
+		float windowHeight = (float)mApp->getViewportHeight();
         float scaleY = (windowHeight - border*2.0f) * 0.25f;
         float yOffset = (windowHeight * 0.25f + border);
         
@@ -168,7 +212,7 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
             realLine.push_back(Vec2f(i * scaleX + border, real[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*4.0f)));
         }
         
-        scaleX = ((float)getWindowWidth() - border*2.0f) / (float)dataSize;
+        scaleX = ((float)mApp->getViewportWidth() - border*2.0f) / (float)dataSize;
         
 		// Use polylines to depict time and frequency domains
 		PolyLine<Vec2f> freqLine;
@@ -209,7 +253,7 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
         audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
         
-        int displaySize = getWindowWidth();
+        int displaySize = mApp->getViewportWidth();
         int endIdx = bufferSamples;
         
         //only draw the last 1024 samples or less
@@ -233,15 +277,15 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         gl::color( Color( 1.0f, 0.5f, 0.25f ) );
         gl::draw( spectrum_right );
     }
-    glPopMatrix();
+    gl::popMatrices();
 }
 
 void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
 {
     AudioInput& audioInput = mApp->getAudioInput();
     uint16_t bandCount = audioInput.getFftBandCount();
-	float ht = getWindowHeight() * 0.70f;
-	float bottom = getWindowHeight() - 50.f;
+	float ht = mApp->getViewportHeight() * 0.70f;
+	float bottom = mApp->getViewportHeight() - 50.f;
     const float width = 2.0f;
     const float space = width + 0.0f;
 	
@@ -270,66 +314,6 @@ void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
     glPopMatrix();
 }
 
-void AudioSignal::drawVerticalLines()
-{
-    AudioInput& audioInput = mApp->getAudioInput();
-	
-    // Get data
-    float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    // Get dimensions
-    //float scale = ((float)getWindowWidth() - 20.0f) / (float)dataSize;
-    //float mWindowHeight = (float)getWindowHeight();
-    
-    // Use polylines to depict time and frequency domains
-    PolyLine<Vec2f> freqLine;
-    PolyLine<Vec2f> timeLine;
-    
-    
-    float screenHeight = getWindowHeight();
-    float screenWidth = getWindowWidth();
-    //float bottom = getWindowHeight();
-    
-    glPushMatrix();
-    gl::enableAdditiveBlending();
-    // Iterate through data
-    for (int32_t i = 0; i < dataSize; i++) 
-    {
-        
-        // Do logarithmic plotting for frequency domain
-        //double logSize = log((double)dataSize);
-        //float x = (float)(log((double)i) / logSize) * (double)dataSize;
-        //float y = math<float>::clamp(freqData[i] * (x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
-        float x = fftLogData[i].x;
-        float y = fftLogData[i].y;
-    
-        const float threshold = 0.025f;
-        const float minAlpha = 0.25f;
-        if( y > threshold )
-        {
-            const float width = Rand::randFloat(1.0f+(x/dataSize)*7.0f, (x/dataSize)*10.0f);
-            //const float space = Rand::randFloat(1.0f, 3.0f);
-
-            float barX = Rand::randFloat(0.0f,screenWidth);
-            glBegin( GL_QUADS );
-            // bottom
-            glColor4f( 0.0f, 0.1f, 0.75f, y+minAlpha );
-            glVertex2f( barX, 0.0f );
-            glVertex2f( barX + width, 0.0f );
-            // top
-            glColor4f( 0.0f, 0.25f, 1.0f, y+minAlpha );
-            glVertex2f( barX + width, screenHeight );
-            glVertex2f( barX, screenHeight );
-            glEnd();
-        }
-	}
-    gl::enableAlphaBlending();
-    glPopMatrix();
-}
-
 bool AudioSignal::setFilter()
 {
     mApp->getAudioInput().getFft()->setFilter( mFilterFrequency, mFilter );
@@ -341,5 +325,15 @@ bool AudioSignal::removeFilter()
     mFilter = Kiss::Filter::NONE;
     mFilterFrequency = 0.0f;
     mApp->getAudioInput().getFft()->removeFilter();
+    return false;
+}
+
+bool AudioSignal::handleKeyDown(const ci::app::KeyEvent& keyEvent)
+{
+    if( keyEvent.getCode() == KeyEvent::KEY_SPACE )
+    {
+        mEclipse->reset();
+    }
+    
     return false;
 }

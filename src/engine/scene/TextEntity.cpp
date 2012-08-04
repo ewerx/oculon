@@ -8,6 +8,7 @@
  */
 
 #include "TextEntity.h"
+#include "OculonApp.h"
 #include "cinder/Text.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/app/App.h"
@@ -102,12 +103,12 @@ void TextEntity::updateTextSize()
 {
     if( mJustifyRight )
     {
-        mPosition.x = app::getWindowWidth() - mTextBox.measure().x - mMarginRight;
+        mPosition.x = mParentScene->getApp()->getViewportWidth() - mTextBox.measure().x - mMarginRight;
     }
     
     if( mJustifyBottom )
     {
-        mPosition.y = app::getWindowHeight() - mTextBox.measure().y - mMarginBottom;
+        mPosition.y = mParentScene->getApp()->getViewportHeight() - mTextBox.measure().y - mMarginBottom;
     }
 }
 

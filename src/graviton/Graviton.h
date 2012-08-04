@@ -128,6 +128,16 @@ private:
         PARTICLE_FLAGS_SHOW_MASS =  (1 << 3),
     };
     
+    enum eColorMode
+    {
+        COLOR_MONO,
+        COLOR_SPEED,
+        COLOR_MASS,
+        
+        COLOR_COUNT,
+    };
+    eColorMode              mColorMode;
+    
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
@@ -184,6 +194,9 @@ private:
     bool                mScalePointsByDistance;
     bool                mUseMotionBlur;
     
+    bool                mResetCameraByBlink;
+    bool                mColorByMindWave;
+    
     bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
     
@@ -220,6 +233,7 @@ private:
     void resetGravityNodes(const eNodeFormation formation);
     
     void updateAudioResponse();
+    void updateNeuralResponse();
     void updateCamera(const double dt);
         
     void preRender();

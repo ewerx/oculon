@@ -56,7 +56,7 @@ void Scene::init(OculonApp* app)
     
     // setup FBO
     setupFbo();
-    mSyphon.setName(mName);
+    //mSyphon.setName(mName);
     
     // setup master interface
     mInterface = new Interface( mApp, &mApp->getOscServer() );
