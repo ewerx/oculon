@@ -348,11 +348,6 @@ void Binned::setupInterface()
     mInterface->addParam(CreateColorParam("Indicator Color", &mForceIndicatorColor, kMinColor, kMaxColor)
                          .oscReceiver(mName,"indicatorcolor"));
     
-    mInterface->addEnum(CreateEnumParam("Force Pattern", &mAudioPattern)
-                        .maxValue(PATTERN_COUNT)
-                        .oscReceiver(mName,"forcepattern")
-                        .isVertical());
-    
     // TouchOSC XY-pad
     const int maxTouches = 5;
     char buf[OSC_ADDRESS_SIZE];

@@ -41,8 +41,8 @@ void VerticalLines::setup()
 {
     mColor = Colorf::white();
     
-    mBaseWidth = 2.0f;
-    mMaxWidth = 50.0f;
+    mBaseWidth = 1.0f;
+    mMaxWidth = 15.0f;
     mIntensity = 0.25f;
     mThreshold = 0.02f;
     mWidthByFft = true;
@@ -63,7 +63,7 @@ void VerticalLines::setupInterface()
     interface->addParam(CreateBoolParam("Width By Audio", &mWidthByFft)
                         .oscReceiver(name,"widthaudio"));
     interface->addParam(CreateBoolParam("Alpha By Audio", &mAlphaByFft)
-                        .oscReceiver(name,"alphaudio"));
+                        .oscReceiver(name,"alphaaudio"));
     interface->addParam(CreateBoolParam("Pos By Audio", &mPositionByFft)
                         .oscReceiver(name,"posaudio"));
     interface->addParam(CreateFloatParam("Base Width", &mBaseWidth)

@@ -77,7 +77,7 @@ void SignalScope::setupInterface()
                                            .sendFeedback());
     mParentScene->getInterface()->addParam(CreateIntParam("Center Bias Range", &mCenterBiasRange)
                                            .minValue(1)
-                                           .maxValue(NUM_POINTS/2)
+                                           .maxValue(NUM_POINTS/4)
                                            .oscReceiver(name,"biasrange")
                                            .sendFeedback());
     mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Min", &mHorizSmoothingMin)
