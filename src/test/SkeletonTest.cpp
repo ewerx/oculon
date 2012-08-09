@@ -42,16 +42,15 @@ void SkeletonTest::setup()
 		m_2RealKinect = _2RealKinect::getInstance();
 		std::cout << "_2RealKinectWrapper Version: " << m_2RealKinect->getVersion() << std::endl;
 		bool bResult = false;
-		//m_iNumberOfDevices = m_2RealKinect->getNumberOfDevices();
-		m_iNumberOfDevices = 1;
+		m_iNumberOfDevices = m_2RealKinect->getNumberOfDevices();
 		for ( int devIdx=0; devIdx < m_iNumberOfDevices ; ++devIdx )
 		{
-			bResult = m_2RealKinect->configure( devIdx,  COLORIMAGE | DEPTHIMAGE | USERIMAGE, IMAGE_COLOR_640X480  );
+			bResult = m_2RealKinect->configure( devIdx, COLORIMAGE | DEPTHIMAGE | USERIMAGE, IMAGE_COLOR_640X480 );
 			if( bResult )
 			{
 				std::cout << "_2RealKinectWrapper Device " << devIdx << " started successfully!..." << std::endl;
 			}
-			m_iMotorValue = m_2RealKinect->getMotorAngle( devIdx );	// just make motor device 0 controllable
+			//m_iMotorValue = m_2RealKinect->getMotorAngle( devIdx );	// just make motor device 0 controllable
 			m_2RealKinect->startGenerator( devIdx,  DEPTHIMAGE | COLORIMAGE | USERIMAGE );
 		}
 		resizeImages();
@@ -63,6 +62,8 @@ void SkeletonTest::setup()
 		int pause = 0;
 		std::cin >> pause;
 	}
+    
+    m_Font = Font("Arial", 24);
 }
 
 void SkeletonTest::update(double dt)
@@ -71,6 +72,10 @@ void SkeletonTest::update(double dt)
 
 void SkeletonTest::draw()
 {
+    gl::enableAlphaBlending();
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+    
     gl::pushMatrices();
     gl::setMatricesWindowPersp(getWindowSize());
 
@@ -145,16 +150,21 @@ void SkeletonTest::drawKinectImages()
 	boost::shared_array<unsigned char> imgRef;
 	int numberChannels = 0;
     
-	cout << m_iMotorValue << std::endl;
-	for( int i = 0; i < m_iNumberOfDevices; ++i)
+    
+    
+ 	for( int i = 0; i < m_iNumberOfDevices; ++i)
 	{
 		//---------------Color Image---------------------//
+		m_iKinectWidth  = m_2RealKinect->getImageWidth(i, COLORIMAGE );
+		m_iKinectHeight = m_2RealKinect->getImageHeight(i, COLORIMAGE );
 		ci::Rectf destinationRectangle( m_ImageSize.x * i, 0, m_ImageSize.x * (i+1), m_ImageSize.y);
 		imgRef = getImageData( i, COLORIMAGE, m_iKinectWidth, m_iKinectHeight, numberChannels);
 		Surface8u color( imgRef.get(), m_iKinectWidth, m_iKinectHeight, m_iKinectWidth*numberChannels, SurfaceChannelOrder::RGB );
 		gl::draw( gl::Texture( color ), destinationRectangle );
         
 		//---------------Depth Image---------------------//
+		m_iKinectWidth = m_2RealKinect->getImageWidth(i, DEPTHIMAGE );
+		m_iKinectHeight = m_2RealKinect->getImageHeight(i, DEPTHIMAGE );
 		imgRef = getImageData( i, DEPTHIMAGE, m_iKinectWidth, m_iKinectHeight, numberChannels);
 		Channel depth( m_iKinectWidth, m_iKinectHeight, m_iKinectWidth, numberChannels, imgRef.get() );
 		destinationRectangle.offset( ci::Vec2f( 0, m_ImageSize.y) );
@@ -165,7 +175,9 @@ void SkeletonTest::drawKinectImages()
 		if( i == 0 )
 #endif
 		{
-            imgRef = getImageData( i, USERIMAGE, m_iKinectWidth, m_iKinectHeight, numberChannels);
+			m_iKinectWidth = m_2RealKinect->getImageWidth(i, USERIMAGE );
+			m_iKinectHeight = m_2RealKinect->getImageHeight(i, USERIMAGE );
+			imgRef = getImageData( i, USERIMAGE, m_iKinectWidth, m_iKinectHeight, numberChannels);
 			if( imgRef )
 			{
 				Surface8u userColored( imgRef.get(), m_iKinectWidth, m_iKinectHeight, m_iKinectWidth*3, SurfaceChannelOrder::RGB );
@@ -202,10 +214,9 @@ void SkeletonTest::drawKinectImages()
 boost::shared_array<unsigned char> SkeletonTest::getImageData( int deviceID, _2RealGenerator imageType, int& imageWidth, int& imageHeight, int& bytePerPixel )
 {
 	bytePerPixel = m_2RealKinect->getBytesPerPixel( imageType );
-	imageWidth = m_2RealKinect->getImageWidth( deviceID, imageType );		
+	imageWidth = m_2RealKinect->getImageWidth( deviceID, imageType );
 	imageHeight = m_2RealKinect->getImageHeight( deviceID, imageType );
-    
-	return m_2RealKinect->getImageData( deviceID, imageType);
+	return m_2RealKinect->getImageData( deviceID, imageType );
 }
 
 void SkeletonTest::drawSkeletons(int deviceID, ci::Rectf rect)
@@ -276,7 +287,6 @@ void SkeletonTest::drawSkeletons(int deviceID, ci::Rectf rect)
 void SkeletonTest::drawCenterOfMasses(int deviceID, ci::Rectf destRect)
 {
 	int nrOfUsers = m_2RealKinect->getNumberOfUsers(deviceID);
-	//std::cout << "The number of users is: " << nrOfUsers << std::endl;
 	if ( nrOfUsers > 0 )
 	{
 		gl::color(1,0,0);
@@ -303,9 +313,9 @@ void SkeletonTest::resize()
 void SkeletonTest::resizeImages()
 {
 	//calculate imagesize
-	int iImageHeight = (int)(m_iScreenHeight / 4.0);		// divide window height according to the number of generator outputs (rgb, depth, user, skeleton)
+	int iImageHeight = (int)(m_iScreenHeight/ 4.0);		// divide window height according to the number of generator outputs (rgb, depth, user, skeleton)
 	int iImageWidth = (int)(iImageHeight * 4.0 / 3.0);		// keep images aspect ratio 4:3
-	if(iImageWidth * m_iNumberOfDevices > m_iScreenWidth)	// aspect ratio 	
+	if(iImageWidth * m_iNumberOfDevices > m_iScreenWidth)	// aspect ratio
 	{
 		iImageWidth = m_iScreenWidth / m_iNumberOfDevices;
 		iImageHeight = iImageWidth * 3 / 4;
@@ -316,11 +326,17 @@ void SkeletonTest::resizeImages()
 
 void SkeletonTest::mirrorImages()
 {
-	m_bIsMirroring = !m_bIsMirroring;	// toggleMirroring
-	for( int i = 0; i < m_iNumberOfDevices; ++i)
+	for ( int i = 0; i < m_iNumberOfDevices; ++i )
 	{
-		m_2RealKinect->setMirrored( i, COLORIMAGE, m_bIsMirroring );
-		m_2RealKinect->setMirrored( i, DEPTHIMAGE, m_bIsMirroring );
-		m_2RealKinect->setMirrored( i, USERIMAGE, m_bIsMirroring );		// OpenNI has no capability yet to mirror the user image
-	}		
+		try
+		{
+			m_2RealKinect->setMirrored( i,  COLORIMAGE , m_bIsMirroring );
+			m_2RealKinect->setMirrored( i,  DEPTHIMAGE , m_bIsMirroring );
+		}
+		catch (...)
+		{
+			std::cout << "Failed to mirror" << std::endl;
+		}
+	}
+	m_bIsMirroring = !m_bIsMirroring;	// toggleMirroring
 }

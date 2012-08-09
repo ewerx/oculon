@@ -34,14 +34,6 @@
 		7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
 		7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
-		7C361A2B15BC68940078C7F1 /* _2RealKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184215BC68900078C7F1 /* _2RealKinect.cpp */; };
-		7C361A2C15BC68940078C7F1 /* _2RealLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184315BC68900078C7F1 /* _2RealLogger.cpp */; };
-		7C361A2D15BC68940078C7F1 /* _2RealTrackedJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184515BC68900078C7F1 /* _2RealTrackedJoint.cpp */; };
-		7C361A2E15BC68940078C7F1 /* _2RealTrackedUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184715BC68900078C7F1 /* _2RealTrackedUser.cpp */; };
-		7C361A2F15BC68940078C7F1 /* _2RealTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184915BC68900078C7F1 /* _2RealTypes.cpp */; };
-		7C361A3015BC68940078C7F1 /* _2RealVector2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36184B15BC68900078C7F1 /* _2RealVector2f.cpp */; };
-		7C361A3115BC68940078C7F1 /* OpenNIDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36185015BC68900078C7F1 /* OpenNIDevice.cpp */; };
-		7C361A3215BC68940078C7F1 /* OpenNIMotorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C36185215BC68900078C7F1 /* OpenNIMotorController.cpp */; };
 		7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
@@ -252,29 +244,6 @@
 		7C1C5CC614FB13D3002CE80B /* glitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glitter.png; sourceTree = "<group>"; };
 		7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonTest.cpp; sourceTree = "<group>"; };
 		7C232C5D15283E7C00B671A5 /* SkeletonTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonTest.h; sourceTree = "<group>"; };
-		7C3617AB15BC68900078C7F1 /* _2RealImageSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealImageSource.h; sourceTree = "<group>"; };
-		7C3617AC15BC68900078C7F1 /* _2RealKinect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealKinect.h; sourceTree = "<group>"; };
-		7C3617AD15BC68900078C7F1 /* _2RealTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealTypes.h; sourceTree = "<group>"; };
-		7C3617AE15BC68900078C7F1 /* _2RealVector2f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealVector2f.h; sourceTree = "<group>"; };
-		7C36184115BC68900078C7F1 /* _2RealConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealConfig.h; sourceTree = "<group>"; };
-		7C36184215BC68900078C7F1 /* _2RealKinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _2RealKinect.cpp; sourceTree = "<group>"; };
-		7C36184315BC68900078C7F1 /* _2RealLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _2RealLogger.cpp; sourceTree = "<group>"; };
-		7C36184415BC68900078C7F1 /* _2RealLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealLogger.h; sourceTree = "<group>"; };
-		7C36184515BC68900078C7F1 /* _2RealTrackedJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _2RealTrackedJoint.cpp; sourceTree = "<group>"; };
-		7C36184615BC68900078C7F1 /* _2RealTrackedJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealTrackedJoint.h; sourceTree = "<group>"; };
-		7C36184715BC68900078C7F1 /* _2RealTrackedUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _2RealTrackedUser.cpp; sourceTree = "<group>"; };
-		7C36184815BC68900078C7F1 /* _2RealTrackedUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealTrackedUser.h; sourceTree = "<group>"; };
-		7C36184915BC68900078C7F1 /* _2RealTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _2RealTypes.cpp; sourceTree = "<group>"; };
-		7C36184A15BC68900078C7F1 /* _2RealUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealUtility.h; sourceTree = "<group>"; };
-		7C36184B15BC68900078C7F1 /* _2RealVector2f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = _2RealVector2f.cpp; sourceTree = "<group>"; };
-		7C36184C15BC68900078C7F1 /* _2RealVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _2RealVersion.h; sourceTree = "<group>"; };
-		7C36184D15BC68900078C7F1 /* I_2RealImplementation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = I_2RealImplementation.h; sourceTree = "<group>"; };
-		7C36184F15BC68900078C7F1 /* _2RealImplementationOpenNI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = _2RealImplementationOpenNI.hpp; sourceTree = "<group>"; };
-		7C36185015BC68900078C7F1 /* OpenNIDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenNIDevice.cpp; sourceTree = "<group>"; };
-		7C36185115BC68900078C7F1 /* OpenNIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenNIDevice.h; sourceTree = "<group>"; };
-		7C36185215BC68900078C7F1 /* OpenNIMotorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenNIMotorController.cpp; sourceTree = "<group>"; };
-		7C36185315BC68900078C7F1 /* OpenNIMotorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenNIMotorController.h; sourceTree = "<group>"; };
-		7C36185415BC68900078C7F1 /* OpenNiUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OpenNiUtils.hpp; sourceTree = "<group>"; };
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
 		7C3738DA14F36A4C00B24851 /* oculon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oculon.png; sourceTree = "<group>"; };
 		7C3738E814F7359B00B24851 /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
@@ -553,61 +522,6 @@
 			);
 			path = catalog;
 			sourceTree = "<group>";
-		};
-		7C3617AA15BC68900078C7F1 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				7C3617AB15BC68900078C7F1 /* _2RealImageSource.h */,
-				7C3617AC15BC68900078C7F1 /* _2RealKinect.h */,
-				7C3617AD15BC68900078C7F1 /* _2RealTypes.h */,
-				7C3617AE15BC68900078C7F1 /* _2RealVector2f.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		7C36184015BC68900078C7F1 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7C36184115BC68900078C7F1 /* _2RealConfig.h */,
-				7C36184215BC68900078C7F1 /* _2RealKinect.cpp */,
-				7C36184315BC68900078C7F1 /* _2RealLogger.cpp */,
-				7C36184415BC68900078C7F1 /* _2RealLogger.h */,
-				7C36184515BC68900078C7F1 /* _2RealTrackedJoint.cpp */,
-				7C36184615BC68900078C7F1 /* _2RealTrackedJoint.h */,
-				7C36184715BC68900078C7F1 /* _2RealTrackedUser.cpp */,
-				7C36184815BC68900078C7F1 /* _2RealTrackedUser.h */,
-				7C36184915BC68900078C7F1 /* _2RealTypes.cpp */,
-				7C36184A15BC68900078C7F1 /* _2RealUtility.h */,
-				7C36184B15BC68900078C7F1 /* _2RealVector2f.cpp */,
-				7C36184C15BC68900078C7F1 /* _2RealVersion.h */,
-				7C36184D15BC68900078C7F1 /* I_2RealImplementation.h */,
-				7C36184E15BC68900078C7F1 /* OpenNISpecific */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		7C36184E15BC68900078C7F1 /* OpenNISpecific */ = {
-			isa = PBXGroup;
-			children = (
-				7C36184F15BC68900078C7F1 /* _2RealImplementationOpenNI.hpp */,
-				7C36185015BC68900078C7F1 /* OpenNIDevice.cpp */,
-				7C36185115BC68900078C7F1 /* OpenNIDevice.h */,
-				7C36185215BC68900078C7F1 /* OpenNIMotorController.cpp */,
-				7C36185315BC68900078C7F1 /* OpenNIMotorController.h */,
-				7C36185415BC68900078C7F1 /* OpenNiUtils.hpp */,
-			);
-			path = OpenNISpecific;
-			sourceTree = "<group>";
-		};
-		7C36F03D15BC688B0078C7F1 /* _2RealKinectWrapper */ = {
-			isa = PBXGroup;
-			children = (
-				7C3617AA15BC68900078C7F1 /* include */,
-				7C36184015BC68900078C7F1 /* src */,
-			);
-			name = _2RealKinectWrapper;
-			path = ../sdks/cinder/blocks/_2RealKinectWrapper;
-			sourceTree = SOURCE_ROOT;
 		};
 		7C3738E414F7359B00B24851 /* MSACore */ = {
 			isa = PBXGroup;
@@ -1108,7 +1022,6 @@
 		7C865570148C2784000E00B6 /* blocks */ = {
 			isa = PBXGroup;
 			children = (
-				7C36F03D15BC688B0078C7F1 /* _2RealKinectWrapper */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7CF235E9151AE76600445AD8 /* Kinect */,
@@ -1725,14 +1638,6 @@
 				7C1344721589969A0032017E /* faintStars.vert in Sources */,
 				7C1344731589969A0032017E /* passThruNormals.vert in Sources */,
 				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
-				7C361A2B15BC68940078C7F1 /* _2RealKinect.cpp in Sources */,
-				7C361A2C15BC68940078C7F1 /* _2RealLogger.cpp in Sources */,
-				7C361A2D15BC68940078C7F1 /* _2RealTrackedJoint.cpp in Sources */,
-				7C361A2E15BC68940078C7F1 /* _2RealTrackedUser.cpp in Sources */,
-				7C361A2F15BC68940078C7F1 /* _2RealTypes.cpp in Sources */,
-				7C361A3015BC68940078C7F1 /* _2RealVector2f.cpp in Sources */,
-				7C361A3115BC68940078C7F1 /* OpenNIDevice.cpp in Sources */,
-				7C361A3215BC68940078C7F1 /* OpenNIMotorController.cpp in Sources */,
 				7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1782,7 +1687,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(CINDER_PATH)/boost",
-					"$(OPENNI_PATH)/include",
+					/usr/include/ni,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1796,7 +1701,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\" $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src";
 			};
 			name = Debug;
 		};
@@ -1818,7 +1723,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(CINDER_PATH)/boost",
-					"$(OPENNI_PATH)/include",
+					/usr/include/ni,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OPENNI_PATH = /Users/ehsan/dev/sdks/OpenNI;
@@ -1831,7 +1736,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\" $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src";
 			};
 			name = Release;
 		};
@@ -1867,7 +1772,8 @@
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_core.a",
 					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
 					"-lcurl",
-					"$(OPENNI_PATH)/Lib/libOpenNI.dylib",
+					"$(CINDER_PATH)/blocks/_2RealKinectWrapper/lib/_2RealKinectOpenNI_d.a",
+					/usr/lib/libOpenNI.dylib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1906,7 +1812,8 @@
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_core.a",
 					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
 					"-lcurl",
-					"$(OPENNI_PATH)/Lib/libOpenNI.dylib",
+					"$(CINDER_PATH)/blocks/_2RealKinectWrapper/lib/_2RealKinectOpenNI_d.a",
+					/usr/lib/libOpenNI.dylib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

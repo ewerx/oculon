@@ -55,8 +55,9 @@ private:
     ci::Vec2f					m_ImageSize;
     ci::Font					m_Font;
     int							m_iMotorValue;
+    bool						m_Align;
     
-    Vec3f               mHandPos;
+    //Vec3f               mHandPos;
     
     //Surface             mColorSurface;
     

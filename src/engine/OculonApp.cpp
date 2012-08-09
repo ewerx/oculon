@@ -295,10 +295,11 @@ void OculonApp::setupScenes()
     // Test Scenes
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
+    if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     if( mEnableKinect )
     {
         if( mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
-        if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
+        
     }
     if( mEnableMindWave )
     {
