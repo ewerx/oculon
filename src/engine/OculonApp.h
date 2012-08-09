@@ -147,6 +147,7 @@ private: // members
     
     KinectController        mKinectController;
     bool                    mEnableKinect;
+    bool                    mEnableOpenNI;
     
     // render
     double                  mLastElapsedSeconds;

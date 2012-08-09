@@ -19,6 +19,7 @@
 #include "MidiMap.h"
 #include "BinnedParticleSystem.h"
 #include "OscMessage.h"
+#include "BlobTracker.h"
 
 #include "Constants.h"
 #include "cinder/Timeline.h"
@@ -193,6 +194,10 @@ private:
     tMetropolisPattern mMetropolis;
     Anim<float> mTraverse;
     
+    
+    //TEMP
+    bool                mEnableBlobTracker;
+    BlobTracker         mBlobTracker;
 };
 
 #endif // __MAGNETOSPHERE_H__
