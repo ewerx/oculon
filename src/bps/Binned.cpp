@@ -97,8 +97,11 @@ void Binned::setup()
     
     mMetropolis.init( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
-    mBlobTracker.setup( mApp->getKinectController() );
-    mEnableBlobTracker = true;
+    mEnableBlobTracker = false;
+    if( mEnableBlobTracker )
+    {
+        mBlobTracker.setup( mApp->getKinectController() );
+    }
     
     reset();
 }
