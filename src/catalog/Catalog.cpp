@@ -201,6 +201,10 @@ void Catalog::setupInterface()
     mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)
                           .oscReceiver(mName,"quaketrigger"))->registerCallback( this, &Catalog::triggerNextQuake );
     */
+    mInterface->addButton(CreateTriggerParam("Random Home", NULL)
+                          .oscReceiver(mName,"randhome"))->registerCallback( this, &Catalog::setRandomHome );
+    mInterface->addButton(CreateTriggerParam("Random Dest", NULL)
+                          .oscReceiver(mName,"randdest"))->registerCallback( this, &Catalog::setRandomDest );
 }
 
 // ----------------------------------------------------------------
@@ -794,20 +798,45 @@ void Catalog::selectStar( bool wasRightClick )
 	
 	if( touchedStar ){
 		if( wasRightClick ){
-			mHomeStar = touchedStar;
+			setHomeStar( touchedStar );
 		} else {
-			console() << "[catalog] TOUCHED " << touchedStar->mName << std::endl;
-			if( mDestStar ){
-				mDestStar->mIsSelected = false;
-			}
-			mDestStar = touchedStar;
-			mDestStar->mIsSelected = true;
+			setDestStar( touchedStar );
 		}
 	}
 }
 
 //
 ////////------------------------------------------------------
+
+void Catalog::setHomeStar( Star* target )
+{
+    console() << "[catalog] HOME -> " << target->mName << std::endl;
+    mHomeStar = target;
+}
+
+void Catalog::setDestStar( Star* target )
+{
+    console() << "[catalog] DEST -> " << target->mName << std::endl;
+    if( mDestStar ){
+        mDestStar->mIsSelected = false;
+    }
+    mDestStar = target;
+    mDestStar->mIsSelected = true;
+}
+
+bool Catalog::setRandomHome()
+{
+    int index = Rand::randInt( mBrightStars.size() );
+    setHomeStar( mBrightStars[index] );
+    return false;
+}
+
+bool Catalog::setRandomDest()
+{
+    int index = Rand::randInt( mBrightStars.size() );
+    setDestStar( mBrightStars[index] );
+    return false;
+}
 
 const Camera& Catalog::getCam()
 {
