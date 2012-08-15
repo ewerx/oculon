@@ -177,6 +177,7 @@ private:
     cl_float                mGravity;
     cl_float                mEps;
     cl_uint                 mFlags;
+    float4                  mClColorScale;
     
     cl_int                  mNumNodes;
 
@@ -185,7 +186,7 @@ private:
     ci::gl::Texture     mParticleTexture;
     float				mPointSize;
     float				mLineWidth;
-    float               mParticleAlpha;
+    //float               mParticleAlpha;
     bool				mEnableBlending;
     bool				mAdditiveBlending;
     bool				mEnableLineSmoothing;
@@ -222,7 +223,8 @@ private:
     ci::Quatf           mCamRotation;
     ci::BSpline3f       mCamSpline;
     float               mCamSplineValue;
-    ci::Vec3f              mCamLastPos;
+    ci::Vec3f           mCamLastPos;
+    ci::ColorAf         mColorScale;
     
     MotionBlurRenderer  mMotionBlurRenderer;
 
