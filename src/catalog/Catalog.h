@@ -78,6 +78,11 @@ protected:
     //
     ////////------------------------------------------------------
     
+    void        setHomeStar( Star* target );
+    void        setDestStar( Star* target );
+    bool        setRandomHome();
+    bool        setRandomDest();
+    
     const ci::Camera& getCam();
         
 private:

@@ -43,6 +43,7 @@
 #include "MovieTest.h"
 #include "ShaderTest.h"
 #include "KinectTest.h"
+#include "SkeletonTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -305,9 +306,11 @@ void OculonApp::setupScenes()
     // Test Scenes
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
+    if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     if( mEnableKinect )
     {
         if( mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
+        
     }
     if( mEnableMindWave )
     {

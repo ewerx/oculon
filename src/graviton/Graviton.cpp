@@ -40,7 +40,7 @@ void Graviton::setup()
     
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
-    mColorMode = COLOR_MONO;
+    mColorMode = COLOR_MASS;
     
     mInitialFormation = FORMATION_SPHERE;
     mFormationRadius = 50.0f;
@@ -50,8 +50,9 @@ void Graviton::setup()
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
     mPointSize = 1.0f;
-    mParticleAlpha = 0.5f;
+    //mParticleAlpha = 0.5f;
     mUseMotionBlur = false;
+    mColorScale = ColorAf( 0.1f, 0.2f, 0.3f, 0.5f );
     
     mDamping = 1.0f;
     mGravity = 100.0f;
@@ -157,13 +158,15 @@ void Graviton::setupInterface()
                          .maxValue(1000.0f)
                          .oscReceiver(getName(), "formradius"));
     
-    mInterface->gui()->addSeparator();
+    mInterface->gui()->addColumn();
     mInterface->addEnum(CreateEnumParam( "Color Mode", (int*)(&mColorMode) )
                         .maxValue(COLOR_COUNT)
                         .oscReceiver(getName(), "colormode")
                         .isVertical());
-    mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
-                         .oscReceiver(getName(), "alpha"));
+    //mInterface->addParam(CreateFloatParam( "Alpha", &mParticleAlpha )
+    //                     .oscReceiver(getName(), "alpha"));
+    mInterface->addParam(CreateColorParam("Color Scale", &mColorScale, kMinColor, kMaxColor)
+                         .oscReceiver(mName,"colorscale"));
     mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
                          .minValue(1.0f)
                          .maxValue(3.0f)
@@ -507,13 +510,18 @@ void Graviton::update(double dt)
     
     // mStep = # of particles that act as gravitational attractors
     mStep = (NODE_FORMATION_NONE != mGravityNodeFormation) ? mNumNodes : (mNumParticles / kStep) / 4;
+    
+    mClColorScale.x = mColorScale.r;
+    mClColorScale.y = mColorScale.g;
+    mClColorScale.z = mColorScale.b;
+    mClColorScale.w = mColorScale.a;
 
     mKernel->setArg(ARG_DT, mTimeStep);
     mKernel->setArg(ARG_COUNT, mNumParticles);
     mKernel->setArg(ARG_STEP, mStep);
     mKernel->setArg(ARG_DAMPING, mDamping);
     mKernel->setArg(ARG_GRAVITY, mGravity);
-    mKernel->setArg(ARG_ALPHA, mParticleAlpha);
+    mKernel->setArg(ARG_ALPHA, mClColorScale);
     
     //mEps = Rand::randFloat(mFormationRadius/3.0f,mFormationRadius);
     mKernel->setArg(ARG_EPS, mEps);

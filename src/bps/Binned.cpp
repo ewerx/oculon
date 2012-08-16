@@ -97,6 +97,12 @@ void Binned::setup()
     
     mMetropolis.init( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
+    mEnableBlobTracker = false;
+    if( mEnableBlobTracker )
+    {
+        mBlobTracker.setup( mApp->getKinectController() );
+    }
+    
     reset();
 }
 
@@ -424,6 +430,17 @@ void Binned::draw()
         mParticleSystem.addRepulsionForce(mMousePos.x, mMousePos.y, radius, force*mForceScaleX, force*mForceScaleY);
     }
     
+    if( mEnableBlobTracker )
+    {
+        const float radius = mMaxRadius;
+        const float force = mMaxForce;
+        const Vec3f& blobPosition = mBlobTracker.getTargetPosition();
+        glColor3f(ci::Color::white());
+        gl::drawSphere(blobPosition, 10.0f);
+        
+        mParticleSystem.addRepulsionForce(blobPosition.x, blobPosition.y, radius, force*mForceScaleX, force*mForceScaleY);
+    }
+
     applyForcePatterns();
     
 	mParticleSystem.update();

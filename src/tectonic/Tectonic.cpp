@@ -62,6 +62,7 @@ void Tectonic::setup()
     // params
     mTriggerMode = TRIGGER_BPM;
     mBpm = 120.0f;
+    mBpmTapTimer = 0.0f;
     mLongitudeOffsetDegrees = 205; // pacific ocean centered
     mShowMap = false;
     mShowLabels = true;
@@ -144,6 +145,8 @@ void Tectonic::setupInterface()
                          .sendFeedback());    
     mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)
                           .oscReceiver(mName,"quaketrigger"))->registerCallback( this, &Tectonic::triggerNextQuake );
+    mInterface->addButton(CreateTriggerParam("BPM Tap", NULL)
+                          .oscReceiver(mName,"bpmtap"))->registerCallback( this, &Tectonic::bpmTap );
 }
 
 // ----------------------------------------------------------------
@@ -189,6 +192,7 @@ void Tectonic::update(double dt)
             break;
             
         case TRIGGER_BPM:
+            mBpmTapTimer += dt;
             triggerByBpm(dt);
             break;
             
@@ -302,6 +306,23 @@ bool Tectonic::triggerNextQuake()
         mCurrentIndex = 0;
     }
     
+    return false;
+}
+
+bool Tectonic::bpmTap()
+{
+    if( mBpmTapTimer < 2.0f )
+    {
+        mBpmAverage = (mBpmAverage + (60.0f / mBpmTapTimer)) / 2.0f;
+        mBpm = mBpmAverage;
+        console() << "[tectonic] TAP " << mBpmTapTimer << ". " << "Average BPM = " << mBpm << std::endl;
+        triggerNextQuake();
+    }
+    else
+    {
+        mBpmAverage = mBpm;
+    }
+    mBpmTapTimer = 0.0f;
     return false;
 }
 

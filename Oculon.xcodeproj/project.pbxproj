@@ -35,6 +35,7 @@
 		7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
 		7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
+		7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
 		7C3738F514F7359B00B24851 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738EA14F7359B00B24851 /* Color.cpp */; };
@@ -283,6 +284,8 @@
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
 		7C1C5CC614FB13D3002CE80B /* glitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glitter.png; sourceTree = "<group>"; };
+		7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonTest.cpp; sourceTree = "<group>"; };
+		7C232C5D15283E7C00B671A5 /* SkeletonTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonTest.h; sourceTree = "<group>"; };
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
 		7C3738DA14F36A4C00B24851 /* oculon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oculon.png; sourceTree = "<group>"; };
 		7C3738E814F7359B00B24851 /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
@@ -1061,6 +1064,8 @@
 				7C5CA3BC14B8F7F10037B007 /* MovieTest.h */,
 				7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */,
 				7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */,
+				7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */,
+				7C232C5D15283E7C00B671A5 /* SkeletonTest.h */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -1785,6 +1790,7 @@
 				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
 				7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */,
 				7C65CA7115C0AC2E00CF1197 /* Eclipse.cpp in Sources */,
+				7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */,
 				7C8F150A15BB287300BAD08D /* Controller.cpp in Sources */,
 				7C8F150B15BB287300BAD08D /* Flock.cpp in Sources */,
 				7C8F150C15BB287300BAD08D /* Glow.cpp in Sources */,
@@ -1851,9 +1857,13 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(CINDER_PATH)/boost";
+				HEADER_SEARCH_PATHS = (
+					"$(CINDER_PATH)/boost",
+					/usr/include/ni,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OPENNI_PATH = /Users/ehsan/dev/sdks/OpenNI;
 				OTHER_LDFLAGS = (
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
@@ -1863,7 +1873,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\" $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src";
 			};
 			name = Debug;
 		};
@@ -1883,8 +1893,12 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(CINDER_PATH)/boost";
+				HEADER_SEARCH_PATHS = (
+					"$(CINDER_PATH)/boost",
+					/usr/include/ni,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OPENNI_PATH = /Users/ehsan/dev/sdks/OpenNI;
 				OTHER_LDFLAGS = (
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
@@ -1894,7 +1908,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include \"$(CINDER_PATH)/blocks/Cinder-Syphon/src\" $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src";
 			};
 			name = Release;
 		};
@@ -1910,10 +1924,18 @@
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
+					"$(OPENNI_PATH)/Lib",
 					"$(inherited)",
 					"\"$(CINDER_PATH)/blocks/osc/lib/iphone\"",
 					"\"$(CINDER_PATH)/blocks/osc/lib/macosx\"",
 					"\"$(CINDER_PATH)/blocks/osc/lib/vc10\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/boost/lib/osx\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/boost/lib/win32\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/cinder/lib/osx\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/cinder/lib/osx/macosx\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/freeglut/lib\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/freeglut/lib/x86\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/lib\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
@@ -1922,6 +1944,8 @@
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_core.a",
 					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
 					"-lcurl",
+					"$(CINDER_PATH)/blocks/_2RealKinectWrapper/lib/_2RealKinectOpenNI_d.a",
+					/usr/lib/libOpenNI.dylib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1940,10 +1964,18 @@
 				GCC_PREFIX_HEADER = "xcode/Oculon-Prefix.pch";
 				INFOPLIST_FILE = "xcode/Oculon-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
+					"$(OPENNI_PATH)/Lib",
 					"$(inherited)",
 					"\"$(CINDER_PATH)/blocks/osc/lib/iphone\"",
 					"\"$(CINDER_PATH)/blocks/osc/lib/macosx\"",
 					"\"$(CINDER_PATH)/blocks/osc/lib/vc10\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/boost/lib/osx\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/boost/lib/win32\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/cinder/lib/osx\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/cinder/lib/osx/macosx\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/freeglut/lib\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/externalLibs/freeglut/lib/x86\"",
+					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/lib\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
@@ -1952,6 +1984,8 @@
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_core.a",
 					"$(CINDER_PATH)/blocks/osc/lib/macosx/osc.a",
 					"-lcurl",
+					"$(CINDER_PATH)/blocks/_2RealKinectWrapper/lib/_2RealKinectOpenNI_d.a",
+					/usr/lib/libOpenNI.dylib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

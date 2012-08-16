@@ -55,6 +55,7 @@ private:
     void setupMidiMapping();
     
     void updateAudioResponse();
+    void updateCam();
     
     void setupHud();
     void updateHud();
@@ -77,6 +78,7 @@ private:
     int                 mFollowTargetIndex;
     Body*               mFollowTarget;
     CameraPersp         mCam;
+    Matrix44d           mScaleMatrix;
     
     enum eCamType 
     {

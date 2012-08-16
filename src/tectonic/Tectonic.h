@@ -45,6 +45,7 @@ public:
     
     // callbacks
     bool triggerNextQuake();
+    bool bpmTap();
     
 protected:
     void setupInterface();
@@ -103,6 +104,8 @@ private:
     
     float mBpmTriggerTime;
     float mBpm;
+    float mBpmTapTimer;
+    float mBpmAverage;
     
     // hud
     enum eTextBoxLocations

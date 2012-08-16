@@ -334,6 +334,7 @@ void Orbiter::update(double dt)
     
     updateAudioResponse();
     updateHud();
+    updateCam();
     
     Scene::update(dt);
 }
@@ -425,21 +426,16 @@ void Orbiter::updateAudioResponse()
     }
 }
 
-void Orbiter::draw()
+void Orbiter::updateCam()
 {
-    gl::enableDepthWrite();
-    gl::enableAlphaBlending();
-    gl::pushMatrices();
-    
-    Matrix44d matrix = Matrix44d::identity();
-    matrix.scale(Vec3d( mDrawScale * mApp->getViewportWidth() / 2.0f, 
+    mScaleMatrix = Matrix44d::identity();
+    mScaleMatrix.scale(Vec3d( mDrawScale * mApp->getViewportWidth() / 2.0f,
                        mDrawScale * mApp->getViewportHeight() / 2.0f,
                        mDrawScale * mApp->getViewportHeight() / 2.0f));
-
+    
     if( CAM_BINNED == mCamType )
     {
         mCam.lookAt( Vec3d(0,6000,0), Vec3d(0,0,0), Vec3d(0,0,1) );
-        gl::setMatrices(mCam);
     }
     else if( CAM_FOLLOW == mCamType )
     {
@@ -453,8 +449,8 @@ void Orbiter::draw()
         
         // put the camera outside the planet
         double offset = cameraAttachedTo->getRadius()*1.2f;
-        Vec3d cameraPos = matrix * cameraAttachedTo->getPosition();
-        Vec3d targetPos = matrix * cameraLookingAt->getPosition();
+        Vec3d cameraPos = mScaleMatrix * cameraAttachedTo->getPosition();
+        Vec3d targetPos = mScaleMatrix * cameraLookingAt->getPosition();
         Vec3d toTarget = targetPos - cameraPos;
         Vec3d offsetVec = offset * toTarget.normalized();
         Vec3d up = Vec3f::zAxis();
@@ -479,12 +475,16 @@ void Orbiter::draw()
         
         cameraPos = cameraPos + offsetVec;
         mCam.lookAt( cameraPos, targetPos, up );
-        gl::setMatrices(mCam);
     }
-    else
-    {
-        gl::setMatrices(mApp->getMayaCam());
-    }
+}
+
+void Orbiter::draw()
+{
+    gl::enableDepthWrite();
+    gl::enableAlphaBlending();
+    gl::pushMatrices();
+    
+    gl::setMatrices(getCamera());
     
     glEnable( GL_POLYGON_SMOOTH );
     glEnable( GL_LIGHTING );
@@ -503,13 +503,13 @@ void Orbiter::draw()
     {
         Body* body = (*bodyIt);
         if (!mEnableFrustumCulling ||
-            isSphereInFrustum( (matrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
+            isSphereInFrustum( (mScaleMatrix * body->getPosition()), body->getBaseRadius()/3.0f ) )
         {
-            body->draw(matrix, true);
+            body->draw(mScaleMatrix, true);
         }
         else
         {
-            body->draw(matrix, false);
+            body->draw(mScaleMatrix, false);
             culled++;
         }
         

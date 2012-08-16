@@ -77,13 +77,15 @@ __kernel void gravity(__global const float4 *in_pos,
                       const float dt1,
                       const float damping,
                       const float gravity,
-                      const float alpha,
+                      const float4 colorScale,
                       const uint flags,
                       const float eps)
 {
     // the 4th element of in_vel holds mass, this filters it out
     const float4 dt = (float4)(dt1,dt1,dt1,0.0f);
     //const float eps = eps;//150.f//0.0001f;
+    
+    const float alpha = colorScale.w;
     
 	const uint i = get_global_id(0);
 	if (i >= nb_particles)
@@ -161,17 +163,21 @@ __kernel void gravity(__global const float4 *in_pos,
     }
     else if( flags & PARTICLE_FLAGS_SHOW_SPEED )
     {
-        float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
-        color[i].y = speed;
-        color[i].z = speed;
-        color[i].w = alpha;
+        //float speed = 10.0f*rsqrt(out_vel[i].x*out_vel[i].x + out_vel[i].y*out_vel[i].y + out_vel[i].z*out_vel[i].z);
+        color[i].x = out_vel[i].x * colorScale.x + out_vel[i].y * colorScale.y * colorScale.x + out_vel[i].z * colorScale.z * colorScale.x;
+        color[i].y = out_vel[i].x * colorScale.x * colorScale.y + out_vel[i].y * colorScale.y + out_vel[i].z * colorScale.z * colorScale.y;
+        color[i].z = out_vel[i].x * colorScale.z + out_vel[i].y * colorScale.y * colorScale.z + out_vel[i].z * colorScale.z;
+        color[i].w = alpha + fft[fftIdx];
     }
     else if( flags & PARTICLE_FLAGS_SHOW_MASS )
     {
         float massRatio = out_vel[i].w / MAX_MASS;
-        color[i].x = massRatio*massRatio + (fft[fftIdx]/2.0f);
-        color[i].y = massRatio/2.0f + (fftIdx/512);
-        color[i].z = massRatio - fft[fftIdx];
+        //color[i].x = massRatio*massRatio + (fft[fftIdx]/2.0f);
+        //color[i].y = massRatio/2.0f + (fftIdx/512);
+        //color[i].z = massRatio - fft[fftIdx];
+        color[i].x = massRatio*colorScale.x + fft[fftIdx]*colorScale.x;
+        color[i].y = massRatio*colorScale.y + fft[fftIdx]*colorScale.y;
+        color[i].z = massRatio*colorScale.z + fft[fftIdx]*colorScale.z;
         color[i].w = alpha + fft[fftIdx];
         if( i < n )
         {
