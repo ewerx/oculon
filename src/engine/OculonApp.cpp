@@ -68,6 +68,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mEnableSyphonServer = mConfig.getBool("syphon");;
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
+    mDebugRender        = true;
     
     mOutputMode         = OUTPUT_FBO;
     const int outputMode = mConfig.getInt("output_mode");
@@ -301,7 +302,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
-    if( mConfig.getBool("flock") )      addScene( new Flock() );
+    if( mConfig.getBool("flock") )      addScene( new Flock(), true );
     
     // Test Scenes
     //addScene( new MovieTest() );
@@ -849,6 +850,12 @@ void OculonApp::drawScenes()
 void OculonApp::draw()
 {
     gl::clear();
+    
+    if( mDebugRender )
+    {
+        mScenes[0]->draw();
+        return;
+    }
     
     if( mOutputMode == OUTPUT_FBO )
     {
