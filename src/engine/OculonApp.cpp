@@ -302,7 +302,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
-    if( mConfig.getBool("flock") )      addScene( new Flock(), true );
+    if( mConfig.getBool("flock") )      addScene( new Flock() );
     
     // Test Scenes
     //addScene( new MovieTest() );

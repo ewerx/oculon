@@ -756,7 +756,7 @@ void Flock::draw()
     
     ////////------------------------------------------------------
     //
-	gl::clear( ColorA( 0.1f, 0.1f, 0.1f, 0.0f ), true );
+	//gl::clear( ColorA( 0.1f, 0.1f, 0.1f, 0.0f ), true );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	
 	gl::setMatricesWindow( getWindowSize(), false );
