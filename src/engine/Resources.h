@@ -68,7 +68,7 @@
 #define RES_FLOCK_LANTERNGLOW_PNG	CINDER_RESOURCE( ../resources/, lanternGlow.png,	150, IMAGE )
 #define RES_FLOCK_GLOW_PNG		CINDER_RESOURCE( ../resources/, glow.png,			151, IMAGE )
 #define RES_FLOCK_NEBULA_PNG		CINDER_RESOURCE( ../resources/, nebula.png,			152, IMAGE )
-#define RES_FLOCK_PASSTHRU_VERT	CINDER_RESOURCE( ../resources/, passThru.vert,		160, GLSL )
+#define RES_FLOCK_PASSTHRU_VERT	CINDER_RESOURCE( ../resources/, passThruFlock.vert,		160, GLSL )
 #define RES_FLOCK_VELOCITY_FRAG	CINDER_RESOURCE( ../resources/, Velocity.frag,		161, GLSL )
 #define RES_FLOCK_POSITION_FRAG	CINDER_RESOURCE( ../resources/, Position.frag,		162, GLSL )
 #define RES_FLOCK_P_VELOCITY_FRAG CINDER_RESOURCE( ../resources/, P_Velocity.frag,	163, GLSL )

@@ -46,6 +46,8 @@ Flock::~Flock()
 
 void Flock::setup()
 {
+    Scene::setup();
+    
     mCamType = CAM_SPRING;
     
     ////////------------------------------------------------------
@@ -76,16 +78,16 @@ void Flock::setup()
 	
 	// LOAD SHADERS
 	try {
-		mVelocityShader		= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_VELOCITY_FRAG ) );
-		mPositionShader		= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_POSITION_FRAG ) );
-		mP_VelocityShader	= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_P_VELOCITY_FRAG ) );
-		mP_PositionShader	= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_P_POSITION_FRAG ) );
+		mVelocityShader		= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_VELOCITY_FRAG ) );
+		mPositionShader		= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_POSITION_FRAG ) );
+		mP_VelocityShader	= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_VELOCITY_FRAG ) );
+		mP_PositionShader	= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_POSITION_FRAG ) );
 		mLanternShader		= gl::GlslProg( loadResource( RES_FLOCK_LANTERN_VERT ),	loadResource( RES_FLOCK_LANTERN_FRAG ) );
 		mRoomShader			= gl::GlslProg( loadResource( RES_FLOCK_ROOM_VERT ),loadResource( RES_FLOCK_ROOM_FRAG ) );
 		mShader				= gl::GlslProg( loadResource( RES_FLOCK_VBOPOS_VERT ),	loadResource( RES_FLOCK_VBOPOS_FRAG ) );
 		mP_Shader			= gl::GlslProg( loadResource( RES_FLOCK_P_VBOPOS_VERT ),	loadResource( RES_FLOCK_P_VBOPOS_FRAG ) );
-		mGlowShader			= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_GLOW_FRAG ) );
-		mNebulaShader		= gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ),	loadResource( RES_FLOCK_NEBULA_FRAG ) );
+		mGlowShader			= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_GLOW_FRAG ) );
+		mNebulaShader		= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_NEBULA_FRAG ) );
 	} catch( gl::GlslProgCompileExc e ) {
 		std::cout << e.what() << std::endl;
 		exit(1);

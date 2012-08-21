@@ -68,7 +68,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mEnableSyphonServer = mConfig.getBool("syphon");;
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
-    mDebugRender        = true;
+    mDebugRender        = false;
     
     mOutputMode         = OUTPUT_FBO;
     const int outputMode = mConfig.getInt("output_mode");
@@ -955,7 +955,7 @@ void OculonApp::drawDebug()
     
     if( mInfoPanel.isVisible() )
     {
-        //mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
+        mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
     }
     
     if( !mIsPresentationMode )

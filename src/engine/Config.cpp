@@ -103,7 +103,7 @@ double Config::getDouble(const string key, double alt) const
 }
 
 
-float Config::getFloat(const string key, float alt) 
+float Config::getFloat(const string key, float alt) const
 { 
     return getValue<float>(key, alt); 
 }
