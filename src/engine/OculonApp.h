@@ -53,6 +53,15 @@ public:
         INTERFACE_NONE = -2
     };
     
+    enum eOutputMode
+    {
+        OUTPUT_DIRECT,
+        OUTPUT_FBO,
+        OUTPUT_MULTIFBO,
+        
+        OUTPUT_COUNT
+    };
+    
 public: // cinder interface
     void prepareSettings( Settings *settings );
 	void setup();
@@ -107,6 +116,9 @@ public: // new
     bool toggleScene(const int sceneId);
     bool showInterface(const int sceneId);
     
+    const Config& getConfig() const { return mConfig; }
+    eOutputMode getOutputMode() const { return mOutputMode; }
+    
 protected: // new
     
     void drawToScreen();
@@ -155,14 +167,6 @@ private: // members
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     
-    enum eOutputMode
-    {
-        OUTPUT_DIRECT,
-        OUTPUT_FBO,
-        OUTPUT_MULTIFBO,
-        
-        OUTPUT_COUNT
-    };
     eOutputMode             mOutputMode;
     gl::Fbo                 mFbo;
     

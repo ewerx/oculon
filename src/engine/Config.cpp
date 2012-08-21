@@ -80,24 +80,24 @@ void Config::print()
 
 
 // -- Getters ------------------------------------------------------------------
-string Config::getString(const string key, string alt) 
+string Config::getString(const string key, string alt) const 
 { 
     return getValue<string>(key, alt); 
 }
 
-bool Config::getBool(const string key, bool alt) 
+bool Config::getBool(const string key, bool alt) const 
 {
     return getValue<bool>(key, alt); 
 }
 
 
-int Config::getInt(const string key, int alt) 
+int Config::getInt(const string key, int alt) const 
 { 
     return getValue<int>(key, alt); 
 }
 
 
-double Config::getDouble(const string key, double alt) 
+double Config::getDouble(const string key, double alt) const 
 { 
     return getValue<double>(key, alt); 
 }
@@ -109,7 +109,7 @@ float Config::getFloat(const string key, float alt)
 }
 
 
-Vec2f Config::getVec2f(const string key, Vec2f alt)
+Vec2f Config::getVec2f(const string key, Vec2f alt) const
 {
     string value = getString(key);
     
@@ -127,7 +127,7 @@ Vec2f Config::getVec2f(const string key, Vec2f alt)
 }
 
 
-Vec3f Config::getVec3f(const string key, Vec3f alt)
+Vec3f Config::getVec3f(const string key, Vec3f alt) const
 {
     string value = getString(key);
     
@@ -145,7 +145,7 @@ Vec3f Config::getVec3f(const string key, Vec3f alt)
     }
 }
 
-Vec2i Config::getVec2i(const string key, Vec2i alt)
+Vec2i Config::getVec2i(const string key, Vec2i alt) const
 {
     string value = getString(key);
     

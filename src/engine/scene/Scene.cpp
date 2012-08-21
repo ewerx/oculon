@@ -55,8 +55,11 @@ void Scene::init(OculonApp* app)
     mApp = app;
     
     // setup FBO
-    setupFbo();
-    //mSyphon.setName(mName);
+    if( mApp->getOutputMode() == OculonApp::OUTPUT_MULTIFBO )
+    {
+        setupFbo();
+        mSyphon.setName(mName);
+    }
     
     // setup master interface
     mInterface = new Interface( mApp, &mApp->getOscServer() );
@@ -90,17 +93,20 @@ void Scene::setup()
 void Scene::setupFbo()
 {
     gl::Fbo::Format format;
-    //format.enableMipmapping(false);
-    //format.enableDepthBuffer(false);
-	//format.setCoverageSamples(8);
-	format.setSamples(4); // 4x AA
+    format.enableMipmapping(false);
+    format.enableDepthBuffer(false);
+    format.setCoverageSamples(8);
+    format.setSamples(4); // 4x AA
     
-    //mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+    mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
 }
 
 void Scene::resize()
 {
-    setupFbo();
+    if( mApp->getOutputMode() == OculonApp::OUTPUT_MULTIFBO )
+    {
+        setupFbo();
+    }
 }
 
 void Scene::setupDebugInterface()
