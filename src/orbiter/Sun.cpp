@@ -13,8 +13,6 @@
 #include "OculonApp.h"
 #include "cinder/gl/gl.h"
 
-#include "Binned.h"
-
 using namespace ci;
 
 GLfloat Sun::mat_ambient[]		= { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -114,7 +112,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         if( binned )
         {
             //TODO: hack, use a message
-            Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene(1));
+            Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene("binned"));
             
             if( binnedScene && binnedScene->isRunning() )
             {

@@ -10,7 +10,6 @@
 #ifndef __OCULONAPP_H__
 #define __OCULONAPP_H__
 
-#include <vector>
 #include "cinder/app/AppBasic.h"
 #include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
@@ -26,6 +25,9 @@
 #include "OscServer.h"
 #include "KinectController.h"
 #include "InfoPanel.h"
+
+#include <vector>
+#include <boost/unordered_map.hpp>
 
 // fwd decl
 class Scene;
@@ -103,6 +105,7 @@ public: // new
     
     //TODO: hack
     Scene* getScene(const int index)                    { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
+    Scene* getScene(const std::string& name);
     
     void enableFrameCapture( const bool enable );
     void setCaptureDuration( const float duration ) { mCaptureDuration = duration; }
@@ -172,8 +175,11 @@ private: // members
     gl::Fbo                 mFbo;
     
     // scenes
-    typedef vector<Scene*>  SceneList;
-    SceneList               mScenes;
+    typedef boost::unordered_map<std::string, Scene*> tSceneMap;
+    typedef vector<Scene*>  tSceneList;
+    
+    tSceneList              mScenes;
+    tSceneMap               mSceneMap;
     bool                    mDrawToScreen;
     bool                    mDrawOnlyLastScene;
     int                     mLastActiveScene;

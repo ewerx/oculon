@@ -44,6 +44,7 @@ public:
     void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseUp( const ci::app::MouseEvent& event);
 	void handleMouseDrag( const ci::app::MouseEvent& event );
+    const ci::Camera& getCamera() const;
     
 protected:// from Scene
     void setupInterface();

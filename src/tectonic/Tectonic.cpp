@@ -278,7 +278,7 @@ bool Tectonic::triggerNextQuake()
             
             if( mSendToBinned )
             {
-                Binned* binnedScene = static_cast<Binned*>(mApp->getScene(1));
+                Binned* binnedScene = static_cast<Binned*>(mApp->getScene("binned"));
                 
                 if( binnedScene && binnedScene->isRunning() )
                 {

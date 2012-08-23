@@ -55,6 +55,7 @@ public:
     void handleMouseUp( const ci::app::MouseEvent& event );
     void handleMouseDrag( const ci::app::MouseEvent& event );
     void handleMouseMove( const ci::app::MouseEvent& event );
+    const ci::Camera& getCamera();
     
     // callbacks
     bool setCamType();
@@ -82,8 +83,6 @@ protected:
     void        setDestStar( Star* target );
     bool        setRandomHome();
     bool        setRandomDest();
-    
-    const ci::Camera& getCam();
         
 private:
     

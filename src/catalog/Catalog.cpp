@@ -231,7 +231,7 @@ void Catalog::update(double dt)
 	mSpringCam.update( 0.25f );
 	
 	BOOST_FOREACH( Star* &s, mBrightStars ){
-		s->update( getCam(), mScale );
+		s->update( getCamera(), mScale );
 	}
     //
     ////////------------------------------------------------------
@@ -277,7 +277,7 @@ void Catalog::draw()
 		gl::enableAdditiveBlending();
 	}
     
-	gl::setMatrices( getCam() );
+	gl::setMatrices( getCamera() );
 	
     /*
 	// DRAW PANEL
@@ -293,7 +293,7 @@ void Catalog::draw()
 	// DRAW MILKYWAY
 	if( power > 0.01f ){
 		gl::pushMatrices();
-		gl::translate( getCam().getEyePoint() );
+		gl::translate( getCamera().getEyePoint() );
 		gl::rotate( Vec3f( 75.0f, 0.0f, 0.0f ) );
 		gl::color( ColorA( 1.0f, 1.0f, 1.0f, power * mScalePer ) );
 		mMilkyWayTex.bind();
@@ -348,8 +348,8 @@ void Catalog::draw()
 		mBrightStarsShader.uniform( "scale", mScale );
 		mBrightStarsShader.uniform( "power", 1.0f );//mRoom.getPower() );
 		mBrightStarsShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ));//mRoom.getDims() );
-		mBrightStarsShader.uniform( "mvMatrix", getCam().getModelViewMatrix() );
-		mBrightStarsShader.uniform( "eyePos", getCam().getEyePoint() );
+		mBrightStarsShader.uniform( "mvMatrix", getCamera().getModelViewMatrix() );
+		mBrightStarsShader.uniform( "eyePos", getCamera().getEyePoint() );
 		if( power > 0.5f ){
 			mBrightStarsShader.uniform( "texScale", 0.5f );
 			gl::draw( mBrightVbo );
@@ -806,7 +806,7 @@ bool Catalog::setRandomDest()
     return false;
 }
 
-const Camera& Catalog::getCam()
+const Camera& Catalog::getCamera()
 {
     switch( mCamType )
     {
@@ -815,7 +815,7 @@ const Camera& Catalog::getCam()
             
         case CAM_ORBITER:
         {
-            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
+            Scene* orbiterScene = mApp->getScene("orbiter");
             
             if( orbiterScene && orbiterScene->isRunning() )
             {

@@ -17,8 +17,6 @@
 #include "OculonApp.h"
 #include "Orbiter.h"
 
-#include "Binned.h" //TODO: hack
-
 using namespace ci;
 using namespace std;
 
@@ -172,11 +170,11 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
 
             mLabel.draw();
             
-            const bool binned = true;
+            const bool binned = false;
             if( binned )
             {
                 //TODO: hack, use a message
-                Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene(1));
+                Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene("binned"));
                 
                 if( binnedScene && binnedScene->isRunning() )
                 {

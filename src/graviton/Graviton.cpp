@@ -15,7 +15,6 @@
 #include "cinder/Rand.h"
 #include "cinder/Easing.h"
 #include "Utils.h"
-#include "Orbiter.h"
 #include "Interface.h"
 
 using namespace ci;
@@ -795,33 +794,37 @@ void Graviton::draw()
     glPopMatrix();
 }
 
-void Graviton::preRender() 
+const Camera& Graviton::getCamera() const
 {
     switch( mCamType )
     {
         case CAM_SPLINE:
         case CAM_SPIRAL:
-            gl::setMatrices( mCam );
-            break;
+            return( mCam );
             
         case CAM_ORBITER:
         {
-            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene(0));
+            Scene* orbiterScene = mApp->getScene("orbiter");
             
             if( orbiterScene && orbiterScene->isRunning() )
             {
-                gl::setMatrices( orbiterScene->getCamera() );
+                return( orbiterScene->getCamera() );
             }
             else
             {
-                gl::setMatrices( mApp->getMayaCam() );
+                return( mApp->getMayaCam() );
             }
         }
             break;
             
         default:
-            gl::setMatrices( mApp->getMayaCam() );
+            return mApp->getMayaCam();
     }
+}
+
+void Graviton::preRender() 
+{
+    gl::setMatrices( getCamera() );
     
 	if(mUseImageForPoints) 
     {

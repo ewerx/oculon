@@ -161,7 +161,7 @@ void OculonApp::shutdown()
 {
     console() << "[main] shutting down...\n";
     
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -207,7 +207,7 @@ void OculonApp::setupInterface()
 bool OculonApp::syncInterface()
 {
     mInterface->sendAll();
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -215,37 +215,6 @@ bool OculonApp::syncInterface()
         scene->mInterface->sendAll();
     }
     return false;
-}
-
-void OculonApp::addScene(Scene* scene, bool autoStart)
-{
-    console() << (mScenes.size()+1) << ": " << scene->getName() << std::endl;
-    
-    scene->init(this);
-    if( mSetupScenesOnStart )
-    {
-        scene->setup();
-    }
-    
-    if( autoStart )
-    {
-        scene->setRunning(true);
-        scene->setVisible(true);
-        scene->setDebug(true);
-    }
-    mScenes.push_back(scene);
-    
-    // interface
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
-    // scene thumbnails
-    if( scene->getFbo() )
-    {
-        mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
-    }
-    mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
-    mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
-    mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
 }
 
 bool OculonApp::toggleScene(const int sceneId)
@@ -267,7 +236,7 @@ bool OculonApp::showInterface(const int sceneId)
     if( sceneId < 0 )
     {
         // hide all scene interfaces
-        for (SceneList::iterator sceneIt = mScenes.begin(); 
+        for (tSceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -319,6 +288,51 @@ void OculonApp::setupScenes()
     }
 }
 
+void OculonApp::addScene(Scene* scene, bool autoStart)
+{
+    console() << (mScenes.size()+1) << ": " << scene->getName() << std::endl;
+    
+    scene->init(this);
+    if( mSetupScenesOnStart )
+    {
+        scene->setup();
+    }
+    
+    if( autoStart )
+    {
+        scene->setRunning(true);
+        scene->setVisible(true);
+        scene->setDebug(true);
+    }
+    mScenes.push_back(scene);
+    mSceneMap[scene->getName()] = scene;
+    
+    // interface
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
+    // scene thumbnails
+    if( scene->getFbo() )
+    {
+        mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
+    }
+    mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
+    mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
+    mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
+}
+
+Scene* OculonApp::getScene(const std::string& name)
+{
+    tSceneMap::iterator it = mSceneMap.find(name);
+    if( it != mSceneMap.end() )
+    {
+        return it->second;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 void OculonApp::resize( ResizeEvent event )
 {
     CameraPersp cam = mMayaCam.getCamera();
@@ -326,7 +340,7 @@ void OculonApp::resize( ResizeEvent event )
     mMayaCam.setCurrentCam( cam );
     
     int index = 0;
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
         sceneIt != mScenes.end();
         ++sceneIt )
     {
@@ -345,7 +359,7 @@ void OculonApp::resize( ResizeEvent event )
 
 void OculonApp::mouseMove( MouseEvent event )
 {    
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -362,7 +376,7 @@ void OculonApp::mouseDown( MouseEvent event )
     // let the camera handle the interaction
     mMayaCam.mouseDown( event.getPos() );
     
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -382,7 +396,7 @@ void OculonApp::mouseDrag( MouseEvent event )
     mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
 
     
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -396,7 +410,7 @@ void OculonApp::mouseDrag( MouseEvent event )
 
 void OculonApp::mouseUp( MouseEvent event)
 {
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -423,7 +437,7 @@ void OculonApp::keyDown( KeyEvent event )
             }
             else
             {
-                for (SceneList::iterator sceneIt = mScenes.begin(); 
+                for (tSceneList::iterator sceneIt = mScenes.begin(); 
                      sceneIt != mScenes.end();
                      ++sceneIt )
                 {
@@ -559,7 +573,7 @@ void OculonApp::keyDown( KeyEvent event )
     
     if( passToScenes )
     {
-        for (SceneList::iterator sceneIt = mScenes.begin(); 
+        for (tSceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -628,6 +642,8 @@ void OculonApp::update()
                 break;
         }
         snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
+        mInfoPanel.addLine( buf, Color(0.4f, 0.5f, 1.0f) );
+        snprintf(buf, BUFSIZE, "%d x %d", getWindowWidth(), getWindowHeight());
         mInfoPanel.addLine( buf, defaultColor );
         
         if( mEnableSyphonServer )
@@ -694,7 +710,7 @@ void OculonApp::update()
     
     // update scenes
     const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -778,7 +794,7 @@ void OculonApp::drawFromFbo()
 void OculonApp::renderScenes()
 {
     // render scenes to FBO
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -816,7 +832,7 @@ void OculonApp::drawScenes()
         }
         else
         {
-            for (SceneList::iterator sceneIt = mScenes.begin(); 
+            for (tSceneList::iterator sceneIt = mScenes.begin(); 
                  sceneIt != mScenes.end();
                  ++sceneIt )
             {
@@ -833,7 +849,7 @@ void OculonApp::drawScenes()
     else
     {
         // draw scenes directly
-        for (SceneList::iterator sceneIt = mScenes.begin(); 
+        for (tSceneList::iterator sceneIt = mScenes.begin(); 
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -908,7 +924,7 @@ void OculonApp::draw()
                 
             case OUTPUT_MULTIFBO:
                 // publish each scene separately
-                for (SceneList::iterator sceneIt = mScenes.begin(); 
+                for (tSceneList::iterator sceneIt = mScenes.begin(); 
                      sceneIt != mScenes.end();
                      ++sceneIt )
                 {
@@ -936,7 +952,7 @@ void OculonApp::drawDebug()
 {
     gl::pushMatrices();
     gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
-    for (SceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin(); 
          sceneIt != mScenes.end();
          ++sceneIt )
     {
