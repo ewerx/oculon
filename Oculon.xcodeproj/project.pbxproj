@@ -10,6 +10,9 @@
 		7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C08407A15BE525600CCE6DB /* VerticalLines.cpp */; };
 		7C0F498015E3400B006CDE84 /* passThruFlock.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
 		7C0F498115E340CC006CDE84 /* passThruFlock.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
+		7C118AE615E5CFEE00BDF80C /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */; };
+		7C118AE915E5D00A00BDF80C /* FisheyeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C118AE715E5D00A00BDF80C /* FisheyeTest.cpp */; };
+		7C118AEB15E5D02400BDF80C /* fisheye_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C118AEA15E5D02400BDF80C /* fisheye_vert.glsl */; };
 		7C13446A158992AD0032017E /* darkStar.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C134465158992AD0032017E /* darkStar.png */; };
 		7C13446B158992AD0032017E /* milkyWay.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C134466158992AD0032017E /* milkyWay.jpg */; };
 		7C13446C158992AD0032017E /* spectrum.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C134467158992AD0032017E /* spectrum.png */; };
@@ -269,6 +272,11 @@
 		7C08407A15BE525600CCE6DB /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VerticalLines.cpp; path = test/VerticalLines.cpp; sourceTree = "<group>"; };
 		7C08407B15BE525600CCE6DB /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalLines.h; path = test/VerticalLines.h; sourceTree = "<group>"; };
 		7C0F497F15E3400B006CDE84 /* passThruFlock.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruFlock.vert; sourceTree = "<group>"; };
+		7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
+		7C118AE515E5CFEE00BDF80C /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
+		7C118AE715E5D00A00BDF80C /* FisheyeTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeTest.cpp; sourceTree = "<group>"; };
+		7C118AE815E5D00A00BDF80C /* FisheyeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeTest.h; sourceTree = "<group>"; };
+		7C118AEA15E5D02400BDF80C /* fisheye_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fisheye_vert.glsl; sourceTree = "<group>"; };
 		7C13445A158992950032017E /* brightStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.frag; sourceTree = "<group>"; };
 		7C13445B158992950032017E /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C13445C158992950032017E /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
@@ -991,6 +999,8 @@
 				7CF3DF0015A542C200CC61D2 /* Config.cpp */,
 				7CF3DF0215A542CB00CC61D2 /* Config.h */,
 				7C74555D148C259C009C0356 /* Constants.h */,
+				7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */,
+				7C118AE515E5CFEE00BDF80C /* FisheyeRender.h */,
 				7C74555E148C259C009C0356 /* InfoPanel.cpp */,
 				7C74555F148C259C009C0356 /* InfoPanel.h */,
 				7C745561148C259C009C0356 /* MidiInput.cpp */,
@@ -1061,6 +1071,8 @@
 			children = (
 				7CF23588151ADE7600445AD8 /* KinectTest.cpp */,
 				7CF23589151ADE7600445AD8 /* KinectTest.h */,
+				7C118AE715E5D00A00BDF80C /* FisheyeTest.cpp */,
+				7C118AE815E5D00A00BDF80C /* FisheyeTest.h */,
 				7C745585148C259C009C0356 /* MindWaveTest.cpp */,
 				7C745586148C259C009C0356 /* MindWaveTest.h */,
 				7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */,
@@ -1194,6 +1206,7 @@
 				7C13445B158992950032017E /* brightStars.vert */,
 				7C13445C158992950032017E /* faintStars.frag */,
 				7C13445D158992950032017E /* faintStars.vert */,
+				7C118AEA15E5D02400BDF80C /* fisheye_vert.glsl */,
 				7C13445E158992950032017E /* passThruNormals.vert */,
 				7CE9C855154A6DDE0057E409 /* earth_frag.glsl */,
 				7CE9C856154A6DDE0057E409 /* quake_frag.glsl */,
@@ -1702,6 +1715,7 @@
 				7C8F153A15BB4B1700BAD08D /* glow.png in Resources */,
 				7C8F153B15BB4B1700BAD08D /* lanternGlow.png in Resources */,
 				7C8F153C15BB4B1700BAD08D /* nebula.png in Resources */,
+				7C118AEB15E5D02400BDF80C /* fisheye_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1817,6 +1831,8 @@
 				7C8F153415BB4AF100BAD08D /* VboPos.vert in Sources */,
 				7C8F153515BB4AF100BAD08D /* Velocity.frag in Sources */,
 				7C0F498015E3400B006CDE84 /* passThruFlock.vert in Sources */,
+				7C118AE615E5CFEE00BDF80C /* FisheyeRender.cpp in Sources */,
+				7C118AE915E5D00A00BDF80C /* FisheyeTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

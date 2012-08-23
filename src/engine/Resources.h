@@ -17,6 +17,7 @@
 #define RES_EMITTER_FRAG			CINDER_RESOURCE( ../resources/shaders/, emitter_frag.glsl, 136, GLSL )
 #define RES_BLUR2_VERT              CINDER_RESOURCE( ../resources/shaders/, blur2_vert.glsl, 135, GLSL )
 #define RES_BLUR2_FRAG              CINDER_RESOURCE( ../resources/shaders/, blur2_frag.glsl, 136, GLSL )
+#define RES_FISHEYE_VERT			CINDER_RESOURCE( ../resources/shaders/, fisheye_vert.glsl, 136, GLSL )
 
 #define RES_PASSTHRU_VERT           CINDER_RESOURCE( ../resources/shaders/, passThru_vert.glsl, 128, GLSL )
 #define RES_BLUR_FRAG               CINDER_RESOURCE( ../resources/shaders/, gaussianBlur_frag.glsl, 129, GLSL )

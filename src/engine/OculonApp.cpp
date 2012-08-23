@@ -44,6 +44,7 @@
 #include "ShaderTest.h"
 #include "KinectTest.h"
 #include "SkeletonTest.h"
+#include "FisheyeTest.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -276,16 +277,10 @@ void OculonApp::setupScenes()
     // Test Scenes
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
+    if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
     if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
-    if( mEnableKinect )
-    {
-        if( mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
-        
-    }
-    if( mEnableMindWave )
-    {
-        if( mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );
-    }
+    if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
+    if( mEnableMindWave && mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );
 }
 
 void OculonApp::addScene(Scene* scene, bool autoStart)
