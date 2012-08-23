@@ -18,9 +18,9 @@ class Lantern {
 	void draw();
 	
 	ci::Vec3f	mPos;
+    ci::Vec3f   mVel;
 	float		mRadius;
 	float		mRadiusDest;
-	float		mFallSpeed;
 	ci::Color	mColor;
 	
 	float		mVisiblePer;

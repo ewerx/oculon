@@ -36,8 +36,7 @@ public:
     void handleMouseUp( const ci::app::MouseEvent& event );
     void handleMouseDrag( const ci::app::MouseEvent& event );
     void handleMouseMove( const ci::app::MouseEvent& event );
-    
-    const ci::Camera& getCam();
+    const ci::Camera& getCamera();
     
 protected:
     ////////------------------------------------------------------
@@ -124,6 +123,8 @@ private:
     enum eCamType
     {
         CAM_SPRING,
+        CAM_GRAVITON,
+        CAM_ORBITER,
         CAM_MAYA,
         
         CAM_COUNT

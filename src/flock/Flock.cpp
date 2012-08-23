@@ -53,7 +53,7 @@ void Flock::setup()
     ////////------------------------------------------------------
     //
     // CAMERA
-	mSpringCam			= SpringCam( -420.0f, getWindowAspectRatio() );
+	mSpringCam			= SpringCam( -420.0f, mApp->getViewportAspectRatio() );
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );
@@ -116,6 +116,10 @@ void Flock::setup()
 //
 void Flock::setupInterface()
 {
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camera")
+                        .isVertical());
 }
 
 // ----------------------------------------------------------------
@@ -731,9 +735,9 @@ void Flock::drawIntoRoomFbo()
 	mRoomShader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
 	mRoomShader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
 	mRoomShader.uniform( "att", 1.25f );
-	mRoomShader.uniform( "mvpMatrix", getCam().mMvpMatrix );
+	mRoomShader.uniform( "mvpMatrix", getCamera().mMvpMatrix );
 	mRoomShader.uniform( "mMatrix", m );
-	mRoomShader.uniform( "eyePos", getCam().getEyePoint());
+	mRoomShader.uniform( "eyePos", getCamera().getEyePoint());
 	mRoomShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ) );
 	mRoomShader.uniform( "power", 1.0f );
 	mRoomShader.uniform( "lightPower", mRoom.getLightPower() );
@@ -759,12 +763,12 @@ void Flock::draw()
 	//gl::clear( ColorA( 0.1f, 0.1f, 0.1f, 0.0f ), true );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	
-	gl::setMatricesWindow( getWindowSize(), false );
+	gl::setMatricesWindow( mApp->getViewportSize(), false );
 	gl::setViewport( getWindowBounds() );
     
     Vec3f billboardRight;
     Vec3f billboardUp;
-    getCam().getBillboardVectors( &billboardRight, &billboardUp );
+    getCamera().getBillboardVectors( &billboardRight, &billboardUp );
     
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
@@ -775,7 +779,7 @@ void Flock::draw()
 	//mRoomFbo.bindTexture();
 	//gl::drawSolidRect( getWindowBounds() );
 	
-	gl::setMatrices( getCam() );
+	gl::setMatrices( getCamera() );
 	gl::setViewport( getWindowBounds() );
 	
 	gl::enableAlphaBlending();
@@ -797,7 +801,7 @@ void Flock::draw()
 	mShader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
 	mShader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
 	mShader.uniform( "att", 1.05f );
-	mShader.uniform( "eyePos", getCam().getEyePoint());
+	mShader.uniform( "eyePos", getCamera().getEyePoint());
 	mShader.uniform( "power", 1.0f );
 	gl::draw( mVboMesh );
 	mShader.unbind();
@@ -816,7 +820,7 @@ void Flock::draw()
 	mP_Shader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
 	mP_Shader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
 	mP_Shader.uniform( "att", 1.05f );
-	mP_Shader.uniform( "eyePos", getCam().getEyePoint());
+	mP_Shader.uniform( "eyePos", getCamera().getEyePoint());
 	mP_Shader.uniform( "power", 1.0f );
 	gl::draw( mP_VboMesh );
 	mP_Shader.unbind();
@@ -839,8 +843,8 @@ void Flock::draw()
 	
 	// DRAW LANTERNS
 	mLanternShader.bind();
-	mLanternShader.uniform( "mvpMatrix", getCam().getModelViewMatrix() );
-	mLanternShader.uniform( "eyePos", getCam().getEyePoint());
+	mLanternShader.uniform( "mvpMatrix", getCamera().getModelViewMatrix() );
+	mLanternShader.uniform( "eyePos", getCamera().getEyePoint());
 	mLanternShader.uniform( "mainPower", 1.0f );
 	mLanternShader.uniform( "roomDim", Vec3f( 350.0f, 200.0f, 350.0f ) );
 	mController.drawLanterns( &mLanternShader );
@@ -855,7 +859,7 @@ void Flock::draw()
 	
 	if( false ){	// DRAW POSITION AND VELOCITY FBOS
 		gl::color( Color::white() );
-		gl::setMatricesWindow( getWindowSize() );
+		gl::setMatricesWindow( mApp->getViewportSize() );
 		gl::enable( GL_TEXTURE_2D );
 		mPositionFbos[ mThisFbo ].bindTexture();
 		gl::drawSolidRect( Rectf( 5.0f, 5.0f, 105.0f, 105.0f ) );
@@ -957,6 +961,12 @@ void Flock::handleMouseDown( const MouseEvent& event )
 	mMouseDownPos = event.getPos();
 	mMousePressed = true;
 	mMouseOffset = Vec2f::zero();
+    
+    Vec3f dims( 350.0f, 200.0f, 350.0f );
+    Vec3f randPos( Rand::randFloat( -dims.x * 0.8f, dims.x * 0.8f ),
+                  dims.y,
+                  Rand::randFloat( -dims.z * 0.5f, dims.z * 0.5f ) );
+    mController.addLantern(randPos);
 }
 
 void Flock::handleMouseUp( const MouseEvent& event )
@@ -977,12 +987,42 @@ void Flock::handleMouseDrag( const MouseEvent& event )
 	mMouseOffset = ( mMousePos - mMouseDownPos ) * 0.4f;
 }
 
-const Camera& Flock::getCam()
+const Camera& Flock::getCamera()
 {
     switch( mCamType )
     {
         case CAM_SPRING:
             return mSpringCam.getCam();
+            
+        case CAM_GRAVITON:
+        {
+            Scene* gravitonScene = mApp->getScene("graviton");
+            
+            if( gravitonScene && gravitonScene->isRunning() )
+            {
+                return gravitonScene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+            break;
+            
+        case CAM_ORBITER:
+        {
+            Scene* orbiterScene = mApp->getScene("orbiter");
+            
+            if( orbiterScene && orbiterScene->isRunning() )
+            {
+                return orbiterScene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+            break;
             
         default:
             return mApp->getMayaCam();
