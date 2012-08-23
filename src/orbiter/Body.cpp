@@ -17,6 +17,8 @@
 #include "OculonApp.h"
 #include "Orbiter.h"
 
+#include "Binned.h"
+
 using namespace ci;
 using namespace std;
 

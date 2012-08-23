@@ -13,6 +13,8 @@
 #include "OculonApp.h"
 #include "cinder/gl/gl.h"
 
+#include "Binned.h"
+
 using namespace ci;
 
 GLfloat Sun::mat_ambient[]		= { 0.5f, 0.5f, 0.5f, 1.0f };
