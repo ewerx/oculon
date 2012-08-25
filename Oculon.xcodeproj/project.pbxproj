@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C08407A15BE525600CCE6DB /* VerticalLines.cpp */; };
 		7C0F498015E3400B006CDE84 /* passThruFlock.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
 		7C0F498115E340CC006CDE84 /* passThruFlock.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
 		7C118AE615E5CFEE00BDF80C /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */; };
@@ -32,6 +31,10 @@
 		7C17495B1505ADF600BFC351 /* render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749591505ADF600BFC351 /* render_frag.glsl */; };
 		7C1749BC1505DA2800BFC351 /* gaussianBlur_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749BB1505DA2800BFC351 /* gaussianBlur_frag.glsl */; };
 		7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */; };
+		7C1BA53215E9408D005BE669 /* AudioSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52615E9408D005BE669 /* AudioSignal.cpp */; };
+		7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52815E9408D005BE669 /* Eclipse.cpp */; };
+		7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52E15E9408D005BE669 /* SignalScope.cpp */; };
+		7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53015E9408D005BE669 /* VerticalLines.cpp */; };
 		7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC014FB1346002CE80B /* WaveParticle.cl */; };
 		7C1C5CC414FB13B7002CE80B /* blur2_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */; };
 		7C1C5CC514FB13B7002CE80B /* blur2_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
@@ -65,7 +68,6 @@
 		7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C37393814F737DA00B24851 /* OpenCL.framework */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
-		7C65CA7115C0AC2E00CF1197 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65CA6F15C0AC2E00CF1197 /* Eclipse.cpp */; };
 		7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */; };
 		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
@@ -98,7 +100,6 @@
 		7C745596148C259C009C0356 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74557C148C259C009C0356 /* Body.cpp */; };
 		7C745597148C259C009C0356 /* Orbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74557E148C259C009C0356 /* Orbiter.cpp */; };
 		7C745598148C259C009C0356 /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745580148C259C009C0356 /* Sun.cpp */; };
-		7C745599148C259C009C0356 /* AudioSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745583148C259C009C0356 /* AudioSignal.cpp */; };
 		7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745585148C259C009C0356 /* MindWaveTest.cpp */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
@@ -119,7 +120,6 @@
 		7C8C0C1D154F764F006C35DA /* earthNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C1B154F764F006C35DA /* earthNormal.png */; };
 		7C8C236B15007D960009FF26 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
 		7C8C237115007E6B0009FF26 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C8CD31A1500784E0009FF26 /* Syphon.framework */; };
-		7C8C4CEF1575F4A600453067 /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8C4CED1575F4A600453067 /* SignalScope.cpp */; };
 		7C8CD29614FFAA3E0009FF26 /* ShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */; };
 		7C8CD35F1500784E0009FF26 /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD31C1500784E0009FF26 /* SyphonNameboundClient.m */; };
 		7C8CD3611500784E0009FF26 /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CD3211500784E0009FF26 /* syphonClient.mm */; };
@@ -269,8 +269,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7C08407A15BE525600CCE6DB /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VerticalLines.cpp; path = test/VerticalLines.cpp; sourceTree = "<group>"; };
-		7C08407B15BE525600CCE6DB /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticalLines.h; path = test/VerticalLines.h; sourceTree = "<group>"; };
 		7C0F497F15E3400B006CDE84 /* passThruFlock.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruFlock.vert; sourceTree = "<group>"; };
 		7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
 		7C118AE515E5CFEE00BDF80C /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
@@ -291,6 +289,14 @@
 		7C1749591505ADF600BFC351 /* render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = render_frag.glsl; sourceTree = "<group>"; };
 		7C1749BB1505DA2800BFC351 /* gaussianBlur_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gaussianBlur_frag.glsl; sourceTree = "<group>"; };
 		7C1749BD1505DA4300BFC351 /* passThru_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = passThru_vert.glsl; sourceTree = "<group>"; };
+		7C1BA52615E9408D005BE669 /* AudioSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSignal.cpp; sourceTree = "<group>"; };
+		7C1BA52715E9408D005BE669 /* AudioSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSignal.h; sourceTree = "<group>"; };
+		7C1BA52815E9408D005BE669 /* Eclipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Eclipse.cpp; sourceTree = "<group>"; };
+		7C1BA52915E9408D005BE669 /* Eclipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Eclipse.h; sourceTree = "<group>"; };
+		7C1BA52E15E9408D005BE669 /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SignalScope.cpp; sourceTree = "<group>"; };
+		7C1BA52F15E9408D005BE669 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
+		7C1BA53015E9408D005BE669 /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VerticalLines.cpp; sourceTree = "<group>"; };
+		7C1BA53115E9408D005BE669 /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerticalLines.h; sourceTree = "<group>"; };
 		7C1C5CC014FB1346002CE80B /* WaveParticle.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = WaveParticle.cl; path = opencl/WaveParticle.cl; sourceTree = "<group>"; };
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
@@ -369,8 +375,6 @@
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
 		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
-		7C65CA6F15C0AC2E00CF1197 /* Eclipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Eclipse.cpp; path = test/Eclipse.cpp; sourceTree = "<group>"; };
-		7C65CA7015C0AC2E00CF1197 /* Eclipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Eclipse.h; path = test/Eclipse.h; sourceTree = "<group>"; };
 		7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = eclipse_mapping_pattern.jpg; sourceTree = "<group>"; };
 		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -424,8 +428,6 @@
 		7C74557F148C259C009C0356 /* Orbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Orbiter.h; sourceTree = "<group>"; };
 		7C745580148C259C009C0356 /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sun.cpp; sourceTree = "<group>"; };
 		7C745581148C259C009C0356 /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sun.h; sourceTree = "<group>"; };
-		7C745583148C259C009C0356 /* AudioSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioSignal.cpp; path = test/AudioSignal.cpp; sourceTree = "<group>"; };
-		7C745584148C259C009C0356 /* AudioSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioSignal.h; path = test/AudioSignal.h; sourceTree = "<group>"; };
 		7C745585148C259C009C0356 /* MindWaveTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MindWaveTest.cpp; sourceTree = "<group>"; };
 		7C745586148C259C009C0356 /* MindWaveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindWaveTest.h; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
@@ -457,8 +459,6 @@
 		7C8C0C18154F7648006C35DA /* earthDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthDiffuse.png; path = resources/images/tectonic/earthDiffuse.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1A154F764F006C35DA /* earthMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthMask.png; path = resources/images/tectonic/earthMask.png; sourceTree = SOURCE_ROOT; };
 		7C8C0C1B154F764F006C35DA /* earthNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthNormal.png; path = resources/images/tectonic/earthNormal.png; sourceTree = SOURCE_ROOT; };
-		7C8C4CED1575F4A600453067 /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SignalScope.cpp; path = test/SignalScope.cpp; sourceTree = "<group>"; };
-		7C8C4CEE1575F4A600453067 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalScope.h; path = test/SignalScope.h; sourceTree = "<group>"; };
 		7C8CD29414FFAA3E0009FF26 /* ShaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderTest.cpp; sourceTree = "<group>"; };
 		7C8CD29514FFAA3E0009FF26 /* ShaderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTest.h; sourceTree = "<group>"; };
 		7C8CD31A1500784E0009FF26 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
@@ -1544,16 +1544,17 @@
 		7CF3DF0315A559B400CC61D2 /* audiosignal */ = {
 			isa = PBXGroup;
 			children = (
-				7C65CA6F15C0AC2E00CF1197 /* Eclipse.cpp */,
-				7C65CA7015C0AC2E00CF1197 /* Eclipse.h */,
-				7C8C4CED1575F4A600453067 /* SignalScope.cpp */,
-				7C8C4CEE1575F4A600453067 /* SignalScope.h */,
-				7C08407A15BE525600CCE6DB /* VerticalLines.cpp */,
-				7C08407B15BE525600CCE6DB /* VerticalLines.h */,
-				7C745583148C259C009C0356 /* AudioSignal.cpp */,
-				7C745584148C259C009C0356 /* AudioSignal.h */,
+				7C1BA52615E9408D005BE669 /* AudioSignal.cpp */,
+				7C1BA52715E9408D005BE669 /* AudioSignal.h */,
+				7C1BA52815E9408D005BE669 /* Eclipse.cpp */,
+				7C1BA52915E9408D005BE669 /* Eclipse.h */,
+				7C1BA52E15E9408D005BE669 /* SignalScope.cpp */,
+				7C1BA52F15E9408D005BE669 /* SignalScope.h */,
+				7C1BA53015E9408D005BE669 /* VerticalLines.cpp */,
+				7C1BA53115E9408D005BE669 /* VerticalLines.h */,
 			);
 			name = audiosignal;
+			path = audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1744,7 +1745,6 @@
 				7C745596148C259C009C0356 /* Body.cpp in Sources */,
 				7C745597148C259C009C0356 /* Orbiter.cpp in Sources */,
 				7C745598148C259C009C0356 /* Sun.cpp in Sources */,
-				7C745599148C259C009C0356 /* AudioSignal.cpp in Sources */,
 				7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */,
 				7C86560D148C2A97000E00B6 /* RtMidi.cpp in Sources */,
 				7C86563E148C2A97000E00B6 /* MidiHub.cpp in Sources */,
@@ -1797,7 +1797,6 @@
 				7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */,
 				7C90D66E156F21CD00685CB4 /* SolFrame.cpp in Sources */,
 				7C90D673156F2B4900685CB4 /* TextureManager.cpp in Sources */,
-				7C8C4CEF1575F4A600453067 /* SignalScope.cpp in Sources */,
 				7C941F3A158980990099A0D3 /* SpringCam.cpp in Sources */,
 				7C941F3B158980990099A0D3 /* Star.cpp in Sources */,
 				7C941F3E158981080099A0D3 /* Catalog.cpp in Sources */,
@@ -1807,8 +1806,6 @@
 				7C1344721589969A0032017E /* faintStars.vert in Sources */,
 				7C1344731589969A0032017E /* passThruNormals.vert in Sources */,
 				7CF3DF0115A542C200CC61D2 /* Config.cpp in Sources */,
-				7C08407C15BE525600CCE6DB /* VerticalLines.cpp in Sources */,
-				7C65CA7115C0AC2E00CF1197 /* Eclipse.cpp in Sources */,
 				7C361A3F15BC6A660078C7F1 /* SkeletonTest.cpp in Sources */,
 				7C8F150A15BB287300BAD08D /* Controller.cpp in Sources */,
 				7C8F150B15BB287300BAD08D /* Flock.cpp in Sources */,
@@ -1833,6 +1830,10 @@
 				7C0F498015E3400B006CDE84 /* passThruFlock.vert in Sources */,
 				7C118AE615E5CFEE00BDF80C /* FisheyeRender.cpp in Sources */,
 				7C118AE915E5D00A00BDF80C /* FisheyeTest.cpp in Sources */,
+				7C1BA53215E9408D005BE669 /* AudioSignal.cpp in Sources */,
+				7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */,
+				7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */,
+				7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
