@@ -103,6 +103,9 @@
 		7C745597148C259C009C0356 /* Orbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74557E148C259C009C0356 /* Orbiter.cpp */; };
 		7C745598148C259C009C0356 /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745580148C259C009C0356 /* Sun.cpp */; };
 		7C74559A148C259C009C0356 /* MindWaveTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C745585148C259C009C0356 /* MindWaveTest.cpp */; };
+		7C783E9215E982DE00492299 /* ExoplanetArchive.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C783E9115E982DE00492299 /* ExoplanetArchive.csv */; };
+		7C783E9515E99B4C00492299 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783E9315E99B4C00492299 /* Planet.cpp */; };
+		7C783E9715E9C82900492299 /* starData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C783E9615E9C82900492299 /* starData.csv */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
 		7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7B1547B00600CF488D /* QuakeData.cpp */; };
@@ -435,6 +438,10 @@
 		7C745581148C259C009C0356 /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sun.h; sourceTree = "<group>"; };
 		7C745585148C259C009C0356 /* MindWaveTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MindWaveTest.cpp; sourceTree = "<group>"; };
 		7C745586148C259C009C0356 /* MindWaveTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindWaveTest.h; sourceTree = "<group>"; };
+		7C783E9115E982DE00492299 /* ExoplanetArchive.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ExoplanetArchive.csv; path = data/ExoplanetArchive.csv; sourceTree = "<group>"; };
+		7C783E9315E99B4C00492299 /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Planet.cpp; path = catalog/Planet.cpp; sourceTree = "<group>"; };
+		7C783E9415E99B4C00492299 /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Planet.h; path = catalog/Planet.h; sourceTree = "<group>"; };
+		7C783E9615E9C82900492299 /* starData.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = starData.csv; path = data/starData.csv; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
 		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
 		7C832E751547AD6700CF488D /* Tectonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tectonic.cpp; sourceTree = "<group>"; };
@@ -1360,6 +1367,8 @@
 			children = (
 				7C941F3C158981080099A0D3 /* Catalog.cpp */,
 				7C941F3D158981080099A0D3 /* Catalog.h */,
+				7C783E9315E99B4C00492299 /* Planet.cpp */,
+				7C783E9415E99B4C00492299 /* Planet.h */,
 				7C941F35158980990099A0D3 /* SpringCam.cpp */,
 				7C941F36158980990099A0D3 /* SpringCam.h */,
 				7C941F37158980990099A0D3 /* Star.cpp */,
@@ -1426,6 +1435,8 @@
 		7CAFEE60158C17F2005B338D /* data */ = {
 			isa = PBXGroup;
 			children = (
+				7C783E9115E982DE00492299 /* ExoplanetArchive.csv */,
+				7C783E9615E9C82900492299 /* starData.csv */,
 				7CAFEE61158C1808005B338D /* starData.txt */,
 				7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */,
 			);
@@ -1733,6 +1744,9 @@
 				7C8F153B15BB4B1700BAD08D /* lanternGlow.png in Resources */,
 				7C8F153C15BB4B1700BAD08D /* nebula.png in Resources */,
 				7C118AEB15E5D02400BDF80C /* fisheye_vert.glsl in Resources */,
+				7C1BA54115E9475E005BE669 /* cube.obj in Resources */,
+				7C783E9215E982DE00492299 /* ExoplanetArchive.csv in Resources */,
+				7C783E9715E9C82900492299 /* starData.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -78,7 +78,9 @@ protected:
     void        selectStar( bool wasRightClick );
     //
     ////////------------------------------------------------------
-    
+    void        parsePlanets( const fs::path &path );
+	void        createPlanet( const std::string &text, int lineNumber );
+	
     void        setHomeStar( Star* target );
     void        setDestStar( Star* target );
     bool        setRandomHome();

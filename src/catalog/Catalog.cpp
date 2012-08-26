@@ -118,13 +118,11 @@ void Catalog::setup()
 	mScale		= 0.2f;
 	mMaxScale	= 400.0f;
 	mScalePer	= mScale/mMaxScale;
-	parseData( App::getResourcePath( "starData.txt" ) );
+	parseData( App::getResourcePath( "starData.csv" ) );
 	mTotalTouringStars = mTouringStars.size();
 	mHomeStar	= NULL;
 	mDestStar	= NULL;
     mSol        = NULL;
-	
-	std::cout << mStars.size() << std::endl;
     
 	setFboPositions( mPositionFbo );
 	
@@ -623,6 +621,8 @@ void Catalog::initFaintVbo()
 	mFaintVbo.unbindBuffers();
 }
 
+//MARK: data parsing
+
 void Catalog::parseData( const fs::path &path )
 {
 	std::string line;
@@ -632,58 +632,84 @@ void Catalog::parseData( const fs::path &path )
 		int i=0;
 		while( !myfile.eof() ){
 			std::getline( myfile, line );
-			createStar( line, i );
+            if( line[0] != '#' )
+            {
+                createStar( line, i );
+            }
 			++i;
 		}
 		
 		myfile.close();
 	} else console() << "[catalog] ERROR: unable to read data file";
+    
+    console() << "[catalog] Stars: " << mStars.size() << " / Bright: " << mBrightStars.size() << " / Faint: " << mFaintStars.size() << " / Named: " << mNamedStars.size() << std::endl;
 }
 
 void Catalog::createStar( const std::string &text, int lineNumber )
 {
-	char_separator<char> sep(",");
-	tokenizer< char_separator<char> > tokens(text, sep);
+	//char_separator<char> sep(",");
+	tokenizer< escaped_list_separator<char> > tokens(text);
 	int index = 0;
 	double ra, dec, dist;
 	float appMag, absMag;
 	float colIndex;
+    int hd;
+    int hip;
 	std::string name;
 	std::string spectrum;
-	//0			 1    2  3   4    5      6      7        8
-	//lineNumber,name,ra,dec,dist,appMag,absMag,spectrum,colIndex;
+	//0			 1   2  3     4     5    6  7   8    9      10     11       12
+	//lineNumber,hip,hd,gname,pname,name,ra,dec,dist,appMag,absMag,spectrum,colIndex;
 	BOOST_FOREACH(string t, tokens)
 	{
-		if( index == 1 ){
-			if( t.length() > 1 ){
-				name = t;
-			} else {
-				name = "";
-			}
-		} else if( index == 2 ){
-			ra = lexical_cast<double>(t);
-			
-		} else if( index == 3 ){
-			dec = lexical_cast<double>(t);
-			
-		} else if( index == 4 ){
-			dist = lexical_cast<double>(t);
-			
-		} else if( index == 5 ){
-			appMag = lexical_cast<float>(t);
-			
-		} else if( index == 6 ){
-			absMag = lexical_cast<float>(t);
-			
-		} else if( index == 7 ){
-			spectrum = t;
-			
-		} else if( index == 8 ){
-			if( t != " " ){
-				colIndex = lexical_cast<float>(t);
-			} else {
-				colIndex = 0.0f;
-			}
+        if( t.length() == 0 )
+        {
+            index ++;
+            continue;
+        }
+        
+        switch( index )
+        {
+            case 1:
+                hip = lexical_cast<int>(t);
+                break;
+            case 2:
+                hd = lexical_cast<int>(t);
+                break;
+            case 5:
+                if( t.length() > 1 ){
+                    name = t;
+                } else {
+                    name = "";
+                }
+                break;
+            case 6:
+                ra = lexical_cast<double>(t);
+                break;
+            case 7:
+                dec = lexical_cast<double>(t);
+                break;
+            case 8:
+                dist = lexical_cast<double>(t);
+                break;
+            case 9:
+                appMag = lexical_cast<float>(t);
+                break;
+            case 10:
+                absMag = lexical_cast<float>(t);
+                break;
+            case 11:
+                spectrum = t;
+                break;
+            case 12:
+                if( t != " " ){
+                    colIndex = lexical_cast<float>(t);
+                } else {
+                    colIndex = 0.0f;
+                }
+                break;
+                
+            default:
+                break;
 		}
 		
 		index ++;
@@ -735,6 +761,142 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 			console() << "[catalog] ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
 		}
 	}
+}
+
+void Catalog::parsePlanets( const fs::path &path )
+{
+	std::string line;
+	std::ifstream myfile( path.c_str() );
+	
+	if( myfile.is_open() ){
+		int i=0;
+		while( !myfile.eof() ){
+			std::getline( myfile, line );
+            if( line[0] != '#' )
+            {
+                createPlanet( line, i );
+            }
+			++i;
+		}
+		
+		myfile.close();
+	} else console() << "[catalog] ERROR: unable to read data file";
+}
+
+void Catalog::createPlanet( const std::string &text, int lineNumber )
+{
+	char_separator<char> sep(",");
+	tokenizer< char_separator<char> > tokens(text, sep);
+	int index = 0;
+	double orbper, orbsmax, mass, radius, orbincl;
+	std::string hostname;
+	char letter;
+    /*
+	//			 1    2  3   4    5      6      7        8
+	//0-pl_hostname,1-pl_letter,2-pl_discmethod,3-pl_orbper,4-pl_orbsmax,5-pl_orbeccen,6-pl_massj,7-pl_radj,8-pl_dens,9-pl_orbincl,10-pl_ttvflag,11-ra,12-dec,13-st_dist,14-st_vj,15-st_teff,16-st_mass,17-st_rad,18-hd_name,19-hip_name
+	BOOST_FOREACH(string t, tokens)
+	{
+        switch(index)
+        {
+            case 1:
+                if( t.length() > 1 )
+                {
+                    hostname = t;
+                }
+                else
+                {
+                    hostname = "";
+                }
+                break;
+            case 2:
+                if( t.length() == 1 )
+                {
+                    letter = t[0];
+                }
+                break;
+                
+            case 3:
+                dec = lexical_cast<double>(t);
+                
+                break;
+            case 4:
+                dist = lexical_cast<double>(t);
+                
+                break;
+            case 5:
+                appMag = lexical_cast<float>(t);
+                
+                break;
+            case 6:
+                absMag = lexical_cast<float>(t);
+                
+                break;
+            case 7:
+                spectrum = t;
+                
+                break;
+            case 8:
+                if( t != " " ){
+                    colIndex = lexical_cast<float>(t);
+                } else {
+                    colIndex = 0.0f;
+                }
+                break;
+                
+            default:
+                break;
+		}
+		
+		index ++;
+	}
+	
+	Vec3f pos = convertToCartesian( ra, dec, dist );
+	
+	//float mag = ( 80 - appMag ) * 0.1f;
+	//Color col = Color( mag, mag, mag );
+	
+	float color = constrain( colIndex, 0.0f, 1.0f );//0.0f;
+    //	if( name.length() > 0 ){
+    //		char sp = spectrum[0];
+    //
+    //		switch( sp ){
+    //			case 'O':	color = 0.0f;	break;
+    //			case 'B':	color = 0.166f;	break;
+    //			case 'A':	color = 0.2f;	break;
+    //			case 'F':	color = 0.5f;	break;
+    //			case 'G':	color = 0.666f;	break;
+    //			case 'K':	color = 0.833f;	break;
+    //			case 'M':	color = 1.0f;	break;
+    //			default:					break;
+    //		}
+    //	}
+	
+	// THIS FEELS WRONG. ASK ABOUT THE RIGHT WAY TO DO THIS.
+	Star *star = new Star( this, pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
+    mStars.push_back( star );
+    
+    //TODO: special rendering for Sol??
+    if( name == "Sol" )
+    {
+        mSol = star;
+    }
+    else
+    {
+        if( appMag < 6.0f || name.length() > 1 ){
+            mBrightStars.push_back( star );
+        } else {
+            mFaintStars.push_back( star );
+        }
+	}
+	if( name.length() > 1 ){
+		mNamedStars.push_back( star );
+		
+		if( name == "Sol" || name == "Sirius" || name == "Vega" || name == "Gliese 581" ){
+			mTouringStars.push_back( star );
+			console() << "[catalog] ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
+		}
+	}
+                 */
 }
 
 Vec3f Catalog::convertToCartesian( double ra, double dec, double dist )
