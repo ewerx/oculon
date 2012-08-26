@@ -14,7 +14,7 @@ SpringCam::SpringCam()
 {
 }
 
-SpringCam::SpringCam( float camDist, float aspectRatio )
+SpringCam::SpringCam( float camDist, float aspectRatio, float farPlane )
 {
 	mCamDist		= camDist;
 	
@@ -26,8 +26,7 @@ SpringCam::SpringCam( float camDist, float aspectRatio )
 	mCenNode		= SpringNode( mCenter );
 	mUpNode			= SpringNode( mUp );
 	
-	//mCam.setPerspective( 65.0f, aspectRatio, 5.0f, 200000.0f ); // catalog
-    mCam.setPerspective( 65.0f, aspectRatio, 5.0f, 3000.0f ); // flocking
+    mCam.setPerspective( 65.0f, aspectRatio, 5.0f, farPlane );
 }
 
 void SpringCam::update( float timeDelta )

@@ -51,7 +51,7 @@ class SpringCam {
 	
 	
 	SpringCam();
-	SpringCam( float camDist, float aspectRatio );
+	SpringCam( float camDist, float aspectRatio, float farPlane );
 	void apply( float timeDelta );
 	void update( float timeDelta );
 	void dragCam( const ci::Vec2f &posOffset, float distFromCenter );

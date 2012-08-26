@@ -53,7 +53,7 @@ void Flock::setup()
     ////////------------------------------------------------------
     //
     // CAMERA
-	mSpringCam			= SpringCam( -420.0f, mApp->getViewportAspectRatio() );
+	mSpringCam			= SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );

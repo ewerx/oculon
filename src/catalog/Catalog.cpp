@@ -68,7 +68,7 @@ void Catalog::setup()
     ////////------------------------------------------------------
     //
     // CAMERA	
-	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio() );
+	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio(), 200000.0f );
     
 	// LOAD SHADERS
 	try {
