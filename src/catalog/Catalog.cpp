@@ -27,6 +27,8 @@ using namespace boost;
 const int Catalog::FBO_WIDTH = 78;
 const int Catalog::FBO_HEIGHT = 78;
 
+#define USE_NEW_DATA 1
+
 // ----------------------------------------------------------------
 //
 Catalog::Catalog()
@@ -647,7 +649,7 @@ void Catalog::parseData( const fs::path &path )
 
 void Catalog::createStar( const std::string &text, int lineNumber )
 {
-	//char_separator<char> sep(",");
+#if USE_NEW_DATA
 	tokenizer< escaped_list_separator<char> > tokens(text);
 	int index = 0;
 	double ra, dec, dist;
@@ -714,6 +716,54 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 		
 		index ++;
 	}
+#else // original data
+    char_separator<char> sep(",");
+	tokenizer< char_separator<char> > tokens(text, sep);
+	int index = 0;
+	double ra, dec, dist;
+	float appMag, absMag;
+	float colIndex;
+	std::string name;
+	std::string spectrum;
+	//0			 1    2  3   4    5      6      7        8
+	//lineNumber,name,ra,dec,dist,appMag,absMag,spectrum,colIndex;
+	BOOST_FOREACH(string t, tokens)
+	{
+		if( index == 1 ){
+			if( t.length() > 1 ){
+				name = t;
+			} else {
+				name = "";
+			}
+		} else if( index == 2 ){
+			ra = lexical_cast<double>(t);
+			
+		} else if( index == 3 ){
+			dec = lexical_cast<double>(t);
+			
+		} else if( index == 4 ){
+			dist = lexical_cast<double>(t);
+			
+		} else if( index == 5 ){
+			appMag = lexical_cast<float>(t);
+			
+		} else if( index == 6 ){
+			absMag = lexical_cast<float>(t);
+			
+		} else if( index == 7 ){
+			spectrum = t;
+			
+		} else if( index == 8 ){
+			if( t != " " ){
+				colIndex = lexical_cast<float>(t);
+			} else {
+				colIndex = 0.0f;
+			}
+		}
+		
+		index ++;
+	}
+#endif
 	
 	Vec3f pos = convertToCartesian( ra, dec, dist );
 	
