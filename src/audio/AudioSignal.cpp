@@ -14,6 +14,7 @@
 #include "SignalScope.h"
 #include "VerticalLines.h"
 #include "Eclipse.h"
+#include "Polyhedron.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -29,6 +30,7 @@ AudioSignal::AudioSignal()
     mSignalScope = new SignalScope(this);
     mVerticalLines = new VerticalLines(this);
     mEclipse = new Eclipse(this);
+    mPolyhedron = new Polyhedron(this);
 }
 
 AudioSignal::~AudioSignal()
@@ -36,6 +38,7 @@ AudioSignal::~AudioSignal()
     delete mSignalScope;
     delete mVerticalLines;
     delete mEclipse;
+    delete mPolyhedron;
 }
 
 void AudioSignal::setup()
@@ -54,8 +57,11 @@ void AudioSignal::setup()
     mEnableSignalScope = false;
     mSignalScope->setup();
     
-    mEnableEclipse = true;
+    mEnableEclipse = false;
     mEclipse->setup();
+    
+    mEnablePolyhedron = true;
+    mPolyhedron->setup();
 }
 
 void AudioSignal::reset()
@@ -63,6 +69,7 @@ void AudioSignal::reset()
     mVerticalLines->reset();
     mSignalScope->reset();
     mEclipse->reset();
+    mPolyhedron->reset();
 }
 
 void AudioSignal::setupInterface()
@@ -87,6 +94,7 @@ void AudioSignal::setupInterface()
     mSignalScope->setupInterface();
     mVerticalLines->setupInterface();
     mEclipse->setupInterface();
+    mPolyhedron->setupInterface();
 }
 
 void AudioSignal::setupDebugInterface()
@@ -96,6 +104,7 @@ void AudioSignal::setupDebugInterface()
     mSignalScope->setupDebugInterface();
     mVerticalLines->setupDebugInterface();
     mEclipse->setupDebugInterface();
+    mPolyhedron->setupDebugInterface();
 }
 
 void AudioSignal::update(double dt)
@@ -113,6 +122,10 @@ void AudioSignal::update(double dt)
     if( mEnableEclipse )
     {
         mEclipse->update(dt);
+    }
+    if( mEnablePolyhedron )
+    {
+        mPolyhedron->update(dt);
     }
 }
 
@@ -149,6 +162,11 @@ void AudioSignal::drawSubScenes()
     if( mEnableEclipse )
     {
         mEclipse->draw();
+    }
+    
+    if( mEnablePolyhedron )
+    {
+        mPolyhedron->draw();
     }
 }
 

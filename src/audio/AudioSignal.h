@@ -18,6 +18,7 @@
 class SignalScope;
 class VerticalLines;
 class Eclipse;
+class Polyhedron;
 
 //
 // Audio input tests
@@ -65,5 +66,8 @@ private:
     
     Eclipse* mEclipse;
     bool mEnableEclipse;
+    
+    Polyhedron* mPolyhedron;
+    bool mEnablePolyhedron;
 };
 

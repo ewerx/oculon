@@ -35,6 +35,8 @@
 		7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52815E9408D005BE669 /* Eclipse.cpp */; };
 		7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52E15E9408D005BE669 /* SignalScope.cpp */; };
 		7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53015E9408D005BE669 /* VerticalLines.cpp */; };
+		7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53815E940D9005BE669 /* Polyhedron.cpp */; };
+		7C1BA54115E9475E005BE669 /* cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = 7C1BA54015E9475E005BE669 /* cube.obj */; };
 		7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC014FB1346002CE80B /* WaveParticle.cl */; };
 		7C1C5CC414FB13B7002CE80B /* blur2_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */; };
 		7C1C5CC514FB13B7002CE80B /* blur2_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
@@ -297,6 +299,9 @@
 		7C1BA52F15E9408D005BE669 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
 		7C1BA53015E9408D005BE669 /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VerticalLines.cpp; sourceTree = "<group>"; };
 		7C1BA53115E9408D005BE669 /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerticalLines.h; sourceTree = "<group>"; };
+		7C1BA53815E940D9005BE669 /* Polyhedron.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
+		7C1BA53915E940D9005BE669 /* Polyhedron.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
+		7C1BA54015E9475E005BE669 /* cube.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cube.obj; sourceTree = "<group>"; };
 		7C1C5CC014FB1346002CE80B /* WaveParticle.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = WaveParticle.cl; path = opencl/WaveParticle.cl; sourceTree = "<group>"; };
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
@@ -606,6 +611,14 @@
 				7C134469158992AD0032017E /* starGlow.png */,
 			);
 			path = catalog;
+			sourceTree = "<group>";
+		};
+		7C1BA53F15E9475E005BE669 /* models */ = {
+			isa = PBXGroup;
+			children = (
+				7C1BA54015E9475E005BE669 /* cube.obj */,
+			);
+			path = models;
 			sourceTree = "<group>";
 		};
 		7C3738E414F7359B00B24851 /* MSACore */ = {
@@ -1173,6 +1186,7 @@
 			children = (
 				7CAFEE60158C17F2005B338D /* data */,
 				7C702036153BC57F0057D4EC /* macos */,
+				7C1BA53F15E9475E005BE669 /* models */,
 				7C5C208E14F751B600971B41 /* opencl */,
 				7C865645148C2BCD000E00B6 /* images */,
 				7C865647148C2BCD000E00B6 /* shaders */,
@@ -1548,6 +1562,8 @@
 				7C1BA52715E9408D005BE669 /* AudioSignal.h */,
 				7C1BA52815E9408D005BE669 /* Eclipse.cpp */,
 				7C1BA52915E9408D005BE669 /* Eclipse.h */,
+				7C1BA53815E940D9005BE669 /* Polyhedron.cpp */,
+				7C1BA53915E940D9005BE669 /* Polyhedron.h */,
 				7C1BA52E15E9408D005BE669 /* SignalScope.cpp */,
 				7C1BA52F15E9408D005BE669 /* SignalScope.h */,
 				7C1BA53015E9408D005BE669 /* VerticalLines.cpp */,
@@ -1834,6 +1850,8 @@
 				7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */,
 				7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */,
 				7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */,
+				7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */,
+				7C783E9515E99B4C00492299 /* Planet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

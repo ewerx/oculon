@@ -85,3 +85,5 @@
 #define RES_FLOCK_GLOW_FRAG		CINDER_RESOURCE( ../resources/, glow.frag,			173, GLSL )
 #define RES_FLOCK_NEBULA_FRAG		CINDER_RESOURCE( ../resources/, nebula.frag,		174, GLSL )
 
+// objects
+#define RES_CUBE_OBJ		CINDER_RESOURCE( ../resources/, cube.obj, 128, DATA )
