@@ -9,6 +9,7 @@
 #include <vector>
 
 class Scene;
+class Planet;
 
 class Star {
 public:
@@ -23,6 +24,8 @@ public:
 		  const ci::Font &fontM );
 	void update( const ci::Camera &cam, float scale );
 	void drawName( const ci::Vec2f &mousePos, float power, float alpha );
+    
+    void addPlanet( Planet* planet );
 
 	ci::Vec3f	mInitPos;
 	ci::Vec3f	mPos;
@@ -49,4 +52,6 @@ public:
 	bool		mIsSelected;
     
     Scene*      mParentScene;
+    
+    std::vector<Planet*>    mPlanets;
 };

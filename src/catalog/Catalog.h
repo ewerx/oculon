@@ -31,6 +31,7 @@
 #include "cinder/Rand.h"
 
 #include <vector>
+#include <map>
 
 using namespace ci;
 
@@ -71,15 +72,15 @@ protected:
     void        initBrightVbo();
 	void        initFaintVbo();
     void        setFboPositions( gl::Fbo &fbo );
-	void        parseData( const fs::path &path );
+	void        parseStarData( const fs::path &path );
 	Vec3f       convertToCartesian( double ra, double dec, double dist );
 	void        createStar( const std::string &text, int lineNumber );
 	void        setView( int homeIndex, int destIndex );
     void        selectStar( bool wasRightClick );
     //
     ////////------------------------------------------------------
-    void        parsePlanets( const fs::path &path );
-	void        createPlanet( const std::string &text, int lineNumber );
+    void        parsePlanetData( const fs::path &path );
+	bool        createPlanet( const std::string &text, int lineNumber );
 	
     void        setHomeStar( Star* target );
     void        setDestStar( Star* target );
@@ -126,6 +127,9 @@ private:
 	std::vector<Star*>	mFaintStars;
 	std::vector<Star*>	mNamedStars;
 	std::vector<Star*>	mTouringStars;
+    typedef std::map<unsigned long,Star*> tStarMap;
+    tStarMap mStarsHIP;
+    tStarMap mStarsHD;
 	
 	gl::Texture			mStarTex;
 	gl::Texture			mStarGlowTex;

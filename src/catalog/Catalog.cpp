@@ -13,6 +13,7 @@
 #include "AudioInput.h"
 #include "Interface.h"
 #include "Resources.h"
+#include "Planet.h"
 
 #include "Orbiter.h"
 
@@ -120,11 +121,12 @@ void Catalog::setup()
 	mScale		= 0.2f;
 	mMaxScale	= 400.0f;
 	mScalePer	= mScale/mMaxScale;
-	parseData( App::getResourcePath( "starData.csv" ) );
+	parseStarData( App::getResourcePath( "starData.csv" ) );
 	mTotalTouringStars = mTouringStars.size();
 	mHomeStar	= NULL;
 	mDestStar	= NULL;
     mSol        = NULL;
+    parsePlanetData( App::getResourcePath( "ExoplanetArchive.csv" ) );
     
 	setFboPositions( mPositionFbo );
 	
@@ -165,9 +167,7 @@ void Catalog::setupInterface()
                          .minValue(60.0f)
                          .maxValue(150.0f)
                          .oscReceiver(mName,"bpm")
-                         .sendFeedback());    
-    mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)
-                          .oscReceiver(mName,"quaketrigger"))->registerCallback( this, &Catalog::triggerNextQuake );
+                         .sendFeedback());
     */
     mInterface->addButton(CreateTriggerParam("Random Home", NULL)
                           .oscReceiver(mName,"randhome"))->registerCallback( this, &Catalog::setRandomHome );
@@ -625,7 +625,7 @@ void Catalog::initFaintVbo()
 
 //MARK: data parsing
 
-void Catalog::parseData( const fs::path &path )
+void Catalog::parseStarData( const fs::path &path )
 {
 	std::string line;
 	std::ifstream myfile( path.c_str() );
@@ -655,8 +655,8 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 	double ra, dec, dist;
 	float appMag, absMag;
 	float colIndex;
-    int hd;
-    int hip;
+    unsigned long hd;
+    unsigned long hip;
 	std::string name;
 	std::string spectrum;
 	//0			 1   2  3     4     5    6  7   8    9      10     11       12
@@ -672,10 +672,10 @@ void Catalog::createStar( const std::string &text, int lineNumber )
         switch( index )
         {
             case 1:
-                hip = lexical_cast<int>(t);
+                hip = lexical_cast<unsigned long>(t);
                 break;
             case 2:
-                hd = lexical_cast<int>(t);
+                hd = lexical_cast<unsigned long>(t);
                 break;
             case 5:
                 if( t.length() > 1 ){
@@ -790,140 +790,15 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 	Star *star = new Star( this, pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
     mStars.push_back( star );
     
-    //TODO: special rendering for Sol??
-    if( name == "Sol" )
+    if( hip > 0 )
     {
-        mSol = star;
+        mStarsHIP[hip] = star;
     }
-    else
+    
+    if( hd > 0 )
     {
-        if( appMag < 6.0f || name.length() > 1 ){
-            mBrightStars.push_back( star );
-        } else {
-            mFaintStars.push_back( star );
-        }
-	}
-	if( name.length() > 1 ){
-		mNamedStars.push_back( star );
-		
-		if( name == "Sol" || name == "Sirius" || name == "Vega" || name == "Gliese 581" ){
-			mTouringStars.push_back( star );
-			console() << "[catalog] ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
-		}
-	}
-}
-
-void Catalog::parsePlanets( const fs::path &path )
-{
-	std::string line;
-	std::ifstream myfile( path.c_str() );
-	
-	if( myfile.is_open() ){
-		int i=0;
-		while( !myfile.eof() ){
-			std::getline( myfile, line );
-            if( line[0] != '#' )
-            {
-                createPlanet( line, i );
-            }
-			++i;
-		}
-		
-		myfile.close();
-	} else console() << "[catalog] ERROR: unable to read data file";
-}
-
-void Catalog::createPlanet( const std::string &text, int lineNumber )
-{
-	char_separator<char> sep(",");
-	tokenizer< char_separator<char> > tokens(text, sep);
-	int index = 0;
-	double orbper, orbsmax, mass, radius, orbincl;
-	std::string hostname;
-	char letter;
-    /*
-	//			 1    2  3   4    5      6      7        8
-	//0-pl_hostname,1-pl_letter,2-pl_discmethod,3-pl_orbper,4-pl_orbsmax,5-pl_orbeccen,6-pl_massj,7-pl_radj,8-pl_dens,9-pl_orbincl,10-pl_ttvflag,11-ra,12-dec,13-st_dist,14-st_vj,15-st_teff,16-st_mass,17-st_rad,18-hd_name,19-hip_name
-	BOOST_FOREACH(string t, tokens)
-	{
-        switch(index)
-        {
-            case 1:
-                if( t.length() > 1 )
-                {
-                    hostname = t;
-                }
-                else
-                {
-                    hostname = "";
-                }
-                break;
-            case 2:
-                if( t.length() == 1 )
-                {
-                    letter = t[0];
-                }
-                break;
-                
-            case 3:
-                dec = lexical_cast<double>(t);
-                
-                break;
-            case 4:
-                dist = lexical_cast<double>(t);
-                
-                break;
-            case 5:
-                appMag = lexical_cast<float>(t);
-                
-                break;
-            case 6:
-                absMag = lexical_cast<float>(t);
-                
-                break;
-            case 7:
-                spectrum = t;
-                
-                break;
-            case 8:
-                if( t != " " ){
-                    colIndex = lexical_cast<float>(t);
-                } else {
-                    colIndex = 0.0f;
-                }
-                break;
-                
-            default:
-                break;
-		}
-		
-		index ++;
-	}
-	
-	Vec3f pos = convertToCartesian( ra, dec, dist );
-	
-	//float mag = ( 80 - appMag ) * 0.1f;
-	//Color col = Color( mag, mag, mag );
-	
-	float color = constrain( colIndex, 0.0f, 1.0f );//0.0f;
-    //	if( name.length() > 0 ){
-    //		char sp = spectrum[0];
-    //
-    //		switch( sp ){
-    //			case 'O':	color = 0.0f;	break;
-    //			case 'B':	color = 0.166f;	break;
-    //			case 'A':	color = 0.2f;	break;
-    //			case 'F':	color = 0.5f;	break;
-    //			case 'G':	color = 0.666f;	break;
-    //			case 'K':	color = 0.833f;	break;
-    //			case 'M':	color = 1.0f;	break;
-    //			default:					break;
-    //		}
-    //	}
-	
-	// THIS FEELS WRONG. ASK ABOUT THE RIGHT WAY TO DO THIS.
-	Star *star = new Star( this, pos, appMag, absMag, color, name, spectrum, mFontBlackT, mFontBlackS );
-    mStars.push_back( star );
+        mStarsHD[hip] = star;
+    }
     
     //TODO: special rendering for Sol??
     if( name == "Sol" )
@@ -946,7 +821,180 @@ void Catalog::createPlanet( const std::string &text, int lineNumber )
 			console() << "[catalog] ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
 		}
 	}
-                 */
+}
+
+void Catalog::parsePlanetData( const fs::path &path )
+{
+	std::string line;
+	std::ifstream myfile( path.c_str() );
+    
+    int numPlanets = 0;
+	
+	if( myfile.is_open() ){
+		int i=0;
+		while( !myfile.eof() ){
+			std::getline( myfile, line );
+            if( line[0] != '#' )
+            {
+                if( createPlanet( line, i ) )
+                    numPlanets++;
+            }
+			++i;
+		}
+        
+        console() << "[catalog] " << numPlanets << " / " << i << " planets added" << std::endl;
+		
+		myfile.close();
+	} else console() << "[catalog] ERROR: unable to read data file";
+}
+
+bool Catalog::createPlanet( const std::string &text, int lineNumber )
+{
+	tokenizer< escaped_list_separator<char> > tokens(text);
+	int index = 0;
+	double orbper, orbsmax, mass, radius, orbincl;
+	std::string hostname;
+    unsigned long hdname = 0;
+    unsigned long hipname = 0;
+    std::string name;
+    
+	//0-pl_hostname,1-pl_letter,2-pl_orbper,3-pl_orbsmax,4-pl_orbeccen,5-pl_massj,6-pl_radj,7-pl_dens,8-pl_orbincl,9-pl_ttvflag,10-ra,11-dec,12-st_dist,13-st_vj,14-st_teff,15-st_mass,16-st_rad,17-hd_name,18-hip_name
+	BOOST_FOREACH(string t, tokens)
+	{
+        switch(index)
+        {
+            case 0:
+                if( t.length() > 1 )
+                {
+                    hostname = t;
+                }
+                else
+                {
+                    hostname = "";
+                }
+                break;
+            case 1:
+                if( t.length() > 0 )
+                {
+                    name = t;
+                }
+                else
+                {
+                    name = "";
+                }
+                break;
+                
+            case 2:
+                if( t.length() > 0 )
+                {
+                    orbper = lexical_cast<double>(t);
+                }
+                else
+                {
+                    orbper = 0.0f;
+                }
+                break;
+            case 3:
+                if( t.length() > 0 )
+                {
+                    orbsmax = lexical_cast<double>(t);
+                }
+                else
+                {
+                    orbsmax = 0.0f;
+                }
+                break;
+            case 5:
+                if( t.length() > 0 )
+                {
+                    mass = lexical_cast<double>(t);
+                }
+                else
+                {
+                    mass = 0.0f;
+                }
+                break;
+            case 6:
+                if( t.length() > 0 )
+                {
+                    radius = lexical_cast<double>(t);
+                }
+                else
+                {
+                    radius = 0.0f;
+                }
+                break;
+            case 8:
+                if( t.length() > 0 )
+                {
+                    orbincl = lexical_cast<double>(t);
+                }
+                else
+                {
+                    orbincl = 0.0f;
+                }
+                break;
+            case 17:
+                if( t.length() > 0 )
+                {
+                    hdname = lexical_cast<unsigned long>(t);
+                }
+                else
+                {
+                    hdname = 0;
+                }
+                break;
+            case 18:
+                if( t.length() > 0 )
+                {
+                    hipname = lexical_cast<unsigned long>(t);
+                }
+                else
+                {
+                    hipname = 0;
+                }
+                break;
+                
+            default:
+                break;
+		}
+		
+		index ++;
+	}
+	
+    Star* star = NULL;
+    // star by HIP name
+    
+    if( hipname > 0 )
+    {
+        tStarMap::iterator it = mStarsHIP.find(hipname);
+        if( it != mStarsHIP.end() )
+        {
+            star = it->second;
+        }
+    }
+
+    if( star == NULL && hdname > 0 )
+    {
+        tStarMap::iterator it = mStarsHD.find(hdname);
+        if( it != mStarsHD.end() )
+        {
+            star = it->second;
+        }
+    }
+    
+    if( star != NULL )
+    {
+        Planet *planet = new Planet( this, star, name, orbper, orbsmax, orbincl, mass, radius );
+        star->addPlanet( planet );
+        //console() << "[catalog] added planet: " << hostname << " " << name << std::endl;
+        return true;
+    }
+    else
+    {
+        //console() << "[catalog] host star not found for planet: " << hostname << " " << name << std::endl;
+        return false;
+    }
 }
 
 Vec3f Catalog::convertToCartesian( double ra, double dec, double dist )

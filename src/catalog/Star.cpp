@@ -82,3 +82,8 @@ void Star::drawName( const Vec2f &mousePos, float power, float alpha )
 		}
 	}
 }
+
+void Star::addPlanet( Planet* planet )
+{
+    mPlanets.push_back(planet);
+}
