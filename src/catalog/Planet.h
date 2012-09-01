@@ -19,11 +19,12 @@ public:
            float orbitalPeriod,
            float semiMajorAxis,
            float inclination,
+           float eccentricity,
            float mass,
-           float radius
+           float radius,
+           float stellarMass
            );
 	void update( const ci::Camera &cam, float scale );
-	//void drawName( const ci::Vec2f &mousePos, float power, float alpha );
 
 	std::string		mName;
 	ci::gl::Texture mNameTex;
@@ -32,7 +33,9 @@ public:
     float       mOrbitalPeriod;
     float       mSemiMajorAxis;
     float       mInclination;
+    float       mEccentricity;
     float       mMass;
+    float       mStellarMass;
     
     Star*       mHostStar;
     Scene*      mParentScene;

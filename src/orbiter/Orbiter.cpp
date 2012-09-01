@@ -16,6 +16,8 @@
 #include "TextEntity.h"
 #include "Resources.h"
 #include "Interface.h"
+#include "Star.h"
+#include "Planet.h"
 
 using namespace ci;
 using namespace boost;
@@ -26,7 +28,7 @@ PLANETS_ENTRY("Mercury",57900000000.f,  2440000,3.33E+023,      47900,  1.240E-0
 PLANETS_ENTRY("Venus",  108000000000.f, 6050000,4.869E+024,     35000,  -2.99E-07,  RES_ORBITER_VENUS ) \
 PLANETS_ENTRY("Earth",  150000000000.f, 6378140,5.976E+024,     29800,  7.30E-05,   RES_ORBITER_EARTH ) \
 PLANETS_ENTRY("Mars",   227940000000.f, 3397200,6.421E+023,     24100,  7.09E-05,   RES_ORBITER_MARS ) \
-PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.9E+027,      13100,  1.76E-04,   RES_ORBITER_JUPITER ) \
+PLANETS_ENTRY("Jupiter",778330000000.f, 71492000,1.898E+027,    13070,  1.76E-04,   RES_ORBITER_JUPITER ) \
 PLANETS_ENTRY("Saturn", 1429400000000.f,60268000,5.688E+026,    9640,   1.63E-04,   RES_ORBITER_SATURN ) \
 PLANETS_ENTRY("Uranus", 2870990000000.f,25559000,8.686E+025,    6810,   -1.01E-04,   RES_ORBITER_URANUS ) \
 PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04,   RES_ORBITER_NEPTUNE ) \
@@ -166,11 +168,16 @@ void Orbiter::setupInterface()
 
 void Orbiter::reset()
 {
+    createSolSystem();
+    
     mElapsedTime = 0.0f;
-    
-    const float radialEnhancement = 500000.0f;// at true scale the plaents would be invisible
-    
+}
+
+void Orbiter::createSolSystem()
+{
     removeBodies();
+    
+    const float radialEnhancement = 500000.0f;// at true scale the planets would be invisible
     
     // sun
     double mass = 1.989E+030;
@@ -240,14 +247,14 @@ void Orbiter::reset()
         snprintf(name,128,"%c%d/%04d/%02d", randInt('A','Z'), num_planets+i, randInt(1000,9999), randInt(300));
         orbitalVel = ( ( rand() % 200 ) + 100 ) * 50.0;
         Body* body = new Body(this,
-                              name, 
-                              pos, 
+                              name,
+                              pos,
                               /*orbitalPlaneNormal * orbitalVel,*/
-                               Vec3d(orbitalVel, 0.0f, 0.0f),
-                               radius, 
-                               0.0000000001f,
-                               mass, 
-                               ColorA(0.5f, 0.55f, 0.925f));
+                              Vec3d(orbitalVel, 0.0f, 0.0f),
+                              radius,
+                              0.0000000001f,
+                              mass,
+                              ColorA(0.5f, 0.55f, 0.925f));
         body->setup();
         mBodies.push_back(body);
     }
@@ -262,15 +269,88 @@ void Orbiter::reset()
      Vec3d initVelDir = dirToCenter.cross(up);
      initVelDir.normalize();
      float magnitude = mEscapeVelocity * (Orbiter::sGravityConstant * mBodies[0].mMass) / dirToCenter.length();
-     //float magnitude =  
+     //float magnitude =
      mBodies[i].mVelocity = initVelDir * magnitude;
      }
      */
 }
 
+void Orbiter::createSystem( Star* star )
+{
+    if( star == NULL )
+    {
+        createSolSystem();
+        return;
+    }
+    
+    int numPlanets = star->mPlanets.size();
+    if( numPlanets == 0 )
+    {
+        console() << "[orbiter] ERROR creating system: star has no planets\n";
+        return;
+    }
+    
+    removeBodies();
+    
+    const float radialEnhancement = 500000.0f;// at true scale the planets would be invisible
+    
+    // star
+    double mass = star->mPlanets[0]->mStellarMass;
+    float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
+    double rotationSpeed = 0.0f;
+    mSun = new Sun(this,
+                   star->mPos,
+                   Vec3d::zero(),
+                   radius,
+                   rotationSpeed,
+                   mass,
+                   ColorA(1.0f, 1.0f, 1.0f));
+    mSun->setup();
+    mSun->setLabelVisible(false);
+    mBodies.push_back(mSun);
+    
+    Body* body;
+    
+    double orbitalRadius;
+    double orbitalVel;
+    double angle;
+    Vec3d pos;
+    pos.y = 0.0f;
+    
+    string name;
+    
+    for( int i=0; i < numPlanets; ++i )
+    {
+        Planet* planet = star->mPlanets[i];
+        mass = planet->mMass * 1.898E+027; // Jupiter-mass
+        orbitalRadius = planet->mSemiMajorAxis * 149598000000; // AU -> M
+        // this assumes near circular orbit
+        // v0 = 2pi * semiMajorAxis / orbPeriod
+        orbitalVel = 2*M_PI * orbitalRadius / ( planet->mOrbitalPeriod * 24 * 3600 );
+        rotationSpeed = 0.0f;
+        angle = toRadians(Rand::randFloat(3.0f, 8.0f)); // inclination?
+        pos = mSun->getPosition();
+        pos.y += orbitalRadius * sin ( angle );
+        pos.z += orbitalRadius * cos ( angle );
+        radius = planet->mRadius*71492000 * mDrawScale * radialEnhancement; // Jupiter-radius
+        body = new Body(this, name,
+                        pos,
+                        Vec3d(orbitalVel, 0.0f, 0.0f),
+                        radius, 
+                        rotationSpeed, 
+                        mass, 
+                        ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), 
+                        mTextures[i++]); 
+        body->setup(); 
+        mBodies.push_back( body );
+    }
+    
+    mFollowTargetIndex = Rand::randInt(0,mBodies.size()-1);
+}
+
 void Orbiter::removeBodies()
 {
-    for(BodyList::iterator bodyIt = mBodies.begin(); 
+    for(BodyList::iterator bodyIt = mBodies.begin();
         bodyIt != mBodies.end();
         ++bodyIt)
     {

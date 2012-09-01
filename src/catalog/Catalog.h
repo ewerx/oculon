@@ -130,6 +130,7 @@ private:
     typedef std::map<unsigned long,Star*> tStarMap;
     tStarMap mStarsHIP;
     tStarMap mStarsHD;
+    std::vector<Star*>  mStarsWithPlanets;
 	
 	gl::Texture			mStarTex;
 	gl::Texture			mStarGlowTex;

@@ -842,7 +842,7 @@ void Catalog::parsePlanetData( const fs::path &path )
 			++i;
 		}
         
-        console() << "[catalog] " << numPlanets << " / " << i << " planets added" << std::endl;
+        console() << "[catalog] " << numPlanets << " / " << i << " planets added" << " forming " << mStarsWithPlanets.size() << " systems" << std::endl;
 		
 		myfile.close();
 	} else console() << "[catalog] ERROR: unable to read data file";
@@ -852,7 +852,7 @@ bool Catalog::createPlanet( const std::string &text, int lineNumber )
 {
 	tokenizer< escaped_list_separator<char> > tokens(text);
 	int index = 0;
-	double orbper, orbsmax, mass, radius, orbincl;
+	double orbper, orbsmax, orbeccen, mass, radius, orbincl, stmass;
 	std::string hostname;
     unsigned long hdname = 0;
     unsigned long hipname = 0;
@@ -904,6 +904,16 @@ bool Catalog::createPlanet( const std::string &text, int lineNumber )
                     orbsmax = 0.0f;
                 }
                 break;
+            case 4:
+                if( t.length() > 0 )
+                {
+                    orbeccen = lexical_cast<double>(t);
+                }
+                else
+                {
+                    orbeccen = 0.0f;
+                }
+                break;
             case 5:
                 if( t.length() > 0 )
                 {
@@ -932,6 +942,16 @@ bool Catalog::createPlanet( const std::string &text, int lineNumber )
                 else
                 {
                     orbincl = 0.0f;
+                }
+                break;
+            case 15:
+                if( t.length() > 0 )
+                {
+                    stmass = lexical_cast<double>(t);
+                }
+                else
+                {
+                    stmass = 0.0f;
                 }
                 break;
             case 17:
@@ -985,7 +1005,13 @@ bool Catalog::createPlanet( const std::string &text, int lineNumber )
     
     if( star != NULL )
     {
-        Planet *planet = new Planet( this, star, name, orbper, orbsmax, orbincl, mass, radius );
+        // add the star the first time
+        if( star->mPlanets.size() == 0 )
+        {
+            mStarsWithPlanets.push_back(star);
+        }
+        
+        Planet *planet = new Planet( this, star, name, orbper, orbsmax, orbincl, orbeccen, mass, radius, stmass );
         star->addPlanet( planet );
         //console() << "[catalog] added planet: " << hostname << " " << name << std::endl;
         return true;
@@ -1040,6 +1066,13 @@ void Catalog::setHomeStar( Star* target )
 {
     console() << "[catalog] HOME -> " << target->mName << std::endl;
     mHomeStar = target;
+    
+    Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
+    
+    if( orbiterScene && orbiterScene->isRunning() )
+    {
+        orbiterScene->createSystem(target);
+    }
 }
 
 void Catalog::setDestStar( Star* target )
@@ -1054,8 +1087,8 @@ void Catalog::setDestStar( Star* target )
 
 bool Catalog::setRandomHome()
 {
-    int index = Rand::randInt( mBrightStars.size() );
-    setHomeStar( mBrightStars[index] );
+    int index = Rand::randInt( mStarsWithPlanets.size() );
+    setHomeStar( mStarsWithPlanets[index] );
     return false;
 }
 

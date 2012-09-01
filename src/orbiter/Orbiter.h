@@ -22,6 +22,7 @@ using std::vector;
 class Body;
 class Sun;
 class TextEntity;
+class Star;
 
 //
 // An orbital simulator
@@ -47,6 +48,8 @@ public:
     bool prevTarget();
     bool nextTarget();
     
+    void createSystem( Star* star );
+    
 protected:// from Scene
     void setupInterface();
     void setupDebugInterface();
@@ -64,12 +67,13 @@ private:
     void drawHudSpectrumAnalyzer(float left, float top, float width, float height);
     
     void removeBodies();
+    void createSolSystem();
     
 private:
     //Vec3f           mLightDirection;
     
     typedef vector<Body*> BodyList;
-    BodyList        mBodies;
+    BodyList            mBodies;
     
     enum { NUM_PLANETS = 8 };
     ImageSourceRef      mTextures[NUM_PLANETS];
