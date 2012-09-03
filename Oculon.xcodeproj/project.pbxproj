@@ -60,6 +60,49 @@
 		7C37393614F736E300B24851 /* MSAOpenCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37392114F736E300B24851 /* MSAOpenCLMemoryObject.cpp */; };
 		7C37393714F736E300B24851 /* MSAOpenCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37392314F736E300B24851 /* MSAOpenCLProgram.cpp */; };
 		7C39957315240BAD000CAF97 /* libcinder_d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C39956C15240B5B000CAF97 /* libcinder_d.a */; };
+		7C3BB41715F5567900A4E384 /* Corona.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40715F5567900A4E384 /* Corona.cpp */; };
+		7C3BB41815F5567900A4E384 /* CoronaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40815F5567900A4E384 /* CoronaController.cpp */; };
+		7C3BB41915F5567900A4E384 /* CoronaStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40A15F5567900A4E384 /* CoronaStar.cpp */; };
+		7C3BB41A15F5567900A4E384 /* CubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40B15F5567900A4E384 /* CubeMap.cpp */; };
+		7C3BB41B15F5567900A4E384 /* CoronaGlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40D15F5567900A4E384 /* CoronaGlow.cpp */; };
+		7C3BB41C15F5567900A4E384 /* CoronaNebula.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40F15F5567900A4E384 /* CoronaNebula.cpp */; };
+		7C3BB41D15F5567900A4E384 /* Room.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB41215F5567900A4E384 /* Room.cpp */; };
+		7C3BB42C15F55B8D00A4E384 /* corona.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42115F55B8D00A4E384 /* corona.frag */; };
+		7C3BB42D15F55B8D00A4E384 /* dustCorona.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42215F55B8D00A4E384 /* dustCorona.frag */; };
+		7C3BB42E15F55B8D00A4E384 /* glowCorona.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42315F55B8D00A4E384 /* glowCorona.frag */; };
+		7C3BB42F15F55B8D00A4E384 /* gradient.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42415F55B8D00A4E384 /* gradient.frag */; };
+		7C3BB43015F55B8D00A4E384 /* nebulaCorona.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42515F55B8D00A4E384 /* nebulaCorona.frag */; };
+		7C3BB43115F55B8D00A4E384 /* passThruColorCorona.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42615F55B8D00A4E384 /* passThruColorCorona.vert */; };
+		7C3BB43215F55B8D00A4E384 /* passThruCorona.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42715F55B8D00A4E384 /* passThruCorona.vert */; };
+		7C3BB43315F55B8D00A4E384 /* passThruNormalsCorona.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42815F55B8D00A4E384 /* passThruNormalsCorona.vert */; };
+		7C3BB43415F55B8D00A4E384 /* planet.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42915F55B8D00A4E384 /* planet.frag */; };
+		7C3BB43515F55B8D00A4E384 /* star.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42A15F55B8D00A4E384 /* star.frag */; };
+		7C3BB43615F55B8D00A4E384 /* star.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB42B15F55B8D00A4E384 /* star.vert */; };
+		7C3BB44615F55DC400A4E384 /* bigGlow0.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43815F55DC400A4E384 /* bigGlow0.png */; };
+		7C3BB44715F55DC400A4E384 /* bigGlow1.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43915F55DC400A4E384 /* bigGlow1.png */; };
+		7C3BB44815F55DC400A4E384 /* corona.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43A15F55DC400A4E384 /* corona.png */; };
+		7C3BB44915F55DC400A4E384 /* cubeNegX.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43B15F55DC400A4E384 /* cubeNegX.jpg */; };
+		7C3BB44A15F55DC400A4E384 /* cubeNegY.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43C15F55DC400A4E384 /* cubeNegY.jpg */; };
+		7C3BB44B15F55DC400A4E384 /* cubeNegZ.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43D15F55DC400A4E384 /* cubeNegZ.jpg */; };
+		7C3BB44C15F55DC400A4E384 /* cubePosX.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43E15F55DC400A4E384 /* cubePosX.jpg */; };
+		7C3BB44D15F55DC400A4E384 /* cubePosY.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB43F15F55DC400A4E384 /* cubePosY.jpg */; };
+		7C3BB44E15F55DC400A4E384 /* cubePosZ.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB44015F55DC400A4E384 /* cubePosZ.jpg */; };
+		7C3BB44F15F55DC400A4E384 /* glowCorona.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB44115F55DC400A4E384 /* glowCorona.png */; };
+		7C3BB45015F55DC400A4E384 /* grid.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB44215F55DC400A4E384 /* grid.png */; };
+		7C3BB45115F55DC400A4E384 /* nebulaCorona.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB44315F55DC400A4E384 /* nebulaCorona.png */; };
+		7C3BB45215F55DC400A4E384 /* smallGrid.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB44415F55DC400A4E384 /* smallGrid.png */; };
+		7C3BB45315F55DC400A4E384 /* spectrumCorona.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB44515F55DC400A4E384 /* spectrumCorona.png */; };
+		7C3BB45415F56D7800A4E384 /* corona.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42115F55B8D00A4E384 /* corona.frag */; };
+		7C3BB45515F56D7800A4E384 /* dustCorona.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42215F55B8D00A4E384 /* dustCorona.frag */; };
+		7C3BB45615F56D7800A4E384 /* glowCorona.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42315F55B8D00A4E384 /* glowCorona.frag */; };
+		7C3BB45715F56D7800A4E384 /* gradient.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42415F55B8D00A4E384 /* gradient.frag */; };
+		7C3BB45815F56D7800A4E384 /* nebulaCorona.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42515F55B8D00A4E384 /* nebulaCorona.frag */; };
+		7C3BB45915F56D7800A4E384 /* passThruColorCorona.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42615F55B8D00A4E384 /* passThruColorCorona.vert */; };
+		7C3BB45A15F56D7800A4E384 /* passThruCorona.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42715F55B8D00A4E384 /* passThruCorona.vert */; };
+		7C3BB45B15F56D7800A4E384 /* passThruNormalsCorona.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42815F55B8D00A4E384 /* passThruNormalsCorona.vert */; };
+		7C3BB45C15F56D7800A4E384 /* planet.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42915F55B8D00A4E384 /* planet.frag */; };
+		7C3BB45D15F56D7800A4E384 /* star.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42A15F55B8D00A4E384 /* star.frag */; };
+		7C3BB45E15F56D7800A4E384 /* star.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42B15F55B8D00A4E384 /* star.vert */; };
 		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
 		7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11C14CCFCA6008507D3 /* OscListener.cpp */; };
 		7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */; };
@@ -106,6 +149,7 @@
 		7C783E9215E982DE00492299 /* ExoplanetArchive.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C783E9115E982DE00492299 /* ExoplanetArchive.csv */; };
 		7C783E9515E99B4C00492299 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783E9315E99B4C00492299 /* Planet.cpp */; };
 		7C783E9715E9C82900492299 /* starData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C783E9615E9C82900492299 /* starData.csv */; };
+		7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783EE815F26ED000492299 /* StarCam.cpp */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
 		7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7B1547B00600CF488D /* QuakeData.cpp */; };
@@ -351,6 +395,46 @@
 		7C37392514F736E300B24851 /* MSAOpenCLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLTypes.h; sourceTree = "<group>"; };
 		7C37393814F737DA00B24851 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		7C39956215240B5A000CAF97 /* cinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cinder.xcodeproj; path = ../sdks/cinder/xcode/cinder.xcodeproj; sourceTree = "<group>"; };
+		7C3BB40715F5567900A4E384 /* Corona.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Corona.cpp; sourceTree = "<group>"; };
+		7C3BB40815F5567900A4E384 /* CoronaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaController.cpp; sourceTree = "<group>"; };
+		7C3BB40915F5567900A4E384 /* CoronaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaController.h; sourceTree = "<group>"; };
+		7C3BB40A15F5567900A4E384 /* CoronaStar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaStar.cpp; sourceTree = "<group>"; };
+		7C3BB40B15F5567900A4E384 /* CubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CubeMap.cpp; sourceTree = "<group>"; };
+		7C3BB40C15F5567900A4E384 /* CubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CubeMap.h; sourceTree = "<group>"; };
+		7C3BB40D15F5567900A4E384 /* CoronaGlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaGlow.cpp; sourceTree = "<group>"; };
+		7C3BB40E15F5567900A4E384 /* CoronaGlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaGlow.h; sourceTree = "<group>"; };
+		7C3BB40F15F5567900A4E384 /* CoronaNebula.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaNebula.cpp; sourceTree = "<group>"; };
+		7C3BB41015F5567900A4E384 /* CoronaNebula.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaNebula.h; sourceTree = "<group>"; };
+		7C3BB41115F5567900A4E384 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Resources.h; sourceTree = "<group>"; };
+		7C3BB41215F5567900A4E384 /* Room.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Room.cpp; sourceTree = "<group>"; };
+		7C3BB41315F5567900A4E384 /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
+		7C3BB41615F5567900A4E384 /* CoronaStar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaStar.h; sourceTree = "<group>"; };
+		7C3BB41F15F5569D00A4E384 /* Corona.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Corona.h; sourceTree = "<group>"; };
+		7C3BB42115F55B8D00A4E384 /* corona.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = corona.frag; sourceTree = "<group>"; };
+		7C3BB42215F55B8D00A4E384 /* dustCorona.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = dustCorona.frag; sourceTree = "<group>"; };
+		7C3BB42315F55B8D00A4E384 /* glowCorona.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = glowCorona.frag; sourceTree = "<group>"; };
+		7C3BB42415F55B8D00A4E384 /* gradient.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gradient.frag; sourceTree = "<group>"; };
+		7C3BB42515F55B8D00A4E384 /* nebulaCorona.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = nebulaCorona.frag; sourceTree = "<group>"; };
+		7C3BB42615F55B8D00A4E384 /* passThruColorCorona.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruColorCorona.vert; sourceTree = "<group>"; };
+		7C3BB42715F55B8D00A4E384 /* passThruCorona.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruCorona.vert; sourceTree = "<group>"; };
+		7C3BB42815F55B8D00A4E384 /* passThruNormalsCorona.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruNormalsCorona.vert; sourceTree = "<group>"; };
+		7C3BB42915F55B8D00A4E384 /* planet.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = planet.frag; sourceTree = "<group>"; };
+		7C3BB42A15F55B8D00A4E384 /* star.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = star.frag; sourceTree = "<group>"; };
+		7C3BB42B15F55B8D00A4E384 /* star.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = star.vert; sourceTree = "<group>"; };
+		7C3BB43815F55DC400A4E384 /* bigGlow0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bigGlow0.png; sourceTree = "<group>"; };
+		7C3BB43915F55DC400A4E384 /* bigGlow1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bigGlow1.png; sourceTree = "<group>"; };
+		7C3BB43A15F55DC400A4E384 /* corona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = corona.png; sourceTree = "<group>"; };
+		7C3BB43B15F55DC400A4E384 /* cubeNegX.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cubeNegX.jpg; sourceTree = "<group>"; };
+		7C3BB43C15F55DC400A4E384 /* cubeNegY.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cubeNegY.jpg; sourceTree = "<group>"; };
+		7C3BB43D15F55DC400A4E384 /* cubeNegZ.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cubeNegZ.jpg; sourceTree = "<group>"; };
+		7C3BB43E15F55DC400A4E384 /* cubePosX.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cubePosX.jpg; sourceTree = "<group>"; };
+		7C3BB43F15F55DC400A4E384 /* cubePosY.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cubePosY.jpg; sourceTree = "<group>"; };
+		7C3BB44015F55DC400A4E384 /* cubePosZ.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cubePosZ.jpg; sourceTree = "<group>"; };
+		7C3BB44115F55DC400A4E384 /* glowCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glowCorona.png; sourceTree = "<group>"; };
+		7C3BB44215F55DC400A4E384 /* grid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grid.png; sourceTree = "<group>"; };
+		7C3BB44315F55DC400A4E384 /* nebulaCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nebulaCorona.png; sourceTree = "<group>"; };
+		7C3BB44415F55DC400A4E384 /* smallGrid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smallGrid.png; sourceTree = "<group>"; };
+		7C3BB44515F55DC400A4E384 /* spectrumCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spectrumCorona.png; sourceTree = "<group>"; };
 		7C52E10714CCFC9B008507D3 /* IpEndpointName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
 		7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
 		7C52E10914CCFC9B008507D3 /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
@@ -442,6 +526,8 @@
 		7C783E9315E99B4C00492299 /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Planet.cpp; path = catalog/Planet.cpp; sourceTree = "<group>"; };
 		7C783E9415E99B4C00492299 /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Planet.h; path = catalog/Planet.h; sourceTree = "<group>"; };
 		7C783E9615E9C82900492299 /* starData.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = starData.csv; path = data/starData.csv; sourceTree = "<group>"; };
+		7C783EE815F26ED000492299 /* StarCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StarCam.cpp; sourceTree = "<group>"; };
+		7C783EEB15F26F4300492299 /* StarCam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StarCam.h; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
 		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
 		7C832E751547AD6700CF488D /* Tectonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tectonic.cpp; sourceTree = "<group>"; };
@@ -838,6 +924,67 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7C3BB40615F5567900A4E384 /* corona */ = {
+			isa = PBXGroup;
+			children = (
+				7C3BB40715F5567900A4E384 /* Corona.cpp */,
+				7C3BB41F15F5569D00A4E384 /* Corona.h */,
+				7C3BB40815F5567900A4E384 /* CoronaController.cpp */,
+				7C3BB40915F5567900A4E384 /* CoronaController.h */,
+				7C3BB40A15F5567900A4E384 /* CoronaStar.cpp */,
+				7C3BB41615F5567900A4E384 /* CoronaStar.h */,
+				7C3BB40B15F5567900A4E384 /* CubeMap.cpp */,
+				7C3BB40C15F5567900A4E384 /* CubeMap.h */,
+				7C3BB40D15F5567900A4E384 /* CoronaGlow.cpp */,
+				7C3BB40E15F5567900A4E384 /* CoronaGlow.h */,
+				7C3BB40F15F5567900A4E384 /* CoronaNebula.cpp */,
+				7C3BB41015F5567900A4E384 /* CoronaNebula.h */,
+				7C3BB41115F5567900A4E384 /* Resources.h */,
+				7C3BB41215F5567900A4E384 /* Room.cpp */,
+				7C3BB41315F5567900A4E384 /* Room.h */,
+			);
+			path = corona;
+			sourceTree = "<group>";
+		};
+		7C3BB42015F55B8D00A4E384 /* corona */ = {
+			isa = PBXGroup;
+			children = (
+				7C3BB42115F55B8D00A4E384 /* corona.frag */,
+				7C3BB42215F55B8D00A4E384 /* dustCorona.frag */,
+				7C3BB42315F55B8D00A4E384 /* glowCorona.frag */,
+				7C3BB42415F55B8D00A4E384 /* gradient.frag */,
+				7C3BB42515F55B8D00A4E384 /* nebulaCorona.frag */,
+				7C3BB42615F55B8D00A4E384 /* passThruColorCorona.vert */,
+				7C3BB42715F55B8D00A4E384 /* passThruCorona.vert */,
+				7C3BB42815F55B8D00A4E384 /* passThruNormalsCorona.vert */,
+				7C3BB42915F55B8D00A4E384 /* planet.frag */,
+				7C3BB42A15F55B8D00A4E384 /* star.frag */,
+				7C3BB42B15F55B8D00A4E384 /* star.vert */,
+			);
+			path = corona;
+			sourceTree = "<group>";
+		};
+		7C3BB43715F55DC400A4E384 /* corona */ = {
+			isa = PBXGroup;
+			children = (
+				7C3BB43815F55DC400A4E384 /* bigGlow0.png */,
+				7C3BB43915F55DC400A4E384 /* bigGlow1.png */,
+				7C3BB43A15F55DC400A4E384 /* corona.png */,
+				7C3BB43B15F55DC400A4E384 /* cubeNegX.jpg */,
+				7C3BB43C15F55DC400A4E384 /* cubeNegY.jpg */,
+				7C3BB43D15F55DC400A4E384 /* cubeNegZ.jpg */,
+				7C3BB43E15F55DC400A4E384 /* cubePosX.jpg */,
+				7C3BB43F15F55DC400A4E384 /* cubePosY.jpg */,
+				7C3BB44015F55DC400A4E384 /* cubePosZ.jpg */,
+				7C3BB44115F55DC400A4E384 /* glowCorona.png */,
+				7C3BB44215F55DC400A4E384 /* grid.png */,
+				7C3BB44315F55DC400A4E384 /* nebulaCorona.png */,
+				7C3BB44415F55DC400A4E384 /* smallGrid.png */,
+				7C3BB44515F55DC400A4E384 /* spectrumCorona.png */,
+			);
+			path = corona;
+			sourceTree = "<group>";
+		};
 		7C52DFB314CCFC2F008507D3 /* osc */ = {
 			isa = PBXGroup;
 			children = (
@@ -997,6 +1144,7 @@
 				7CF3DF0315A559B400CC61D2 /* audiosignal */,
 				7C8F207414D79B4400AC2D64 /* binned */,
 				7C941F321589807A0099A0D3 /* catalog */,
+				7C3BB40615F5567900A4E384 /* corona */,
 				7C8F150315BB287300BAD08D /* flock */,
 				7C560DEB1506E22F000B91B0 /* graviton */,
 				7C745578148C259C009C0356 /* magneto */,
@@ -1012,6 +1160,7 @@
 		7C74555A148C259C009C0356 /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				7C783EE715F26ED000492299 /* camera */,
 				7C7A5D65152EC23E009C0DA0 /* interface */,
 				7C9F032015A5656200E75CF4 /* kinect */,
 				7C74555B148C259C009C0356 /* AudioInput.cpp */,
@@ -1103,6 +1252,15 @@
 				7C232C5D15283E7C00B671A5 /* SkeletonTest.h */,
 			);
 			path = test;
+			sourceTree = "<group>";
+		};
+		7C783EE715F26ED000492299 /* camera */ = {
+			isa = PBXGroup;
+			children = (
+				7C783EE815F26ED000492299 /* StarCam.cpp */,
+				7C783EEB15F26F4300492299 /* StarCam.h */,
+			);
+			path = camera;
 			sourceTree = "<group>";
 		};
 		7C7A5D65152EC23E009C0DA0 /* interface */ = {
@@ -1206,6 +1364,7 @@
 			isa = PBXGroup;
 			children = (
 				7C134464158992AD0032017E /* catalog */,
+				7C3BB43715F55DC400A4E384 /* corona */,
 				7C8F153615BB4B1700BAD08D /* flock */,
 				7C8BE8CC158515D1003B36DE /* sol */,
 				7CE9C84E154A6DC70057E409 /* tectonic */,
@@ -1222,6 +1381,7 @@
 		7C865647148C2BCD000E00B6 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7C3BB42015F55B8D00A4E384 /* corona */,
 				7C8F151715BB4AF100BAD08D /* flock */,
 				7C13445A158992950032017E /* brightStars.frag */,
 				7C13445B158992950032017E /* brightStars.vert */,
@@ -1667,6 +1827,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C3BB45415F56D7800A4E384 /* corona.frag in Resources */,
+				7C3BB45515F56D7800A4E384 /* dustCorona.frag in Resources */,
+				7C3BB45615F56D7800A4E384 /* glowCorona.frag in Resources */,
+				7C3BB45715F56D7800A4E384 /* gradient.frag in Resources */,
+				7C3BB45815F56D7800A4E384 /* nebulaCorona.frag in Resources */,
+				7C3BB45915F56D7800A4E384 /* passThruColorCorona.vert in Resources */,
+				7C3BB45A15F56D7800A4E384 /* passThruCorona.vert in Resources */,
+				7C3BB45B15F56D7800A4E384 /* passThruNormalsCorona.vert in Resources */,
+				7C3BB45C15F56D7800A4E384 /* planet.frag in Resources */,
+				7C3BB45D15F56D7800A4E384 /* star.frag in Resources */,
+				7C3BB45E15F56D7800A4E384 /* star.vert in Resources */,
 				7C0F498115E340CC006CDE84 /* passThruFlock.vert in Resources */,
 				7C8F153D15BB506100BAD08D /* glow.frag in Resources */,
 				7C8F153E15BB506100BAD08D /* lantern.frag in Resources */,
@@ -1747,6 +1918,20 @@
 				7C1BA54115E9475E005BE669 /* cube.obj in Resources */,
 				7C783E9215E982DE00492299 /* ExoplanetArchive.csv in Resources */,
 				7C783E9715E9C82900492299 /* starData.csv in Resources */,
+				7C3BB44615F55DC400A4E384 /* bigGlow0.png in Resources */,
+				7C3BB44715F55DC400A4E384 /* bigGlow1.png in Resources */,
+				7C3BB44815F55DC400A4E384 /* corona.png in Resources */,
+				7C3BB44915F55DC400A4E384 /* cubeNegX.jpg in Resources */,
+				7C3BB44A15F55DC400A4E384 /* cubeNegY.jpg in Resources */,
+				7C3BB44B15F55DC400A4E384 /* cubeNegZ.jpg in Resources */,
+				7C3BB44C15F55DC400A4E384 /* cubePosX.jpg in Resources */,
+				7C3BB44D15F55DC400A4E384 /* cubePosY.jpg in Resources */,
+				7C3BB44E15F55DC400A4E384 /* cubePosZ.jpg in Resources */,
+				7C3BB44F15F55DC400A4E384 /* glowCorona.png in Resources */,
+				7C3BB45015F55DC400A4E384 /* grid.png in Resources */,
+				7C3BB45115F55DC400A4E384 /* nebulaCorona.png in Resources */,
+				7C3BB45215F55DC400A4E384 /* smallGrid.png in Resources */,
+				7C3BB45315F55DC400A4E384 /* spectrumCorona.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1866,6 +2051,25 @@
 				7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */,
 				7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */,
 				7C783E9515E99B4C00492299 /* Planet.cpp in Sources */,
+				7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */,
+				7C3BB41715F5567900A4E384 /* Corona.cpp in Sources */,
+				7C3BB41815F5567900A4E384 /* CoronaController.cpp in Sources */,
+				7C3BB41915F5567900A4E384 /* CoronaStar.cpp in Sources */,
+				7C3BB41A15F5567900A4E384 /* CubeMap.cpp in Sources */,
+				7C3BB41B15F5567900A4E384 /* CoronaGlow.cpp in Sources */,
+				7C3BB41C15F5567900A4E384 /* CoronaNebula.cpp in Sources */,
+				7C3BB41D15F5567900A4E384 /* Room.cpp in Sources */,
+				7C3BB42C15F55B8D00A4E384 /* corona.frag in Sources */,
+				7C3BB42D15F55B8D00A4E384 /* dustCorona.frag in Sources */,
+				7C3BB42E15F55B8D00A4E384 /* glowCorona.frag in Sources */,
+				7C3BB42F15F55B8D00A4E384 /* gradient.frag in Sources */,
+				7C3BB43015F55B8D00A4E384 /* nebulaCorona.frag in Sources */,
+				7C3BB43115F55B8D00A4E384 /* passThruColorCorona.vert in Sources */,
+				7C3BB43215F55B8D00A4E384 /* passThruCorona.vert in Sources */,
+				7C3BB43315F55B8D00A4E384 /* passThruNormalsCorona.vert in Sources */,
+				7C3BB43415F55B8D00A4E384 /* planet.frag in Sources */,
+				7C3BB43515F55B8D00A4E384 /* star.frag in Sources */,
+				7C3BB43615F55B8D00A4E384 /* star.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -60,9 +60,10 @@ void Catalog::setup()
     Scene::setup();
     
     // params
-    mShowLabels = true;
+    mShowSol = false;
     mMoreGlow = false;
-    mCamType = CAM_ORBITER;
+    mCamType = CAM_STAR;
+    mCameraDistance = 0.0f;
     
     // assets
     
@@ -70,6 +71,7 @@ void Catalog::setup()
     //
     // CAMERA	
 	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio(), 200000.0f );
+    mStarCam.setup();
     
 	// LOAD SHADERS
 	try {
@@ -121,11 +123,10 @@ void Catalog::setup()
 	mScale		= 0.2f;
 	mMaxScale	= 400.0f;
 	mScalePer	= mScale/mMaxScale;
-	parseStarData( App::getResourcePath( "starData.csv" ) );
-	mTotalTouringStars = mTouringStars.size();
-	mHomeStar	= NULL;
+    mHomeStar	= NULL;
 	mDestStar	= NULL;
     mSol        = NULL;
+	parseStarData( App::getResourcePath( "starData.csv" ) );
     parsePlanetData( App::getResourcePath( "ExoplanetArchive.csv" ) );
     
 	setFboPositions( mPositionFbo );
@@ -156,6 +157,8 @@ void Catalog::setupInterface()
                         .isVertical());
     mInterface->addParam(CreateBoolParam( "show names", &mRenderNames )
                         .oscReceiver(getName(), "shownames"));
+    mInterface->addParam(CreateBoolParam( "show sol", &mShowSol )
+                         .oscReceiver(getName(), "showsol"));
     mInterface->addParam(CreateBoolParam( "show faint", &mRenderFaintStars )
                          .oscReceiver(getName(), "showfaint"));
     mInterface->addParam(CreateBoolParam( "show bright", &mRenderBrightStars )
@@ -179,7 +182,7 @@ void Catalog::setupInterface()
 //
 void Catalog::setupDebugInterface()
 {
-    mDebugParams.addParam("Show Labels", &mShowLabels );
+    mDebugParams.addParam("Camera Distance", &mCameraDistance, "readonly=true");
 }
 
 // ----------------------------------------------------------------
@@ -218,6 +221,11 @@ void Catalog::update(double dt)
 	mScalePer = mScale/mMaxScale;
 	
 	// CAMERA
+    mStarCam.update(dt);
+    
+    // convert from parsecs to lightyears
+    mCameraDistance = getCamera().getEyePoint().length() * 3.261631f;
+    
 	if( mHomeStar != NULL ){
 		mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
 	}
@@ -383,7 +391,9 @@ void Catalog::draw()
 		gl::setMatricesWindow( mApp->getViewportSize(), true );
 		
 		BOOST_FOREACH( Star* &s, mNamedStars ){
-			s->drawName( mMousePos, power * mScalePer, math<float>::max( sqrt( mScalePer ) - 0.1f, 0.0f ) );
+            if( mShowSol || s != mSol ) {
+                s->drawName( mMousePos, power * mScalePer, math<float>::max( sqrt( mScalePer ) - 0.1f, 0.0f ) );
+            }
 		}
 	}
 	
@@ -424,10 +434,6 @@ void Catalog::drawHud()
     
     //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
     //gl::setMatrices(textCam);
-    
-    if( mShowLabels )
-    {
-    }
     
     gl::popMatrices();
 }
@@ -475,6 +481,10 @@ void Catalog::handleMouseDown( const MouseEvent& event )
 	mMouseDownPos = event.getPos();
 	mMousePressed = true;
 	mMouseOffset = Vec2f::zero();
+    if( mCamType == CAM_STAR )
+    {
+        //mStarCam.mouseDown( mMouseDownPos );
+    }
 }
 
 void Catalog::handleMouseUp( const MouseEvent& event )
@@ -482,6 +492,10 @@ void Catalog::handleMouseUp( const MouseEvent& event )
 	mMouseTimeReleased	= getElapsedSeconds();
 	mMousePressed = false;
 	mMouseOffset = Vec2f::zero();
+    if( mCamType == CAM_STAR )
+    {
+        //mStarCam.mouseUp( event.getPos() );
+    }
 }
 
 void Catalog::handleMouseMove( const MouseEvent& event )
@@ -493,6 +507,11 @@ void Catalog::handleMouseDrag( const MouseEvent& event )
 {
 	handleMouseMove( event );
 	mMouseOffset = ( mMousePos - mMouseDownPos ) * 0.4f;
+    if( mCamType == CAM_STAR )
+    {
+        //TODO
+        //mStarCam.mouseDown( (mMouseDownPos+mMouseOffset) );
+    }
 }
 
 ////////------------------------------------------------------
@@ -513,10 +532,14 @@ void Catalog::setFboPositions( gl::Fbo &fbo )
 			Vec3f pos = Vec3f( 1000000.0f, 0.0f, 0.0f );
 			float col = 0.4f;
 			float rad = 0.0f;
-			if( index < numBrightStars ){
-				pos = mBrightStars[index]->mPos;
-				col = mBrightStars[index]->mColor;
-				rad = floor( constrain( ( ( 6.0f - ( mBrightStars[index]->mAbsoluteMag ) )/6.0f ), 0.3f, 1.0f ) * 3.0f * 1000 );
+			if( index < numBrightStars )
+            {
+                //if( mShowSol || mBrightStars[index] != mSol )
+                {
+                    pos = mBrightStars[index]->mPos;
+                    col = mBrightStars[index]->mColor;
+                    rad = floor( constrain( ( ( 6.0f - ( mBrightStars[index]->mAbsoluteMag ) )/6.0f ), 0.3f, 1.0f ) * 3.0f * 1000 );
+                }
 			}
 			it.r() = pos.x;
 			it.g() = pos.y;
@@ -627,6 +650,7 @@ void Catalog::initFaintVbo()
 
 void Catalog::parseStarData( const fs::path &path )
 {
+    console() << "[catalog] loading HYG star database..." << std::endl;
 	std::string line;
 	std::ifstream myfile( path.c_str() );
 	
@@ -799,32 +823,25 @@ void Catalog::createStar( const std::string &text, int lineNumber )
     {
         mStarsHD[hip] = star;
     }
-    
-    //TODO: special rendering for Sol??
-    if( name == "Sol" )
-    {
-        mSol = star;
+
+    if( appMag < 6.0f || name.length() > 1 ){
+        mBrightStars.push_back( star );
+    } else {
+        mFaintStars.push_back( star );
     }
-    else
-    {
-        if( appMag < 6.0f || name.length() > 1 ){
-            mBrightStars.push_back( star );
-        } else {
-            mFaintStars.push_back( star );
-        }
-	}
 	if( name.length() > 1 ){
 		mNamedStars.push_back( star );
 		
-		if( name == "Sol" || name == "Sirius" || name == "Vega" || name == "Gliese 581" ){
-			mTouringStars.push_back( star );
-			console() << "[catalog] ADDED TOURING STAR: " << star->mName << " " << star->mPos << std::endl;
-		}
+        if( name == "Sol" )
+        {
+            mSol = star;
+        }
 	}
 }
 
 void Catalog::parsePlanetData( const fs::path &path )
 {
+    console() << "[catalog] loading Kepler planet database..." << std::endl;
 	std::string line;
 	std::ifstream myfile( path.c_str() );
     
@@ -1026,12 +1043,12 @@ bool Catalog::createPlanet( const std::string &text, int lineNumber )
 Vec3f Catalog::convertToCartesian( double ra, double dec, double dist )
 {
 	Vec3f pos;
-	float RA = toRadians( ra * 15.0 );
-	float DEC = toRadians( dec );
+	float alpha = toRadians( ra * 15.0 );
+	float delta = toRadians( dec );
 	
-	pos.x = ( dist * cos( DEC ) ) * cos( RA ); 
-	pos.y = ( dist * cos( DEC ) ) * sin( RA );
-	pos.z = dist * sin( DEC );
+	pos.x = ( dist * cos( delta ) ) * cos( alpha ); 
+	pos.y = ( dist * cos( delta ) ) * sin( alpha );
+	pos.z = dist * sin( delta );
 	
 	return pos;
 }
@@ -1105,6 +1122,9 @@ const Camera& Catalog::getCamera()
     {
         case CAM_SPRING:
             return mSpringCam.getCam();
+            
+        case CAM_STAR:
+            return mStarCam.getCamera();
             
         case CAM_ORBITER:
         {

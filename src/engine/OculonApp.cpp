@@ -37,6 +37,7 @@
 #include "Sol.h"
 #include "Catalog.h"
 #include "Flock.h"
+#include "Corona.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -273,6 +274,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
     if( mConfig.getBool("flock") )      addScene( new Flock() );
+    if( mConfig.getBool("corona") )     addScene( new Corona() );
     
     // Test Scenes
     //addScene( new MovieTest() );

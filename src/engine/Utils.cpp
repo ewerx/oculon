@@ -94,3 +94,44 @@ using namespace std;
     
     return time_t(x);
 }
+
+/*static*/ Color Utils::toColor(uint32_t hex)
+{
+	float r = ((hex & 0x00FF0000) >> 16) / 255.0f;
+	float g = ((hex & 0x0000FF00) >> 8) / 255.0f;
+	float b = ((hex & 0x000000FF)) / 255.0f;
+    
+	return Color(r, g, b);
+}
+
+/*static*/ ColorA Utils::toColorA(uint32_t hex)
+{
+	float a = ((hex & 0xFF000000) >> 24) / 255.0f;
+	float r = ((hex & 0x00FF0000) >> 16) / 255.0f;
+	float g = ((hex & 0x0000FF00) >> 8) / 255.0f;
+	float b = ((hex & 0x000000FF)) / 255.0f;
+    
+	return ColorA(r, g, b, a);
+}
+
+/*static*/ int Utils::toInt(const std::string &str)
+{
+	int x;
+	std::istringstream i(str);
+    
+	if (!(i >> x)) throw std::exception();
+    
+	return x;
+}
+
+/*static*/ double Utils::toDouble(const std::string &str)
+{
+	double x;
+	std::istringstream i(str);
+    
+	if (!(i >> x)) throw std::exception();
+    
+	return x;
+}
+
+

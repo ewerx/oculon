@@ -11,6 +11,7 @@
 
 #include "Scene.h"
 #include "SpringCam.h"
+#include "StarCam.h"
 #include "Star.h"
 #include "TextEntity.h"
 
@@ -35,9 +36,6 @@
 
 using namespace ci;
 
-//
-// Audio input tests
-//
 class Catalog : public Scene
 {
 public:
@@ -93,6 +91,7 @@ private:
     //
     // CAMERA
 	SpringCam			mSpringCam;
+    StarCam             mStarCam;
 	
 	// SHADERS
 	gl::GlslProg		mBrightStarsShader;
@@ -155,17 +154,19 @@ private:
     ////////------------------------------------------------------
     
     // rendering
-    bool mShowLabels;
     bool mMoreGlow;
+    bool mShowSol;
     
     enum eCamType
     {
         CAM_SPRING,
+        CAM_STAR,
         CAM_ORBITER,
         
         CAM_COUNT
     };
     eCamType mCamType;
+    float mCameraDistance;
     
     // display list
     //GLuint mDisplayListPoints;
