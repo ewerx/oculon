@@ -845,14 +845,32 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     glPopMatrix();
 }
 
-const Camera& Orbiter::getCamera() const
+const Camera& Orbiter::getCamera()
 {
-    if( mCamType != CAM_MANUAL )
+    switch( mCamType )
     {
+        case CAM_FOLLOW:
+        case CAM_BINNED:
         return mCam;
+            
+        case CAM_CATALOG:
+        {
+            Scene* scene = mApp->getScene("catalog");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
     }
     else
     {
+                return mCam;
+            }
+        }
+            
+        case CAM_MANUAL:
+            return mApp->getMayaCam();
+            
+        default:
         return mApp->getMayaCam();
     }
 }

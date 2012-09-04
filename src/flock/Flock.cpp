@@ -843,7 +843,7 @@ void Flock::draw()
 	
 	// DRAW LANTERNS
 	mLanternShader.bind();
-	mLanternShader.uniform( "mvpMatrix", getCamera().getModelViewMatrix() );
+	mLanternShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix()  );
 	mLanternShader.uniform( "eyePos", getCamera().getEyePoint());
 	mLanternShader.uniform( "mainPower", 1.0f );
 	mLanternShader.uniform( "roomDim", Vec3f( 350.0f, 200.0f, 350.0f ) );

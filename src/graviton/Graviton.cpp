@@ -794,7 +794,7 @@ void Graviton::draw()
     glPopMatrix();
 }
 
-const Camera& Graviton::getCamera() const
+const Camera& Graviton::getCamera()
 {
     switch( mCamType )
     {

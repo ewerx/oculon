@@ -356,7 +356,7 @@ void Catalog::draw()
 		mBrightStarsShader.uniform( "scale", mScale );
 		mBrightStarsShader.uniform( "power", 1.0f );//mRoom.getPower() );
 		mBrightStarsShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ));//mRoom.getDims() );
-		mBrightStarsShader.uniform( "mvMatrix", getCamera().getModelViewMatrix() );
+		mBrightStarsShader.uniform( "mvMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix() );
 		mBrightStarsShader.uniform( "eyePos", getCamera().getEyePoint() );
 		if( power > 0.5f ){
 			mBrightStarsShader.uniform( "texScale", 0.5f );
@@ -825,6 +825,9 @@ void Catalog::createStar( const std::string &text, int lineNumber )
     }
 
     if( appMag < 6.0f || name.length() > 1 ){
+#if 1
+        if( name != "Sol" )
+#endif
         mBrightStars.push_back( star );
     } else {
         mFaintStars.push_back( star );
@@ -1128,9 +1131,9 @@ const Camera& Catalog::getCamera()
             
         case CAM_ORBITER:
         {
-            Scene* orbiterScene = mApp->getScene("orbiter");
+            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
             
-            if( orbiterScene && orbiterScene->isRunning() )
+            if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
             {
                 return orbiterScene->getCamera();
             }

@@ -49,7 +49,7 @@ public:
     virtual void handleVisibleChanged()                                     { }
     virtual void handleDebugChanged()                                       { }
     
-    virtual const ci::Camera& getCamera() const;
+    virtual const ci::Camera& getCamera();
     
     void drawToFbo();
     void publishToSyphon();

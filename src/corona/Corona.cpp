@@ -52,6 +52,7 @@ void Corona::setup()
     
 	// CAMERA
 	mSpringCam			= SpringCam( -466.0f, mApp->getViewportAspectRatio(), 30000.0f );
+    mCamType = CAM_CATALOG;
 	
 	// FBOS
 	gl::Fbo::Format format;
@@ -107,7 +108,7 @@ void Corona::setup()
 	roomFormat.setColorInternalFormat( GL_RGB );
 	int fboXRes			= mApp->getViewportWidth()/ROOM_FBO_RES;
 	int fboYRes			= mApp->getViewportHeight()/ROOM_FBO_RES;
-	mRoomFbo			= gl::Fbo( fboXRes, fboYRes, roomFormat );
+	//mRoomFbo			= gl::Fbo( fboXRes, fboYRes, roomFormat );
 	bool isPowerOn		= true;
 	bool isGravityOn	= true;
 	mRoom				= Room( Vec3f( 350.0f, 200.0f, 350.0f ), isPowerOn, isGravityOn );
@@ -118,7 +119,7 @@ void Corona::setup()
 	mStar				= CoronaStar( Vec3f::zero(), 4000000.0f );
 	createSphere( mStarVbo, 4 );
 	createSphere( mStarVboLo, 3 );
-	mCanisMajorisPos	= Vec3f( getWindowWidth(), 0.0f, 0.0f );
+	mCanisMajorisPos	= Vec3f( mApp->getViewportWidth(), 0.0f, 0.0f );
 	mCanisMajorisPer	= 0.0f;
 	
 	// MOUSE
@@ -561,9 +562,9 @@ void Corona::drawIntoRoomFbo()
 	mRoomShader.uniform( "spectrumTex", 1 );
 	mRoomShader.uniform( "starPos", Vec4f( mStar.mPos.xyz(), mStar.mRadius ) );
 	mRoomShader.uniform( "color", mStar.mColor );
-	mRoomShader.uniform( "mvpMatrix", mSpringCam.mMvpMatrix );
+	mRoomShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix()  );
 	mRoomShader.uniform( "mMatrix", m );
-	mRoomShader.uniform( "eyePos", mSpringCam.getEye() );
+	mRoomShader.uniform( "eyePos", getCamera().getEyePoint() );
 	mRoomShader.uniform( "roomDims", mRoom.getDims() );
 	mRoomShader.uniform( "mainPower", mRoom.getPower() );
 	mRoomShader.uniform( "lightPower", mRoom.getLightPower() );
@@ -580,8 +581,8 @@ void Corona::draw()
 {
 	//gl::clear( ColorA( 0, 0, 0, 0 ), true );
 	
-	gl::setMatricesWindow( getWindowSize(), false );
-	gl::setViewport( getWindowBounds() );
+	gl::setMatricesWindow( mApp->getViewportSize(), false );
+	gl::setViewport( mApp->getViewportBounds() );
 
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
@@ -592,7 +593,7 @@ void Corona::draw()
 	// DRAW ROOM
 	if( mRoom.getPower() < 0.9f ){ // TURN ROOM OFF WHEN POWER IS ON
 		mRoomFbo.bindTexture();
-		gl::drawSolidRect( getWindowBounds() );
+		gl::drawSolidRect( mApp->getViewportBounds() );
 	}
 	
 	gl::enableAdditiveBlending();
@@ -601,7 +602,7 @@ void Corona::draw()
 		drawCanisMajoris();
 	}
 	
-	gl::setMatrices( mSpringCam.getCam() );
+	gl::setMatrices( getCamera() );
 	gl::enableAlphaBlending();	
 
 	gl::enable( GL_TEXTURE_2D );
@@ -670,7 +671,7 @@ void Corona::draw()
 	mPlanetShader.uniform( "spectrumTex", 0 );
 	mPlanetShader.uniform( "starColor", mStar.mColor );
 	mPlanetShader.uniform( "power", mRoom.getPower() );
-	mPlanetShader.uniform( "windowDims", Vec2f( getWindowWidth(), getWindowHeight() ) );
+	mPlanetShader.uniform( "windowDims", Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() ) );
 	mPlanetShader.uniform( "eyePos", mSpringCam.getEye() );
 	mStar.drawPlanets( &mPlanetShader );
 	mPlanetShader.unbind();
@@ -692,8 +693,8 @@ void Corona::drawSphere()
 	mStarShader.uniform( "color", mStar.mColor );
 	mStarShader.uniform( "time", mRoom.mTimeElapsed );
 	mStarShader.uniform( "radius", mStar.mRadiusDrawn );
-	mStarShader.uniform( "mvpMatrix", mSpringCam.mMvpMatrix );
-	mStarShader.uniform( "eyePos", mSpringCam.getEye() );
+	mStarShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix() );
+	mStarShader.uniform( "eyePos", getCamera().getEyePoint() );
 	mStarShader.uniform( "mainPower", mRoom.getPower() );
 	mStarShader.uniform( "roomDim", mRoom.getDims() );
 	gl::draw( mStarVbo );
@@ -704,7 +705,7 @@ void Corona::drawCorona()
 {
 	if( mBillboard ){
 		gl::pushMatrices();
-		gl::rotate( mSpringCam.getCam().getOrientation() );
+		gl::rotate( getCamera().getOrientation() );
 	}
 	gl::color( ColorA( 1, 1, 1, 1 ) );
 	float radius = mStar.mRadius * 1.8f;
@@ -728,7 +729,7 @@ void Corona::drawFlat()
 {
 	if( mBillboard ){
 		gl::pushMatrices();
-		gl::rotate( mSpringCam.getCam().getOrientation() );
+		gl::rotate( getCamera().getOrientation() );
 	}
 	gl::color( ColorA( 1, 1, 1, 1 ) );
 	float radius = mStar.mRadius;
@@ -779,7 +780,7 @@ void Corona::drawGlows()
 	mGlowShader.uniform( "starRadius", mStar.mRadiusDrawn );
 	Vec3f right = Vec3f::xAxis();
 	Vec3f up	= Vec3f::yAxis();
-	if( mBillboard ) mSpringCam.mCam.getBillboardVectors( &right, &up );
+	if( mBillboard ) getCamera().getBillboardVectors( &right, &up );
 
 	mController.drawGlows( &mGlowShader, right, up );
 	mGlowShader.unbind();
@@ -799,7 +800,7 @@ void Corona::drawNebulas()
 	mNebulaShader.uniform( "starRadius", mStar.mRadiusDrawn );
 	Vec3f right = Vec3f::xAxis();
 	Vec3f up	= Vec3f::yAxis();
-	if( mBillboard ) mSpringCam.mCam.getBillboardVectors( &right, &up );
+	if( mBillboard ) getCamera().getBillboardVectors( &right, &up );
 	
 	mController.drawNebulas( &mNebulaShader, right, up );
 	mNebulaShader.unbind();
@@ -822,7 +823,7 @@ void Corona::drawDusts()
 
 void Corona::drawCanisMajoris()
 {
-	Rectf rect = Rectf( mCanisMajorisPos.x, 0.0f, mCanisMajorisPos.x + mBigGlow0Tex.getWidth(), getWindowHeight() );
+	Rectf rect = Rectf( mCanisMajorisPos.x, 0.0f, mCanisMajorisPos.x + mBigGlow0Tex.getWidth(), mApp->getViewportHeight() );
 	
 	mBigGlow0Tex.bind();
 	gl::drawSolidRect( rect );
@@ -831,3 +832,42 @@ void Corona::drawCanisMajoris()
 	gl::drawSolidRect( rect );
 }
 
+const Camera& Corona::getCamera()
+{
+    switch( mCamType )
+    {
+        case CAM_SPRING:
+            return mSpringCam.getCam();
+            
+        case CAM_CATALOG:
+        {
+            Scene* scene = mApp->getScene("catalog");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+            
+        case CAM_ORBITER:
+        {
+            Scene* orbiterScene = mApp->getScene("orbiter");
+            
+            if( orbiterScene && orbiterScene->isRunning() )
+            {
+                return orbiterScene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+            
+        default:
+            return mSpringCam.getCam();
+    }
+}

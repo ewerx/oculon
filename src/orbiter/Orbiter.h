@@ -40,7 +40,7 @@ public:
     void update(double dt);
     void draw();
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
-    const Camera& getCamera() const;
+    const Camera& getCamera();
     
     // callbacks
     void handleGravityChange(MidiEvent midiEvent);
@@ -49,6 +49,19 @@ public:
     bool nextTarget();
     
     void createSystem( Star* star );
+    
+    
+    // HACK
+    enum eCamType
+    {
+        CAM_MANUAL,
+        CAM_FOLLOW,
+        CAM_BINNED,
+        CAM_CATALOG,
+        
+        CAM_COUNT
+    };
+    eCamType getCamType() { return mCamType; }
     
 protected:// from Scene
     void setupInterface();
@@ -84,14 +97,7 @@ private:
     CameraPersp         mCam;
     Matrix44d           mScaleMatrix;
     
-    enum eCamType 
-    {
-        CAM_MANUAL,
-        CAM_FOLLOW,
-        CAM_BINNED,
-        
-        CAM_COUNT
-    };
+    
     eCamType        mCamType;
     
     double          mElapsedTime;

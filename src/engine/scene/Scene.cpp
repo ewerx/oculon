@@ -191,7 +191,7 @@ void Scene::drawDebug()
     mDebugParams.draw();
 }
 
-const Camera& Scene::getCamera() const
+const Camera& Scene::getCamera()
 {
     return mApp->getMayaCam();
 }
