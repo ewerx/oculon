@@ -160,8 +160,8 @@ private:
     enum eCamType
     {
         CAM_SPRING,
-        CAM_STAR,
         CAM_ORBITER,
+        CAM_STAR,
         
         CAM_COUNT
     };

@@ -89,9 +89,13 @@ void Orbiter::setup()
 {
     Scene::setup();
     
+    mDrawHud = true;
+    mDrawLabels = true;
+    mDrawTrails = true;
+    
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
-	mCam.setPerspective( 45.0f, mApp->getViewportAspectRatio(), 1.0f, 200000.0f );
+	mCam.setPerspective( 65.0f, mApp->getViewportAspectRatio(), 1.0f, 200000.0f );
     
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
@@ -102,6 +106,11 @@ void Orbiter::setup()
     
     mMidiMap.init(&mApp->getMidiInput());
     setupMidiMapping();
+    
+    mFontHud            = Font( "Menlo", 13 );
+    mFontLabel          = Font( "Menlo", 10 );
+    mTextureFontHud     = gl::TextureFont::create( mFontHud );
+	mTextureFontLabel	= gl::TextureFont::create( mFontLabel );
     
     setupHud();
     
@@ -164,6 +173,13 @@ void Orbiter::setupInterface()
                           .oscReceiver(mName,"nexttarget"))->registerCallback( this, &Orbiter::nextTarget );
     mInterface->addButton(CreateTriggerParam("Prev Target", NULL)
                           .oscReceiver(mName,"prevtarget"))->registerCallback( this, &Orbiter::prevTarget );
+    
+    mInterface->addParam(CreateBoolParam("Show Hud", &mDrawHud)
+                         .oscReceiver(getName(), "showhud"));
+    mInterface->addParam(CreateBoolParam("Show Labels", &mDrawLabels)
+                         .oscReceiver(getName(), "showlabels"));
+    mInterface->addParam(CreateBoolParam("Show Trails", &mDrawTrails)
+                         .oscReceiver(getName(), "showtrails"));
 }
 
 void Orbiter::reset()
@@ -339,7 +355,7 @@ void Orbiter::createSystem( Star* star )
                         radius, 
                         rotationSpeed, 
                         mass, 
-                        ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale), 
+                        ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale),
                         mTextures[i++]); 
         body->setup(); 
         mBodies.push_back( body );
@@ -565,6 +581,24 @@ void Orbiter::draw()
     gl::pushMatrices();
     
     gl::setMatrices(getCamera());
+//    
+//    glDisable( GL_LIGHT0 );
+//    glDisable( GL_LIGHTING );
+    
+    if( mDrawTrails )
+    {
+        glEnable( GL_LINE_SMOOTH );
+        glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+        glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+        glLineWidth(Orbiter::sTrailWidth);
+        
+        for(BodyList::iterator bodyIt = mBodies.begin();
+            bodyIt != mBodies.end();
+            ++bodyIt)
+        {
+            (*bodyIt)->drawTrail();
+        }
+    }
     
     glEnable( GL_POLYGON_SMOOTH );
     glEnable( GL_LIGHTING );
@@ -604,21 +638,12 @@ void Orbiter::draw()
 	glDisable( GL_LIGHT0 );
     glDisable( GL_LIGHTING );
     
-    glEnable( GL_LINE_SMOOTH );
-    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-    glLineWidth(Orbiter::sTrailWidth);
-    
-    for(BodyList::iterator bodyIt = mBodies.begin(); 
-       bodyIt != mBodies.end();
-       ++bodyIt)
-    {
-        (*bodyIt)->drawTrail();
-    }
-    
     gl::popMatrices();
     
-    drawHud();
+    if( mDrawHud )
+    {
+        drawHud();
+    }
 }
 
 void Orbiter::handleGravityChange(MidiEvent midiEvent)

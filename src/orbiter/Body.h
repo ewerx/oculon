@@ -21,6 +21,7 @@ using namespace ci;
 using namespace std;
 
 class Scene;
+class Orbiter;
 
 //
 // An orbital body
@@ -28,7 +29,7 @@ class Scene;
 class Body : public Entity<double>
 {
 public:
-    Body(Scene* scene,
+    Body(Orbiter* orbiter,
          string name,
          const Vec3d& pos, 
          const Vec3d& vel, 
@@ -37,7 +38,7 @@ public:
          double mass, 
          const ColorA& color);
     
-    Body(Scene* scene,
+    Body(Orbiter* orbiter,
          string name,
          const Vec3d& pos, 
          const Vec3d& vel, 
@@ -75,6 +76,7 @@ protected:
     void drawDebugVectors();
     
 protected:
+    Orbiter* mOrbiter;
     Vec3d mVelocity;
     double mAcceleration;
     double mMass;

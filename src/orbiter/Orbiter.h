@@ -10,12 +10,13 @@
 #ifndef __ORBITER_H__
 #define __ORBITER_H__
 
-#include "cinder/Cinder.h"
-#include "cinder/Vector.h"
-#include <vector>
-
 #include "Scene.h"
 #include "MidiMap.h"
+
+#include "cinder/Cinder.h"
+#include "cinder/Vector.h"
+#include "cinder/gl/TextureFont.h"
+#include <vector>
 
 using std::vector;
 
@@ -56,12 +57,17 @@ public:
     {
         CAM_MANUAL,
         CAM_FOLLOW,
-        CAM_BINNED,
         CAM_CATALOG,
+        CAM_BINNED,
         
         CAM_COUNT
     };
     eCamType getCamType() { return mCamType; }
+    
+    
+    bool isDrawLabelsEnabled()      { return mDrawLabels; }
+    ci::gl::TextureFontRef getLabelFont()   { return mTextureFontLabel; }
+    ci::gl::TextureFontRef getHudFont()     { return mTextureFontHud; }
     
 protected:// from Scene
     void setupInterface();
@@ -109,6 +115,11 @@ private:
     
     MidiMap         mMidiMap;
     
+    ci::Font                mFontLabel;
+    ci::Font                mFontHud;
+    ci::gl::TextureFontRef  mTextureFontLabel;
+    ci::gl::TextureFontRef  mTextureFontHud;
+    
     enum eTextBoxLocations
     {
         TB_TOP_LEFT,
@@ -119,6 +130,9 @@ private:
         TB_COUNT
     };
     TextEntity*     mTextBox[TB_COUNT];
+    bool            mDrawHud;
+    bool            mDrawLabels;
+    bool            mDrawTrails;
     
 public:
     static double   sDefaultTimeScale;

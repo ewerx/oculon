@@ -16,11 +16,12 @@
 using namespace ci;
 
 class Scene;
+class Orbiter;
 
 class Sun : public Body
 {
 public:
-    Sun(Scene* scene,
+    Sun(Orbiter* scene,
         const Vec3d& pos, 
         const Vec3d& vel, 
         float radius, 

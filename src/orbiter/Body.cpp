@@ -35,8 +35,9 @@ GLfloat Body::no_shininess[]	= { 0.0f };
 // Body
 // 
 
-Body::Body(Scene* scene, string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color)
+Body::Body(Orbiter* scene, string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color)
 : Entity<double>(scene,pos)
+, mOrbiter(scene)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
@@ -56,8 +57,9 @@ Body::Body(Scene* scene, string name, const Vec3d& pos, const Vec3d& vel, float 
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
 }
 
-Body::Body(Scene* scene, string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color, ImageSourceRef textureImage)
+Body::Body(Orbiter* scene, string name, const Vec3d& pos, const Vec3d& vel, float radius, double rotSpeed, double mass, const ColorA& color, ImageSourceRef textureImage)
 : Entity<double>(scene,pos)
+, mOrbiter(scene)
 , mName(name)
 , mVelocity(vel)
 , mAcceleration(0.0f)
@@ -133,6 +135,8 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         gl::pushMatrices();
         glEnable( GL_LIGHTING );
         
+        gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
+        
         glTranslated(screenCoords.x, screenCoords.y, screenCoords.z);
         glRotated(mRotation, 0.0f, 1.0f, 0.0f);
         
@@ -145,7 +149,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
         
         glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale, Orbiter::sPlanetGrayScale) );
-        //glMaterialfv( GL_FRONT, GL_DIFFUSE, mColor );
+        glMaterialfv( GL_FRONT, GL_DIFFUSE, mColor );
         bool drawShell = false;
         float radius = drawShell ? mRadius : mRadius * mRadiusMultiplier;
         
@@ -160,17 +164,25 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         }
         
         // label
-        if( mIsLabelVisible )
+        if( mOrbiter->isDrawLabelsEnabled() && mIsLabelVisible )
         {
             gl::pushMatrices();
+            
+            glDisable(GL_LIGHTING);
+            gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
         
             CameraOrtho textCam(0.0f, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight(), 0.0f, 0.0f, 10.f);
             gl::setMatrices(textCam);
         
             Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
-            glTranslatef(textCoords.x, textCoords.y, 0.0f);
+            
+            char buf[256];
+            snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
+            textCoords.x += 15.0f;
+            mOrbiter->getLabelFont()->drawString( buf, textCoords );
+            //glTranslatef(textCoords.x, textCoords.y, 0.0f);
 
-            mLabel.draw();
+            //mLabel.draw();
             
             const bool binned = false;
             if( binned )
@@ -250,7 +262,8 @@ void Body::applyForceFromBody(Body& otherBody, double dt, double gravConst)
 
 void Body::updateLabel()
 {
-    if( mIsLabelVisible )
+    /*
+    if( mOrbiter->isDrawLabelsEnabled() && mIsLabelVisible )
     {
         char buf[256];
         snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
@@ -258,6 +271,7 @@ void Body::updateLabel()
         //snprintf(buf,256,"%s\n%.1f m/s\n%.4e km", mName.c_str(), mVelocity.length(), (mPosition.length()/1000.f));
         mLabel.setText(buf);
     }
+     */
 }
 
 void Body::resetTrail()

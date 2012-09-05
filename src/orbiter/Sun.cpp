@@ -22,7 +22,7 @@ GLfloat Sun::mat_diffuse[]		= { 0.8f, 0.8f, 0.8f, 1.0f };
 GLfloat Sun::mat_emission[]     = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
-Sun::Sun(Scene* scene,
+Sun::Sun(Orbiter* scene,
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
