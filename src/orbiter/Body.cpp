@@ -26,7 +26,7 @@ GLfloat Body::no_mat[]			= { 0.0f, 0.0, 0.0f, 1.0f };
 GLfloat Body::mat_ambient[]		= { 0.5f, 0.5, 0.5f, 1.0f };
 GLfloat Body::mat_diffuse[]		= { 0.8f, 0.8, 0.8f, 1.0f };
 GLfloat Body::mat_specular[]	= { 1.0f, 1.0, 1.0f, 1.0f };
-GLfloat Body::mat_emission[]	= { 0.2f, 0.2, 0.2f, 0.0f };
+GLfloat Body::mat_emission[]	= { 0.15f, 0.15f, 0.15f, 0.0f };
 
 GLfloat Body::mat_shininess[]	= { 128.0f };
 GLfloat Body::no_shininess[]	= { 0.0f };
@@ -133,6 +133,8 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
     if( drawBody )
     {
         gl::pushMatrices();
+        
+        gl::enableDepthRead();
         glEnable( GL_LIGHTING );
         
         gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -168,6 +170,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
         {
             gl::pushMatrices();
             
+            gl::disableDepthRead();
             glDisable(GL_LIGHTING);
             gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
         

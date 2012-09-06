@@ -33,6 +33,7 @@ public:
     void resize(); //TODO: make this part of Entity
     
     // new
+    const std::string& getText() { return mTextBox.getText(); }
     void setText( const std::string& str );
     void setText( const std::string& str, const ci::ColorA& color );
     void setText( const std::string& str, const std::string& font, const float size, const ci::ColorA& color );

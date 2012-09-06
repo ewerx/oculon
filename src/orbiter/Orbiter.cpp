@@ -198,8 +198,8 @@ void Orbiter::createSolSystem()
     // sun
     double mass = 1.989E+030;
     float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
-    double orbitalRadius;
-    double orbitalVel;
+    double orbitalRadius = 0.0f;
+    double orbitalVel = 0.0f;
     double rotationSpeed = 0.0f;
     mSun = new Sun(this,
                    Vec3d::zero(),
@@ -270,7 +270,7 @@ void Orbiter::createSolSystem()
                               radius,
                               0.0000000001f,
                               mass,
-                              ColorA(0.5f, 0.55f, 0.925f));
+                              ColorA(0.5f, 0.5f, 0.5f));
         body->setup();
         mBodies.push_back(body);
     }
@@ -311,11 +311,11 @@ void Orbiter::createSystem( Star* star )
     const float radialEnhancement = 500000.0f;// at true scale the planets would be invisible
     
     // star
-    double mass = star->mPlanets[0]->mStellarMass;
+    double mass = star->mPlanets[0]->mStellarMass * 1.989E+030; // solar-mass
     float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
     double rotationSpeed = 0.0f;
     mSun = new Sun(this,
-                   star->mPos,
+                   Vec3d::zero(),//star->mPos,
                    Vec3d::zero(),
                    radius,
                    rotationSpeed,
@@ -362,6 +362,8 @@ void Orbiter::createSystem( Star* star )
     }
     
     mFollowTargetIndex = Rand::randInt(0,mBodies.size()-1);
+    
+    mElapsedTime = 0.0f;
 }
 
 void Orbiter::removeBodies()
@@ -576,6 +578,7 @@ void Orbiter::updateCam()
 
 void Orbiter::draw()
 {
+    gl::enableDepthRead();
     gl::enableDepthWrite();
     gl::enableAlphaBlending();
     gl::pushMatrices();
@@ -664,7 +667,7 @@ void Orbiter::handleTimeScaleChange(MidiEvent midiEvent)
 
 void Orbiter::setupHud()
 {
-    const float margin = 20.0f;
+    const float margin = 25.0f;
     for( int i = 0; i < TB_COUNT; ++i )
     {
         mTextBox[i]->setFont("Menlo", 13.0f);
@@ -760,9 +763,18 @@ void Orbiter::drawHud()
     CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 50.f);
     gl::setMatrices(textCam);
     
+    
     for( int i = 0; i < TB_COUNT; ++i )
     {
-        mTextBox[i]->draw();
+        //mTextBox[i]->draw();
+        if( i == TB_TOP_RIGHT )
+        {
+            mTextureFontLabel->drawString(mTextBox[i]->getText(), Vec2f(mTextBox[i]->getPosition().x,mTextBox[i]->getPosition().y));
+        }
+        else
+        {
+            mTextureFontHud->drawString(mTextBox[i]->getText(), Vec2f(mTextBox[i]->getPosition().x,mTextBox[i]->getPosition().y));
+        }
     }
     
     const float width = 200.0f;
@@ -864,7 +876,8 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     }
     
     float shade = 0.6f;
-    gl::color( ColorA(shade,shade,shade,0.6f) );
+    gl::color( ColorA(shade,shade,shade,0.75f) );
+    glLineWidth(2.0f);
     gl::drawStrokedRect(Rectf(0.0f, 0.0f, width, height));
     
     glPopMatrix();
