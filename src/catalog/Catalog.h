@@ -84,6 +84,8 @@ protected:
     void        setDestStar( Star* target );
     bool        setRandomHome();
     bool        setRandomDest();
+    
+    void        updateAudioResponse();
         
 private:
     
@@ -167,6 +169,8 @@ private:
     };
     eCamType mCamType;
     float mCameraDistance;
+    
+    float mLabelBrightnessByAudio;
     
     // display list
     //GLuint mDisplayListPoints;

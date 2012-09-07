@@ -65,6 +65,8 @@ void Catalog::setup()
     mCamType = CAM_STAR;
     mCameraDistance = 0.0f;
     
+    mLabelBrightnessByAudio = 0.0f;
+    
     // assets
     
     ////////------------------------------------------------------
@@ -176,6 +178,12 @@ void Catalog::setupInterface()
                           .oscReceiver(mName,"randhome"))->registerCallback( this, &Catalog::setRandomHome );
     mInterface->addButton(CreateTriggerParam("Random Dest", NULL)
                           .oscReceiver(mName,"randdest"))->registerCallback( this, &Catalog::setRandomDest );
+    
+    mInterface->addParam(CreateFloatParam("Audio Label Multi", &mLabelBrightnessByAudio)
+                         .minValue(0.0f)
+                         .maxValue(20.0f)
+                         .oscReceiver(mName,"audiolabelmulti")
+                         .sendFeedback());
 }
 
 // ----------------------------------------------------------------
@@ -209,10 +217,12 @@ void Catalog::update(double dt)
 {
     ////////------------------------------------------------------
     //
-    if( getElapsedSeconds() - mMouseTimePressed < mMouseTimeThresh && !mMousePressed ){
+    if( mCamType == CAM_SPRING && getElapsedSeconds() - mMouseTimePressed < mMouseTimeThresh && !mMousePressed ){
 		mMouseTimePressed = 0.0f;
 		selectStar( mWasRightButtonLastClicked );
 	}
+    
+    updateAudioResponse();
 	
 	//mRoom.update();
 	
@@ -1163,3 +1173,25 @@ bool Catalog::setCamType()
     return false;
 }
 
+void Catalog::updateAudioResponse()
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+	
+    // Get data
+    //float * freqData = audioInput.getFft()->getAmplitude();
+    //float * timeData = audioInput.getFft()->getData();
+    int32_t dataSize = audioInput.getFft()->getBinSize();
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    
+    int maxData = std::min( (int)mNamedStars.size(), (int)dataSize );
+    
+    // Iterate through data
+    for (int32_t i = 0; i < mNamedStars.size(); i++)
+    {
+        int index = i % dataSize;
+        float x = fftLogData[index].x;
+        float y = fftLogData[index].y;
+        
+        mNamedStars[i]->mAudioPer = x * y * mLabelBrightnessByAudio;
+    }
+}

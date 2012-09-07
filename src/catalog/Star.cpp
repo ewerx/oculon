@@ -25,6 +25,7 @@ Star::Star( Scene* scene, Vec3f pos, float appMag, float absMag, float color, st
 	mIsSelected		= false;
 	mRadius			= ( 10.0f - mAbsoluteMag ) * 0.025f;
 	mRadiusMulti	= 1.0f; // not implemented yet
+    mAudioPer       = 0.0f;
 	
 	if( mName.length() > 1 && appMag < 6.0f ){
 		TextLayout layout;
@@ -54,7 +55,8 @@ void Star::update( const Camera &cam, float scale )
 
 void Star::drawName( const Vec2f &mousePos, float power, float alpha )
 {
-	if( mDistToCam > 0.0f && mNameTex ){
+	if( mDistToCam > 0.0f && mNameTex )
+    {
 		float per = constrain( 1.0f - mDistToCam * 0.0000375f, 0.0f, 1.0f );
 		per *= per * per;
 		
@@ -63,6 +65,8 @@ void Star::drawName( const Vec2f &mousePos, float power, float alpha )
 		
 		if( mDistToMouse < 40.0f )
 			per += 1.0f - mDistToMouse/40.0f;
+        
+        per += mAudioPer;
 		
 		if( mIsSelected )
 			per = 1.0f;

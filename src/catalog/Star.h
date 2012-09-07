@@ -51,6 +51,8 @@ public:
 	
 	bool		mIsSelected;
     
+    float       mAudioPer;
+    
     Scene*      mParentScene;
     
     std::vector<Planet*>    mPlanets;
