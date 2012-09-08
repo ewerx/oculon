@@ -758,6 +758,8 @@ void Orbiter::drawHud()
 {
     gl::pushMatrices();
     
+    gl::disableDepthRead();
+    glDisable(GL_LIGHTING);
     gl::enableAlphaBlending();
     
     CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 50.f);
