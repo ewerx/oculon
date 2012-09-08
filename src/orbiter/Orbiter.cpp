@@ -56,6 +56,7 @@ Orbiter::Orbiter()
 , mFollowTargetIndex(0)
 , mFollowTarget(NULL)
 , mCamType(CAM_FOLLOW)
+, mExoStar(NULL)
 {
     mEnableFrustumCulling = true; // Scene
     
@@ -202,6 +203,7 @@ void Orbiter::createSolSystem()
     double orbitalVel = 0.0f;
     double rotationSpeed = 0.0f;
     mSun = new Sun(this,
+                   "Sol",
                    Vec3d::zero(),
                    Vec3d::zero(),
                    radius,
@@ -211,6 +213,8 @@ void Orbiter::createSolSystem()
     mSun->setup();
     mSun->setLabelVisible(false);
     mBodies.push_back(mSun);
+    
+    mExoStar = NULL;
     
     Body* body;
     
@@ -315,7 +319,8 @@ void Orbiter::createSystem( Star* star )
     float radius = (float)(3800000.0f * mDrawScale * radialEnhancement);
     double rotationSpeed = 0.0f;
     mSun = new Sun(this,
-                   Vec3d::zero(),//star->mPos,
+                   star->mName,
+                   Vec3d::zero(),
                    Vec3d::zero(),
                    radius,
                    rotationSpeed,
@@ -324,6 +329,8 @@ void Orbiter::createSystem( Star* star )
     mSun->setup();
     mSun->setLabelVisible(false);
     mBodies.push_back(mSun);
+    
+    mExoStar = star;
     
     Body* body;
     
@@ -584,7 +591,12 @@ void Orbiter::draw()
     gl::pushMatrices();
     
     gl::setMatrices(getCamera());
-//    
+    
+    if( mExoStar )
+    {
+        gl::translate( mExoStar->mPos );
+    }
+//
 //    glDisable( GL_LIGHT0 );
 //    glDisable( GL_LIGHTING );
     
@@ -614,7 +626,7 @@ void Orbiter::draw()
     // frustum culling
     BodyList visibleBodies;
     int culled = 0;
-    for(BodyList::iterator bodyIt = mBodies.begin(); 
+    for(BodyList::iterator bodyIt = mBodies.begin();
         bodyIt != mBodies.end();
         ++bodyIt)
     {
@@ -765,6 +777,7 @@ void Orbiter::drawHud()
     CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 50.f);
     gl::setMatrices(textCam);
     
+    gl::color( 1.0f, 1.0f, 1.0f, 0.9f );
     
     for( int i = 0; i < TB_COUNT; ++i )
     {

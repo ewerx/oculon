@@ -18,6 +18,7 @@
 #include "Orbiter.h"
 
 #include "Binned.h"
+#include "Star.h"
 
 using namespace ci;
 using namespace std;
@@ -89,12 +90,14 @@ Body::~Body()
 void Body::setup()
 {
     mRadiusAnimRate = 0.000005f;
+    mDistToCam = 0.0f;
 }
 
 void Body::update(double dt)
 {
     mPosition += mVelocity * dt;
     mRotation += toDegrees(mRotationSpeed) * dt * (mRadiusMultiplier*10.f);
+
     
     updateLabel();
     
@@ -165,14 +168,21 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             gl::drawSphere( Vec3d::zero(), mRadius * mRadiusMultiplier, sphereDetail );
         }
         
+        mDistToCam = -mOrbiter->getCamera().worldToEyeDepth( screenCoords );
+        
         // label
         if( mOrbiter->isDrawLabelsEnabled() && mIsLabelVisible )
         {
+            if( mDistToCam > 0.0f )
+            {
+                float per = constrain( 1.0f - mDistToCam * 0.0000375f, 0.0f, 1.0f );
+                per *= per * per;
+                
             gl::pushMatrices();
             
             gl::disableDepthRead();
             glDisable(GL_LIGHTING);
-            gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
+            gl::color( 1.0f, 1.0f, 1.0f, per );
         
             CameraOrtho textCam(0.0f, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight(), 0.0f, 0.0f, 10.f);
             gl::setMatrices(textCam);
@@ -203,6 +213,7 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             }
 
             gl::popMatrices();
+            }
         }
         gl::popMatrices();
     }

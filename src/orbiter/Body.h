@@ -97,6 +97,8 @@ protected:
     //TextBox mLabel;
     bool mIsLabelVisible;
     
+    float mDistToCam;
+    
     //TEST
     float mRadiusAnimRate;
     float mRadiusAnimTime;

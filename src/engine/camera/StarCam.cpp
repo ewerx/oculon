@@ -39,6 +39,7 @@ void StarCam::setup()
 {
 	mTimeOut = 300.0;
 	mTimeMouse = getElapsedSeconds() - mTimeOut;
+    mElapsedTime = 0.0f;
 }
 
 void StarCam::update(double elapsed)
@@ -46,19 +47,21 @@ void StarCam::update(double elapsed)
 	static const double sqrt2pi = math<double>::sqrt(2.0 * M_PI);
 
 	if((getElapsedSeconds() - mTimeMouse) > mTimeOut)	// screensaver mode
-	{		
+	{
+        mElapsedTime += elapsed * ( mTimeScale ? (*mTimeScale) : 0.005f );
+        
 		// calculate time 
 		double t = getElapsedSeconds();
 
 		// determine distance to the sun (in parsecs)
-		double time = t * ( mTimeScale ? (*mTimeScale) : 0.005f );
+		double time = mElapsedTime;//t * ( mTimeScale ? (*mTimeScale) : 0.005f );
 		double t_frac = (time) - math<double>::floor(time);
 		double n = sqrt2pi * t_frac;
 		double f = cos( n * n );
 		double distance = DISTANCE_MAX - (DISTANCE_MAX-DISTANCE_MIN) * f;//500.0 - 499.95 * f;
 
 		// determine where to look
-		double longitude = toDegrees(t * ( mTimeScale ? (*mTimeScale) : 0.034f ));
+		double longitude = toDegrees( mElapsedTime );//toDegrees(t * ( mTimeScale ? (*mTimeScale * 2) : 0.034f ));
 		double latitude = LATITUDE_LIMIT * sin(t * 0.029);
 
 		// determine interpolation factor
@@ -194,7 +197,7 @@ void StarCam::setCurrentCam( const CameraPersp &aCurrentCam )
 	mCurrentCam = aCurrentCam;
 
 	// update distance and fov
-	mDistance = mCurrentCam.getEyePoint().length();
+	mDistance = (mCurrentCam.getEyePoint() - mLookAt).length();
 	mFov = mCurrentCam.getFov();
 }
 

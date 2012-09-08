@@ -23,13 +23,14 @@ GLfloat Sun::mat_emission[]     = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
 Sun::Sun(Orbiter* scene,
+         const std::string& name,
          const Vec3d& pos, 
          const Vec3d& vel, 
          float radius, 
          double rotSpeed,
          double mass, 
          const ColorA& color) 
-: Body(scene,"Sol",pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
+: Body(scene,name,pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
 , mMoviePlayer(scene)
 {
 }
@@ -59,7 +60,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
     {
         Vec3d screenCoords = transform * mPosition;
         float radius = mRadius*mRadiusMultiplier;
-        glPushMatrix();
+        gl::pushMatrices();
         //glEnable( GL_LIGHTING );
         
         glTranslatef(screenCoords.x, screenCoords.y, screenCoords.z);
@@ -125,7 +126,7 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
             }
         }
         
-        glPopMatrix();
+        gl::popMatrices();
         
         //mMoviePlayer.draw();
     }

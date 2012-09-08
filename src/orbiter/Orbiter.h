@@ -68,7 +68,8 @@ public:
     bool isDrawLabelsEnabled()      { return mDrawLabels; }
     ci::gl::TextureFontRef getLabelFont()   { return mTextureFontLabel; }
     ci::gl::TextureFontRef getHudFont()     { return mTextureFontHud; }
-    
+   
+    Star* getExoStar() { return mExoStar; }
 protected:// from Scene
     void setupInterface();
     void setupDebugInterface();
@@ -133,6 +134,8 @@ private:
     bool            mDrawHud;
     bool            mDrawLabels;
     bool            mDrawTrails;
+    
+    Star*           mExoStar;
     
 public:
     static double   sDefaultTimeScale;

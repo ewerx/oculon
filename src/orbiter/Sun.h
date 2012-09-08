@@ -22,6 +22,7 @@ class Sun : public Body
 {
 public:
     Sun(Orbiter* scene,
+        const std::string& name,
         const Vec3d& pos, 
         const Vec3d& vel, 
         float radius, 

@@ -72,6 +72,7 @@ private:
 
 	double					mTimeMouse;
 	double					mTimeOut;
+    double                  mElapsedTime;
 
 	ci::Anim<double>		mLatitude;
 	ci::Anim<double>		mLongitude;

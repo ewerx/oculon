@@ -184,9 +184,9 @@ void Catalog::setupInterface()
     mInterface->addButton(CreateTriggerParam("Random Dest", NULL)
                           .oscReceiver(mName,"randdest"))->registerCallback( this, &Catalog::setRandomDest );
     mInterface->addButton(CreateTriggerParam("Sol Home", NULL)
-                          .oscReceiver(mName,"solhome"))->registerCallback( this, &Catalog::setRandomHome );
+                          .oscReceiver(mName,"solhome"))->registerCallback( this, &Catalog::setSolHome );
     mInterface->addButton(CreateTriggerParam("Sol Dest", NULL)
-                          .oscReceiver(mName,"soldest"))->registerCallback( this, &Catalog::setRandomDest );
+                          .oscReceiver(mName,"soldest"))->registerCallback( this, &Catalog::setSolDest );
     mInterface->addButton(CreateTriggerParam("Next Kepler Star", NULL)
                           .oscReceiver(mName,"nextkepler"))->registerCallback( this, &Catalog::setNextKeplerStar );
     mInterface->addButton(CreateTriggerParam("Prev Kepler Star", NULL)
@@ -255,7 +255,10 @@ void Catalog::update(double dt)
 	mScalePer = mScale/mMaxScale;
 	
 	// CAMERA
-    mStarCam.update(dt);
+    if( mCamType == CAM_STAR )
+    {
+        mStarCam.update(dt);
+    }
     
     // convert from parsecs to lightyears
     mCameraDistance = getCamera().getEyePoint().length() * 3.261631f;
@@ -281,11 +284,13 @@ void Catalog::update(double dt)
     {
         if( mHomeStar != NULL ){
             mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
+            mStarCam.setCurrentCam(mSpringCam.getCam());
         }
         
         if( mDestStar != NULL ){
             mSpringCam.setCenter( mDestStar->mPos );
             mStarCam.setTarget( mDestStar->mPos );
+            mStarCam.setCurrentCam(mSpringCam.getCam());
         }
     }
     
@@ -1080,6 +1085,12 @@ bool Catalog::createPlanet( const std::string &text, int lineNumber )
     
     if( star != NULL )
     {
+        // only add planets attached to named/bright stars
+        if( star->mApparentMag >= 6.0f || star->mName.length() < 1 )
+        {
+            return false;
+        }
+        
         // add the star the first time
         if( star->mPlanets.size() == 0 )
         {
@@ -1141,13 +1152,6 @@ void Catalog::setHomeStar( Star* target )
 {
     console() << "[catalog] HOME -> " << target->mName << std::endl;
     mHomeStar = target;
-    
-    Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
-    
-    if( orbiterScene && orbiterScene->isRunning() )
-    {
-        orbiterScene->createSystem(target);
-    }
 }
 
 void Catalog::setDestStar( Star* target )
@@ -1158,12 +1162,26 @@ void Catalog::setDestStar( Star* target )
     }
     mDestStar = target;
     mDestStar->mIsSelected = true;
+    
+    Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
+    
+    if( orbiterScene && orbiterScene->isRunning() )
+    {
+        if( target == mSol )
+        {
+            orbiterScene->createSystem(NULL);
+        }
+        else
+        {
+            orbiterScene->createSystem(target);
+        }
+    }
 }
 
 bool Catalog::setRandomHome()
 {
-    int index = Rand::randInt( mStarsWithPlanets.size() );
-    setHomeStar( mStarsWithPlanets[index] );//mBrightStars[index]
+    int index = Rand::randInt( mBrightStars.size() );
+    setHomeStar( mBrightStars[index] );
     return false;
 }
 
@@ -1195,8 +1213,8 @@ bool Catalog::setKeplerStar()
 
 bool Catalog::setRandomDest()
 {
-    int index = Rand::randInt( mBrightStars.size() );
-    setDestStar( mBrightStars[index] );
+    int index = Rand::randInt( mStarsWithPlanets.size() );
+    setDestStar( mStarsWithPlanets[index] );
     return false;
 }
 
