@@ -262,8 +262,8 @@ void Binned::setupDebugInterface()
     
     mDebugParams.addSeparator();
     mDebugParams.setOptions("Time Step", "step=0.001 min=0.0001 max=1.0");
-    mDebugParams.setOptions("Particle Repulsion", "step=0.01");
-    mDebugParams.setOptions("Damping Force", "step=0.01");
+    //mDebugParams.setOptions("Particle Repulsion", "step=0.01");
+    //mDebugParams.setOptions("Damping Force", "step=0.01");
     mDebugParams.setOptions("Wall Damping", "step=0.01");
 
     mDebugParams.addParam("Wall Radius", &mCircularWallRadius, "");
