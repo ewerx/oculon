@@ -12,8 +12,8 @@ using namespace std;
 // initialize static members
 const double StarCam::LATITUDE_LIMIT = 89.0;
 const double StarCam::LATITUDE_THRESHOLD = 89.0;
-const double StarCam::DISTANCE_MIN = 0.015;
-const double StarCam::DISTANCE_MAX = 1000.0;
+const double StarCam::DISTANCE_MIN = 100;
+const double StarCam::DISTANCE_MAX = 50000.0;
 
 StarCam::StarCam(void)
 {
@@ -27,8 +27,12 @@ StarCam::StarCam(void)
 
 	mLatitude = 0.0;
 	mLongitude = 0.0;
-	mDistance = 0.015;
+	mDistance = 0.015 * 33333;
 	mFov = 60.0;
+    
+    mTimeScale = NULL;
+    mRotateSpeed = NULL;
+    mLookAt = Vec3f::zero();
 }
 
 void StarCam::setup()
@@ -47,14 +51,14 @@ void StarCam::update(double elapsed)
 		double t = getElapsedSeconds();
 
 		// determine distance to the sun (in parsecs)
-		double time = t * 0.005;
+		double time = t * ( mTimeScale ? (*mTimeScale) : 0.005f );
 		double t_frac = (time) - math<double>::floor(time);
 		double n = sqrt2pi * t_frac;
 		double f = cos( n * n );
-		double distance = 500.0 - 499.95 * f;
+		double distance = DISTANCE_MAX - (DISTANCE_MAX-DISTANCE_MIN) * f;//500.0 - 499.95 * f;
 
 		// determine where to look
-		double longitude = toDegrees(t * 0.034);
+		double longitude = toDegrees(t * ( mTimeScale ? (*mTimeScale) : 0.034f ));
 		double latitude = LATITUDE_LIMIT * sin(t * 0.029);
 
 		// determine interpolation factor
@@ -114,6 +118,11 @@ void StarCam::update(double elapsed)
 		// adjust field-of-view to 60 degrees
 		//mFov = (1.0f - t) * mFov.value() + t * 60.0f;
 	}
+    
+    // update current camera
+	mCurrentCam.setFov( mFov.value() );
+	mCurrentCam.setEyePoint( getPosition() );
+	mCurrentCam.setCenterOfInterestPoint( mLookAt );
 }
 
 void StarCam::mouseDown( const Vec2i &mousePos )
@@ -177,11 +186,6 @@ void StarCam::resize( ResizeEvent event )
 
 const CameraPersp& StarCam::getCamera()  
 {
-	// update current camera
-	mCurrentCam.setFov( mFov.value() );
-	mCurrentCam.setEyePoint( getPosition() );
-	mCurrentCam.setCenterOfInterestPoint( Vec3f::zero() );
-
 	return mCurrentCam;
 }
 
@@ -206,4 +210,10 @@ Vec3f StarCam::getPosition()
 		static_cast<float>( sin(phi) * sin(theta) ) );
 
 	return mDistance.value() * orientation; 
+}
+
+void StarCam::setTarget( const ci::Vec3f& lookAt )
+{
+    //TODO: interpolate
+    mLookAt = lookAt;
 }

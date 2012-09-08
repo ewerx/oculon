@@ -84,6 +84,11 @@ protected:
     void        setDestStar( Star* target );
     bool        setRandomHome();
     bool        setRandomDest();
+    bool        setSolHome();
+    bool        setSolDest();
+    bool        setNextKeplerStar();
+    bool        setPrevKeplerStar();
+    bool        setKeplerStar();
     
     void        updateAudioResponse();
         
@@ -165,12 +170,16 @@ private:
         CAM_ORBITER,
         CAM_STAR,
         
-        CAM_COUNT
+        CAM_COUNT,
+        CAM_ORBITER_SPRING,
     };
     eCamType mCamType;
     float mCameraDistance;
     
     float mLabelBrightnessByAudio;
+    
+    int mNextKeplerIndex;
+    float mStarCamTimeScale;
     
     // display list
     //GLuint mDisplayListPoints;

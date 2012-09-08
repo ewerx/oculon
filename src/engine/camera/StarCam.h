@@ -23,6 +23,11 @@ public:
 
 	const ci::CameraPersp& getCamera();
 	void		setCurrentCam( const ci::CameraPersp &aCurrentCam );
+    void        setTarget( const ci::Vec3f& lookAt );
+    
+    // HACK!
+    float*                  mTimeScale;
+    float*                  mRotateSpeed;
 private:
 	//! returns the position of the camera in world space
 	ci::Vec3f	getPosition();
@@ -56,6 +61,7 @@ private:
 
 	ci::Vec2i				mInitialMousePos;
 	ci::CameraPersp			mInitialCam;
+    ci::Vec3f               mLookAt;
 
 	double					mDeltaX;
 	double					mDeltaY;

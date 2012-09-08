@@ -67,6 +67,9 @@ void Catalog::setup()
     
     mLabelBrightnessByAudio = 0.0f;
     
+    mNextKeplerIndex = 0;
+    mStarCamTimeScale = 0.005;
+    
     // assets
     
     ////////------------------------------------------------------
@@ -74,6 +77,8 @@ void Catalog::setup()
     // CAMERA	
 	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio(), 200000.0f );
     mStarCam.setup();
+    //TODO: hack!
+    mStarCam.mTimeScale = &mStarCamTimeScale;
     
 	// LOAD SHADERS
 	try {
@@ -178,11 +183,30 @@ void Catalog::setupInterface()
                           .oscReceiver(mName,"randhome"))->registerCallback( this, &Catalog::setRandomHome );
     mInterface->addButton(CreateTriggerParam("Random Dest", NULL)
                           .oscReceiver(mName,"randdest"))->registerCallback( this, &Catalog::setRandomDest );
+    mInterface->addButton(CreateTriggerParam("Sol Home", NULL)
+                          .oscReceiver(mName,"solhome"))->registerCallback( this, &Catalog::setRandomHome );
+    mInterface->addButton(CreateTriggerParam("Sol Dest", NULL)
+                          .oscReceiver(mName,"soldest"))->registerCallback( this, &Catalog::setRandomDest );
+    mInterface->addButton(CreateTriggerParam("Next Kepler Star", NULL)
+                          .oscReceiver(mName,"nextkepler"))->registerCallback( this, &Catalog::setNextKeplerStar );
+    mInterface->addButton(CreateTriggerParam("Prev Kepler Star", NULL)
+                          .oscReceiver(mName,"prevkepler"))->registerCallback( this, &Catalog::setPrevKeplerStar );
+    
+    mInterface->addParam(CreateIntParam("Kepler Star Index", &mNextKeplerIndex)
+                         .maxValue( mStarsWithPlanets.size() )
+                         .oscReceiver(mName,"keplerindex")
+                         .sendFeedback())->registerCallback( this, &Catalog::setKeplerStar );
     
     mInterface->addParam(CreateFloatParam("Audio Label Multi", &mLabelBrightnessByAudio)
                          .minValue(0.0f)
                          .maxValue(20.0f)
                          .oscReceiver(mName,"audiolabelmulti")
+                         .sendFeedback());
+    
+    mInterface->addParam(CreateFloatParam("Star Cam Time Scale", &mStarCamTimeScale)
+                         .minValue(0.0f)
+                         .maxValue(0.2f)
+                         .oscReceiver(mName,"starcamtimescale")
                          .sendFeedback());
 }
 
@@ -190,7 +214,7 @@ void Catalog::setupInterface()
 //
 void Catalog::setupDebugInterface()
 {
-    mDebugParams.addParam("Camera Distance", &mCameraDistance, "readonly=true");
+    //mDebugParams.addParam("Camera Distance", &mCameraDistance, "readonly=true");
 }
 
 // ----------------------------------------------------------------
@@ -235,14 +259,35 @@ void Catalog::update(double dt)
     
     // convert from parsecs to lightyears
     mCameraDistance = getCamera().getEyePoint().length() * 3.261631f;
+    //console() << "[catalog] cam distance = " << mCameraDistance << std::endl;
     
-	if( mHomeStar != NULL ){
-		mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
-	}
-	
-	if( mDestStar != NULL ){
-		mSpringCam.setCenter( mDestStar->mPos );
-	}
+    if( mCamType == CAM_ORBITER_SPRING )
+    {
+        Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
+        
+        Vec3f lookAt = mDestStar ? mDestStar->mPos : Vec3f::zero();
+        Vec3f eyePoint = mHomeStar ? mHomeStar->mPos + Vec3f( 500.0f, 0.0f, 80.0f ) : Vec3f::zero();
+        
+        if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
+        {
+            lookAt = orbiterScene->getCamera().getCenterOfInterestPoint();
+            eyePoint = orbiterScene->getCamera().getEyePoint();
+        }
+        
+        mSpringCam.setEye( eyePoint );
+        mSpringCam.setCenter( lookAt );
+    }
+    else
+    {
+        if( mHomeStar != NULL ){
+            mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
+        }
+        
+        if( mDestStar != NULL ){
+            mSpringCam.setCenter( mDestStar->mPos );
+            mStarCam.setTarget( mDestStar->mPos );
+        }
+    }
     
 	if( mMousePressed ) 
 		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01 );
@@ -1118,7 +1163,33 @@ void Catalog::setDestStar( Star* target )
 bool Catalog::setRandomHome()
 {
     int index = Rand::randInt( mStarsWithPlanets.size() );
-    setHomeStar( mStarsWithPlanets[index] );
+    setHomeStar( mStarsWithPlanets[index] );//mBrightStars[index]
+    return false;
+}
+
+bool Catalog::setNextKeplerStar()
+{
+    mNextKeplerIndex++;
+    if( mNextKeplerIndex == mStarsWithPlanets.size() )
+    {
+        mNextKeplerIndex = 0;
+    }
+    return setKeplerStar();
+}
+
+bool Catalog::setPrevKeplerStar()
+{
+    mNextKeplerIndex--;
+    if( mNextKeplerIndex < 0 )
+    {
+        mNextKeplerIndex = mStarsWithPlanets.size()-1;
+    }
+    return setKeplerStar();
+}
+
+bool Catalog::setKeplerStar()
+{
+    setHomeStar( mStarsWithPlanets[mNextKeplerIndex] );
     return false;
 }
 
@@ -1129,11 +1200,24 @@ bool Catalog::setRandomDest()
     return false;
 }
 
+bool Catalog::setSolHome()
+{
+    setHomeStar( mSol );
+    return false;
+}
+
+bool Catalog::setSolDest()
+{
+    setDestStar( mSol );
+    return false;
+}
+
 const Camera& Catalog::getCamera()
 {
     switch( mCamType )
     {
         case CAM_SPRING:
+        case CAM_ORBITER_SPRING:
             return mSpringCam.getCam();
             
         case CAM_STAR:
