@@ -219,6 +219,10 @@ void Corona::setup()
 //
 void Corona::setupInterface()
 {
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camera")
+                        .isVertical());
 }
 
 // ----------------------------------------------------------------
