@@ -9,16 +9,16 @@
 
 #pragma once
 
+#include "Constants.h"
+#include "SubScene.h"
 #include "cinder/Timeline.h"
 #include "cinder/PolyLine.h"
 #include "cinder/Rect.h"
 #include "cinder/gl/Texture.h"
-#include "Constants.h"
 
 class Scene;
 
-//TODO: refactor as SubScene
-class Eclipse
+class Eclipse : public SubScene
 {
 public:
     Eclipse(Scene* scene);
@@ -47,7 +47,6 @@ private:
     ci::Vec2f getPoint();
     
 private:
-    Scene*  mParentScene;
     
     bool mShowTestBackground;
     ci::gl::Texture mTestBackground;

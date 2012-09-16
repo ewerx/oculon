@@ -28,7 +28,7 @@ using namespace std;
 // 
 
 Eclipse::Eclipse(Scene* scene)
-: mParentScene(scene)
+: SubScene(scene)
 {
     mDim = 168; // cube dimension
     mXOffset = 8;

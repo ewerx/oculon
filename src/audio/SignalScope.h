@@ -9,14 +9,14 @@
 
 #pragma once
 
+#include "SubScene.h"
 #include "cinder/Timeline.h"
 #include "cinder/PolyLine.h"
 #include "cinder/Color.h"
 
 class Scene;
 
-//TODO: refactor as SubScene
-class SignalScope
+class SignalScope : public SubScene
 {
 public:
     SignalScope(Scene* scene);
@@ -71,7 +71,5 @@ private:
         ci::PolyLine2f mPolyLine;
     };
     std::vector<tLine> mLines;
-    
-    Scene*  mParentScene;
 
 };

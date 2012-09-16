@@ -1,5 +1,5 @@
 /*
- *  VerticalLines.h
+ *  Barcode.h
  *  Oculon
  *
  *  Created by Ehsan on 11-10-22.
@@ -9,18 +9,18 @@
 
 #pragma once
 
+#include "SubScene.h"
 #include "cinder/Timeline.h"
 #include "cinder/PolyLine.h"
 #include "cinder/Color.h"
 
 class Scene;
 
-//TODO: refactor as SubScene
-class VerticalLines
+class Barcode : public SubScene
 {
 public:
-    VerticalLines(Scene* scene);
-    virtual ~VerticalLines();
+    Barcode(Scene* scene);
+    virtual ~Barcode();
 
     void setup();
     void setupInterface();
@@ -41,6 +41,10 @@ private:
     bool        mAlphaByFft;
     bool        mPositionByFft;
     
+    int         mBars;
+    int         mBarGap;
+    bool        mVertical;
+    
     enum eFftMode
     {
         FFT_ALPHA,
@@ -50,7 +54,4 @@ private:
         FFT_COUNT
     };
     eFftMode mFftMode;
-    
-    Scene*  mParentScene;
-
 };

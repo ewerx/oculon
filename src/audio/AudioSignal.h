@@ -16,7 +16,7 @@
 #include "MotionBlurRenderer.h"
 
 class SignalScope;
-class VerticalLines;
+class Barcode;
 class Eclipse;
 class Polyhedron;
 
@@ -61,8 +61,8 @@ private:
     SignalScope* mSignalScope;
     bool mEnableSignalScope;
 
-    VerticalLines* mVerticalLines;
-    bool mEnableVerticalLines;
+    Barcode* mBarcode;
+    bool mEnableBarcode;
     
     Eclipse* mEclipse;
     bool mEnableEclipse;

@@ -12,7 +12,7 @@
 #include "AudioSignal.h"
 #include "Interface.h"
 #include "SignalScope.h"
-#include "VerticalLines.h"
+#include "Barcode.h"
 #include "Eclipse.h"
 #include "Polyhedron.h"
 
@@ -28,7 +28,7 @@ AudioSignal::AudioSignal()
 : Scene("audio")
 {
     mSignalScope = new SignalScope(this);
-    mVerticalLines = new VerticalLines(this);
+    mBarcode = new Barcode(this);
     mEclipse = new Eclipse(this);
     mPolyhedron = new Polyhedron(this);
 }
@@ -36,7 +36,7 @@ AudioSignal::AudioSignal()
 AudioSignal::~AudioSignal()
 {
     delete mSignalScope;
-    delete mVerticalLines;
+    delete mBarcode;
     delete mEclipse;
     delete mPolyhedron;
 }
@@ -51,8 +51,8 @@ void AudioSignal::setup()
     mFilter = 0;
     mFilterFrequency = 0.0f;
     
-    mEnableVerticalLines = false;
-    mVerticalLines->setup();
+    mEnableBarcode = false;
+    mBarcode->setup();
     
     mEnableSignalScope = false;
     mSignalScope->setup();
@@ -66,7 +66,7 @@ void AudioSignal::setup()
 
 void AudioSignal::reset()
 {
-    mVerticalLines->reset();
+    mBarcode->reset();
     mSignalScope->reset();
     mEclipse->reset();
     mPolyhedron->reset();
@@ -76,7 +76,7 @@ void AudioSignal::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(mName,"blur"));
-    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mEnableVerticalLines )
+    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mEnableBarcode )
                          .oscReceiver(mName,"lines"));
     mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
                          .oscReceiver(mName,"signal"));
@@ -92,7 +92,7 @@ void AudioSignal::setupInterface()
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
     mSignalScope->setupInterface();
-    mVerticalLines->setupInterface();
+    mBarcode->setupInterface();
     mEclipse->setupInterface();
     mPolyhedron->setupInterface();
 }
@@ -102,7 +102,7 @@ void AudioSignal::setupDebugInterface()
     Scene::setupDebugInterface();
     
     mSignalScope->setupDebugInterface();
-    mVerticalLines->setupDebugInterface();
+    mBarcode->setupDebugInterface();
     mEclipse->setupDebugInterface();
     mPolyhedron->setupDebugInterface();
 }
@@ -115,9 +115,9 @@ void AudioSignal::update(double dt)
     {
         mSignalScope->update(dt);
     }
-    if( mEnableVerticalLines )
+    if( mEnableBarcode )
     {
-        mVerticalLines->update(dt);
+        mBarcode->update(dt);
     }
     if( mEnableEclipse )
     {
@@ -149,9 +149,9 @@ void AudioSignal::drawSubScenes()
 {
     gl::enableAlphaBlending();
     
-    if( mEnableVerticalLines )
+    if( mEnableBarcode )
     {
-        mVerticalLines->draw();
+        mBarcode->draw();
     }
     
     if( mEnableSignalScope )

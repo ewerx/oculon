@@ -9,13 +9,13 @@
 
 #pragma once
 
+#include "SubScene.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
 
 class Scene;
 
-//TODO: refactor as SubScene
-class Polyhedron
+class Polyhedron : public SubScene
 {
 public:
     Polyhedron(Scene* scene);
@@ -32,7 +32,5 @@ public:
 private:
     ci::TriMesh			mMesh;
     ci::gl::VboMesh		mVBO;
-    
-    Scene*  mParentScene;
 
 };

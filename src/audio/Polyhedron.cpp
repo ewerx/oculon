@@ -31,7 +31,7 @@ using namespace std;
 // 
 
 Polyhedron::Polyhedron(Scene* scene)
-: mParentScene(scene)
+: SubScene(scene)
 {
 }
 

@@ -34,7 +34,7 @@
 		7C1BA53215E9408D005BE669 /* AudioSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52615E9408D005BE669 /* AudioSignal.cpp */; };
 		7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52815E9408D005BE669 /* Eclipse.cpp */; };
 		7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52E15E9408D005BE669 /* SignalScope.cpp */; };
-		7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53015E9408D005BE669 /* VerticalLines.cpp */; };
+		7C1BA53715E9408D005BE669 /* Barcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53015E9408D005BE669 /* Barcode.cpp */; };
 		7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53815E940D9005BE669 /* Polyhedron.cpp */; };
 		7C1BA54115E9475E005BE669 /* cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = 7C1BA54015E9475E005BE669 /* cube.obj */; };
 		7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC014FB1346002CE80B /* WaveParticle.cl */; };
@@ -103,6 +103,7 @@
 		7C3BB45C15F56D7800A4E384 /* planet.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42915F55B8D00A4E384 /* planet.frag */; };
 		7C3BB45D15F56D7800A4E384 /* star.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42A15F55B8D00A4E384 /* star.frag */; };
 		7C3BB45E15F56D7800A4E384 /* star.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42B15F55B8D00A4E384 /* star.vert */; };
+		7C48581F16062A2C008895F7 /* SubScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C48581D16062A2C008895F7 /* SubScene.cpp */; };
 		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
 		7C52E12014CCFCA6008507D3 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11C14CCFCA6008507D3 /* OscListener.cpp */; };
 		7C52E12114CCFCA6008507D3 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11D14CCFCA6008507D3 /* OscMessage.cpp */; };
@@ -344,8 +345,8 @@
 		7C1BA52915E9408D005BE669 /* Eclipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Eclipse.h; sourceTree = "<group>"; };
 		7C1BA52E15E9408D005BE669 /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SignalScope.cpp; sourceTree = "<group>"; };
 		7C1BA52F15E9408D005BE669 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
-		7C1BA53015E9408D005BE669 /* VerticalLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VerticalLines.cpp; sourceTree = "<group>"; };
-		7C1BA53115E9408D005BE669 /* VerticalLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerticalLines.h; sourceTree = "<group>"; };
+		7C1BA53015E9408D005BE669 /* Barcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Barcode.cpp; sourceTree = "<group>"; };
+		7C1BA53115E9408D005BE669 /* Barcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Barcode.h; sourceTree = "<group>"; };
 		7C1BA53815E940D9005BE669 /* Polyhedron.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
 		7C1BA53915E940D9005BE669 /* Polyhedron.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
 		7C1BA54015E9475E005BE669 /* cube.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cube.obj; sourceTree = "<group>"; };
@@ -435,6 +436,8 @@
 		7C3BB44315F55DC400A4E384 /* nebulaCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nebulaCorona.png; sourceTree = "<group>"; };
 		7C3BB44415F55DC400A4E384 /* smallGrid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smallGrid.png; sourceTree = "<group>"; };
 		7C3BB44515F55DC400A4E384 /* spectrumCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spectrumCorona.png; sourceTree = "<group>"; };
+		7C48581D16062A2C008895F7 /* SubScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubScene.cpp; sourceTree = "<group>"; };
+		7C48581E16062A2C008895F7 /* SubScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubScene.h; sourceTree = "<group>"; };
 		7C52E10714CCFC9B008507D3 /* IpEndpointName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
 		7C52E10814CCFC9B008507D3 /* NetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
 		7C52E10914CCFC9B008507D3 /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
@@ -1207,6 +1210,8 @@
 				7C745573148C259C009C0356 /* ParticleController.h */,
 				7C745574148C259C009C0356 /* Scene.cpp */,
 				7C745575148C259C009C0356 /* Scene.h */,
+				7C48581D16062A2C008895F7 /* SubScene.cpp */,
+				7C48581E16062A2C008895F7 /* SubScene.h */,
 				7C745576148C259C009C0356 /* TextEntity.cpp */,
 				7C745577148C259C009C0356 /* TextEntity.h */,
 			);
@@ -1737,8 +1742,8 @@
 				7C1BA53915E940D9005BE669 /* Polyhedron.h */,
 				7C1BA52E15E9408D005BE669 /* SignalScope.cpp */,
 				7C1BA52F15E9408D005BE669 /* SignalScope.h */,
-				7C1BA53015E9408D005BE669 /* VerticalLines.cpp */,
-				7C1BA53115E9408D005BE669 /* VerticalLines.h */,
+				7C1BA53015E9408D005BE669 /* Barcode.cpp */,
+				7C1BA53115E9408D005BE669 /* Barcode.h */,
 			);
 			name = audiosignal;
 			path = audio;
@@ -2048,7 +2053,7 @@
 				7C1BA53215E9408D005BE669 /* AudioSignal.cpp in Sources */,
 				7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */,
 				7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */,
-				7C1BA53715E9408D005BE669 /* VerticalLines.cpp in Sources */,
+				7C1BA53715E9408D005BE669 /* Barcode.cpp in Sources */,
 				7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */,
 				7C783E9515E99B4C00492299 /* Planet.cpp in Sources */,
 				7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */,
@@ -2070,6 +2075,7 @@
 				7C3BB43415F55B8D00A4E384 /* planet.frag in Sources */,
 				7C3BB43515F55B8D00A4E384 /* star.frag in Sources */,
 				7C3BB43615F55B8D00A4E384 /* star.vert in Sources */,
+				7C48581F16062A2C008895F7 /* SubScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

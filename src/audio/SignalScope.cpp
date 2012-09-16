@@ -28,7 +28,7 @@ using namespace std;
 // 
 
 SignalScope::SignalScope(Scene* scene)
-: mParentScene(scene)
+: SubScene(scene)
 {
 }
 

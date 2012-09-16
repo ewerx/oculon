@@ -1,5 +1,5 @@
 /*
- *  VerticalLines.cpp
+ *  Barcode.cpp
  *  Oculon
  *
  *  Created by Ehsan on 11-10-22.
@@ -8,7 +8,7 @@
  */
 
 
-#include "VerticalLines.h"
+#include "Barcode.h"
 #include "Utils.h"
 #include "Scene.h"
 #include "OculonApp.h"
@@ -25,19 +25,19 @@ using namespace std;
 
 
 //
-// VerticalLines
+// Barcode
 // 
 
-VerticalLines::VerticalLines(Scene* scene)
-: mParentScene(scene)
+Barcode::Barcode(Scene* scene)
+: SubScene(scene)
 {
 }
 
-VerticalLines::~VerticalLines()
+Barcode::~Barcode()
 {
 }
 
-void VerticalLines::setup()
+void Barcode::setup()
 {
     mColor = Colorf::white();
     
@@ -54,7 +54,7 @@ void VerticalLines::setup()
     reset();
 }
 
-void VerticalLines::setupInterface()
+void Barcode::setupInterface()
 {
     Interface* interface = mParentScene->getInterface();
     const string name("lines");
@@ -83,23 +83,23 @@ void VerticalLines::setupInterface()
                         .oscReceiver(name,"color"));
 }
 
-void VerticalLines::setupDebugInterface()
+void Barcode::setupDebugInterface()
 {
 }
 
-void VerticalLines::reset()
+void Barcode::reset()
 {
 }
 
-void VerticalLines::resize()
+void Barcode::resize()
 {
 }
 
-void VerticalLines::update(double dt)
+void Barcode::update(double dt)
 {
 }
 
-void VerticalLines::draw()
+void Barcode::draw()
 {
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
 	
