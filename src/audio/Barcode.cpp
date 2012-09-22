@@ -39,15 +39,18 @@ Barcode::~Barcode()
 
 void Barcode::setup()
 {
-    mColor = Colorf::white();
+    mColor = ColorAf(1.0f,1.0f,1.0f,0.25f);
     
     mBaseWidth = 1.0f;
     mMaxWidth = 15.0f;
-    mIntensity = 0.25f;
     mThreshold = 0.02f;
     mWidthByFft = true;
     mAlphaByFft = true;
     mPositionByFft = false;
+    
+    mNumBars = 1;
+    mBarGap = 0;
+    mVertical = true;
     
     mFftMode = FFT_ALPHA;
     
@@ -74,13 +77,17 @@ void Barcode::setupInterface()
                         .minValue(1.0f)
                         .maxValue(50.0f)
                         .oscReceiver(name,"maxwidth"));
-    interface->addParam(CreateFloatParam("Intensity", &mIntensity)
-                        .oscReceiver(name,"intensity"));
     interface->addParam(CreateFloatParam("Threshold", &mThreshold)
                         .maxValue(0.1f)
                         .oscReceiver(name,"threshold"));
     interface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
                         .oscReceiver(name,"color"));
+    
+    interface->addParam(CreateBoolParam("Vetical", &mVertical)
+                        .oscReceiver(name,"vertical"));
+    interface->addParam(CreateIntParam("Num Bars", &mNumBars)
+                        .maxValue(64)
+                        .oscReceiver(name,"numbars"));
 }
 
 void Barcode::setupDebugInterface()
@@ -101,6 +108,30 @@ void Barcode::update(double dt)
 
 void Barcode::draw()
 {
+    gl::pushMatrices();
+    gl::enableAdditiveBlending();
+    
+    for( int i=0; i < mNumBars; ++i )
+    {
+        drawBar(i);
+    }
+    
+    gl::enableAlphaBlending();
+    gl::popMatrices();
+
+}
+
+void Barcode::drawBar(const int index)
+{
+    float screenWidth = mParentScene->getApp()->getViewportWidth();
+    float screenHeight = mParentScene->getApp()->getViewportHeight();
+    
+    // vertical barcodes are split into horizontal segments
+    // horizontal barcodes are split into vertical segments
+    float barSize = mVertical ? (screenHeight / mNumBars) : (screenWidth / mNumBars);
+    float barRange = mVertical ? screenWidth : screenHeight;
+    float barOffset = barSize * index;
+
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
 	
     // Get data
@@ -109,18 +140,12 @@ void Barcode::draw()
     int32_t dataSize = audioInput.getFft()->getBinSize();
     const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
-    float screenWidth = mParentScene->getApp()->getViewportWidth();
-    float screenHeight = mParentScene->getApp()->getViewportHeight();
-    
-    gl::pushMatrices();
-    gl::enableAdditiveBlending();
     // Iterate through data
     for (int32_t i = 0; i < dataSize; i++)
     {
         float x = fftLogData[i].x;
         float y = fftLogData[i].y;
         
-        const float minAlpha = 0.25f;
         if( y > mThreshold )
         {
             float width;
@@ -132,44 +157,52 @@ void Barcode::draw()
             {
                 width = mBaseWidth;
             }
-        
-            float barX;
+            
+            float lineX;
             if( mPositionByFft )
             {
-                
                 if( Rand::randFloat() < 0.5f )
                 {
-                    barX = (screenWidth/2.0f) + (x/dataSize)*(screenWidth/2.0f);
+                    lineX = (barRange/2.0f) + (x/dataSize)*(barRange/2.0f);
                 }
                 else
                 {
-                    barX = (screenWidth/2.0f) - (x/dataSize)*(screenWidth/2.0f);
+                    lineX = (barRange/2.0f) - (x/dataSize)*(barRange/2.0f);
                 }
             }
             else
             {
-                barX = Rand::randFloat(0.0f,screenWidth);
+                lineX = Rand::randFloat(0.0f,barRange);
             }
             
-            ColorA color( mColor.r, mColor.g, mColor.b, mIntensity );
+            ColorA color( mColor.r, mColor.g, mColor.b, mColor.a );
             if( mAlphaByFft )
             {
-                color.a = mIntensity + y;
+                color.a = mColor.a + y;
             }
             
             gl::color( color );
             
             glBegin( GL_QUADS );
-            // bottom
-            glVertex2f( barX, 0.0f );
-            glVertex2f( barX + width, 0.0f );
-            // top
-            glVertex2f( barX + width, screenHeight );
-            glVertex2f( barX, screenHeight );
+            if( mVertical )
+            {
+                // bottom
+                glVertex2f( lineX,          barOffset );
+                glVertex2f( lineX + width,  barOffset );
+                // top
+                glVertex2f( lineX + width,  barOffset + barSize );
+                glVertex2f( lineX,          barOffset + barSize );
+            }
+            else
+            {
+                // left
+                glVertex2f( barOffset, lineX );
+                glVertex2f( barOffset, lineX + width );
+                // right
+                glVertex2f( barOffset + barSize, lineX + width );
+                glVertex2f( barOffset + barSize, lineX );
+            }
             glEnd();
         }
 	}
-    gl::enableAlphaBlending();
-    gl::popMatrices();
-
 }

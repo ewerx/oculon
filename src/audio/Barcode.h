@@ -31,17 +31,19 @@ public:
     void draw();
     
 private:
+    void drawBar(const int index);
+    
+    
     ci::ColorAf mColor;
     float       mBaseWidth;
     float       mMaxWidth;
-    float       mIntensity;
     float       mThreshold;
     
     bool        mWidthByFft;
     bool        mAlphaByFft;
     bool        mPositionByFft;
     
-    int         mBars;
+    int         mNumBars;
     int         mBarGap;
     bool        mVertical;
     
