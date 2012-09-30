@@ -144,8 +144,8 @@ void Quake::draw()
     */
     
     // marker
-    const float MARKER_SIZE_FACTOR = 2.0f;
-    const int num_circles = (int)(mEventData->getMag());
+    const float MARKER_SIZE_FACTOR = 0.01f;//2.0f;
+    const int num_circles = (int)(mEventData->getMag())/100;
     const float spacing = 5.0f;
     const float colorRamp = 0.075f;
     for( int i = 0; i < num_circles; ++i )

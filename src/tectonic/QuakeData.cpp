@@ -23,8 +23,12 @@ using std::string;
 using std::istringstream;
 using std::stringstream;
 
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/date_time.hpp>
 using namespace boost::posix_time;
+using namespace boost;
 
 // ----------------------------------------------------------------
 // 
@@ -32,6 +36,7 @@ QuakeEvent::QuakeEvent()
 : mLat(0.0f)
 , mLong(0.0f)
 , mMag(0.0f)
+, mType(0)
 , mTitle("")
 {
     
@@ -39,11 +44,12 @@ QuakeEvent::QuakeEvent()
 
 // ----------------------------------------------------------------
 // 
-QuakeEvent::QuakeEvent( float aLat, float aLong, float aMag, float aDepth, ptime& aTimeStamp, string aTitle )
+QuakeEvent::QuakeEvent( float aLat, float aLong, float aMag, float aDepth, int aType, ptime& aTimeStamp, string aTitle )
 : mLat(aLat)
 , mLong(aLong)
 , mMag(aMag)
 , mDepth(aDepth)
+, mType(aType)
 , mTimeStamp(aTimeStamp)
 , mTitle(aTitle)
 {
@@ -85,11 +91,11 @@ QuakeData::~QuakeData()
 
 // ----------------------------------------------------------------
 // 
-void QuakeData::addEvent( float aLat, float aLong, float aMag, float aDepth, ptime& aTimeStamp, std::string aTitle )
+void QuakeData::addEvent( float aLat, float aLong, float aMag, float aDepth, int aType, ptime& aTimeStamp, std::string aTitle )
 {
-	//mQuakeEvents.push_back( QuakeEvent( aLat, aLong, aMag, aDepth, aTimeStamp, aTitle ) );
-    time_t epochTimestamp = Utils::toEpochSeconds(aTimeStamp);
-    mQuakeEvents[epochTimestamp] = QuakeEvent( aLat, aLong, aMag, aDepth, aTimeStamp, aTitle );
+	mQuakeEvents.push_back( QuakeEvent( aLat, aLong, aMag, aDepth, aType, aTimeStamp, aTitle ) );
+    //time_t epochTimestamp = Utils::toEpochSeconds(aTimeStamp);
+    //mQuakeEvents[epochTimestamp] = QuakeEvent( aLat, aLong, aMag, aDepth, aType, aTimeStamp, aTitle );
 }
 
 //
@@ -129,7 +135,8 @@ void USGSQuakeData::parseData( std::string url )
             ptime timeStamp;
             timestampLine >> timeStamp;
             
-            addEvent( locationVector.x, locationVector.y, magnitude, depth, timeStamp, title );
+            const int type = 0;
+            addEvent( locationVector.x, locationVector.y, magnitude, depth, type, timeStamp, title );
         } 
         catch(std::exception& e) 
         {
@@ -138,4 +145,106 @@ void USGSQuakeData::parseData( std::string url )
 	}
 	//console() << xml << std::endl;
     console() << "[tectonic] " << mQuakeEvents.size() << " events added" << std::endl;
+}
+
+// ----------------------------------------------------------------
+//
+void NuclearEventData::parseData( std::string url )
+{
+    // format: M/d/YYYY H:M:S
+    time_input_facet* p_facet = new time_input_facet("%m/%d/%Y %H:%M:%S");
+    // locale takes ownership of p_facet
+    locale timeStampLocale(locale(""), p_facet);
+    
+    std::string line;
+	std::ifstream myfile( url.c_str() );
+	
+	if( myfile.is_open() )
+    {
+		int i=0;
+		while( !myfile.eof() )
+        {
+			std::getline( myfile, line );
+            if( line[0] != '#' )
+            {
+                ++i;
+                int type = 0;
+                float magnitude = 0.0f;
+                float depth = 0.0f;
+                ptime timeStamp;
+                string title = "";
+                float lat = 0.0f;
+                float lon = 0.0f;
+                
+                tokenizer< escaped_list_separator<char> > tokens(line);
+                std::string name;
+                int col = 0;
+                //Country,Source Type,Date Time,Latitude,Longitude,Depth,Yield,Name
+                BOOST_FOREACH(std::string t, tokens)
+                {
+                    if( t.length() > 0 )
+                    {
+                        switch(col)
+                        {
+                            case 1://Type
+                                if( t[0] == 'A' )//Atomspheric
+                                {
+                                    type = 0;
+                                }
+                                else//Under...
+                                {
+                                    if( t[5] == 'g' )
+                                    {
+                                        type = 1;//Underground
+                                    }
+                                    else
+                                    {
+                                        type = 2;//Underwater
+                                    }
+                                }
+                                break;
+                                
+                            case 2://DateTime
+                            {
+                                stringstream timestampLine( t );
+                                timestampLine.imbue(timeStampLocale);
+                                
+                                timestampLine >> timeStamp;
+                            }
+                                break;
+                                
+                            case 3://Latitude
+                                lat = lexical_cast<float>(t);
+                                break;
+                                
+                            case 4://Longitude
+                                lon = lexical_cast<float>(t);
+                                break;
+                                
+                            case 5://Depth
+                                depth = lexical_cast<float>(t);
+                                break;
+                                
+                            case 6://Yield
+                                magnitude = lexical_cast<float>(t);
+                                break;
+                                
+                            case 7://Name
+                                title = t;
+                                
+                            default:
+                                break;
+                        }
+                        
+                    }
+                    
+                    col++;
+                }
+
+                addEvent( lat, lon, magnitude, depth, type, timeStamp, title );
+            }
+        }
+	}
+        
+    console() << "[nuclear] " << mQuakeEvents.size() << " events added" << std::endl;
 }

@@ -152,6 +152,7 @@
 		7C783E9715E9C82900492299 /* starData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C783E9615E9C82900492299 /* starData.csv */; };
 		7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783EE815F26ED000492299 /* StarCam.cpp */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
+		7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C7BD60B160D5F5F00783008 /* nukes.csv */; };
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
 		7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7B1547B00600CF488D /* QuakeData.cpp */; };
 		7C832E7F154A4E0200CF488D /* Quake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7D154A4E0200CF488D /* Quake.cpp */; };
@@ -241,7 +242,6 @@
 		7C9A0548153121A500EB0452 /* pf_tempesta_seven.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C9A0547153121A500EB0452 /* pf_tempesta_seven.ttf */; };
 		7CA51EFD152BE62C004AF8FD /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA51EFB152BE62C004AF8FD /* MotionBlurRenderer.cpp */; };
 		7CAF998614E367FB00E6D9F3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAF998514E367FB00E6D9F3 /* Utils.cpp */; };
-		7CAFEE63158C1808005B338D /* starData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7CAFEE61158C1808005B338D /* starData.txt */; };
 		7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */ = {isa = PBXBuildFile; fileRef = 7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
 		7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB39D31156DCDD10093A8ED /* Sol.cpp */; };
@@ -533,6 +533,7 @@
 		7C783EEB15F26F4300492299 /* StarCam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StarCam.h; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
 		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
+		7C7BD60B160D5F5F00783008 /* nukes.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = nukes.csv; path = data/nukes.csv; sourceTree = "<group>"; };
 		7C832E751547AD6700CF488D /* Tectonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tectonic.cpp; sourceTree = "<group>"; };
 		7C832E761547AD6700CF488D /* Tectonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tectonic.h; sourceTree = "<group>"; };
 		7C832E7A1547AFEC00CF488D /* QuakeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuakeData.h; sourceTree = "<group>"; };
@@ -640,7 +641,6 @@
 		7CA51EFC152BE62C004AF8FD /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
 		7CAF998514E367FB00E6D9F3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7CAF998814E3681200E6D9F3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
-		7CAFEE61158C1808005B338D /* starData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = starData.txt; path = data/starData.txt; sourceTree = "<group>"; };
 		7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = usgs_earthquakes_30days.xhtml; path = data/usgs_earthquakes_30days.xhtml; sourceTree = "<group>"; };
 		7CB17ECF15310B330074572D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interface.h; path = interface/Interface.h; sourceTree = "<group>"; };
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
@@ -1600,9 +1600,9 @@
 		7CAFEE60158C17F2005B338D /* data */ = {
 			isa = PBXGroup;
 			children = (
+				7C7BD60B160D5F5F00783008 /* nukes.csv */,
 				7C783E9115E982DE00492299 /* ExoplanetArchive.csv */,
 				7C783E9615E9C82900492299 /* starData.csv */,
-				7CAFEE61158C1808005B338D /* starData.txt */,
 				7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */,
 			);
 			name = data;
@@ -1913,7 +1913,6 @@
 				7C13446C158992AD0032017E /* spectrum.png in Resources */,
 				7C13446D158992AD0032017E /* star.png in Resources */,
 				7C13446E158992AD0032017E /* starGlow.png in Resources */,
-				7CAFEE63158C1808005B338D /* starData.txt in Resources */,
 				7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */,
 				7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */,
 				7C8F153A15BB4B1700BAD08D /* glow.png in Resources */,
@@ -1937,6 +1936,7 @@
 				7C3BB45115F55DC400A4E384 /* nebulaCorona.png in Resources */,
 				7C3BB45215F55DC400A4E384 /* smallGrid.png in Resources */,
 				7C3BB45315F55DC400A4E384 /* spectrumCorona.png in Resources */,
+				7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,13 +17,14 @@ class QuakeEvent
 {
 public:
     QuakeEvent();
-    QuakeEvent( float aLat, float aLong, float aMag, float aDepth, boost::posix_time::ptime& aTimeStamp, std::string aTitle );
+    QuakeEvent( float aLat, float aLong, float aMag, float aDepth, int aType, boost::posix_time::ptime& aTimeStamp, std::string aTitle );
     virtual ~QuakeEvent();
     
     float getLat() const                        { return mLat; }
     float getLong() const                       { return mLong; }
     float getMag() const                        { return mMag; }
     float getDepth() const                      { return mDepth; }
+    int   getType() const                       { return mType; }
     boost::posix_time::ptime& getTimeStamp()    { return mTimeStamp; }
     const std::string& getTitle() const         { return mTitle; }
     
@@ -34,6 +35,7 @@ protected:
 	float       mLong;
 	float       mMag;
     float       mDepth;
+    int         mType;
     boost::posix_time::ptime  mTimeStamp;
     
 	std::string mTitle;
@@ -45,21 +47,20 @@ protected:
 class QuakeData
 {
 public:
-    //typedef std::vector<QuakeEvent> EventList;
-    typedef std::map<time_t,QuakeEvent> EventMap;
+    typedef std::vector<QuakeEvent> EventMap;
+    //typedef std::map<time_t,QuakeEvent> EventMap;
 public:
     QuakeData();
     virtual ~QuakeData();
     
     virtual void parseData(std::string url) = 0;
     
-    void addEvent( float aLat, float aLong, float aMag, float aDepth, boost::posix_time::ptime& aTimeStamp, std::string aTitle );
+    void addEvent( float aLat, float aLong, float aMag, float aDepth, int aType, boost::posix_time::ptime& aTimeStamp, std::string aTitle );
     
     EventMap::const_iterator   eventsBegin() const     { return mQuakeEvents.begin(); }
     EventMap::const_iterator   eventsEnd() const       { return mQuakeEvents.end(); }
     
 protected:
-    //std::vector<QuakeEvent> mQuakeEvents;
     EventMap mQuakeEvents;
 };
 
@@ -68,6 +69,12 @@ class USGSQuakeData : public QuakeData
 public:
     void parseData(std::string url);
     
+};
+
+class NuclearEventData : public QuakeData
+{
+public:
+    void parseData(std::string url);
 };
 
 //

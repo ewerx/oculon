@@ -48,10 +48,18 @@ public:
     bool bpmTap();
     
 protected:
+    enum eDataSource
+    {
+        DATASOURCE_QUAKES,
+        DATASOURCE_NUKES,
+        
+        DATASOURCE_COUNT
+    };
+    
     void setupInterface();
     void setupDebugInterface();
     
-    void initQuakes();
+    void initEvents(const eDataSource src);
     void clearQuakes();
     void drawEarthMap();
     void drawPoints();
@@ -63,7 +71,7 @@ protected:
     void triggerByTime(double dt);
     
 private:
-    QuakeData* mData;
+    QuakeData* mData[DATASOURCE_COUNT];
     typedef std::vector<Quake*> QuakeList;
     QuakeList mQuakes;
     QuakeList mActiveQuakes;

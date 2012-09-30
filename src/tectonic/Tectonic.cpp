@@ -29,7 +29,8 @@ Tectonic::Tectonic()
 : Scene("tectonic")
 , mDisplayListPoints(0)
 {
-    mData = new USGSQuakeData();
+    mData[DATASOURCE_QUAKES] = new USGSQuakeData();
+    mData[DATASOURCE_NUKES] = new NuclearEventData();
     
     for( int i=0; i < TB_COUNT; ++i )
     {
@@ -50,7 +51,10 @@ Tectonic::~Tectonic()
         mTextBox[i] = NULL;
     }
     
-    delete mData;
+    for( int i=0; i < DATASOURCE_COUNT; ++i )
+    {
+        delete mData[i];
+    }
 }
 
 // ----------------------------------------------------------------
@@ -75,24 +79,27 @@ void Tectonic::setup()
     
     //mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
     //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
-    mData->parseData("/Volumes/cruxpod/oculondata/month.xhtml");
+    mData[DATASOURCE_QUAKES]->parseData("/Volumes/cruxpod/oculondata/month.xhtml");
+    mData[DATASOURCE_NUKES]->parseData(App::getResourcePath("nukes.csv").generic_string());
     
-    initQuakes();
+    //initEvents(DATASOURCE_QUAKES);
+    initEvents(DATASOURCE_NUKES);
     
     reset();
 }
 
 // ----------------------------------------------------------------
 //
-void Tectonic::initQuakes()
+void Tectonic::initEvents(const eDataSource src)
 {
     clearQuakes();
     
-    for (QuakeData::EventMap::const_iterator it = mData->eventsBegin();
-         it != mData->eventsEnd();
+    for (QuakeData::EventMap::const_iterator it = mData[src]->eventsBegin();
+         it != mData[src]->eventsEnd();
          ++it)
     {
-        const QuakeEvent* eventData = &((*it).second);
+        //const QuakeEvent* eventData = &((*it).second);
+        const QuakeEvent* eventData = &(*it);
         mQuakes.push_back( new Quake(this, eventData, mLongitudeOffsetDegrees) );
         //console() << "Quake" << mQuakes.size() << ": " << eventData->toString() << std::endl;
     }
@@ -268,7 +275,7 @@ bool Tectonic::triggerNextQuake()
             //console() << " --> " << mActiveQuakes.size() << std::endl;
             assert(mQuakes[mCurrentIndex] != NULL);
             
-            const float durationMagnitudeMultiplier = 0.25f;
+            const float durationMagnitudeMultiplier = 0.0025f;
             float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
             if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
             
