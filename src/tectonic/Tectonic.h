@@ -25,8 +25,19 @@
 class QuakeData;
 class TextEntity;
 
+class SineWave
+{
+public:
+	SineWave( uint32_t freq, float duration );
+	~SineWave() {}
+	void getData( uint64_t inSampleOffset, uint32_t inSampleCount, ci::audio::Buffer32f *ioBuffer );
+private:
+	uint32_t mFreq;
+	float mDuration;
+};
+
 //
-// Audio input tests
+// Tectonic
 //
 class Tectonic : public Scene
 {
@@ -46,6 +57,7 @@ public:
     // callbacks
     bool triggerNextQuake();
     bool bpmTap();
+    bool changeDataSource();
     
 protected:
     enum eDataSource
@@ -75,6 +87,7 @@ private:
     typedef std::vector<Quake*> QuakeList;
     QuakeList mQuakes;
     QuakeList mActiveQuakes;
+    int mDataSource;
     
     struct IsTriggeredQuakeFinished
     {
@@ -91,6 +104,12 @@ private:
     bool mShowMap;
     bool mShowLabels;
     bool mShowAllPoints;
+    ci::Color mMarkerColor;
+    float mEarthAlpha;
+    bool mColorNukesByType;
+    
+    // audio
+    bool mGenerateAudio;
     
     // points
     GLuint mDisplayListPoints;

@@ -14,7 +14,6 @@
 
 #include "cinder/Timeline.h"
 
-using namespace ci;
 using namespace std;
 
 class Tectonic;
@@ -32,6 +31,7 @@ public:
     virtual void draw();
     
     // new methods
+    void draw( const ci::Color& markerColor, const float ringsMultiplier, const float radiusMultiplier );
     void setEvent( const QuakeEvent* event, const int mapOffset );
     const QuakeEvent*   getEventData() const    { return mEventData; }
     
@@ -59,7 +59,7 @@ protected:
     };
     eState mState;
     
-    Anim<float> mGridLinesAlpha;
-    Anim<float> mMarkerAlpha;
-    Anim<float> mMarkerSize;
+    ci::Anim<float> mGridLinesAlpha;
+    ci::Anim<float> mMarkerAlpha;
+    ci::Anim<float> mMarkerSize;
 };

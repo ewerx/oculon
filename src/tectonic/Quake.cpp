@@ -113,6 +113,11 @@ void Quake::update(double dt)
 
 void Quake::draw()
 {
+    assert(false && "use the custom draw");
+}
+
+void Quake::draw(const ci::Color& markerColor, const float ringsMultiplier, const float radiusMultiplier )
+{
     if( mState != STATE_TRIGGERED )
     {
         return;
@@ -125,37 +130,39 @@ void Quake::draw()
     const float screenHeight = mParentScene->getApp()->getViewportHeight();
     //const float width = 1.0f;
     
-    glColor4f(1.0f, 1.0f, 1.0f, mGridLinesAlpha);
+    gl::color( 1.0f, 1.0f, 1.0f, mGridLinesAlpha );
     gl::drawLine( Vec2f(mPosition.x, 0.0f), Vec2f(mPosition.x, screenHeight) );
     gl::drawLine( Vec2f(0.0f, mPosition.y), Vec2f(screenWidth, mPosition.y) );
     /*
-    glBegin( GL_QUADS );
-    glVertex2f( mPosition.x, 0.0f );
-    glVertex2f( mPosition.x + width, 0.0f );
-    glVertex2f( mPosition.x + width, screenHeight );
-    glVertex2f( mPosition.x, screenHeight );
-    glEnd();
-    glBegin( GL_QUADS );
-    glVertex2f( mPosition.x, 0.0f );
-    glVertex2f( mPosition.x + width, 0.0f );
-    glVertex2f( mPosition.x + width, screenHeight );
-    glVertex2f( mPosition.x, screenHeight );
-    glEnd();
-    */
+     glBegin( GL_QUADS );
+     glVertex2f( mPosition.x, 0.0f );
+     glVertex2f( mPosition.x + width, 0.0f );
+     glVertex2f( mPosition.x + width, screenHeight );
+     glVertex2f( mPosition.x, screenHeight );
+     glEnd();
+     glBegin( GL_QUADS );
+     glVertex2f( mPosition.x, 0.0f );
+     glVertex2f( mPosition.x + width, 0.0f );
+     glVertex2f( mPosition.x + width, screenHeight );
+     glVertex2f( mPosition.x, screenHeight );
+     glEnd();
+     */
     
     // marker
-    const float MARKER_SIZE_FACTOR = 0.01f;//2.0f;
-    const int num_circles = (int)(mEventData->getMag())/100;
+    const int num_circles = std::max( 2, (int)((int)(mEventData->getMag())*ringsMultiplier) );
     const float spacing = 5.0f;
     const float colorRamp = 0.075f;
     for( int i = 0; i < num_circles; ++i )
     {
-        glColor4f(1.0f, 0.0f, 0.0f, mMarkerAlpha - i*colorRamp);
-        const float radius = mMarkerSize * (mEventData->getMag()*MARKER_SIZE_FACTOR + i*spacing);
-        if( i == 0 ) {
+        gl::color(markerColor.r, markerColor.g, markerColor.b, mMarkerAlpha - i*colorRamp);
+        float maxRadius = std::max( 3.0f + i*spacing, (mEventData->getMag()*radiusMultiplier + i*spacing) );
+        float radius = mMarkerSize * maxRadius;
+        if( i == 0 )
+        {
             gl::drawSolidCircle(Vec2f(mPosition.x, mPosition.y), radius);
         }
-        else {
+        else
+        {
             gl::drawStrokedCircle(Vec2f(mPosition.x, mPosition.y), radius);
         }
     }

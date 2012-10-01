@@ -115,6 +115,7 @@
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
 		7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */; };
+		7C687E9F1617FD8D0006150F /* earthGray.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C687E9E1617FD8D0006150F /* earthGray.png */; };
 		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
@@ -471,6 +472,7 @@
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
 		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
 		7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = eclipse_mapping_pattern.jpg; sourceTree = "<group>"; };
+		7C687E9E1617FD8D0006150F /* earthGray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthGray.png; path = resources/images/tectonic/earthGray.png; sourceTree = SOURCE_ROOT; };
 		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -1640,6 +1642,7 @@
 			isa = PBXGroup;
 			children = (
 				7C8C0C1A154F764F006C35DA /* earthMask.png */,
+				7C687E9E1617FD8D0006150F /* earthGray.png */,
 				7C8C0C1B154F764F006C35DA /* earthNormal.png */,
 				7C8C0C18154F7648006C35DA /* earthDiffuse.png */,
 			);
@@ -1937,6 +1940,7 @@
 				7C3BB45215F55DC400A4E384 /* smallGrid.png in Resources */,
 				7C3BB45315F55DC400A4E384 /* spectrumCorona.png in Resources */,
 				7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */,
+				7C687E9F1617FD8D0006150F /* earthGray.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

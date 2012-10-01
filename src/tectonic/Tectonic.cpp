@@ -17,6 +17,10 @@
 #include "Resources.h"
 #include "Binned.h"
 
+#include "cinder/audio/Output.h"
+#include "cinder/audio/Callback.h"
+#include "cinder/audio/PcmBuffer.h"
+
 #include "cinder/Rand.h"
 
 
@@ -72,18 +76,20 @@ void Tectonic::setup()
     mShowLabels = true;
     mShowAllPoints = false;
     mSendToBinned = true;
+    mDataSource = DATASOURCE_NUKES;
+    mMarkerColor = Color(1.0f,0.0f,0.0f);
+    mEarthAlpha = 0.0f;
+    mColorNukesByType = true;
+    mGenerateAudio = false;
     
     // assets
-    mEarthDiffuse = gl::Texture( loadImage( loadResource( RES_EARTHDIFFUSE ) ) );
+    mEarthDiffuse = gl::Texture( loadImage( loadResource( "earthGray.png" ) ) );
     mEarthDiffuse.setWrap( GL_REPEAT, GL_REPEAT );
     
     //mData->parseData("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml");
     //mData->parseData("http://earthquake.usgs.gov/earthquakes/feed/atom/2.5/month");
-    mData[DATASOURCE_QUAKES]->parseData("/Volumes/cruxpod/oculondata/month.xhtml");
+    mData[DATASOURCE_QUAKES]->parseData(App::getResourcePath("usgs_earthquakes_30days.xhtml").generic_string());
     mData[DATASOURCE_NUKES]->parseData(App::getResourcePath("nukes.csv").generic_string());
-    
-    //initEvents(DATASOURCE_QUAKES);
-    initEvents(DATASOURCE_NUKES);
     
     reset();
 }
@@ -141,19 +147,25 @@ void Tectonic::clearQuakes()
 //
 void Tectonic::setupInterface()
 {
+    mInterface->addEnum(CreateEnumParam( "Data Source", (int*)(&mTriggerMode) )
+                        .maxValue(DATASOURCE_COUNT)
+                        .isVertical()
+                        .oscReceiver(mName,"datasource"))->registerCallback( this, &Tectonic::changeDataSource );
     mInterface->addEnum(CreateEnumParam( "Trigger Mode", (int*)(&mTriggerMode) )
                         .maxValue(TRIGGER_COUNT)
                         .isVertical()
                         .oscReceiver(mName,"triggermode"));
     mInterface->addParam(CreateFloatParam("BPM", &mBpm)
-                         .minValue(60.0f)
-                         .maxValue(150.0f)
+                         .minValue(40.0f)
+                         .maxValue(300.0f)
                          .oscReceiver(mName,"bpm")
                          .sendFeedback());    
     mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)
                           .oscReceiver(mName,"quaketrigger"))->registerCallback( this, &Tectonic::triggerNextQuake );
     mInterface->addButton(CreateTriggerParam("BPM Tap", NULL)
                           .oscReceiver(mName,"bpmtap"))->registerCallback( this, &Tectonic::bpmTap );
+    mInterface->addParam(CreateFloatParam("Earth Alpha", &mEarthAlpha)
+                         .oscReceiver(mName,"earthalpha"));
 }
 
 // ----------------------------------------------------------------
@@ -170,11 +182,11 @@ void Tectonic::setupDebugInterface()
 //
 void Tectonic::reset()
 {
+    initEvents(static_cast<eDataSource>(mDataSource));
     mCurrentIndex = 0;
     mBpmTriggerTime = 60.0f / mBpm;
     mActiveQuakes.clear();
     mIsCapturing = false;
-    
 }
 
 // ----------------------------------------------------------------
@@ -275,7 +287,8 @@ bool Tectonic::triggerNextQuake()
             //console() << " --> " << mActiveQuakes.size() << std::endl;
             assert(mQuakes[mCurrentIndex] != NULL);
             
-            const float durationMagnitudeMultiplier = 0.0025f;
+            // time to keep dot on screen proportional to magnitude
+            const float durationMagnitudeMultiplier = (mDataSource == DATASOURCE_NUKES) ? 0.00025f : 0.25f;
             float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
             if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
             
@@ -297,6 +310,13 @@ bool Tectonic::triggerNextQuake()
                                                    20.0f + event->getMag()*radMult, 
                                                    100.0f + event->getDepth()*forceMult);
                 }
+            }
+            
+            if( mGenerateAudio )
+            {
+                const float freqMultiplier = 1.0f - (mQuakes[mCurrentIndex]->getEventData()->getMag() / 50000.0f);
+                uint32_t freq = 15 + freqMultiplier * 500;
+                audio::Output::play( audio::createCallback( new SineWave( freq, duration ), &SineWave::getData, true ) );
             }
         }
     }
@@ -356,29 +376,48 @@ void Tectonic::draw()
 //
 void Tectonic::drawEarthMap()
 {
-    if( mShowMap )
-    {
-        gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
-        //gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
-        const float textureWidth = mEarthDiffuse.getCleanWidth();
-        const float screenWidth = mApp->getViewportWidth();
-        const float screenHeight = mApp->getViewportHeight();
-        const float textureOffset = ((float)(mLongitudeOffsetDegrees)/360.0f) * textureWidth;
-        
-        gl::draw( mEarthDiffuse, Area( -textureOffset, 0, textureWidth-textureOffset, mEarthDiffuse.getCleanHeight() ), Rectf( 0, 0, screenWidth, screenHeight ) );
-    }
+    gl::color( 1.0f, 1.0f, 1.0f, mEarthAlpha );
+    //gl::draw( mEarthDiffuse, Rectf( 0, 0, mApp->getViewportWidth(), mApp->getViewportHeight() ) );
+    const float textureWidth = mEarthDiffuse.getCleanWidth();
+    const float screenWidth = mApp->getViewportWidth();
+    const float screenHeight = mApp->getViewportHeight();
+    const float textureOffset = ((float)(mLongitudeOffsetDegrees)/360.0f) * textureWidth;
+    
+    gl::draw( mEarthDiffuse, Area( -textureOffset, 0, textureWidth-textureOffset, mEarthDiffuse.getCleanHeight() ), Rectf( 0, 0, screenWidth, screenHeight ) );
 }
 
 // ----------------------------------------------------------------
 //
 void Tectonic::drawQuakes()
 {
+    const float ringsMultiplier = 0.01f;
+    const float radiusMultiplier = (mDataSource == DATASOURCE_NUKES) ? 0.005f : 0.01f;
     gl::disableDepthRead();
     for(QuakeList::iterator it = mActiveQuakes.begin(); 
         it != mActiveQuakes.end();
         ++it)
     {
-        (*it)->draw();
+        Color color = mMarkerColor;
+        if( mDataSource == DATASOURCE_NUKES && mColorNukesByType )
+        {
+            switch ((*it)->getEventData()->getType()) {
+                case 0:// Atmospheric
+                    color = Color(1.0f,0.5f,0.0f);
+                    break;
+                    
+                case 1:// Underground
+                    color = Color(1.0f,0.0f,0.0f);
+                    break;
+                    
+                case 2:// Underwater
+                    color = Color(0.0f,0.0f,1.0f);
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+        (*it)->draw(color, ringsMultiplier, radiusMultiplier);
     }
     //gl::enableDepthRead();
 }
@@ -459,3 +498,41 @@ bool Tectonic::handleKeyDown(const KeyEvent& keyEvent)
     
     return handled;
 }
+
+// ----------------------------------------------------------------
+//
+bool Tectonic::changeDataSource()
+{
+    reset();
+    return false;
+}
+
+// ----------------------------------------------------------------
+//
+
+SineWave::SineWave( uint32_t freq, float duration )
+: mFreq( freq ), mDuration( duration )
+{
+}
+
+// ----------------------------------------------------------------
+//
+void SineWave::getData( uint64_t inSampleOffset, uint32_t inSampleCount, ci::audio::Buffer32f *ioBuffer )
+{
+	if( ( inSampleOffset / 44100.0f ) > mDuration ) {
+		ioBuffer->mDataByteSize = 0;
+		return;
+	}
+	
+	uint64_t idx = inSampleOffset;
+	
+	for( int  i = 0; i < inSampleCount; i++ ) {
+		
+		float val = ci::math<float>::sin( idx * ( mFreq / 44100.0f ) * 2.0f * M_PI );
+		
+		ioBuffer->mData[i*ioBuffer->mNumberChannels] = val;
+		ioBuffer->mData[i*ioBuffer->mNumberChannels + 1] = val;
+		idx++;
+	}
+}
+
