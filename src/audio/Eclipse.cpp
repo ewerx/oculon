@@ -85,14 +85,14 @@ void Eclipse::setup()
     mMaxThickness = mDim/2.0f;
     mRandomizeFaces = false;
     mRandomizeSignal = false;
-    mUseFftData = false;
+    mUseFftData = true;
     mSignalScale = 4.0f;
     
     mNumSnakes = 4;
     mSnakeLength = mDim/1.2f;
     mMinSnakeSpeed = 15.0f;
     mMaxSnakeSpeed = 15.0f;
-    mSnakeDirMode = SNAKEDIR_UNISON;
+    mSnakeDirMode = SNAKEDIR_ALTERNATE;
     mSnakeRounded = false;
     mSnakeRandomSpeed = false;
     mSnakeSpeedMultiplier = 1.0f;
@@ -136,7 +136,7 @@ void Eclipse::setupInterface()
                           .oscReceiver(name,"snakereset"))->registerCallback( this, &Eclipse::resetSnakes );
     interface->addParam(CreateFloatParam("Snake Length", &mSnakeLength)
                         .minValue(1.0f)
-                        .maxValue(mDim*2.0f)
+                        .maxValue(mDim*4.0f)
                         .oscReceiver(name,"snakelength"));
     interface->addParam(CreateFloatParam("Snake Min Speed", &mMinSnakeSpeed)
                         .minValue(mDim/2.0f)
