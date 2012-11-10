@@ -15,6 +15,7 @@
 #include "Barcode.h"
 #include "Eclipse.h"
 #include "Polyhedron.h"
+#include "Circles.h"
 
 #include "KissFFT.h"
 #include "cinder/Rand.h"
@@ -31,6 +32,7 @@ AudioSignal::AudioSignal()
     mBarcode = new Barcode(this);
     mEclipse = new Eclipse(this);
     mPolyhedron = new Polyhedron(this);
+    mCircles = new Circles(this);
 }
 
 AudioSignal::~AudioSignal()
@@ -39,6 +41,7 @@ AudioSignal::~AudioSignal()
     delete mBarcode;
     delete mEclipse;
     delete mPolyhedron;
+    delete mCircles;
 }
 
 void AudioSignal::setup()
@@ -60,8 +63,11 @@ void AudioSignal::setup()
     mEnableEclipse = false;
     mEclipse->setup();
     
-    mEnablePolyhedron = true;
+    mEnablePolyhedron = false;
     mPolyhedron->setup();
+    
+    mEnableCircles = false;
+    mCircles->setup();
 }
 
 void AudioSignal::reset()
@@ -70,6 +76,7 @@ void AudioSignal::reset()
     mSignalScope->reset();
     mEclipse->reset();
     mPolyhedron->reset();
+    mCircles->reset();
 }
 
 void AudioSignal::setupInterface()
@@ -82,6 +89,8 @@ void AudioSignal::setupInterface()
                          .oscReceiver(mName,"signal"));
     mInterface->addParam(CreateBoolParam( "Eclipse", &mEnableEclipse )
                          .oscReceiver(mName,"eclipse"));
+    mInterface->addParam(CreateBoolParam( "Circles", &mEnableCircles )
+                         .oscReceiver(mName,"circles"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -95,6 +104,7 @@ void AudioSignal::setupInterface()
     mBarcode->setupInterface();
     mEclipse->setupInterface();
     mPolyhedron->setupInterface();
+    mCircles->setupInterface();
 }
 
 void AudioSignal::setupDebugInterface()
@@ -105,6 +115,7 @@ void AudioSignal::setupDebugInterface()
     mBarcode->setupDebugInterface();
     mEclipse->setupDebugInterface();
     mPolyhedron->setupDebugInterface();
+    mCircles->setupDebugInterface();
 }
 
 void AudioSignal::update(double dt)
@@ -126,6 +137,10 @@ void AudioSignal::update(double dt)
     if( mEnablePolyhedron )
     {
         mPolyhedron->update(dt);
+    }
+    if( mEnableCircles )
+    {
+        mCircles->update(dt);
     }
 }
 
@@ -167,6 +182,11 @@ void AudioSignal::drawSubScenes()
     if( mEnablePolyhedron )
     {
         mPolyhedron->draw();
+    }
+    
+    if( mEnableCircles )
+    {
+        mCircles->draw();
     }
 }
 

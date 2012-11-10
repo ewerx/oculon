@@ -246,6 +246,7 @@
 		7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */ = {isa = PBXBuildFile; fileRef = 7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
 		7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB39D31156DCDD10093A8ED /* Sol.cpp */; };
+		7CC3BE4416191F99009F59D3 /* Circles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3BE4216191F99009F59D3 /* Circles.cpp */; };
 		7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C855154A6DDE0057E409 /* earth_frag.glsl */; };
 		7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C856154A6DDE0057E409 /* quake_frag.glsl */; };
 		7CE9C85A154A6DDE0057E409 /* quake_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C857154A6DDE0057E409 /* quake_vert.glsl */; };
@@ -648,6 +649,8 @@
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7CB39D31156DCDD10093A8ED /* Sol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sol.cpp; sourceTree = "<group>"; };
 		7CB39D32156DCDD10093A8ED /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
+		7CC3BE4216191F99009F59D3 /* Circles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Circles.cpp; sourceTree = "<group>"; };
+		7CC3BE4316191F99009F59D3 /* Circles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circles.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
 		7CE9C855154A6DDE0057E409 /* earth_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earth_frag.glsl; sourceTree = "<group>"; };
 		7CE9C856154A6DDE0057E409 /* quake_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quake_frag.glsl; sourceTree = "<group>"; };
@@ -1741,6 +1744,8 @@
 				7C1BA52715E9408D005BE669 /* AudioSignal.h */,
 				7C1BA52815E9408D005BE669 /* Eclipse.cpp */,
 				7C1BA52915E9408D005BE669 /* Eclipse.h */,
+				7CC3BE4216191F99009F59D3 /* Circles.cpp */,
+				7CC3BE4316191F99009F59D3 /* Circles.h */,
 				7C1BA53815E940D9005BE669 /* Polyhedron.cpp */,
 				7C1BA53915E940D9005BE669 /* Polyhedron.h */,
 				7C1BA52E15E9408D005BE669 /* SignalScope.cpp */,
@@ -2080,6 +2085,7 @@
 				7C3BB43515F55B8D00A4E384 /* star.frag in Sources */,
 				7C3BB43615F55B8D00A4E384 /* star.vert in Sources */,
 				7C48581F16062A2C008895F7 /* SubScene.cpp in Sources */,
+				7CC3BE4416191F99009F59D3 /* Circles.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

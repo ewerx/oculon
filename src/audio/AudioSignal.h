@@ -19,6 +19,7 @@ class SignalScope;
 class Barcode;
 class Eclipse;
 class Polyhedron;
+class Circles;
 
 //
 // Audio input tests
@@ -69,5 +70,8 @@ private:
     
     Polyhedron* mPolyhedron;
     bool mEnablePolyhedron;
+    
+    Circles* mCircles;
+    bool mEnableCircles;
 };
 
