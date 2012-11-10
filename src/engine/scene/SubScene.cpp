@@ -22,12 +22,24 @@ using namespace std;
 // SubScene
 // 
 
-SubScene::SubScene(Scene* scene)
+SubScene::SubScene(Scene* scene, const std::string& name)
 : mParentScene(scene)
+, mName(name)
 , mIsActive(false)
 {
 }
 
 SubScene::~SubScene()
 {
+}
+
+void SubScene::setupInterface()
+{
+    Interface* interface = mParentScene->getInterface();
+    interface->gui()->addColumn();
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateBoolParam( "Active", &mIsActive )
+                         .oscReceiver(mName,"active"));
+    
+    
 }

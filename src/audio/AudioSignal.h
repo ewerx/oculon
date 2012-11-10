@@ -15,11 +15,7 @@
 #include "cinder/Timeline.h"
 #include "MotionBlurRenderer.h"
 
-class SignalScope;
-class Barcode;
-class Eclipse;
-class Polyhedron;
-class Circles;
+class SubScene;
 
 //
 // Audio input tests
@@ -59,19 +55,6 @@ private:
     float mFilterFrequency;
     
     // sub scenes
-    SignalScope* mSignalScope;
-    bool mEnableSignalScope;
-
-    Barcode* mBarcode;
-    bool mEnableBarcode;
-    
-    Eclipse* mEclipse;
-    bool mEnableEclipse;
-    
-    Polyhedron* mPolyhedron;
-    bool mEnablePolyhedron;
-    
-    Circles* mCircles;
-    bool mEnableCircles;
+    std::vector<SubScene*> mSubScenes;
 };
 

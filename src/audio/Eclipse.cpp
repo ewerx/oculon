@@ -28,7 +28,7 @@ using namespace std;
 // 
 
 Eclipse::Eclipse(Scene* scene)
-: SubScene(scene)
+: SubScene(scene,"eclipse")
 {
     mDim = 168; // cube dimension
     mXOffset = 8;
@@ -104,62 +104,61 @@ void Eclipse::setup()
 
 void Eclipse::setupInterface()
 {
+    SubScene::setupInterface();
+    
     Interface* interface = mParentScene->getInterface();
-    const string name("eclipse");
-    interface->gui()->addColumn();
-    interface->gui()->addLabel("Eclipse Cubes");
     interface->addParam(CreateBoolParam("Test Pattern", &mShowTestBackground)
-                        .oscReceiver(name,"testpattern"));
+                        .oscReceiver(mName,"testpattern"));
     interface->addEnum(CreateEnumParam("Draw Mode", (int*)&mMode)
                        .maxValue(MODE_COUNT)
-                       .oscReceiver(name,"drawmode")
+                       .oscReceiver(mName,"drawmode")
                        .isVertical());
     interface->addParam(CreateBoolParam("Inverse", &mInverse)
-                        .oscReceiver(name,"inverse"));
+                        .oscReceiver(mName,"inverse"));
     interface->addParam(CreateBoolParam("Draw Inner Lines", &mDrawInnerLines)
-                        .oscReceiver(name,"drawinnerlines"));
+                        .oscReceiver(mName,"drawinnerlines"));
     interface->addParam(CreateBoolParam("Randomize Faces", &mRandomizeFaces)
-                        .oscReceiver(name,"randomfaces"));
+                        .oscReceiver(mName,"randomfaces"));
     interface->addParam(CreateBoolParam("Randomize Signal", &mRandomizeSignal)
-                        .oscReceiver(name,"randomsignal"));
+                        .oscReceiver(mName,"randomsignal"));
     interface->addParam(CreateBoolParam("Use FFT", &mUseFftData)
-                        .oscReceiver(name,"usefft"));
+                        .oscReceiver(mName,"usefft"));
     interface->addParam(CreateFloatParam("Max Thickness", &mMaxThickness)
                         .minValue(2.0f)
                         .maxValue((float)mDim/2.0f)
-                        .oscReceiver(name,"maxthickness"));
+                        .oscReceiver(mName,"maxthickness"));
     interface->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                         .minValue(1.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(name,"signalscale"));
+                        .oscReceiver(mName,"signalscale"));
     interface->addButton(CreateTriggerParam("Reset Snakes", NULL)
-                          .oscReceiver(name,"snakereset"))->registerCallback( this, &Eclipse::resetSnakes );
+                          .oscReceiver(mName,"snakereset"))->registerCallback( this, &Eclipse::resetSnakes );
     interface->addParam(CreateFloatParam("Snake Length", &mSnakeLength)
                         .minValue(1.0f)
                         .maxValue(mDim*4.0f)
-                        .oscReceiver(name,"snakelength"));
+                        .oscReceiver(mName,"snakelength"));
     interface->addParam(CreateFloatParam("Snake Min Speed", &mMinSnakeSpeed)
                         .minValue(mDim/2.0f)
                         .maxValue(mDim*2.0f)
-                        .oscReceiver(name,"snakeminspeed"));
+                        .oscReceiver(mName,"snakeminspeed"));
     interface->addParam(CreateFloatParam("Snake Max Speed", &mMaxSnakeSpeed)
                         .minValue(mDim/2.0f)
                         .maxValue(mDim*2.0f)
-                        .oscReceiver(name,"snakemaxspeed"));
+                        .oscReceiver(mName,"snakemaxspeed"));
     interface->addParam(CreateBoolParam("Snake Random Speed", &mSnakeRandomSpeed)
-                        .oscReceiver(name,"snakespeedrandom"));
+                        .oscReceiver(mName,"snakespeedrandom"));
     interface->addParam(CreateFloatParam("Snake Speed Multiplier", &mSnakeSpeedMultiplier)
                         .minValue(0.0f)
                         .maxValue(100.0f)
-                        .oscReceiver(name,"snakespeedmutli"));
+                        .oscReceiver(mName,"snakespeedmutli"));
     interface->addEnum(CreateEnumParam("Snake Direction", (int*)&mSnakeDirMode)
                        .maxValue(SNAKEDIR_COUNT)
-                       .oscReceiver(name,"snakedirmode")
+                       .oscReceiver(mName,"snakedirmode")
                        .isVertical());
     interface->addParam(CreateBoolParam("Snakes Rounded", &mSnakeRounded)
-                        .oscReceiver(name,"snakerounded"));
+                        .oscReceiver(mName,"snakerounded"));
     interface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                        .oscReceiver(name,"color"));
+                        .oscReceiver(mName,"color"));
 }
 
 void Eclipse::setupDebugInterface()

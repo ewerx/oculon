@@ -31,7 +31,7 @@ using namespace std;
 // 
 
 Circles::Circles(Scene* scene)
-: SubScene(scene)
+: SubScene(scene,"circles")
 {
 }
 
@@ -59,31 +59,30 @@ void Circles::setup()
 
 void Circles::setupInterface()
 {
+    SubScene::setupInterface();
+    
     Interface* interface = mParentScene->getInterface();
-    const string name("Circles");
-    interface->gui()->addColumn();
-    interface->gui()->addLabel(name);
     
     interface->addParam(CreateIntParam("Rows", &mRows)
                         .minValue(1)
                         .maxValue(16)
-                        .oscReceiver(name,"rows"));
+                        .oscReceiver(mName,"rows"));
     interface->addParam(CreateIntParam("Cols", &mCols)
                         .minValue(1)
                         .maxValue(16)
-                        .oscReceiver(name,"cols"));
+                        .oscReceiver(mName,"cols"));
     interface->addParam(CreateFloatParam("Radius", &mRadius)
                         .minValue(1.0f)
                         .maxValue(200.0f)
-                        .oscReceiver(name,"radius"));
+                        .oscReceiver(mName,"radius"));
     interface->addParam(CreateFloatParam("Spacing", &mSpacing)
                         .minValue(0.0f)
                         .maxValue(100.0f)
-                        .oscReceiver(name,"spacing"));
+                        .oscReceiver(mName,"spacing"));
     interface->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                         .minValue(1.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(name,"signalscale"));
+                        .oscReceiver(mName,"signalscale"));
     
 }
 

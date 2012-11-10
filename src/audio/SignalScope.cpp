@@ -28,7 +28,7 @@ using namespace std;
 // 
 
 SignalScope::SignalScope(Scene* scene)
-: SubScene(scene)
+: SubScene(scene,"signal")
 {
 }
 
@@ -60,42 +60,43 @@ void SignalScope::setup()
 
 void SignalScope::setupInterface()
 {
-    const string name("signal");
-    mParentScene->getInterface()->gui()->addColumn();
-    mParentScene->getInterface()->gui()->addLabel("Signal Scope");
-    mParentScene->getInterface()->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
-                                           .oscReceiver(name,"randomize"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
+    SubScene::setupInterface();
+    
+    Interface* interface = mParentScene->getInterface();
+    
+    interface->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
+                                           .oscReceiver(mName,"randomize"));
+    interface->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                                            .minValue(0.0f)
                                            .maxValue(10.0f)
-                                           .oscReceiver(name,"scale")
+                                           .oscReceiver(mName,"scale")
                                            .sendFeedback());
-    mParentScene->getInterface()->addParam(CreateFloatParam("Signal Cap", &mSignalMaxRatio)
+    interface->addParam(CreateFloatParam("Signal Cap", &mSignalMaxRatio)
                                            .minValue(1.0f)
                                            .maxValue(10.0f)
-                                           .oscReceiver(name,"cap")
+                                           .oscReceiver(mName,"cap")
                                            .sendFeedback());
-    mParentScene->getInterface()->addParam(CreateIntParam("Center Bias Range", &mCenterBiasRange)
+    interface->addParam(CreateIntParam("Center Bias Range", &mCenterBiasRange)
                                            .minValue(1)
                                            .maxValue(NUM_POINTS/4)
-                                           .oscReceiver(name,"biasrange")
+                                           .oscReceiver(mName,"biasrange")
                                            .sendFeedback());
-    mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Min", &mHorizSmoothingMin)
-                                           .oscReceiver(name,"smoothingmin"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Smoothing Max", &mHorizSmoothingMax)
-                                           .oscReceiver(name,"smoothingmax"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Falloff Min", &mFallOffMin)
-                                           .oscReceiver(name,"falloffmin"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Falloff Max", &mFallOffMax)
-                                           .oscReceiver(name,"falloffmax"));
-    mParentScene->getInterface()->addParam(CreateBoolParam("Render Smooth", &mSmoothLines)
-                                           .oscReceiver(name,"rendersmooth"));
-    mParentScene->getInterface()->addParam(CreateFloatParam("Thickness", &mThickness)
+    interface->addParam(CreateFloatParam("Smoothing Min", &mHorizSmoothingMin)
+                                           .oscReceiver(mName,"smoothingmin"));
+    interface->addParam(CreateFloatParam("Smoothing Max", &mHorizSmoothingMax)
+                                           .oscReceiver(mName,"smoothingmax"));
+    interface->addParam(CreateFloatParam("Falloff Min", &mFallOffMin)
+                                           .oscReceiver(mName,"falloffmin"));
+    interface->addParam(CreateFloatParam("Falloff Max", &mFallOffMax)
+                                           .oscReceiver(mName,"falloffmax"));
+    interface->addParam(CreateBoolParam("Render Smooth", &mSmoothLines)
+                                           .oscReceiver(mName,"rendersmooth"));
+    interface->addParam(CreateFloatParam("Thickness", &mThickness)
                                            .minValue(1.0f)
                                            .maxValue(6.0f)
-                                           .oscReceiver(name,"thickness"));
-    mParentScene->getInterface()->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                                           .oscReceiver(name,"color"));
+                                           .oscReceiver(mName,"thickness"));
+    interface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
+                                           .oscReceiver(mName,"color"));
 }
 
 void SignalScope::setupDebugInterface()

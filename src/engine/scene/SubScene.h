@@ -9,16 +9,18 @@
 
 #pragma once
 
+#include <string>
+
 class Scene;
 
 class SubScene
 {
 public:
-    SubScene(Scene* scene);
+    SubScene(Scene* scene, const std::string& name);
     virtual ~SubScene();
 
     virtual void setup() = 0;
-    virtual void setupInterface() {}
+    virtual void setupInterface();
     virtual void setupDebugInterface() {}
     virtual void resize() {}
     virtual void reset() {}
@@ -28,6 +30,7 @@ public:
     bool isActive() const { return mIsActive; }
     
 protected:
-    Scene*  mParentScene;
-    bool    mIsActive;
+    Scene*      mParentScene;
+    std::string mName;
+    bool        mIsActive;
 };

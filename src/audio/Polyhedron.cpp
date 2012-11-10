@@ -31,7 +31,7 @@ using namespace std;
 // 
 
 Polyhedron::Polyhedron(Scene* scene)
-: SubScene(scene)
+: SubScene(scene,"polyhedron")
 {
 }
 
@@ -50,11 +50,9 @@ void Polyhedron::setup()
 
 void Polyhedron::setupInterface()
 {
-    Interface* interface = mParentScene->getInterface();
-    const string name("polyhedron");
-    interface->gui()->addColumn();
-    interface->gui()->addLabel(name);
+    SubScene::setupInterface();
     
+    Interface* interface = mParentScene->getInterface();
 }
 
 void Polyhedron::setupDebugInterface()

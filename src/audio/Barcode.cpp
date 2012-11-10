@@ -29,7 +29,7 @@ using namespace std;
 // 
 
 Barcode::Barcode(Scene* scene)
-: SubScene(scene)
+: SubScene(scene,"lines")
 {
 }
 
@@ -59,35 +59,35 @@ void Barcode::setup()
 
 void Barcode::setupInterface()
 {
+    SubScene::setupInterface();
+    
     Interface* interface = mParentScene->getInterface();
-    const string name("lines");
-    interface->gui()->addColumn();
-    interface->gui()->addLabel("Vertical Lines");
+    
     interface->addParam(CreateBoolParam("Width By Audio", &mWidthByFft)
-                        .oscReceiver(name,"widthaudio"));
+                        .oscReceiver(mName,"widthaudio"));
     interface->addParam(CreateBoolParam("Alpha By Audio", &mAlphaByFft)
-                        .oscReceiver(name,"alphaaudio"));
+                        .oscReceiver(mName,"alphaaudio"));
     interface->addParam(CreateBoolParam("Pos By Audio", &mPositionByFft)
-                        .oscReceiver(name,"posaudio"));
+                        .oscReceiver(mName,"posaudio"));
     interface->addParam(CreateFloatParam("Base Width", &mBaseWidth)
                         .minValue(1.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(name,"basewidth"));
+                        .oscReceiver(mName,"basewidth"));
     interface->addParam(CreateFloatParam("Max Width", &mMaxWidth)
                         .minValue(1.0f)
                         .maxValue(50.0f)
-                        .oscReceiver(name,"maxwidth"));
+                        .oscReceiver(mName,"maxwidth"));
     interface->addParam(CreateFloatParam("Threshold", &mThreshold)
                         .maxValue(0.1f)
-                        .oscReceiver(name,"threshold"));
+                        .oscReceiver(mName,"threshold"));
     interface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                        .oscReceiver(name,"color"));
+                        .oscReceiver(mName,"color"));
     
     interface->addParam(CreateBoolParam("Vetical", &mVertical)
-                        .oscReceiver(name,"vertical"));
+                        .oscReceiver(mName,"vertical"));
     interface->addParam(CreateIntParam("Num Bars", &mNumBars)
                         .maxValue(64)
-                        .oscReceiver(name,"numbars"));
+                        .oscReceiver(mName,"numbars"));
 }
 
 void Barcode::setupDebugInterface()

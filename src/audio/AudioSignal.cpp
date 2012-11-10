@@ -21,6 +21,8 @@
 #include "cinder/Rand.h"
 #include <algorithm>
 
+#include <boost/foreach.hpp>
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -28,20 +30,19 @@ using namespace std;
 AudioSignal::AudioSignal()
 : Scene("audio")
 {
-    mSignalScope = new SignalScope(this);
-    mBarcode = new Barcode(this);
-    mEclipse = new Eclipse(this);
-    mPolyhedron = new Polyhedron(this);
-    mCircles = new Circles(this);
+    mSubScenes.push_back( new SignalScope(this) );
+    mSubScenes.push_back( new Barcode(this) );
+    mSubScenes.push_back( new Eclipse(this) );
+    mSubScenes.push_back( new Polyhedron(this) );
+    mSubScenes.push_back( new Circles(this) );
 }
 
 AudioSignal::~AudioSignal()
 {
-    delete mSignalScope;
-    delete mBarcode;
-    delete mEclipse;
-    delete mPolyhedron;
-    delete mCircles;
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
+    {
+		delete ss;
+	}
 }
 
 void AudioSignal::setup()
@@ -54,43 +55,24 @@ void AudioSignal::setup()
     mFilter = 0;
     mFilterFrequency = 0.0f;
     
-    mEnableBarcode = false;
-    mBarcode->setup();
-    
-    mEnableSignalScope = false;
-    mSignalScope->setup();
-    
-    mEnableEclipse = false;
-    mEclipse->setup();
-    
-    mEnablePolyhedron = false;
-    mPolyhedron->setup();
-    
-    mEnableCircles = false;
-    mCircles->setup();
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
+    {
+		ss->setup();
+	}
 }
 
 void AudioSignal::reset()
 {
-    mBarcode->reset();
-    mSignalScope->reset();
-    mEclipse->reset();
-    mPolyhedron->reset();
-    mCircles->reset();
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
+    {
+		ss->reset();
+	}
 }
 
 void AudioSignal::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(mName,"blur"));
-    mInterface->addParam(CreateBoolParam( "Vertical Lines", &mEnableBarcode )
-                         .oscReceiver(mName,"lines"));
-    mInterface->addParam(CreateBoolParam( "Signal Scope", &mEnableSignalScope )
-                         .oscReceiver(mName,"signal"));
-    mInterface->addParam(CreateBoolParam( "Eclipse", &mEnableEclipse )
-                         .oscReceiver(mName,"eclipse"));
-    mInterface->addParam(CreateBoolParam( "Circles", &mEnableCircles )
-                         .oscReceiver(mName,"circles"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
@@ -100,47 +82,32 @@ void AudioSignal::setupInterface()
     mInterface->addButton(CreateTriggerParam("Remove Filter", NULL)
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
-    mSignalScope->setupInterface();
-    mBarcode->setupInterface();
-    mEclipse->setupInterface();
-    mPolyhedron->setupInterface();
-    mCircles->setupInterface();
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
+    {
+		ss->setupInterface();
+	}
 }
 
 void AudioSignal::setupDebugInterface()
 {
     Scene::setupDebugInterface();
     
-    mSignalScope->setupDebugInterface();
-    mBarcode->setupDebugInterface();
-    mEclipse->setupDebugInterface();
-    mPolyhedron->setupDebugInterface();
-    mCircles->setupDebugInterface();
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
+    {
+		ss->setupDebugInterface();
+	}
 }
 
 void AudioSignal::update(double dt)
 {
     Scene::update(dt);
     
-    if( mEnableSignalScope )
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
     {
-        mSignalScope->update(dt);
-    }
-    if( mEnableBarcode )
-    {
-        mBarcode->update(dt);
-    }
-    if( mEnableEclipse )
-    {
-        mEclipse->update(dt);
-    }
-    if( mEnablePolyhedron )
-    {
-        mPolyhedron->update(dt);
-    }
-    if( mEnableCircles )
-    {
-        mCircles->update(dt);
+        if( ss->isActive() )
+        {
+            ss->update(dt);
+        }
     }
 }
 
@@ -164,29 +131,12 @@ void AudioSignal::drawSubScenes()
 {
     gl::enableAlphaBlending();
     
-    if( mEnableBarcode )
+    BOOST_FOREACH( SubScene* &ss, mSubScenes )
     {
-        mBarcode->draw();
-    }
-    
-    if( mEnableSignalScope )
-    {
-        mSignalScope->draw();
-    }
-    
-    if( mEnableEclipse )
-    {
-        mEclipse->draw();
-    }
-    
-    if( mEnablePolyhedron )
-    {
-        mPolyhedron->draw();
-    }
-    
-    if( mEnableCircles )
-    {
-        mCircles->draw();
+        if( ss->isActive() )
+        {
+            ss->draw();
+        }
     }
 }
 
@@ -368,10 +318,5 @@ bool AudioSignal::removeFilter()
 
 bool AudioSignal::handleKeyDown(const ci::app::KeyEvent& keyEvent)
 {
-    if( keyEvent.getCode() == KeyEvent::KEY_SPACE )
-    {
-        mEclipse->reset();
-    }
-    
     return false;
 }
