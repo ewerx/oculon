@@ -74,7 +74,7 @@ void AudioSignal::setupInterface()
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(mName,"blur"));
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
-                         .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );;
+                         .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );
     mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
                         .maxValue(Kiss::Filter::NOTCH+1)
                         .isVertical()
