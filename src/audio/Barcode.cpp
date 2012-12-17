@@ -48,11 +48,24 @@ void Barcode::setup()
     mAlphaByFft = true;
     mPositionByFft = false;
     
+    mFalloff = 1.0f;
+    mFftFalloff = true;
+    mFalloffMode = FALLOFF_OUTEXPO;
+    
     mNumBars = 1;
     mBarGap = 0;
     mVertical = true;
     
     mFftMode = FFT_ALPHA;
+    
+    for (int i=0; i < MAX_BARS; ++i)
+    {
+        for (int j=0; j < MAX_LINES; ++j)
+        {
+            mLines[i][j].mAlpha = 0.0f;
+            mLines[i][j].mWidth = 0.0f;
+        }
+    }
     
     reset();
 }
@@ -86,8 +99,17 @@ void Barcode::setupInterface()
     interface->addParam(CreateBoolParam("Vetical", &mVertical)
                         .oscReceiver(mName,"vertical"));
     interface->addParam(CreateIntParam("Num Bars", &mNumBars)
-                        .maxValue(64)
+                        .maxValue(MAX_BARS)
                         .oscReceiver(mName,"numbars"));
+    
+    interface->addParam(CreateFloatParam("Falloff", &mFalloff)
+                        .minValue(0.0f)
+                        .maxValue(20.0f));
+    interface->addParam(CreateBoolParam("FFT Falloff", &mFftFalloff));
+    interface->addEnum(CreateEnumParam("Falloff Mode", (int*)&mFalloffMode)
+                       .maxValue(FALLOFF_COUNT)
+                       .oscReceiver(mName,"falloffmode")
+                       .isVertical());
 }
 
 void Barcode::setupDebugInterface()
@@ -137,7 +159,7 @@ void Barcode::drawBar(const int index)
     // Get data
     //float * freqData = audioInput.getFft()->getAmplitude();
     //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
+    int32_t dataSize = math<int>::max( audioInput.getFft()->getBinSize(), MAX_LINES );
     const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
     // Iterate through data
@@ -146,8 +168,11 @@ void Barcode::drawBar(const int index)
         float x = fftLogData[i].x;
         float y = fftLogData[i].y;
         
+        float falloff = mFftFalloff ? (mFalloff * (1.0f - x / dataSize)) : mFalloff;
+        
         if( y > mThreshold )
         {
+            // width
             float width;
             if( mWidthByFft )
             {
@@ -157,7 +182,15 @@ void Barcode::drawBar(const int index)
             {
                 width = mBaseWidth;
             }
+        
+            if (width > mLines[index][i].mWidth)
+            {
+                mLines[index][i].mWidth = width;
+                timeline().apply( &mLines[index][i].mWidth, 0.0f, falloff, getFalloffFunction() );
+            }
+            width = mLines[index][i].mWidth;
             
+            // position
             float lineX;
             if( mPositionByFft )
             {
@@ -175,10 +208,18 @@ void Barcode::drawBar(const int index)
                 lineX = Rand::randFloat(0.0f,barRange);
             }
             
+            // alpha
             ColorA color( mColor.r, mColor.g, mColor.b, mColor.a );
+            float alpha = color.a;
             if( mAlphaByFft )
             {
-                color.a = mColor.a + y;
+                alpha = mColor.a + y;
+                if( alpha > mLines[index][i].mAlpha )
+                {
+                    mLines[index][i].mAlpha = alpha;
+                    timeline().apply( &mLines[index][i].mAlpha, 0.0f, falloff, getFalloffFunction() );
+                }
+                color.a = mLines[index][i].mAlpha;
             }
             
             gl::color( color );
@@ -205,4 +246,20 @@ void Barcode::drawBar(const int index)
             glEnd();
         }
 	}
+}
+
+Barcode::tEaseFn Barcode::getFalloffFunction()
+{
+    switch( mFalloffMode )
+    {
+        case FALLOFF_LINEAR: return EaseNone();
+        case FALLOFF_OUTQUAD: return EaseOutQuad();
+        case FALLOFF_OUTEXPO: return EaseOutExpo();
+        case FALLOFF_OUTBACK: return EaseOutBack();
+        case FALLOFF_OUTBOUNCE: return EaseOutBounce();
+        case FALLOFF_OUTINEXPO: return EaseOutInExpo();
+        case FALLOFF_OUTINBACK: return EaseOutInBack();
+            
+        default: return EaseNone();
+    }
 }
