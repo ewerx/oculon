@@ -145,8 +145,8 @@ void AudioSignal::drawDebug()
     glPushMatrix();
     gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
-    //drawWaveform( mApp->getAudioInput().getPcmBuffer() );
-    //drawFft( mApp->getAudioInput().getFftDataRef() );
+    drawWaveform( mApp->getAudioInput().getPcmBuffer() );
+    drawFft( mApp->getAudioInput().getFftDataRef() );
     
     glPopMatrix();
 }
