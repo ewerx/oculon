@@ -42,6 +42,8 @@ private:
     {
         ci::Anim<float> mRadius;
         ci::Anim<float> mAlpha;
+        ci::Vec2f mPos;
+        //ci::Anim<ci::Vec2f> mVel;
     };
     enum {
         MAX_X = 256,
@@ -63,6 +65,17 @@ private:
     };
     eFalloffMode mFalloffMode;
     
+    enum eShape
+    {
+        SHAPE_CIRCLE,
+        SHAPE_RING,
+        SHAPE_SOLID_SQUARE,
+        SHAPE_STROKED_SQUARE,
+        
+        SHAPE_COUNT
+    };
+    eShape mShape;
+    
     //TODO: boost multi_array?
 //    typedef boost::multi_array<struct tCircle,2> tCircleArray;
 //    tCircleArray mCircles(boost::extents[MAX_X][MAX_Y]);
@@ -71,13 +84,21 @@ private:
     int mCols;
     int mLayers;
     
-    float mSpacing;
+    int mSpacing;
     float mBaseRadius;
     float mFalloff;
+    bool mFftFalloff;
     
     bool mAlphaByAudio;
     
     float mSignalScale;
+    float mMinRadiusFactor;
+    
+    //TODO: setup as XY-pad
+    float mShiftSpeedX;
+    float mShiftSpeedY;
+    bool mShiftAlternateX;
+    bool mShiftAlternateY;
     
     ci::ColorA mColorPrimary;
     ci::ColorA mColorSecondary;
