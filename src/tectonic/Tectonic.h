@@ -117,6 +117,7 @@ private:
     // simulation
     int mLongitudeOffsetDegrees;
     int mCurrentIndex;
+    float mTimeScale;
     
     enum eTriggerMode
     {

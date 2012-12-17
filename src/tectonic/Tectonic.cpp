@@ -81,6 +81,7 @@ void Tectonic::setup()
     mEarthAlpha = 0.0f;
     mColorNukesByType = true;
     mGenerateAudio = false;
+    mTimeScale = 1.0f;
     
     // assets
     mEarthDiffuse = gl::Texture( loadImage( loadResource( "earthGray.png" ) ) );
@@ -166,6 +167,10 @@ void Tectonic::setupInterface()
                           .oscReceiver(mName,"bpmtap"))->registerCallback( this, &Tectonic::bpmTap );
     mInterface->addParam(CreateFloatParam("Earth Alpha", &mEarthAlpha)
                          .oscReceiver(mName,"earthalpha"));
+    mInterface->addParam(CreateFloatParam( "Time Scale", &mTimeScale )
+                         .minValue(1.0f)
+                         .maxValue(30.0f)
+                         .oscReceiver(getName(), "timescale"));
 }
 
 // ----------------------------------------------------------------
@@ -289,7 +294,7 @@ bool Tectonic::triggerNextQuake()
             
             // time to keep dot on screen proportional to magnitude
             const float durationMagnitudeMultiplier = (mDataSource == DATASOURCE_NUKES) ? 0.00025f : 0.25f;
-            float duration = 60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag();
+            float duration = (60.0f / mBpm + durationMagnitudeMultiplier*mQuakes[mCurrentIndex]->getEventData()->getMag()) / mTimeScale;
             if( mIsCapturing ) duration *= kCaptureFramerate / mApp->getAverageFps();
             
             mQuakes[mCurrentIndex]->trigger(duration);
