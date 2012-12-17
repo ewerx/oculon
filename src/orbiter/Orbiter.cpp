@@ -904,7 +904,7 @@ const Camera& Orbiter::getCamera()
     {
         case CAM_FOLLOW:
         case CAM_BINNED:
-        return mCam;
+            return mCam;
             
         case CAM_CATALOG:
         {
@@ -913,9 +913,9 @@ const Camera& Orbiter::getCamera()
             if( scene && scene->isRunning() )
             {
                 return scene->getCamera();
-    }
-    else
-    {
+            }
+            else
+            {
                 return mCam;
             }
         }
@@ -924,6 +924,6 @@ const Camera& Orbiter::getCamera()
             return mApp->getMayaCam();
             
         default:
-        return mApp->getMayaCam();
+            return mApp->getMayaCam();
     }
 }

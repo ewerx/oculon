@@ -57,16 +57,22 @@ void Star::drawName( const Vec2f &mousePos, float power, float alpha )
 {
 	if( mDistToCam > 0.0f && mNameTex )
     {
-		float per = constrain( 1.0f - mDistToCam * 0.0000375f, 0.0f, 1.0f );
-		per *= per * per;
+		float per = 0.0f;
 		
-		Vec2f dirToMouse	= mScreenPos - mousePos;
-		mDistToMouse		= dirToMouse.length();
-		
-		if( mDistToMouse < 40.0f )
-			per += 1.0f - mDistToMouse/40.0f;
-        
-        per += mAudioPer;
+        if( mAudioPer > 0.0f )
+        {
+            per = mAudioPer * constrain( 1.95f - mDistToCam * 0.0000375f, 0.25f, 1.0f );
+        }
+        else
+        {
+            per = constrain( 1.0f - mDistToCam * 0.0000375f, 0.0f, 1.0f );
+            per *= per * per;
+            Vec2f dirToMouse	= mScreenPos - mousePos;
+            mDistToMouse		= dirToMouse.length();
+            
+            if( mDistToMouse < 40.0f )
+                per += 1.0f - mDistToMouse/40.0f;
+        }
 		
 		if( mIsSelected )
 			per = 1.0f;

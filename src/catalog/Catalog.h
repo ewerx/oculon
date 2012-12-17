@@ -181,6 +181,9 @@ private:
     int mNextKeplerIndex;
     float mStarCamTimeScale;
     
+    float mStarfieldAlpha;
+    float mNamesAlpha;
+    
     // display list
     //GLuint mDisplayListPoints;
         

@@ -61,14 +61,16 @@ void Catalog::setup()
     
     // params
     mShowSol = false;
-    mMoreGlow = false;
+    mMoreGlow = true;
     mCamType = CAM_STAR;
     mCameraDistance = 0.0f;
     
-    mLabelBrightnessByAudio = 0.0f;
+    mLabelBrightnessByAudio = 0.16f;
     
     mNextKeplerIndex = 0;
-    mStarCamTimeScale = 0.005;
+    mStarCamTimeScale = 0.0025;
+    mStarfieldAlpha = 1.0f;
+    mNamesAlpha = 1.0f;
     
     // assets
     
@@ -199,14 +201,26 @@ void Catalog::setupInterface()
     
     mInterface->addParam(CreateFloatParam("Audio Label Multi", &mLabelBrightnessByAudio)
                          .minValue(0.0f)
-                         .maxValue(20.0f)
+                         .maxValue(1.0f)
                          .oscReceiver(mName,"audiolabelmulti")
                          .sendFeedback());
     
     mInterface->addParam(CreateFloatParam("Star Cam Time Scale", &mStarCamTimeScale)
                          .minValue(0.0f)
-                         .maxValue(0.2f)
+                         .maxValue(0.01f)
                          .oscReceiver(mName,"starcamtimescale")
+                         .sendFeedback());
+    
+    mInterface->addParam(CreateFloatParam("Starfield Alpha", &mStarfieldAlpha)
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(mName,"starfieldalpha")
+                         .sendFeedback());
+    
+    mInterface->addParam(CreateFloatParam("Names Alpha", &mNamesAlpha)
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(mName,"namesalpha")
                          .sendFeedback());
 }
 
@@ -337,9 +351,10 @@ void Catalog::draw()
 	*/
 	gl::setMatricesWindow( mApp->getViewportSize(), true );
 	
-	float power = 1.0f;//mRoom.getPower();
+    const float starDrawMinAlpha = 0.001f;
+	float power = mStarfieldAlpha;
 	gl::color( Color( power, power, power ) );
-	if( power < 0.5f ){
+	if( power < starDrawMinAlpha ){
 		gl::enableAlphaBlending();
 	} else {
 		gl::enableAdditiveBlending();
@@ -379,7 +394,7 @@ void Catalog::draw()
         glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
         glPointSize(1.0f);
         
-		if( power < 0.5f )
+		if( power < starDrawMinAlpha )
 			gl::enableAlphaBlending();
 		else
 			gl::enableAdditiveBlending();
@@ -388,9 +403,10 @@ void Catalog::draw()
 		mFaintStarsShader.bind();
 		mFaintStarsShader.uniform( "spectrumTex", 0 );
 		mFaintStarsShader.uniform( "scale", mScale );
-		mFaintStarsShader.uniform( "power", power );//mRoom.getPower() );
+		mFaintStarsShader.uniform( "power", power );
 		mFaintStarsShader.uniform( "time", (float)getElapsedSeconds() );
 		mFaintStarsShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ) );//mRoom.getDims() );
+        gl::color( 1.0f, 1.0f, 1.0f, mStarfieldAlpha );
 		gl::draw( mFaintVbo );
 		mFaintStarsShader.unbind();
 	}
@@ -399,7 +415,7 @@ void Catalog::draw()
 	
 	// DRAW STARS
 	if( mRenderBrightStars ){
-		if( power < 0.5f ){
+		if( power < starDrawMinAlpha ){
 			gl::enableAlphaBlending();
 			mDarkStarTex.bind( 1 );
 		} else {
@@ -414,11 +430,12 @@ void Catalog::draw()
 		mBrightStarsShader.uniform( "starTex", 1 );
 		mBrightStarsShader.uniform( "spectrumTex", 2 );
 		mBrightStarsShader.uniform( "scale", mScale );
-		mBrightStarsShader.uniform( "power", 1.0f );//mRoom.getPower() );
+		mBrightStarsShader.uniform( "power", power );
 		mBrightStarsShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ));//mRoom.getDims() );
 		mBrightStarsShader.uniform( "mvMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix() );
 		mBrightStarsShader.uniform( "eyePos", getCamera().getEyePoint() );
-		if( power > 0.5f ){
+        gl::color( mStarfieldAlpha, mStarfieldAlpha, mStarfieldAlpha, 1.0f );
+		if( power > starDrawMinAlpha ){
 			mBrightStarsShader.uniform( "texScale", 0.5f );
 			gl::draw( mBrightVbo );
 			
@@ -440,19 +457,25 @@ void Catalog::draw()
 	
 	gl::popMatrices();
 	
-	
 	// DRAW NAMES
 	if( mRenderNames ){
-		if( power < 0.5f ){
+		gl::setMatricesWindow( mApp->getViewportSize(), true );
+        
+        gl::enableAlphaBlending();
+        gl::color(0.0f,0.0f,0.0f, 1.0f-mStarfieldAlpha);
+        gl::drawSolidRect( mApp->getViewportBounds() );
+        
+        if( power < starDrawMinAlpha ){
 			gl::enableAlphaBlending();
 		} else {
 			gl::enableAdditiveBlending();
 		}
-		gl::setMatricesWindow( mApp->getViewportSize(), true );
+        
+        gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
 		
 		BOOST_FOREACH( Star* &s, mNamedStars ){
             if( mShowSol || s != mSol ) {
-                s->drawName( mMousePos, power * mScalePer, math<float>::max( sqrt( mScalePer ) - 0.1f, 0.0f ) );
+                s->drawName( mMousePos, mNamesAlpha * mScalePer, math<float>::max( sqrt( mScalePer ) - 0.1f, 0.0f ) );
             }
 		}
 	}

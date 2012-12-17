@@ -271,8 +271,8 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("graviton") )   addScene( new Graviton() );
     if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
     if( mConfig.getBool("sol") )        addScene( new Sol() );
-    if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
+    if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("flock") )      addScene( new Flock() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     
