@@ -78,11 +78,12 @@ void Controller::update(double dt)
 	
 	// ADD LANTERN IF REQUIRED
 	mNumLanterns = mLanterns.size();
-    Vec3f randPos( Rand::randFloat( -dims.x * 0.8f, dims.x * 0.8f ),
-              dims.y,
-              Rand::randFloat( -dims.z * 0.5f, dims.z * 0.5f ) );
+//    Vec3f randPos( Rand::randFloat( -dims.x * 0.8f, dims.x * 0.8f ),
+//              dims.y,
+//              Rand::randFloat( -dims.z * 0.5f, dims.z * 0.5f ) );
+    Vec3f randPos( 0.0f, 0.0f, 0.0f );
 
-    if( ( Rand::randFloat() < 0.00175f && mNumLanterns < 3 ) || mNumLanterns < 1 ){
+    if( ( Rand::randFloat() < 0.00175f && mNumLanterns < 1 ) || mNumLanterns < 1 ){
         addLantern( randPos );
     }
 	

@@ -130,5 +130,8 @@ private:
         CAM_COUNT
     };
     eCamType mCamType;
+    
+    bool mDrawPredators;
+    
 };
 

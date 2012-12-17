@@ -19,8 +19,9 @@ Lantern::Lantern( const Vec3f &pos )
 	mRadiusDest	= Rand::randFloat( 4.5f, 7.5f );
 	if( Rand::randFloat() < 0.1f ) mRadiusDest = Rand::randFloat( 13.0f, 25.0f );
 	
-	mVel        = Rand::randVec3f() * Rand::randFloat( 0.1f, 0.8f );
-	mColor		= Color( CM_HSV, Rand::randFloat( 0.0f, 0.1f ), 0.9f, 1.0f );
+	mVel        = Vec3f::zero();//Rand::randVec3f() * Rand::randFloat( 0.1f, 0.8f );
+//	mColor		= Color( CM_HSV, Rand::randFloat( 0.0f, 0.1f ), 0.9f, 1.0f );
+    mColor      = Color::white();
 	mIsDead		= false;
 	mIsDying	= false;
 	

@@ -807,23 +807,23 @@ void Flock::draw()
 	mShader.unbind();
 	
 	// DRAW PREDATORS
-	mP_PositionFbos[mPrevFbo].bindTexture( 0 );
-	mP_PositionFbos[mThisFbo].bindTexture( 1 );
-	mP_VelocityFbos[mThisFbo].bindTexture( 2 );
-	mLanternsFbo.bindTexture( 3 );
-	mP_Shader.bind();
-	mP_Shader.uniform( "prevPosition", 0 );
-	mP_Shader.uniform( "currentPosition", 1 );
-	mP_Shader.uniform( "currentVelocity", 2 );
-	mP_Shader.uniform( "lightsTex", 3 );
-	mP_Shader.uniform( "numLights", (float)mController.mNumLanterns );
-	mP_Shader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
-	mP_Shader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
-	mP_Shader.uniform( "att", 1.05f );
-	mP_Shader.uniform( "eyePos", getCamera().getEyePoint());
-	mP_Shader.uniform( "power", 1.0f );
-	gl::draw( mP_VboMesh );
-	mP_Shader.unbind();
+//	mP_PositionFbos[mPrevFbo].bindTexture( 0 );
+//	mP_PositionFbos[mThisFbo].bindTexture( 1 );
+//	mP_VelocityFbos[mThisFbo].bindTexture( 2 );
+//	mLanternsFbo.bindTexture( 3 );
+//	mP_Shader.bind();
+//	mP_Shader.uniform( "prevPosition", 0 );
+//	mP_Shader.uniform( "currentPosition", 1 );
+//	mP_Shader.uniform( "currentVelocity", 2 );
+//	mP_Shader.uniform( "lightsTex", 3 );
+//	mP_Shader.uniform( "numLights", (float)mController.mNumLanterns );
+//	mP_Shader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
+//	mP_Shader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
+//	mP_Shader.uniform( "att", 1.05f );
+//	mP_Shader.uniform( "eyePos", getCamera().getEyePoint());
+//	mP_Shader.uniform( "power", 1.0f );
+//	gl::draw( mP_VboMesh );
+//	mP_Shader.unbind();
     
 	// DRAW LANTERN GLOWS
     gl::disableDepthWrite();
