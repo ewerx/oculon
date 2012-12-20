@@ -56,6 +56,8 @@ private:
     std::shared_ptr<float> mFftDataRef;
     unsigned int mFftBandCount;
     
+    float mGain;
+    
     // Kiss Analyzer
 	bool    mFftInit;
 	KissRef mFft;

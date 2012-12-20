@@ -282,14 +282,9 @@ void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
     //float * timeData = audioInput.getFft()->getData(); // normalized -1 to +1
     const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
-    float min = 1000.0f;
-    float max = 0.0f;
-    
+    //TODO: dropping peaks
     for( int i = 0; i < dataSize; i++ )
     {
-        min = math<float>::min(fftLogData[i].y, min);
-        max = math<float>::max(fftLogData[i].y, max);
-
         float barY = fftLogData[i].y * ht;
         glBegin( GL_QUADS );
         // bottom
@@ -303,7 +298,7 @@ void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
         glEnd();
     }
     
-    console() << "min: " << min << " max: " << max << std::endl;
+    //console() << "min: " << min << " max: " << max << std::endl;
     
     gl::popMatrices();
 }

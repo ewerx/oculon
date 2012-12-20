@@ -44,6 +44,7 @@ void AudioInput::setup()
 	mInput = new audio::Input( /*devices.front()*/ );
     
     mFftInit = false;
+    mGain = 1.0f;
 }
 
 void AudioInput::setupInterface( Interface* interface )
@@ -67,6 +68,9 @@ void AudioInput::setupInterface( Interface* interface )
         ++index;
 	}
     
+    interface->addParam(CreateFloatParam("Gain", &mGain)
+                        .maxValue(50.0f)
+                        .oscReceiver("master", "gain"));
 }
 
 bool AudioInput::changeInput( const int index )
@@ -188,7 +192,7 @@ void AudioInput::analyzeKissFft()
         // Do logarithmic plotting for frequency domain
         double mLogSize = log((double)dataSize);
         mFftLogPlot[i].x = (float)(log((double)i) / mLogSize) * (double)dataSize;
-        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
+        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f) * mGain;
     }
 }
 
@@ -196,9 +200,10 @@ float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, con
 {
     float amplitude = 0.0f;
     
+    int minIndex = math<int>::max( 0, minBand );
     int maxIndex = math<int>::min( mFft->getBinSize(), maxBand );
     
-    for (int32_t i = minBand; i < maxIndex; i++)
+    for (int32_t i = minIndex; i < maxIndex; i++)
     {
         amplitude += mFftLogPlot[i].y;
     }
