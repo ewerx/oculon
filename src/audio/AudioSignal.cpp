@@ -169,7 +169,7 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
     {
         // Get data
         int32_t dataSize = audioInput.getFft()->getBinSize();
-		float * timeData = audioInput.getFft()->getData();
+		float * timeData = audioInput.getFft()->getData(); // normalized -1 to +1
         
         int32_t	binSize = audioInput.getFft()->getBinSize();
         float * amplitude = audioInput.getFft()->getAmplitude();
@@ -196,8 +196,8 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 			// Plot points on lines
 			ampLine.push_back(Vec2f(i * scaleX + border, amplitude[i] * (i+1) * scaleY + yOffset + (windowHeight*0.1f)));
 			phaseLine.push_back(Vec2f(i * scaleX + border, phase[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*2.0f)));
-            imgLine.push_back(Vec2f(i * scaleX + border, imaginary[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*3.0f)));
-            realLine.push_back(Vec2f(i * scaleX + border, real[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*4.0f)));
+            //imgLine.push_back(Vec2f(i * scaleX + border, imaginary[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*3.0f)));
+            //realLine.push_back(Vec2f(i * scaleX + border, real[i] * (i+1)  * scaleY + yOffset + (windowHeight*0.1f*4.0f)));
         }
         
         scaleX = ((float)mApp->getViewportWidth() - border*2.0f) / (float)dataSize;
@@ -271,24 +271,27 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
 {
     AudioInput& audioInput = mApp->getAudioInput();
-    uint16_t bandCount = audioInput.getFftBandCount();
-	float ht = mApp->getViewportHeight() * 0.70f;
-	float bottom = mApp->getViewportHeight() - 50.f;
-    const float width = 2.0f;
+	float ht = mApp->getViewportHeight() / 3.0f;
+	float bottom = mApp->getViewportHeight() - 80.f;
+    const float width = 5.0f;
     const float space = width + 0.0f;
-	
-	if( ! fftDataRef ) 
+    
+    gl::pushMatrices();
+    
+    int32_t dataSize = audioInput.getFft()->getBinSize();
+    //float * timeData = audioInput.getFft()->getData(); // normalized -1 to +1
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    
+    float min = 1000.0f;
+    float max = 0.0f;
+    
+    for( int i = 0; i < dataSize; i++ )
     {
-		return;
-	}
-	
-    glPushMatrix();
-	float * fftBuffer = fftDataRef.get();
-	
-	for( int i = 0; i < ( bandCount ); i++ ) 
-    {
-		float barY = fftBuffer[i] / bandCount * ht;
-		glBegin( GL_QUADS );
+        min = math<float>::min(fftLogData[i].y, min);
+        max = math<float>::max(fftLogData[i].y, max);
+
+        float barY = fftLogData[i].y * ht;
+        glBegin( GL_QUADS );
         // bottom
         glColor3f( 0.25f, 0.0f, 0.0f );
         glVertex2f( i * space, bottom );
@@ -297,9 +300,12 @@ void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
         glColor3f( 1.0f, 0.25f, 0.0f );
         glVertex2f( i * space + width, bottom - barY );
         glVertex2f( i * space, bottom - barY );
-		glEnd();
-	}
-    glPopMatrix();
+        glEnd();
+    }
+    
+    console() << "min: " << min << " max: " << max << std::endl;
+    
+    gl::popMatrices();
 }
 
 bool AudioSignal::setFilter()

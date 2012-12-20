@@ -191,6 +191,7 @@ void OculonApp::setupInterface()
     mInterface = new Interface(this, &mOscServer);
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("OCULON");
+    // main
     mInterface->addButton(CreateTriggerParam("sync", NULL)
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
@@ -198,12 +199,16 @@ void OculonApp::setupInterface()
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
+    // capture
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
     mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
                          .minValue(1.0f)
                          .maxValue(600.0f));
+    // audio
+    mInterface->gui()->addSeparator();
+    mAudioInput.setupInterface( mInterface );
 }
 
 bool OculonApp::syncInterface()

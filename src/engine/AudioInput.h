@@ -14,6 +14,9 @@
 #include "cinder/audio/Input.h"
 #include "cinder/Vector.h"
 #include "KissFFT.h"
+#include "Interface.h"
+
+#define KISS_DEFAULT_DATASIZE 512
 
 class AudioInput
 {
@@ -38,6 +41,11 @@ public:
     FftLogPlot::const_iterator   fftPlotBegin() const     { return mFftLogPlot.begin(); }
     FftLogPlot::const_iterator   fftPlotEnd() const       { return mFftLogPlot.end(); }
     const FftLogPlot& getFftLogData() const { return mFftLogPlot; }
+    
+    float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
+    
+    void setupInterface( Interface* interface );
+    bool changeInput( const int index );
     
 private:
     void analyzeKissFft();
