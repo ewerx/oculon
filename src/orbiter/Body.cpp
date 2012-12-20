@@ -45,14 +45,12 @@ Body::Body(Orbiter* scene, string name, const Vec3d& pos, const Vec3d& vel, floa
 , mRotationSpeed(rotSpeed)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
-, mPeakRadiusMultiplier(1.0f)
 , mMass(mass)
 , mColor(color)
 , mHasTexture(false)
 , mIsLabelVisible(true)
 , mLabel(scene)
 {
-    mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
@@ -67,7 +65,6 @@ Body::Body(Orbiter* scene, string name, const Vec3d& pos, const Vec3d& vel, floa
 , mRotationSpeed(rotSpeed)
 , mRadius(radius)
 , mRadiusMultiplier(1.0f)
-, mPeakRadiusMultiplier(1.0f)
 , mMass(mass)
 , mColor(color)
 , mTexture(textureImage)
@@ -75,7 +72,6 @@ Body::Body(Orbiter* scene, string name, const Vec3d& pos, const Vec3d& vel, floa
 , mIsLabelVisible(true)
 , mLabel(scene)
 {
-    mEaseFactor = 1.0f;
     mLabel.setPosition(Vec3d(10.0f, 0.0f, 0.0f));
     mLabel.setFont("Menlo", 10.0f);
     mLabel.setTextColor( ColorA(1.0f,1.0f,1.0f,0.95f) );
@@ -89,25 +85,15 @@ Body::~Body()
 
 void Body::setup()
 {
-    mRadiusAnimRate = 0.000005f;
     mDistToCam = 0.0f;
 }
 
 void Body::update(double dt)
 {
     mPosition += mVelocity * dt;
-    mRotation += toDegrees(mRotationSpeed) * dt * (mRadiusMultiplier*10.f);
+    mRotation += toDegrees(mRotationSpeed) * dt * mRadiusMultiplier;
 
-    
     updateLabel();
-    
-    if( mRadiusMultiplier > 1.0f && mRadiusAnimTime < 3.0f)
-    {
-        mRadiusAnimTime += (float)(mParentScene->getApp()->getElapsedSecondsThisFrame());
-        mEaseFactor = easeOutQuad(mRadiusAnimTime);
-        mRadiusMultiplier = 1.0f + mEaseFactor * (mPeakRadiusMultiplier - 1.0f);
-        //mRadiusMultiplier = math<float>::max( 1.0f, mRadiusMultiplier - dt*mRadiusAnimRate );
-    }
 }
 
 void Body::draw(const Matrix44d& transform, bool drawBody)
@@ -190,7 +176,8 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
             
             char buf[256];
-            snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
+            //snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
+                snprintf(buf,256,"%.3f\n%.4f", mRadiusMultiplier.value(), mRadius);
             textCoords.x += 15.0f;
             mOrbiter->getLabelFont()->drawString( buf, textCoords );
             //glTranslatef(textCoords.x, textCoords.y, 0.0f);
@@ -295,28 +282,11 @@ void Body::resetTrail()
 
 void Body::applyFftBandValue( float fftBandValue )
 {
-    mRadiusAnimTime += (float)(mParentScene->getApp()->getElapsedSecondsThisFrame());
-    
-    int framesToAvgFft = Orbiter::sNumFramesToAvgFft;
-    if( mLastFftValues.size() > framesToAvgFft )
-    {
-        mLastFftValues.erase(mLastFftValues.begin());
-    }
-    mLastFftValues.push_back(fftBandValue);
-    
-    float avgFftValue = 0.0f;
-    for (vector<float>::iterator it = mLastFftValues.begin(); it != mLastFftValues.end(); ++it) 
-    {
-        avgFftValue += (*it);
-    }
-    avgFftValue /= mLastFftValues.size();
-    
-    float mult = 1.0f + avgFftValue * Orbiter::sMaxRadiusMultiplier;
+    float mult = mOrbiter->getMinRadiusMultiplier() + fftBandValue * mOrbiter->getMaxRadiusMultiplier();
     if( mult > mRadiusMultiplier )
     {
-        mPeakRadiusMultiplier = mult;
         mRadiusMultiplier = mult;
-        mRadiusAnimTime = 0.0f;
+        timeline().apply( &mRadiusMultiplier, mOrbiter->getMinRadiusMultiplier(), mOrbiter->getFalloff(), EaseNone() );
     }
 }
 

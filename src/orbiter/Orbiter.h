@@ -70,6 +70,10 @@ public:
     ci::gl::TextureFontRef getHudFont()     { return mTextureFontHud; }
    
     Star* getExoStar() { return mExoStar; }
+    
+    float getMinRadiusMultiplier() const      { return mMinRadiusMultiplier; }
+    float getMaxRadiusMultiplier() const      { return mMaxRadiusMultiplier; }
+    float getFalloff() const                { return mFalloff; }
 protected:// from Scene
     void setupInterface();
     void setupDebugInterface();
@@ -104,6 +108,10 @@ private:
     CameraPersp         mCam;
     Matrix44d           mScaleMatrix;
     
+    int             mFrequencySpread;
+    float           mMinRadiusMultiplier;
+    float           mMaxRadiusMultiplier;
+    float           mFalloff;
     
     eCamType        mCamType;
     
@@ -141,8 +149,6 @@ public:
     static double   sDefaultTimeScale;
     static double   sDefaultGravityConstant;
     static double   sDrawScale;
-    static float    sMaxRadiusMultiplier;
-    static int      sNumFramesToAvgFft;
     static bool     sUseSmoothLines;
     static bool     sUseTriStripLine;
     static int      sMinTrailLength;
