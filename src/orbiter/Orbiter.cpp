@@ -88,7 +88,7 @@ void Orbiter::setup()
 {
     Scene::setup();
     
-    mDrawHud = true;
+    mDrawHud = false;
     mDrawLabels = true;
     mDrawTrails = true;
     
@@ -105,16 +105,12 @@ void Orbiter::setup()
     mDrawScale = Orbiter::sDrawScale;
     mGravityConstant = sDefaultGravityConstant;
     
-    //mLightDirection = Vec3f( 0.025f, 0.25f, 1.0f );
-	//mLightDirection.normalize();
-    
-    mMidiMap.init(&mApp->getMidiInput());
-    setupMidiMapping();
-    
     mFontHud            = Font( "Menlo", 13 );
     mFontLabel          = Font( "Menlo", 10 );
     mTextureFontHud     = gl::TextureFont::create( mFontHud );
 	mTextureFontLabel	= gl::TextureFont::create( mFontLabel );
+    
+    mLabelBrightnessByAudio = 0.0f;
     
     setupHud();
     
@@ -135,16 +131,6 @@ void Orbiter::resize()
     {
         mTextBox[i]->resize();
     }
-}
-
-void Orbiter::setupMidiMapping()
-{
-    // setup MIDI inputs for learning
-    mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    mMidiMap.beginLearning();
-    // ... or load a MIDI mapping
-    //mMidiInput.setMidiKey("gravity", channel, note);
 }
 
 void Orbiter::setupInterface()
@@ -181,6 +167,9 @@ void Orbiter::setupInterface()
     mInterface->addParam(CreateFloatParam("Falloff", &mFalloff)
                          .maxValue(1.0f)
                          .oscReceiver(mName,"falloff"));
+    
+    mInterface->addParam(CreateFloatParam("Label FFT", &mLabelBrightnessByAudio)
+                         .oscReceiver(mName,"labelfft"));
 }
 
 
@@ -636,9 +625,6 @@ void Orbiter::draw()
     {
         gl::translate( mExoStar->mPos );
     }
-//
-//    glDisable( GL_LIGHT0 );
-//    glDisable( GL_LIGHTING );
     
     if( mDrawTrails )
     {
@@ -681,14 +667,7 @@ void Orbiter::draw()
             body->draw(mScaleMatrix, false);
             culled++;
         }
-        
-        //glPushMatrix();
-        //Vec3d pos = matrix * bodyIt->getPosition();
-        //glTranslated(pos.x, pos.y, pos.z);
-        //glPopMatrix();
     }
-    
-    //mApp->console() << "culled " << culled << std::endl;
     
 	glDisable( GL_LIGHT0 );
     glDisable( GL_LIGHTING );
@@ -699,17 +678,6 @@ void Orbiter::draw()
     {
         drawHud();
     }
-}
-
-void Orbiter::handleGravityChange(MidiEvent midiEvent)
-{
-    double delta = (midiEvent.getValueRatio() * 2.0f - 1.0f) * 8.0e-11;
-    mGravityConstant = 6.6742e-11 + delta;
-}
-
-void Orbiter::handleTimeScaleChange(MidiEvent midiEvent)
-{
-    mTimeScale = sDefaultTimeScale * ( midiEvent.getValueRatio() * 100.f );
 }
 
 #pragma mark HUD
@@ -837,64 +805,11 @@ void Orbiter::drawHud()
     const float space = 10.0f;
     const float left = 20.0f;
     const float top = mApp->getViewportHeight() - 20.0f - (height*2.0f) - space;
-    drawHudWaveformAnalyzer(0.0f,100.0f,mApp->getViewportWidth(),height);
     drawHudSpectrumAnalyzer(left,top+height+space,width,height);
     
     gl::popMatrices();
 }
 
-void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float height)
-{
-    /*
-    AudioInput& audioInput = mApp->getAudioInput();
-    audio::PcmBuffer32fRef pcmBufferRef = audioInput.getPcmBuffer();
-    if( !pcmBufferRef )
-    {
-        return;
-    }
-    
-    glPushMatrix();
-    glDisable(GL_LIGHTING);
-    uint32_t bufferSamples = pcmBufferRef->getSampleCount();
-    audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
-    audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
-    
-    //float mid = top + height / 2.0f;
-    int endIdx = bufferSamples;
-    
-    //only draw the last 1024 samples or less
-    int32_t startIdx = ( endIdx - 1024 );
-    startIdx = ci::math<int32_t>::clamp( startIdx, 0, endIdx );
-    
-    float scale = width / (float)( endIdx - startIdx );
-    
-    PolyLine<Vec2f>	spectrum_right;
-    PolyLine<Vec2f> spectrum_left;
-    for( uint32_t i = startIdx, c = 0; i < endIdx; i++, c++ ) 
-    {
-        float y = ( ( rightBuffer->mData[i] - 1 ) * - height );
-        spectrum_right.push_back( Vec2f( ( c * scale ), y ) );
-        y = ( ( leftBuffer->mData[i] - 1 ) * - height );
-        spectrum_left.push_back( Vec2f( ( c * scale ), y ) );
-    }
-    glPushMatrix();
-    glTranslatef(left,mApp->getViewportHeight()/6.0f,0.0f);
-    gl::color( ColorA( 0.0f, 0.0f, 0.0f, 0.75f ) );
-    gl::draw( spectrum_right );
-    glPopMatrix();
-    glPushMatrix();
-    //gl::color( Color( 0.75f, 0.75f, 0.75f ) );
-    glTranslatef(left,mApp->getViewportHeight()/2.0f,0.0f);
-    gl::draw( spectrum_left );
-    glPopMatrix();
-    
-    //float shade = 0.4f;
-    //glColor3f(shade,shade,shade);
-    //gl::drawStrokedRect(Rectf(left, top, width, top+height));
-    
-    glPopMatrix();    
-     */
-}
 
 void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float height)
 {
@@ -921,11 +836,11 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
         barY = math<float>::min( barY, height );
         glBegin( GL_QUADS );
         glColor3f( 0.8f,0.8f,0.8f );
-        glVertex2f( i * space, height-2.f );
+        glVertex2f( i * space, height-3.f );
         glVertex2f( i * space + barWidth, height-bumpUp );
         glColor3f( 1.0f, 1.0f, 1.0f );
         glVertex2f( i * space + barWidth, height - barY-bumpUp );
-        glVertex2f( i * space, height - barY-2.f );
+        glVertex2f( i * space, height - barY-3.f );
         glEnd();
     }
     

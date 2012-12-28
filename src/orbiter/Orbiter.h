@@ -11,8 +11,6 @@
 #define __ORBITER_H__
 
 #include "Scene.h"
-#include "MidiMap.h"
-
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/gl/TextureFont.h"
@@ -44,8 +42,6 @@ public:
     const Camera& getCamera();
     
     // callbacks
-    void handleGravityChange(MidiEvent midiEvent);
-    void handleTimeScaleChange(MidiEvent midiEvent);
     bool prevTarget();
     bool nextTarget();
     
@@ -74,12 +70,12 @@ public:
     float getMinRadiusMultiplier() const      { return mMinRadiusMultiplier; }
     float getMaxRadiusMultiplier() const      { return mMaxRadiusMultiplier; }
     float getFalloff() const                { return mFalloff; }
+    float getLabelBrightnessByAudio() const { return mLabelBrightnessByAudio; }
 protected:// from Scene
     void setupInterface();
     void setupDebugInterface();
     
 private:
-    void setupMidiMapping();
     
     void updateAudioResponse();
     void updateCam();
@@ -87,7 +83,6 @@ private:
     void setupHud();
     void updateHud();
     void drawHud();
-    void drawHudWaveformAnalyzer(float left, float top, float width, float height);
     void drawHudSpectrumAnalyzer(float left, float top, float width, float height);
     
     void removeBodies();
@@ -122,8 +117,6 @@ private:
     
     Quatd           mCameraRotation;
     
-    MidiMap         mMidiMap;
-    
     ci::Font                mFontLabel;
     ci::Font                mFontHud;
     ci::gl::TextureFontRef  mTextureFontLabel;
@@ -142,6 +135,8 @@ private:
     bool            mDrawHud;
     bool            mDrawLabels;
     bool            mDrawTrails;
+    
+    float           mLabelBrightnessByAudio;
     
     Star*           mExoStar;
     

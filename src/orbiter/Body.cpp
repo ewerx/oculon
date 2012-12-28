@@ -162,44 +162,44 @@ void Body::draw(const Matrix44d& transform, bool drawBody)
             if( mDistToCam > 0.0f )
             {
                 float per = constrain( 1.0f - mDistToCam * 0.0000375f, 0.0f, 1.0f );
-                per *= per * per;
+                per = per * per;
                 
-            gl::pushMatrices();
-            
-            gl::disableDepthRead();
-            glDisable(GL_LIGHTING);
-            gl::color( 1.0f, 1.0f, 1.0f, per );
-        
-            CameraOrtho textCam(0.0f, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight(), 0.0f, 0.0f, 10.f);
-            gl::setMatrices(textCam);
-        
-            Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
-            
-            char buf[256];
-            //snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
+                gl::pushMatrices();
+                
+                gl::disableDepthRead();
+                glDisable(GL_LIGHTING);
+                gl::color( 1.0f, 1.0f, 1.0f, (mRadiusMultiplier.value() - mOrbiter->getMinRadiusMultiplier()) + mOrbiter->getLabelBrightnessByAudio() );
+                
+                CameraOrtho textCam(0.0f, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight(), 0.0f, 0.0f, 10.f);
+                gl::setMatrices(textCam);
+                
+                Vec2f textCoords = mParentScene->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
+                
+                char buf[256];
+                //snprintf(buf,256,"%.4f AU\n%.1f m/s", mPosition.length()/149598000000.0f, mVelocity.length());
                 snprintf(buf,256,"%.3f\n%.4f", mRadiusMultiplier.value(), mRadius);
-            textCoords.x += 15.0f;
-            mOrbiter->getLabelFont()->drawString( buf, textCoords );
-            //glTranslatef(textCoords.x, textCoords.y, 0.0f);
-
-            //mLabel.draw();
-            
-            const bool binned = false;
-            if( binned )
-            {
-                //TODO: hack, use a message
-                Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene("binned"));
+                textCoords.x += 15.0f;
+                mOrbiter->getLabelFont()->drawString( buf, textCoords );
+                //glTranslatef(textCoords.x, textCoords.y, 0.0f);
                 
-                if( binnedScene && binnedScene->isRunning() )
+                //mLabel.draw();
+                
+                const bool binned = false;
+                if( binned )
                 {
-                    Vec3d screenCoords = transform * mPosition;
-                    //Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
-                    float force = 200.f;
-                    binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.35f, force*mRadiusMultiplier);
+                    //TODO: hack, use a message
+                    Binned* binnedScene = NULL;//static_cast<Binned*>(app->getScene("binned"));
+                    
+                    if( binnedScene && binnedScene->isRunning() )
+                    {
+                        Vec3d screenCoords = transform * mPosition;
+                        //Vec2f textCoords = app->getCamera().worldToScreen(screenCoords, mParentScene->getApp()->getViewportWidth(), mParentScene->getApp()->getViewportHeight());
+                        float force = 200.f;
+                        binnedScene->addRepulsionForce(textCoords, mRadius*mRadiusMultiplier*0.35f, force*mRadiusMultiplier);
+                    }
                 }
-            }
-
-            gl::popMatrices();
+                
+                gl::popMatrices();
             }
         }
         gl::popMatrices();

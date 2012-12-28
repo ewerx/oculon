@@ -76,32 +76,10 @@ void Pulsar::resize()
     Scene::resize();
 }
 
-//void Pulsar::setupMidiMapping()
-//{
-    // setup MIDI inputs for learning
-    //mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    //mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    //mMidiMap.beginLearning();
-    // ... or load a MIDI mapping
-    //mMidiInput.setMidiKey("gravity", channel, note);
-//}
-
 void Pulsar::setupDebugInterface()
 {
     mDebugParams.addText( "pulsar", "label=`Pulsar`" );
     mDebugParams.addParam("Rotation Speed", &mRotationVelocity, "step=10 keyIncr=t keyDecr=y");
-    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    //mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    //mDebugParams.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
-    //mDebugParams.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    //mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=s");
-    //mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine, "key=t");
-    //mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "keyIncr=l keyDecr=;");
-    //mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "keyIncr=w keyDecr=q step=0.1");
-    //mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "keyIncr=x keyDecr=z step=0.05");
-    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //mDebugParams.addSeparator();
-    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
 
 void Pulsar::setupInterface()
