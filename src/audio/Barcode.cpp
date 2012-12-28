@@ -46,7 +46,8 @@ void Barcode::setup()
     mThreshold = 0.02f;
     mWidthByFft = true;
     mAlphaByFft = true;
-    mPositionByFft = false;
+    
+    mPositionMode = POSITION_SHIFT_RANDOM;
     
     mFalloff = 1.0f;
     mFftFalloff = true;
@@ -55,8 +56,6 @@ void Barcode::setup()
     mNumBars = 1;
     mBarGap = 0;
     mVertical = true;
-    
-    mFftMode = FFT_ALPHA;
     
     for (int i=0; i < MAX_BARS; ++i)
     {
@@ -80,8 +79,6 @@ void Barcode::setupInterface()
                         .oscReceiver(mName,"widthaudio"));
     interface->addParam(CreateBoolParam("Alpha By Audio", &mAlphaByFft)
                         .oscReceiver(mName,"alphaaudio"));
-    interface->addParam(CreateBoolParam("Pos By Audio", &mPositionByFft)
-                        .oscReceiver(mName,"posaudio"));
     interface->addParam(CreateFloatParam("Base Width", &mBaseWidth)
                         .minValue(1.0f)
                         .maxValue(10.0f)
@@ -101,6 +98,16 @@ void Barcode::setupInterface()
     interface->addParam(CreateIntParam("Num Bars", &mNumBars)
                         .maxValue(MAX_BARS)
                         .oscReceiver(mName,"numbars"));
+    
+    interface->addEnum(CreateEnumParam("Position Mode", (int*)&mPositionMode)
+                       .maxValue(POSITION_COUNT)
+                       .oscReceiver(mName,"posmode")
+                       .isVertical());
+    
+    interface->addEnum(CreateEnumParam("Width Mode", (int*)&mWidthMode)
+                       .maxValue(WIDTH_MODE_COUNT)
+                       .oscReceiver(mName,"widthmode")
+                       .isVertical());
     
     interface->addParam(CreateFloatParam("Falloff", &mFalloff)
                         .minValue(0.0f)
@@ -174,13 +181,22 @@ void Barcode::drawBar(const int index)
         {
             // width
             float width;
-            if( mWidthByFft )
+            switch( mWidthMode )
             {
+                case WIDTH_FIXED:
+                    width = mBaseWidth;
+                    break;
+                    
+                case WIDTH_FIXED_FREQ:
                 width = mBaseWidth+(1.0f-x/dataSize)*mMaxWidth;
-            }
-            else
-            {
-                width = mBaseWidth;
+                    break;
+                
+                case WIDTH_AUDIO_FREQ:
+                    width = mBaseWidth+(1.0f-x/dataSize)*mMaxWidth*y;
+                    break;
+                    
+                default:
+                    assert(false && "invalid");
             }
         
             if (width > mLines[index][i].mWidth)
@@ -191,22 +207,7 @@ void Barcode::drawBar(const int index)
             width = mLines[index][i].mWidth;
             
             // position
-            float lineX;
-            if( mPositionByFft )
-            {
-                if( Rand::randFloat() < 0.5f )
-                {
-                    lineX = (barRange/2.0f) + (x/dataSize)*(barRange/2.0f);
-                }
-                else
-                {
-                    lineX = (barRange/2.0f) - (x/dataSize)*(barRange/2.0f);
-                }
-            }
-            else
-            {
-                lineX = Rand::randFloat(0.0f,barRange);
-            }
+            float lineX = getPositionOffset( index, i, x, y, dataSize, barRange );
             
             // alpha
             ColorA color( mColor.r, mColor.g, mColor.b, mColor.a );
@@ -246,6 +247,50 @@ void Barcode::drawBar(const int index)
             glEnd();
         }
 	}
+}
+
+float Barcode::getPositionOffset( const int barIndex, const int lineIndex, const float x, const float y, const float dataSize, const float barRange )
+{
+    float offset = 0.0f;
+    
+    switch( mPositionMode )
+    {
+        case POSITION_FIXED_CENTER:
+            if( lineIndex % 2 == 0 )
+            {
+                offset = (barRange/2.0f) + (x/dataSize)*(barRange/2.0f);
+            }
+            else
+            {
+                offset = (barRange/2.0f) - (x/dataSize)*(barRange/2.0f);
+            }
+            break;
+            
+        case POSITION_SHIFT_RANDOM:
+            offset = Rand::randFloat(0.0f,barRange);
+            break;
+            
+        case POSITION_SHIFT_LINEAR:
+            // TODO: store offset as line var
+            break;
+            
+        case POSITION_FIXED_RANDOM:
+        {
+            // TODO: inefficient
+            Rand fixedRand( barIndex );
+            for( int i=0; i < barIndex; ++i )
+            {
+                offset = fixedRand.nextFloat(barRange);
+            }
+        }
+            break;
+            
+        default:
+            assert( false && "unhandle" );
+            break;
+    }
+    
+    return offset;
 }
 
 Barcode::tEaseFn Barcode::getFalloffFunction()

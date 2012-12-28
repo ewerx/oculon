@@ -33,6 +33,8 @@ public:
 private:
     void drawBar(const int index);
     
+    float getPositionOffset( const int barIndex, const int lineIndex, const float fftx, const float ffty, const float fftDataSize, const float barRange );
+    
     typedef std::function<float (float)> tEaseFn;
     tEaseFn getFalloffFunction();
     
@@ -44,22 +46,11 @@ private:
     
     bool        mWidthByFft;
     bool        mAlphaByFft;
-    bool        mPositionByFft;
     bool        mFftFalloff;
     
     int         mNumBars;
     int         mBarGap;
     bool        mVertical;
-    
-    enum eFftMode
-    {
-        FFT_ALPHA,
-        FFT_WIDTH,
-        FFT_POSITION,
-        
-        FFT_COUNT
-    };
-    eFftMode mFftMode;
     
     struct tLine
     {
@@ -72,6 +63,29 @@ private:
         MAX_LINES = 256
     };
     tLine mLines[MAX_BARS][MAX_LINES];
+    
+    enum ePositionMode
+    {
+        POSITION_FIXED_CENTER,
+        POSITION_FIXED_RANDOM,
+        POSITION_SHIFT_RANDOM,
+        POSITION_SHIFT_LINEAR,
+        
+        POSITION_COUNT
+    };
+    ePositionMode mPositionMode;
+
+    float mShiftSpeed[MAX_BARS];
+    
+    enum eWidthMode
+    {
+        WIDTH_FIXED,
+        WIDTH_FIXED_FREQ,
+        WIDTH_AUDIO_FREQ,
+        
+        WIDTH_MODE_COUNT
+    };
+    eWidthMode mWidthMode;
     
     enum eFalloffMode
     {
