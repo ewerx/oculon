@@ -285,7 +285,7 @@ void OculonApp::setupScenes()
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
     if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
-    if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
+    //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
     if( mEnableMindWave && mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );
 }
