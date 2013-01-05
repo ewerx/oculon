@@ -101,6 +101,8 @@ void Orbiter::setup()
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
 	mCam.setPerspective( 65.0f, mApp->getViewportAspectRatio(), 1.0f, 200000.0f );
     
+    mCamType = CAM_CATALOG;
+    
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
     mGravityConstant = sDefaultGravityConstant;
