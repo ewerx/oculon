@@ -59,7 +59,6 @@
 		7C37393514F736E300B24851 /* MSAOpenCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37391F14F736E300B24851 /* MSAOpenCLKernel.cpp */; };
 		7C37393614F736E300B24851 /* MSAOpenCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37392114F736E300B24851 /* MSAOpenCLMemoryObject.cpp */; };
 		7C37393714F736E300B24851 /* MSAOpenCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37392314F736E300B24851 /* MSAOpenCLProgram.cpp */; };
-		7C39957315240BAD000CAF97 /* libcinder_d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C39956C15240B5B000CAF97 /* libcinder_d.a */; };
 		7C3BB41715F5567900A4E384 /* Corona.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40715F5567900A4E384 /* Corona.cpp */; };
 		7C3BB41815F5567900A4E384 /* CoronaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40815F5567900A4E384 /* CoronaController.cpp */; };
 		7C3BB41915F5567900A4E384 /* CoronaStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40A15F5567900A4E384 /* CoronaStar.cpp */; };
@@ -277,37 +276,6 @@
 		};
 /* End PBXBuildRule section */
 
-/* Begin PBXContainerItemProxy section */
-		7C39956B15240B5B000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = cinder;
-		};
-		7C39956D15240B5B000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 007050BE1114F93F003FCAE4;
-			remoteInfo = cinder_iphone;
-		};
-		7C39956F15240B5B000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 00CFD9E11135C3520091E310;
-			remoteInfo = cinder_iphone_sim;
-		};
-		7C39957115240B95000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC07D0554694100DB518D;
-			remoteInfo = cinder;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		7C8C237015007E620009FF26 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -400,7 +368,6 @@
 		7C37392414F736E300B24851 /* MSAOpenCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLProgram.h; sourceTree = "<group>"; };
 		7C37392514F736E300B24851 /* MSAOpenCLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLTypes.h; sourceTree = "<group>"; };
 		7C37393814F737DA00B24851 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		7C39956215240B5A000CAF97 /* cinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cinder.xcodeproj; path = ../sdks/cinder/xcode/cinder.xcodeproj; sourceTree = "<group>"; };
 		7C3BB40715F5567900A4E384 /* Corona.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Corona.cpp; sourceTree = "<group>"; };
 		7C3BB40815F5567900A4E384 /* CoronaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaController.cpp; sourceTree = "<group>"; };
 		7C3BB40915F5567900A4E384 /* CoronaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaController.h; sourceTree = "<group>"; };
@@ -684,7 +651,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C39957315240BAD000CAF97 /* libcinder_d.a in Frameworks */,
 				7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */,
 				7C865591148C2980000E00B6 /* CoreMIDI.framework in Frameworks */,
 				7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */,
@@ -927,16 +893,6 @@
 			path = ../sdks/msalibs/MSAOpenCL/src;
 			sourceTree = SOURCE_ROOT;
 		};
-		7C39956315240B5A000CAF97 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				7C39956C15240B5B000CAF97 /* libcinder_d.a */,
-				7C39956E15240B5B000CAF97 /* libcinder-iphone_d.a */,
-				7C39957015240B5B000CAF97 /* libcinder-iphone-sim_d.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		7C3BB40615F5567900A4E384 /* corona */ = {
 			isa = PBXGroup;
 			children = (
@@ -1100,7 +1056,6 @@
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
-				7C39956215240B5A000CAF97 /* cinder.xcodeproj */,
 				7C74552E148C04C6009C0356 /* Oculon */,
 				7C745513148C04C6009C0356 /* Frameworks */,
 				7C745511148C04C6009C0356 /* Products */,
@@ -1790,7 +1745,6 @@
 				7C1C5CA514F75EB5002CE80B /* PBXBuildRule */,
 			);
 			dependencies = (
-				7C39957215240B95000CAF97 /* PBXTargetDependency */,
 			);
 			name = Oculon;
 			productName = Oculon;
@@ -1815,42 +1769,12 @@
 			mainGroup = 7C745505148C04C6009C0356;
 			productRefGroup = 7C745511148C04C6009C0356 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 7C39956315240B5A000CAF97 /* Products */;
-					ProjectRef = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				7C74550F148C04C6009C0356 /* Oculon */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		7C39956C15240B5B000CAF97 /* libcinder_d.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libcinder_d.a;
-			remoteRef = 7C39956B15240B5B000CAF97 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		7C39956E15240B5B000CAF97 /* libcinder-iphone_d.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libcinder-iphone_d.a";
-			remoteRef = 7C39956D15240B5B000CAF97 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		7C39957015240B5B000CAF97 /* libcinder-iphone-sim_d.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libcinder-iphone-sim_d.a";
-			remoteRef = 7C39956F15240B5B000CAF97 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7C74550E148C04C6009C0356 /* Resources */ = {
@@ -2109,14 +2033,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		7C39957215240B95000CAF97 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = cinder;
-			targetProxy = 7C39957115240B95000CAF97 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		7C74554F148C2413009C0356 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -2231,6 +2147,7 @@
 					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/lib\"",
 				);
 				OTHER_LDFLAGS = (
+					"$(CINDER_PATH)/lib/libcinder_d.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_imgproc.a",
@@ -2269,6 +2186,7 @@
 					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/lib\"",
 				);
 				OTHER_LDFLAGS = (
+					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_imgproc.a",
