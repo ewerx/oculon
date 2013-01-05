@@ -78,7 +78,7 @@ void Catalog::setup()
     //
     // CAMERA	
 	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio(), 200000.0f );
-    mStarCam.setup();
+    mStarCam.setup(this);
     //TODO: hack!
     mStarCam.mTimeScale = &mStarCamTimeScale;
     
@@ -211,6 +211,11 @@ void Catalog::setupInterface()
                          .oscReceiver(mName,"starcamtimescale")
                          .sendFeedback());
     
+    mInterface->addParam(CreateFloatParam("Star Cam Time x100", &mStarCamTimeScale)
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(mName,"starcamtimescale100"));
+    
     mInterface->addParam(CreateFloatParam("Starfield Alpha", &mStarfieldAlpha)
                          .minValue(0.0f)
                          .maxValue(1.0f)
@@ -228,6 +233,7 @@ void Catalog::setupInterface()
 //
 void Catalog::setupDebugInterface()
 {
+    Scene::setupDebugInterface();
     //mDebugParams.addParam("Camera Distance", &mCameraDistance, "readonly=true");
 }
 

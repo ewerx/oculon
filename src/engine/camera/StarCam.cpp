@@ -4,6 +4,8 @@
 #include "cinder/CinderMath.h"
 #include "cinder/Utilities.h"
 #include "cinder/app/AppBasic.h"
+#include "Scene.h"
+#include "OculonApp.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -15,7 +17,8 @@ const double StarCam::LATITUDE_THRESHOLD = 89.0;
 const double StarCam::DISTANCE_MIN = 100;
 const double StarCam::DISTANCE_MAX = 50000.0;
 
-StarCam::StarCam(void)
+StarCam::StarCam()
+: mScene(NULL)
 {
 	mInitialCam = mCurrentCam = CameraPersp(); 
 	mCurrentCam.setNearClip( 5.0f );//0.01f );
@@ -28,18 +31,20 @@ StarCam::StarCam(void)
 	mLatitude = 0.0;
 	mLongitude = 0.0;
 	mDistance = 0.015 * 33333;
-	mFov = 60.0;
+	mFov = 65.0;
     
     mTimeScale = NULL;
     mRotateSpeed = NULL;
     mLookAt = Vec3f::zero();
 }
 
-void StarCam::setup()
+void StarCam::setup(Scene* scene)
 {
+    mScene = scene;
 	mTimeOut = 300.0;
 	mTimeMouse = getElapsedSeconds() - mTimeOut;
     mElapsedTime = 0.0f;
+    mCurrentCam.setPerspective( 65.0f, mScene->getApp()->getViewportAspectRatio(), 5.0f, 200000.0f );
 }
 
 void StarCam::update(double elapsed)
