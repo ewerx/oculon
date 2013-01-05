@@ -10,6 +10,7 @@
 #define PARTICLE_FLAGS_SHOW_DARK    (1 << 1)
 #define PARTICLE_FLAGS_SHOW_SPEED   (1 << 2)
 #define PARTICLE_FLAGS_SHOW_MASS    (1 << 3)
+#define PARTICLE_FLAGS_CONSTRAIN    (1 << 4)
 
 #define MAX_MASS 50.0f
 
@@ -93,6 +94,7 @@ __kernel void gravity(__global const float4 *in_pos,
     
 	float4 p1 = in_pos[i];
 	float4 a = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 v1 = in_vel[i];
     
     // the higgs bassons
 	const uint n = step;
@@ -131,9 +133,21 @@ __kernel void gravity(__global const float4 *in_pos,
         }
 	}
     
-	float4 v = in_vel[i] + dt * a;
+	float4 v = v1 + dt * a;
     float4 damping1 = (float4)(damping,damping,damping,1.0f);
     v *= damping1;
+    
+    if( flags & PARTICLE_FLAGS_CONSTRAIN )
+    {
+        float dist = p1.x*p1.x + p1.y*p1.y + p1.z+p1.z;
+        if( dist > 40000.0f )
+        {
+            v.x = -p1.x;
+            v.y = -p1.y;
+            v.z = -p1.z;
+        }
+    }
+    
     out_pos[i] = p1 + (dt * v);
     
     out_vel[i] = v;
