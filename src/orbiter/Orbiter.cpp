@@ -38,8 +38,6 @@ PLANETS_ENTRY("Neptune",4504300000000.f,24746000,1.024E+026,    5430,   1.08E-04
 /*static*/ double   Orbiter::sDefaultTimeScale          = 60.f * 60.f * 24.f * 10.f; // 10 days
 /*static*/ double   Orbiter::sDefaultGravityConstant    = 6.6742e-11;
 /*static*/ double   Orbiter::sDrawScale                 = 2e-12;
-/*static*/ float    Orbiter::sMaxRadiusMultiplier       = 2.6f;
-/*static*/ int      Orbiter::sNumFramesToAvgFft         = 1;
 /*static*/ bool     Orbiter::sUseSmoothLines            = true;
 /*static*/ bool     Orbiter::sUseTriStripLine           = false;
 /*static*/ int      Orbiter::sMinTrailLength            = 47;// in segments
@@ -90,28 +88,31 @@ void Orbiter::setup()
 {
     Scene::setup();
     
-    mDrawHud = true;
+    mDrawHud = false;
     mDrawLabels = true;
     mDrawTrails = true;
+    
+    mFrequencySpread = 5;
+    mMinRadiusMultiplier = 1.5f;
+    mMaxRadiusMultiplier = 5.0f;
+    mFalloff = 0.18f;
     
     mCam.setEyePoint( Vec3f(0.0f, 0.0f, 750.0f) );
 	mCam.setCenterOfInterestPoint( Vec3f::zero() );
 	mCam.setPerspective( 65.0f, mApp->getViewportAspectRatio(), 1.0f, 200000.0f );
     
+    mCamType = CAM_CATALOG;
+    
     mTimeScale = sDefaultTimeScale;
     mDrawScale = Orbiter::sDrawScale;
     mGravityConstant = sDefaultGravityConstant;
-    
-    //mLightDirection = Vec3f( 0.025f, 0.25f, 1.0f );
-	//mLightDirection.normalize();
-    
-    mMidiMap.init(&mApp->getMidiInput());
-    setupMidiMapping();
     
     mFontHud            = Font( "Menlo", 13 );
     mFontLabel          = Font( "Menlo", 10 );
     mTextureFontHud     = gl::TextureFont::create( mFontHud );
 	mTextureFontLabel	= gl::TextureFont::create( mFontLabel );
+    
+    mLabelBrightnessByAudio = 0.0f;
     
     setupHud();
     
@@ -134,35 +135,6 @@ void Orbiter::resize()
     }
 }
 
-void Orbiter::setupMidiMapping()
-{
-    // setup MIDI inputs for learning
-    mMidiMap.registerMidiEvent("orb_gravity", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    mMidiMap.registerMidiEvent("orb_timescale", MidiEvent::TYPE_VALUE_CHANGE, this, &Orbiter::handleGravityChange);
-    mMidiMap.beginLearning();
-    // ... or load a MIDI mapping
-    //mMidiInput.setMidiKey("gravity", channel, note);
-}
-
-void Orbiter::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-    
-    mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
-    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    mDebugParams.addParam("Max Radius Mult", &Orbiter::sMaxRadiusMultiplier, "step=0.1");
-    mDebugParams.addParam("Frames to Avg", &Orbiter::sNumFramesToAvgFft, "step=1");
-    mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
-    mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
-    mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
-    mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
-    mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
-    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //mDebugParams.addSeparator();
-    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
-}
-
 void Orbiter::setupInterface()
 {
     mInterface->addEnum(CreateEnumParam("Camera", (int*)(&mCamType) )
@@ -181,6 +153,43 @@ void Orbiter::setupInterface()
                          .oscReceiver(getName(), "showlabels"));
     mInterface->addParam(CreateBoolParam("Show Trails", &mDrawTrails)
                          .oscReceiver(getName(), "showtrails"));
+    
+    mInterface->addParam(CreateIntParam("Freq Spread", &mFrequencySpread)
+                         .minValue(1)
+                         .maxValue(512)
+                         .oscReceiver(mName,"freqspread"));
+    mInterface->addParam(CreateFloatParam("Min Rad Mult", &mMinRadiusMultiplier)
+                         .minValue(1.0f)
+                         .maxValue(3.0f)
+                         .oscReceiver(mName,"minradmult"));
+    mInterface->addParam(CreateFloatParam("Max Rad Mult", &mMaxRadiusMultiplier)
+                         .minValue(1.0f)
+                         .maxValue(20.0f)
+                         .oscReceiver(mName,"maxradmult"));
+    mInterface->addParam(CreateFloatParam("Falloff", &mFalloff)
+                         .maxValue(1.0f)
+                         .oscReceiver(mName,"falloff"));
+    
+    mInterface->addParam(CreateFloatParam("Label FFT", &mLabelBrightnessByAudio)
+                         .oscReceiver(mName,"labelfft"));
+}
+
+
+void Orbiter::setupDebugInterface()
+{
+    Scene::setupDebugInterface();
+    
+    mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
+    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+    mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
+    mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
+    mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
+    mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
+    mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
+    mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
+    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
+    //mDebugParams.addSeparator();
+    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
 }
 
 void Orbiter::reset()
@@ -504,31 +513,53 @@ bool Orbiter::nextTarget()
 void Orbiter::updateAudioResponse()
 {
     AudioInput& audioInput = mApp->getAudioInput();
-    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
     
-    unsigned int bandCount = audioInput.getFftBandCount();
-    float* fftBuffer = fftDataRef.get();
+    //int32_t dataSize = audioInput.getFft()->getBinSize();
+    //const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+
+    const int numBandsPerBody = mFrequencySpread;//dataSize / mBodies.size();
     
-    const int numBandsPerBody = 2;
-    int bodyIndex = 0;
+    int minBand = 0;
+    int maxBand = numBandsPerBody;
     
-    if( fftBuffer )
+    for(BodyList::iterator bodyIt = mBodies.begin();
+        bodyIt != mBodies.end();
+        ++bodyIt)
     {
-        for( int i = 0; i < ( bandCount - numBandsPerBody ); i += numBandsPerBody) 
-        {
-            if( bodyIndex < mBodies.size() )
-            {
-                float avgFft = 0.0f;
-                for( int j = 0; j < numBandsPerBody; ++j )
-                {
-                    avgFft += fftBuffer[i] / bandCount;
-                }
-                avgFft /= (float)(numBandsPerBody);
-                mBodies[bodyIndex]->applyFftBandValue( avgFft );
-                ++bodyIndex;
-            }
-        }
+        float volume = audioInput.getAverageVolumeByFrequencyRange( minBand, maxBand ) * mGain;
+        
+        (*bodyIt)->applyFftBandValue( volume );
+        
+        minBand += numBandsPerBody;
+        maxBand += numBandsPerBody;
     }
+    
+    //
+//    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
+//    
+//    unsigned int bandCount = audioInput.getFftBandCount();
+//    float* fftBuffer = fftDataRef.get();
+//    
+//    const int numBandsPerBody = 2;
+//    int bodyIndex = 0;
+//    
+//    if( fftBuffer )
+//    {
+//        for( int i = 0; i < ( bandCount - numBandsPerBody ); i += numBandsPerBody) 
+//        {
+//            if( bodyIndex < mBodies.size() )
+//            {
+//                float avgFft = 0.0f;
+//                for( int j = 0; j < numBandsPerBody; ++j )
+//                {
+//                    avgFft += fftBuffer[i] / bandCount;
+//                }
+//                avgFft /= (float)(numBandsPerBody);
+//                mBodies[bodyIndex]->applyFftBandValue( avgFft );
+//                ++bodyIndex;
+//            }
+//        }
+//    }
 }
 
 void Orbiter::updateCam()
@@ -596,9 +627,6 @@ void Orbiter::draw()
     {
         gl::translate( mExoStar->mPos );
     }
-//
-//    glDisable( GL_LIGHT0 );
-//    glDisable( GL_LIGHTING );
     
     if( mDrawTrails )
     {
@@ -641,14 +669,7 @@ void Orbiter::draw()
             body->draw(mScaleMatrix, false);
             culled++;
         }
-        
-        //glPushMatrix();
-        //Vec3d pos = matrix * bodyIt->getPosition();
-        //glTranslated(pos.x, pos.y, pos.z);
-        //glPopMatrix();
     }
-    
-    //mApp->console() << "culled " << culled << std::endl;
     
 	glDisable( GL_LIGHT0 );
     glDisable( GL_LIGHTING );
@@ -659,17 +680,6 @@ void Orbiter::draw()
     {
         drawHud();
     }
-}
-
-void Orbiter::handleGravityChange(MidiEvent midiEvent)
-{
-    double delta = (midiEvent.getValueRatio() * 2.0f - 1.0f) * 8.0e-11;
-    mGravityConstant = 6.6742e-11 + delta;
-}
-
-void Orbiter::handleTimeScaleChange(MidiEvent midiEvent)
-{
-    mTimeScale = sDefaultTimeScale * ( midiEvent.getValueRatio() * 100.f );
 }
 
 #pragma mark HUD
@@ -797,96 +807,42 @@ void Orbiter::drawHud()
     const float space = 10.0f;
     const float left = 20.0f;
     const float top = mApp->getViewportHeight() - 20.0f - (height*2.0f) - space;
-    drawHudWaveformAnalyzer(0.0f,100.0f,mApp->getViewportWidth(),height);
     drawHudSpectrumAnalyzer(left,top+height+space,width,height);
     
     gl::popMatrices();
 }
 
-void Orbiter::drawHudWaveformAnalyzer(float left, float top, float width, float height)
-{
-    /*
-    AudioInput& audioInput = mApp->getAudioInput();
-    audio::PcmBuffer32fRef pcmBufferRef = audioInput.getPcmBuffer();
-    if( !pcmBufferRef )
-    {
-        return;
-    }
-    
-    glPushMatrix();
-    glDisable(GL_LIGHTING);
-    uint32_t bufferSamples = pcmBufferRef->getSampleCount();
-    audio::Buffer32fRef leftBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
-    audio::Buffer32fRef rightBuffer = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_RIGHT );
-    
-    //float mid = top + height / 2.0f;
-    int endIdx = bufferSamples;
-    
-    //only draw the last 1024 samples or less
-    int32_t startIdx = ( endIdx - 1024 );
-    startIdx = ci::math<int32_t>::clamp( startIdx, 0, endIdx );
-    
-    float scale = width / (float)( endIdx - startIdx );
-    
-    PolyLine<Vec2f>	spectrum_right;
-    PolyLine<Vec2f> spectrum_left;
-    for( uint32_t i = startIdx, c = 0; i < endIdx; i++, c++ ) 
-    {
-        float y = ( ( rightBuffer->mData[i] - 1 ) * - height );
-        spectrum_right.push_back( Vec2f( ( c * scale ), y ) );
-        y = ( ( leftBuffer->mData[i] - 1 ) * - height );
-        spectrum_left.push_back( Vec2f( ( c * scale ), y ) );
-    }
-    glPushMatrix();
-    glTranslatef(left,mApp->getViewportHeight()/6.0f,0.0f);
-    gl::color( ColorA( 0.0f, 0.0f, 0.0f, 0.75f ) );
-    gl::draw( spectrum_right );
-    glPopMatrix();
-    glPushMatrix();
-    //gl::color( Color( 0.75f, 0.75f, 0.75f ) );
-    glTranslatef(left,mApp->getViewportHeight()/2.0f,0.0f);
-    gl::draw( spectrum_left );
-    glPopMatrix();
-    
-    //float shade = 0.4f;
-    //glColor3f(shade,shade,shade);
-    //gl::drawStrokedRect(Rectf(left, top, width, top+height));
-    
-    glPopMatrix();    
-     */
-}
 
 void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float height)
 {
     AudioInput& audioInput = mApp->getAudioInput();
-    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
-    uint16_t bandCount = audioInput.getFftBandCount();
-    uint16_t bandsToShow = 200;
+    //int32_t bandCount = audioInput.getFft()->getBinSize();
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
-    //const float bottom = top+height;
-    const float space = 1.0f;
-    const float barWidth = width / bandsToShow;
+    uint16_t bandsToShow = math<int>::max( 200, (width / 2.0f) );
+    
+    const float gap = 1.0f;
+    const float barWidth = width / (bandsToShow * (1.0f + gap));
     const float bumpUp = 1.0f;
+    const float space = gap + barWidth;
     
-    if( ! fftDataRef ) 
-    {
-        return;
-    }
-    
-    glPushMatrix();
+    gl::pushMatrices();
     glTranslatef(left,top,0.0f);
-    float * fftBuffer = fftDataRef.get();
     
     for( int i = 0; i < bandsToShow; i++ ) 
     {
-        float barY = (fftBuffer[i] / bandCount) * height;
+        if( (i * space + barWidth) > width )
+            break;
+        
+        float barY = fftLogData[i].y * height * mGain;
+        barY = math<float>::min( barY, height );
         glBegin( GL_QUADS );
         glColor3f( 0.8f,0.8f,0.8f );
-        glVertex2f( i * space, height-2.f );
+        glVertex2f( i * space, height-3.f );
         glVertex2f( i * space + barWidth, height-bumpUp );
         glColor3f( 1.0f, 1.0f, 1.0f );
         glVertex2f( i * space + barWidth, height - barY-bumpUp );
-        glVertex2f( i * space, height - barY-2.f );
+        glVertex2f( i * space, height - barY-3.f );
         glEnd();
     }
     
@@ -895,7 +851,7 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
     glLineWidth(2.0f);
     gl::drawStrokedRect(Rectf(0.0f, 0.0f, width, height));
     
-    glPopMatrix();
+    gl::popMatrices();
 }
 
 const Camera& Orbiter::getCamera()

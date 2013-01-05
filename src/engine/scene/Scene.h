@@ -112,6 +112,8 @@ protected:
     
     bool        mEnableFrustumCulling;
     
+    float       mGain;
+    
     Interface*              mInterface;
     ci::params::InterfaceGl mDebugParams;
     

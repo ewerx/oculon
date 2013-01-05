@@ -30,6 +30,8 @@ SkeletonTest::~SkeletonTest()
 
 void SkeletonTest::setup()
 {
+    Scene::setup();
+    
     m_iKinectWidth = 640;
 	m_iKinectHeight = 480;
 	m_iScreenWidth = mApp->getWindowWidth();

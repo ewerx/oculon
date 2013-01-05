@@ -127,6 +127,7 @@ private:
         PARTICLE_FLAGS_SHOW_DARK =  (1 << 1),
         PARTICLE_FLAGS_SHOW_SPEED = (1 << 2),
         PARTICLE_FLAGS_SHOW_MASS =  (1 << 3),
+        PARTICLE_FLAGS_CONSTRAIN =  (1 << 4)
     };
     
     enum eColorMode
@@ -201,6 +202,7 @@ private:
     
     bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
+    bool                mConstrainParticles;
     
     ci::CameraPersp     mCam;
     //ci::Vec3f               mCamPosition;

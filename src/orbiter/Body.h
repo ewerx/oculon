@@ -14,6 +14,7 @@
 #include "cinder/Matrix.h"
 #include "cinder/PolyLine.h"
 #include "cinder/gl/gl.h"
+#include "cinder/Timeline.h"
 #include "Entity.h"
 #include "TextEntity.h"
 
@@ -81,8 +82,9 @@ protected:
     double mAcceleration;
     double mMass;
     float mRadius;
-    float mPeakRadiusMultiplier;
-    float mRadiusMultiplier;
+    
+    ci::Anim<float> mRadiusMultiplier;
+    
     double mRotation;
     double mRotationSpeed;
     string mName;
@@ -100,8 +102,6 @@ protected:
     float mDistToCam;
     
     //TEST
-    float mRadiusAnimRate;
-    float mRadiusAnimTime;
     float mEaseFactor;
     vector<float> mLastFftValues;
     

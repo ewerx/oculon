@@ -40,6 +40,7 @@ void Graviton::setup()
     mUseInvSquareCalc = true;
     mFlags = PARTICLE_FLAGS_NONE;
     mColorMode = COLOR_MASS;
+    mConstrainParticles = false;
     
     mInitialFormation = FORMATION_SPHERE;
     mFormationRadius = 50.0f;
@@ -540,6 +541,9 @@ void Graviton::update(double dt)
     }
     if( mUseInvSquareCalc )
         mFlags |= PARTICLE_FLAGS_INVSQR;
+    
+    if( mConstrainParticles )
+        mFlags |= PARTICLE_FLAGS_CONSTRAIN;
         
     mKernel->setArg(ARG_FLAGS, mFlags);
     

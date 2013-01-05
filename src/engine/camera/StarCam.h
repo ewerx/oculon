@@ -7,12 +7,14 @@
 
 #include <deque>
 
+class Scene;
+
 class StarCam {
 public:
 	StarCam();
 	StarCam( const ci::CameraPersp &aInitialCam ) { mInitialCam = mCurrentCam = aInitialCam; }
 
-	void		setup();
+	void		setup(Scene* scene);
 	void		update(double elapsed);
 
 	void		mouseDown( const ci::Vec2i &mousePos );
@@ -78,4 +80,6 @@ private:
 	ci::Anim<double>		mLongitude;
 	ci::Anim<double>		mDistance;
 	ci::Anim<double>		mFov;
+    
+    Scene*                  mScene;
 };

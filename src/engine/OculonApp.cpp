@@ -38,6 +38,7 @@
 #include "Catalog.h"
 #include "Flock.h"
 #include "Corona.h"
+#include "Trails.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -60,9 +61,10 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->enableSecondaryDisplayBlanking(false);
+    settings->setTitle("Oculon");
     
     mSetupScenesOnStart = true;
-    mIsPresentationMode = true;
+    mIsPresentationMode = false;
     mIsSendingFps       = true;
     
     mUseMayaCam         = true;
@@ -123,7 +125,6 @@ void OculonApp::setup()
     mParams.hide();
     //mParams.setOptions("","position='10 600'");
     setupInterface();
-
     
     // audio input
     mAudioInput.setup();
@@ -191,6 +192,7 @@ void OculonApp::setupInterface()
     mInterface = new Interface(this, &mOscServer);
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("OCULON");
+    // main
     mInterface->addButton(CreateTriggerParam("sync", NULL)
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
@@ -198,12 +200,16 @@ void OculonApp::setupInterface()
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
+    // capture
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
     mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
                          .minValue(1.0f)
                          .maxValue(600.0f));
+    // audio
+    mInterface->gui()->addSeparator();
+    mAudioInput.setupInterface( mInterface );
 }
 
 bool OculonApp::syncInterface()
@@ -264,23 +270,26 @@ void OculonApp::setupScenes()
     
     mScenes.clear(); 
     
+    if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
     if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
+    if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("binned") )     addScene( new Binned() );
+    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
+    
+    if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
+    if( mConfig.getBool("flock") )      addScene( new Flock() );
+    if( mConfig.getBool("trails") )     addScene( new Trails() );
+    
     if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
     if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
-    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
-    if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
     if( mConfig.getBool("sol") )        addScene( new Sol() );
-    if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
-    if( mConfig.getBool("catalog") )    addScene( new Catalog() );
-    if( mConfig.getBool("flock") )      addScene( new Flock() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     
     // Test Scenes
     //addScene( new MovieTest() );
     //addScene( new ShaderTest() );
     if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
-    if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
+    //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
     if( mEnableMindWave && mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );
 }
@@ -305,14 +314,21 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     mSceneMap[scene->getName()] = scene;
     
     // interface
-    mInterface->gui()->addColumn();
+    if( (mScenes.size()-1) % 2 == 0 )
+    {
+        mInterface->gui()->addColumn();
+    }
+    else
+    {
+        mInterface->gui()->addSeparator();
+    }
     mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
     // scene thumbnails
     if( scene->getFbo() )
     {
         mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
     }
-    mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
+    //mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
     mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
     mInterface->addParam(CreateBoolParam("debug", &(scene->mIsDebug)))->registerCallback( scene, &Scene::onDebugChanged );
 }

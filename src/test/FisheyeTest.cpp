@@ -26,7 +26,9 @@ FisheyeTest::~FisheyeTest()
 }
 
 void FisheyeTest::setup()
-{    
+{
+    Scene::setup();
+    
     mUseShader = false;
     
     try 

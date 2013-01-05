@@ -50,6 +50,9 @@ void Sun::update(double dt)
     Body::update(dt);
     
     mMoviePlayer.update(dt);
+    
+    //TODO: hack fix
+    mPosition = Vec3d::zero();
 }
 
 void Sun::draw(const Matrix44d& transform, bool drawBody)

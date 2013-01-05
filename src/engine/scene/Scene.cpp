@@ -79,6 +79,10 @@ void Scene::init(OculonApp* app)
     mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateFloatParam("gain", &mGain)
+                         .maxValue(50.0f)
+                         .oscReceiver(mName).sendFeedback());
+    mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
     setupInterface();
@@ -88,6 +92,7 @@ void Scene::init(OculonApp* app)
 void Scene::setup()
 {
     mIsSetup = true;
+    mGain = 1.0f;
 }
 
 void Scene::setupFbo()
