@@ -11,6 +11,7 @@
 
 
 #include "Scene.h"
+#include "SplineCam.h"
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/gl/gl.h"
@@ -36,10 +37,11 @@ public:
     //void resize();
     void update(double dt);
     void draw();
+    const Camera& getCamera();
     
 protected:// from Scene
-    //void setupInterface();
-    //void setupDebugInterface();
+    void setupInterface();
+    void setupDebugInterface();
     
 private:
     void updateAudioResponse();
@@ -55,6 +57,31 @@ private:
     
     double				mTime;
     float				mAngle;
+    
+    // params
+    float               mTrailsPerSecond;
+    float               mPhiScale;
+    float               mPhiOffset;
+    float               mThetaScale;
+    //float               mThetaOffset;
+    float               mRadius;
+    float               mTwist;
+    float               mWidth;
+    float               mAngleIncrement;
+    bool                mWireframe;
+    
+    enum eCamType
+    {
+        CAM_MANUAL,
+        CAM_ORBITER,
+        CAM_CATALOG,
+        CAM_SPLINE,
+        
+        CAM_COUNT
+    };
+    eCamType            mCamType;
+    
+    SplineCam           mSplineCam;
 
 };
 

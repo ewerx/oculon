@@ -1,31 +1,18 @@
-/*
- Copyright (c) 2010-2012, Paul Houx - All rights reserved.
- This code is intended for use with the Cinder C++ library: http://libcinder.org
-
- Redistribution and use in source and binary forms, with or without modification, are permitted provided that
- the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this list of conditions and
-	the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-	the following disclaimer in the documentation and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
- WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- POSSIBILITY OF SUCH DAMAGE.
-*/
+//
+//  Trails.cpp
+//  Oculon
+//
+//  Created by Ehsan Rezaie on 2012-12-28.
+//
+//
 
 
 #include "Trails.h"
+#include "Interface.h"
+#include "OculonApp.h"
 #include "cinder/Camera.h"
 #include "cinder/ImageIo.h"
 #include "cinder/app/AppBasic.h"
-
 
 using namespace ci;
 using namespace ci::app;
@@ -44,12 +31,9 @@ Trails::~Trails()
 
 void Trails::setup()
 {
-	// initialize camera
-//	CameraPersp cam( getWindowWidth(), getWindowHeight(), 60.0f, 0.1f, 500.0f );
-//	cam.setEyePoint( Vec3f(0, 0, -100.0f) );
-//	cam.setCenterOfInterestPoint( Vec3f::zero() );
-//
-//	mCamera.setCurrentCam( cam );
+    Scene::setup();
+	
+    mSplineCam.setup();
 
 	// load texture
 	try { mTexture = gl::Texture( loadImage( loadResource("spectrum.png") ) ); }
@@ -85,38 +69,110 @@ void Trails::setup()
 	// initialize time and angle
 	mTime = getElapsedSeconds();
 	mAngle= 0.0f;
+    
+    mTrailsPerSecond = 2000.0f;
+    mPhiScale = 0.01f;
+    mPhiOffset = 0.01f;
+    mThetaScale = 0.03f;
+    //mThetaOffset = 0.03f;
+    mRadius = 45.0f;
+    mTwist = 20.0f;
+    mWidth = 1.0f;
+    mAngleIncrement = 1.0f;
+    mWireframe = false;
+    
+    mCamType = CAM_SPLINE;
 
 	// disable vertical sync, so we can see the actual frame rate
 	//gl::disableVerticalSync();
 }
 
+void Trails::setupInterface()
+{
+    mInterface->addParam(CreateFloatParam("Trails/s", &mTrailsPerSecond)
+                         .minValue(100.0f)
+                         .maxValue(5000.0f)
+                         .oscReceiver(mName,"trailspersec")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Phi Scale", &mPhiScale)
+                         .minValue(0.0f)
+                         .maxValue(0.1f)
+                         .oscReceiver(mName,"phiscale")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Phi Offset", &mPhiOffset)
+                         .minValue(0.0f)
+                         .maxValue(0.1f)
+                         .oscReceiver(mName,"phioffset")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Theta Scale", &mThetaScale)
+                         .minValue(0.0f)
+                         .maxValue(0.1f)
+                         .oscReceiver(mName,"thetascale")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Radius", &mRadius)
+                         .minValue(1.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName,"radius")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Twist", &mTwist)
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName,"twist")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Width", &mWidth)
+                         .minValue(0.0f)
+                         .maxValue(5.0f)
+                         .oscReceiver(mName,"width")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("Angle Incr", &mAngleIncrement)
+                         .minValue(0.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(mName,"angleincr")
+                         .sendFeedback());
+    mInterface->addParam(CreateBoolParam("Wireframe", &mWireframe)
+                         .oscReceiver(mName,"wireframe"));
+    
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camtype")
+                        .isVertical());
+    mSplineCam.setupInterface(mInterface, mName);
+    
+}
+
+void Trails::setupDebugInterface()
+{
+    Scene::setupDebugInterface(); // add all interface params
+    
+    mDebugParams.setOptions("Trails/s", "min=0 max=10000");
+}
+
 void Trails::update(double dt)
 {
 	// find out how many trails we should add
-	const double	trails_per_second = 2000.0;
 	double			elapsed = getElapsedSeconds() - mTime;
-	uint32_t		num_trails = uint32_t(elapsed * trails_per_second);
+	uint32_t		num_trails = uint32_t(elapsed * mTrailsPerSecond);
 	
 	// add this number of trails 
 	// (note: it's an ugly function that draws a swirling trail around a sphere, just for demo purposes)
 	for(size_t i=0; i<num_trails; ++i ) {
-		float		phi = mAngle * 0.01f;
-		float		prev_phi = phi - 0.01f;
-		float		theta = phi * 0.03f;
-		float		prev_theta = prev_phi * 0.03f;
+		float		phi = mAngle * mPhiScale;
+		float		prev_phi = phi - mPhiOffset;
+		float		theta = phi * mThetaScale;
+		float		prev_theta = prev_phi * mThetaScale;
 
-		Vec3f		pos = 45.0f * Vec3f( sinf( phi ) * cosf( theta ), sinf( phi ) * sinf( theta ), cosf( phi ) );
-		Vec3f		prev_pos = 45.0f * Vec3f( sinf( prev_phi ) * cosf( prev_theta ), sinf( prev_phi ) * sinf( prev_theta ), cosf( prev_phi ) );
+		Vec3f		pos = mRadius * Vec3f( sinf( phi ) * cosf( theta ), sinf( phi ) * sinf( theta ), cosf( phi ) );
+		Vec3f		prev_pos = mRadius * Vec3f( sinf( prev_phi ) * cosf( prev_theta ), sinf( prev_phi ) * sinf( prev_theta ), cosf( prev_phi ) );
 
 		Vec3f		direction = pos - prev_pos;
-		Vec3f		right = Vec3f( sinf( 20.0f * phi ), 0.0f, cosf( 20.0f * phi ) );
+		Vec3f		right = Vec3f( sinf( mTwist * phi ), 0.0f, cosf( mTwist * phi ) );
 		Vec3f		normal = direction.cross( right ).normalized();
 
 		// add two vertices, one at each side of the center line
-		mTrail.push_front( pos - 1.0f * normal );
-		mTrail.push_front( pos + 1.0f * normal );
+		mTrail.push_front( pos - mWidth * normal );
+		mTrail.push_front( pos + mWidth * normal );
 
-		mAngle += 1.0;
+		mAngle += mAngleIncrement;
 	}
 
 	// keep trail length within bounds
@@ -129,28 +185,36 @@ void Trails::update(double dt)
 		itr.setPosition( mTrail[i] );
 
 	// advance time
-	mTime += num_trails / trails_per_second;
+	mTime += num_trails / mTrailsPerSecond;
+    
+    if( mCamType == CAM_SPLINE )
+        mSplineCam.update(dt);
 }
 
 void Trails::draw()
 {
 	// clear window
-	gl::clear(); 
+	//gl::clear();
 
 	// set render states
-	gl::enableWireframe();
+    if( mWireframe )
+        gl::enableWireframe();
+    
 	gl::enableAlphaBlending();
 
 	gl::enableDepthRead();
 	gl::enableDepthWrite();
     
-    CameraPersp cam( getWindowWidth(), getWindowHeight(), 60.0f, 0.1f, 500.0f );
-    cam.setEyePoint( Vec3f(0, 0, -100.0f) );
-    cam.setCenterOfInterestPoint( Vec3f::zero() );
+    gl::enable( GL_TEXTURE_2D );
+	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
+    
+    //CameraPersp cam( getWindowWidth(), getWindowHeight(), 60.0f, 0.1f, 500.0f );
+    //cam.setEyePoint( Vec3f(0, 0, -100.0f) );
+    //cam.setCenterOfInterestPoint( Vec3f::zero() );
 
 	// enable 3D camera
 	gl::pushMatrices();
-	gl::setMatrices( cam );
+	gl::setMatrices( getCamera() );
 
 	// draw VBO mesh using texture
 	mTexture.enableAndBind();
@@ -158,12 +222,54 @@ void Trails::draw()
 	mTexture.unbind();
 
 	// restore camera and render states
+    gl::disable( GL_TEXTURE_2D );
 	gl::popMatrices();
 
 	gl::disableDepthWrite();
 	gl::disableDepthRead();
 
 	gl::disableAlphaBlending();
-	gl::disableWireframe();
+    
+    if( mWireframe )
+        gl::disableWireframe();
 }
 
+const Camera& Trails::getCamera()
+{
+    switch( mCamType )
+    {
+        case CAM_SPLINE:
+            return mSplineCam.getCamera();
+            
+        case CAM_CATALOG:
+        {
+            Scene* scene = mApp->getScene("catalog");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSplineCam.getCamera();
+            }
+        }
+            
+        case CAM_ORBITER:
+        {
+            Scene* scene = mApp->getScene("orbiter");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSplineCam.getCamera();
+            }
+        }
+            
+        default:
+            return mApp->getMayaCam();
+    }
+}
