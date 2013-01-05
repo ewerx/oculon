@@ -33,6 +33,8 @@ MovieTest::~MovieTest()
 
 void MovieTest::setup()
 {
+    Scene::setup();
+    
     fs::path filePath;
     boost::format filenameFormat("~/Desktop/oculon%03d.mov");
     string pathString;

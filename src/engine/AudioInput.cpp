@@ -68,9 +68,10 @@ void AudioInput::setupInterface( Interface* interface )
         ++index;
 	}
     
-    interface->addParam(CreateFloatParam("Gain", &mGain)
+    interface->addParam(CreateFloatParam("Input Gain", &mGain)
                         .maxValue(50.0f)
-                        .oscReceiver("master", "gain"));
+                        .oscReceiver("master", "gain")
+                        .sendFeedback());
 }
 
 bool AudioInput::changeInput( const int index )
