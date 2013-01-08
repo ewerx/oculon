@@ -247,6 +247,9 @@
 		7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */ = {isa = PBXBuildFile; fileRef = 7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
 		7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB39D31156DCDD10093A8ED /* Sol.cpp */; };
+		7CBB8659169BCA93007D8F49 /* redgreenyellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB8658169BCA93007D8F49 /* redgreenyellow.png */; };
+		7CBB865E169BCA9E007D8F49 /* polyhedron_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */; };
+		7CBB865F169BCA9E007D8F49 /* polyhedron_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */; };
 		7CC3BE4416191F99009F59D3 /* Circles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3BE4216191F99009F59D3 /* Circles.cpp */; };
 		7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C855154A6DDE0057E409 /* earth_frag.glsl */; };
 		7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C856154A6DDE0057E409 /* quake_frag.glsl */; };
@@ -624,6 +627,9 @@
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7CB39D31156DCDD10093A8ED /* Sol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sol.cpp; sourceTree = "<group>"; };
 		7CB39D32156DCDD10093A8ED /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
+		7CBB8658169BCA93007D8F49 /* redgreenyellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redgreenyellow.png; sourceTree = "<group>"; };
+		7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyhedron_frag.glsl; sourceTree = "<group>"; };
+		7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyhedron_vert.glsl; sourceTree = "<group>"; };
 		7CC3BE4216191F99009F59D3 /* Circles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Circles.cpp; sourceTree = "<group>"; };
 		7CC3BE4316191F99009F59D3 /* Circles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circles.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
@@ -1380,6 +1386,7 @@
 				7C8663BF149536F0004C9558 /* particle.png */,
 				7C3738C114F03AED00B24851 /* particle_white.png */,
 				7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */,
+				7CBB8658169BCA93007D8F49 /* redgreenyellow.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -1388,6 +1395,7 @@
 			isa = PBXGroup;
 			children = (
 				7C3BB42015F55B8D00A4E384 /* corona */,
+				7CBB865B169BCA9E007D8F49 /* polyhedron */,
 				7C8F151715BB4AF100BAD08D /* flock */,
 				7C13445A158992950032017E /* brightStars.frag */,
 				7C13445B158992950032017E /* brightStars.vert */,
@@ -1618,6 +1626,15 @@
 				7C90D66F156F21F800685CB4 /* SolFrame.h */,
 			);
 			path = sol;
+			sourceTree = "<group>";
+		};
+		7CBB865B169BCA9E007D8F49 /* polyhedron */ = {
+			isa = PBXGroup;
+			children = (
+				7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */,
+				7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */,
+			);
+			path = polyhedron;
 			sourceTree = "<group>";
 		};
 		7CC6214F14F73E8500B768DD /* MSAPingPong */ = {
@@ -1909,6 +1926,9 @@
 				7C3BB45315F55DC400A4E384 /* spectrumCorona.png in Resources */,
 				7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */,
 				7C687E9F1617FD8D0006150F /* earthGray.png in Resources */,
+				7CBB8659169BCA93007D8F49 /* redgreenyellow.png in Resources */,
+				7CBB865E169BCA9E007D8F49 /* polyhedron_frag.glsl in Resources */,
+				7CBB865F169BCA9E007D8F49 /* polyhedron_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

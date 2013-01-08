@@ -44,6 +44,38 @@ void Polyhedron::setup()
 {
     Scene::setup();
     
+    // Params
+    mLightEnabled       = true;
+    mTextureEnabled     = true;
+    mWireframe          = true;
+    mDrawInstances      = true;
+    mObjectScale        = 10.0f;
+    mDivision           = 1;
+    mResolution         = 12;
+    
+    // Set up the instancing grid
+	mGridSize		= Vec2i( 16, 16 );
+	mGridSpacing	= Vec2f( 2.5f, 2.5f );
+    
+    // Load shader
+	try {
+		mShader = gl::GlslProg( loadResource( RES_POLYHEDRON_SHADER_VERT ), loadResource( RES_POLYHEDRON_SHADER_FRAG ) );
+	} catch ( gl::GlslProgCompileExc ex ) {
+		console() << ex.what() << endl;
+	}
+    
+	// Load the texture map
+	mTexture = gl::Texture( loadImage( loadResource( RES_POLYHEDRON_TEX1 ) ) );
+    
+    // Set up the light
+	mLight = new gl::Light( gl::Light::DIRECTIONAL, 0 );
+	mLight->setAmbient( ColorAf::black() );
+	mLight->setDiffuse( ColorAf::gray( 0.6f ) );
+	mLight->setDirection( Vec3f::one() );
+	mLight->setPosition( Vec3f::one() * -1.0f );
+	mLight->setSpecular( ColorAf::white() );
+	mLight->enable();
+    
     //loadMesh();
     
     createMeshes();
@@ -60,13 +92,64 @@ void Polyhedron::loadMesh()
 
 void Polyhedron::createMeshes()
 {
-    mVboMesh = gl::VboMesh( MeshHelper::createSphere( Vec2i(64,64) ) );
+    mVboMesh = gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
 }
 
 // ----------------------------------------------------------------
 //
 void Polyhedron::setupInterface()
 {
+//    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+//                        .maxValue(CAM_COUNT)
+//                        .oscReceiver(getName(), "camera")
+//                        .isVertical());
+    
+    mInterface->addParam(CreateBoolParam( "wireframe", &mWireframe )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "lighting", &mLightEnabled )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "texture", &mTextureEnabled )
+                         .oscReceiver(getName()));
+    
+    mInterface->addParam(CreateFloatParam("scale", &mObjectScale)
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName)
+                         .sendFeedback());
+    
+    mInterface->addParam(CreateIntParam("count x", &mGridSize.x)
+                         .minValue(0)
+                         .maxValue(100)
+                         .oscReceiver(mName, "spacingx")
+                         .sendFeedback());
+    mInterface->addParam(CreateIntParam("count y", &mGridSize.y)
+                         .minValue(0)
+                         .maxValue(100)
+                         .oscReceiver(mName, "spacingy")
+                         .sendFeedback());
+    
+    mInterface->addParam(CreateFloatParam("spacing x", &mGridSpacing.x)
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName, "spacingx")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("spacing y", &mGridSpacing.y)
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName, "spacingy")
+                         .sendFeedback());
+    
+//    mInterface->addParam(CreateIntParam("division", &mDivision)
+//                         .minValue(1)
+//                         .maxValue(100)
+//                         .oscReceiver(mName, "division")
+//                         .sendFeedback());
+//
+//    mInterface->addParam(CreateIntParam("resolution", &mResolution)
+//                         .minValue(1)
+//                         .maxValue(100)
+//                         .oscReceiver(mName, "resolution")
+//                         .sendFeedback());
 }
 
 // ----------------------------------------------------------------
@@ -92,12 +175,22 @@ void Polyhedron::resize()
 //
 void Polyhedron::update(double dt)
 {
+    // Update light on every frame
+	mLight->update( getCamera() );
 }
 
 // ----------------------------------------------------------------
 //
 void Polyhedron::draw()
 {
+    // Set up OpenGL to work with default lighting
+	glShadeModel( GL_SMOOTH );
+	gl::enable( GL_POLYGON_SMOOTH );
+	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+	gl::enableAlphaBlending();
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+    
     // setup
     if ( mLightEnabled ) {
 		gl::enable( GL_LIGHTING );
@@ -112,11 +205,19 @@ void Polyhedron::draw()
     
     // draw
     gl::pushMatrices();
-    gl::setMatrices(mApp->getMayaCam());
+    gl::setMatrices( getCamera() );
+    gl::scale( Vec3f::one() * mObjectScale );
     
     gl::color( Color::white() );
     
-    gl::draw( mVboMesh );
+    if (mDrawInstances)
+    {
+        drawInstances();
+    }
+    else
+    {
+        gl::draw( mVboMesh ); // draw one
+    }
     
     gl::popMatrices();
     
@@ -131,5 +232,38 @@ void Polyhedron::draw()
 	if ( mLightEnabled ) {
 		gl::disable( GL_LIGHTING );
 	}
+}
 
+void Polyhedron::drawInstances()
+{
+    // Bind and configure shader
+	if ( mShader ) {
+		mShader.bind();
+		mShader.uniform( "eyePoint",		getCamera().getEyePoint() );
+		mShader.uniform( "lightingEnabled",	mLightEnabled );
+		mShader.uniform( "size",			Vec2f( mGridSize ) );
+		mShader.uniform( "spacing",			mGridSpacing );
+		mShader.uniform( "tex",				0 );
+		mShader.uniform( "textureEnabled",	mTextureEnabled );
+	}
+    
+    // draw instanced
+    size_t instanceCount = (size_t)( mGridSize.x * mGridSize.y );
+    drawInstanced( mVboMesh, instanceCount );
+
+    // Unbind shader
+	if ( mShader ) {
+		mShader.unbind();
+	}
+}
+
+// Draw VBO instanced
+void Polyhedron::drawInstanced( const gl::VboMesh &vbo, size_t count )
+{
+	vbo.enableClientStates();
+	vbo.bindAllData();
+	glDrawElementsInstancedARB( vbo.getPrimitiveType(), vbo.getNumIndices(), GL_UNSIGNED_INT, (GLvoid*)( sizeof(uint32_t) * 0 ), count );
+	//glDrawElementsInstancedEXT( vbo.getPrimitiveType(), vbo.getNumIndices(), GL_UNSIGNED_INT, (GLvoid*)( sizeof(uint32_t) * 0 ), count ); // Try this if ARB doesn't work
+	gl::VboMesh::unbindBuffers();
+	vbo.disableClientStates();
 }

@@ -13,6 +13,7 @@
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Light.h"
+#include "cinder/gl/GlslProg.h"
 
 class Polyhedron : public Scene
 {
@@ -27,13 +28,19 @@ public:
     void update(double dt);
     void draw();
     
+    // new
     
 protected:
+    // inherited from Scene
+    void setupInterface();
+    void setupDebugInterface();
+    
+    // new
     void loadMesh();
     void createMeshes();
     
-    void setupInterface();
-    void setupDebugInterface();
+    void drawInstances();
+    void drawInstanced( const ci::gl::VboMesh &vbo, size_t count = 1 );
     
 private:
     ci::TriMesh			mMesh;
@@ -48,9 +55,19 @@ private:
 	ci::gl::Texture				mTexture;
 	bool						mTextureEnabled;
     
+    // Instancing shader
+	ci::gl::GlslProg			mShader;
+    
+    // Instance grid
+	ci::Vec2i					mGridSize;
+	ci::Vec2f					mGridSpacing;
     
 	bool						mWireframe;
-
+    bool                        mDrawInstances;
+    
+    float                       mObjectScale;
+    int32_t						mDivision;
+    int32_t                     mResolution;
 };
 
 #endif // __Polyhedron_H__
