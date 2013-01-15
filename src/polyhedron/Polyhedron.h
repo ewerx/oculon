@@ -59,8 +59,8 @@ private:
 	ci::gl::GlslProg			mShader;
     
     // Instance grid
-	ci::Vec2i					mGridSize;
-	ci::Vec2f					mGridSpacing;
+	ci::Vec3i					mGridSize;
+	ci::Vec3f					mGridSpacing;
     
 	bool						mWireframe;
     bool                        mDrawInstances;

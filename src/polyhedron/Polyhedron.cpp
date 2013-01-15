@@ -54,8 +54,8 @@ void Polyhedron::setup()
     mResolution         = 12;
     
     // Set up the instancing grid
-	mGridSize		= Vec2i( 16, 16 );
-	mGridSpacing	= Vec2f( 2.5f, 2.5f );
+	mGridSize		= Vec3i( 16, 16, 16 );
+	mGridSpacing	= Vec3f( 2.5f, 2.5f, 2.5f );
     
     // Load shader
 	try {
@@ -120,12 +120,17 @@ void Polyhedron::setupInterface()
     mInterface->addParam(CreateIntParam("count x", &mGridSize.x)
                          .minValue(0)
                          .maxValue(100)
-                         .oscReceiver(mName, "spacingx")
+                         .oscReceiver(mName, "countx")
                          .sendFeedback());
     mInterface->addParam(CreateIntParam("count y", &mGridSize.y)
                          .minValue(0)
                          .maxValue(100)
-                         .oscReceiver(mName, "spacingy")
+                         .oscReceiver(mName, "county")
+                         .sendFeedback());
+    mInterface->addParam(CreateIntParam("count z", &mGridSize.z)
+                         .minValue(0)
+                         .maxValue(100)
+                         .oscReceiver(mName, "countz")
                          .sendFeedback());
     
     mInterface->addParam(CreateFloatParam("spacing x", &mGridSpacing.x)
@@ -137,6 +142,11 @@ void Polyhedron::setupInterface()
                          .minValue(0.0f)
                          .maxValue(100.0f)
                          .oscReceiver(mName, "spacingy")
+                         .sendFeedback());
+    mInterface->addParam(CreateFloatParam("spacing z", &mGridSpacing.z)
+                         .minValue(0.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName, "spacingz")
                          .sendFeedback());
     
 //    mInterface->addParam(CreateIntParam("division", &mDivision)
@@ -241,14 +251,19 @@ void Polyhedron::drawInstances()
 		mShader.bind();
 		mShader.uniform( "eyePoint",		getCamera().getEyePoint() );
 		mShader.uniform( "lightingEnabled",	mLightEnabled );
-		mShader.uniform( "size",			Vec2f( mGridSize ) );
+		mShader.uniform( "size",			Vec3f( mGridSize ) );
 		mShader.uniform( "spacing",			mGridSpacing );
 		mShader.uniform( "tex",				0 );
 		mShader.uniform( "textureEnabled",	mTextureEnabled );
+        
+        //TODO: texture method
+        //TODO: then with dynamic texture
+        //TODO: ARB instanced array method -- if textured works don't bother
+        //mShader.getAttribLocation("");
 	}
     
     // draw instanced
-    size_t instanceCount = (size_t)( mGridSize.x * mGridSize.y );
+    size_t instanceCount = (size_t)( mGridSize.x * mGridSize.y * mGridSize.z );
     drawInstanced( mVboMesh, instanceCount );
 
     // Unbind shader

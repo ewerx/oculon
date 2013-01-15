@@ -2,8 +2,8 @@
 #extension GL_EXT_gpu_shader4		: enable // Uncomment if ARB doesn't work
 //#extension GL_EXT_draw_instanced	: enable // Uncomment if ARB doesn't work 
 
-uniform vec2 size;
-uniform vec2 spacing;
+uniform vec3 size;
+uniform vec3 spacing;
 
 varying vec2 uv;
 varying vec3 normal;
@@ -14,12 +14,17 @@ void main()
 	normal			= gl_Normal;
 	position		= gl_Vertex;
 	uv				= gl_MultiTexCoord0.st;
+    
+    float xysize    = size.x * size.y;
+    float xy        = float( mod( float( gl_InstanceID ), xysize ) );
+    float z         = float( floor( float( gl_InstanceID ) / xysize ) ) * -spacing.z;
 
-	float x			= float( mod( float( gl_InstanceID ), size.x ) ) * spacing.x;
-	float z			= float( floor( float( gl_InstanceID ) / size.x ) ) * -spacing.y;
+	float x			= float( mod( xy, size.x ) ) * spacing.x;
+    float y			= float( floor( xy / size.y ) ) * -spacing.y;
 	x				-= spacing.x * size.x * 0.5;
-	z				+= spacing.y * size.y * 0.5;
-	vec3 offset		= vec3( x, -1.0, z );
+    y               += spacing.y * size.y * 0.5;
+	z				+= spacing.z * size.z * 0.5;
+	vec3 offset		= vec3( x, y, z );
 	position.xyz	+= offset;
 
 	gl_Position		= gl_ModelViewProjectionMatrix * position;
