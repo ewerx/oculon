@@ -49,9 +49,12 @@ void Polyhedron::setup()
     mTextureEnabled     = true;
     mWireframe          = true;
     mDrawInstances      = true;
+    mAdditiveBlending   = true;
     mObjectScale        = 10.0f;
     mDivision           = 1;
     mResolution         = 12;
+    mCamType            = CAM_SPLINE;
+    mLineWidth          = 1.0f;
     
     // Set up the instancing grid
 	mGridSize		= Vec3i( 16, 16, 16 );
@@ -76,8 +79,10 @@ void Polyhedron::setup()
 	mLight->setSpecular( ColorAf::white() );
 	mLight->enable();
     
-    //loadMesh();
+    // camera
+    mSplineCam.setup();
     
+    //loadMesh();
     createMeshes();
     
     reset();
@@ -110,6 +115,8 @@ void Polyhedron::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "texture", &mTextureEnabled )
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "additive", &mAdditiveBlending )
+                         .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam("scale", &mObjectScale)
                          .minValue(0.0f)
@@ -135,18 +142,24 @@ void Polyhedron::setupInterface()
     
     mInterface->addParam(CreateFloatParam("spacing x", &mGridSpacing.x)
                          .minValue(0.0f)
-                         .maxValue(100.0f)
+                         .maxValue(10.0f)
                          .oscReceiver(mName, "spacingx")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("spacing y", &mGridSpacing.y)
                          .minValue(0.0f)
-                         .maxValue(100.0f)
+                         .maxValue(10.0f)
                          .oscReceiver(mName, "spacingy")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("spacing z", &mGridSpacing.z)
                          .minValue(0.0f)
-                         .maxValue(100.0f)
+                         .maxValue(10.0f)
                          .oscReceiver(mName, "spacingz")
+                         .sendFeedback());
+    
+    mInterface->addParam(CreateIntParam("line width", &mLineWidth)
+                         .minValue(1)
+                         .maxValue(8)
+                         .oscReceiver(mName, "linewidth")
                          .sendFeedback());
     
 //    mInterface->addParam(CreateIntParam("division", &mDivision)
@@ -160,6 +173,12 @@ void Polyhedron::setupInterface()
 //                         .maxValue(100)
 //                         .oscReceiver(mName, "resolution")
 //                         .sendFeedback());
+    
+    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName(), "camtype")
+                        .isVertical());
+    mSplineCam.setupInterface(mInterface, mName);
 }
 
 // ----------------------------------------------------------------
@@ -185,6 +204,9 @@ void Polyhedron::resize()
 //
 void Polyhedron::update(double dt)
 {
+    if( mCamType == CAM_SPLINE )
+        mSplineCam.update(dt);
+    
     // Update light on every frame
 	mLight->update( getCamera() );
 }
@@ -197,8 +219,16 @@ void Polyhedron::draw()
 	glShadeModel( GL_SMOOTH );
 	gl::enable( GL_POLYGON_SMOOTH );
 	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-	gl::enableAlphaBlending();
-	gl::enableDepthRead();
+    
+    if (mAdditiveBlending)
+    {
+        gl::enableAdditiveBlending();
+    }
+    else
+    {
+        gl::enableAlphaBlending();
+	}
+    gl::enableDepthRead();
 	gl::enableDepthWrite();
     
     // setup
@@ -209,7 +239,9 @@ void Polyhedron::draw()
 		gl::enable( GL_TEXTURE_2D );
 		mTexture.bind();
 	}
-	if ( mWireframe ) {
+	if ( mWireframe )
+    {
+        glLineWidth( (GLfloat)mLineWidth );
 		gl::enableWireframe();
 	}
     
@@ -281,4 +313,58 @@ void Polyhedron::drawInstanced( const gl::VboMesh &vbo, size_t count )
 	//glDrawElementsInstancedEXT( vbo.getPrimitiveType(), vbo.getNumIndices(), GL_UNSIGNED_INT, (GLvoid*)( sizeof(uint32_t) * 0 ), count ); // Try this if ARB doesn't work
 	gl::VboMesh::unbindBuffers();
 	vbo.disableClientStates();
+}
+
+const Camera& Polyhedron::getCamera()
+{
+    switch( mCamType )
+    {
+        case CAM_SPLINE:
+            return mSplineCam.getCamera();
+            
+        case CAM_CATALOG:
+        {
+            Scene* scene = mApp->getScene("catalog");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSplineCam.getCamera();
+            }
+        }
+            
+        case CAM_GRAVITON:
+        {
+            Scene* scene = mApp->getScene("graviton");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSplineCam.getCamera();
+            }
+        }
+            
+        case CAM_ORBITER:
+        {
+            Scene* scene = mApp->getScene("orbiter");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSplineCam.getCamera();
+            }
+        }
+            
+        default:
+            return mApp->getMayaCam();
+    }
 }

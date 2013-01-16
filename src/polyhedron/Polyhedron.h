@@ -10,6 +10,7 @@
 #define __Polyhedron_H__
 
 #include "Scene.h"
+#include "SplineCam.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Light.h"
@@ -27,6 +28,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
+    const Camera& getCamera();
     
     // new
     
@@ -64,10 +66,27 @@ private:
     
 	bool						mWireframe;
     bool                        mDrawInstances;
+    bool                        mAdditiveBlending;
     
     float                       mObjectScale;
     int32_t						mDivision;
     int32_t                     mResolution;
+    int                         mLineWidth;
+    
+    // camera
+    enum eCamType
+    {
+        CAM_MANUAL,
+        CAM_ORBITER,
+        CAM_GRAVITON,
+        CAM_CATALOG,
+        CAM_SPLINE,
+        
+        CAM_COUNT
+    };
+    eCamType            mCamType;
+    
+    SplineCam           mSplineCam;
 };
 
 #endif // __Polyhedron_H__
