@@ -46,19 +46,23 @@ void Polyhedron::setup()
     
     // Params
     mLightEnabled       = true;
-    mTextureEnabled     = true;
+    mTextureEnabled     = false;
     mWireframe          = true;
     mDrawInstances      = true;
     mAdditiveBlending   = true;
+    mDynamicLight       = false;
     mObjectScale        = 10.0f;
     mDivision           = 1;
     mResolution         = 12;
     mCamType            = CAM_SPLINE;
-    mLineWidth          = 1.0f;
+    mLineWidth          = 2.0f;
+    mColor              = ColorAf::white();
     
     // Set up the instancing grid
-	mGridSize		= Vec3i( 16, 16, 16 );
-	mGridSpacing	= Vec3f( 2.5f, 2.5f, 2.5f );
+	mGridSize           = Vec3i( 16, 16, 16 );
+	mGridSpacing        = Vec3f( 2.5f, 2.5f, 2.5f );
+    
+    mMeshType           = MESH_TYPE_ICOSAHEDRON;
     
     // Load shader
 	try {
@@ -97,7 +101,15 @@ void Polyhedron::loadMesh()
 
 void Polyhedron::createMeshes()
 {
-    mVboMesh = gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
+    //mCircle			= gl::VboMesh( MeshHelper::createCircle( Vec2i( mResolution, mResolution ) ) );
+	//mCone			= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ), 0.0f, 1.0f, false, true ) );
+	mCube			= gl::VboMesh( MeshHelper::createCube( Vec3i( mResolution, mResolution, mResolution ) ) );
+	//mCylinder		= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ) ) );
+	mIcosahedron	= gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
+	//mRing			= gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, mResolution ) ) );
+	mSphere			= gl::VboMesh( MeshHelper::createSphere( Vec2i( mResolution, mResolution ) ) );
+	//mSquare			= gl::VboMesh( MeshHelper::createSquare( Vec2i( mResolution, mResolution ) ) );
+	//mTorus			= gl::VboMesh( MeshHelper::createTorus( Vec2i( mResolution, mResolution ) ) );
 }
 
 // ----------------------------------------------------------------
@@ -116,6 +128,8 @@ void Polyhedron::setupInterface()
     mInterface->addParam(CreateBoolParam( "texture", &mTextureEnabled )
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "additive", &mAdditiveBlending )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "dynamic light", &mDynamicLight )
                          .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam("scale", &mObjectScale)
@@ -162,6 +176,14 @@ void Polyhedron::setupInterface()
                          .oscReceiver(mName, "linewidth")
                          .sendFeedback());
     
+    mInterface->addEnum(CreateEnumParam( "Mesh", (int*)(&mMeshType) )
+                        .maxValue(MESH_COUNT)
+                        .oscReceiver(getName(), "mesh")
+                        .isVertical());
+    
+    mInterface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
+                        .oscReceiver(mName,"color"));
+    
 //    mInterface->addParam(CreateIntParam("division", &mDivision)
 //                         .minValue(1)
 //                         .maxValue(100)
@@ -207,6 +229,12 @@ void Polyhedron::update(double dt)
     if( mCamType == CAM_SPLINE )
         mSplineCam.update(dt);
     
+    if (mDynamicLight)
+    {
+        mLight->setPosition( getCamera().getEyePoint() * 1.1f );
+        mLight->setDirection( getCamera().getCenterOfInterestPoint() );
+    }
+    
     // Update light on every frame
 	mLight->update( getCamera() );
 }
@@ -234,6 +262,9 @@ void Polyhedron::draw()
     // setup
     if ( mLightEnabled ) {
 		gl::enable( GL_LIGHTING );
+        Color diffuse = mColor * mColor.a;
+        mLight->setDiffuse( diffuse );
+        mLight->setSpecular( mColor );
 	}
 	if ( mTextureEnabled && mTexture ) {
 		gl::enable( GL_TEXTURE_2D );
@@ -250,15 +281,15 @@ void Polyhedron::draw()
     gl::setMatrices( getCamera() );
     gl::scale( Vec3f::one() * mObjectScale );
     
-    gl::color( Color::white() );
+    gl::color( mColor );
     
     if (mDrawInstances)
     {
-        drawInstances();
+        drawInstances( getMesh() );
     }
     else
     {
-        gl::draw( mVboMesh ); // draw one
+        gl::draw( getMesh() ); // draw one
     }
     
     gl::popMatrices();
@@ -276,7 +307,7 @@ void Polyhedron::draw()
 	}
 }
 
-void Polyhedron::drawInstances()
+void Polyhedron::drawInstances( const ci::gl::VboMesh &mesh )
 {
     // Bind and configure shader
 	if ( mShader ) {
@@ -296,7 +327,7 @@ void Polyhedron::drawInstances()
     
     // draw instanced
     size_t instanceCount = (size_t)( mGridSize.x * mGridSize.y * mGridSize.z );
-    drawInstanced( mVboMesh, instanceCount );
+    drawInstanced( mesh, instanceCount );
 
     // Unbind shader
 	if ( mShader ) {
@@ -367,4 +398,35 @@ const Camera& Polyhedron::getCamera()
         default:
             return mApp->getMayaCam();
     }
+}
+
+const ci::gl::VboMesh& Polyhedron::getMesh()
+{
+    switch( mMeshType )
+    {
+//        case MESH_TYPE_CIRCLE:
+//            return mCircle;
+//        case MESH_TYPE_CONE:
+//            return mCone;
+//        case MESH_TYPE_CYLINDER:
+//            return mCylinder;
+//        case MESH_TYPE_RING:
+//            return mRing;
+//        case MESH_TYPE_SQUARE:
+//            return mSquare;
+//        case MESH_TYPE_TORUS:
+//            return mTorus;
+        case MESH_TYPE_ICOSAHEDRON:
+            return mIcosahedron;
+        case MESH_TYPE_SPHERE:
+            return mSphere;
+        case MESH_TYPE_CUBE:
+            return mCube;
+//        case MESH_TYPE_CUSTOM:
+//            return mCustom;
+            
+        default:
+            console() << "[polyhedron] invalid mesh type" << std::endl;
+            return mIcosahedron;
+	}
 }

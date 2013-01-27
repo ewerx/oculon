@@ -32,7 +32,8 @@ public:
     const ci::CameraPersp& getCamera()          { return mCam; }
     
     void setRadius( const float radius)         { mRadius = radius; }
-    void setTarget( const ci::Vec3f& target )   { mTarget = target; }
+    void setTarget( const ci::Vec3f& target )   { mTarget = target; mLookForward = false; }
+    void setLookForward( bool lookForward )     { mLookForward = lookForward; }
 
 private:
     
@@ -43,6 +44,7 @@ private:
     ci::Vec3f           mLastPos;
     ci::Vec3f           mTarget;
     float               mSpeed;
+    bool                mLookForward;
 };
 
 #endif /* defined(__Oculon__SplineCam__) */

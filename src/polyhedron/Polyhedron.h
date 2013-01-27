@@ -41,13 +41,24 @@ protected:
     void loadMesh();
     void createMeshes();
     
-    void drawInstances();
+    void drawInstances( const ci::gl::VboMesh &mesh );
     void drawInstanced( const ci::gl::VboMesh &vbo, size_t count = 1 );
+    const ci::gl::VboMesh& getMesh();
     
 private:
-    ci::TriMesh			mMesh;
-    ci::gl::VboMesh		mVboMesh;
-    ci::gl::Fbo         mFbo;
+    //ci::gl::VboMesh             mTriMesh;
+    ci::gl::VboMesh				mCircle;
+	ci::gl::VboMesh				mCone;
+	ci::gl::VboMesh				mCube;
+	//ci::gl::VboMesh				mCustom;
+	ci::gl::VboMesh				mCylinder;
+	ci::gl::VboMesh				mIcosahedron;
+	ci::gl::VboMesh				mRing;
+	ci::gl::VboMesh				mSphere;
+	ci::gl::VboMesh				mSquare;
+	ci::gl::VboMesh				mTorus;
+    
+    ci::gl::Fbo                 mFbo;
     
     // Lighting
 	ci::gl::Light				*mLight;
@@ -64,14 +75,35 @@ private:
 	ci::Vec3i					mGridSize;
 	ci::Vec3f					mGridSpacing;
     
+    ci::ColorAf                 mColor;
+    
 	bool						mWireframe;
     bool                        mDrawInstances;
     bool                        mAdditiveBlending;
+    bool                        mDynamicLight;
     
     float                       mObjectScale;
     int32_t						mDivision;
     int32_t                     mResolution;
     int                         mLineWidth;
+    
+    // meshes
+    enum eMeshType
+    {
+        MESH_TYPE_CUBE,
+		MESH_TYPE_SPHERE,
+		//MESH_TYPE_CYLINDER,
+		//MESH_TYPE_CONE,
+        //MESH_TYPE_TORUS,
+		MESH_TYPE_ICOSAHEDRON,
+		//MESH_TYPE_CIRCLE,
+		//MESH_TYPE_SQUARE,
+		//MESH_TYPE_RING,
+		//MESH_TYPE_CUSTOM,
+        
+        MESH_COUNT
+    };
+    eMeshType                   mMeshType;
     
     // camera
     enum eCamType
@@ -84,9 +116,9 @@ private:
         
         CAM_COUNT
     };
-    eCamType            mCamType;
+    eCamType                    mCamType;
     
-    SplineCam           mSplineCam;
+    SplineCam                   mSplineCam;
 };
 
 #endif // __Polyhedron_H__
