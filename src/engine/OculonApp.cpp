@@ -1005,7 +1005,9 @@ void OculonApp::captureFrames()
     
     if( mOutputMode == OUTPUT_FBO )
     {
-        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
+        // TODO: the fbo is flipped, using the window surface instead
+        //writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
     }
     else
     {
