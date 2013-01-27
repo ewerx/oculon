@@ -95,3 +95,8 @@
 
 // objects
 #define RES_CUBE_OBJ		CINDER_RESOURCE( ../resources/, cube.obj, 128, DATA )
+
+// polyhedron
+#define RES_POLYHEDRON_TEX1		CINDER_RESOURCE( ../resources/images/, redgreenyellow.png,		138, IMAGE )
+#define RES_POLYHEDRON_SHADER_FRAG		CINDER_RESOURCE( ../resources/shaders/polyhedron/, polyhedron_frag.glsl, 128, GLSL )
+#define RES_POLYHEDRON_SHADER_VERT		CINDER_RESOURCE( ../resources/shaders/polyhedron/, polyhedron_vert.glsl, 129, GLSL )

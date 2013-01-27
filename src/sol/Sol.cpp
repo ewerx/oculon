@@ -7,14 +7,14 @@
  *
  */
 
-#include "Sol.h"
-#include "TextEntity.h"
-#include "OculonApp.h"
+
 #include "AudioInput.h"
 #include "Interface.h"
+#include "OculonApp.h"
 #include "Resources.h"
+#include "Sol.h"
+#include "TextEntity.h"
 #include "TextureManager.h"
-
 #include "cinder/Filesystem.h"
 #include "cinder/Rand.h"
 

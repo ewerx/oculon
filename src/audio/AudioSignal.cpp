@@ -14,7 +14,6 @@
 #include "SignalScope.h"
 #include "Barcode.h"
 #include "Eclipse.h"
-#include "Polyhedron.h"
 #include "Circles.h"
 
 #include "KissFFT.h"
@@ -33,7 +32,6 @@ AudioSignal::AudioSignal()
     mSubScenes.push_back( new SignalScope(this) );
     mSubScenes.push_back( new Barcode(this) );
     mSubScenes.push_back( new Eclipse(this) );
-    mSubScenes.push_back( new Polyhedron(this) );
     mSubScenes.push_back( new Circles(this) );
 }
 
