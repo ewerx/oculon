@@ -88,31 +88,37 @@ private:
     int                         mLineWidth;
     
     // meshes
+#define POLYHEDRON_MESHTYPE_TUPLE \
+POLYHEDRON_MESHTYPE_ENTRY( "Cube", MESH_TYPE_CUBE ) \
+POLYHEDRON_MESHTYPE_ENTRY( "Sphere", MESH_TYPE_SPHERE ) \
+POLYHEDRON_MESHTYPE_ENTRY( "Icosahedron", MESH_TYPE_ICOSAHEDRON ) \
+//end tuple
     enum eMeshType
     {
-        MESH_TYPE_CUBE,
-		MESH_TYPE_SPHERE,
-		//MESH_TYPE_CYLINDER,
-		//MESH_TYPE_CONE,
-        //MESH_TYPE_TORUS,
-		MESH_TYPE_ICOSAHEDRON,
-		//MESH_TYPE_CIRCLE,
-		//MESH_TYPE_SQUARE,
-		//MESH_TYPE_RING,
-		//MESH_TYPE_CUSTOM,
+#define POLYHEDRON_MESHTYPE_ENTRY( nam, enm ) \
+        enm,
+        POLYHEDRON_MESHTYPE_TUPLE
+#undef  POLYHEDRON_MESHTYPE_ENTRY
         
         MESH_COUNT
     };
     eMeshType                   mMeshType;
     
     // camera
+#define POLYHEDRON_CAMTYPE_TUPLE \
+POLYHEDRON_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
+POLYHEDRON_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
+POLYHEDRON_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON ) \
+POLYHEDRON_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
+POLYHEDRON_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
+//end tuple
+    
     enum eCamType
     {
-        CAM_MANUAL,
-        CAM_ORBITER,
-        CAM_GRAVITON,
-        CAM_CATALOG,
-        CAM_SPLINE,
+#define POLYHEDRON_CAMTYPE_ENTRY( nam, enm ) \
+        enm,
+        POLYHEDRON_CAMTYPE_TUPLE
+#undef  POLYHEDRON_CAMTYPE_ENTRY
         
         CAM_COUNT
     };
