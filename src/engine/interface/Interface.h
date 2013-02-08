@@ -29,6 +29,7 @@ public:
     mowa::sgui::BoolVarControl*   addParam( const CreateBoolParam& param );
     mowa::sgui::ButtonControl*    addButton( const CreateTriggerParam& param );
     mowa::sgui::IntVarControl*    addEnum( const CreateEnumParam& param );
+    mowa::sgui::EnumVarControl*    addEnum( const CreateEnumParam& param, std::vector<std::string>& options );
     mowa::sgui::ColorVarControl*  addParam( const CreateColorParam& param );
     mowa::sgui::Vec2fVarControl*  addParam( const CreateVec2fParam& param );
     mowa::sgui::Vec3fVarControl*  addParam( const CreateVec3fParam& param );

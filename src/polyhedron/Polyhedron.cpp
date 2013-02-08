@@ -20,6 +20,7 @@
 #include "cinder/ObjLoader.h"
 #include "cinder/Rand.h"
 #include "cinder/gl/gl.h"
+#include <vector>
 
 using namespace ci;
 using namespace std;
@@ -176,10 +177,15 @@ void Polyhedron::setupInterface()
                          .oscReceiver(mName, "linewidth")
                          .sendFeedback());
     
+    vector<string> meshTypeNames;
+#define POLYHEDRON_MESHTYPE_ENTRY( nam, enm ) \
+    meshTypeNames.push_back(nam);
+    POLYHEDRON_MESHTYPE_TUPLE
+#undef  POLYHEDRON_MESHTYPE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Mesh", (int*)(&mMeshType) )
                         .maxValue(MESH_COUNT)
                         .oscReceiver(getName(), "mesh")
-                        .isVertical());
+                        .isVertical(), meshTypeNames);
     
     mInterface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
                         .oscReceiver(mName,"color"));
@@ -196,10 +202,16 @@ void Polyhedron::setupInterface()
 //                         .oscReceiver(mName, "resolution")
 //                         .sendFeedback());
     
+    mInterface->gui()->addColumn();
+    vector<string> camTypeNames;
+#define POLYHEDRON_CAMTYPE_ENTRY( nam, enm ) \
+    camTypeNames.push_back(nam);
+    POLYHEDRON_CAMTYPE_TUPLE
+#undef  POLYHEDRON_CAMTYPE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
                         .oscReceiver(getName(), "camtype")
-                        .isVertical());
+                        .isVertical(), camTypeNames);
     mSplineCam.setupInterface(mInterface, mName);
 }
 

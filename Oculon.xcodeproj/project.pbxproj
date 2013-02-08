@@ -113,6 +113,7 @@
 		7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C37393814F737DA00B24851 /* OpenCL.framework */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
+		7C65C3A116B62F1B00F84FD1 /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65C39F16B62F1A00F84FD1 /* DomeRenderer.cpp */; };
 		7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */; };
 		7C687E9F1617FD8D0006150F /* earthGray.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C687E9E1617FD8D0006150F /* earthGray.png */; };
 		7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB486169926250096EF7B /* Polyhedron.cpp */; };
@@ -446,6 +447,8 @@
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
 		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
+		7C65C39F16B62F1A00F84FD1 /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
+		7C65C3A016B62F1B00F84FD1 /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
 		7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = eclipse_mapping_pattern.jpg; sourceTree = "<group>"; };
 		7C687E9E1617FD8D0006150F /* earthGray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthGray.png; path = resources/images/tectonic/earthGray.png; sourceTree = SOURCE_ROOT; };
 		7C6CB486169926250096EF7B /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
@@ -1193,6 +1196,8 @@
 				7CAF998814E3681200E6D9F3 /* Utils.h */,
 				7CAF998514E367FB00E6D9F3 /* Utils.cpp */,
 				7C74556B148C259C009C0356 /* scene */,
+				7C65C39F16B62F1A00F84FD1 /* DomeRenderer.cpp */,
+				7C65C3A016B62F1B00F84FD1 /* DomeRenderer.h */,
 			);
 			path = engine;
 			sourceTree = "<group>";
@@ -2071,6 +2076,7 @@
 				7C2F90CD1690D3BB0062D6E0 /* SplineCam.cpp in Sources */,
 				7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */,
 				7C6CB4A7169936030096EF7B /* MeshHelper.cpp in Sources */,
+				7C65C3A116B62F1B00F84FD1 /* DomeRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

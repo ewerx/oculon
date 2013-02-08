@@ -51,7 +51,7 @@ bool SplineCam::resetSpline()
 
 void SplineCam::setupInterface( Interface* interface, const std::string& name)
 {
-    interface->gui()->addColumn();
+    //interface->gui()->addColumn();
     interface->gui()->addLabel("Spline Cam");
     interface->addParam(CreateBoolParam( "Look Fwd", &mLookForward )
                         .oscReceiver(name, "lookfwd"));
