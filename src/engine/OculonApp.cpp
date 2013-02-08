@@ -39,6 +39,7 @@
 #include "Flock.h"
 #include "Corona.h"
 #include "Trails.h"
+#include "Polyhedron.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -98,6 +99,7 @@ void OculonApp::setup()
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     mFbo = gl::Fbo( fboWidth, fboHeight, format );
+    mDomeRenderer.setup( fboWidth, fboHeight );
     
     gl::enableVerticalSync(true);
     //wireframe
@@ -195,8 +197,15 @@ void OculonApp::setupInterface()
     // main
     mInterface->addButton(CreateTriggerParam("sync", NULL)
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
+    
+    // output mode
+    vector<string> outputModeNames;
+#define OUTPUTMODE_ENTRY( nam, enm ) \
+outputModeNames.push_back(nam);
+    OUTPUTMODE_TUPLE
+#undef  OUTPUTMODE_ENTRY
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
-                        .maxValue(OUTPUT_COUNT))->registerCallback( this, &OculonApp::onOutputModeChange );
+                        .maxValue(OUTPUT_COUNT), outputModeNames)->registerCallback( this, &OculonApp::onOutputModeChange );
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
@@ -279,6 +288,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
     if( mConfig.getBool("flock") )      addScene( new Flock() );
     if( mConfig.getBool("trails") )     addScene( new Trails() );
+    if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
     
     if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
     if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
@@ -363,7 +373,7 @@ void OculonApp::resize( ResizeEvent event )
             scene->resize();
             if( scene->getFbo() )
             {
-                mThumbnailControls[index]->resetTexture( &(scene->getFbo().getTexture()) );
+                //mThumbnailControls[index]->resetTexture( &(scene->getFbo().getTexture()) );
             }
         }
         ++index;
@@ -766,28 +776,28 @@ void OculonApp::drawToScreen()
     }
 }
 
-void OculonApp::drawToFbo()
+void OculonApp::drawToFbo( gl::Fbo& fbo )
 {
     Area prevViewport = gl::getViewport();
     // bind the framebuffer - now everything we draw will go there
-    mFbo.bindFramebuffer();
+    fbo.bindFramebuffer();
     
     gl::disableDepthRead();
     gl::disableDepthWrite();
     gl::disableAlphaBlending();
     
     // setup the viewport to match the dimensions of the FBO
-    gl::setViewport( mFbo.getBounds() );
+    gl::setViewport( fbo.getBounds() );
     gl::clear( Color(0.0f,0.0f,0.0f) );
     
     drawScenes();
     
-    mFbo.unbindFramebuffer();
+    fbo.unbindFramebuffer();
     
     gl::setViewport( prevViewport );
 }
 
-void OculonApp::drawFromFbo()
+void OculonApp::drawFromFbo( gl::Fbo& fbo )
 {
     //gl::enableDepthRead();
     //gl::enableDepthWrite();
@@ -800,7 +810,7 @@ void OculonApp::drawFromFbo()
     gl::setMatricesWindow( Vec2i( width, height ) );
     
     // flip
-    gl::draw( mFbo.getTexture(), Rectf( 0, height, width, 0 ) );
+    gl::draw( fbo.getTexture(), Rectf( 0, height, width, 0 ) );
 
 }
 
@@ -886,9 +896,9 @@ void OculonApp::draw()
         return;
     }
     
-    if( mOutputMode == OUTPUT_FBO )
+    if( mOutputMode == OUTPUT_FBO || mOutputMode == OUTPUT_DOME )
     {
-        drawToFbo();
+        drawToFbo(mFbo);
     }
     else
     {
@@ -920,7 +930,12 @@ void OculonApp::draw()
     
     if( mOutputMode == OUTPUT_FBO )
     {
-        drawFromFbo();
+        drawFromFbo(mFbo);
+    }
+    else if (mOutputMode == OUTPUT_DOME )
+    {
+        mDomeRenderer.renderFboToDome( mFbo, getMayaCam() );
+        drawFromFbo( mDomeRenderer.getDomeProjectionFbo() );
     }
     
     if( mEnableSyphonServer )
@@ -948,6 +963,10 @@ void OculonApp::draw()
                         scene->publishToSyphon();
                     }
                 }
+                break;
+                
+            case OUTPUT_DOME:
+                mScreenSyphon.publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture() );
                 break;
             
             default:
@@ -1003,7 +1022,9 @@ void OculonApp::captureFrames()
     
     if( mOutputMode == OUTPUT_FBO )
     {
-        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
+        // TODO: the fbo is flipped, using the window surface instead
+        //writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
     }
     else
     {

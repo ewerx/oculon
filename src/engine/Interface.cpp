@@ -67,6 +67,16 @@ mowa::sgui::IntVarControl* Interface::addEnum( const CreateEnumParam& param )
     return control;
 }
 
+mowa::sgui::EnumVarControl* Interface::addEnum( const CreateEnumParam& param, std::vector<std::string>& enumNames )
+{
+    mowa::sgui::EnumVarControl* control = mGui->addParam( param._name, param._var, enumNames );
+    
+    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    mParams.push_back(oscParam);
+    
+    return control;
+}
+
 mowa::sgui::ColorVarControl* Interface::addParam( const CreateColorParam& param )
 {
     mowa::sgui::ColorVarControl* control = mGui->addParam( param._name, param._var );

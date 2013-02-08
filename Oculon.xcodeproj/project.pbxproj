@@ -35,7 +35,6 @@
 		7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52815E9408D005BE669 /* Eclipse.cpp */; };
 		7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA52E15E9408D005BE669 /* SignalScope.cpp */; };
 		7C1BA53715E9408D005BE669 /* Barcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53015E9408D005BE669 /* Barcode.cpp */; };
-		7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BA53815E940D9005BE669 /* Polyhedron.cpp */; };
 		7C1BA54115E9475E005BE669 /* cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = 7C1BA54015E9475E005BE669 /* cube.obj */; };
 		7C1C5CC114FB1346002CE80B /* WaveParticle.cl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC014FB1346002CE80B /* WaveParticle.cl */; };
 		7C1C5CC414FB13B7002CE80B /* blur2_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */; };
@@ -59,7 +58,6 @@
 		7C37393514F736E300B24851 /* MSAOpenCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37391F14F736E300B24851 /* MSAOpenCLKernel.cpp */; };
 		7C37393614F736E300B24851 /* MSAOpenCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37392114F736E300B24851 /* MSAOpenCLMemoryObject.cpp */; };
 		7C37393714F736E300B24851 /* MSAOpenCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C37392314F736E300B24851 /* MSAOpenCLProgram.cpp */; };
-		7C39957315240BAD000CAF97 /* libcinder_d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C39956C15240B5B000CAF97 /* libcinder_d.a */; };
 		7C3BB41715F5567900A4E384 /* Corona.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40715F5567900A4E384 /* Corona.cpp */; };
 		7C3BB41815F5567900A4E384 /* CoronaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40815F5567900A4E384 /* CoronaController.cpp */; };
 		7C3BB41915F5567900A4E384 /* CoronaStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BB40A15F5567900A4E384 /* CoronaStar.cpp */; };
@@ -115,8 +113,11 @@
 		7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C37393814F737DA00B24851 /* OpenCL.framework */; };
 		7C5CA3B914B8F66C0037B007 /* MoviePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3B714B8F66C0037B007 /* MoviePlayer.cpp */; };
 		7C5CA3BD14B8F7F10037B007 /* MovieTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */; };
+		7C65C3A116B62F1B00F84FD1 /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65C39F16B62F1A00F84FD1 /* DomeRenderer.cpp */; };
 		7C65CA7315C0B01F00CF1197 /* eclipse_mapping_pattern.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */; };
 		7C687E9F1617FD8D0006150F /* earthGray.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C687E9E1617FD8D0006150F /* earthGray.png */; };
+		7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB486169926250096EF7B /* Polyhedron.cpp */; };
+		7C6CB4A7169936030096EF7B /* MeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB4A5169936030096EF7B /* MeshHelper.cpp */; };
 		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
@@ -247,6 +248,9 @@
 		7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */ = {isa = PBXBuildFile; fileRef = 7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
 		7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB39D31156DCDD10093A8ED /* Sol.cpp */; };
+		7CBB8659169BCA93007D8F49 /* redgreenyellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB8658169BCA93007D8F49 /* redgreenyellow.png */; };
+		7CBB865E169BCA9E007D8F49 /* polyhedron_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */; };
+		7CBB865F169BCA9E007D8F49 /* polyhedron_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */; };
 		7CC3BE4416191F99009F59D3 /* Circles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3BE4216191F99009F59D3 /* Circles.cpp */; };
 		7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C855154A6DDE0057E409 /* earth_frag.glsl */; };
 		7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C856154A6DDE0057E409 /* quake_frag.glsl */; };
@@ -276,37 +280,6 @@
 			script = "# <com.apple.compilers.opencl>\ncp ${INPUT_FILE_PATH} ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.cls\ncp ${INPUT_FILE_PATH} ${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${INPUT_FILE_BASE}.cl";
 		};
 /* End PBXBuildRule section */
-
-/* Begin PBXContainerItemProxy section */
-		7C39956B15240B5B000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = cinder;
-		};
-		7C39956D15240B5B000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 007050BE1114F93F003FCAE4;
-			remoteInfo = cinder_iphone;
-		};
-		7C39956F15240B5B000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 00CFD9E11135C3520091E310;
-			remoteInfo = cinder_iphone_sim;
-		};
-		7C39957115240B95000CAF97 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC07D0554694100DB518D;
-			remoteInfo = cinder;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		7C8C237015007E620009FF26 /* CopyFiles */ = {
@@ -350,8 +323,6 @@
 		7C1BA52F15E9408D005BE669 /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
 		7C1BA53015E9408D005BE669 /* Barcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Barcode.cpp; sourceTree = "<group>"; };
 		7C1BA53115E9408D005BE669 /* Barcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Barcode.h; sourceTree = "<group>"; };
-		7C1BA53815E940D9005BE669 /* Polyhedron.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
-		7C1BA53915E940D9005BE669 /* Polyhedron.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
 		7C1BA54015E9475E005BE669 /* cube.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cube.obj; sourceTree = "<group>"; };
 		7C1C5CC014FB1346002CE80B /* WaveParticle.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = WaveParticle.cl; path = opencl/WaveParticle.cl; sourceTree = "<group>"; };
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
@@ -400,7 +371,6 @@
 		7C37392414F736E300B24851 /* MSAOpenCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLProgram.h; sourceTree = "<group>"; };
 		7C37392514F736E300B24851 /* MSAOpenCLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLTypes.h; sourceTree = "<group>"; };
 		7C37393814F737DA00B24851 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		7C39956215240B5A000CAF97 /* cinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cinder.xcodeproj; path = ../sdks/cinder/xcode/cinder.xcodeproj; sourceTree = "<group>"; };
 		7C3BB40715F5567900A4E384 /* Corona.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Corona.cpp; sourceTree = "<group>"; };
 		7C3BB40815F5567900A4E384 /* CoronaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaController.cpp; sourceTree = "<group>"; };
 		7C3BB40915F5567900A4E384 /* CoronaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaController.h; sourceTree = "<group>"; };
@@ -477,8 +447,14 @@
 		7C5CA3B814B8F66C0037B007 /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
 		7C5CA3BB14B8F7F10037B007 /* MovieTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovieTest.cpp; sourceTree = "<group>"; };
 		7C5CA3BC14B8F7F10037B007 /* MovieTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieTest.h; sourceTree = "<group>"; };
+		7C65C39F16B62F1A00F84FD1 /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
+		7C65C3A016B62F1B00F84FD1 /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
 		7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = eclipse_mapping_pattern.jpg; sourceTree = "<group>"; };
 		7C687E9E1617FD8D0006150F /* earthGray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthGray.png; path = resources/images/tectonic/earthGray.png; sourceTree = SOURCE_ROOT; };
+		7C6CB486169926250096EF7B /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
+		7C6CB487169926250096EF7B /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
+		7C6CB4A5169936030096EF7B /* MeshHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshHelper.cpp; path = "../sdks/cinder/blocks/Cinder-MeshHelper/src/MeshHelper.cpp"; sourceTree = SOURCE_ROOT; };
+		7C6CB4A6169936030096EF7B /* MeshHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshHelper.h; path = "../sdks/cinder/blocks/Cinder-MeshHelper/src/MeshHelper.h"; sourceTree = SOURCE_ROOT; };
 		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -654,6 +630,9 @@
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7CB39D31156DCDD10093A8ED /* Sol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sol.cpp; sourceTree = "<group>"; };
 		7CB39D32156DCDD10093A8ED /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
+		7CBB8658169BCA93007D8F49 /* redgreenyellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redgreenyellow.png; sourceTree = "<group>"; };
+		7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyhedron_frag.glsl; sourceTree = "<group>"; };
+		7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyhedron_vert.glsl; sourceTree = "<group>"; };
 		7CC3BE4216191F99009F59D3 /* Circles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Circles.cpp; sourceTree = "<group>"; };
 		7CC3BE4316191F99009F59D3 /* Circles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circles.h; sourceTree = "<group>"; };
 		7CC6215114F73E8600B768DD /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
@@ -684,7 +663,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C39957315240BAD000CAF97 /* libcinder_d.a in Frameworks */,
 				7C5C209714F75D3C00971B41 /* OpenCL.framework in Frameworks */,
 				7C865591148C2980000E00B6 /* CoreMIDI.framework in Frameworks */,
 				7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */,
@@ -927,16 +905,6 @@
 			path = ../sdks/msalibs/MSAOpenCL/src;
 			sourceTree = SOURCE_ROOT;
 		};
-		7C39956315240B5A000CAF97 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				7C39956C15240B5B000CAF97 /* libcinder_d.a */,
-				7C39956E15240B5B000CAF97 /* libcinder-iphone_d.a */,
-				7C39957015240B5B000CAF97 /* libcinder-iphone-sim_d.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		7C3BB40615F5567900A4E384 /* corona */ = {
 			isa = PBXGroup;
 			children = (
@@ -1089,6 +1057,25 @@
 			name = opencl;
 			sourceTree = "<group>";
 		};
+		7C6CB485169926250096EF7B /* polyhedron */ = {
+			isa = PBXGroup;
+			children = (
+				7C6CB486169926250096EF7B /* Polyhedron.cpp */,
+				7C6CB487169926250096EF7B /* Polyhedron.h */,
+			);
+			path = polyhedron;
+			sourceTree = "<group>";
+		};
+		7C6CB4A4169936030096EF7B /* Cinder-MeshHelper */ = {
+			isa = PBXGroup;
+			children = (
+				7C6CB4A5169936030096EF7B /* MeshHelper.cpp */,
+				7C6CB4A6169936030096EF7B /* MeshHelper.h */,
+			);
+			name = "Cinder-MeshHelper";
+			path = "../../sdks/cinder/blocks/Cinder-MeshHelper/src";
+			sourceTree = SOURCE_ROOT;
+		};
 		7C702036153BC57F0057D4EC /* macos */ = {
 			isa = PBXGroup;
 			children = (
@@ -1100,7 +1087,6 @@
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
-				7C39956215240B5A000CAF97 /* cinder.xcodeproj */,
 				7C74552E148C04C6009C0356 /* Oculon */,
 				7C745513148C04C6009C0356 /* Frameworks */,
 				7C745511148C04C6009C0356 /* Products */,
@@ -1171,6 +1157,7 @@
 				7C560DEB1506E22F000B91B0 /* graviton */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
+				7C6CB485169926250096EF7B /* polyhedron */,
 				7C9693401496FFC400C0E1E6 /* pulsar */,
 				7CB39D30156DCDD10093A8ED /* sol */,
 				7C832E741547AD6700CF488D /* tectonic */,
@@ -1209,6 +1196,8 @@
 				7CAF998814E3681200E6D9F3 /* Utils.h */,
 				7CAF998514E367FB00E6D9F3 /* Utils.cpp */,
 				7C74556B148C259C009C0356 /* scene */,
+				7C65C39F16B62F1A00F84FD1 /* DomeRenderer.cpp */,
+				7C65C3A016B62F1B00F84FD1 /* DomeRenderer.h */,
 			);
 			path = engine;
 			sourceTree = "<group>";
@@ -1317,6 +1306,7 @@
 		7C865570148C2784000E00B6 /* blocks */ = {
 			isa = PBXGroup;
 			children = (
+				7C6CB4A4169936030096EF7B /* Cinder-MeshHelper */,
 				7C8655B4148C2A97000E00B6 /* Cinder-MIDI */,
 				7C8CD2BD1500784E0009FF26 /* Cinder-Syphon */,
 				7CF235E9151AE76600445AD8 /* Kinect */,
@@ -1401,6 +1391,7 @@
 				7C8663BF149536F0004C9558 /* particle.png */,
 				7C3738C114F03AED00B24851 /* particle_white.png */,
 				7C65CA7215C0B01F00CF1197 /* eclipse_mapping_pattern.jpg */,
+				7CBB8658169BCA93007D8F49 /* redgreenyellow.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -1409,6 +1400,7 @@
 			isa = PBXGroup;
 			children = (
 				7C3BB42015F55B8D00A4E384 /* corona */,
+				7CBB865B169BCA9E007D8F49 /* polyhedron */,
 				7C8F151715BB4AF100BAD08D /* flock */,
 				7C13445A158992950032017E /* brightStars.frag */,
 				7C13445B158992950032017E /* brightStars.vert */,
@@ -1641,6 +1633,15 @@
 			path = sol;
 			sourceTree = "<group>";
 		};
+		7CBB865B169BCA9E007D8F49 /* polyhedron */ = {
+			isa = PBXGroup;
+			children = (
+				7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */,
+				7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */,
+			);
+			path = polyhedron;
+			sourceTree = "<group>";
+		};
 		7CC6214F14F73E8500B768DD /* MSAPingPong */ = {
 			isa = PBXGroup;
 			children = (
@@ -1763,8 +1764,6 @@
 				7C1BA52915E9408D005BE669 /* Eclipse.h */,
 				7CC3BE4216191F99009F59D3 /* Circles.cpp */,
 				7CC3BE4316191F99009F59D3 /* Circles.h */,
-				7C1BA53815E940D9005BE669 /* Polyhedron.cpp */,
-				7C1BA53915E940D9005BE669 /* Polyhedron.h */,
 				7C1BA52E15E9408D005BE669 /* SignalScope.cpp */,
 				7C1BA52F15E9408D005BE669 /* SignalScope.h */,
 				7C1BA53015E9408D005BE669 /* Barcode.cpp */,
@@ -1790,7 +1789,6 @@
 				7C1C5CA514F75EB5002CE80B /* PBXBuildRule */,
 			);
 			dependencies = (
-				7C39957215240B95000CAF97 /* PBXTargetDependency */,
 			);
 			name = Oculon;
 			productName = Oculon;
@@ -1815,42 +1813,12 @@
 			mainGroup = 7C745505148C04C6009C0356;
 			productRefGroup = 7C745511148C04C6009C0356 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 7C39956315240B5A000CAF97 /* Products */;
-					ProjectRef = 7C39956215240B5A000CAF97 /* cinder.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				7C74550F148C04C6009C0356 /* Oculon */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		7C39956C15240B5B000CAF97 /* libcinder_d.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libcinder_d.a;
-			remoteRef = 7C39956B15240B5B000CAF97 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		7C39956E15240B5B000CAF97 /* libcinder-iphone_d.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libcinder-iphone_d.a";
-			remoteRef = 7C39956D15240B5B000CAF97 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		7C39957015240B5B000CAF97 /* libcinder-iphone-sim_d.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libcinder-iphone-sim_d.a";
-			remoteRef = 7C39956F15240B5B000CAF97 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7C74550E148C04C6009C0356 /* Resources */ = {
@@ -1963,6 +1931,9 @@
 				7C3BB45315F55DC400A4E384 /* spectrumCorona.png in Resources */,
 				7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */,
 				7C687E9F1617FD8D0006150F /* earthGray.png in Resources */,
+				7CBB8659169BCA93007D8F49 /* redgreenyellow.png in Resources */,
+				7CBB865E169BCA9E007D8F49 /* polyhedron_frag.glsl in Resources */,
+				7CBB865F169BCA9E007D8F49 /* polyhedron_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2079,7 +2050,6 @@
 				7C1BA53315E9408D005BE669 /* Eclipse.cpp in Sources */,
 				7C1BA53615E9408D005BE669 /* SignalScope.cpp in Sources */,
 				7C1BA53715E9408D005BE669 /* Barcode.cpp in Sources */,
-				7C1BA53E15E94697005BE669 /* Polyhedron.cpp in Sources */,
 				7C783E9515E99B4C00492299 /* Planet.cpp in Sources */,
 				7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */,
 				7C3BB41715F5567900A4E384 /* Corona.cpp in Sources */,
@@ -2104,18 +2074,13 @@
 				7CC3BE4416191F99009F59D3 /* Circles.cpp in Sources */,
 				7C4A9A33168E3C3D00CE6F9D /* Trails.cpp in Sources */,
 				7C2F90CD1690D3BB0062D6E0 /* SplineCam.cpp in Sources */,
+				7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */,
+				7C6CB4A7169936030096EF7B /* MeshHelper.cpp in Sources */,
+				7C65C3A116B62F1B00F84FD1 /* DomeRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		7C39957215240B95000CAF97 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = cinder;
-			targetProxy = 7C39957115240B95000CAF97 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		7C74554F148C2413009C0356 /* InfoPlist.strings */ = {
@@ -2166,7 +2131,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src $(CINDER_PATH)/blocks/Cinder-MeshHelper/src";
 			};
 			name = Debug;
 		};
@@ -2201,7 +2166,7 @@
 					"-lcurl",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src";
+				USER_HEADER_SEARCH_PATHS = "../include $(CINDER_PATH)/include $(CINDER_PATH)/blocks/Cinder-Kinect/include $(CINDER_PATH)/blocks/Cinder-OpenCV/include $(CINDER_PATH)/blocks/Cinder-MIDI/include $(CINDER_PATH)/blocks/Cinder-MIDI/libs $(CINDER_PATH)/blocks/osc/include $(CINDER_PATH)/blocks/Cinder-Syphon/src $(CINDER_PATH)/blocks/MowaLibs/SimpleGUI/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/include $(CINDER_PATH)/blocks/_2RealKinectWrapper/src $(CINDER_PATH)/blocks/Cinder-MeshHelper/src";
 			};
 			name = Release;
 		};
@@ -2231,6 +2196,7 @@
 					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/lib\"",
 				);
 				OTHER_LDFLAGS = (
+					"$(CINDER_PATH)/lib/libcinder_d.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_imgproc.a",
@@ -2269,6 +2235,7 @@
 					"\"$(SRCROOT)/../sdks/cinder/blocks/_2RealKinectWrapper/lib\"",
 				);
 				OTHER_LDFLAGS = (
+					"$(CINDER_PATH)/lib/libcinder.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libfreenect.a",
 					"$(CINDER_PATH)/blocks/Cinder-Kinect/lib/macosx/libusb-1.0.a",
 					"$(CINDER_PATH)/blocks/Cinder-OpenCV/lib/macosx/libopencv_imgproc.a",

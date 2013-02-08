@@ -28,6 +28,7 @@ void SplineCam::setup()
     mTarget = Vec3f::zero();
     mSpeed = 1.0f;
     mRadius = 100.0f;
+    mLookForward = false;
     
     resetSpline();
 }
@@ -50,17 +51,19 @@ bool SplineCam::resetSpline()
 
 void SplineCam::setupInterface( Interface* interface, const std::string& name)
 {
-    interface->gui()->addColumn();
+    //interface->gui()->addColumn();
     interface->gui()->addLabel("Spline Cam");
+    interface->addParam(CreateBoolParam( "Look Fwd", &mLookForward )
+                        .oscReceiver(name, "lookfwd"));
     interface->addParam(CreateFloatParam( "Radius", &mRadius )
                          .minValue(1.0f)
-                         .maxValue(500.f)
+                         .maxValue(1000.f)
                          .oscReceiver(name, "splinecamradius"));
     interface->addButton(CreateTriggerParam("Reset Spline", NULL)
                           .oscReceiver(name,"splinecamreset"))->registerCallback( this, &SplineCam::resetSpline );
     interface->addParam(CreateFloatParam( "Speed", &mSpeed )
                          .minValue(0.0f)
-                         .maxValue(5.0f)
+                         .maxValue(10.0f)
                          .oscReceiver(name, "splinecamspeed"));
 }
 
@@ -71,7 +74,16 @@ void SplineCam::update(double dt)
     Vec3f delta = pos - mLastPos;
     Vec3f up = delta.cross(pos);
     //up.normalize();
-    mCam.lookAt( pos, mTarget, up );
+    if( mLookForward )
+    {
+        Vec3f target = delta;
+        mCam.setEyePoint( pos );
+        mCam.setCenterOfInterestPoint(target);
+    }
+    else
+    {
+        mCam.lookAt( pos, mTarget, up );
+    }
     mLastPos = pos;
 }
 

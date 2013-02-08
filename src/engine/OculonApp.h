@@ -10,21 +10,23 @@
 #ifndef __OCULONAPP_H__
 #define __OCULONAPP_H__
 
-#include "cinder/app/AppBasic.h"
-#include "cinder/audio/Input.h"
-#include "cinder/Camera.h"
-#include "cinder/params/Params.h"
-#include "cinder/MayaCamUI.h"
-#include "cinder/qtime/MovieWriter.h"
-#include "cinder/gl/Fbo.h"
-#include "cinderSyphon.h"
-#include "SimpleGUI.h"
 #include "AudioInput.h"
+#include "DomeRenderer.h"
+#include "InfoPanel.h"
+#include "KinectController.h"
 #include "MidiInput.h"
 #include "MindWave.h"
 #include "OscServer.h"
-#include "KinectController.h"
-#include "InfoPanel.h"
+#include "SimpleGUI.h"
+
+#include "cinder/Camera.h"
+#include "cinder/MayaCamUI.h"
+#include "cinder/app/AppBasic.h"
+#include "cinder/audio/Input.h"
+#include "cinder/gl/Fbo.h"
+#include "cinder/params/Params.h"
+#include "cinder/qtime/MovieWriter.h"
+#include "cinderSyphon.h"
 
 #include <vector>
 #include <boost/unordered_map.hpp>
@@ -55,11 +57,19 @@ public:
         INTERFACE_NONE = -2
     };
     
+
+#define OUTPUTMODE_TUPLE \
+OUTPUTMODE_ENTRY( "Direct", OUTPUT_DIRECT ) \
+OUTPUTMODE_ENTRY( "FBO", OUTPUT_FBO ) \
+OUTPUTMODE_ENTRY( "Multi-FBO", OUTPUT_MULTIFBO ) \
+OUTPUTMODE_ENTRY( "Dome", OUTPUT_DOME ) \
+//end tuple
     enum eOutputMode
     {
-        OUTPUT_DIRECT,
-        OUTPUT_FBO,
-        OUTPUT_MULTIFBO,
+#define OUTPUTMODE_ENTRY( nam, enm ) \
+enm,
+        OUTPUTMODE_TUPLE
+#undef  OUTPUTMODE_ENTRY
         
         OUTPUT_COUNT
     };
@@ -125,8 +135,8 @@ public: // new
 protected: // new
     
     void drawToScreen();
-    void drawToFbo();
-    void drawFromFbo();
+    void drawToFbo( gl::Fbo& fbo );
+    void drawFromFbo( gl::Fbo& fbo );
     void drawScenes();
     void renderScenes();
     void drawDebug();
@@ -173,6 +183,8 @@ private: // members
     
     eOutputMode             mOutputMode;
     gl::Fbo                 mFbo;
+    
+    DomeRenderer            mDomeRenderer;
     
     // scenes
     typedef boost::unordered_map<std::string, Scene*> tSceneMap;
