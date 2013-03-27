@@ -1,18 +1,16 @@
 //
-// Polyhedron.cpp
+// Terrain.cpp
 // Oculon
 //
-// Created by Ehsan on 12-01-05.
-// Copyright 2012 ewerx. All rights reserved.
+// Created by Ehsan on 13-Mar-25.
+// Copyright 2013 ewerx. All rights reserved.
 //
-
-
 
 #include "Constants.h"
 #include "Interface.h"
 #include "MeshHelper.h"
 #include "OculonApp.h"
-#include "Polyhedron.h"
+#include "Terrain.h"
 #include "Resources.h"
 #include "Utils.h"
 #include "cinder/CinderMath.h"
@@ -28,42 +26,37 @@ using namespace std;
 
 // ----------------------------------------------------------------
 //
-Polyhedron::Polyhedron()
-: Scene("polyhedron")
+Terrain::Terrain()
+: Scene("Terrain")
 {
 }
 
 // ----------------------------------------------------------------
 //
-Polyhedron::~Polyhedron()
+Terrain::~Terrain()
 {
 }
 
 // ----------------------------------------------------------------
 //
-void Polyhedron::setup()
+void Terrain::setup()
 {
     Scene::setup();
     
     // Params
-    mLightEnabled       = true;
+    mLightEnabled       = false;
     mTextureEnabled     = false;
     mWireframe          = true;
-    mDrawInstances      = true;
+    mDrawInstances      = false;
     mAdditiveBlending   = true;
     mDynamicLight       = false;
     mObjectScale        = 10.0f;
     mDivision           = 1;
     mResolution         = 12;
-    mCamType            = CAM_SPLINE;
+    mSlices             = 20;
+    mCamType            = CAM_MANUAL;
     mLineWidth          = 2.0f;
     mColor              = ColorAf::white();
-    
-    // Set up the instancing grid
-	mGridSize           = Vec3i( 16, 16, 16 );
-	mGridSpacing        = Vec3f( 2.5f, 2.5f, 2.5f );
-    
-    mMeshType           = MESH_TYPE_ICOSAHEDRON;
     
     // Load shader
 	try {
@@ -93,29 +86,59 @@ void Polyhedron::setup()
     reset();
 }
 
-void Polyhedron::loadMesh()
+void Terrain::loadMesh()
 {
     //  ObjLoader loader( (DataSourceRef)loadResource( RES_CUBE_OBJ ) );
     //	loader.load( &mMesh );
     //	mVboMesh = gl::VboMesh( mMesh );
 }
 
-void Polyhedron::createMeshes()
+void Terrain::createMeshes()
 {
-    //mCircle			= gl::VboMesh( MeshHelper::createCircle( Vec2i( mResolution, mResolution ) ) );
-	//mCone			= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ), 0.0f, 1.0f, false, true ) );
-	mCube			= gl::VboMesh( MeshHelper::createCube( Vec3i( mResolution, mResolution, mResolution ) ) );
-	//mCylinder		= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ) ) );
-	mIcosahedron	= gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
-	//mRing			= gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, mResolution ) ) );
-	mSphere			= gl::VboMesh( MeshHelper::createSphere( Vec2i( mResolution, mResolution ) ) );
-	//mSquare			= gl::VboMesh( MeshHelper::createSquare( Vec2i( mResolution, mResolution ) ) );
-	//mTorus			= gl::VboMesh( MeshHelper::createTorus( Vec2i( mResolution, mResolution ) ) );
+	mCylinder		= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mSlices ), 1.0f, 1.0f, false, false ) );
+    
+    
+    float delta = ( 2.0f * (float)M_PI ) / (float)mResolution;
+	float step	= 1.0f / (float)mSlices;
+	float ud	= 1.0f / (float)mResolution;
+    
+	int32_t p = 0;
+	for ( float phi = 0.0f; p <= mSlices; ++p, phi += step ) {
+		int32_t t	= 0;
+		float u		= 0.0f;
+		for ( float theta = 0.0f; t < mResolution; ++t, u += ud, theta += delta ) {
+            
+			float radius = 1.0f;//lerp( baseRadius, topRadius, phi );
+            
+			Vec3f position(
+                           math<float>::cos( theta ) * radius,
+                           phi - 0.5f,
+                           math<float>::sin( theta ) * radius
+                           );
+			srcPositions.push_back( position );
+            
+			Vec3f normal = Vec3f( position.x, 0.0f, position.z ).normalized();
+			normal.y = 0.0f;
+			srcNormals.push_back( normal );
+            
+			Vec2f texCoord( u, phi );
+			srcTexCoords.push_back( texCoord );
+		}
+	}
+    
+	srcNormals.push_back( Vec3f( 0.0f, 1.0f, 0.0f ) );
+	srcNormals.push_back( Vec3f( 0.0f, -1.0f, 0.0f ) );
+	srcPositions.push_back( Vec3f( 0.0f, -0.5f, 0.0f ) );
+	srcPositions.push_back( Vec3f( 0.0f, 0.5f, 0.0f ) );
+	srcTexCoords.push_back( Vec2f( 0.0f, 0.0f ) );
+	srcTexCoords.push_back( Vec2f( 0.0f, 1.0f ) );
+	int32_t topCenter		= (int32_t)srcPositions.size() - 1;
+	int32_t bottomCenter	= topCenter - 1;
 }
 
 // ----------------------------------------------------------------
 //
-void Polyhedron::setupInterface()
+void Terrain::setupInterface()
 {
 //    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
 //                        .maxValue(CAM_COUNT)
@@ -139,36 +162,15 @@ void Polyhedron::setupInterface()
                          .oscReceiver(mName)
                          .sendFeedback());
     
-    mInterface->addParam(CreateIntParam("count x", &mGridSize.x)
-                         .minValue(0)
-                         .maxValue(100)
-                         .oscReceiver(mName, "countx")
-                         .sendFeedback());
-    mInterface->addParam(CreateIntParam("count y", &mGridSize.y)
-                         .minValue(0)
-                         .maxValue(100)
-                         .oscReceiver(mName, "county")
-                         .sendFeedback());
-    mInterface->addParam(CreateIntParam("count z", &mGridSize.z)
-                         .minValue(0)
-                         .maxValue(100)
-                         .oscReceiver(mName, "countz")
-                         .sendFeedback());
-    
-    mInterface->addParam(CreateFloatParam("spacing x", &mGridSpacing.x)
-                         .minValue(0.0f)
-                         .maxValue(10.0f)
+    mInterface->addParam(CreateIntParam("res x", &mResolution)
+                         .minValue(1)
+                         .maxValue(20)
                          .oscReceiver(mName, "spacingx")
                          .sendFeedback());
-    mInterface->addParam(CreateFloatParam("spacing y", &mGridSpacing.y)
-                         .minValue(0.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(mName, "spacingy")
-                         .sendFeedback());
-    mInterface->addParam(CreateFloatParam("spacing z", &mGridSpacing.z)
-                         .minValue(0.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(mName, "spacingz")
+    mInterface->addParam(CreateIntParam("slices", &mSlices)
+                         .minValue(1)
+                         .maxValue(200)
+                         .oscReceiver(mName, "spacingx")
                          .sendFeedback());
     
     mInterface->addParam(CreateIntParam("line width", &mLineWidth)
@@ -176,16 +178,6 @@ void Polyhedron::setupInterface()
                          .maxValue(8)
                          .oscReceiver(mName, "linewidth")
                          .sendFeedback());
-    
-    vector<string> meshTypeNames;
-#define POLYHEDRON_MESHTYPE_ENTRY( nam, enm ) \
-    meshTypeNames.push_back(nam);
-    POLYHEDRON_MESHTYPE_TUPLE
-#undef  POLYHEDRON_MESHTYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Mesh", (int*)(&mMeshType) )
-                        .maxValue(MESH_COUNT)
-                        .oscReceiver(getName(), "mesh")
-                        .isVertical(), meshTypeNames);
     
     mInterface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
                         .oscReceiver(mName,"color"));
@@ -204,10 +196,10 @@ void Polyhedron::setupInterface()
     
     mInterface->gui()->addColumn();
     vector<string> camTypeNames;
-#define POLYHEDRON_CAMTYPE_ENTRY( nam, enm ) \
+#define TERRAIN_CAMTYPE_ENTRY( nam, enm ) \
     camTypeNames.push_back(nam);
-    POLYHEDRON_CAMTYPE_TUPLE
-#undef  POLYHEDRON_CAMTYPE_ENTRY
+    TERRAIN_CAMTYPE_TUPLE
+#undef  TERRAIN_CAMTYPE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
                         .oscReceiver(getName(), "camtype")
@@ -217,28 +209,31 @@ void Polyhedron::setupInterface()
 
 // ----------------------------------------------------------------
 //
-void Polyhedron::setupDebugInterface()
+void Terrain::setupDebugInterface()
 {
     Scene::setupDebugInterface();
 }
 
 // ----------------------------------------------------------------
 //
-void Polyhedron::reset()
+void Terrain::reset()
+{
+    createMeshes();
+}
+
+// ----------------------------------------------------------------
+//
+void Terrain::resize()
 {
 }
 
 // ----------------------------------------------------------------
 //
-void Polyhedron::resize()
-{
-}
-
-// ----------------------------------------------------------------
-//
-void Polyhedron::update(double dt)
+void Terrain::update(double dt)
 {
     Scene::update(dt);
+    
+    generate();
     
     if( mCamType == CAM_SPLINE )
         mSplineCam.update(dt);
@@ -253,9 +248,50 @@ void Polyhedron::update(double dt)
 	mLight->update( getCamera() );
 }
 
+void Terrain::generate()
+{
+	for ( int32_t p = 0; p < mSlices; ++p ) {
+		for ( int32_t t = 0; t < mResolution; ++t ) {
+			int32_t n = t + 1 >= mResolution ? 0 : t + 1;
+            
+			int32_t index0 = ( p + 0 ) * mResolution + t;
+			int32_t index1 = ( p + 0 ) * mResolution + n;
+			int32_t index2 = ( p + 1 ) * mResolution + t;
+			int32_t index3 = ( p + 1 ) * mResolution + n;
+            
+			normals.push_back( srcNormals[ index0 ] );
+			normals.push_back( srcNormals[ index2 ] );
+			normals.push_back( srcNormals[ index1 ] );
+			normals.push_back( srcNormals[ index1 ] );
+			normals.push_back( srcNormals[ index2 ] );
+			normals.push_back( srcNormals[ index3 ] );
+            
+			positions.push_back( srcPositions[ index0 ] );
+			positions.push_back( srcPositions[ index2 ] );
+			positions.push_back( srcPositions[ index1 ] );
+			positions.push_back( srcPositions[ index1 ] );
+			positions.push_back( srcPositions[ index2 ] );
+			positions.push_back( srcPositions[ index3 ] );
+            
+			texCoords.push_back( srcTexCoords[ index0 ] );
+			texCoords.push_back( srcTexCoords[ index2 ] );
+			texCoords.push_back( srcTexCoords[ index1 ] );
+			texCoords.push_back( srcTexCoords[ index1 ] );
+			texCoords.push_back( srcTexCoords[ index2 ] );
+			texCoords.push_back( srcTexCoords[ index3 ] );
+		}
+	}
+    
+	for ( uint32_t i = 0; i < positions.size(); ++i ) {
+		indices.push_back( i );
+	}
+    
+    mTriMesh = MeshHelper::create( indices, positions, normals, texCoords );
+}
+
 // ----------------------------------------------------------------
 //
-void Polyhedron::draw()
+void Terrain::draw()
 {
     // Set up OpenGL to work with default lighting
 	glShadeModel( GL_SMOOTH );
@@ -297,14 +333,12 @@ void Polyhedron::draw()
     
     gl::color( mColor );
     
-    if (mDrawInstances)
-    {
-        drawInstances( getMesh() );
-    }
-    else
-    {
-        gl::draw( getMesh() ); // draw one
-    }
+    gl::draw( getMesh() );
+    
+    gl::translate( 3.0f, 0.0f, 0.0f );
+    gl::color(1.0f, 0.0f, 0.0f);
+    
+    gl::draw( mTriMesh );
     
     gl::popMatrices();
     
@@ -321,46 +355,7 @@ void Polyhedron::draw()
 	}
 }
 
-void Polyhedron::drawInstances( const ci::gl::VboMesh &mesh )
-{
-    // Bind and configure shader
-	if ( mShader ) {
-		mShader.bind();
-		mShader.uniform( "eyePoint",		getCamera().getEyePoint() );
-		mShader.uniform( "lightingEnabled",	mLightEnabled );
-		mShader.uniform( "size",			Vec3f( mGridSize ) );
-		mShader.uniform( "spacing",			mGridSpacing );
-		mShader.uniform( "tex",				0 );
-		mShader.uniform( "textureEnabled",	mTextureEnabled );
-        
-        //TODO: texture method
-        //TODO: then with dynamic texture
-        //TODO: ARB instanced array method -- if textured works don't bother
-        //mShader.getAttribLocation("");
-	}
-    
-    // draw instanced
-    size_t instanceCount = (size_t)( mGridSize.x * mGridSize.y * mGridSize.z );
-    drawInstanced( mesh, instanceCount );
-
-    // Unbind shader
-	if ( mShader ) {
-		mShader.unbind();
-	}
-}
-
-// Draw VBO instanced
-void Polyhedron::drawInstanced( const gl::VboMesh &vbo, size_t count )
-{
-	vbo.enableClientStates();
-	vbo.bindAllData();
-	glDrawElementsInstancedARB( vbo.getPrimitiveType(), vbo.getNumIndices(), GL_UNSIGNED_INT, (GLvoid*)( sizeof(uint32_t) * 0 ), count );
-	//glDrawElementsInstancedEXT( vbo.getPrimitiveType(), vbo.getNumIndices(), GL_UNSIGNED_INT, (GLvoid*)( sizeof(uint32_t) * 0 ), count ); // Try this if ARB doesn't work
-	gl::VboMesh::unbindBuffers();
-	vbo.disableClientStates();
-}
-
-const Camera& Polyhedron::getCamera()
+const Camera& Terrain::getCamera()
 {
     switch( mCamType )
     {
@@ -414,33 +409,7 @@ const Camera& Polyhedron::getCamera()
     }
 }
 
-const ci::gl::VboMesh& Polyhedron::getMesh()
+const ci::gl::VboMesh& Terrain::getMesh()
 {
-    switch( mMeshType )
-    {
-//        case MESH_TYPE_CIRCLE:
-//            return mCircle;
-//        case MESH_TYPE_CONE:
-//            return mCone;
-//        case MESH_TYPE_CYLINDER:
-//            return mCylinder;
-//        case MESH_TYPE_RING:
-//            return mRing;
-//        case MESH_TYPE_SQUARE:
-//            return mSquare;
-//        case MESH_TYPE_TORUS:
-//            return mTorus;
-        case MESH_TYPE_ICOSAHEDRON:
-            return mIcosahedron;
-        case MESH_TYPE_SPHERE:
-            return mSphere;
-        case MESH_TYPE_CUBE:
-            return mCube;
-//        case MESH_TYPE_CUSTOM:
-//            return mCustom;
-            
-        default:
-            console() << "[polyhedron] invalid mesh type" << std::endl;
-            return mIcosahedron;
-	}
+    return mCylinder;
 }

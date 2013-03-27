@@ -27,7 +27,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define FBO_DIM			50//167
+#define FBO_DIM			56//167
 #define P_FBO_DIM		5
 #define MAX_LANTERNS	5
 
@@ -46,14 +46,16 @@ Flock::~Flock()
 
 void Flock::setup()
 {
-    Scene::setup();
-    
     mCamType = CAM_SPRING;
+    mDrawNebulas = false;
+    mDrawPredators = false;
+    mTimeScale = 1.0f;
     
     ////////------------------------------------------------------
     //
     // CAMERA
 	mSpringCam			= SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
+    mSplineCam.setup(8000.0f);
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );
@@ -83,7 +85,7 @@ void Flock::setup()
 		mP_VelocityShader	= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_VELOCITY_FRAG ) );
 		mP_PositionShader	= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_POSITION_FRAG ) );
 		mLanternShader		= gl::GlslProg( loadResource( RES_FLOCK_LANTERN_VERT ),	loadResource( RES_FLOCK_LANTERN_FRAG ) );
-		mRoomShader			= gl::GlslProg( loadResource( RES_FLOCK_ROOM_VERT ),loadResource( RES_FLOCK_ROOM_FRAG ) );
+		//mRoomShader			= gl::GlslProg( loadResource( RES_FLOCK_ROOM_VERT ),loadResource( RES_FLOCK_ROOM_FRAG ) );
 		mShader				= gl::GlslProg( loadResource( RES_FLOCK_VBOPOS_VERT ),	loadResource( RES_FLOCK_VBOPOS_FRAG ) );
 		mP_Shader			= gl::GlslProg( loadResource( RES_FLOCK_P_VBOPOS_VERT ),	loadResource( RES_FLOCK_P_VBOPOS_FRAG ) );
 		mGlowShader			= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_GLOW_FRAG ) );
@@ -108,6 +110,7 @@ void Flock::setup()
 
     //
     ///////--------------------------------------------------------
+    Scene::setup();
 
     reset();
 }
@@ -116,10 +119,23 @@ void Flock::setup()
 //
 void Flock::setupInterface()
 {
+    mInterface->gui()->addColumn();
+    vector<string> camTypeNames;
+#define FLOCK_CAMTYPE_ENTRY( nam, enm ) \
+camTypeNames.push_back(nam);
+    FLOCK_CAMTYPE_TUPLE
+#undef  FLOCK_CAMTYPE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camera")
-                        .isVertical());
+                        .oscReceiver(getName(), "camtype")
+                        .isVertical(), camTypeNames);
+    
+    mInterface->addParam(CreateBoolParam("draw nebulas", &mDrawNebulas));
+    mInterface->addParam(CreateBoolParam("draw predators", &mDrawPredators));
+    mInterface->addParam(CreateFloatParam("time scale", &mTimeScale, 0.001f, 10.0f));
+    
+    mController.setupInterface(mInterface);
+    mSplineCam.setupInterface(mInterface, mName);
 }
 
 // ----------------------------------------------------------------
@@ -179,6 +195,12 @@ void Flock::initialize()
 	
 	initVbo();
 	initPredatorVbo();
+    
+    // AUDIO
+    mAudioFboDim    = 16; // 256 bands
+    mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
+    mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
+    mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, mRgba16Format );
 }
 
 void Flock::setFboPositions( gl::Fbo fbo )
@@ -298,13 +320,13 @@ void Flock::initVbo()
 	
 	mVboMesh		= gl::VboMesh( numVertices * 8 * 3, 0, layout, GL_TRIANGLES );
 	
-	float s = 1.5f;
+	float s = 0.5f; // girth
 	Vec3f p0( 0.0f, 0.0f, 2.0f );
 	Vec3f p1( -s, -s, 0.0f );
 	Vec3f p2( -s,  s, 0.0f );
 	Vec3f p3(  s,  s, 0.0f );
 	Vec3f p4(  s, -s, 0.0f );
-	Vec3f p5( 0.0f, 0.0f, -5.0f );
+	Vec3f p5( 0.0f, 0.0f, -10.0f );
 	
 	Vec3f n;
 	Vec3f n0 = Vec3f( 0.0f, 0.0f, 1.0f );
@@ -439,7 +461,7 @@ void Flock::initPredatorVbo()
 	
 	mP_VboMesh		= gl::VboMesh( numVertices * 8 * 3, 0, layout, GL_TRIANGLES );
 	
-	float s = 5.0f;
+	float s = 1.0f;
 	Vec3f p0( 0.0f, 0.0f, 3.0f );
 	Vec3f p1( -s*1.3f, 0.0f, 0.0f );
 	Vec3f p2( 0.0f, s * 0.5f, 0.0f );
@@ -573,30 +595,119 @@ void Flock::update(double dt)
     if( !mInitUpdateCalled )
         mInitUpdateCalled = true;
     
-    dt *= 60;
+    dt *= (60 * mTimeScale);
     
 	// CONTROLLER
 	mController.update(dt);
     
     // CAMERA
-    if( mMousePressed ){
-		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01f );
+    if( mCamType == CAM_SPRING )
+    {
+        if( mMousePressed ){
+            mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01f );
+        }
+        mSpringCam.update( 0.3f );
 	}
-	mSpringCam.update( 0.3f );
-	
+    else if( mCamType == CAM_SPLINE )
+    {
+        mSplineCam.update(dt);
+    }
+    
 	gl::disableAlphaBlending();
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
 	gl::color( Color( 1, 1, 1 ) );
+    
+    // AUDIO
+    updateAudioResponse();
 
 	drawIntoVelocityFbo(dt);
 	drawIntoPositionFbo(dt);
 	drawIntoPredatorVelocityFbo(dt);
 	drawIntoPredatorPositionFbo(dt);
-	//drawIntoRoomFbo();
 	drawIntoLanternsFbo();
 }
 
+void Flock::updateAudioResponse()
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+	
+    // Get data
+    //float * freqData = audioInput.getFft()->getAmplitude();
+    //float * timeData = audioInput.getFft()->getData();
+    int32_t dataSize = audioInput.getFft()->getBinSize();
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    
+    int32_t index = 0;
+    
+	Surface32f fftSurface( mAudioFbo.getTexture() );
+	Surface32f::Iter it = fftSurface.getIter();
+	while( it.line() )
+    {
+		while( it.pixel() && index < dataSize )
+        {
+			it.r() = fftLogData[index].y;
+            it.g() = 0.0f; // UNUSED
+			it.b() = 0.0f; // UNUSED
+			it.a() = 1.0f; // UNUSED
+            ++index;
+		}
+	}
+	
+	gl::Texture fftTexture( fftSurface );
+	mAudioFbo.bindFramebuffer();
+	gl::setMatricesWindow( mAudioFboSize, false );
+	gl::setViewport( mAudioFboBounds );
+	gl::draw( fftTexture );
+	mAudioFbo.unbindFramebuffer();
+}
+
+#pragma mark - Draw
+
+const Camera& Flock::getCamera()
+{
+    switch( mCamType )
+    {
+        case CAM_SPRING:
+            return mSpringCam.getCam();
+            
+        case CAM_SPLINE:
+            return mSplineCam.getCamera();
+            
+        case CAM_GRAVITON:
+        {
+            Scene* gravitonScene = mApp->getScene("graviton");
+            
+            if( gravitonScene && gravitonScene->isRunning() )
+            {
+                return gravitonScene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+            break;
+            
+        case CAM_ORBITER:
+        {
+            Scene* orbiterScene = mApp->getScene("orbiter");
+            
+            if( orbiterScene && orbiterScene->isRunning() )
+            {
+                return orbiterScene->getCamera();
+            }
+            else
+            {
+                return mSpringCam.getCam();
+            }
+        }
+            break;
+            
+        default:
+            return mApp->getMayaCam();
+    }
+}
 
 // FISH VELOCITY
 void Flock::drawIntoVelocityFbo(double dt)
@@ -710,46 +821,6 @@ void Flock::drawIntoPredatorPositionFbo(double dt)
 	mP_PositionFbos[ mThisFbo ].unbindFramebuffer();
 }
 
-void Flock::drawIntoRoomFbo()
-{
-	//gl::setMatricesWindow( mFbo.getSize(), false );
-	//gl::setViewport( mFbo.getBounds() );
-	
-	//mFbo.bindFramebuffer();
-	gl::clear( ColorA( 0.0f, 0.0f, 0.0f, 0.0f ), true );
-	
-	
-	gl::disableAlphaBlending();
-	gl::enable( GL_TEXTURE_2D );
-	glEnable( GL_CULL_FACE );
-	glCullFace( GL_BACK );
-	Matrix44f m;
-	m.setToIdentity();
-	m.scale( Vec3f( 350.0f, 200.0f, 350.0f ) );
-	
-	mLanternsFbo.bindTexture();
-    /*
-	mRoomShader.bind();
-	mRoomShader.uniform( "lanternsTex", 0 );
-	mRoomShader.uniform( "numLights", (float)mController.mNumLanterns );
-	mRoomShader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
-	mRoomShader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
-	mRoomShader.uniform( "att", 1.25f );
-	mRoomShader.uniform( "mvpMatrix", getCamera().mMvpMatrix );
-	mRoomShader.uniform( "mMatrix", m );
-	mRoomShader.uniform( "eyePos", getCamera().getEyePoint());
-	mRoomShader.uniform( "roomDims", Vec3f( 350.0f, 200.0f, 350.0f ) );
-	mRoomShader.uniform( "power", 1.0f );
-	mRoomShader.uniform( "lightPower", mRoom.getLightPower() );
-	mRoomShader.uniform( "timePer", mRoom.getTimePer() * 1.5f + 0.5f );
-	mRoom.draw();
-	mRoomShader.unbind();
-    */
-	
-	//mRoomFbo.unbindFramebuffer();
-	glDisable( GL_CULL_FACE );
-}
-
 void Flock::draw()
 {
     if( !mInitUpdateCalled )
@@ -806,24 +877,27 @@ void Flock::draw()
 	gl::draw( mVboMesh );
 	mShader.unbind();
 	
-	// DRAW PREDATORS
-//	mP_PositionFbos[mPrevFbo].bindTexture( 0 );
-//	mP_PositionFbos[mThisFbo].bindTexture( 1 );
-//	mP_VelocityFbos[mThisFbo].bindTexture( 2 );
-//	mLanternsFbo.bindTexture( 3 );
-//	mP_Shader.bind();
-//	mP_Shader.uniform( "prevPosition", 0 );
-//	mP_Shader.uniform( "currentPosition", 1 );
-//	mP_Shader.uniform( "currentVelocity", 2 );
-//	mP_Shader.uniform( "lightsTex", 3 );
-//	mP_Shader.uniform( "numLights", (float)mController.mNumLanterns );
-//	mP_Shader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
-//	mP_Shader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
-//	mP_Shader.uniform( "att", 1.05f );
-//	mP_Shader.uniform( "eyePos", getCamera().getEyePoint());
-//	mP_Shader.uniform( "power", 1.0f );
-//	gl::draw( mP_VboMesh );
-//	mP_Shader.unbind();
+    if (mDrawPredators)
+    {
+        // DRAW PREDATORS
+        mP_PositionFbos[mPrevFbo].bindTexture( 0 );
+        mP_PositionFbos[mThisFbo].bindTexture( 1 );
+        mP_VelocityFbos[mThisFbo].bindTexture( 2 );
+        mLanternsFbo.bindTexture( 3 );
+        mP_Shader.bind();
+        mP_Shader.uniform( "prevPosition", 0 );
+        mP_Shader.uniform( "currentPosition", 1 );
+        mP_Shader.uniform( "currentVelocity", 2 );
+        mP_Shader.uniform( "lightsTex", 3 );
+        mP_Shader.uniform( "numLights", (float)mController.mNumLanterns );
+        mP_Shader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
+        mP_Shader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
+        mP_Shader.uniform( "att", 1.05f );
+        mP_Shader.uniform( "eyePos", getCamera().getEyePoint());
+        mP_Shader.uniform( "power", 1.0f );
+        gl::draw( mP_VboMesh );
+        mP_Shader.unbind();
+    }
     
 	// DRAW LANTERN GLOWS
     gl::disableDepthWrite();
@@ -834,7 +908,10 @@ void Flock::draw()
     mController.drawLanternGlows( billboardRight, billboardUp );
     
     drawGlows( billboardRight, billboardUp );
-    drawNebulas( billboardRight, billboardUp );
+    if( mDrawNebulas )
+    {
+        drawNebulas( billboardRight, billboardUp );
+    }
 	
 	gl::disable( GL_TEXTURE_2D );
 	gl::enableDepthWrite();
@@ -855,29 +932,37 @@ void Flock::draw()
 	
 	// DRAW PANEL
 	//drawInfoPanel();
-
-	
-	if( false ){	// DRAW POSITION AND VELOCITY FBOS
-		gl::color( Color::white() );
-		gl::setMatricesWindow( mApp->getViewportSize() );
-		gl::enable( GL_TEXTURE_2D );
-		mPositionFbos[ mThisFbo ].bindTexture();
-		gl::drawSolidRect( Rectf( 5.0f, 5.0f, 105.0f, 105.0f ) );
-		
-		mPositionFbos[ mPrevFbo ].bindTexture();
-		gl::drawSolidRect( Rectf( 106.0f, 5.0f, 206.0f, 105.0f ) );
-		
-		mVelocityFbos[ mThisFbo ].bindTexture();
-		gl::drawSolidRect( Rectf( 5.0f, 106.0f, 105.0f, 206.0f ) );
-		
-		mVelocityFbos[ mPrevFbo ].bindTexture();
-		gl::drawSolidRect( Rectf( 106.0f, 106.0f, 206.0f, 206.0f ) );
-	}
 	
 	mThisFbo	= ( mThisFbo + 1 ) % 2;
 	mPrevFbo	= ( mThisFbo + 1 ) % 2;
     //
     ////////------------------------------------------------------
+    
+    gl::popMatrices();
+}
+
+void Flock::drawDebug()
+{
+    gl::pushMatrices();
+    
+    // DRAW POSITION AND VELOCITY FBOS
+    gl::color( Color::white() );
+    gl::setMatricesWindow( mApp->getViewportSize() );
+    gl::enable( GL_TEXTURE_2D );
+    mPositionFbos[ mThisFbo ].bindTexture();
+    gl::drawSolidRect( Rectf( 5.0f, 5.0f, 105.0f, 105.0f ) );
+    
+    mPositionFbos[ mPrevFbo ].bindTexture();
+    gl::drawSolidRect( Rectf( 106.0f, 5.0f, 206.0f, 105.0f ) );
+    
+    mVelocityFbos[ mThisFbo ].bindTexture();
+    gl::drawSolidRect( Rectf( 5.0f, 106.0f, 105.0f, 206.0f ) );
+    
+    mVelocityFbos[ mPrevFbo ].bindTexture();
+    gl::drawSolidRect( Rectf( 106.0f, 106.0f, 206.0f, 206.0f ) );
+    
+    mAudioFbo.bindTexture();
+    gl::drawSolidRect( Rectf( 5.0f, 207.0f, 105.0f, 307.0f ) );
     
     gl::popMatrices();
 }
@@ -948,6 +1033,7 @@ void Flock::drawIntoLanternsFbo()
 
 //
 ////////------------------------------------------------------
+#pragma mark - Input
 
 void Flock::handleMouseDown( const MouseEvent& event )
 {
@@ -966,7 +1052,7 @@ void Flock::handleMouseDown( const MouseEvent& event )
     Vec3f randPos( Rand::randFloat( -dims.x * 0.8f, dims.x * 0.8f ),
                   dims.y,
                   Rand::randFloat( -dims.z * 0.5f, dims.z * 0.5f ) );
-    mController.addLantern(randPos);
+    //mController.addLantern(randPos);
 }
 
 void Flock::handleMouseUp( const MouseEvent& event )
@@ -985,47 +1071,5 @@ void Flock::handleMouseDrag( const MouseEvent& event )
 {
 	handleMouseMove( event );
 	mMouseOffset = ( mMousePos - mMouseDownPos ) * 0.4f;
-}
-
-const Camera& Flock::getCamera()
-{
-    switch( mCamType )
-    {
-        case CAM_SPRING:
-            return mSpringCam.getCam();
-            
-        case CAM_GRAVITON:
-        {
-            Scene* gravitonScene = mApp->getScene("graviton");
-            
-            if( gravitonScene && gravitonScene->isRunning() )
-            {
-                return gravitonScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            break;
-            
-        case CAM_ORBITER:
-        {
-            Scene* orbiterScene = mApp->getScene("orbiter");
-            
-            if( orbiterScene && orbiterScene->isRunning() )
-            {
-                return orbiterScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            break;
-            
-        default:
-            return mApp->getMayaCam();
-    }
 }
 

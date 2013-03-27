@@ -22,7 +22,7 @@ public:
     SplineCam();
     ~SplineCam();
 
-    void setup();
+    void setup(const float maxDistance = 1000.0f);
     bool resetSpline();
     void setupInterface(Interface* interface, const std::string& name);
     void update(double dt);
@@ -41,6 +41,7 @@ private:
     ci::BSpline3f       mSpline;
     float               mSplineValue;
     float               mRadius;
+    float               mMaxDistance;
     ci::Vec3f           mLastPos;
     ci::Vec3f           mTarget;
     float               mSpeed;

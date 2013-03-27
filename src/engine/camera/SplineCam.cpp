@@ -23,12 +23,13 @@ SplineCam::~SplineCam()
 {
 }
 
-void SplineCam::setup()
+void SplineCam::setup(const float maxDistance)
 {
     mTarget = Vec3f::zero();
     mSpeed = 1.0f;
     mRadius = 100.0f;
     mLookForward = false;
+    mMaxDistance = maxDistance;
     
     resetSpline();
 }
@@ -57,7 +58,7 @@ void SplineCam::setupInterface( Interface* interface, const std::string& name)
                         .oscReceiver(name, "lookfwd"));
     interface->addParam(CreateFloatParam( "Radius", &mRadius )
                          .minValue(1.0f)
-                         .maxValue(1000.f)
+                         .maxValue(mMaxDistance)
                          .oscReceiver(name, "splinecamradius"));
     interface->addButton(CreateTriggerParam("Reset Spline", NULL)
                           .oscReceiver(name,"splinecamreset"))->registerCallback( this, &SplineCam::resetSpline );

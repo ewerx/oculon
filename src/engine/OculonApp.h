@@ -11,6 +11,7 @@
 #define __OCULONAPP_H__
 
 #include "AudioInput.h"
+#include "CameraController.h"
 #include "DomeRenderer.h"
 #include "InfoPanel.h"
 #include "KinectController.h"
@@ -96,20 +97,21 @@ public: // cinder interface
     float   getViewportAspectRatio() const;
     
 public: // new
-    inline AudioInput& getAudioInput()                  { return mAudioInput; }
-    inline MidiInput& getMidiInput()                    { return mMidiInput; }
-    inline MindWave& getMindWave()                      { return mMindWave; }
-    inline KinectController& getKinectController()      { return mKinectController; }
-    inline OscServer& getOscServer()                    { return mOscServer; }
-    
-    inline InfoPanel& getInfoPanel()                    { return mInfoPanel; }
-    inline params::InterfaceGl& getParams()             { return mParams; }
+    AudioInput& getAudioInput()                         { return mAudioInput; }
+    MidiInput& getMidiInput()                           { return mMidiInput; }
+    MindWave& getMindWave()                             { return mMindWave; }
+    KinectController& getKinectController()             { return mKinectController; }
+    OscServer& getOscServer()                           { return mOscServer; }
+                
+    InfoPanel& getInfoPanel()                           { return mInfoPanel; }
+    params::InterfaceGl& getParams()                    { return mParams; }
     
     inline bool isPresentationMode() const              { return mIsPresentationMode; }
     inline void setUseMayaCam(bool use)                 { mUseMayaCam = use; }
     
     void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    inline const Camera& getMayaCam() const             { return mMayaCam.getCamera();  }
+    const Camera& getMayaCam() const                    { return mMayaCam.getCamera(); }
+    //const Camera& getGlobalCam()                        { return mCameraController.getCamera(); }
     
     inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
     
@@ -180,6 +182,8 @@ private: // members
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     bool                    mDebugRender;
+    //CameraController        mCameraController;
+    
     
     eOutputMode             mOutputMode;
     gl::Fbo                 mFbo;

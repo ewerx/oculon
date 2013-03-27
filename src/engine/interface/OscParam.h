@@ -217,6 +217,21 @@ public:
     {
     }
     
+    inline CreateParam( const std::string& name, T* var, const std::string& sceneName )
+    : _name(name)
+    , _var(var)
+    , _min(0)
+    , _max(1)
+    , _sendAddr("")
+    , _recvAddr("")
+    , _feedback(false)
+    , _altstyle(false)
+    , _step(0)
+    {
+        _recvAddr = "/oculon/" + sceneName + '/' + name;
+        _sendAddr = _recvAddr; // default to send to same address
+    }
+    
     inline CreateParam& minValue( const T& min ) 
     { 
         _min = min;

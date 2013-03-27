@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C0CFC2516F1A8AB00CECB8B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0CFC2316F1A8AB00CECB8B /* CameraController.cpp */; };
 		7C0F498015E3400B006CDE84 /* passThruFlock.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
 		7C0F498115E340CC006CDE84 /* passThruFlock.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
 		7C118AE615E5CFEE00BDF80C /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */; };
@@ -159,6 +160,7 @@
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
 		7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7B1547B00600CF488D /* QuakeData.cpp */; };
 		7C832E7F154A4E0200CF488D /* Quake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7D154A4E0200CF488D /* Quake.cpp */; };
+		7C8471631701243200B2F604 /* Terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8471611701243200B2F604 /* Terrain.cpp */; };
 		7C865591148C2980000E00B6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C865590148C2980000E00B6 /* CoreMIDI.framework */; };
 		7C86560D148C2A97000E00B6 /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8655BD148C2A97000E00B6 /* RtMidi.cpp */; };
 		7C86563E148C2A97000E00B6 /* MidiHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C86560A148C2A97000E00B6 /* MidiHub.cpp */; };
@@ -295,6 +297,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7C0CFC2316F1A8AB00CECB8B /* CameraController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraController.cpp; sourceTree = "<group>"; };
+		7C0CFC2416F1A8AB00CECB8B /* CameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		7C0F497F15E3400B006CDE84 /* passThruFlock.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruFlock.vert; sourceTree = "<group>"; };
 		7C118AE415E5CFEE00BDF80C /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
 		7C118AE515E5CFEE00BDF80C /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
@@ -524,6 +528,8 @@
 		7C832E7B1547B00600CF488D /* QuakeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuakeData.cpp; sourceTree = "<group>"; };
 		7C832E7D154A4E0200CF488D /* Quake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quake.cpp; sourceTree = "<group>"; };
 		7C832E7E154A4E0200CF488D /* Quake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quake.h; sourceTree = "<group>"; };
+		7C8471611701243200B2F604 /* Terrain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Terrain.cpp; sourceTree = "<group>"; };
+		7C8471621701243200B2F604 /* Terrain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terrain.h; sourceTree = "<group>"; };
 		7C865590148C2980000E00B6 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		7C8655B6148C2A97000E00B6 /* MidiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiConstants.h; sourceTree = "<group>"; };
 		7C8655B7148C2A97000E00B6 /* MidiExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiExceptions.h; sourceTree = "<group>"; };
@@ -597,8 +603,8 @@
 		7C922868151C066400FB3773 /* BlobTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobTracker.h; sourceTree = "<group>"; };
 		7C92286E151C098D00FB3773 /* KinectController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectController.cpp; sourceTree = "<group>"; };
 		7C92286F151C098D00FB3773 /* KinectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectController.h; sourceTree = "<group>"; };
-		7C941F35158980990099A0D3 /* SpringCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpringCam.cpp; path = catalog/SpringCam.cpp; sourceTree = "<group>"; };
-		7C941F36158980990099A0D3 /* SpringCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpringCam.h; path = catalog/SpringCam.h; sourceTree = "<group>"; };
+		7C941F35158980990099A0D3 /* SpringCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpringCam.cpp; path = ../../catalog/SpringCam.cpp; sourceTree = "<group>"; };
+		7C941F36158980990099A0D3 /* SpringCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpringCam.h; path = ../../catalog/SpringCam.h; sourceTree = "<group>"; };
 		7C941F37158980990099A0D3 /* Star.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Star.cpp; path = catalog/Star.cpp; sourceTree = "<group>"; };
 		7C941F38158980990099A0D3 /* Star.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Star.h; path = catalog/Star.h; sourceTree = "<group>"; };
 		7C941F3C158981080099A0D3 /* Catalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Catalog.cpp; path = catalog/Catalog.cpp; sourceTree = "<group>"; };
@@ -1161,6 +1167,7 @@
 				7C9693401496FFC400C0E1E6 /* pulsar */,
 				7CB39D30156DCDD10093A8ED /* sol */,
 				7C832E741547AD6700CF488D /* tectonic */,
+				7C8471601701243200B2F604 /* terrain */,
 				7C4A9A30168E3C3D00CE6F9D /* trails */,
 				7C745582148C259C009C0356 /* test */,
 			);
@@ -1275,6 +1282,10 @@
 				7C783EEB15F26F4300492299 /* StarCam.h */,
 				7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */,
 				7C2F90CC1690D3BB0062D6E0 /* SplineCam.h */,
+				7C941F35158980990099A0D3 /* SpringCam.cpp */,
+				7C941F36158980990099A0D3 /* SpringCam.h */,
+				7C0CFC2316F1A8AB00CECB8B /* CameraController.cpp */,
+				7C0CFC2416F1A8AB00CECB8B /* CameraController.h */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -1301,6 +1312,15 @@
 				7C832E7B1547B00600CF488D /* QuakeData.cpp */,
 			);
 			path = tectonic;
+			sourceTree = "<group>";
+		};
+		7C8471601701243200B2F604 /* terrain */ = {
+			isa = PBXGroup;
+			children = (
+				7C8471611701243200B2F604 /* Terrain.cpp */,
+				7C8471621701243200B2F604 /* Terrain.h */,
+			);
+			path = terrain;
 			sourceTree = "<group>";
 		};
 		7C865570148C2784000E00B6 /* blocks */ = {
@@ -1548,8 +1568,6 @@
 				7C941F3D158981080099A0D3 /* Catalog.h */,
 				7C783E9315E99B4C00492299 /* Planet.cpp */,
 				7C783E9415E99B4C00492299 /* Planet.h */,
-				7C941F35158980990099A0D3 /* SpringCam.cpp */,
-				7C941F36158980990099A0D3 /* SpringCam.h */,
 				7C941F37158980990099A0D3 /* Star.cpp */,
 				7C941F38158980990099A0D3 /* Star.h */,
 			);
@@ -2077,6 +2095,8 @@
 				7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */,
 				7C6CB4A7169936030096EF7B /* MeshHelper.cpp in Sources */,
 				7C65C3A116B62F1B00F84FD1 /* DomeRenderer.cpp in Sources */,
+				7C0CFC2516F1A8AB00CECB8B /* CameraController.cpp in Sources */,
+				7C8471631701243200B2F604 /* Terrain.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

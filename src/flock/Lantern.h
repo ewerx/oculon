@@ -15,6 +15,7 @@ class Lantern {
 	Lantern();
 	Lantern( const ci::Vec3f &pos );
 	void update( float dt, float yFloor );
+    void updateAudioResponse();
 	void draw();
 	
 	ci::Vec3f	mPos;

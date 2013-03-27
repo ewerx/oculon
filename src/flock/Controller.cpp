@@ -10,6 +10,7 @@
 #include "cinder/gl/Gl.h"
 #include "cinder/Rand.h"
 #include "Controller.h"
+#include "Interface.h"
 
 using namespace ci;
 using std::vector;
@@ -26,6 +27,11 @@ Controller::Controller( int maxLanterns )
 //	for( int i=0; i<mNumPredators; i++ ){
 //		mPredators.push_back( Predator( Vec3f::zero() ) );
 //	}
+}
+
+void Controller::setupInterface( Interface* interface )
+{
+    interface->addParam(CreateFloatParam("lantern pos x", &mLanternPosX, -500,500));
 }
 
 void Controller::updatePredatorBodies( gl::Fbo *fbo )
@@ -72,6 +78,7 @@ void Controller::update(double dt)
 			it = mLanterns.erase( it );
 		} else {
 			it->update(dt, -dims.y);//( mRoom->mTimeAdjusted, mRoom->getFloorLevel() );
+            it->mPos.x = mLanternPosX;
 			++it;
 		}
 	}

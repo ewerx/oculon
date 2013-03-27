@@ -10,6 +10,7 @@
 
 #include "Scene.h"
 #include "SpringCam.h"
+#include "SplineCam.h"
 #include "Controller.h"
 
 #include "cinder/Cinder.h"
@@ -31,7 +32,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
-    //void drawDebug();
+    void drawDebug();
     void handleMouseDown( const ci::app::MouseEvent& event );
     void handleMouseUp( const ci::app::MouseEvent& event );
     void handleMouseDrag( const ci::app::MouseEvent& event );
@@ -63,12 +64,14 @@ protected:
     
     void setupInterface();
     void setupDebugInterface();
+    void updateAudioResponse();
 	
 private:
     ////////------------------------------------------------------
     //
 	// CAMERA
 	SpringCam			mSpringCam;
+    SplineCam           mSplineCam;
 	
 	// TEXTURES
 	ci::gl::Texture			mLanternGlowTex;
@@ -112,26 +115,44 @@ private:
 	ci::gl::Fbo			mP_VelocityFbos[2];
 	int					mThisFbo, mPrevFbo;
     
+    // AUDIO
+    int                 mAudioFboDim;
+    ci::Vec2f           mAudioFboSize;
+    ci::Area            mAudioFboBounds;
+    ci::gl::Fbo         mAudioFbo;
+    
     // MOUSE
     ci::Vec2f			mMousePos, mMouseDownPos, mMouseOffset;
 	bool				mMousePressed;
     
     bool                mInitUpdateCalled;
+    bool                mDrawNebulas;
     //
     ////////------------------------------------------------------
     
+#define FLOCK_CAMTYPE_TUPLE \
+FLOCK_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
+FLOCK_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
+FLOCK_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON ) \
+FLOCK_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
+FLOCK_CAMTYPE_ENTRY( "Spring", CAM_SPRING ) \
+FLOCK_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
+//end tuple
+    
     enum eCamType
     {
-        CAM_SPRING,
-        CAM_GRAVITON,
-        CAM_ORBITER,
-        CAM_MAYA,
+#define FLOCK_CAMTYPE_ENTRY( nam, enm ) \
+enm,
+        FLOCK_CAMTYPE_TUPLE
+#undef  FLOCK_CAMTYPE_ENTRY
         
         CAM_COUNT
     };
-    eCamType mCamType;
+    eCamType                    mCamType;
     
     bool mDrawPredators;
+    
+    float mTimeScale;
     
 };
 

@@ -84,15 +84,15 @@ void Scene::init(OculonApp* app)
                          .oscReceiver(mName).sendFeedback());
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
-    
-    setupInterface();
-    setupDebugInterface();
 }
 
 void Scene::setup()
 {
     mIsSetup = true;
     mGain = 1.0f;
+    
+    setupInterface();
+    setupDebugInterface();
 }
 
 void Scene::setupFbo()
