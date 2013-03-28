@@ -1,4 +1,5 @@
 uniform float theta;
+uniform vec3  scale;
 
 varying vec2 uv;
 const float twoPi = 3.1415926 * 2.0;
@@ -22,11 +23,8 @@ const float twoPi = 3.1415926 * 2.0;
 
 /*
 uniform float	u_time;
-
 uniform vec3	u_scale;
-
 uniform vec2	u_RenderSize;
-
 */
 
 float lmap(float val, float inMin, float inMax, float outMin, float outMax)
@@ -139,7 +137,7 @@ void main( void )
 //	float dist		= distance( uv, offset );
 //	vec4 the_color	= vec4( dist, 0.0, 0.0, 1.0 );
     vec2 coord = uv;//gl_TexCoord[0].st;
-    vec3 v = vec3( coord, theta );
+    vec3 v = vec3( coord, theta ) * scale;
     float n = snoise3d( v );
     gl_FragColor = vec4( n, 0.0, 0.0, 1.0 );
 }

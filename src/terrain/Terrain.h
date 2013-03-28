@@ -116,11 +116,12 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
 	ci::gl::GlslProg			mShaderTex;
 	float						mDisplacementSpeed;
 	float						mTheta;
-    Perlin                      mPerlin;
+    //Perlin                      mPerlin;
     
     // Displacement
 	float						mDisplacementHeight;
 	ci::gl::GlslProg			mShaderVtf;
+    Vec3f                       mNoiseScale;
 };
 
 #endif // __TERRAIN_H__

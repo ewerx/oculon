@@ -28,7 +28,7 @@ using namespace std;
 // ----------------------------------------------------------------
 //
 Terrain::Terrain()
-: Scene("Terrain")
+: Scene("terrain")
 {
 }
 
@@ -42,7 +42,6 @@ Terrain::~Terrain()
 //
 void Terrain::setup()
 {
-    Scene::setup();
     
     // Params
     mCamType = CAM_MANUAL;
@@ -50,6 +49,9 @@ void Terrain::setup()
 	mDrawFlatShaded = false;
 	mDrawShadowMap = false;
     mMeshType = MESHTYPE_FLAT;
+    mEnableLight = false;
+    mEnableShadow = false;
+    mNoiseScale = Vec3f(1.0f,1.0f,1.0f);
     
     // create the mesh
 	setupMesh();
@@ -88,6 +90,8 @@ void Terrain::setup()
     
     mApp->setCamera(Vec3f( 0.0f, 0.0f, -16.0f ), Vec3f::zero(), Vec3f(0.0f,1.0f,0.0f));
     
+    
+    Scene::setup();
     reset();
 }
 
@@ -103,6 +107,14 @@ void Terrain::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "shadow", &mEnableShadow )
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "disp speed", &mDisplacementSpeed )
+                         .maxValue(5.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "disp height", &mDisplacementHeight )
+                         .maxValue(20.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
+                         .oscReceiver(mName));
 //    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
 //                         .oscReceiver(getName()));
 
@@ -161,19 +173,16 @@ void Terrain::update(double dt)
     
     // Update animation position
 	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
-	mTheta = getElapsedSeconds();//math<float>::sin( time );
+	mTheta = time;//math<float>::sin( time );
+    
+    drawDynamicTexture();
 }
 
 // ----------------------------------------------------------------
 //
 void Terrain::draw()
 {
-//    // Set up OpenGL to work with default lighting
-//	glShadeModel( GL_SMOOTH );
-//	gl::enable( GL_POLYGON_SMOOTH );
-//	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
-    
-    gl::enableAlphaBlending();
+    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
     
     gl::pushMatrices();
 	gl::setMatrices( getCamera() );
@@ -248,7 +257,11 @@ void Terrain::draw()
     
     // VTF
     // Set up OpenGL to work with default lighting
-	glShadeModel( GL_SMOOTH );
+    if (!mDrawFlatShaded) {
+        glShadeModel( GL_SMOOTH );
+    } else {
+        glShadeModel( GL_FLAT );
+    }
 	gl::enable( GL_POLYGON_SMOOTH );
 	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
 	gl::enable( GL_NORMALIZE );
@@ -256,16 +269,14 @@ void Terrain::draw()
 	gl::enableDepthRead();
 	gl::enableDepthWrite();
     
-    drawDynamicTexture();
     drawMesh();
     
 	// no need to call 'disableLights()' or 'gl::disableDepthRead/Write()' here,
 	// glPopAttrib() will do it for us
-
-	// restore OpenGL state
-	glPopAttrib();
     
 	gl::popMatrices();
+    // restore OpenGL state
+	glPopAttrib();
 }
 
 void Terrain::drawDynamicTexture()
@@ -279,6 +290,7 @@ void Terrain::drawDynamicTexture()
 	// Bind and configure dynamic texture shader
 	mShaderTex.bind();
 	mShaderTex.uniform( "theta", mTheta );
+    mShaderTex.uniform( "scale", mNoiseScale );
 //    mShaderTex.uniform( "u_time", mTheta );
 //    mShaderTex.uniform( "u_scale", 1.0f );
 //    mShaderTex.uniform( "u_RenderSize", mVtfFbo.getSize() );
@@ -316,14 +328,11 @@ void Terrain::drawDynamicTexture()
 	gl::vertex( vert3 );
     
 	gl::end();
+    gl::disable( GL_TEXTURE_2D );
     
 	// Unbind everything
 	mShaderTex.unbind();
 	mVtfFbo.unbindFramebuffer();
-    
-    gl::popMatrices();
-	// restore OpenGL state
-	glPopAttrib();
     
 	///////////////////////////////////////////////////////////////
 }
@@ -332,8 +341,6 @@ void Terrain::drawMesh()
 {
 	// Set up window
 	gl::setViewport( mApp->getViewportBounds() );
-	gl::pushMatrices();
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT );
 	gl::setMatrices( getCamera() );
     
 	// Use arcball to rotate model view
@@ -380,20 +387,17 @@ void Terrain::drawMesh()
 	gl::draw( mVboMesh );
 	
 	// Unbind everything
+    if(mEnableShadow) {
+        mDepthFbo.unbindTexture();
+    }
 	mShaderVtf.unbind();
-	mDepthFbo.unbindTexture();
 	mVtfFbo.unbindTexture();
 	
 	// Disable wireframe, texture mapping, lighting
 	if ( mDrawWireframe ) {
 		gl::disableWireframe();
 	}
-//	if ( mTextureEnabled && mTexture ) {
-//		mTexture.unbind();
-//	}
-//	if ( mLightEnabled ) {
-//		gl::disable( GL_LIGHTING );
-//	}
+
 	gl::disable( GL_TEXTURE_2D );
 }
 
@@ -425,7 +429,7 @@ void Terrain::drawDebug()
     
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( getWindowSize() );
-    Rectf preview( 220.0f, 20.0f, 300.0f, 100.0f );
+    Rectf preview( 100.0f, mApp->getWindowHeight() - 200.0f, 180.0f, mApp->getWindowHeight() - 120.0f );
     gl::draw( mVtfFbo.getTexture(), mVtfFbo.getBounds(), preview );
     gl::disable( GL_TEXTURE_2D );
 }
@@ -676,5 +680,5 @@ void Terrain::setupDynamicTexture()
 		console() << "Unable to compile VTF shader:\n" << ex.what() << "\n";
 	}
     
-    mPerlin = Perlin( 3, clock() & 65535 );
+    //mPerlin = Perlin( 3, clock() & 65535 );
 }
