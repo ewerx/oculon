@@ -18,6 +18,7 @@
 #include "cinder/ObjLoader.h"
 #include "cinder/Rand.h"
 #include "cinder/gl/gl.h"
+#include "cinder/Perlin.h"
 #include <vector>
 
 using namespace ci;
@@ -44,155 +45,54 @@ void Terrain::setup()
     Scene::setup();
     
     // Params
-    mLightEnabled       = false;
-    mTextureEnabled     = false;
-    mWireframe          = true;
-    mDrawInstances      = false;
-    mAdditiveBlending   = true;
-    mDynamicLight       = false;
-    mObjectScale        = 10.0f;
-    mDivision           = 1;
-    mResolution         = 12;
-    mSlices             = 20;
-    mCamType            = CAM_MANUAL;
-    mLineWidth          = 2.0f;
-    mColor              = ColorAf::white();
+    mCamType = CAM_MANUAL;
+    mDrawWireframe = false;
+	mDrawFlatShaded = false;
+	mDrawShadowMap = false;
+    mMeshType = MESHTYPE_SMOOTH;
     
-    // Load shader
-	try {
-		mShader = gl::GlslProg( loadResource( RES_POLYHEDRON_SHADER_VERT ), loadResource( RES_POLYHEDRON_SHADER_FRAG ) );
-	} catch ( gl::GlslProgCompileExc ex ) {
-		console() << ex.what() << endl;
-	}
+	// create the mesh
+	setupMesh();
     
-	// Load the texture map
-	mTexture = gl::Texture( loadImage( loadResource( RES_POLYHEDRON_TEX1 ) ) );
+	// initialize shadow map
+	setupShadowMap();
     
-    // Set up the light
-	mLight = new gl::Light( gl::Light::DIRECTIONAL, 0 );
-	mLight->setAmbient( ColorAf::black() );
-	mLight->setDiffuse( ColorAf::gray( 0.6f ) );
-	mLight->setDirection( Vec3f::one() );
-	mLight->setPosition( Vec3f::one() * -1.0f );
-	mLight->setSpecular( ColorAf::white() );
-	mLight->enable();
+	// load the texture from the "assets" folder (easier than using resources)
+	try
+    {
+        mTexture = gl::Texture( loadImage( loadResource(RES_TERRAIN_TEXTURE) ) );
+    }
+	catch( const std::exception &e )
+    {
+        console() << "Could not load texture:" << e.what() << std::endl;
+    }
     
-    // camera
+	// load and compile the shader
+	try
+    {
+        mShader = gl::GlslProg( loadResource(RES_TERRAIN_VERT), loadResource(RES_TERRAIN_FRAG) );
+    }
+	catch( const std::exception &e )
+    {
+        console() << "Could not load&compile shader:" << e.what() << std::endl;
+    }
+    
     mSplineCam.setup();
     
-    //loadMesh();
-    createMeshes();
-    
     reset();
-}
-
-void Terrain::loadMesh()
-{
-    //  ObjLoader loader( (DataSourceRef)loadResource( RES_CUBE_OBJ ) );
-    //	loader.load( &mMesh );
-    //	mVboMesh = gl::VboMesh( mMesh );
-}
-
-void Terrain::createMeshes()
-{
-	mCylinder		= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mSlices ), 1.0f, 1.0f, false, false ) );
-    
-    
-    float delta = ( 2.0f * (float)M_PI ) / (float)mResolution;
-	float step	= 1.0f / (float)mSlices;
-	float ud	= 1.0f / (float)mResolution;
-    
-	int32_t p = 0;
-	for ( float phi = 0.0f; p <= mSlices; ++p, phi += step ) {
-		int32_t t	= 0;
-		float u		= 0.0f;
-		for ( float theta = 0.0f; t < mResolution; ++t, u += ud, theta += delta ) {
-            
-			float radius = 1.0f;//lerp( baseRadius, topRadius, phi );
-            
-			Vec3f position(
-                           math<float>::cos( theta ) * radius,
-                           phi - 0.5f,
-                           math<float>::sin( theta ) * radius
-                           );
-			srcPositions.push_back( position );
-            
-			Vec3f normal = Vec3f( position.x, 0.0f, position.z ).normalized();
-			normal.y = 0.0f;
-			srcNormals.push_back( normal );
-            
-			Vec2f texCoord( u, phi );
-			srcTexCoords.push_back( texCoord );
-		}
-	}
-    
-	srcNormals.push_back( Vec3f( 0.0f, 1.0f, 0.0f ) );
-	srcNormals.push_back( Vec3f( 0.0f, -1.0f, 0.0f ) );
-	srcPositions.push_back( Vec3f( 0.0f, -0.5f, 0.0f ) );
-	srcPositions.push_back( Vec3f( 0.0f, 0.5f, 0.0f ) );
-	srcTexCoords.push_back( Vec2f( 0.0f, 0.0f ) );
-	srcTexCoords.push_back( Vec2f( 0.0f, 1.0f ) );
-	int32_t topCenter		= (int32_t)srcPositions.size() - 1;
-	int32_t bottomCenter	= topCenter - 1;
 }
 
 // ----------------------------------------------------------------
 //
 void Terrain::setupInterface()
 {
-//    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-//                        .maxValue(CAM_COUNT)
-//                        .oscReceiver(getName(), "camera")
-//                        .isVertical());
-    
-    mInterface->addParam(CreateBoolParam( "wireframe", &mWireframe )
+    mInterface->addParam(CreateBoolParam( "wireframe", &mDrawWireframe )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "lighting", &mLightEnabled )
+    mInterface->addParam(CreateBoolParam( "flat shaded", &mDrawFlatShaded )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "texture", &mTextureEnabled )
+    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "additive", &mAdditiveBlending )
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "dynamic light", &mDynamicLight )
-                         .oscReceiver(getName()));
-    
-    mInterface->addParam(CreateFloatParam("scale", &mObjectScale)
-                         .minValue(0.0f)
-                         .maxValue(100.0f)
-                         .oscReceiver(mName)
-                         .sendFeedback());
-    
-    mInterface->addParam(CreateIntParam("res x", &mResolution)
-                         .minValue(1)
-                         .maxValue(20)
-                         .oscReceiver(mName, "spacingx")
-                         .sendFeedback());
-    mInterface->addParam(CreateIntParam("slices", &mSlices)
-                         .minValue(1)
-                         .maxValue(200)
-                         .oscReceiver(mName, "spacingx")
-                         .sendFeedback());
-    
-    mInterface->addParam(CreateIntParam("line width", &mLineWidth)
-                         .minValue(1)
-                         .maxValue(8)
-                         .oscReceiver(mName, "linewidth")
-                         .sendFeedback());
-    
-    mInterface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                        .oscReceiver(mName,"color"));
-    
-//    mInterface->addParam(CreateIntParam("division", &mDivision)
-//                         .minValue(1)
-//                         .maxValue(100)
-//                         .oscReceiver(mName, "division")
-//                         .sendFeedback());
-//
-//    mInterface->addParam(CreateIntParam("resolution", &mResolution)
-//                         .minValue(1)
-//                         .maxValue(100)
-//                         .oscReceiver(mName, "resolution")
-//                         .sendFeedback());
+
     
     mInterface->gui()->addColumn();
     vector<string> camTypeNames;
@@ -218,7 +118,6 @@ void Terrain::setupDebugInterface()
 //
 void Terrain::reset()
 {
-    createMeshes();
 }
 
 // ----------------------------------------------------------------
@@ -233,126 +132,135 @@ void Terrain::update(double dt)
 {
     Scene::update(dt);
     
-    generate();
-    
     if( mCamType == CAM_SPLINE )
         mSplineCam.update(dt);
     
-    if (mDynamicLight)
-    {
-        mLight->setPosition( getCamera().getEyePoint() * 1.1f );
-        mLight->setDirection( getCamera().getCenterOfInterestPoint() );
-    }
+    // animate light
+	float x = 50.0f + 150.0f * (float) sin( 0.20 * getElapsedSeconds() );
+	float y = 50.0f +  45.0f * (float) cos( 0.13 * getElapsedSeconds() );
+	float z = 50.0f + 150.0f * (float) cos( 0.20 * getElapsedSeconds() );
     
-    // Update light on every frame
-	mLight->update( getCamera() );
-}
-
-void Terrain::generate()
-{
-	for ( int32_t p = 0; p < mSlices; ++p ) {
-		for ( int32_t t = 0; t < mResolution; ++t ) {
-			int32_t n = t + 1 >= mResolution ? 0 : t + 1;
-            
-			int32_t index0 = ( p + 0 ) * mResolution + t;
-			int32_t index1 = ( p + 0 ) * mResolution + n;
-			int32_t index2 = ( p + 1 ) * mResolution + t;
-			int32_t index3 = ( p + 1 ) * mResolution + n;
-            
-			normals.push_back( srcNormals[ index0 ] );
-			normals.push_back( srcNormals[ index2 ] );
-			normals.push_back( srcNormals[ index1 ] );
-			normals.push_back( srcNormals[ index1 ] );
-			normals.push_back( srcNormals[ index2 ] );
-			normals.push_back( srcNormals[ index3 ] );
-            
-			positions.push_back( srcPositions[ index0 ] );
-			positions.push_back( srcPositions[ index2 ] );
-			positions.push_back( srcPositions[ index1 ] );
-			positions.push_back( srcPositions[ index1 ] );
-			positions.push_back( srcPositions[ index2 ] );
-			positions.push_back( srcPositions[ index3 ] );
-            
-			texCoords.push_back( srcTexCoords[ index0 ] );
-			texCoords.push_back( srcTexCoords[ index2 ] );
-			texCoords.push_back( srcTexCoords[ index1 ] );
-			texCoords.push_back( srcTexCoords[ index1 ] );
-			texCoords.push_back( srcTexCoords[ index2 ] );
-			texCoords.push_back( srcTexCoords[ index3 ] );
-		}
-	}
+	mLightPosition = Vec3f(x, y, z);
     
-	for ( uint32_t i = 0; i < positions.size(); ++i ) {
-		indices.push_back( i );
-	}
-    
-    mTriMesh = MeshHelper::create( indices, positions, normals, texCoords );
+    updateMesh();
 }
 
 // ----------------------------------------------------------------
 //
 void Terrain::draw()
 {
-    // Set up OpenGL to work with default lighting
-	glShadeModel( GL_SMOOTH );
-	gl::enable( GL_POLYGON_SMOOTH );
-	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+//    // Set up OpenGL to work with default lighting
+//	glShadeModel( GL_SMOOTH );
+//	gl::enable( GL_POLYGON_SMOOTH );
+//	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
     
-    if (mAdditiveBlending)
-    {
-        gl::enableAdditiveBlending();
-    }
-    else
-    {
-        gl::enableAlphaBlending();
-	}
-    gl::enableDepthRead();
+    gl::enableAlphaBlending();
+    
+    gl::pushMatrices();
+	gl::setMatrices( getCamera() );
+    
+	// remember what OpenGL effects are enabled by default,
+	// so we can restore that situation at the end of the draw()
+	glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT );
+    
+	// enable the depth buffer
+	gl::enableDepthRead();
 	gl::enableDepthWrite();
     
-    // setup
-    if ( mLightEnabled ) {
-		gl::enable( GL_LIGHTING );
-        Color diffuse = mColor * mColor.a;
-        mLight->setDiffuse( diffuse );
-        mLight->setSpecular( mColor );
+	// draw origin and axes
+	//gl::drawCoordinateFrame(15.0f, 2.5f, 1.0f);
+    
+	// draw light position
+	if(mDrawShadowMap) {
+		gl::color( Color(1.0f, 1.0f, 0.0f) );
+		gl::drawFrustum( mShadowCamera );
 	}
-	if ( mTextureEnabled && mTexture ) {
-		gl::enable( GL_TEXTURE_2D );
-		mTexture.bind();
+    
+	// the annoying thing with lights is that they will automatically convert the
+	// specified coordinates to world coordinates, which depend on the
+	// current camera matrices. So you have to keep telling where the lights are
+	// every time the camera moves, otherwise the light will move along
+	// with the camera, which causes undesired behavior.
+	// To avoid this, and quite a few other annoying things with lights,
+	// I usually redefine them every frame, using a function to keep things tidy.
+    if(mEnableLight)
+        enableLights();
+    else
+        disableLights();
+    
+	// render the shadow map and bind it to texture unit 0,
+	// so the shader can access it
+	renderShadowMap();
+	mDepthFbo.bindDepthTexture(0);
+    
+	// enable texturing and bind texture to texture unit 1
+	gl::enable( GL_TEXTURE_2D );
+	if(mTexture) mTexture.bind(1);
+    
+	// bind the shader and set the uniform variables
+	if(mShader) {
+		mShader.bind();
+		mShader.uniform("tex0", 0);
+		mShader.uniform("tex1", 1);
+		mShader.uniform("flat", mDrawFlatShaded);
+		mShader.uniform("shadowMatrix", mShadowMatrix);
 	}
-	if ( mWireframe )
-    {
-        glLineWidth( (GLfloat)mLineWidth );
+	
+	// draw the mesh
+	if(mDrawWireframe)
 		gl::enableWireframe();
-	}
     
-    // draw
-    gl::pushMatrices();
-    gl::setMatrices( getCamera() );
-    gl::scale( Vec3f::one() * mObjectScale );
+	gl::color( Color::white() );
+	gl::draw( mTriMesh );
     
-    gl::color( mColor );
-    
-    gl::draw( getMesh() );
-    
-    gl::translate( 3.0f, 0.0f, 0.0f );
-    gl::color(1.0f, 0.0f, 0.0f);
-    
-    gl::draw( mTriMesh );
-    
-    gl::popMatrices();
-    
-    // restore
-    if ( mWireframe ) {
+	if(mDrawWireframe)
 		gl::disableWireframe();
+    
+	// unbind the shader
+	if(mShader) mShader.unbind();
+    
+	// unbind the texture
+	if(mTexture) mTexture.unbind();
+    
+	//
+	mDepthFbo.unbindTexture();
+    
+	// no need to call 'disableLights()' or 'gl::disableDepthRead/Write()' here,
+	// glPopAttrib() will do it for us
+    
+	// restore OpenGL state
+	glPopAttrib();
+    
+	gl::popMatrices();
+    
+	if(mDrawShadowMap)
+	{
+		mDepthFbo.getDepthTexture().enableAndBind();
+        
+		// we'd like to draw the depth map as a normal texture,
+		// so let's temporarily disable the texture compare mode
+		glPushAttrib( GL_TEXTURE_BIT );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE );
+		glTexParameteri( GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE );
+        
+		// optional: invert colors when drawing, so black is far away and white is nearby
+		//glEnable( GL_BLEND );
+		//glBlendFuncSeparate( GL_ONE_MINUS_SRC_COLOR, GL_ZERO, GL_SRC_ALPHA, GL_DST_ALPHA );
+		
+		gl::color( Color::white() );
+		gl::drawSolidRect( Rectf( 0, 256, 256, 0 ), false );
+        
+		//glDisable( GL_BLEND );
+        
+		glPopAttrib();
+        
+		mDepthFbo.unbindTexture();
 	}
-	if ( mTextureEnabled && mTexture ) {
-		mTexture.unbind();
-		gl::disable( GL_TEXTURE_2D );
-	}
-	if ( mLightEnabled ) {
-		gl::disable( GL_LIGHTING );
-	}
+}
+
+void Terrain::drawDebug()
+{
+    
 }
 
 const Camera& Terrain::getCamera()
@@ -409,7 +317,150 @@ const Camera& Terrain::getCamera()
     }
 }
 
-const ci::gl::VboMesh& Terrain::getMesh()
+void Terrain::enableLights()
 {
-    return mCylinder;
+	// setup light 0
+	gl::Light light(gl::Light::POINT, 0);
+    
+	light.lookAt( mLightPosition, Vec3f( 50.0f, 0.0f, 50.0f ) );
+	light.setAmbient( Color( 0.0f, 0.0f, 0.0f ) );
+	light.setDiffuse( Color( 1.0f, 1.0f, 1.0f ) );
+	light.setSpecular( Color( 1.0f, 1.0f, 1.0f ) );
+	light.setShadowParams( 60.0f, 50.0f, 300.0f );
+	light.enable();
+    
+	// enable lighting
+	gl::enable( GL_LIGHTING );
+    
+	// because I chose to redefine the light every frame,
+	// the easiest way to access the light's shadow settings
+	// is to store them in a few member variables
+	mShadowMatrix = light.getShadowTransformationMatrix( getCamera() );
+	mShadowCamera = light.getShadowCamera();
 }
+
+void Terrain::disableLights()
+{
+	gl::disable( GL_LIGHTING );
+}
+
+void Terrain::setupShadowMap()
+{
+	static const int size = 2048;
+    
+	// create a frame buffer object (FBO) containing only a depth buffer
+	mDepthFbo = gl::Fbo( size, size, false, false, true );
+    
+	// set it up for shadow mapping
+	mDepthFbo.bindDepthTexture();
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+}
+
+void Terrain::renderShadowMap()
+{
+	// store the current OpenGL state,
+	// so we can restore it when done
+	glPushAttrib( GL_VIEWPORT_BIT | GL_ENABLE_BIT | GL_CURRENT_BIT );
+    
+	// bind the shadow map FBO
+	mDepthFbo.bindFramebuffer();
+    
+	// set the viewport to the correct dimensions and clear the FBO
+	glViewport( 0, 0, mDepthFbo.getWidth(), mDepthFbo.getHeight() );
+	glClear( GL_DEPTH_BUFFER_BIT );
+    
+	// to reduce artefacts, offset the polygons a bit
+	glPolygonOffset( 2.0f, 5.0f );
+	glEnable( GL_POLYGON_OFFSET_FILL );
+    
+	// render the mesh
+	gl::enableDepthWrite();
+    
+	gl::pushMatrices();
+    gl::setMatrices( mShadowCamera );
+    gl::draw( mTriMesh );
+	gl::popMatrices();
+    
+	// unbind the FBO and restore the OpenGL state
+	mDepthFbo.unbindFramebuffer();
+    
+	glPopAttrib();
+}
+
+void Terrain::setupMesh()
+{
+	// perlin noise generator (see below)
+	Perlin	perlin( 3, clock() & 65535 );
+    
+	// clear the mesh
+	mTriMesh.clear();
+    
+	// create the vertices and texture coords
+	size_t width = 120;
+	size_t depth = 120;
+    
+	for(size_t z=0;z<=depth;++z) {
+		for(size_t x=0;x<=width;++x) {
+			float y = 0.0f;
+            
+			switch( mMeshType ) {
+                case MESHTYPE_RANDOM:
+                    //	1. random bumps
+                    y = 5.0f * Rand::randFloat();
+                    break;
+                case MESHTYPE_SMOOTH:
+                    //	2. smooth bumps (egg container)
+                    y = 5.0f * sinf( (float) M_PI * 0.05f * x ) * cosf( (float) M_PI * 0.05f * z );
+                    break;
+                case MESHTYPE_PERLIN:
+                    //	3. perlin noise
+                    y = 20.0f * perlin.fBm( Vec3f( static_cast<float>(x), static_cast<float>(z), 0.0f ) * 0.02f );
+                    break;
+			}
+            
+			mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
+			mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
+		}
+	}
+    
+	// next, create the index buffer
+	std::vector<uint32_t>	indices;
+    
+	for(size_t z=0;z<depth;++z) {
+		size_t base = z * (width + 1);
+        
+		for(size_t x=0;x<width;++x) {
+			indices.push_back( base + x );
+			indices.push_back( base + x + width + 1 );
+			indices.push_back( base + x + 1 );
+			
+			indices.push_back( base + x + 1 );
+			indices.push_back( base + x + width + 1 );
+			indices.push_back( base + x + width + 2 );
+		}
+	}
+    
+	mTriMesh.appendIndices( &indices.front(), indices.size() );
+    
+	// use this custom function to create the normal buffer
+	mTriMesh.generateNormals();
+}
+
+void Terrain::updateMesh()
+{
+    size_t width = 120;
+    size_t depth = 120;
+    for(size_t x=0;x<=width;++x) {
+        mTriMesh.getVertices().pop_back();
+        //mTriMesh.getTexCoords().pop_back();
+    }
+    
+    int z = 120;
+    for(size_t x=0;x<=width;++x) {
+        float y = 5.0f * Rand::randFloat();
+        mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
+        //mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
+    }
+}
+

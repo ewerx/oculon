@@ -31,6 +31,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
+    void drawDebug();
     const Camera& getCamera();
     
     // new
@@ -40,55 +41,19 @@ protected:
     void setupInterface();
     void setupDebugInterface();
     
-    // new
-    void loadMesh();
-    void createMeshes();
-    void generate();
+    // HOUX
+    void enableLights();
+	void disableLights();
     
-    const ci::gl::VboMesh& getMesh();
+	void setupShadowMap();
+	void renderShadowMap();
+    
+	void setupMesh();
+    void updateMesh();
+    
+    void generateNormals( TriMesh& triMesh );
     
 private:
-    
-    ci::gl::Fbo                 mFbo;
-    
-    ci::gl::VboMesh             mCylinder;
-    ci::TriMesh                 mTriMesh;
-    
-    std::vector<uint32_t> indices;
-	std::vector<Vec3f> normals;
-	std::vector<Vec3f> positions;
-	std::vector<Vec3f> srcNormals;
-	std::vector<Vec3f> srcPositions;
-	std::vector<Vec2f> srcTexCoords;
-	std::vector<Vec2f> texCoords;
-    
-    int slice;
-    
-    // Lighting
-	ci::gl::Light				*mLight;
-	bool						mLightEnabled;
-    
-    // Texture map
-	ci::gl::Texture				mTexture;
-	bool						mTextureEnabled;
-    
-    // Instancing shader
-	ci::gl::GlslProg			mShader;
-    
-    ci::ColorAf                 mColor;
-    
-	bool						mWireframe;
-    bool                        mDrawInstances;
-    bool                        mAdditiveBlending;
-    bool                        mDynamicLight;
-    
-    float                       mObjectScale;
-    int32_t						mDivision;
-    int32_t                     mResolution;
-    int32_t                     mSlices;
-    int                         mLineWidth;
-    
-    
     // camera
 #define TERRAIN_CAMTYPE_TUPLE \
 TERRAIN_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
@@ -110,6 +75,32 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     eCamType                    mCamType;
     
     SplineCam                   mSplineCam;
+    
+    // HOUX
+    bool			mDrawWireframe;
+	bool			mDrawFlatShaded;
+	bool			mDrawShadowMap;
+    bool            mEnableLight;
+    
+	Vec3f			mLightPosition;
+    
+	TriMesh			mTriMesh;
+    
+	gl::Fbo			mDepthFbo;
+	gl::GlslProg	mShader;
+	gl::Texture		mTexture;
+    
+	Matrix44f		mShadowMatrix;
+	CameraPersp		mShadowCamera;
+    
+    enum eMeshType
+    {
+        MESHTYPE_RANDOM,
+        MESHTYPE_SMOOTH,
+        MESHTYPE_PERLIN
+    };
+    int             mMeshType;
+    
 };
 
 #endif // __TERRAIN_H__
