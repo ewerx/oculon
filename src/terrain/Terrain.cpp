@@ -46,14 +46,15 @@ void Terrain::setup()
     
     // Params
     mCamType = CAM_MANUAL;
-    mDrawWireframe = false;
+    mDrawWireframe = true;
 	mDrawFlatShaded = false;
 	mDrawShadowMap = false;
-    mMeshType = MESHTYPE_SMOOTH;
+    mMeshType = MESHTYPE_FLAT;
     
-	// create the mesh
+    // create the mesh
 	setupMesh();
     
+//#ifdef STATIC_TERRAIN
 	// initialize shadow map
 	setupShadowMap();
     
@@ -76,8 +77,16 @@ void Terrain::setup()
     {
         console() << "Could not load&compile shader:" << e.what() << std::endl;
     }
+//#endif
+    
+    setupDynamicTexture();
     
     mSplineCam.setup();
+    
+    mStaticCam = CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.0001f, 100.0f );
+	mStaticCam.lookAt( Vec3f( 0.0f, 0.0f, -16.0f ), Vec3f::zero() );
+    
+    mApp->setCamera(Vec3f( 0.0f, 0.0f, -16.0f ), Vec3f::zero(), Vec3f(0.0f,1.0f,0.0f));
     
     reset();
 }
@@ -90,8 +99,12 @@ void Terrain::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "flat shaded", &mDrawFlatShaded )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
+    mInterface->addParam(CreateBoolParam( "lighting", &mEnableLight )
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "shadow", &mEnableShadow )
+                         .oscReceiver(getName()));
+//    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
+//                         .oscReceiver(getName()));
 
     
     mInterface->gui()->addColumn();
@@ -135,6 +148,7 @@ void Terrain::update(double dt)
     if( mCamType == CAM_SPLINE )
         mSplineCam.update(dt);
     
+//#ifdef STATIC_TERRAIN
     // animate light
 	float x = 50.0f + 150.0f * (float) sin( 0.20 * getElapsedSeconds() );
 	float y = 50.0f +  45.0f * (float) cos( 0.13 * getElapsedSeconds() );
@@ -142,7 +156,12 @@ void Terrain::update(double dt)
     
 	mLightPosition = Vec3f(x, y, z);
     
-    updateMesh();
+    //updateMesh();
+//#endif
+    
+    // Update animation position
+	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
+	mTheta = getElapsedSeconds();//math<float>::sin( time );
 }
 
 // ----------------------------------------------------------------
@@ -159,6 +178,7 @@ void Terrain::draw()
     gl::pushMatrices();
 	gl::setMatrices( getCamera() );
     
+#ifdef STATIC_TERRAIN
 	// remember what OpenGL effects are enabled by default,
 	// so we can restore that situation at the end of the draw()
 	glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT );
@@ -224,16 +244,162 @@ void Terrain::draw()
     
 	//
 	mDepthFbo.unbindTexture();
+#endif
+    
+    // VTF
+    // Set up OpenGL to work with default lighting
+	glShadeModel( GL_SMOOTH );
+	gl::enable( GL_POLYGON_SMOOTH );
+	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+	gl::enable( GL_NORMALIZE );
+	gl::enableAlphaBlending();
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+    
+    drawDynamicTexture();
+    drawMesh();
     
 	// no need to call 'disableLights()' or 'gl::disableDepthRead/Write()' here,
 	// glPopAttrib() will do it for us
-    
+
 	// restore OpenGL state
 	glPopAttrib();
     
 	gl::popMatrices();
+}
+
+void Terrain::drawDynamicTexture()
+{
+    // Bind FBO and set up window
+	mVtfFbo.bindFramebuffer();
+	gl::setViewport( mVtfFbo.getBounds() );
+	gl::setMatricesWindow( mVtfFbo.getSize() );
+	gl::clear();
     
-	if(mDrawShadowMap)
+	// Bind and configure dynamic texture shader
+	mShaderTex.bind();
+	mShaderTex.uniform( "theta", mTheta );
+//    mShaderTex.uniform( "u_time", mTheta );
+//    mShaderTex.uniform( "u_scale", 1.0f );
+//    mShaderTex.uniform( "u_RenderSize", mVtfFbo.getSize() );
+    
+	// Draw shader output
+	gl::enable( GL_TEXTURE_2D );
+	gl::color( Colorf::white() );
+	gl::begin( GL_TRIANGLES );
+    
+	// Define quad vertices
+	Vec2f vert0( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y1 );
+	Vec2f vert1( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y1 );
+	Vec2f vert2( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y2 );
+	Vec2f vert3( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y2 );
+    
+	// Define quad texture coordinates
+	Vec2f uv0( 0.0f, 0.0f );
+	Vec2f uv1( 1.0f, 0.0f );
+	Vec2f uv2( 0.0f, 1.0f );
+	Vec2f uv3( 1.0f, 1.0f );
+    
+	// Draw quad (two triangles)
+	gl::texCoord( uv0 );
+	gl::vertex( vert0 );
+	gl::texCoord( uv2 );
+	gl::vertex( vert2 );
+	gl::texCoord( uv1 );
+	gl::vertex( vert1 );
+    
+	gl::texCoord( uv1 );
+	gl::vertex( vert1 );
+	gl::texCoord( uv2 );
+	gl::vertex( vert2 );
+	gl::texCoord( uv3 );
+	gl::vertex( vert3 );
+    
+	gl::end();
+    
+	// Unbind everything
+	mShaderTex.unbind();
+	mVtfFbo.unbindFramebuffer();
+    
+    gl::popMatrices();
+	// restore OpenGL state
+	glPopAttrib();
+    
+	///////////////////////////////////////////////////////////////
+}
+
+void Terrain::drawMesh()
+{
+	// Set up window
+	gl::setViewport( mApp->getViewportBounds() );
+	gl::pushMatrices();
+    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT );
+	gl::setMatrices( getCamera() );
+    
+	// Use arcball to rotate model view
+//	glMultMatrixf( mArcball.getQuat() );
+    
+	// Enabled lighting, texture mapping, wireframe
+	gl::enable( GL_TEXTURE_2D );
+    
+    if(mEnableLight) {
+        enableLights();
+    }
+    else {
+        disableLights();
+    }
+    
+	// Bind textures
+	mVtfFbo.bindTexture( 0, 0 );
+    
+    if(mEnableShadow) {
+        // render the shadow map and bind it to texture unit 0,
+        // so the shader can access it
+        renderShadowMap();
+        mDepthFbo.bindDepthTexture(1);
+    }
+    
+	// Bind and configure displacement shader
+	mShaderVtf.bind();
+	mShaderVtf.uniform( "displacement", 0 );
+	mShaderVtf.uniform( "eyePoint", getCamera().getEyePoint() );
+	mShaderVtf.uniform( "height", mDisplacementHeight );
+	mShaderVtf.uniform( "lightingEnabled", (mEnableShadow && mEnableLight) );
+	mShaderVtf.uniform( "scale", Vec3f(1.0f,1.0f,1.0f) );
+	//mShaderVtf.uniform( "tex", 1 );
+	mShaderVtf.uniform( "textureEnabled", false );
+    mShaderVtf.uniform( "tex0", 1 );
+    mShaderVtf.uniform( "flat", mDrawFlatShaded );
+    mShaderVtf.uniform( "shadowMatrix", mShadowMatrix );
+    
+    if ( mDrawWireframe ) {
+		gl::enableWireframe();
+	}
+    
+	// Draw mesh
+	gl::draw( mVboMesh );
+	
+	// Unbind everything
+	mShaderVtf.unbind();
+	mDepthFbo.unbindTexture();
+	mVtfFbo.unbindTexture();
+	
+	// Disable wireframe, texture mapping, lighting
+	if ( mDrawWireframe ) {
+		gl::disableWireframe();
+	}
+//	if ( mTextureEnabled && mTexture ) {
+//		mTexture.unbind();
+//	}
+//	if ( mLightEnabled ) {
+//		gl::disable( GL_LIGHTING );
+//	}
+	gl::disable( GL_TEXTURE_2D );
+}
+
+void Terrain::drawDebug()
+{
+    if(mDrawShadowMap)
 	{
 		mDepthFbo.getDepthTexture().enableAndBind();
         
@@ -256,17 +422,21 @@ void Terrain::draw()
         
 		mDepthFbo.unbindTexture();
 	}
-}
-
-void Terrain::drawDebug()
-{
     
+    gl::enable( GL_TEXTURE_2D );
+    gl::setMatricesWindow( getWindowSize() );
+    Rectf preview( 220.0f, 20.0f, 300.0f, 100.0f );
+    gl::draw( mVtfFbo.getTexture(), mVtfFbo.getBounds(), preview );
+    gl::disable( GL_TEXTURE_2D );
 }
 
 const Camera& Terrain::getCamera()
 {
     switch( mCamType )
     {
+        case CAM_STATIC:
+            return mStaticCam;
+            
         case CAM_SPLINE:
             return mSplineCam.getCamera();
             
@@ -379,7 +549,7 @@ void Terrain::renderShadowMap()
     
 	gl::pushMatrices();
     gl::setMatrices( mShadowCamera );
-    gl::draw( mTriMesh );
+    gl::draw( mVboMesh );
 	gl::popMatrices();
     
 	// unbind the FBO and restore the OpenGL state
@@ -390,6 +560,7 @@ void Terrain::renderShadowMap()
 
 void Terrain::setupMesh()
 {
+//#ifdef STATIC_TERRAIN
 	// perlin noise generator (see below)
 	Perlin	perlin( 3, clock() & 65535 );
     
@@ -405,6 +576,9 @@ void Terrain::setupMesh()
 			float y = 0.0f;
             
 			switch( mMeshType ) {
+                case MESHTYPE_FLAT:
+                    y = 0.0f;
+                    break;
                 case MESHTYPE_RANDOM:
                     //	1. random bumps
                     y = 5.0f * Rand::randFloat();
@@ -445,6 +619,23 @@ void Terrain::setupMesh()
     
 	// use this custom function to create the normal buffer
 	mTriMesh.generateNormals();
+//#endif
+    
+    // Initialize FBO
+	gl::Fbo::Format format;
+	format.setColorInternalFormat( GL_RGB32F_ARB );
+	mVtfFbo = gl::Fbo( 64, 64, format );
+    
+	// Initialize FBO texture
+	mVtfFbo.bindFramebuffer();
+	gl::setViewport( mVtfFbo.getBounds() );
+	gl::clear();
+	mVtfFbo.unbindFramebuffer();
+	mVtfFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
+    
+    // Generate sphere
+	//mVboMesh = gl::VboMesh( MeshHelper::createCylinder( Vec2i(32,32), 1.0f, 1.0f, false, false ) );//gl::VboMesh( MeshHelper::createSphere( Vec2i(64,64) ) );
+    mVboMesh = gl::VboMesh( mTriMesh );
 }
 
 void Terrain::updateMesh()
@@ -464,3 +655,26 @@ void Terrain::updateMesh()
     }
 }
 
+#pragma mark - VTF
+
+void Terrain::setupDynamicTexture()
+{
+    // Params
+    mDisplacementHeight	= 8.0f;
+	mDisplacementSpeed  = 1.0f;
+	mTheta				= 0.0f;
+    
+    // Load shaders
+	try {
+		mShaderTex = gl::GlslProg( loadResource( RES_SHADER_TEX_VERT ), loadResource( RES_SHADER_TEX_FRAG ) );
+	} catch ( gl::GlslProgCompileExc ex ) {
+		console() << "Unable to compile texture shader:\n" << ex.what() << "\n";
+	}
+	try {
+		mShaderVtf = gl::GlslProg( loadResource( RES_SHADER_VTF_VERT ), loadResource( RES_SHADER_VTF_FRAG ) );
+	} catch ( gl::GlslProgCompileExc ex ) {
+		console() << "Unable to compile VTF shader:\n" << ex.what() << "\n";
+	}
+    
+    mPerlin = Perlin( 3, clock() & 65535 );
+}

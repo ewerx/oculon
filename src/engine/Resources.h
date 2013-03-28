@@ -93,6 +93,15 @@
 #define RES_CUBE5_ID		CINDER_RESOURCE( ../resources/, cubeNegY.jpg,		142, IMAGE )
 #define RES_CUBE6_ID		CINDER_RESOURCE( ../resources/, cubeNegZ.jpg,		143, IMAGE )
 
+// terrain
+#define RES_TERRAIN_FRAG    CINDER_RESOURCE( ../resources/terrain/, terrain_shader_frag.glsl,		160, GLSL )
+#define RES_TERRAIN_VERT    CINDER_RESOURCE( ../resources/terrain/, terrain_shader_vert.glsl,		160, GLSL )
+#define RES_TERRAIN_TEXTURE CINDER_RESOURCE( ../resources/terrain/, terrain_texture.jpg,			151, IMAGE )
+#define RES_SHADER_TEX_FRAG		CINDER_RESOURCE( ../resources/terrain/, terrain_tex_frag.glsl,	128, GLSL	)
+#define RES_SHADER_TEX_VERT		CINDER_RESOURCE( ../resources/terrain/, terrain_tex_vert.glsl,	129, GLSL	)
+#define RES_SHADER_VTF_FRAG		CINDER_RESOURCE( ../resources/terrain/, terrain_vtf_frag.glsl,	130, GLSL	)
+#define RES_SHADER_VTF_VERT		CINDER_RESOURCE( ../resources/terrain/, terrain_vtf_vert.glsl,	131, GLSL	)
+
 // objects
 #define RES_CUBE_OBJ		CINDER_RESOURCE( ../resources/, cube.obj, 128, DATA )
 

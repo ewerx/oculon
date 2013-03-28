@@ -12,6 +12,7 @@
 
 #include "Scene.h"
 #include "SplineCam.h"
+#include "cinder/Perlin.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Light.h"
@@ -49,7 +50,11 @@ protected:
 	void renderShadowMap();
     
 	void setupMesh();
+    void setupDynamicTexture();
     void updateMesh();
+    
+    void drawDynamicTexture();
+    void drawMesh();
     
     void generateNormals( TriMesh& triMesh );
     
@@ -57,6 +62,7 @@ private:
     // camera
 #define TERRAIN_CAMTYPE_TUPLE \
 TERRAIN_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
+TERRAIN_CAMTYPE_ENTRY( "Static", CAM_STATIC ) \
 TERRAIN_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
 TERRAIN_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON ) \
 TERRAIN_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
@@ -75,16 +81,19 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     eCamType                    mCamType;
     
     SplineCam                   mSplineCam;
+    ci::CameraPersp             mStaticCam;
     
     // HOUX
     bool			mDrawWireframe;
 	bool			mDrawFlatShaded;
 	bool			mDrawShadowMap;
     bool            mEnableLight;
+    bool            mEnableShadow;
     
 	Vec3f			mLightPosition;
     
 	TriMesh			mTriMesh;
+    gl::VboMesh     mVboMesh;
     
 	gl::Fbo			mDepthFbo;
 	gl::GlslProg	mShader;
@@ -97,10 +106,21 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     {
         MESHTYPE_RANDOM,
         MESHTYPE_SMOOTH,
-        MESHTYPE_PERLIN
+        MESHTYPE_PERLIN,
+        MESHTYPE_FLAT
     };
     int             mMeshType;
     
+    // Dynamic texture
+	ci::gl::Fbo					mVtfFbo;
+	ci::gl::GlslProg			mShaderTex;
+	float						mDisplacementSpeed;
+	float						mTheta;
+    Perlin                      mPerlin;
+    
+    // Displacement
+	float						mDisplacementHeight;
+	ci::gl::GlslProg			mShaderVtf;
 };
 
 #endif // __TERRAIN_H__

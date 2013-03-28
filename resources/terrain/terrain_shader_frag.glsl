@@ -32,7 +32,7 @@ void main()
 	vec4 Iamb = ambient;
 
 	// diffuse term
-	vec4 Idiff = texture2D( tex1, gl_TexCoord[0].st) * diffuse;
+	vec4 Idiff = vec4( 1.0, 1.0, 1.0, 1.0 ) * diffuse;//texture2D( tex1, gl_TexCoord[0].st) * diffuse;
 	Idiff *= max(dot(n,L), 0.0);
 	Idiff = clamp(Idiff, 0.0, 1.0) * shadow;
 

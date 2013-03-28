@@ -1210,4 +1210,11 @@ float OculonApp::getViewportAspectRatio() const
     }
 }
 
+void OculonApp::setCamera(const Vec3f &eye, const Vec3f &look, const Vec3f &up)
+{
+    CameraPersp cam;
+    cam.lookAt( eye, look, up );
+    mMayaCam.setCurrentCam( cam );
+}
+
 CINDER_APP_BASIC( OculonApp, RendererGl(0) )

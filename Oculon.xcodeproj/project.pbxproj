@@ -102,6 +102,9 @@
 		7C3BB45C15F56D7800A4E384 /* planet.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42915F55B8D00A4E384 /* planet.frag */; };
 		7C3BB45D15F56D7800A4E384 /* star.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42A15F55B8D00A4E384 /* star.frag */; };
 		7C3BB45E15F56D7800A4E384 /* star.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BB42B15F55B8D00A4E384 /* star.vert */; };
+		7C438FA71702904F00BC7F54 /* terrain_shader_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C438FA41702904F00BC7F54 /* terrain_shader_frag.glsl */; };
+		7C438FA81702904F00BC7F54 /* terrain_shader_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C438FA51702904F00BC7F54 /* terrain_shader_vert.glsl */; };
+		7C438FA91702904F00BC7F54 /* terrain_texture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C438FA61702904F00BC7F54 /* terrain_texture.jpg */; };
 		7C48581F16062A2C008895F7 /* SubScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C48581D16062A2C008895F7 /* SubScene.cpp */; };
 		7C4A9A33168E3C3D00CE6F9D /* Trails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4A9A31168E3C3D00CE6F9D /* Trails.cpp */; };
 		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
@@ -257,6 +260,10 @@
 		7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C855154A6DDE0057E409 /* earth_frag.glsl */; };
 		7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C856154A6DDE0057E409 /* quake_frag.glsl */; };
 		7CE9C85A154A6DDE0057E409 /* quake_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE9C857154A6DDE0057E409 /* quake_vert.glsl */; };
+		7CEA36691703D94D000EE9CB /* terrain_tex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEA36651703D94D000EE9CB /* terrain_tex_frag.glsl */; };
+		7CEA366A1703D94D000EE9CB /* terrain_tex_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEA36661703D94D000EE9CB /* terrain_tex_vert.glsl */; };
+		7CEA366B1703D94D000EE9CB /* terrain_vtf_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEA36671703D94D000EE9CB /* terrain_vtf_frag.glsl */; };
+		7CEA366C1703D94D000EE9CB /* terrain_vtf_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEA36681703D94D000EE9CB /* terrain_vtf_vert.glsl */; };
 		7CEB32C915290F49001391C9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C315290F49001391C9 /* kiss_fft.c */; };
 		7CEB32CA15290F49001391C9 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C515290F49001391C9 /* kiss_fftr.c */; };
 		7CEB32CB15290F49001391C9 /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB32C715290F49001391C9 /* KissFFT.cpp */; };
@@ -415,6 +422,9 @@
 		7C3BB44315F55DC400A4E384 /* nebulaCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nebulaCorona.png; sourceTree = "<group>"; };
 		7C3BB44415F55DC400A4E384 /* smallGrid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smallGrid.png; sourceTree = "<group>"; };
 		7C3BB44515F55DC400A4E384 /* spectrumCorona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spectrumCorona.png; sourceTree = "<group>"; };
+		7C438FA41702904F00BC7F54 /* terrain_shader_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_shader_frag.glsl; sourceTree = "<group>"; };
+		7C438FA51702904F00BC7F54 /* terrain_shader_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_shader_vert.glsl; sourceTree = "<group>"; };
+		7C438FA61702904F00BC7F54 /* terrain_texture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = terrain_texture.jpg; sourceTree = "<group>"; };
 		7C48581D16062A2C008895F7 /* SubScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubScene.cpp; sourceTree = "<group>"; };
 		7C48581E16062A2C008895F7 /* SubScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubScene.h; sourceTree = "<group>"; };
 		7C4A9A31168E3C3D00CE6F9D /* Trails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trails.cpp; sourceTree = "<group>"; };
@@ -645,6 +655,10 @@
 		7CE9C855154A6DDE0057E409 /* earth_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earth_frag.glsl; sourceTree = "<group>"; };
 		7CE9C856154A6DDE0057E409 /* quake_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quake_frag.glsl; sourceTree = "<group>"; };
 		7CE9C857154A6DDE0057E409 /* quake_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quake_vert.glsl; sourceTree = "<group>"; };
+		7CEA36651703D94D000EE9CB /* terrain_tex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_tex_frag.glsl; sourceTree = "<group>"; };
+		7CEA36661703D94D000EE9CB /* terrain_tex_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_tex_vert.glsl; sourceTree = "<group>"; };
+		7CEA36671703D94D000EE9CB /* terrain_vtf_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_vtf_frag.glsl; sourceTree = "<group>"; };
+		7CEA36681703D94D000EE9CB /* terrain_vtf_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_vtf_vert.glsl; sourceTree = "<group>"; };
 		7CEB32C215290F49001391C9 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		7CEB32C315290F49001391C9 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
 		7CEB32C415290F49001391C9 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
@@ -970,6 +984,20 @@
 				7C3BB44515F55DC400A4E384 /* spectrumCorona.png */,
 			);
 			path = corona;
+			sourceTree = "<group>";
+		};
+		7C438FA31702904F00BC7F54 /* terrain */ = {
+			isa = PBXGroup;
+			children = (
+				7CEA36651703D94D000EE9CB /* terrain_tex_frag.glsl */,
+				7CEA36661703D94D000EE9CB /* terrain_tex_vert.glsl */,
+				7CEA36671703D94D000EE9CB /* terrain_vtf_frag.glsl */,
+				7CEA36681703D94D000EE9CB /* terrain_vtf_vert.glsl */,
+				7C438FA41702904F00BC7F54 /* terrain_shader_frag.glsl */,
+				7C438FA51702904F00BC7F54 /* terrain_shader_vert.glsl */,
+				7C438FA61702904F00BC7F54 /* terrain_texture.jpg */,
+			);
+			path = terrain;
 			sourceTree = "<group>";
 		};
 		7C4A9A30168E3C3D00CE6F9D /* trails */ = {
@@ -1386,6 +1414,7 @@
 		7C865644148C2BCD000E00B6 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				7C438FA31702904F00BC7F54 /* terrain */,
 				7CAFEE60158C17F2005B338D /* data */,
 				7C702036153BC57F0057D4EC /* macos */,
 				7C1BA53F15E9475E005BE669 /* models */,
@@ -1952,6 +1981,13 @@
 				7CBB8659169BCA93007D8F49 /* redgreenyellow.png in Resources */,
 				7CBB865E169BCA9E007D8F49 /* polyhedron_frag.glsl in Resources */,
 				7CBB865F169BCA9E007D8F49 /* polyhedron_vert.glsl in Resources */,
+				7C438FA71702904F00BC7F54 /* terrain_shader_frag.glsl in Resources */,
+				7C438FA81702904F00BC7F54 /* terrain_shader_vert.glsl in Resources */,
+				7C438FA91702904F00BC7F54 /* terrain_texture.jpg in Resources */,
+				7CEA36691703D94D000EE9CB /* terrain_tex_frag.glsl in Resources */,
+				7CEA366A1703D94D000EE9CB /* terrain_tex_vert.glsl in Resources */,
+				7CEA366B1703D94D000EE9CB /* terrain_vtf_frag.glsl in Resources */,
+				7CEA366C1703D94D000EE9CB /* terrain_vtf_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
