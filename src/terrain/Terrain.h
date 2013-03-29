@@ -41,6 +41,7 @@ protected:
     // inherited from Scene
     void setupInterface();
     void setupDebugInterface();
+    void updateAudioResponse();
     
     // HOUX
     void enableLights();
@@ -55,8 +56,6 @@ protected:
     
     void drawDynamicTexture();
     void drawMesh();
-    
-    void generateNormals( TriMesh& triMesh );
     
 private:
     // camera
@@ -122,6 +121,36 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
 	float						mDisplacementHeight;
 	ci::gl::GlslProg			mShaderVtf;
     Vec3f                       mNoiseScale;
+    
+    
+    // AUDIO
+    int                 mAudioFboDim;
+    ci::Vec2f           mAudioFboSize;
+    ci::Area            mAudioFboBounds;
+    ci::gl::Fbo         mAudioFbo;
+    std::vector< ci::Anim<float> >    mFftFalloff;
+    float               mFalloff;
+    int                 mAudioRowShift;
+    float               mAudioRowShiftTime;
+    float               mAudioRowShiftDelay;
+    
+    typedef std::function<float (float)> tEaseFn;
+    tEaseFn getFalloffFunction();
+    
+    enum eFalloffMode
+    {
+        FALLOFF_LINEAR,
+        FALLOFF_OUTQUAD,
+        FALLOFF_OUTEXPO,
+        FALLOFF_OUTBACK,
+        FALLOFF_OUTBOUNCE,
+        FALLOFF_OUTINEXPO,
+        FALLOFF_OUTINBACK,
+        
+        FALLOFF_COUNT
+    };
+    eFalloffMode mFalloffMode;
+    
 };
 
 #endif // __TERRAIN_H__

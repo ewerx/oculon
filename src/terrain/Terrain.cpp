@@ -53,6 +53,13 @@ void Terrain::setup()
     mEnableShadow = false;
     mNoiseScale = Vec3f(1.0f,1.0f,1.0f);
     
+    // Audio
+    mFalloff = 2.0f;
+    mFalloffMode = FALLOFF_OUTBOUNCE;
+    mAudioRowShift = 0;
+    mAudioRowShiftTime = 0.0f;
+    mAudioRowShiftDelay = 0.25f;
+    
     // create the mesh
 	setupMesh();
     
@@ -90,6 +97,13 @@ void Terrain::setup()
     
     mApp->setCamera(Vec3f( 0.0f, 0.0f, -16.0f ), Vec3f::zero(), Vec3f(0.0f,1.0f,0.0f));
     
+    // AUDIO
+    mAudioFboDim    = 16; // 256 bands
+    mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
+    mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
+    gl::Fbo::Format format;
+	format.setColorInternalFormat( GL_RGB32F_ARB );
+    mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, format );
     
     Scene::setup();
     reset();
@@ -117,6 +131,19 @@ void Terrain::setupInterface()
                          .oscReceiver(mName));
 //    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
 //                         .oscReceiver(getName()));
+
+    
+    mInterface->gui()->addColumn();
+    mInterface->addParam(CreateFloatParam("Falloff", &mFalloff)
+                        .minValue(0.0f)
+                        .maxValue(20.0f));
+    mInterface->addEnum(CreateEnumParam("Falloff Mode", (int*)&mFalloffMode)
+                       .maxValue(FALLOFF_COUNT)
+                       .oscReceiver(mName,"falloffmode")
+                       .isVertical());
+    mInterface->addParam(CreateFloatParam("Shift Delay", &mAudioRowShiftDelay)
+                         .minValue(0.0f)
+                         .maxValue(1.0f));
 
     
     mInterface->gui()->addColumn();
@@ -151,11 +178,21 @@ void Terrain::resize()
 {
 }
 
+#pragma mark - Update
+
 // ----------------------------------------------------------------
 //
 void Terrain::update(double dt)
 {
     Scene::update(dt);
+    
+    gl::disableAlphaBlending();
+	gl::disableDepthRead();
+	gl::disableDepthWrite();
+	gl::color( Color( 1, 1, 1 ) );
+    
+    mAudioRowShiftTime += dt;
+    updateAudioResponse();
     
     if( mCamType == CAM_SPLINE )
         mSplineCam.update(dt);
@@ -177,6 +214,149 @@ void Terrain::update(double dt)
     
     drawDynamicTexture();
 }
+
+
+void Terrain::drawDynamicTexture()
+{
+    // Bind FBO and set up window
+	mVtfFbo.bindFramebuffer();
+	gl::setViewport( mVtfFbo.getBounds() );
+	gl::setMatricesWindow( mVtfFbo.getSize() );
+	gl::clear();
+    
+	// Bind and configure dynamic texture shader
+	mShaderTex.bind();
+	mShaderTex.uniform( "theta", mTheta );
+    mShaderTex.uniform( "scale", mNoiseScale );
+    //    mShaderTex.uniform( "u_time", mTheta );
+    //    mShaderTex.uniform( "u_scale", 1.0f );
+    //    mShaderTex.uniform( "u_RenderSize", mVtfFbo.getSize() );
+    
+	// Draw shader output
+	gl::enable( GL_TEXTURE_2D );
+	gl::color( Colorf::white() );
+	gl::begin( GL_TRIANGLES );
+    
+	// Define quad vertices
+	Vec2f vert0( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y1 );
+	Vec2f vert1( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y1 );
+	Vec2f vert2( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y2 );
+	Vec2f vert3( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y2 );
+    
+	// Define quad texture coordinates
+	Vec2f uv0( 0.0f, 0.0f );
+	Vec2f uv1( 1.0f, 0.0f );
+	Vec2f uv2( 0.0f, 1.0f );
+	Vec2f uv3( 1.0f, 1.0f );
+    
+	// Draw quad (two triangles)
+	gl::texCoord( uv0 );
+	gl::vertex( vert0 );
+	gl::texCoord( uv2 );
+	gl::vertex( vert2 );
+	gl::texCoord( uv1 );
+	gl::vertex( vert1 );
+    
+	gl::texCoord( uv1 );
+	gl::vertex( vert1 );
+	gl::texCoord( uv2 );
+	gl::vertex( vert2 );
+	gl::texCoord( uv3 );
+	gl::vertex( vert3 );
+    
+	gl::end();
+    gl::disable( GL_TEXTURE_2D );
+    
+	// Unbind everything
+	mShaderTex.unbind();
+	mVtfFbo.unbindFramebuffer();
+    
+	///////////////////////////////////////////////////////////////
+}
+
+#pragma mark Audio
+
+void Terrain::updateAudioResponse()
+{
+    AudioInput& audioInput = mApp->getAudioInput();
+	
+    // Get data
+    //float * freqData = audioInput.getFft()->getAmplitude();
+    //float * timeData = audioInput.getFft()->getData();
+    int32_t dataSize = audioInput.getFft()->getBinSize();
+    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    
+    if( mFftFalloff.size() == 0 )
+    {
+        for( int i=0; i< dataSize; ++i )
+        {
+            mFftFalloff.push_back( fftLogData[i].y );
+        }
+    }
+    
+    int32_t row = mAudioRowShift;
+    
+	Surface32f fftSurface( mAudioFbo.getTexture() );
+	Surface32f::Iter it = fftSurface.getIter();
+	while( it.line() )
+    {
+        int32_t index = row * mAudioFboDim;
+		while( it.pixel() && index < dataSize )
+        {
+            if (fftLogData[index].y > mFftFalloff[index])
+            {
+                mFftFalloff[index] = fftLogData[index].y;
+                timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
+            }
+            
+			it.r() = mFftFalloff[index];
+            it.g() = 0.0f; // UNUSED
+			it.b() = 0.0f; // UNUSED
+			it.a() = 1.0f; // UNUSED
+            
+            ++index;
+		}
+        
+        ++row;
+        if (row >= mAudioFboDim)
+            row = 0;
+	}
+    
+    if (mAudioRowShiftTime >= mAudioRowShiftDelay)
+    {
+        mAudioRowShiftTime = 0.0f;
+        ++mAudioRowShift;
+        if (mAudioRowShift >= mAudioFboDim) {
+            mAudioRowShift = 0;
+        }
+    }
+	
+    glShadeModel( GL_FLAT );
+	gl::Texture fftTexture( fftSurface );
+	mAudioFbo.bindFramebuffer();
+	gl::setMatricesWindow( mAudioFboSize, false );
+	gl::setViewport( mAudioFboBounds );
+	gl::draw( fftTexture );
+	mAudioFbo.unbindFramebuffer();
+}
+
+Terrain::tEaseFn Terrain::getFalloffFunction()
+{
+    switch( mFalloffMode )
+    {
+        case FALLOFF_LINEAR: return EaseNone();
+        case FALLOFF_OUTQUAD: return EaseOutQuad();
+        case FALLOFF_OUTEXPO: return EaseOutExpo();
+        case FALLOFF_OUTBACK: return EaseOutBack();
+        case FALLOFF_OUTBOUNCE: return EaseOutBounce();
+        case FALLOFF_OUTINEXPO: return EaseOutInExpo();
+        case FALLOFF_OUTINBACK: return EaseOutInBack();
+            
+        default: return EaseNone();
+    }
+}
+
+#pragma mark - Render 
 
 // ----------------------------------------------------------------
 //
@@ -279,64 +459,6 @@ void Terrain::draw()
 	glPopAttrib();
 }
 
-void Terrain::drawDynamicTexture()
-{
-    // Bind FBO and set up window
-	mVtfFbo.bindFramebuffer();
-	gl::setViewport( mVtfFbo.getBounds() );
-	gl::setMatricesWindow( mVtfFbo.getSize() );
-	gl::clear();
-    
-	// Bind and configure dynamic texture shader
-	mShaderTex.bind();
-	mShaderTex.uniform( "theta", mTheta );
-    mShaderTex.uniform( "scale", mNoiseScale );
-//    mShaderTex.uniform( "u_time", mTheta );
-//    mShaderTex.uniform( "u_scale", 1.0f );
-//    mShaderTex.uniform( "u_RenderSize", mVtfFbo.getSize() );
-    
-	// Draw shader output
-	gl::enable( GL_TEXTURE_2D );
-	gl::color( Colorf::white() );
-	gl::begin( GL_TRIANGLES );
-    
-	// Define quad vertices
-	Vec2f vert0( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y1 );
-	Vec2f vert1( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y1 );
-	Vec2f vert2( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y2 );
-	Vec2f vert3( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y2 );
-    
-	// Define quad texture coordinates
-	Vec2f uv0( 0.0f, 0.0f );
-	Vec2f uv1( 1.0f, 0.0f );
-	Vec2f uv2( 0.0f, 1.0f );
-	Vec2f uv3( 1.0f, 1.0f );
-    
-	// Draw quad (two triangles)
-	gl::texCoord( uv0 );
-	gl::vertex( vert0 );
-	gl::texCoord( uv2 );
-	gl::vertex( vert2 );
-	gl::texCoord( uv1 );
-	gl::vertex( vert1 );
-    
-	gl::texCoord( uv1 );
-	gl::vertex( vert1 );
-	gl::texCoord( uv2 );
-	gl::vertex( vert2 );
-	gl::texCoord( uv3 );
-	gl::vertex( vert3 );
-    
-	gl::end();
-    gl::disable( GL_TEXTURE_2D );
-    
-	// Unbind everything
-	mShaderTex.unbind();
-	mVtfFbo.unbindFramebuffer();
-    
-	///////////////////////////////////////////////////////////////
-}
-
 void Terrain::drawMesh()
 {
 	// Set up window
@@ -357,7 +479,8 @@ void Terrain::drawMesh()
     }
     
 	// Bind textures
-	mVtfFbo.bindTexture( 0, 0 );
+	//mVtfFbo.bindTexture( 0, 0 );
+    mAudioFbo.bindTexture(0, 0);
     
     if(mEnableShadow) {
         // render the shadow map and bind it to texture unit 0,
@@ -429,8 +552,14 @@ void Terrain::drawDebug()
     
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( getWindowSize() );
+    
     Rectf preview( 100.0f, mApp->getWindowHeight() - 200.0f, 180.0f, mApp->getWindowHeight() - 120.0f );
     gl::draw( mVtfFbo.getTexture(), mVtfFbo.getBounds(), preview );
+    
+    mAudioFbo.bindTexture();
+    //TODO: make utility func for making rects with origin/size
+    gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
+    
     gl::disable( GL_TEXTURE_2D );
 }
 
@@ -562,6 +691,8 @@ void Terrain::renderShadowMap()
 	glPopAttrib();
 }
 
+#pragma mark - Mesh
+
 void Terrain::setupMesh()
 {
 //#ifdef STATIC_TERRAIN
@@ -638,7 +769,8 @@ void Terrain::setupMesh()
 	mVtfFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
     
     // Generate sphere
-	//mVboMesh = gl::VboMesh( MeshHelper::createCylinder( Vec2i(32,32), 1.0f, 1.0f, false, false ) );//gl::VboMesh( MeshHelper::createSphere( Vec2i(64,64) ) );
+	//mVboMesh = gl::VboMesh( MeshHelper::createSphere( Vec2i(64,64) ) );
+    //mVboMesh = gl::VboMesh( MeshHelper::createCylinder( Vec2i(32,32), 1.0f, 1.0f, false, false ) );//
     mVboMesh = gl::VboMesh( mTriMesh );
 }
 
@@ -659,7 +791,7 @@ void Terrain::updateMesh()
     }
 }
 
-#pragma mark - VTF
+#pragma mark VTF
 
 void Terrain::setupDynamicTexture()
 {
