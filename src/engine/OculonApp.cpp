@@ -1213,7 +1213,10 @@ float OculonApp::getViewportAspectRatio() const
 void OculonApp::setCamera(const Vec3f &eye, const Vec3f &look, const Vec3f &up)
 {
     CameraPersp cam;
-    cam.lookAt( eye, look, up );
+    //cam.lookAt( Vec3f( 0.0f, 0.0f, 750.0f ), Vec3f::zero(), Vec3f(0.0f, 1.0f, 0.0f) );
+    cam.setEyePoint( eye );
+	cam.setCenterOfInterestPoint( look );
+	cam.setPerspective( 45.0f, getWindowAspectRatio(), 1.0f, 200000.0f );
     mMayaCam.setCurrentCam( cam );
 }
 

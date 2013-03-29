@@ -139,6 +139,7 @@ void main( void )
     vec2 coord = uv;//gl_TexCoord[0].st;
     vec3 v = vec3( coord, theta ) * scale;
     float n = snoise3d( v );
+    
     gl_FragColor = vec4( n, 0.0, 0.0, 1.0 );
 }
 

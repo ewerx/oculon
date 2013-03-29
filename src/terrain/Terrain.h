@@ -12,6 +12,8 @@
 
 #include "Scene.h"
 #include "SplineCam.h"
+#include "TunnelCam.h"
+#include "RDiffusion.h"
 #include "cinder/Perlin.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
@@ -52,7 +54,6 @@ protected:
     
 	void setupMesh();
     void setupDynamicTexture();
-    void updateMesh();
     
     void drawDynamicTexture();
     void drawMesh();
@@ -62,6 +63,7 @@ private:
 #define TERRAIN_CAMTYPE_TUPLE \
 TERRAIN_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
 TERRAIN_CAMTYPE_ENTRY( "Static", CAM_STATIC ) \
+TERRAIN_CAMTYPE_ENTRY( "Tunnel", CAM_TUNNEL ) \
 TERRAIN_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
 TERRAIN_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON ) \
 TERRAIN_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
@@ -81,6 +83,8 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     
     SplineCam                   mSplineCam;
     ci::CameraPersp             mStaticCam;
+    TunnelCam                   mTunnelCam;
+    float                       mTunnelDistance;
     
     // HOUX
     bool			mDrawWireframe;
@@ -106,7 +110,10 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
         MESHTYPE_RANDOM,
         MESHTYPE_SMOOTH,
         MESHTYPE_PERLIN,
-        MESHTYPE_FLAT
+        MESHTYPE_FLAT,
+        MESHTYPE_CYLINDER,
+        
+        MESHTYPE_COUNT
     };
     int             mMeshType;
     
@@ -122,6 +129,26 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
 	ci::gl::GlslProg			mShaderVtf;
     Vec3f                       mNoiseScale;
     
+    // camera
+#define TERRAIN_DISPLACEMODE_TUPLE \
+TERRAIN_DISPLACEMODE_ENTRY( "None", DISPLACE_NONE ) \
+TERRAIN_DISPLACEMODE_ENTRY( "Noise", DISPLACE_NOISE ) \
+TERRAIN_DISPLACEMODE_ENTRY( "Audio", DISPLACE_AUDIO ) \
+TERRAIN_DISPLACEMODE_ENTRY( "Diffusion", DISPLACE_RDIFF ) \
+//end tuple
+    
+    enum eDisplacementMode
+    {
+#define TERRAIN_DISPLACEMODE_ENTRY( nam, enm ) \ 
+enm,
+        TERRAIN_DISPLACEMODE_TUPLE
+#undef  TERRAIN_DISPLACEMODE_ENTRY
+        
+        DISPLACE_COUNT
+    };
+    eDisplacementMode   mDisplacementMode;
+
+    RDiffusion          mRDiffusion;
     
     // AUDIO
     int                 mAudioFboDim;
@@ -133,6 +160,8 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     int                 mAudioRowShift;
     float               mAudioRowShiftTime;
     float               mAudioRowShiftDelay;
+    
+    bool                mAudioEffectNoise;
     
     typedef std::function<float (float)> tEaseFn;
     tEaseFn getFalloffFunction();

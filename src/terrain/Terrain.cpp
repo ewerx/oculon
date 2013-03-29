@@ -13,6 +13,7 @@
 #include "Terrain.h"
 #include "Resources.h"
 #include "Utils.h"
+#include "RDiffusion.h"
 #include "cinder/CinderMath.h"
 #include "cinder/Easing.h"
 #include "cinder/ObjLoader.h"
@@ -23,6 +24,8 @@
 
 using namespace ci;
 using namespace std;
+
+#define VTF_FBO_SIZE 64
 
 
 // ----------------------------------------------------------------
@@ -48,10 +51,11 @@ void Terrain::setup()
     mDrawWireframe = true;
 	mDrawFlatShaded = false;
 	mDrawShadowMap = false;
-    mMeshType = MESHTYPE_FLAT;
+    mMeshType = MESHTYPE_CYLINDER;
     mEnableLight = false;
     mEnableShadow = false;
     mNoiseScale = Vec3f(1.0f,1.0f,1.0f);
+    mDisplacementMode = DISPLACE_NOISE;
     
     // Audio
     mFalloff = 2.0f;
@@ -59,6 +63,20 @@ void Terrain::setup()
     mAudioRowShift = 0;
     mAudioRowShiftTime = 0.0f;
     mAudioRowShiftDelay = 0.25f;
+    mAudioEffectNoise = false;
+    
+    // VTF
+    // Initialize FBO
+	gl::Fbo::Format format;
+	format.setColorInternalFormat( GL_RGB32F_ARB );
+	mVtfFbo = gl::Fbo( VTF_FBO_SIZE, VTF_FBO_SIZE, format );
+    
+	// Initialize FBO texture
+	mVtfFbo.bindFramebuffer();
+	gl::setViewport( mVtfFbo.getBounds() );
+	gl::clear();
+	mVtfFbo.unbindFramebuffer();
+	mVtfFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
     
     // create the mesh
 	setupMesh();
@@ -92,18 +110,23 @@ void Terrain::setup()
     
     mSplineCam.setup();
     
+    mTunnelDistance = 80.0f;
+    mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
     mStaticCam = CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.0001f, 100.0f );
-	mStaticCam.lookAt( Vec3f( 0.0f, 0.0f, -16.0f ), Vec3f::zero() );
+	mStaticCam.lookAt( Vec3f( 0.0f, 1.0f, 0.0f ), Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
     
-    mApp->setCamera(Vec3f( 0.0f, 0.0f, -16.0f ), Vec3f::zero(), Vec3f(0.0f,1.0f,0.0f));
+    //mApp->setCamera(Vec3f( 0.0f, 40.0f, 0.0f ), Vec3f( 0.0f, 0.0f, 0.0f ), Vec3f(1.0f,1.0f,0.0f));
     
     // AUDIO
     mAudioFboDim    = 16; // 256 bands
     mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
     mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
-    gl::Fbo::Format format;
-	format.setColorInternalFormat( GL_RGB32F_ARB );
-    mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, format );
+    gl::Fbo::Format audioFboFormat;
+	audioFboFormat.setColorInternalFormat( GL_RGB32F_ARB );
+    mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, audioFboFormat );
+    
+    // Reaction Diffusion
+    mRDiffusion = RDiffusion( VTF_FBO_SIZE, VTF_FBO_SIZE );
     
     Scene::setup();
     reset();
@@ -122,7 +145,7 @@ void Terrain::setupInterface()
     mInterface->addParam(CreateBoolParam( "shadow", &mEnableShadow )
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "disp speed", &mDisplacementSpeed )
-                         .maxValue(5.0f)
+                         .maxValue(3.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "disp height", &mDisplacementHeight )
                          .maxValue(20.0f)
@@ -132,8 +155,19 @@ void Terrain::setupInterface()
 //    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
 //                         .oscReceiver(getName()));
 
+    vector<string> dispTypeNames;
+#define TERRAIN_DISPLACEMODE_ENTRY( nam, enm ) \
+dispTypeNames.push_back(nam);
+    TERRAIN_DISPLACEMODE_TUPLE
+#undef  TERRAIN_DISPLACEMODE_ENTRY
+    mInterface->addEnum(CreateEnumParam( "Displacement", (int*)(&mDisplacementMode) )
+                        .maxValue(DISPLACE_COUNT)
+                        .oscReceiver(getName(), "displacement")
+                        .isVertical(), dispTypeNames);
     
     mInterface->gui()->addColumn();
+    mInterface->addParam(CreateBoolParam( "Audio Noise", &mAudioEffectNoise )
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("Falloff", &mFalloff)
                         .minValue(0.0f)
                         .maxValue(20.0f));
@@ -157,6 +191,7 @@ void Terrain::setupInterface()
                         .oscReceiver(getName(), "camtype")
                         .isVertical(), camTypeNames);
     mSplineCam.setupInterface(mInterface, mName);
+    mTunnelCam.setupInterface(mInterface, mName);
 }
 
 // ----------------------------------------------------------------
@@ -194,8 +229,20 @@ void Terrain::update(double dt)
     mAudioRowShiftTime += dt;
     updateAudioResponse();
     
+    // update noise
+	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
+	mTheta = time;//math<float>::sin( time );
+    drawDynamicTexture();
+    
     if( mCamType == CAM_SPLINE )
+    {
         mSplineCam.update(dt);
+    }
+    
+    if( mCamType == CAM_TUNNEL )
+    {
+        mTunnelCam.update(dt);
+    }
     
 //#ifdef STATIC_TERRAIN
     // animate light
@@ -204,20 +251,17 @@ void Terrain::update(double dt)
 	float z = 50.0f + 150.0f * (float) cos( 0.20 * getElapsedSeconds() );
     
 	mLightPosition = Vec3f(x, y, z);
-    
-    //updateMesh();
 //#endif
-    
-    // Update animation position
-	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
-	mTheta = time;//math<float>::sin( time );
-    
-    drawDynamicTexture();
 }
 
 
 void Terrain::drawDynamicTexture()
 {
+    if (mAudioEffectNoise)
+    {
+        
+    }
+    
     // Bind FBO and set up window
 	mVtfFbo.bindFramebuffer();
 	gl::setViewport( mVtfFbo.getBounds() );
@@ -331,13 +375,17 @@ void Terrain::updateAudioResponse()
         }
     }
 	
-    glShadeModel( GL_FLAT );
 	gl::Texture fftTexture( fftSurface );
 	mAudioFbo.bindFramebuffer();
 	gl::setMatricesWindow( mAudioFboSize, false );
 	gl::setViewport( mAudioFboBounds );
 	gl::draw( fftTexture );
 	mAudioFbo.unbindFramebuffer();
+    
+    if (mAudioEffectNoise)
+    {
+        mDisplacementHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange();
+    }
 }
 
 Terrain::tEaseFn Terrain::getFalloffFunction()
@@ -479,8 +527,19 @@ void Terrain::drawMesh()
     }
     
 	// Bind textures
-	//mVtfFbo.bindTexture( 0, 0 );
-    mAudioFbo.bindTexture(0, 0);
+    switch (mDisplacementMode) {
+        case DISPLACE_AUDIO:
+             mAudioFbo.bindTexture(0, 0);
+            break;
+            
+        case DISPLACE_NOISE:
+            mVtfFbo.bindTexture( 0, 0 );
+            break;
+            
+        default:
+            break;
+    }
+   
     
     if(mEnableShadow) {
         // render the shadow map and bind it to texture unit 0,
@@ -505,6 +564,9 @@ void Terrain::drawMesh()
     if ( mDrawWireframe ) {
 		gl::enableWireframe();
 	}
+    
+    if (mMeshType == MESHTYPE_CYLINDER)
+        gl::scale( 1.0f, 200.0f, 1.0f );
     
 	// Draw mesh
 	gl::draw( mVboMesh );
@@ -572,6 +634,9 @@ const Camera& Terrain::getCamera()
             
         case CAM_SPLINE:
             return mSplineCam.getCamera();
+            
+        case CAM_TUNNEL:
+            return mTunnelCam.getCamera();
             
         case CAM_CATALOG:
         {
@@ -695,7 +760,8 @@ void Terrain::renderShadowMap()
 
 void Terrain::setupMesh()
 {
-//#ifdef STATIC_TERRAIN
+    if (mMeshType != MESHTYPE_CYLINDER) {
+        
 	// perlin noise generator (see below)
 	Perlin	perlin( 3, clock() & 65535 );
     
@@ -754,41 +820,12 @@ void Terrain::setupMesh()
     
 	// use this custom function to create the normal buffer
 	mTriMesh.generateNormals();
-//#endif
+    }
+    else {
+        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false );
+    }
     
-    // Initialize FBO
-	gl::Fbo::Format format;
-	format.setColorInternalFormat( GL_RGB32F_ARB );
-	mVtfFbo = gl::Fbo( 64, 64, format );
-    
-	// Initialize FBO texture
-	mVtfFbo.bindFramebuffer();
-	gl::setViewport( mVtfFbo.getBounds() );
-	gl::clear();
-	mVtfFbo.unbindFramebuffer();
-	mVtfFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
-    
-    // Generate sphere
-	//mVboMesh = gl::VboMesh( MeshHelper::createSphere( Vec2i(64,64) ) );
-    //mVboMesh = gl::VboMesh( MeshHelper::createCylinder( Vec2i(32,32), 1.0f, 1.0f, false, false ) );//
     mVboMesh = gl::VboMesh( mTriMesh );
-}
-
-void Terrain::updateMesh()
-{
-    size_t width = 120;
-    size_t depth = 120;
-    for(size_t x=0;x<=width;++x) {
-        mTriMesh.getVertices().pop_back();
-        //mTriMesh.getTexCoords().pop_back();
-    }
-    
-    int z = 120;
-    for(size_t x=0;x<=width;++x) {
-        float y = 5.0f * Rand::randFloat();
-        mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
-        //mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
-    }
 }
 
 #pragma mark VTF

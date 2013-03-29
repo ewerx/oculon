@@ -173,6 +173,8 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8A43FC1706103800C02839 /* RDiffusion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8A43FB1706103800C02839 /* RDiffusion.cpp */; };
+		7C8A43FF1706262D00C02839 /* TunnelCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8A43FD1706262D00C02839 /* TunnelCam.cpp */; };
 		7C8BE8CE158515D1003B36DE /* solmask.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8BE8CD158515D1003B36DE /* solmask.png */; };
 		7C8C0C19154F7648006C35DA /* earthDiffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C18154F7648006C35DA /* earthDiffuse.png */; };
 		7C8C0C1C154F764F006C35DA /* earthMask.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8C0C1A154F764F006C35DA /* earthMask.png */; };
@@ -556,6 +558,10 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8A43FA1706103800C02839 /* RDiffusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDiffusion.h; sourceTree = "<group>"; };
+		7C8A43FB1706103800C02839 /* RDiffusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RDiffusion.cpp; sourceTree = "<group>"; };
+		7C8A43FD1706262D00C02839 /* TunnelCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TunnelCam.cpp; sourceTree = "<group>"; };
+		7C8A43FE1706262D00C02839 /* TunnelCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TunnelCam.h; sourceTree = "<group>"; };
 		7C8B6EF4150C3B9B004AE472 /* Nbody2.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; name = Nbody2.cl; path = resources/Nbody2.cl; sourceTree = SOURCE_ROOT; };
 		7C8BE8CD158515D1003B36DE /* solmask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = solmask.png; sourceTree = "<group>"; };
 		7C8C0C18154F7648006C35DA /* earthDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthDiffuse.png; path = resources/images/tectonic/earthDiffuse.png; sourceTree = SOURCE_ROOT; };
@@ -1314,6 +1320,8 @@
 				7C941F36158980990099A0D3 /* SpringCam.h */,
 				7C0CFC2316F1A8AB00CECB8B /* CameraController.cpp */,
 				7C0CFC2416F1A8AB00CECB8B /* CameraController.h */,
+				7C8A43FD1706262D00C02839 /* TunnelCam.cpp */,
+				7C8A43FE1706262D00C02839 /* TunnelCam.h */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -1345,6 +1353,8 @@
 		7C8471601701243200B2F604 /* terrain */ = {
 			isa = PBXGroup;
 			children = (
+				7C8A43FA1706103800C02839 /* RDiffusion.h */,
+				7C8A43FB1706103800C02839 /* RDiffusion.cpp */,
 				7C8471611701243200B2F604 /* Terrain.cpp */,
 				7C8471621701243200B2F604 /* Terrain.h */,
 			);
@@ -2133,6 +2143,8 @@
 				7C65C3A116B62F1B00F84FD1 /* DomeRenderer.cpp in Sources */,
 				7C0CFC2516F1A8AB00CECB8B /* CameraController.cpp in Sources */,
 				7C8471631701243200B2F604 /* Terrain.cpp in Sources */,
+				7C8A43FC1706103800C02839 /* RDiffusion.cpp in Sources */,
+				7C8A43FF1706262D00C02839 /* TunnelCam.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
