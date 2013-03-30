@@ -52,7 +52,7 @@ protected:
 	void setupShadowMap();
 	void renderShadowMap();
     
-	void setupMesh();
+	bool setupMesh();
     void setupDynamicTexture();
     
     void drawDynamicTexture();
@@ -91,31 +91,40 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
 	bool			mDrawFlatShaded;
 	bool			mDrawShadowMap;
     bool            mEnableLight;
+    bool            mEnableTexture;
     bool            mEnableShadow;
-    
 	Vec3f			mLightPosition;
-    
 	TriMesh			mTriMesh;
-    gl::VboMesh     mVboMesh;
+	Matrix44f		mShadowMatrix;
+	CameraPersp		mShadowCamera;
+    
+    // BTR
+    ci::gl::Light   *mLight;
+    
+    gl::VboMesh     mVboMesh[2];
+    int             mCurMesh;
+    int             mNextMesh;
     
 	gl::Fbo			mDepthFbo;
 	gl::GlslProg	mShader;
 	gl::Texture		mTexture;
     
-	Matrix44f		mShadowMatrix;
-	CameraPersp		mShadowCamera;
+    // mesh type
+#define TERRAIN_MESHTYPE_TUPLE \
+TERRAIN_MESHTYPE_ENTRY( "Surface", MESHTYPE_FLAT ) \
+TERRAIN_MESHTYPE_ENTRY( "Tunnel", MESHTYPE_CYLINDER ) \
+//end tuple
     
     enum eMeshType
     {
-        MESHTYPE_RANDOM,
-        MESHTYPE_SMOOTH,
-        MESHTYPE_PERLIN,
-        MESHTYPE_FLAT,
-        MESHTYPE_CYLINDER,
+#define TERRAIN_MESHTYPE_ENTRY( nam, enm ) \
+        enm,
+        TERRAIN_MESHTYPE_TUPLE
+#undef  TERRAIN_MESHTYPE_ENTRY
         
         MESHTYPE_COUNT
     };
-    int             mMeshType;
+    eMeshType   mMeshType;
     
     // Dynamic texture
 	ci::gl::Fbo					mVtfFbo;
@@ -125,11 +134,11 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     //Perlin                      mPerlin;
     
     // Displacement
-	float						mDisplacementHeight;
+    ci::Anim<float>             mDisplacementHeight;
 	ci::gl::GlslProg			mShaderVtf;
     Vec3f                       mNoiseScale;
     
-    // camera
+    // displacement
 #define TERRAIN_DISPLACEMODE_TUPLE \
 TERRAIN_DISPLACEMODE_ENTRY( "None", DISPLACE_NONE ) \
 TERRAIN_DISPLACEMODE_ENTRY( "Noise", DISPLACE_NOISE ) \
@@ -163,8 +172,11 @@ enm,
     
     bool                mAudioEffectNoise;
     
+    bool                mInfiniteTunnel;
+    
     typedef std::function<float (float)> tEaseFn;
     tEaseFn getFalloffFunction();
+    tEaseFn getReverseFalloffFunction();
     
     enum eFalloffMode
     {

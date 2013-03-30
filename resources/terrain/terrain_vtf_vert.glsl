@@ -14,6 +14,14 @@ varying vec4 Q;
 
 void main( void )
 {
+	normal			= gl_Normal;
+	uv				= gl_MultiTexCoord0.st;
+	vec4 color		= texture2D( displacement, uv );
+	float offset	= color.r * height;
+	position		= gl_Vertex * vec4( scale, 1.0 );
+	position.xyz	+= normal * scale * offset;
+	gl_Position		= gl_ModelViewProjectionMatrix * position;
+    
     if( lightingEnabled ) {
         // transform vertex into eyespace
         V = (gl_ModelViewMatrix * gl_Vertex).xyz;
@@ -24,12 +32,4 @@ void main( void )
         // needed by the shadow map algorithm
         Q = shadowMatrix * gl_ModelViewMatrix * gl_Vertex;
     }
-    
-	normal			= gl_Normal;
-	uv				= gl_MultiTexCoord0.st;
-	vec4 color		= texture2D( displacement, uv );
-	float offset	= color.r * height;
-	position		= gl_Vertex * vec4( scale, 1.0 );
-	position.xyz	+= normal * scale * offset;
-	gl_Position		= gl_ModelViewProjectionMatrix * position;
 }

@@ -51,14 +51,15 @@ void Terrain::setup()
     mDrawWireframe = true;
 	mDrawFlatShaded = false;
 	mDrawShadowMap = false;
-    mMeshType = MESHTYPE_CYLINDER;
-    mEnableLight = false;
-    mEnableShadow = false;
+    mMeshType = MESHTYPE_FLAT;
+    mEnableLight = true;
+    mEnableShadow = true;
+    mEnableTexture = true;
     mNoiseScale = Vec3f(1.0f,1.0f,1.0f);
     mDisplacementMode = DISPLACE_NOISE;
     
     // Audio
-    mFalloff = 2.0f;
+    mFalloff = 0.32f;
     mFalloffMode = FALLOFF_OUTBOUNCE;
     mAudioRowShift = 0;
     mAudioRowShiftTime = 0.0f;
@@ -108,14 +109,25 @@ void Terrain::setup()
     
     setupDynamicTexture();
     
+    // CAMERA
     mSplineCam.setup();
     
-    mTunnelDistance = 80.0f;
+    mTunnelDistance = -100.0f;
     mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
     mStaticCam = CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.0001f, 100.0f );
 	mStaticCam.lookAt( Vec3f( 0.0f, 1.0f, 0.0f ), Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
-    
+
     //mApp->setCamera(Vec3f( 0.0f, 40.0f, 0.0f ), Vec3f( 0.0f, 0.0f, 0.0f ), Vec3f(1.0f,1.0f,0.0f));
+    
+    // LIGHT
+    gl::enable( GL_LIGHTING );
+	mLight = new gl::Light( gl::Light::DIRECTIONAL, 0 );
+	mLight->setAmbient( ColorAf::black() );
+	mLight->setDiffuse( ColorAf::black() );
+	mLight->setDirection( Vec3f::one() );
+	mLight->setPosition( Vec3f::one() * -1.0f );
+	mLight->setSpecular( ColorAf::white() );
+	mLight->enable();
     
     // AUDIO
     mAudioFboDim    = 16; // 256 bands
@@ -144,10 +156,12 @@ void Terrain::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "shadow", &mEnableShadow )
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "texture", &mEnableTexture )
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "disp speed", &mDisplacementSpeed )
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "disp height", &mDisplacementHeight )
+    mInterface->addParam(CreateFloatParam( "disp height", &mDisplacementHeight() )
                          .maxValue(20.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
@@ -157,13 +171,23 @@ void Terrain::setupInterface()
 
     vector<string> dispTypeNames;
 #define TERRAIN_DISPLACEMODE_ENTRY( nam, enm ) \
-dispTypeNames.push_back(nam);
+    dispTypeNames.push_back(nam);
     TERRAIN_DISPLACEMODE_TUPLE
 #undef  TERRAIN_DISPLACEMODE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Displacement", (int*)(&mDisplacementMode) )
                         .maxValue(DISPLACE_COUNT)
                         .oscReceiver(getName(), "displacement")
                         .isVertical(), dispTypeNames);
+
+    vector<string> meshTypeNames;
+#define TERRAIN_MESHTYPE_ENTRY( nam, enm ) \
+    meshTypeNames.push_back(nam);
+    TERRAIN_MESHTYPE_TUPLE
+#undef  TERRAIN_MESHTYPE_ENTRY
+    mInterface->addEnum(CreateEnumParam( "Mesh", (int*)(&mMeshType) )
+                        .maxValue(MESHTYPE_COUNT)
+                        .oscReceiver(getName(), "meshtype")
+                        .isVertical(), meshTypeNames)->registerCallback( this, &Terrain::setupMesh );
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateBoolParam( "Audio Noise", &mAudioEffectNoise )
@@ -239,19 +263,33 @@ void Terrain::update(double dt)
         mSplineCam.update(dt);
     }
     
-    if( mCamType == CAM_TUNNEL )
+    //if( mCamType == CAM_TUNNEL )
     {
         mTunnelCam.update(dt);
+        
+        const Vec3f& tunnelPos = mTunnelCam.getPosition();
+        //console() << "tunnel cam y = " << tunnelPos.y << std::endl;
+        
+        if( tunnelPos.y >= 100.0f )
+        {
+            mCurMesh = ( mCurMesh + 1 ) % 2;
+            mNextMesh = ( mCurMesh + 1 ) % 2;
+            
+            //mTunnelCam.reset();
+            //console() << "tunnel reset!" << std::endl;
+        }
     }
     
-//#ifdef STATIC_TERRAIN
-    // animate light
-	float x = 50.0f + 150.0f * (float) sin( 0.20 * getElapsedSeconds() );
-	float y = 50.0f +  45.0f * (float) cos( 0.13 * getElapsedSeconds() );
-	float z = 50.0f + 150.0f * (float) cos( 0.20 * getElapsedSeconds() );
-    
-	mLightPosition = Vec3f(x, y, z);
-//#endif
+    if (mEnableShadow) {
+        // animate light
+        float x = 50.0f + 150.0f * (float) sin( 0.20 * getElapsedSeconds() );
+        float y = 50.0f +  45.0f * (float) cos( 0.13 * getElapsedSeconds() );
+        float z = 50.0f + 150.0f * (float) cos( 0.20 * getElapsedSeconds() );
+        
+        mLightPosition = Vec3f(x, y, z);
+    } else {
+        mLight->update( getCamera() );
+    }
 }
 
 
@@ -340,20 +378,27 @@ void Terrain::updateAudioResponse()
     
     int32_t row = mAudioRowShift;
     
+    Rand randIndex(0);
 	Surface32f fftSurface( mAudioFbo.getTexture() );
 	Surface32f::Iter it = fftSurface.getIter();
+    int32_t index = 0;
 	while( it.line() )
     {
-        int32_t index = row * mAudioFboDim;
+        //int32_t index = row * mAudioFboDim;
 		while( it.pixel() && index < dataSize )
         {
-            if (fftLogData[index].y > mFftFalloff[index])
+            int32_t bandIndex = Rand::randInt(dataSize);//randIndex.nextInt(dataSize);
+            if (fftLogData[bandIndex].y > mFftFalloff[index])
             {
-                mFftFalloff[index] = fftLogData[index].y;
+                //mFftFalloff[index] = fftLogData[bandIndex].y;
+                timeline().apply( &mFftFalloff[index], fftLogData[bandIndex].y, mFalloff/2.0f, getReverseFalloffFunction() );
+                timeline().appendTo(&mFftFalloff[index], 0.0f, mFalloff, getReverseFalloffFunction() );
+                //timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
+            } else if (fftLogData[bandIndex].y < mFftFalloff[index]) {
                 timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
             }
             
-			it.r() = mFftFalloff[index];
+			it.r() = mFftFalloff[index]();
             it.g() = 0.0f; // UNUSED
 			it.b() = 0.0f; // UNUSED
 			it.a() = 1.0f; // UNUSED
@@ -363,7 +408,9 @@ void Terrain::updateAudioResponse()
         
         ++row;
         if (row >= mAudioFboDim)
+        {
             row = 0;
+        }
 	}
     
     if (mAudioRowShiftTime >= mAudioRowShiftDelay)
@@ -384,7 +431,11 @@ void Terrain::updateAudioResponse()
     
     if (mAudioEffectNoise)
     {
-        mDisplacementHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange();
+        float newHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange();
+        if (newHeight > mDisplacementHeight) {
+            timeline().apply( &mDisplacementHeight, newHeight, mFalloff/2.0f, getReverseFalloffFunction() );
+            timeline().appendTo(&mDisplacementHeight, 0.0f, mFalloff, getFalloffFunction() );
+        }
     }
 }
 
@@ -399,6 +450,22 @@ Terrain::tEaseFn Terrain::getFalloffFunction()
         case FALLOFF_OUTBOUNCE: return EaseOutBounce();
         case FALLOFF_OUTINEXPO: return EaseOutInExpo();
         case FALLOFF_OUTINBACK: return EaseOutInBack();
+            
+        default: return EaseNone();
+    }
+}
+
+Terrain::tEaseFn Terrain::getReverseFalloffFunction()
+{
+    switch( mFalloffMode )
+    {
+        case FALLOFF_LINEAR: return EaseNone();
+        case FALLOFF_OUTQUAD: return EaseInQuad();
+        case FALLOFF_OUTEXPO: return EaseInExpo();
+        case FALLOFF_OUTBACK: return EaseInBack();
+        case FALLOFF_OUTBOUNCE: return EaseInBounce();
+        case FALLOFF_OUTINEXPO: return EaseInOutExpo();
+        case FALLOFF_OUTINBACK: return EaseInOutBack();
             
         default: return EaseNone();
     }
@@ -440,10 +507,12 @@ void Terrain::draw()
 	// with the camera, which causes undesired behavior.
 	// To avoid this, and quite a few other annoying things with lights,
 	// I usually redefine them every frame, using a function to keep things tidy.
-    if(mEnableLight)
+    if(mEnableLight) {
         enableLights();
-    else
+    }
+    else {
         disableLights();
+    }
     
 	// render the shadow map and bind it to texture unit 0,
 	// so the shader can access it
@@ -513,10 +582,24 @@ void Terrain::drawMesh()
 	gl::setViewport( mApp->getViewportBounds() );
 	gl::setMatrices( getCamera() );
     
-	// Use arcball to rotate model view
-//	glMultMatrixf( mArcball.getQuat() );
+    // DEBUG DRAW
+    if (mCamType != CAM_TUNNEL) {
+        gl::color(1.0f,0.0f,0.0f,1.0f);
+        gl::drawSphere(mTunnelCam.getPosition(), 10.0f);
+    }
     
-	// Enabled lighting, texture mapping, wireframe
+    // draw light position
+	if(mDrawShadowMap) {
+		gl::color( Color(1.0f, 1.0f, 0.0f) );
+		gl::drawFrustum( mShadowCamera );
+	}
+    
+//    gl::color(1.0f,1.0f,0.0f,1.0f);
+//    gl::drawSphere(Vec3f(0.f,-100.f,0.f), 10.0f);
+//    gl::color(0.0f,1.0f,1.0f,1.0f);
+//    gl::drawSphere(Vec3f(0.f,100.f,0.f), 10.0f);
+    
+    // THE REAL DEAL
 	gl::enable( GL_TEXTURE_2D );
     
     if(mEnableLight) {
@@ -525,6 +608,10 @@ void Terrain::drawMesh()
     else {
         disableLights();
     }
+    
+    if ( mDrawWireframe ) {
+		gl::enableWireframe();
+	}
     
 	// Bind textures
     switch (mDisplacementMode) {
@@ -540,38 +627,52 @@ void Terrain::drawMesh()
             break;
     }
    
-    
     if(mEnableShadow) {
-        // render the shadow map and bind it to texture unit 0,
+        // render the shadow map and bind it to texture unit 1,
         // so the shader can access it
         renderShadowMap();
-        mDepthFbo.bindDepthTexture(1);
+        mDepthFbo.bindDepthTexture(2);
+    }
+    
+    if (mEnableTexture) {
+        if(mTexture) mTexture.bind(1);
     }
     
 	// Bind and configure displacement shader
 	mShaderVtf.bind();
 	mShaderVtf.uniform( "displacement", 0 );
+    mShaderVtf.uniform( "tex", 1 );
 	mShaderVtf.uniform( "eyePoint", getCamera().getEyePoint() );
 	mShaderVtf.uniform( "height", mDisplacementHeight );
-	mShaderVtf.uniform( "lightingEnabled", (mEnableShadow && mEnableLight) );
+	mShaderVtf.uniform( "lightingEnabled", mEnableLight );
 	mShaderVtf.uniform( "scale", Vec3f(1.0f,1.0f,1.0f) );
-	//mShaderVtf.uniform( "tex", 1 );
-	mShaderVtf.uniform( "textureEnabled", false );
-    mShaderVtf.uniform( "tex0", 1 );
-    mShaderVtf.uniform( "flat", mDrawFlatShaded );
-    mShaderVtf.uniform( "shadowMatrix", mShadowMatrix );
+	mShaderVtf.uniform( "textureEnabled", mEnableTexture );
+	mShaderVtf.uniform( "shadowEnabled", mEnableShadow );
+    if(mEnableShadow) {
+        mShaderVtf.uniform( "shadowtex", 2 );
+        mShaderVtf.uniform( "flat", mDrawFlatShaded );
+        mShaderVtf.uniform( "shadowMatrix", mShadowMatrix );
+    }
     
-    if ( mDrawWireframe ) {
-		gl::enableWireframe();
-	}
-    
-    if (mMeshType == MESHTYPE_CYLINDER)
-        gl::scale( 1.0f, 200.0f, 1.0f );
-    
+    //if (mMeshType == MESHTYPE_CYLINDER) {
+        //gl::scale( 1.0f, 200.0f, 1.0f );
+    //}
+
 	// Draw mesh
-	gl::draw( mVboMesh );
+	gl::draw( mVboMesh[mCurMesh] );
 	
+    gl::translate(0.0f, 1.0f, 0.0f);
+    gl::scale( 1.0f, -1.0f, 1.0f );
+    
+    if (mMeshType == MESHTYPE_FLAT) {
+        gl::color(1.0f,1.0f,1.0f,0.5f);
+    }
+    gl::draw( mVboMesh[mCurMesh] );
+    
 	// Unbind everything
+    if (mEnableTexture && mTexture) {
+        mTexture.unbind();
+    }
     if(mEnableShadow) {
         mDepthFbo.unbindTexture();
     }
@@ -588,6 +689,8 @@ void Terrain::drawMesh()
 
 void Terrain::drawDebug()
 {
+    gl::drawCoordinateFrame(15.0f, 2.5f, 1.0f);
+    
     if(mDrawShadowMap)
 	{
 		mDepthFbo.getDepthTexture().enableAndBind();
@@ -687,24 +790,30 @@ const Camera& Terrain::getCamera()
 
 void Terrain::enableLights()
 {
-	// setup light 0
-	gl::Light light(gl::Light::POINT, 0);
-    
-	light.lookAt( mLightPosition, Vec3f( 50.0f, 0.0f, 50.0f ) );
-	light.setAmbient( Color( 0.0f, 0.0f, 0.0f ) );
-	light.setDiffuse( Color( 1.0f, 1.0f, 1.0f ) );
-	light.setSpecular( Color( 1.0f, 1.0f, 1.0f ) );
-	light.setShadowParams( 60.0f, 50.0f, 300.0f );
-	light.enable();
-    
 	// enable lighting
 	gl::enable( GL_LIGHTING );
     
-	// because I chose to redefine the light every frame,
-	// the easiest way to access the light's shadow settings
-	// is to store them in a few member variables
-	mShadowMatrix = light.getShadowTransformationMatrix( getCamera() );
-	mShadowCamera = light.getShadowCamera();
+    if (mEnableShadow) {
+        mLight->disable();
+        
+        // setup light 0
+        gl::Light light(gl::Light::POINT, 0);
+        
+        light.lookAt( mLightPosition, Vec3f( 50.0f, 0.0f, 50.0f ) );
+        light.setAmbient( Color( 0.0f, 0.0f, 0.0f ) );
+        light.setDiffuse( Color( 1.0f, 1.0f, 1.0f ) );
+        light.setSpecular( Color( 1.0f, 1.0f, 1.0f ) );
+        light.setShadowParams( 60.0f, 50.0f, 300.0f );
+        light.enable();
+        
+        // because I chose to redefine the light every frame,
+        // the easiest way to access the light's shadow settings
+        // is to store them in a few member variables
+        mShadowMatrix = light.getShadowTransformationMatrix( getCamera() );
+        mShadowCamera = light.getShadowCamera();
+    } else {
+        mLight->enable();
+    }
 }
 
 void Terrain::disableLights()
@@ -747,7 +856,7 @@ void Terrain::renderShadowMap()
     
 	gl::pushMatrices();
     gl::setMatrices( mShadowCamera );
-    gl::draw( mVboMesh );
+    gl::draw( mVboMesh[mCurMesh] );
 	gl::popMatrices();
     
 	// unbind the FBO and restore the OpenGL state
@@ -758,74 +867,80 @@ void Terrain::renderShadowMap()
 
 #pragma mark - Mesh
 
-void Terrain::setupMesh()
+bool Terrain::setupMesh()
 {
     if (mMeshType != MESHTYPE_CYLINDER) {
         
-	// perlin noise generator (see below)
-	Perlin	perlin( 3, clock() & 65535 );
-    
-	// clear the mesh
-	mTriMesh.clear();
-    
-	// create the vertices and texture coords
-	size_t width = 120;
-	size_t depth = 120;
-    
-	for(size_t z=0;z<=depth;++z) {
-		for(size_t x=0;x<=width;++x) {
-			float y = 0.0f;
-            
-			switch( mMeshType ) {
-                case MESHTYPE_FLAT:
-                    y = 0.0f;
-                    break;
-                case MESHTYPE_RANDOM:
-                    //	1. random bumps
-                    y = 5.0f * Rand::randFloat();
-                    break;
-                case MESHTYPE_SMOOTH:
-                    //	2. smooth bumps (egg container)
-                    y = 5.0f * sinf( (float) M_PI * 0.05f * x ) * cosf( (float) M_PI * 0.05f * z );
-                    break;
-                case MESHTYPE_PERLIN:
-                    //	3. perlin noise
-                    y = 20.0f * perlin.fBm( Vec3f( static_cast<float>(x), static_cast<float>(z), 0.0f ) * 0.02f );
-                    break;
-			}
-            
-			mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
-			mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
-		}
-	}
-    
-	// next, create the index buffer
-	std::vector<uint32_t>	indices;
-    
-	for(size_t z=0;z<depth;++z) {
-		size_t base = z * (width + 1);
+        // perlin noise generator (see below)
+        Perlin	perlin( 3, clock() & 65535 );
         
-		for(size_t x=0;x<width;++x) {
-			indices.push_back( base + x );
-			indices.push_back( base + x + width + 1 );
-			indices.push_back( base + x + 1 );
-			
-			indices.push_back( base + x + 1 );
-			indices.push_back( base + x + width + 1 );
-			indices.push_back( base + x + width + 2 );
-		}
-	}
-    
-	mTriMesh.appendIndices( &indices.front(), indices.size() );
-    
-	// use this custom function to create the normal buffer
-	mTriMesh.generateNormals();
+        // clear the mesh
+        mTriMesh.clear();
+        
+        // create the vertices and texture coords
+        size_t width = 120;
+        size_t depth = 120;
+        
+        for(size_t z=0;z<=depth;++z) {
+            for(size_t x=0;x<=width;++x) {
+                float y = 0.0f;
+                
+                switch( mMeshType ) {
+                    case MESHTYPE_FLAT:
+                        y = 0.0f;
+                        break;
+//                    case MESHTYPE_RANDOM:
+//                        //	1. random bumps
+//                        y = 5.0f * Rand::randFloat();
+//                        break;
+//                    case MESHTYPE_SMOOTH:
+//                        //	2. smooth bumps (egg container)
+//                        y = 5.0f * sinf( (float) M_PI * 0.05f * x ) * cosf( (float) M_PI * 0.05f * z );
+//                        break;
+//                    case MESHTYPE_PERLIN:
+//                        //	3. perlin noise
+//                        y = 20.0f * perlin.fBm( Vec3f( static_cast<float>(x), static_cast<float>(z), 0.0f ) * 0.02f );
+//                        break;
+                }
+                
+                mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
+                mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
+            }
+        }
+        
+        // next, create the index buffer
+        std::vector<uint32_t>	indices;
+        
+        for(size_t z=0;z<depth;++z) {
+            size_t base = z * (width + 1);
+            
+            for(size_t x=0;x<width;++x) {
+                indices.push_back( base + x );
+                indices.push_back( base + x + width + 1 );
+                indices.push_back( base + x + 1 );
+                
+                indices.push_back( base + x + 1 );
+                indices.push_back( base + x + width + 1 );
+                indices.push_back( base + x + width + 2 );
+            }
+        }
+        
+        mTriMesh.appendIndices( &indices.front(), indices.size() );
+        
+        // use this custom function to create the normal buffer
+        mTriMesh.generateNormals();
     }
     else {
-        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false );
+        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false, false );
     }
     
-    mVboMesh = gl::VboMesh( mTriMesh );
+    mCurMesh = 0;
+    mNextMesh = 1;
+    
+    mVboMesh[mCurMesh] = gl::VboMesh( mTriMesh );
+    mVboMesh[mNextMesh] = gl::VboMesh( mTriMesh );
+    
+    return false;
 }
 
 #pragma mark VTF

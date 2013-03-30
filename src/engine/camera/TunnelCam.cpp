@@ -25,7 +25,7 @@ TunnelCam::~TunnelCam()
 
 void TunnelCam::setup(const Vec3f& startPos)
 {
-    mTarget = startPos.normalized() * -1.0f;//Vec3f(0.0f, 1.0f, 0.0f);
+    mTarget = Vec3f(0.0f, 1.0f, 0.0f);
     mSpeed = 1.0f;
     mSpeedMultiplier = 1.0f;
     mStartPos = startPos;
@@ -39,7 +39,7 @@ void TunnelCam::setup(const Vec3f& startPos)
 bool TunnelCam::reset()
 {
     mLastPos = mStartPos;
-    mCam.lookAt( mTarget, mStartPos );
+    mCam.lookAt( mTarget*-500.0f, mStartPos );
     return false;
 }
 
@@ -62,7 +62,7 @@ void TunnelCam::setupInterface( Interface* interface, const std::string& name)
 void TunnelCam::update(double dt)
 {
     Vec3f delta = 10.0f * mSpeed * mSpeedMultiplier * dt * mTarget;
-    Vec3f pos = mLastPos - delta;
+    Vec3f pos = mLastPos + delta;
     mCam.setEyePoint(pos);
     mLastPos = pos;
 }
