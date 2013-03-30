@@ -3,6 +3,9 @@ uniform vec3		eyePoint;
 uniform sampler2D	tex;
 uniform bool		textureEnabled;
 uniform bool		shadowEnabled;
+uniform bool		flatFirstPass;
+uniform float       faceAlpha;
+uniform float       lineAlpha;
 
 uniform bool        flat;
 
@@ -79,7 +82,15 @@ void main( void )
 
             color			+= ambient + diffuse + specular;
         } else {
-            color			= vec4( 1.0, 1.0, 1.0, 1.0 );
+            if (flat) {
+                if (flatFirstPass) {
+                    color = vec4( 0.0, 0.0, 0.0, faceAlpha );
+                } else {
+                    color = vec4( 1.0, 1.0, 1.0, lineAlpha );
+                }
+            } else {
+                color			= vec4( 1.0, 1.0, 1.0, 1.0 );
+            }
         }
     }
         

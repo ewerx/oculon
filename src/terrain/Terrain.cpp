@@ -50,11 +50,13 @@ void Terrain::setup()
     mCamType = CAM_MANUAL;
     mDrawWireframe = true;
 	mDrawFlatShaded = false;
+    mMeshFaceAlpha = 1.0f;
+    mMeshLineAlpha = 1.0f;
 	mDrawShadowMap = false;
     mMeshType = MESHTYPE_FLAT;
-    mEnableLight = true;
-    mEnableShadow = true;
-    mEnableTexture = true;
+    mEnableLight = false;
+    mEnableShadow = false;
+    mEnableTexture = false;
     mNoiseScale = Vec3f(1.0f,1.0f,1.0f);
     mDisplacementMode = DISPLACE_NOISE;
     
@@ -82,7 +84,6 @@ void Terrain::setup()
     // create the mesh
 	setupMesh();
     
-//#ifdef STATIC_TERRAIN
 	// initialize shadow map
 	setupShadowMap();
     
@@ -114,8 +115,8 @@ void Terrain::setup()
     
     mTunnelDistance = -100.0f;
     mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
-    mStaticCam = CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.0001f, 100.0f );
-	mStaticCam.lookAt( Vec3f( 0.0f, 1.0f, 0.0f ), Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
+    mStaticCamPos = Vec3f( 220.0f, 1.0f, 255.0f );
+	mStaticCam.lookAt( mStaticCamPos, Vec3f( 0.0f, 0.0f, 0.0f ) );
 
     //mApp->setCamera(Vec3f( 0.0f, 40.0f, 0.0f ), Vec3f( 0.0f, 0.0f, 0.0f ), Vec3f(1.0f,1.0f,0.0f));
     
@@ -150,7 +151,13 @@ void Terrain::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "wireframe", &mDrawWireframe )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "flat shaded", &mDrawFlatShaded )
+    mInterface->addParam(CreateBoolParam( "flat_shaded", &mDrawFlatShaded )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "face_alpha", &mMeshFaceAlpha )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "line_alpha", &mMeshLineAlpha )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "mirror", &mDrawMirror )
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "lighting", &mEnableLight )
                          .oscReceiver(getName()));
@@ -158,10 +165,10 @@ void Terrain::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "texture", &mEnableTexture )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "disp speed", &mDisplacementSpeed )
+    mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "disp height", &mDisplacementHeight() )
+    mInterface->addParam(CreateFloatParam( "disp_height", &mDisplacementHeight() )
                          .maxValue(20.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
@@ -214,6 +221,8 @@ void Terrain::setupInterface()
                         .maxValue(CAM_COUNT)
                         .oscReceiver(getName(), "camtype")
                         .isVertical(), camTypeNames);
+    mInterface->addParam(CreateVec3fParam("static_cam_pos", &mStaticCamPos, Vec3f(200.0f,-50.0f,200.0f), Vec3f(260.0f, 50.0f, 260.0f))
+                         .oscReceiver(getName()))->registerCallback( this, &Terrain::updateStaticCamPos );
     mSplineCam.setupInterface(mInterface, mName);
     mTunnelCam.setupInterface(mInterface, mName);
 }
@@ -356,6 +365,12 @@ void Terrain::drawDynamicTexture()
 	///////////////////////////////////////////////////////////////
 }
 
+bool Terrain::updateStaticCamPos()
+{
+    mStaticCam.setEyePoint( mStaticCamPos );
+    return false;
+}
+
 #pragma mark Audio
 
 void Terrain::updateAudioResponse()
@@ -482,76 +497,6 @@ void Terrain::draw()
     gl::pushMatrices();
 	gl::setMatrices( getCamera() );
     
-#ifdef STATIC_TERRAIN
-	// remember what OpenGL effects are enabled by default,
-	// so we can restore that situation at the end of the draw()
-	glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT );
-    
-	// enable the depth buffer
-	gl::enableDepthRead();
-	gl::enableDepthWrite();
-    
-	// draw origin and axes
-	//gl::drawCoordinateFrame(15.0f, 2.5f, 1.0f);
-    
-	// draw light position
-	if(mDrawShadowMap) {
-		gl::color( Color(1.0f, 1.0f, 0.0f) );
-		gl::drawFrustum( mShadowCamera );
-	}
-    
-	// the annoying thing with lights is that they will automatically convert the
-	// specified coordinates to world coordinates, which depend on the
-	// current camera matrices. So you have to keep telling where the lights are
-	// every time the camera moves, otherwise the light will move along
-	// with the camera, which causes undesired behavior.
-	// To avoid this, and quite a few other annoying things with lights,
-	// I usually redefine them every frame, using a function to keep things tidy.
-    if(mEnableLight) {
-        enableLights();
-    }
-    else {
-        disableLights();
-    }
-    
-	// render the shadow map and bind it to texture unit 0,
-	// so the shader can access it
-	renderShadowMap();
-	mDepthFbo.bindDepthTexture(0);
-    
-	// enable texturing and bind texture to texture unit 1
-	gl::enable( GL_TEXTURE_2D );
-	if(mTexture) mTexture.bind(1);
-    
-	// bind the shader and set the uniform variables
-	if(mShader) {
-		mShader.bind();
-		mShader.uniform("tex0", 0);
-		mShader.uniform("tex1", 1);
-		mShader.uniform("flat", mDrawFlatShaded);
-		mShader.uniform("shadowMatrix", mShadowMatrix);
-	}
-	
-	// draw the mesh
-	if(mDrawWireframe)
-		gl::enableWireframe();
-    
-	gl::color( Color::white() );
-	gl::draw( mTriMesh );
-    
-	if(mDrawWireframe)
-		gl::disableWireframe();
-    
-	// unbind the shader
-	if(mShader) mShader.unbind();
-    
-	// unbind the texture
-	if(mTexture) mTexture.unbind();
-    
-	//
-	mDepthFbo.unbindTexture();
-#endif
-    
     // VTF
     // Set up OpenGL to work with default lighting
     if (!mDrawFlatShaded) {
@@ -609,10 +554,6 @@ void Terrain::drawMesh()
         disableLights();
     }
     
-    if ( mDrawWireframe ) {
-		gl::enableWireframe();
-	}
-    
 	// Bind textures
     switch (mDisplacementMode) {
         case DISPLACE_AUDIO:
@@ -648,26 +589,73 @@ void Terrain::drawMesh()
 	mShaderVtf.uniform( "scale", Vec3f(1.0f,1.0f,1.0f) );
 	mShaderVtf.uniform( "textureEnabled", mEnableTexture );
 	mShaderVtf.uniform( "shadowEnabled", mEnableShadow );
+	mShaderVtf.uniform( "flat", mDrawFlatShaded );
+	mShaderVtf.uniform( "flatFirstPass", true );
+    //mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
+    //mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
     if(mEnableShadow) {
         mShaderVtf.uniform( "shadowtex", 2 );
         mShaderVtf.uniform( "flat", mDrawFlatShaded );
         mShaderVtf.uniform( "shadowMatrix", mShadowMatrix );
     }
     
+    if ( mDrawWireframe ) {
+        if (mDrawFlatShaded) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            // color set in shader
+        } else {
+            glLineWidth(1.0f);
+            gl::enableWireframe();
+        }
+	}
+    
     //if (mMeshType == MESHTYPE_CYLINDER) {
         //gl::scale( 1.0f, 200.0f, 1.0f );
     //}
 
 	// Draw mesh
+    gl::pushMatrices();
+    mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
+    mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
 	gl::draw( mVboMesh[mCurMesh] );
-	
-    gl::translate(0.0f, 1.0f, 0.0f);
-    gl::scale( 1.0f, -1.0f, 1.0f );
     
-    if (mMeshType == MESHTYPE_FLAT) {
-        gl::color(1.0f,1.0f,1.0f,0.5f);
+    if (mMeshType == MESHTYPE_FLAT && mDrawMirror) {
+        mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha*0.5f );
+        mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha*0.5f );
     }
-    gl::draw( mVboMesh[mCurMesh] );
+    if (mDrawMirror || mMeshType == MESHTYPE_CYLINDER) {
+        gl::translate(0.0f, 1.0f, 0.0f);
+        gl::scale( 1.0f, -1.0f, 1.0f );
+        gl::draw( mVboMesh[mCurMesh] );
+    }
+    gl::popMatrices();
+    
+    if (mDrawWireframe) {
+        if (mDrawFlatShaded) {
+            mShaderVtf.uniform( "flatFirstPass", false );
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glLineWidth(2.0f);
+            
+            // Draw mesh
+            mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
+            mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
+            gl::draw( mVboMesh[mCurMesh] );
+            
+            if (mMeshType == MESHTYPE_FLAT && mDrawMirror) {
+                mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha*0.5f );
+                mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha*0.5f );
+            }
+            if (mDrawMirror || mMeshType == MESHTYPE_CYLINDER) {
+                gl::translate(0.0f, 1.0f, 0.0f);
+                gl::scale( 1.0f, -1.0f, 1.0f );
+                gl::draw( mVboMesh[mCurMesh] );
+            }
+            
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        } else {
+            gl::disableWireframe();
+        }
+    }
     
 	// Unbind everything
     if (mEnableTexture && mTexture) {
@@ -678,18 +666,13 @@ void Terrain::drawMesh()
     }
 	mShaderVtf.unbind();
 	mVtfFbo.unbindTexture();
-	
-	// Disable wireframe, texture mapping, lighting
-	if ( mDrawWireframe ) {
-		gl::disableWireframe();
-	}
 
 	gl::disable( GL_TEXTURE_2D );
 }
 
 void Terrain::drawDebug()
 {
-    gl::drawCoordinateFrame(15.0f, 2.5f, 1.0f);
+    //gl::drawCoordinateFrame(15.0f, 2.5f, 1.0f);
     
     if(mDrawShadowMap)
 	{
@@ -878,8 +861,8 @@ bool Terrain::setupMesh()
         mTriMesh.clear();
         
         // create the vertices and texture coords
-        size_t width = 120;
-        size_t depth = 120;
+        size_t width = 256;
+        size_t depth = 256;
         
         for(size_t z=0;z<=depth;++z) {
             for(size_t x=0;x<=width;++x) {

@@ -58,6 +58,8 @@ protected:
     void drawDynamicTexture();
     void drawMesh();
     
+    bool updateStaticCamPos();
+    
 private:
     // camera
 #define TERRAIN_CAMTYPE_TUPLE \
@@ -83,12 +85,16 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     
     SplineCam                   mSplineCam;
     ci::CameraPersp             mStaticCam;
+    ci::Vec3f                   mStaticCamPos;
     TunnelCam                   mTunnelCam;
     float                       mTunnelDistance;
     
     // HOUX
     bool			mDrawWireframe;
 	bool			mDrawFlatShaded;
+    float           mMeshFaceAlpha;
+    float           mMeshLineAlpha;
+    bool            mDrawMirror;
 	bool			mDrawShadowMap;
     bool            mEnableLight;
     bool            mEnableTexture;
