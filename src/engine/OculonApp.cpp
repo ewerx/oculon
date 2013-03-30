@@ -75,6 +75,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
     mDebugRender        = false;
+    mAlphaBackground    = true;
     
     mOutputMode         = OUTPUT_FBO;
     const int outputMode = mConfig.getInt("output_mode");
@@ -209,6 +210,7 @@ outputModeNames.push_back(nam);
                         .maxValue(OUTPUT_COUNT), outputModeNames)->registerCallback( this, &OculonApp::onOutputModeChange );
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
+    mInterface->addParam(CreateBoolParam("Alpha BG", &mAlphaBackground));
     mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
     // capture
     mInterface->gui()->addSeparator();
@@ -790,7 +792,8 @@ void OculonApp::drawToFbo( gl::Fbo& fbo )
     
     // setup the viewport to match the dimensions of the FBO
     gl::setViewport( fbo.getBounds() );
-    gl::clear( Color(0.0f,0.0f,0.0f) );
+    float alpha = mAlphaBackground ? 0.0f : 1.0f;
+    gl::clear( ColorA(0.0f,0.0f,0.0f,alpha) );
     
     drawScenes();
     

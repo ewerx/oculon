@@ -187,6 +187,7 @@ private: // members
     
     eOutputMode             mOutputMode;
     gl::Fbo                 mFbo;
+    bool                    mAlphaBackground;
     
     DomeRenderer            mDomeRenderer;
     
