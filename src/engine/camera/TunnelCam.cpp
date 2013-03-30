@@ -23,12 +23,15 @@ TunnelCam::~TunnelCam()
 {
 }
 
-void TunnelCam::setup(const Vec3f& startPos)
+void TunnelCam::setup(const Vec3f& startPos, bool loop)
 {
     mTarget = Vec3f(0.0f, 1.0f, 0.0f);
     mSpeed = 1.0f;
     mSpeedMultiplier = 1.0f;
     mStartPos = startPos;
+    mLoop = loop;
+    mTheta = 0;
+    mRadius = 200.0f;
     
     mCam.setNearClip(0.0001f);
     mCam.setFarClip(1000.0f);
@@ -61,8 +64,21 @@ void TunnelCam::setupInterface( Interface* interface, const std::string& name)
 
 void TunnelCam::update(double dt)
 {
-    Vec3f delta = 10.0f * mSpeed * mSpeedMultiplier * dt * mTarget;
-    Vec3f pos = mLastPos + delta;
-    mCam.setEyePoint(pos);
-    mLastPos = pos;
+    if (mLoop) {
+        mTheta += dt * mSpeed * mSpeedMultiplier;
+        Vec3f pos( math<float>::cos( mTheta ) * mRadius,
+                                   math<float>::sin( mTheta ) * mRadius,
+                                   0.0f
+                                   );
+        Vec3f dir = (pos - mLastPos);
+        mCam.setEyePoint(pos);
+        mCam.setViewDirection(dir);
+        mLastPos = pos;
+    }
+    else {
+        Vec3f delta = 10.0f * mSpeed * mSpeedMultiplier * dt * mTarget;
+        Vec3f pos = mLastPos + delta;
+        mCam.setEyePoint(pos);
+        mLastPos = pos;
+    }
 }

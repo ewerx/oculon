@@ -14,6 +14,7 @@
 #include "SplineCam.h"
 #include "TunnelCam.h"
 #include "RDiffusion.h"
+#include "Tube.h"
 #include "cinder/Perlin.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
@@ -118,7 +119,9 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     // mesh type
 #define TERRAIN_MESHTYPE_TUPLE \
 TERRAIN_MESHTYPE_ENTRY( "Surface", MESHTYPE_FLAT ) \
-TERRAIN_MESHTYPE_ENTRY( "Tunnel", MESHTYPE_CYLINDER ) \
+TERRAIN_MESHTYPE_ENTRY( "Cylinder", MESHTYPE_CYLINDER ) \
+TERRAIN_MESHTYPE_ENTRY( "Tube", MESHTYPE_TUBE ) \
+TERRAIN_MESHTYPE_ENTRY( "Torus", MESHTYPE_TORUS ) \
 //end tuple
     
     enum eMeshType
@@ -131,6 +134,15 @@ TERRAIN_MESHTYPE_ENTRY( "Tunnel", MESHTYPE_CYLINDER ) \
         MESHTYPE_COUNT
     };
     eMeshType   mMeshType;
+    
+    Tube                        mTube;
+    BSpline3f                   mTubeSpline;
+    TriMesh                     mTubeMesh;
+    std::vector<Vec3f>          mBasePoints;
+	std::vector<Vec3f>          mCurPoints;
+    
+    float                       mScale;
+
     
     // Dynamic texture
 	ci::gl::Fbo					mVtfFbo;
@@ -154,7 +166,7 @@ TERRAIN_DISPLACEMODE_ENTRY( "Diffusion", DISPLACE_RDIFF ) \
     
     enum eDisplacementMode
     {
-#define TERRAIN_DISPLACEMODE_ENTRY( nam, enm ) \ 
+#define TERRAIN_DISPLACEMODE_ENTRY( nam, enm ) \
 enm,
         TERRAIN_DISPLACEMODE_TUPLE
 #undef  TERRAIN_DISPLACEMODE_ENTRY

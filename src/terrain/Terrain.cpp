@@ -47,9 +47,9 @@ void Terrain::setup()
 {
     
     // Params
-    mCamType = CAM_MANUAL;
+    mCamType = CAM_STATIC;
     mDrawWireframe = true;
-	mDrawFlatShaded = false;
+	mDrawFlatShaded = true;
     mMeshFaceAlpha = 1.0f;
     mMeshLineAlpha = 1.0f;
 	mDrawShadowMap = false;
@@ -57,7 +57,8 @@ void Terrain::setup()
     mEnableLight = false;
     mEnableShadow = false;
     mEnableTexture = false;
-    mNoiseScale = Vec3f(1.0f,1.0f,1.0f);
+    mDrawMirror = false;
+    mNoiseScale = Vec3f(1.0f,1.0f,0.25f);
     mDisplacementMode = DISPLACE_NOISE;
     
     // Audio
@@ -80,6 +81,13 @@ void Terrain::setup()
 	gl::clear();
 	mVtfFbo.unbindFramebuffer();
 	mVtfFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
+    
+    // Tube BSpline
+	mBasePoints.push_back( Vec3f( -3,  4, 0 ) );
+	mBasePoints.push_back( Vec3f(  5,  1, 0 ) );
+	mBasePoints.push_back( Vec3f( -5, -1, 0 ) );
+	mBasePoints.push_back( Vec3f(  3, -4, 0 ) );
+	mCurPoints = mBasePoints;
     
     // create the mesh
 	setupMesh();
@@ -111,10 +119,11 @@ void Terrain::setup()
     setupDynamicTexture();
     
     // CAMERA
-    mSplineCam.setup();
-    
-    mTunnelDistance = -100.0f;
-    mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ) );
+    mSplineCam.setup(1000.0f, 300.0f);
+    mScale = 620.0f;
+    mTunnelDistance = -300.0f;
+    mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ), true );
+    mTunnelCam.mRadius = 200.0f;
     mStaticCamPos = Vec3f( 220.0f, 1.0f, 255.0f );
 	mStaticCam.lookAt( mStaticCamPos, Vec3f( 0.0f, 0.0f, 0.0f ) );
 
@@ -209,6 +218,13 @@ void Terrain::setupInterface()
     mInterface->addParam(CreateFloatParam("Shift Delay", &mAudioRowShiftDelay)
                          .minValue(0.0f)
                          .maxValue(1.0f));
+    
+    mInterface->addParam(CreateFloatParam("Scale", &mScale)
+                         .minValue(400.0f)
+                         .maxValue(1000.0f));
+    mInterface->addParam(CreateFloatParam("Cam Radius", &mTunnelCam.mRadius)
+                         .minValue(100.0f)
+                         .maxValue(1000.0f));
 
     
     mInterface->gui()->addColumn();
@@ -276,17 +292,17 @@ void Terrain::update(double dt)
     {
         mTunnelCam.update(dt);
         
-        const Vec3f& tunnelPos = mTunnelCam.getPosition();
-        //console() << "tunnel cam y = " << tunnelPos.y << std::endl;
-        
-        if( tunnelPos.y >= 100.0f )
-        {
-            mCurMesh = ( mCurMesh + 1 ) % 2;
-            mNextMesh = ( mCurMesh + 1 ) % 2;
-            
-            //mTunnelCam.reset();
-            //console() << "tunnel reset!" << std::endl;
-        }
+//        const Vec3f& tunnelPos = mTunnelCam.getPosition();
+//        console() << "tunnel cam y = " << tunnelPos.y << std::endl;
+//        
+//        if( tunnelPos.y >= 100.0f )
+//        {
+//            mCurMesh = ( mCurMesh + 1 ) % 2;
+//            mNextMesh = ( mCurMesh + 1 ) % 2;
+//            
+//            //mTunnelCam.reset();
+//            console() << "tunnel reset!" << std::endl;
+//        }
     }
     
     if (mEnableShadow) {
@@ -530,7 +546,8 @@ void Terrain::drawMesh()
     // DEBUG DRAW
     if (mCamType != CAM_TUNNEL) {
         gl::color(1.0f,0.0f,0.0f,1.0f);
-        gl::drawSphere(mTunnelCam.getPosition(), 10.0f);
+        gl::drawSphere(mTunnelCam.getCamera().getEyePoint(), 10.0f);
+        gl::drawLine(mTunnelCam.getCamera().getEyePoint(), mTunnelCam.getCamera().getCenterOfInterestPoint());
     }
     
     // draw light position
@@ -591,8 +608,8 @@ void Terrain::drawMesh()
 	mShaderVtf.uniform( "shadowEnabled", mEnableShadow );
 	mShaderVtf.uniform( "flat", mDrawFlatShaded );
 	mShaderVtf.uniform( "flatFirstPass", true );
-    //mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
-    //mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
+    mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
+    mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
     if(mEnableShadow) {
         mShaderVtf.uniform( "shadowtex", 2 );
         mShaderVtf.uniform( "flat", mDrawFlatShaded );
@@ -615,8 +632,19 @@ void Terrain::drawMesh()
 
 	// Draw mesh
     gl::pushMatrices();
-    mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
-    mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
+    float scale = 1.0f;
+    if (mMeshType == MESHTYPE_CYLINDER) {
+        scale = 200.0f;
+        if (mCurMesh == 1) {
+            mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha*0.5f );
+            gl::scale( 1.0f, -scale, 1.0f );
+        } else {
+            gl::scale( 1.0f, scale, 1.0f );
+        }
+    } else if (mMeshType == MESHTYPE_TORUS) {
+        scale = mScale;
+        gl::scale( scale, scale, scale );
+    }
 	gl::draw( mVboMesh[mCurMesh] );
     
     if (mMeshType == MESHTYPE_FLAT && mDrawMirror) {
@@ -624,8 +652,12 @@ void Terrain::drawMesh()
         mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha*0.5f );
     }
     if (mDrawMirror || mMeshType == MESHTYPE_CYLINDER) {
-        gl::translate(0.0f, 1.0f, 0.0f);
-        gl::scale( 1.0f, -1.0f, 1.0f );
+        gl::translate(0.0f, scale, 0.0f);
+        if (mCurMesh == 0) {
+            gl::scale( 1.0f, -scale, 1.0f );
+        } else {
+            mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha*0.5f );
+        }
         gl::draw( mVboMesh[mCurMesh] );
     }
     gl::popMatrices();
@@ -639,6 +671,9 @@ void Terrain::drawMesh()
             // Draw mesh
             mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
             mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
+            if (mMeshType == MESHTYPE_TORUS) {
+                gl::scale( scale, scale, scale );
+            }
             gl::draw( mVboMesh[mCurMesh] );
             
             if (mMeshType == MESHTYPE_FLAT && mDrawMirror) {
@@ -852,7 +887,9 @@ void Terrain::renderShadowMap()
 
 bool Terrain::setupMesh()
 {
-    if (mMeshType != MESHTYPE_CYLINDER) {
+    // setup for tube
+    
+    if (mMeshType == MESHTYPE_FLAT) {
         
         // perlin noise generator (see below)
         Perlin	perlin( 3, clock() & 65535 );
@@ -913,8 +950,35 @@ bool Terrain::setupMesh()
         // use this custom function to create the normal buffer
         mTriMesh.generateNormals();
     }
+    else if (mMeshType == MESHTYPE_TUBE)
+    {
+        // Make the b-spline
+//        int degree = 3;
+//        bool loop = true;
+//        bool open = false;
+//        mBSpline = BSpline3f( mCurPoints, degree, loop, open );
+        
+        // Tube
+        std::vector<Vec3f> prof;
+        makeCircleProfile( prof, 10.0f, 16 );
+        mTube.setProfile( prof );
+        mTube.setBSpline( mSplineCam.getSpline() );
+        mTube.setNumSegments( 256 );
+        mTube.sampleCurve();
+        if( 1 ) {//mParallelTransport ) {
+            mTube.buildPTF();
+        }
+        else {
+            mTube.buildFrenet();
+        }
+        mTube.buildMesh( &mTriMesh );
+    }
+    else if (mMeshType == MESHTYPE_TORUS)
+    {
+        mTriMesh = MeshHelper::createTorus( Vec2i(256,256), 0.10f );
+    }
     else {
-        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false, false );
+        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false );
     }
     
     mCurMesh = 0;

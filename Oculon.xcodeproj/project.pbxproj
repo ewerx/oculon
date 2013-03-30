@@ -122,6 +122,7 @@
 		7C687E9F1617FD8D0006150F /* earthGray.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C687E9E1617FD8D0006150F /* earthGray.png */; };
 		7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB486169926250096EF7B /* Polyhedron.cpp */; };
 		7C6CB4A7169936030096EF7B /* MeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB4A5169936030096EF7B /* MeshHelper.cpp */; };
+		7C6E8175170742BE00CAFFC4 /* Tube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E8174170742BE00CAFFC4 /* Tube.cpp */; };
 		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
@@ -471,6 +472,8 @@
 		7C6CB487169926250096EF7B /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
 		7C6CB4A5169936030096EF7B /* MeshHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshHelper.cpp; path = "../sdks/cinder/blocks/Cinder-MeshHelper/src/MeshHelper.cpp"; sourceTree = SOURCE_ROOT; };
 		7C6CB4A6169936030096EF7B /* MeshHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshHelper.h; path = "../sdks/cinder/blocks/Cinder-MeshHelper/src/MeshHelper.h"; sourceTree = SOURCE_ROOT; };
+		7C6E8173170742BE00CAFFC4 /* Tube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tube.h; sourceTree = "<group>"; };
+		7C6E8174170742BE00CAFFC4 /* Tube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tube.cpp; sourceTree = "<group>"; };
 		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C745510148C04C6009C0356 /* Oculon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oculon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C745514148C04C6009C0356 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -1357,6 +1360,8 @@
 				7C8A43FB1706103800C02839 /* RDiffusion.cpp */,
 				7C8471611701243200B2F604 /* Terrain.cpp */,
 				7C8471621701243200B2F604 /* Terrain.h */,
+				7C6E8173170742BE00CAFFC4 /* Tube.h */,
+				7C6E8174170742BE00CAFFC4 /* Tube.cpp */,
 			);
 			path = terrain;
 			sourceTree = "<group>";
@@ -2145,6 +2150,7 @@
 				7C8471631701243200B2F604 /* Terrain.cpp in Sources */,
 				7C8A43FC1706103800C02839 /* RDiffusion.cpp in Sources */,
 				7C8A43FF1706262D00C02839 /* TunnelCam.cpp in Sources */,
+				7C6E8175170742BE00CAFFC4 /* Tube.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

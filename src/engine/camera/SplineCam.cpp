@@ -23,11 +23,11 @@ SplineCam::~SplineCam()
 {
 }
 
-void SplineCam::setup(const float maxDistance)
+void SplineCam::setup(const float maxDistance, const float radius)
 {
     mTarget = Vec3f::zero();
     mSpeed = 1.0f;
-    mRadius = 100.0f;
+    mRadius = radius;
     mLookForward = false;
     mMaxDistance = maxDistance;
     

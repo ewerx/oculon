@@ -22,7 +22,7 @@ public:
     TunnelCam();
     ~TunnelCam();
     
-    void setup( const ci::Vec3f& startPos = ci::Vec3f::zero() );
+    void setup( const ci::Vec3f& startPos = ci::Vec3f::zero(), bool loop =false );
     bool reset();
     void setupInterface(Interface* interface, const std::string& name);
     void update(double dt);
@@ -32,6 +32,8 @@ public:
     void setTarget( const ci::Vec3f& target )   { mTarget = target; }
     const ci::Vec3f& getPosition() const        { return mLastPos; }
     
+    float mRadius;
+    
 private:
     
     ci::CameraPersp     mCam;
@@ -40,6 +42,8 @@ private:
     ci::Vec3f           mStartPos;
     float               mSpeed;
     float               mSpeedMultiplier;
+    float               mTheta;
+    bool                mLoop;
 };
 
 #endif /* defined(__Oculon__TunnelCam__) */
