@@ -43,8 +43,8 @@ void Circles::setup()
 {
     // params
     mLayers = 1;
-    mSpacing = 4;
-    mBaseRadius = 200.0f;
+    mSpacing = 0;
+    mBaseRadius = 8.0f;
     mMinRadiusFactor = 0.25f;
     
     mSignalScale = 0.16f;
@@ -52,7 +52,7 @@ void Circles::setup()
     mFftFalloff = true;
     mAlphaByAudio = true;
     mFalloffMode = FALLOFF_OUTBOUNCE;
-    mShape = SHAPE_RING;
+    mShape = SHAPE_CIRCLE;
     
     mShiftSpeedX = 0.0f;
     mShiftSpeedY = 0.0f;
@@ -151,6 +151,9 @@ void Circles::reset()
     
     mCols = math<int>::min( (windowWidth / ((float)mSpacing + mBaseRadius*2.0f)), MAX_X );
     mRows = math<int>::min( (windowHeight / ((float)mSpacing + mBaseRadius*2.0f)), MAX_Y );
+    
+    mCols = 72;
+    mRows = 72;
     
     for( int col = 0; col < mCols; ++col )
     {

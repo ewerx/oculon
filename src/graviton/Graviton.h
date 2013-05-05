@@ -90,21 +90,38 @@ private:
     };
 #endif
     
+    // INITIAL FORMATION
+#define GRAVITON_FORMATION_TUPLE \
+GRAVITON_FORMATION_ENTRY( "Sphere", FORMATION_SPHERE ) \
+GRAVITON_FORMATION_ENTRY( "Shell", FORMATION_SPHERE_SHELL ) \
+GRAVITON_FORMATION_ENTRY( "Disc", FORMATION_DISC ) \
+GRAVITON_FORMATION_ENTRY( "Galaxy", FORMATION_GALAXY ) \
+// end tuple
+    
     enum eFormation
     {
-        FORMATION_SPHERE,
-        FORMATION_SPHERE_SHELL,
-        FORMATION_DISC,
-        FORMATION_GALAXY,
+#define GRAVITON_FORMATION_ENTRY( nam, enm ) \
+enm,
+        GRAVITON_FORMATION_TUPLE
+#undef  GRAVITON_FORMATION_ENTRY
         
         FORMATION_COUNT
     };
     
+    // NODE FORMATION
+#define GRAVITON_NODE_FORMATION_TUPLE \
+GRAVITON_NODE_FORMATION_ENTRY( "None", NODE_FORMATION_NONE ) \
+GRAVITON_NODE_FORMATION_ENTRY( "Symmetry", NODE_FORMATION_SYMMETRY ) \
+GRAVITON_NODE_FORMATION_ENTRY( "Blackhole", NODE_FORMATION_BLACKHOLE_STAR ) \
+// end tuple
+    
     enum eNodeFormation
     {
-        NODE_FORMATION_NONE,
-        NODE_FORMATION_SYMMETRY,
-        NODE_FORMATION_BLACKHOLE_STAR,
+#define GRAVITON_NODE_FORMATION_ENTRY( nam, enm ) \
+enm,
+        GRAVITON_NODE_FORMATION_TUPLE
+#undef  GRAVITON_NODE_FORMATION_ENTRY
+        
         NODE_FORMATION_COUNT
     };
     
@@ -205,17 +222,26 @@ private:
     bool                mConstrainParticles;
     
     ci::CameraPersp     mCam;
-    //ci::Vec3f               mCamPosition;
+    
+    // camera
+#define GRAVITON_CAMTYPE_TUPLE \
+GRAVITON_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
+GRAVITON_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
+GRAVITON_CAMTYPE_ENTRY( "Graviton", CAM_SPIRAL ) \
+GRAVITON_CAMTYPE_ENTRY( "Catalog", CAM_SPLINE ) \
+//end tuple
+    
     enum eCamType
     {
-        CAM_MAYA,
-        CAM_ORBITER,
-        CAM_SPIRAL,
-        CAM_SPLINE,
+#define GRAVITON_CAMTYPE_ENTRY( nam, enm ) \
+enm,
+        GRAVITON_CAMTYPE_TUPLE
+#undef  GRAVITON_CAMTYPE_ENTRY
         
         CAM_COUNT
     };
-    eCamType            mCamType;
+    eCamType                    mCamType;
+
     float               mCamRadius;
     double              mCamAngle;
     double              mCamLateralPosition;

@@ -145,14 +145,26 @@ void Graviton::setupInterface()
                          .oscReceiver(getName(), "gravity"));
     
     mInterface->gui()->addSeparator();
+    
+    vector<string> formationNames;
+#define GRAVITON_FORMATION_ENTRY( nam, enm ) \
+formationNames.push_back(nam);
+    GRAVITON_FORMATION_TUPLE
+#undef  GRAVITON_FORMATION_ENTRY
     mInterface->addEnum(CreateEnumParam( "Particle Formation", (int*)(&mInitialFormation) )
                          .maxValue(FORMATION_COUNT)
                          .oscReceiver(getName(), "pformation")
-                         .isVertical());
+                         .isVertical(), formationNames);
+    
+    vector<string> nodeFormationNames;
+#define GRAVITON_NODE_FORMATION_ENTRY( nam, enm ) \
+nodeFormationNames.push_back(nam);
+    GRAVITON_NODE_FORMATION_TUPLE
+#undef  GRAVITON_NODE_FORMATION_ENTRY
     mInterface->addEnum(CreateEnumParam( "Node Formation", (int*)(&mGravityNodeFormation) )
                          .maxValue(NODE_FORMATION_COUNT)
                          .oscReceiver(getName(), "nformation")
-                         .isVertical());
+                         .isVertical(), nodeFormationNames);
     mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
                          .minValue(10.0f)
                          .maxValue(1000.0f)
@@ -747,7 +759,7 @@ bool Graviton::setupCameraSpline()
 void Graviton::drawCamSpline()
 {
     gl::pushMatrices();
-    gl::setMatrices( ( mCamType == CAM_MAYA ) ? mApp->getMayaCam() : mCam );
+    gl::setMatrices( ( mCamType == CAM_MANUAL ) ? mApp->getMayaCam() : mCam );
 	const int numSegments = 100;
 	gl::color( ColorA( 0.2f, 0.85f, 0.8f, 0.85f ) );
 	glLineWidth( 2.0f );

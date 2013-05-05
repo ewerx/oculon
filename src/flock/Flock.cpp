@@ -27,7 +27,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define FBO_DIM			56//167
+#define FBO_DIM			42//167
 #define P_FBO_DIM		5
 #define MAX_LANTERNS	5
 
@@ -55,7 +55,7 @@ void Flock::setup()
     //
     // CAMERA
 	mSpringCam			= SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
-    mSplineCam.setup(8000.0f);
+    mSplineCam.setup(8000.0f,1000.0f);
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );

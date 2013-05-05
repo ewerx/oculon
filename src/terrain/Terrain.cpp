@@ -544,11 +544,11 @@ void Terrain::drawMesh()
 	gl::setMatrices( getCamera() );
     
     // DEBUG DRAW
-    if (mCamType != CAM_TUNNEL) {
-        gl::color(1.0f,0.0f,0.0f,1.0f);
-        gl::drawSphere(mTunnelCam.getCamera().getEyePoint(), 10.0f);
-        gl::drawLine(mTunnelCam.getCamera().getEyePoint(), mTunnelCam.getCamera().getCenterOfInterestPoint());
-    }
+//    if (mCamType != CAM_TUNNEL) {
+//        gl::color(1.0f,0.0f,0.0f,1.0f);
+//        gl::drawSphere(mTunnelCam.getCamera().getEyePoint(), 10.0f);
+//        gl::drawLine(mTunnelCam.getCamera().getEyePoint(), mTunnelCam.getCamera().getCenterOfInterestPoint());
+//    }
     
     // draw light position
 	if(mDrawShadowMap) {

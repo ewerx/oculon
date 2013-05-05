@@ -46,6 +46,7 @@ private:
     ci::Vec3f           mLastPos;
     ci::Vec3f           mTarget;
     float               mSpeed;
+    float               mSpeedMulti;
     bool                mLookForward;
 };
 

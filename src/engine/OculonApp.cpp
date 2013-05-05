@@ -75,7 +75,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
     mDebugRender        = false;
-    mBackgroundAlpha    = 0.0f;
+    mBackgroundAlpha    = 1.0f;
     
     mOutputMode         = OUTPUT_FBO;
     const int outputMode = mConfig.getInt("output_mode");

@@ -282,10 +282,15 @@ void Binned::setupInterface()
                          .minValue(1).maxValue(64)
                          .oscReceiver(mName,"kparticles"));
     
+    vector<string> formationNames;
+#define BINNED_FORMATION_ENTRY( nam, enm ) \
+formationNames.push_back(nam);
+    BINNED_FORMATION_TUPLE
+#undef  BINNED_FORMATION_ENTRY
     mInterface->addEnum(CreateEnumParam("Initial Formation", &mInitialFormation)
                         .maxValue(FORMATION_COUNT)
                         .isVertical()
-                        .oscReceiver(mName,"formation"));
+                        .oscReceiver(mName,"formation"), formationNames);
     
     mInterface->addParam(CreateColorParam("Point Color", &mPointColor, kMinColor, kMaxColor)
                          .oscReceiver(mName,"pointcolor"));
@@ -342,10 +347,15 @@ void Binned::setupInterface()
     mInterface->addEnum(CreateEnumParam("Mode", &mRepulsionMode)
                         .maxValue(MODE_COUNT));
     
+    vector<string> audioPatternNames;
+#define BINNED_AUDIO_PATTERN_ENTRY( nam, enm ) \
+audioPatternNames.push_back(nam);
+    BINNED_AUDIO_PATTERN_TUPLE
+#undef  BINNED_AUDIO_PATTERN_ENTRY
     mInterface->addEnum(CreateEnumParam("Reaction Style", &mAudioPattern)
                         .maxValue(AUDIO_PATTERN_COUNT)
                         .oscReceiver(mName,"audioreaction")
-                        .isVertical());
+                        .isVertical(), audioPatternNames);
     
     mInterface->addParam(CreateBoolParam("Show Indicators", &mShowForceIndicators)
                          .oscReceiver(mName,"indicatorshow"));

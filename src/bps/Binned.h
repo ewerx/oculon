@@ -96,19 +96,26 @@ private:
     float mCircularWallRadius;
     float mWallPadding;
     
-    
+    // audio pattern
+#define BINNED_AUDIO_PATTERN_TUPLE \
+BINNED_AUDIO_PATTERN_ENTRY( "Line", AUDIO_PATTERN_LINE ) \
+BINNED_AUDIO_PATTERN_ENTRY( "TopBottom", AUDIO_PATTERN_TOPBOTTOM ) \
+BINNED_AUDIO_PATTERN_ENTRY( "Random", AUDIO_PATTERN_RANDOM ) \
+BINNED_AUDIO_PATTERN_ENTRY( "Segments", AUDIO_PATTERN_SEGMENTS ) \
+BINNED_AUDIO_PATTERN_ENTRY( "Metro1", AUDIO_PATTERN_METROPOLIS1 ) \
+BINNED_AUDIO_PATTERN_ENTRY( "Metro2", AUDIO_PATTERN_METROPOLIS2 ) \
+//end tuple
     enum eAudioPattern
     {
-        AUDIO_PATTERN_LINE,
-        AUDIO_PATTERN_TOPBOTTOM,
-        AUDIO_PATTERN_RANDOM,
-        AUDIO_PATTERN_SEGMENTS,
-        AUDIO_PATTERN_METROPOLIS1,
-        AUDIO_PATTERN_METROPOLIS2,
+#define BINNED_AUDIO_PATTERN_ENTRY( nam, enm ) \
+enm,
+        BINNED_AUDIO_PATTERN_TUPLE
+#undef  BINNED_AUDIO_PATTERN_ENTRY
         
         AUDIO_PATTERN_COUNT
     };
     int mAudioPattern;
+    
     
     enum eForcePattern
     {
@@ -165,13 +172,21 @@ private:
         
     };
     
+    // initial formation
+#define BINNED_FORMATION_TUPLE \
+BINNED_FORMATION_ENTRY( "Manual", FORMATION_NONE ) \
+BINNED_FORMATION_ENTRY( "Orbiter", FORMATION_DISC ) \
+BINNED_FORMATION_ENTRY( "Graviton", FORMATION_RING ) \
+BINNED_FORMATION_ENTRY( "Catalog", FORMATION_WAVE ) \
+BINNED_FORMATION_ENTRY( "Spline", FORMATION_MULTIWAVE ) \
+//end tuple
+    
     enum eInitialFormation
     {
-        FORMATION_NONE,
-        FORMATION_DISC,
-        FORMATION_RING,
-        FORMATION_WAVE,
-        FORMATION_MULTIWAVE,
+#define BINNED_FORMATION_ENTRY( nam, enm ) \
+enm,
+        BINNED_FORMATION_TUPLE
+#undef  BINNED_FORMATION_ENTRY
         
         FORMATION_COUNT
     };

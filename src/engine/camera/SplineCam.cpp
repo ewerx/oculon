@@ -26,10 +26,14 @@ SplineCam::~SplineCam()
 void SplineCam::setup(const float maxDistance, const float radius)
 {
     mTarget = Vec3f::zero();
-    mSpeed = 1.0f;
+    mSpeed = 0.25f;
     mRadius = radius;
     mLookForward = false;
     mMaxDistance = maxDistance;
+    
+    //mCam.setFarClip(10000.0f);
+    //mCam.setNearClip(0.0001f);
+    mCam.setPerspective(60.0f, 1280.0f/768.0f, 10000.0f, 0.0001f);
     
     resetSpline();
 }
@@ -64,8 +68,12 @@ void SplineCam::setupInterface( Interface* interface, const std::string& name)
                           .oscReceiver(name,"splinecamreset"))->registerCallback( this, &SplineCam::resetSpline );
     interface->addParam(CreateFloatParam( "Speed", &mSpeed )
                          .minValue(0.0f)
-                         .maxValue(10.0f)
+                         .maxValue(1.0f)
                          .oscReceiver(name, "splinecamspeed"));
+    interface->addParam(CreateFloatParam( "Speed Multi", &mSpeedMulti )
+                        .minValue(0.0f)
+                        .maxValue(5.0f)
+                        .oscReceiver(name, "splinecamspeedmult"));
 }
 
 void SplineCam::update(double dt)
@@ -77,9 +85,8 @@ void SplineCam::update(double dt)
     //up.normalize();
     if( mLookForward )
     {
-        Vec3f target = delta;
         mCam.setEyePoint( pos );
-        mCam.setCenterOfInterestPoint(target);
+        mCam.setViewDirection(delta);
     }
     else
     {
