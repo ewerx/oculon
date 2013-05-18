@@ -45,6 +45,8 @@
 		7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
 		7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
+		7C206DCB17403CBA00DA71E9 /* contour_tex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DC917403CBA00DA71E9 /* contour_tex_frag.glsl */; };
+		7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */; };
 		7C2F90CD1690D3BB0062D6E0 /* SplineCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
@@ -161,6 +163,8 @@
 		7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783EE815F26ED000492299 /* StarCam.cpp */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C7BD60B160D5F5F00783008 /* nukes.csv */; };
+		7C7FBC78173C97C500C053F1 /* Contour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7FBC76173C97C500C053F1 /* Contour.cpp */; };
+		7C7FBC7B173C983500C053F1 /* contours.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7FBC79173C983500C053F1 /* contours.cpp */; };
 		7C832E771547AD6700CF488D /* Tectonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E751547AD6700CF488D /* Tectonic.cpp */; };
 		7C832E7C1547B00700CF488D /* QuakeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7B1547B00600CF488D /* QuakeData.cpp */; };
 		7C832E7F154A4E0200CF488D /* Quake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C832E7D154A4E0200CF488D /* Quake.cpp */; };
@@ -342,6 +346,8 @@
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
 		7C1C5CC614FB13D3002CE80B /* glitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glitter.png; sourceTree = "<group>"; };
+		7C206DC917403CBA00DA71E9 /* contour_tex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = contour_tex_frag.glsl; sourceTree = "<group>"; };
+		7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = contour_tex_vert.glsl; sourceTree = "<group>"; };
 		7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonTest.cpp; sourceTree = "<group>"; };
 		7C232C5D15283E7C00B671A5 /* SkeletonTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonTest.h; sourceTree = "<group>"; };
 		7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SplineCam.cpp; sourceTree = "<group>"; };
@@ -537,6 +543,10 @@
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
 		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
 		7C7BD60B160D5F5F00783008 /* nukes.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = nukes.csv; path = data/nukes.csv; sourceTree = "<group>"; };
+		7C7FBC76173C97C500C053F1 /* Contour.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Contour.cpp; sourceTree = "<group>"; };
+		7C7FBC77173C97C500C053F1 /* Contour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contour.h; sourceTree = "<group>"; };
+		7C7FBC79173C983500C053F1 /* contours.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = contours.cpp; sourceTree = "<group>"; };
+		7C7FBC7A173C983500C053F1 /* contours.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = contours.h; sourceTree = "<group>"; };
 		7C832E751547AD6700CF488D /* Tectonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tectonic.cpp; sourceTree = "<group>"; };
 		7C832E761547AD6700CF488D /* Tectonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tectonic.h; sourceTree = "<group>"; };
 		7C832E7A1547AFEC00CF488D /* QuakeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuakeData.h; sourceTree = "<group>"; };
@@ -732,6 +742,15 @@
 				7C1BA54015E9475E005BE669 /* cube.obj */,
 			);
 			path = models;
+			sourceTree = "<group>";
+		};
+		7C206DC817403CBA00DA71E9 /* contour */ = {
+			isa = PBXGroup;
+			children = (
+				7C206DC917403CBA00DA71E9 /* contour_tex_frag.glsl */,
+				7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */,
+			);
+			path = contour;
 			sourceTree = "<group>";
 		};
 		7C3738E414F7359B00B24851 /* MSACore */ = {
@@ -1195,6 +1214,7 @@
 				7CF3DF0315A559B400CC61D2 /* audiosignal */,
 				7C8F207414D79B4400AC2D64 /* binned */,
 				7C941F321589807A0099A0D3 /* catalog */,
+				7C7FBC75173C97C500C053F1 /* contour */,
 				7C3BB40615F5567900A4E384 /* corona */,
 				7C8F150315BB287300BAD08D /* flock */,
 				7C560DEB1506E22F000B91B0 /* graviton */,
@@ -1340,6 +1360,17 @@
 			name = interface;
 			sourceTree = "<group>";
 		};
+		7C7FBC75173C97C500C053F1 /* contour */ = {
+			isa = PBXGroup;
+			children = (
+				7C7FBC76173C97C500C053F1 /* Contour.cpp */,
+				7C7FBC77173C97C500C053F1 /* Contour.h */,
+				7C7FBC79173C983500C053F1 /* contours.cpp */,
+				7C7FBC7A173C983500C053F1 /* contours.h */,
+			);
+			path = contour;
+			sourceTree = "<group>";
+		};
 		7C832E741547AD6700CF488D /* tectonic */ = {
 			isa = PBXGroup;
 			children = (
@@ -1429,6 +1460,7 @@
 		7C865644148C2BCD000E00B6 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				7C206DC817403CBA00DA71E9 /* contour */,
 				7C438FA31702904F00BC7F54 /* terrain */,
 				7CAFEE60158C17F2005B338D /* data */,
 				7C702036153BC57F0057D4EC /* macos */,
@@ -2003,6 +2035,8 @@
 				7CEA366A1703D94D000EE9CB /* terrain_tex_vert.glsl in Resources */,
 				7CEA366B1703D94D000EE9CB /* terrain_vtf_frag.glsl in Resources */,
 				7CEA366C1703D94D000EE9CB /* terrain_vtf_vert.glsl in Resources */,
+				7C206DCB17403CBA00DA71E9 /* contour_tex_frag.glsl in Resources */,
+				7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2151,6 +2185,8 @@
 				7C8A43FC1706103800C02839 /* RDiffusion.cpp in Sources */,
 				7C8A43FF1706262D00C02839 /* TunnelCam.cpp in Sources */,
 				7C6E8175170742BE00CAFFC4 /* Tube.cpp in Sources */,
+				7C7FBC78173C97C500C053F1 /* Contour.cpp in Sources */,
+				7C7FBC7B173C983500C053F1 /* contours.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

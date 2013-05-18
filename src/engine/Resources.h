@@ -102,6 +102,10 @@
 #define RES_SHADER_VTF_FRAG		CINDER_RESOURCE( ../resources/terrain/, terrain_vtf_frag.glsl,	130, GLSL	)
 #define RES_SHADER_VTF_VERT		CINDER_RESOURCE( ../resources/terrain/, terrain_vtf_vert.glsl,	131, GLSL	)
 
+// contour
+#define RES_SHADER_CT_TEX_FRAG		CINDER_RESOURCE( ../resources/contour/, contour_tex_frag.glsl,	128, GLSL	)
+#define RES_SHADER_CT_TEX_VERT		CINDER_RESOURCE( ../resources/contour/, contour_tex_vert.glsl,	129, GLSL	)
+
 // objects
 #define RES_CUBE_OBJ		CINDER_RESOURCE( ../resources/, cube.obj, 128, DATA )
 

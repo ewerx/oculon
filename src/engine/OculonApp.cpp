@@ -39,6 +39,7 @@
 #include "Flock.h"
 #include "Corona.h"
 #include "Trails.h"
+#include "Contour.h"
 #include "Polyhedron.h"
 #include "Terrain.h"
 // test scenes
@@ -293,6 +294,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("trails") )     addScene( new Trails() );
     if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
     if( mConfig.getBool("terrain") )    addScene( new Terrain() );
+    if( mConfig.getBool("contour") )    addScene( new Contour() );
     
     if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
     if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
