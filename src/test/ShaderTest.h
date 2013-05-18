@@ -16,6 +16,7 @@
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
+#include "AudioInputHandler.h"
 
 #include "OscMessage.h"
 
@@ -33,6 +34,7 @@ public:
     //void reset();
     void update(double dt);
     void draw();
+    void drawDebug();
     bool handleKeyDown(const KeyEvent& keyEvent);
     //void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
 	void handleMouseDrag( const ci::app::MouseEvent& event );
@@ -43,8 +45,13 @@ protected:// from Scene
     //void setupDebugInterface();
     
 private:
+    void setupShaders();
     void updateBlur();
     void drawScene();
+    
+    void shaderPreDraw();
+    void drawShaderOutput();
+    void shaderPostDraw();
     
 private:
 
@@ -68,8 +75,36 @@ private:
     
     MotionBlurRenderer  mMotionBlurRenderer;
     
+    std::vector<ci::gl::GlslProg> mShaders;
+    
+    // shaders
+#define SHADERS_TUPLE \
+SHADERS_ENTRY( "Simplicity", SHADER_SIMPLICITY ) \
+SHADERS_ENTRY( "Menger", SHADER_MENGER ) \
+//end tuple
+    
+    enum eShaderType
+    {
+#define SHADERS_ENTRY( nam, enm ) \
+enm,
+        SHADERS_TUPLE
+#undef  SHADERS_ENTRY
+        
+        SHADERS_COUNT
+    };
+    eShaderType   mShaderType;
+    
     //TEST
     int                 mRadius;
+    
+    // audio
+    AudioInputHandler   mAudioInputHandler;
+    
+    // SIMPLICITY
+    ci::Vec3f         mColorScale;
+    int               mRedPower;
+    int               mGreenPower;
+    int               mBluePower;
 };
 
 #endif // __MOVIETEST_H__

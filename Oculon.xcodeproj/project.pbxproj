@@ -262,6 +262,11 @@
 		7CAFEE64158C1808005B338D /* usgs_earthquakes_30days.xhtml in Resources */ = {isa = PBXBuildFile; fileRef = 7CAFEE62158C1808005B338D /* usgs_earthquakes_30days.xhtml */; };
 		7CB17ED115310B550074572D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB17ED015310B550074572D /* Interface.cpp */; };
 		7CB39D33156DCDD10093A8ED /* Sol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB39D31156DCDD10093A8ED /* Sol.cpp */; };
+		7CB585461747287E00A456C3 /* simplicity_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7CB585451747287E00A456C3 /* simplicity_frag.glsl */; };
+		7CB5854A17472C5B00A456C3 /* AudioInputHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5854817472C5B00A456C3 /* AudioInputHandler.cpp */; };
+		7CB5854B17473EBA00A456C3 /* simplicity_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CB585451747287E00A456C3 /* simplicity_frag.glsl */; };
+		7CB5854D174743EA00A456C3 /* menger_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5854C174743EA00A456C3 /* menger_frag.glsl */; };
+		7CB5854E1747443F00A456C3 /* menger_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CB5854C174743EA00A456C3 /* menger_frag.glsl */; };
 		7CBB8659169BCA93007D8F49 /* redgreenyellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB8658169BCA93007D8F49 /* redgreenyellow.png */; };
 		7CBB865E169BCA9E007D8F49 /* polyhedron_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */; };
 		7CBB865F169BCA9E007D8F49 /* polyhedron_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */; };
@@ -671,6 +676,10 @@
 		7CB17ED015310B550074572D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7CB39D31156DCDD10093A8ED /* Sol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sol.cpp; sourceTree = "<group>"; };
 		7CB39D32156DCDD10093A8ED /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
+		7CB585451747287E00A456C3 /* simplicity_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simplicity_frag.glsl; sourceTree = "<group>"; };
+		7CB5854817472C5B00A456C3 /* AudioInputHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioInputHandler.cpp; sourceTree = "<group>"; };
+		7CB5854917472C5B00A456C3 /* AudioInputHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioInputHandler.h; sourceTree = "<group>"; };
+		7CB5854C174743EA00A456C3 /* menger_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = menger_frag.glsl; sourceTree = "<group>"; };
 		7CBB8658169BCA93007D8F49 /* redgreenyellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redgreenyellow.png; sourceTree = "<group>"; };
 		7CBB865C169BCA9E007D8F49 /* polyhedron_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyhedron_frag.glsl; sourceTree = "<group>"; };
 		7CBB865D169BCA9E007D8F49 /* polyhedron_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyhedron_vert.glsl; sourceTree = "<group>"; };
@@ -1287,6 +1296,7 @@
 		7C74556B148C259C009C0356 /* scene */ = {
 			isa = PBXGroup;
 			children = (
+				7CB5854717472B9A00A456C3 /* helpers */,
 				7C74556C148C259C009C0356 /* Behavior.cpp */,
 				7C74556D148C259C009C0356 /* Behavior.h */,
 				7C74556E148C259C009C0356 /* Entity.cpp */,
@@ -1537,6 +1547,8 @@
 				7C96934514970AF800C0E1E6 /* emitter_frag.glsl */,
 				7C865648148C2BCD000E00B6 /* passthru.vsh */,
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
+				7CB585451747287E00A456C3 /* simplicity_frag.glsl */,
+				7CB5854C174743EA00A456C3 /* menger_frag.glsl */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -1745,6 +1757,15 @@
 			path = sol;
 			sourceTree = "<group>";
 		};
+		7CB5854717472B9A00A456C3 /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				7CB5854817472C5B00A456C3 /* AudioInputHandler.cpp */,
+				7CB5854917472C5B00A456C3 /* AudioInputHandler.h */,
+			);
+			name = helpers;
+			sourceTree = "<group>";
+		};
 		7CBB865B169BCA9E007D8F49 /* polyhedron */ = {
 			isa = PBXGroup;
 			children = (
@@ -1937,6 +1958,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CB5854E1747443F00A456C3 /* menger_frag.glsl in Resources */,
+				7CB5854B17473EBA00A456C3 /* simplicity_frag.glsl in Resources */,
 				7C3BB45415F56D7800A4E384 /* corona.frag in Resources */,
 				7C3BB45515F56D7800A4E384 /* dustCorona.frag in Resources */,
 				7C3BB45615F56D7800A4E384 /* glowCorona.frag in Resources */,
@@ -2207,6 +2230,9 @@
 				7C7FBC7B173C983500C053F1 /* contours.cpp in Sources */,
 				7C206DC4173DF19300DA71E9 /* TextOrbit.cpp in Sources */,
 				7C206DC7173DF1FA00DA71E9 /* Character.cpp in Sources */,
+				7CB585461747287E00A456C3 /* simplicity_frag.glsl in Sources */,
+				7CB5854A17472C5B00A456C3 /* AudioInputHandler.cpp in Sources */,
+				7CB5854D174743EA00A456C3 /* menger_frag.glsl in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

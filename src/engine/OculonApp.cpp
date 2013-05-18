@@ -307,7 +307,7 @@ void OculonApp::setupScenes()
     
     // Test Scenes
     //addScene( new MovieTest() );
-    //addScene( new ShaderTest() );
+    if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
     if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
     //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
