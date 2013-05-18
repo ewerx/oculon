@@ -17,7 +17,7 @@
 using namespace ci;
 using namespace mowa::sgui;
 
-/*static*/const char* const Scene::kIniLocation = "/Volumes/cruxpod/oculondata/params/";
+/*static*/const char* const Scene::kIniLocation = "~/Documents/oculon/params/";
 /*static*/const char* const Scene::kIniExt = ".ini";
 /*static*/const int         Scene::kIniDigits = 2;
 

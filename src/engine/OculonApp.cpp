@@ -59,7 +59,9 @@ using namespace boost;
 
 void OculonApp::prepareSettings( Settings *settings )
 {
-    mConfig.loadXML( loadFile("/Volumes/cruxpod/oculondata/params/settings.xml") );
+    
+    fs::path settingsPath = expandPath( fs::path("~/Documents/oculon/settings.xml") );
+    mConfig.loadXML( loadFile(settingsPath) );
     
 	settings->setWindowSize( mConfig.getInt("window_width"), mConfig.getInt("window_height") );
 	settings->setFrameRate( 60.0f );
@@ -1120,7 +1122,7 @@ bool OculonApp::onFrameCaptureToggle()
     if( mIsCapturingFrames )
     {
         mFrameCaptureCount = 0;
-        fs::path outputPath = Utils::getUniquePath("/Volumes/cruxpod/oculondata/capture/oculon_capture");
+        fs::path outputPath = Utils::getUniquePath("~/Documents/oculon/capture/oculon_capture");
         mFrameCapturePath = outputPath.string();
         if( fs::create_directory(outputPath) )
         {

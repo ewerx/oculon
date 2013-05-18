@@ -77,7 +77,7 @@ Eclipse::~Eclipse()
 void Eclipse::setup()
 {
     mShowTestBackground = false;
-    mTestBackground = ci::loadImage( ci::loadFile( "/Users/ehsan/Downloads/eclipse_mapping_pattern.jpg" ) );
+    //mTestBackground = ci::loadImage( ci::loadFile( "/Users/ehsan/Downloads/eclipse_mapping_pattern.jpg" ) );
     
     mMode = MODE_SNAKES;
     mInverse = false;
