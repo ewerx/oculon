@@ -45,6 +45,8 @@
 		7C1C5CC914FC618B002CE80B /* blur2_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */; };
 		7C1C5CCA14FC61A8002CE80B /* emitter_vert.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934414970AF800C0E1E6 /* emitter_vert.glsl */; };
 		7C1C5CCB14FC61A8002CE80B /* emitter_frag.glsl in Sources */ = {isa = PBXBuildFile; fileRef = 7C96934514970AF800C0E1E6 /* emitter_frag.glsl */; };
+		7C206DC4173DF19300DA71E9 /* TextOrbit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C206DC2173DF19300DA71E9 /* TextOrbit.cpp */; };
+		7C206DC7173DF1FA00DA71E9 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C206DC5173DF1FA00DA71E9 /* Character.cpp */; };
 		7C206DCB17403CBA00DA71E9 /* contour_tex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DC917403CBA00DA71E9 /* contour_tex_frag.glsl */; };
 		7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */; };
 		7C2F90CD1690D3BB0062D6E0 /* SplineCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */; };
@@ -346,6 +348,10 @@
 		7C1C5CC214FB13B7002CE80B /* blur2_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_frag.glsl; sourceTree = "<group>"; };
 		7C1C5CC314FB13B7002CE80B /* blur2_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blur2_vert.glsl; sourceTree = "<group>"; };
 		7C1C5CC614FB13D3002CE80B /* glitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glitter.png; sourceTree = "<group>"; };
+		7C206DC2173DF19300DA71E9 /* TextOrbit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextOrbit.cpp; sourceTree = "<group>"; };
+		7C206DC3173DF19300DA71E9 /* TextOrbit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextOrbit.h; sourceTree = "<group>"; };
+		7C206DC5173DF1FA00DA71E9 /* Character.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
+		7C206DC6173DF1FA00DA71E9 /* Character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = "<group>"; };
 		7C206DC917403CBA00DA71E9 /* contour_tex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = contour_tex_frag.glsl; sourceTree = "<group>"; };
 		7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = contour_tex_vert.glsl; sourceTree = "<group>"; };
 		7C232C5C15283E7C00B671A5 /* SkeletonTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonTest.cpp; sourceTree = "<group>"; };
@@ -742,6 +748,17 @@
 				7C1BA54015E9475E005BE669 /* cube.obj */,
 			);
 			path = models;
+			sourceTree = "<group>";
+		};
+		7C206DC1173DF19300DA71E9 /* textorbit */ = {
+			isa = PBXGroup;
+			children = (
+				7C206DC5173DF1FA00DA71E9 /* Character.cpp */,
+				7C206DC6173DF1FA00DA71E9 /* Character.h */,
+				7C206DC2173DF19300DA71E9 /* TextOrbit.cpp */,
+				7C206DC3173DF19300DA71E9 /* TextOrbit.h */,
+			);
+			path = textorbit;
 			sourceTree = "<group>";
 		};
 		7C206DC817403CBA00DA71E9 /* contour */ = {
@@ -1222,6 +1239,7 @@
 				7C74557B148C259C009C0356 /* orbiter */,
 				7C6CB485169926250096EF7B /* polyhedron */,
 				7C9693401496FFC400C0E1E6 /* pulsar */,
+				7C206DC1173DF19300DA71E9 /* textorbit */,
 				7CB39D30156DCDD10093A8ED /* sol */,
 				7C832E741547AD6700CF488D /* tectonic */,
 				7C8471601701243200B2F604 /* terrain */,
@@ -2187,6 +2205,8 @@
 				7C6E8175170742BE00CAFFC4 /* Tube.cpp in Sources */,
 				7C7FBC78173C97C500C053F1 /* Contour.cpp in Sources */,
 				7C7FBC7B173C983500C053F1 /* contours.cpp in Sources */,
+				7C206DC4173DF19300DA71E9 /* TextOrbit.cpp in Sources */,
+				7C206DC7173DF1FA00DA71E9 /* Character.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
