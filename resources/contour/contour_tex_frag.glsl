@@ -147,11 +147,12 @@ void main( void )
     float levels = 64.0;
     float band = floor(levels * n);
     float red = band / levels;
-    if (((levels * n) - band) < 0.05) {
-        color.x = 0.0;
-        color.y = 0.0;
-        color.z = 0.0;
-    } else {
+//    if (((levels * n) - band) < 0.05) {
+//        color.x = 0.0;
+//        color.y = 0.0;
+//        color.z = 0.0;
+//    } else {
+    {
         color.x = red;
         color.y = red;
         color.z = red;

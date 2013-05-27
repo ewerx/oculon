@@ -28,6 +28,8 @@ public:
     
     void setup(const ci::Vec2i& windowSize, tDrawCallback drawCallback);
     void resize(const ci::Vec2i& windowSize);
+    void update();
+    void preDraw();
     void draw();
     
 private:

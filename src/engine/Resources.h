@@ -28,6 +28,7 @@
 // shader test
 #define RES_SHADER_SIMPLICITY_FRAG	CINDER_RESOURCE( ../resources/shaders/, simplicity_frag.glsl, 134, GLSL )
 #define RES_SHADER_MENGER_FRAG	CINDER_RESOURCE( ../resources/shaders/, menger_frag.glsl, 134, GLSL )
+#define RES_SHADER_PIXELATE_FRAG	CINDER_RESOURCE( ../resources/shaders/, pixelate_frag.glsl, 134, GLSL )
 
 // tectonic
 #define RES_EARTH_FRAG		CINDER_RESOURCE( ../resources/shaders/, earth_frag.glsl, 128, GLSL )

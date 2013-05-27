@@ -40,6 +40,7 @@
 #include "Corona.h"
 #include "Trails.h"
 #include "Contour.h"
+#include "Grid.h"
 #include "TextOrbit.h"
 #include "Polyhedron.h"
 #include "Terrain.h"
@@ -88,7 +89,8 @@ void OculonApp::prepareSettings( Settings *settings )
         mOutputMode = (eOutputMode)outputMode;
     }
     
-    mEnableOscServer    = true;
+    mEnableMidi         = mConfig.getBool("midi_enabled");
+    mEnableOscServer    = mConfig.getBool("osc_enabled");
     mEnableKinect       = mConfig.getBool("kinect_enabled");
     mEnableMindWave     = mConfig.getBool("mindwave_enabled");;
 }
@@ -298,6 +300,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
     if( mConfig.getBool("terrain") )    addScene( new Terrain() );
     if( mConfig.getBool("contour") )    addScene( new Contour() );
+    if( mConfig.getBool("grid") )       addScene( new Grid() );
     if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
     
     if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
@@ -809,6 +812,10 @@ void OculonApp::drawToFbo( gl::Fbo& fbo )
 
 void OculonApp::drawFromFbo( gl::Fbo& fbo )
 {
+    if (!mDrawToScreen)
+    {
+        return;
+    }
     //gl::enableDepthRead();
     //gl::enableDepthWrite();
     //gl::disableAlphaBlending();
@@ -816,12 +823,15 @@ void OculonApp::drawFromFbo( gl::Fbo& fbo )
     // draw the captured texture back to screen
     float width = getWindowWidth();
     float height = getWindowHeight();
+
     gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
-    gl::setMatricesWindow( Vec2i( width, height ) );
+    gl::setMatricesWindow( getWindowSize() );
+    
+    width = math<float>::min(getWindowWidth(), fbo.getWidth());
+    height = math<float>::min(getWindowHeight(), fbo.getHeight());
     
     // flip
-    gl::draw( fbo.getTexture(), Rectf( 0, height, width, 0 ) );
-
+    gl::draw( fbo.getTexture(), Rectf( 0, getWindowHeight(), width, getWindowHeight() - height ) );
 }
 
 void OculonApp::renderScenes()

@@ -107,6 +107,11 @@ void AudioSignal::update(double dt)
             ss->update(dt);
         }
     }
+    
+    if( mUseMotionBlur )
+    {
+        mMotionBlurRenderer.preDraw();
+    }
 }
 
 void AudioSignal::draw()

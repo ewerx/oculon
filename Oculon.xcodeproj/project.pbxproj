@@ -109,6 +109,7 @@
 		7C438FA71702904F00BC7F54 /* terrain_shader_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C438FA41702904F00BC7F54 /* terrain_shader_frag.glsl */; };
 		7C438FA81702904F00BC7F54 /* terrain_shader_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C438FA51702904F00BC7F54 /* terrain_shader_vert.glsl */; };
 		7C438FA91702904F00BC7F54 /* terrain_texture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C438FA61702904F00BC7F54 /* terrain_texture.jpg */; };
+		7C4752F517528B25005AE8A5 /* pixelate_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4752F417528B25005AE8A5 /* pixelate_frag.glsl */; };
 		7C48581F16062A2C008895F7 /* SubScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C48581D16062A2C008895F7 /* SubScene.cpp */; };
 		7C4A9A33168E3C3D00CE6F9D /* Trails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4A9A31168E3C3D00CE6F9D /* Trails.cpp */; };
 		7C52E11F14CCFCA6008507D3 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C52E11B14CCFCA6008507D3 /* OscBundle.cpp */; };
@@ -180,6 +181,7 @@
 		7C86564D148C2BCD000E00B6 /* shader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 7C865649148C2BCD000E00B6 /* shader.fsh */; };
 		7C86564E148C2BCD000E00B6 /* ThinkGear.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */; };
 		7C8663C0149536F0004C9558 /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8663BF149536F0004C9558 /* particle.png */; };
+		7C8927FD175194DE00683339 /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8927FB175194DE00683339 /* Grid.cpp */; };
 		7C8A43FC1706103800C02839 /* RDiffusion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8A43FB1706103800C02839 /* RDiffusion.cpp */; };
 		7C8A43FF1706262D00C02839 /* TunnelCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8A43FD1706262D00C02839 /* TunnelCam.cpp */; };
 		7C8BE8CE158515D1003B36DE /* solmask.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C8BE8CD158515D1003B36DE /* solmask.png */; };
@@ -445,6 +447,7 @@
 		7C438FA41702904F00BC7F54 /* terrain_shader_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_shader_frag.glsl; sourceTree = "<group>"; };
 		7C438FA51702904F00BC7F54 /* terrain_shader_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terrain_shader_vert.glsl; sourceTree = "<group>"; };
 		7C438FA61702904F00BC7F54 /* terrain_texture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = terrain_texture.jpg; sourceTree = "<group>"; };
+		7C4752F417528B25005AE8A5 /* pixelate_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pixelate_frag.glsl; sourceTree = "<group>"; };
 		7C48581D16062A2C008895F7 /* SubScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubScene.cpp; sourceTree = "<group>"; };
 		7C48581E16062A2C008895F7 /* SubScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubScene.h; sourceTree = "<group>"; };
 		7C4A9A31168E3C3D00CE6F9D /* Trails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trails.cpp; sourceTree = "<group>"; };
@@ -582,6 +585,8 @@
 		7C865649148C2BCD000E00B6 /* shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader.fsh; sourceTree = "<group>"; };
 		7C86564A148C2BCD000E00B6 /* ThinkGear.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ThinkGear.bundle; sourceTree = "<group>"; };
 		7C8663BF149536F0004C9558 /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
+		7C8927FB175194DE00683339 /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
+		7C8927FC175194DE00683339 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
 		7C8A43FA1706103800C02839 /* RDiffusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDiffusion.h; sourceTree = "<group>"; };
 		7C8A43FB1706103800C02839 /* RDiffusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RDiffusion.cpp; sourceTree = "<group>"; };
 		7C8A43FD1706262D00C02839 /* TunnelCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TunnelCam.cpp; sourceTree = "<group>"; };
@@ -1244,6 +1249,7 @@
 				7C3BB40615F5567900A4E384 /* corona */,
 				7C8F150315BB287300BAD08D /* flock */,
 				7C560DEB1506E22F000B91B0 /* graviton */,
+				7C8927FA175194DE00683339 /* grid */,
 				7C745578148C259C009C0356 /* magneto */,
 				7C74557B148C259C009C0356 /* orbiter */,
 				7C6CB485169926250096EF7B /* polyhedron */,
@@ -1549,8 +1555,18 @@
 				7C865649148C2BCD000E00B6 /* shader.fsh */,
 				7CB585451747287E00A456C3 /* simplicity_frag.glsl */,
 				7CB5854C174743EA00A456C3 /* menger_frag.glsl */,
+				7C4752F417528B25005AE8A5 /* pixelate_frag.glsl */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		7C8927FA175194DE00683339 /* grid */ = {
+			isa = PBXGroup;
+			children = (
+				7C8927FB175194DE00683339 /* Grid.cpp */,
+				7C8927FC175194DE00683339 /* Grid.h */,
+			);
+			path = grid;
 			sourceTree = "<group>";
 		};
 		7C8BE8CC158515D1003B36DE /* sol */ = {
@@ -2078,6 +2094,7 @@
 				7CEA366C1703D94D000EE9CB /* terrain_vtf_vert.glsl in Resources */,
 				7C206DCB17403CBA00DA71E9 /* contour_tex_frag.glsl in Resources */,
 				7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */,
+				7C4752F517528B25005AE8A5 /* pixelate_frag.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2233,6 +2250,7 @@
 				7CB585461747287E00A456C3 /* simplicity_frag.glsl in Sources */,
 				7CB5854A17472C5B00A456C3 /* AudioInputHandler.cpp in Sources */,
 				7CB5854D174743EA00A456C3 /* menger_frag.glsl in Sources */,
+				7C8927FD175194DE00683339 /* Grid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
