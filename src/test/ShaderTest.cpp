@@ -121,6 +121,18 @@ void ShaderTest::setupShaders()
         mGreenPower = 1;
         mBluePower = 0;
         mColorScale = Vec3f(1.8f, 1.4f, 1.0f);
+        mStrengthFactor = 0.03f;
+        mStrengthMin = 7.0f;
+        mStrengthConst = 4373.11f;
+        mIterations = 32;
+        mAccumPower = 2.3f;
+        mMagnitude = Vec3f(-0.5f, -0.4f, -1.5f);
+        mFieldScale = 5.0f;
+        mFieldSubtract = 0.7f;
+        mTimeScale = 1.0f;
+        mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
+        mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
+        mUVScale = 0.25f;
         
 	}
 	catch( gl::GlslProgCompileExc &exc )
@@ -171,7 +183,37 @@ void ShaderTest::setupInterface()
                          .minValue(0)
                          .maxValue(2)
                          .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Iterations", &mIterations )
+                         .minValue(0)
+                         .maxValue(64));
+    mInterface->addParam(CreateFloatParam( "mStrengthFactor", &mStrengthFactor )
+                         .minValue(0.0f)
+                         .maxValue(1.0f));
+    mInterface->addParam(CreateFloatParam( "mStrengthMin", &mStrengthMin )
+                         .minValue(0.0f)
+                         .maxValue(20.0f));
+    mInterface->addParam(CreateFloatParam( "mStrengthConst", &mStrengthConst )
+                         .minValue(4000.0f)
+                         .maxValue(5000.0f));
+    mInterface->addParam(CreateFloatParam( "mAccumPower", &mAccumPower )
+                         .minValue(1.0f)
+                         .maxValue(4.0f));
+    mInterface->addParam(CreateFloatParam( "mFieldScale", &mFieldScale )
+                         .minValue(1.0f)
+                         .maxValue(10.0f));
+    mInterface->addParam(CreateFloatParam( "mFieldSubtract", &mFieldSubtract )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    mInterface->addParam(CreateFloatParam( "mTimeScale", &mTimeScale )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    mInterface->addParam(CreateVec3fParam("magnitude", &mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
     mInterface->addParam(CreateVec3fParam("color_scale", &mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateVec3fParam("mPanSpeed", &mPanSpeed, Vec3f::zero(), Vec3f(0.1f,0.1f,0.1f)));
+    mInterface->addParam(CreateVec3fParam("mUVOffset", &mUVOffset, Vec3f(-2.0f,-2.0f,-2.0f), Vec3f(2.0f,2.0f,2.0f)));
+    mInterface->addParam(CreateFloatParam( "mUVScale", &mUVScale )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
 
     mRadius = 100.0f;
 }
@@ -401,6 +443,21 @@ void ShaderTest::shaderPreDraw()
             shader.uniform( "rPower", mRedPower );
             shader.uniform( "gPower", mGreenPower );
             shader.uniform( "bPower", mBluePower );
+            shader.uniform( "strengthFactor", mStrengthFactor );
+            shader.uniform( "strengthMin", mStrengthMin );
+            shader.uniform( "strengthConst", mStrengthConst );
+            shader.uniform( "iterations", mIterations );
+            shader.uniform( "accumPower", mAccumPower );
+            shader.uniform( "magnitude", mMagnitude );
+            shader.uniform( "fieldScale", mFieldScale );
+            shader.uniform( "fieldSubtract", mFieldSubtract );
+            shader.uniform( "timeScale", mTimeScale );
+            shader.uniform( "panSpeed", mPanSpeed );
+            shader.uniform( "uvOffset", mUVOffset );
+            shader.uniform( "uvScale", mUVScale );
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            break;
         case SHADER_MENGER:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );

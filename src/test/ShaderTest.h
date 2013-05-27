@@ -101,10 +101,23 @@ enm,
     AudioInputHandler   mAudioInputHandler;
     
     // SIMPLICITY
-    ci::Vec3f         mColorScale;
-    int               mRedPower;
-    int               mGreenPower;
-    int               mBluePower;
+    ci::Vec3f           mColorScale;
+    int                 mRedPower;
+    int                 mGreenPower;
+    int                 mBluePower;
+    float               mStrengthFactor;
+    float               mStrengthMin;
+    float               mStrengthConst;
+    int                 mIterations;
+    float               mAccumPower;
+    ci::Vec3f           mMagnitude;
+    float               mFieldScale;
+    float               mFieldSubtract;
+    float               mTimeScale;
+    ci::Vec3f           mPanSpeed;
+    ci::Vec3f           mUVOffset;
+    float               mUVScale;
+    
 };
 
 #endif // __MOVIETEST_H__
