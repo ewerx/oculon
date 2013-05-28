@@ -60,6 +60,8 @@ private:
     void drawFromDynamicTexture();
     void drawPixels();
     
+    bool setColorScheme();
+    
 private:
     ci::gl::Texture             mTexture;
     
@@ -107,6 +109,31 @@ enm,
         GRIDMODE_COUNT
     };
     eGridMode   mGridMode;
+    
+    // colors
+#define COLORSCHEME_TUPLE \
+COLORSCHEME_ENTRY( "RedFire", COLORSCHEME_REDFIRE ) \
+COLORSCHEME_ENTRY( "BlueFire", COLORSCHEME_BLUEFIRE ) \
+COLORSCHEME_ENTRY( "Ice", COLORSCHEME_ICE ) \
+COLORSCHEME_ENTRY( "Green", COLORSCHEME_GREEN ) \
+//end tuple
+    
+    enum eColorScheme
+    {
+#define COLORSCHEME_ENTRY( nam, enm ) \
+enm,
+        COLORSCHEME_TUPLE
+#undef  COLORSCHEME_ENTRY
+        
+        COLORSCHEME_COUNT
+    };
+    eColorScheme    mColorScheme;
+    
+    ci::ColorAf     mColor1;
+    ci::ColorAf     mColor2;
+    ci::ColorAf     mColor3;
 
+    float           mLowPassSplit;
+    float           mHighPassSplit;
 };
 

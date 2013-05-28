@@ -39,6 +39,11 @@ void Grid::setup()
     // params
     mGridMode               = GRIDMODE_SHADER;
     mMotionBlurEnabled      = false;
+    
+    mColorScheme            = COLORSCHEME_REDFIRE;
+    setColorScheme();
+    mLowPassSplit           = 0.1f;
+    mHighPassSplit          = 0.5f;
 
 //	// load texture
 	try { mTexture = gl::Texture( loadImage( loadResource("earthDiffuse.png") ) ); }
@@ -117,7 +122,22 @@ modeNames.push_back(nam);
     mInterface->addParam(CreateBoolParam( "motion_blur", &mMotionBlurEnabled )
                          .oscReceiver(getName()));
     
+    mInterface->gui()->addColumn();
+    vector<string> colorSchemeNames;
+#define COLORSCHEME_ENTRY( nam, enm ) \
+colorSchemeNames.push_back(nam);
+    COLORSCHEME_TUPLE
+#undef  COLORSCHEME_ENTRY
+    mInterface->addEnum(CreateEnumParam( "Color Scheme", (int*)(&mColorScheme) )
+                        .maxValue(COLORSCHEME_COUNT)
+                        .oscReceiver(getName(), "colorscheme")
+                        .isVertical(), colorSchemeNames)->registerCallback( this, &Grid::setColorScheme );
+    mInterface->addParam(CreateFloatParam( "lowpass", &mLowPassSplit )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "highpass", &mHighPassSplit )
+                         .oscReceiver(getName()));
     
+    mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Perlin Shader");
     mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
                          .maxValue(3.0f)
@@ -363,12 +383,15 @@ void Grid::drawPixels()
             float value = fftValue.mValue;
             float freq = (float)(fftValue.mBandIndex) / (float)(mApp->getAudioInput().getFft()->getBinSize());
             //mApp->console() << fftValue.mBandIndex << "\t(" << freq << ")\t" << value << std::endl;
-            if (freq < 0.1f) {
-                gl::color( 1.f/freq, freq * freq, freq * freq, value );
-            } else if (freq < 0.5f) {
-                gl::color( 1.f/freq, 1.f/freq, freq * freq, value );
+            if (freq < mLowPassSplit) {
+                float m = 1.0f - freq/mLowPassSplit;
+                gl::color( mColor1.r * m, mColor1.g * m, mColor1.b * m, value );
+            } else if (mHighPassSplit > mLowPassSplit && freq < mHighPassSplit) {
+                float m = freq/(mHighPassSplit-mLowPassSplit);
+                gl::color( mColor2.r * m, mColor2.g * m, mColor2.b * m, value );
             } else {
-                gl::color( freq * freq, freq * freq, 1.f/freq, value );
+                float m = 1.0f - (1.0f - freq)/mHighPassSplit;
+                gl::color( mColor3.r * m, mColor3.g * m, mColor3.b * m, value );
             }
             drawSolidRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
             
@@ -381,5 +404,31 @@ void Grid::drawPixels()
             ++index;
         }
         y += pixHeight;
+    }
+}
+
+#pragma mark -
+
+bool Grid::setColorScheme()
+{
+    switch (mColorScheme)
+    {
+        case COLORSCHEME_REDFIRE:
+            mColor1 = ColorAf( 0.92f, 0.0f, 0.227f, 1.0f );
+            mColor2 = ColorAf( 1.0f, 0.372f, 0.0f, 1.0f );
+            mColor3 = ColorAf( 1.0f, 0.643f, 0.0f, 1.0f );
+            break;
+            
+        case COLORSCHEME_BLUEFIRE:
+            break;
+            
+        case COLORSCHEME_ICE:
+            break;
+            
+        case COLORSCHEME_GREEN:
+            break;
+            
+        default:
+            break;
     }
 }

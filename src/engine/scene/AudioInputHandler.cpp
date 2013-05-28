@@ -34,7 +34,7 @@ void AudioInputHandler::setup(const Scene *scene, bool fboEnabled)
     
     // FALLOFF
     mFalloffTime        = 0.32f;
-    mFalloffMode        = FALLOFF_LINEAR;
+    mFalloffMode        = FALLOFF_OUTQUAD;
     mFalloffByFreq      = true;
 
     // FBO
