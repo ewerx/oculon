@@ -35,10 +35,10 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    //bool handleKeyDown(const KeyEvent& keyEvent);
     //void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
-	void handleMouseDrag( const ci::app::MouseEvent& event );
-    void handleOscMessage( const ci::osc::Message& message );
+	//void handleMouseDrag( const ci::app::MouseEvent& event );
+    //void handleOscMessage( const ci::osc::Message& message );
     
 protected:// from Scene
     void setupInterface();
@@ -46,7 +46,6 @@ protected:// from Scene
     
 private:
     void setupShaders();
-    void updateBlur();
     void drawScene();
     
     void shaderPreDraw();
@@ -55,22 +54,7 @@ private:
     
 private:
 
-    enum 
-    { 
-        FBO_COUNT = 4,
-    };
-    
-    ci::gl::Fbo         mFbo[FBO_COUNT];
-    int                 mFboIndex;
-    
-    ci::gl::GlslProg    mShader;
-    
-    Vec2f               mPos;
-    Vec2f               mVel;
-    ColorA              mColor;
-
-    bool                mUseFbo;
-    float               mBlurAmount;
+    bool                mMotionBlur;
     gl::Texture         mTexture;
     
     MotionBlurRenderer  mMotionBlurRenderer;

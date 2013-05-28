@@ -16,7 +16,7 @@
 #include "KissFFT.h"
 #include "Interface.h"
 
-#define KISS_DEFAULT_DATASIZE 256
+#define KISS_DEFAULT_DATASIZE 512
 
 class AudioInput
 {

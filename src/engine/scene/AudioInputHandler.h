@@ -16,6 +16,8 @@
 
 #include <vector>
 
+class Interface;
+class Scene;
 
 class AudioInputHandler
 {
@@ -23,23 +25,48 @@ public:
     AudioInputHandler();
     virtual ~AudioInputHandler();
     
-    void setup();
-//    void setupInterface();
+    void setup(const Scene *scene, bool fboEnabled =false);
+    void setupInterface( Interface *interface );
     void update(double dt, AudioInput& audioInput);
     
     void drawDebug(const Vec2f& size);
     
-    ci::gl::Texture getTexture() { return mAudioFbo.getTexture(); }
+    // accessors
+    ci::gl::Texture getTexture()
+    {
+        if (mAudioFboEnabled) return mAudioFbo.getTexture();
+        else return ci::gl::Texture();
+    }
     ci::gl::Fbo& getFbo() { return mAudioFbo; }
+    
+    struct tFftValue
+    {
+        int32_t mBandIndex;
+        bool mFalling;
+        ci::Anim<float> mValue;
+        
+        tFftValue( int32_t index, float value ) : mBandIndex(index), mValue(value) { mFalling = false; }
+    };
+    typedef std::vector<tFftValue> FftValues;
+    FftValues::const_iterator   fftValuesBegin() const     { return mFftFalloff.begin(); }
+    FftValues::const_iterator   fftValuesEnd() const       { return mFftFalloff.end(); }
+    FftValues& getFftValues()                              { return mFftFalloff; }
     
 private:
     
 private:
     // Texture
+    bool                mAudioFboEnabled;
     int                 mAudioFboDim;
     ci::Vec2f           mAudioFboSize;
     ci::Area            mAudioFboBounds;
     ci::gl::Fbo         mAudioFbo;
+    
+    bool                mRandomSignal;
+    bool                mRandomEveryFrame;
+    int                 mRandomSeed;
+    bool                mLinearScale;
+
     
     // FALLOFF
 #define AUDIO_FALLOFF_MODE_TUPLE \
@@ -63,15 +90,16 @@ enm,
         FALLOFFMODE_COUNT
     };
     eFalloffMode        mFalloffMode;
+
+    FftValues           mFftFalloff;
+    float               mFalloffTime;
+    bool                mFalloffByFreq;
     
     typedef std::function<float (float)> tEaseFn;
     tEaseFn getFalloffFunction();
     tEaseFn getReverseFalloffFunction();
-
-    std::vector< ci::Anim<float> >    mFftFalloff;
-    float               mFalloffTime;
     
-    
+    const Scene*        mScene;
 };
 
 #endif /* defined(__Oculon__AudioInputHandler__) */

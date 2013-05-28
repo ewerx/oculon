@@ -10,7 +10,9 @@
 #pragma once
 
 
+#include "AudioInputHandler.h"
 #include "Scene.h"
+#include "MotionBlurRenderer.h"
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/gl/gl.h"
@@ -18,7 +20,13 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/Surface.h"
+#include "cinder/Timeline.h"
 #include <deque>
+
+
+// CONSTANTS
+#define GRID_WIDTH 35
+#define GRID_HEIGHT 9
 
 //
 // Grid
@@ -69,8 +77,36 @@ private:
     // pixelate
     ci::gl::GlslProg			mShaderPixelate;
     
+    // motion blur
+    MotionBlurRenderer          mMotionBlurRenderer;
+    bool                        mMotionBlurEnabled;
+    
+    // pixel control
+    struct tPixel
+    {
+        ci::Anim<ci::ColorAf>   mColor;
+    };
+    tPixel                      mPixels[GRID_WIDTH][GRID_HEIGHT];
+    
+    // audio response
+    AudioInputHandler           mAudioInputHandler;
+    
     // params
-    bool                        mDrawDynamicTexture;
+#define GRIDMODE_TUPLE \
+GRIDMODE_ENTRY( "Shader", GRIDMODE_SHADER ) \
+GRIDMODE_ENTRY( "Pixels", GRIDMODE_PIXELS ) \
+//end tuple
+    
+    enum eGridMode
+    {
+#define GRIDMODE_ENTRY( nam, enm ) \
+enm,
+        GRIDMODE_TUPLE
+#undef  GRIDMODE_ENTRY
+        
+        GRIDMODE_COUNT
+    };
+    eGridMode   mGridMode;
 
 };
 

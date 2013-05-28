@@ -14,19 +14,18 @@
 #include "cinder/Camera.h"
 #include "cinder/ImageIo.h"
 #include "cinder/app/AppBasic.h"
+#include "cinder/Rand.h"
 
 using namespace ci;
 using namespace ci::gl;
 using namespace ci::app;
 using namespace std;
 
-#define VTF_FBO_SIZE 640
-#define GRID_WIDTH 35
-#define GRID_HEIGHT 9
 
 Grid::Grid()
 : Scene("grid")
 {
+    mAudioInputHandler.setup(this, false);
 }
 
 Grid::~Grid()
@@ -38,18 +37,29 @@ void Grid::setup()
     Scene::setup();
     
     // params
-    mDrawDynamicTexture = true;
+    mGridMode               = GRIDMODE_SHADER;
+    mMotionBlurEnabled      = false;
 
-	// load texture
+//	// load texture
 	try { mTexture = gl::Texture( loadImage( loadResource("earthDiffuse.png") ) ); }
 	catch( const std::exception &e ) { console() << e.what() << std::endl; }
 
     setupDynamicTexture();
+    
+    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Grid::drawPixels, this ) );
+    
+    reset();
 }
 
 void Grid::reset()
 {
-    
+    for (int i=0; i < GRID_WIDTH; ++i)
+    {
+        for (int j=0; j < GRID_HEIGHT; ++j)
+        {
+            mPixels[i][j].mColor = ColorAf::black();
+        }
+    }
 }
 
 void Grid::setupDynamicTexture()
@@ -90,35 +100,25 @@ void Grid::setupDynamicTexture()
 	} catch ( gl::GlslProgCompileExc ex ) {
 		console() << "Unable to compile pixelate shader:\n" << ex.what() << "\n";
 	}
-    
-//    int levels = 32;
-//    int stripSize = levels * 2;
-//    mStripFbo = gl::Fbo( stripSize, 1, format );
-//    
-//    bool border = false;
-//    Surface32f stripSurface( mStripFbo.getTexture() );
-//	Surface32f::Iter it = stripSurface.getIter();
-//	while( it.line() ){
-//		while( it.pixel() ){
-//			it.r() = border ? 0.0f : 1.0f;
-//            it.g() = 0.0f;
-//            it.b() = 0.0f;
-//            it.a() = 1.0f;
-//            border = !border;
-//		}
-//	}
-//	
-//	gl::Texture stripTexture( stripSurface );
-//	mStripFbo.bindFramebuffer();
-//	gl::setMatricesWindow( mStripFbo.getSize(), false );
-//	gl::setViewport( mStripFbo.getBounds() );
-//	gl::draw( stripTexture );
-//	mStripFbo.unbindFramebuffer();
-//	mStripFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
 }
 
 void Grid::setupInterface()
 {
+    vector<string> modeNames;
+#define GRIDMODE_ENTRY( nam, enm ) \
+modeNames.push_back(nam);
+    GRIDMODE_TUPLE
+#undef  GRIDMODE_ENTRY
+    mInterface->addEnum(CreateEnumParam( "Mode", (int*)(&mGridMode) )
+                        .maxValue(GRIDMODE_COUNT)
+                        .oscReceiver(getName(), "gridmode")
+                        .isVertical(), modeNames);
+    
+    mInterface->addParam(CreateBoolParam( "motion_blur", &mMotionBlurEnabled )
+                         .oscReceiver(getName()));
+    
+    
+    mInterface->gui()->addLabel("Perlin Shader");
     mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
@@ -128,6 +128,8 @@ void Grid::setupInterface()
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
                          .oscReceiver(mName));
     
+    
+    mAudioInputHandler.setupInterface( mInterface );
 }
 
 void Grid::setupDebugInterface()
@@ -148,9 +150,19 @@ void Grid::update(double dt)
 	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
 	mTheta = time;//math<float>::sin( time );
     
-    if (mDrawDynamicTexture)
+    if (mGridMode == GRIDMODE_SHADER)
     {
         drawDynamicTexture(); // always draw to fbo from update, not draw
+    }
+    else
+    {
+        mAudioInputHandler.update(dt, mApp->getAudioInput());
+        
+        gl::enableAlphaBlending();
+        if (mMotionBlurEnabled)
+        {
+            mMotionBlurRenderer.preDraw();
+        }
     }
 }
 
@@ -164,13 +176,20 @@ void Grid::draw()
 	gl::pushMatrices();
     gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
 
-    if (mDrawDynamicTexture)
+    if (mGridMode == GRIDMODE_SHADER)
     {
         drawFromDynamicTexture();
     }
     else
     {
-        drawPixels();
+        if (mMotionBlurEnabled)
+        {
+            mMotionBlurRenderer.preDraw();
+        }
+        else
+        {
+            drawPixels();
+        }
     }
 
 	// restore camera and render states
@@ -275,50 +294,6 @@ void Grid::drawFromDynamicTexture()
     //mTexture.unbind();
 }
 
-void Grid::drawPixels()
-{
-    const float windowWidth = mApp->getViewportWidth();
-    const float windowHeight = mApp->getViewportHeight();
-    
-    float pixWidth = windowWidth / GRID_WIDTH;
-    float pixHeight = windowHeight / GRID_HEIGHT;
-    
-    gl::setMatricesWindow( mApp->getViewportSize() );
-    
-    Surface32f testSurface( mTexture );
-    
-    // grid
-    gl::disable( GL_TEXTURE_2D );
-    gl::color(1.0f,1.0f,1.0f,1.0f);
-    float x = 0;
-    float y = 0;
-    //int pixWidth = mApp->getWindowWidth() / GRID_WIDTH;
-    //int pixHeight = mApp->getWindowHeight() / GRID_HEIGHT;
-    float imageWidth = testSurface.getWidth();
-    float imageHeight = testSurface.getHeight();
-    float dx = pixWidth / imageWidth;
-    //float dy = pixHeight / imageHeight;
-    
-    bool drawGrid = false;
-    
-    for (int i = 0; i < GRID_HEIGHT; ++i)
-    {
-        x = 0;
-        for (int j = 0; j < GRID_WIDTH; ++j)
-        {
-            gl::color( testSurface.getPixel(Vec2i((x/windowWidth)*imageWidth,(y/mApp->getWindowHeight())*imageHeight)) );
-            drawSolidRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
-            if (drawGrid)
-            {
-                gl::color( Colorf::white() );
-                drawStrokedRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
-            }
-            x += pixWidth;
-        }
-        y += pixHeight;
-    }
-}
-
 void Grid::drawDebug()
 {
     gl::enable( GL_TEXTURE_2D );
@@ -343,6 +318,67 @@ void Grid::drawDebug()
         {
             drawStrokedRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
             x += pixWidth;
+        }
+        y += pixHeight;
+    }
+}
+
+#pragma mark - Pixels
+
+void Grid::drawPixels()
+{
+    
+    
+    // dimensions
+    const float windowWidth = mApp->getViewportWidth();
+    const float windowHeight = mApp->getViewportHeight();
+    
+    const float pixWidth = windowWidth / GRID_WIDTH;
+    const float pixHeight = windowHeight / GRID_HEIGHT;
+    
+    // draw grid
+    gl::setMatricesWindow( mApp->getViewportSize() );
+    gl::disable( GL_TEXTURE_2D );
+    gl::color( ColorAf::white() );
+    float x = 0;
+    float y = 0;
+    
+    int index = 0;
+    
+    AudioInputHandler::FftValues::const_iterator audioIt = mAudioInputHandler.fftValuesBegin();
+    //AudioInputHandler::FftValues& fftValues = mAudioInputHandler.getFftValues();
+    
+    for (int i = 0; i < GRID_HEIGHT; ++i)
+    {
+        x = 0;
+        for (int j = 0; j < GRID_WIDTH; ++j)
+        {
+            if (audioIt == mAudioInputHandler.fftValuesEnd())
+            {
+                audioIt = mAudioInputHandler.fftValuesBegin();
+            }
+            
+            const AudioInputHandler::tFftValue fftValue = (*audioIt);
+            
+            float value = fftValue.mValue;
+            float freq = (float)(fftValue.mBandIndex) / (float)(mApp->getAudioInput().getFft()->getBinSize());
+            //mApp->console() << fftValue.mBandIndex << "\t(" << freq << ")\t" << value << std::endl;
+            if (freq < 0.1f) {
+                gl::color( 1.f/freq, freq * freq, freq * freq, value );
+            } else if (freq < 0.5f) {
+                gl::color( 1.f/freq, 1.f/freq, freq * freq, value );
+            } else {
+                gl::color( freq * freq, freq * freq, 1.f/freq, value );
+            }
+            drawSolidRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
+            
+            // draw grid
+//            gl::color( Colorf::white() );
+//            drawStrokedRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
+            
+            x += pixWidth;
+            audioIt++;
+            ++index;
         }
         y += pixHeight;
     }

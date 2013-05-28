@@ -55,8 +55,8 @@ public:
     void publishToSyphon();
     ci::gl::Fbo& getFbo()           { return mFbo; }
     
-    OculonApp* getApp() const       { return mApp; }
-    const std::string& getName()    { return mName; }
+    OculonApp* getApp() const               { return mApp; }
+    const std::string& getName() const      { return mName; }
     
     Interface* getInterface()                       { return mInterface; }
     ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
@@ -65,6 +65,7 @@ public:
     bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
     bool isDebug() const            { return mIsDebug; }
+    float getGain() const           { return mGain; }
     
     void setRunning(bool running);
     void setVisible(bool visible);
