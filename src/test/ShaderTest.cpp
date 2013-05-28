@@ -35,8 +35,10 @@ void ShaderTest::setup()
     
     Vec2f viewportSize( mApp->getViewportWidth(), mApp->getViewportHeight() );
     mMotionBlurRenderer.setup( viewportSize, boost::bind( &ShaderTest::drawScene, this ) );
+    mGridRenderer.setup( viewportSize, boost::bind( &ShaderTest::drawScene, this ) );
     
     mMotionBlur = false;
+    mGrid       = false;
     
     setupShaders();
     
@@ -53,6 +55,13 @@ void ShaderTest::setupShaders()
     try
     {
         gl::GlslProg shader;
+        
+        // PERLIN NOISE
+        shader = gl::GlslProg( loadResource( RES_SHADER_CT_TEX_VERT ), loadResource( RES_SHADER_CT_TEX_FRAG ) );
+        mShaders.push_back(shader);
+        
+        mNoiseParams.mNoiseScale            = Vec3f(1.0f,1.0f,0.25f);
+        mNoiseParams.mDisplacementSpeed     = 1.0f;
         
         // SIMPLICITY
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_SIMPLICITY_FRAG ) );
@@ -93,10 +102,29 @@ void ShaderTest::setupShaders()
 
 void ShaderTest::setupInterface()
 {
+    vector<string> shaderNames;
+#define SHADERS_ENTRY( nam, enm ) \
+shaderNames.push_back(nam);
+    SHADERS_TUPLE
+#undef  SHADERS_ENTRY
+    mInterface->addEnum(CreateEnumParam( "Shader", (int*)(&mShaderType) )
+                        .maxValue(SHADERS_COUNT)
+                        .oscReceiver(getName(), "shader")
+                        .isVertical(), shaderNames);
     
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
+    mInterface->addParam(CreateBoolParam( "Grid Render", &mGrid ));
     
     mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Noise");
+    mInterface->addParam(CreateFloatParam( "noise/speed", &mNoiseParams.mDisplacementSpeed )
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec3fParam("noise/noise", &mNoiseParams.mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
+                         .oscReceiver(mName));
+    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Simplicity");
     mInterface->addParam(CreateIntParam( "Red Power", &mRedPower )
                          .minValue(0)
                          .maxValue(2)
@@ -136,10 +164,10 @@ void ShaderTest::setupInterface()
     mInterface->addParam(CreateVec3fParam("magnitude", &mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
     mInterface->addParam(CreateVec3fParam("color_scale", &mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
     mInterface->addParam(CreateVec3fParam("PanSpeed", &mPanSpeed, Vec3f::zero(), Vec3f(0.1f,0.1f,0.1f)));
-    mInterface->addParam(CreateVec3fParam("UVOffset", &mUVOffset, Vec3f(-2.0f,-2.0f,-2.0f), Vec3f(2.0f,2.0f,2.0f)));
+    mInterface->addParam(CreateVec3fParam("UVOffset", &mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
     mInterface->addParam(CreateFloatParam( "UVScale", &mUVScale )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
+                         .minValue(0.01f)
+                         .maxValue(4.0f));
     
     mAudioInputHandler.setupInterface(mInterface);
 
@@ -152,7 +180,12 @@ void ShaderTest::update(double dt)
     
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
-    if (mMotionBlur) {
+    if (mGrid)
+    {
+        mGridRenderer.preDraw();
+    }
+    else if (mMotionBlur)
+    {
         mMotionBlurRenderer.preDraw();
     }
 }
@@ -161,7 +194,11 @@ void ShaderTest::draw()
 {
     gl::pushMatrices();
 
-    if( mMotionBlur )
+    if( mGrid )
+    {
+        mGridRenderer.draw();
+    }
+    else if( mMotionBlur )
     {
         mMotionBlurRenderer.draw();
     }
@@ -195,11 +232,10 @@ void ShaderTest::shaderPreDraw()
     
     switch( mShaderType )
     {
-//        case SHADER_SIMPLICITY:
-//            shader.uniform( "iResolution", resolution );
-//            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
-//            shader.uniform( "iChannel0", 1 );
-//            break;
+        case SHADER_NOISE:
+            shader.uniform( "theta", (float)(mApp->getElapsedSeconds() * mNoiseParams.mDisplacementSpeed) );
+            shader.uniform( "scale", mNoiseParams.mNoiseScale );
+            break;
             
         case SHADER_SIMPLICITY:
             shader.uniform( "colorScale", mColorScale );

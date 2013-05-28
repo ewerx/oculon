@@ -1,5 +1,5 @@
 /*
- *  MotionBlurRenderer.cpp
+ *  GridRenderer.cpp
  *  Oculon
  *
  *  Created by Ehsan on 12-Apr-03.
@@ -8,21 +8,21 @@
  */
 
 #include "OculonApp.h"//TODO: fix this dependency
-#include "MotionBlurRenderer.h"
+#include "GridRenderer.h"
 #include "Resources.h"
 #include "cinder/Utilities.h"
 
 using namespace ci;
 
-MotionBlurRenderer::MotionBlurRenderer()
+GridRenderer::GridRenderer()
 {
 }
 
-MotionBlurRenderer::~MotionBlurRenderer()
+GridRenderer::~GridRenderer()
 {
 }
 
-void MotionBlurRenderer::setup(const Vec2i& windowSize, MotionBlurRenderer::tDrawCallback drawCallback)
+void GridRenderer::setup(const Vec2i& windowSize, GridRenderer::tDrawCallback drawCallback)
 {
     mDrawSceneCallback = drawCallback;
     mWindowSize = windowSize;
@@ -33,8 +33,8 @@ void MotionBlurRenderer::setup(const Vec2i& windowSize, MotionBlurRenderer::tDra
     const int fboHeight = windowSize.y;
     //format.enableMipmapping(false);
     format.enableDepthBuffer(false);
-	format.setCoverageSamples(8);
-	format.setSamples(4); // 4x AA
+	//format.setCoverageSamples(8);
+	//format.setSamples(4); // 4x AA
     
     mFboIndex = 0;
     
@@ -46,8 +46,6 @@ void MotionBlurRenderer::setup(const Vec2i& windowSize, MotionBlurRenderer::tDra
     // blur shader
     try 
     {
-		//mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
-        //mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_BLUR_FRAG ) );
         mShader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_MOTIONBLUR_FRAG ) );
 	}
 	catch( gl::GlslProgCompileExc &exc ) 
@@ -61,16 +59,14 @@ void MotionBlurRenderer::setup(const Vec2i& windowSize, MotionBlurRenderer::tDra
 	}
 }
 
-void MotionBlurRenderer::resize(const Vec2i& windowSize)
+void GridRenderer::resize(const Vec2i& windowSize)
 {
     
 }
 
-void MotionBlurRenderer::preDraw()
+void GridRenderer::preDraw()
 {
     Area viewport = gl::getViewport();
-    //gl::setMatricesWindow(getWindowSize());
-    //gl::setViewport(getWindowBounds());
     
     /****** DRAW SCENE ONTO FBO ******/
     
@@ -92,7 +88,7 @@ void MotionBlurRenderer::preDraw()
     gl::setViewport( viewport );
 }
 
-void MotionBlurRenderer::draw()
+void GridRenderer::draw()
 {
     Area viewport = gl::getViewport();
     /****** DRAW GLSL MOTION BLUR ******/
@@ -109,7 +105,19 @@ void MotionBlurRenderer::draw()
         mFbo[i].bindTexture(i);
         mShader.uniform("tex" + toString(i), i);
     }
-    mShader.uniform("pixelate", false);
+    mShader.uniform("pixelate", true);
+    
+    const float GRID_WIDTH = 35;
+    const float GRID_HEIGHT = 9;
+    const float windowWidth = mWindowSize.x;
+    const float windowHeight = mWindowSize.y;
+    const float pixWidth = windowWidth / GRID_WIDTH;
+    const float pixHeight = windowHeight / GRID_HEIGHT;
+    
+    mShader.uniform( "pixelWidth", pixWidth );
+    mShader.uniform( "pixelHeight", pixHeight );
+    mShader.uniform( "imageWidth", windowWidth );
+    mShader.uniform( "imageHeight", windowHeight );
     
     // Draw shader output
     gl::color(Color::white());

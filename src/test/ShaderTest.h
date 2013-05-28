@@ -16,6 +16,7 @@
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
+#include "GridRenderer.h"
 #include "AudioInputHandler.h"
 
 #include "OscMessage.h"
@@ -55,14 +56,17 @@ private:
 private:
 
     bool                mMotionBlur;
+    bool                mGrid;
     gl::Texture         mTexture;
     
     MotionBlurRenderer  mMotionBlurRenderer;
+    GridRenderer        mGridRenderer;
     
     std::vector<ci::gl::GlslProg> mShaders;
     
     // shaders
 #define SHADERS_TUPLE \
+SHADERS_ENTRY( "Noise", SHADER_NOISE ) \
 SHADERS_ENTRY( "Simplicity", SHADER_SIMPLICITY ) \
 SHADERS_ENTRY( "Menger", SHADER_MENGER ) \
 //end tuple
@@ -101,6 +105,14 @@ enm,
     ci::Vec3f           mPanSpeed;
     ci::Vec3f           mUVOffset;
     float               mUVScale;
+    
+    // NOISE
+    struct tNoiseParams
+    {
+        float						mDisplacementSpeed;
+        ci::Vec3f                   mNoiseScale;
+    };
+    tNoiseParams        mNoiseParams;
     
 };
 

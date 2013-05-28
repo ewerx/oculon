@@ -56,6 +56,8 @@ private:
     void updateAudioResponse();
     
     void setupDynamicTexture();
+    void shaderPreDraw();
+    void shaderPostDraw();
     void drawDynamicTexture();
     void drawFromDynamicTexture();
     void drawPixels();
@@ -65,7 +67,24 @@ private:
 private:
     ci::gl::Texture             mTexture;
     
-    ci::Vec2f                   mZoom;
+    // params
+#define SHADER_TUPLE \
+SHADER_ENTRY( "Noise", SHADER_NOISE ) \
+SHADER_ENTRY( "Tunnel", SHADER_TUNNEL ) \
+SHADER_ENTRY( "Fractal", SHADER_FRACTAL ) \
+//end tuple
+    
+    enum eShaderType
+    {
+#define SHADER_ENTRY( nam, enm ) \
+enm,
+        SHADER_TUPLE
+#undef  SHADER_ENTRY
+        
+        SHADER_COUNT
+    };
+    eShaderType                 mShaderType;
+    ci::gl::GlslProg			mShaders[SHADER_COUNT];
     
     // PERLIN
     ci::gl::Fbo					mVtfFbo;
@@ -73,8 +92,10 @@ private:
 	float						mDisplacementSpeed;
     float                       mDisplacementHeight;
 	float						mTheta;
-    ci::gl::GlslProg			mShaderFractal;
     ci::Vec3f                   mNoiseScale;
+    
+    // TUNNEL
+    
     
     // pixelate
     ci::gl::GlslProg			mShaderPixelate;
@@ -86,7 +107,7 @@ private:
     // pixel control
     struct tPixel
     {
-        ci::Anim<ci::ColorAf>   mColor;
+        float mValue;
     };
     tPixel                      mPixels[GRID_WIDTH][GRID_HEIGHT];
     
@@ -135,5 +156,8 @@ enm,
 
     float           mLowPassSplit;
     float           mHighPassSplit;
+    
+    int             mGroupCols;
+    int             mGroupRows;
 };
 
