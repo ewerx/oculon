@@ -54,7 +54,7 @@ public:
     
 private:
     
-private:
+public:
     // Texture
     bool                mAudioFboEnabled;
     int                 mAudioFboDim;

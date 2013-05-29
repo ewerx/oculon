@@ -53,6 +53,7 @@ void AudioInputHandler::setup(const Scene *scene, bool fboEnabled)
 void AudioInputHandler::setupInterface( Interface* interface )
 {
     interface->gui()->addColumn();
+    interface->gui()->addLabel("audio");
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
                          .oscReceiver(mScene->getName(),"audio/random"));
     interface->addParam(CreateBoolParam( "randomize", &mRandomEveryFrame )

@@ -275,9 +275,12 @@ bool Scene::saveInterfaceParams()
 
 bool Scene::loadInterfaceParams(const int index)
 {
-    std::stringstream filePath;
-    filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
-    mInterface->gui()->load(filePath.str());
+    //std::stringstream filePath;
+    //filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
+    fs::path path = getOpenFilePath( kIniLocation );
+	if( ! path.empty() ) {
+        mInterface->gui()->load(path.string());
+    }
     return false;//callback
 }
 

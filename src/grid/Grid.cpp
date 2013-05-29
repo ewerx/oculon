@@ -37,11 +37,10 @@ void Grid::setup()
     Scene::setup();
     
     // params
-    mShaderType             = SHADER_NOISE;
-    mGridMode               = GRIDMODE_PIXELS;
+    mGridMode               = GRIDMODE_PARTICLES;
     mMotionBlurEnabled      = false;
     
-    mColorScheme            = COLORSCHEME_REDFIRE;
+    mColorScheme            = COLORSCHEME_RED;
     setColorScheme();
     mLowPassSplit           = 0.1f;
     mHighPassSplit          = 0.5f;
@@ -49,14 +48,15 @@ void Grid::setup()
     mGroupCols              = 0;
     mGroupRows              = 0;
     
-
-//	// load texture
-	try { mTexture = gl::Texture( loadImage( loadResource("earthDiffuse.png") ) ); }
-	catch( const std::exception &e ) { console() << e.what() << std::endl; }
-
-    setupDynamicTexture();
+    // particles
+    mParticleMode           = PARTICLEMODE_CENTER;
+    mParticleDecay          = 0.95f;
+    mParticleSpeed          = 2.0f;
+    mParticleSpawnTime      = 0.0f;
+    mParticleSpawnRate      = 0.25f;
+    mParticleSpawnByAudio   = true;
     
-    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Grid::drawPixels, this ) );
+    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Grid::drawScene, this ) );
     
     reset();
 }
@@ -70,42 +70,6 @@ void Grid::reset()
             mPixels[i][j].mValue = 0.0f;
         }
     }
-}
-
-void Grid::setupDynamicTexture()
-{
-    // VTF
-    // Initialize FBO
-	gl::Fbo::Format format;
-	format.setColorInternalFormat( GL_RGB32F_ARB );
-	mVtfFbo = gl::Fbo( GRID_WIDTH*5, GRID_HEIGHT*5, format );
-    
-	// Initialize FBO texture
-	mVtfFbo.bindFramebuffer();
-	gl::setViewport( mVtfFbo.getBounds() );
-	gl::clear();
-	mVtfFbo.unbindFramebuffer();
-	mVtfFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
-    
-    // Params
-    mNoiseScale         = Vec3f(1.0f,1.0f,0.25f);
-    mDisplacementHeight	= 8.0f;
-	mDisplacementSpeed  = 1.0f;
-	mTheta				= 0.0f;
-    
-    // Load shaders
-	try {
-		mShaders[SHADER_NOISE] = gl::GlslProg( loadResource( RES_SHADER_CT_TEX_VERT ), loadResource( RES_SHADER_CT_TEX_FRAG ) );
-        
-        mShaderPixelate = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_SHADER_PIXELATE_FRAG ) );
-        
-        
-        
-	} catch ( gl::GlslProgCompileExc ex ) {
-		console() << "Unable to compile texture shader:\n" << ex.what() << "\n";
-	} catch ( ... ) {
-		console() << "Unable to load shader" << std::endl;
-	}
 }
 
 void Grid::setupInterface()
@@ -130,8 +94,6 @@ modeNames.push_back(nam);
     mInterface->addParam(CreateBoolParam( "motion_blur", &mMotionBlurEnabled )
                          .oscReceiver(getName()));
     
-    
-    
     // colors
     mInterface->gui()->addColumn();
     vector<string> colorSchemeNames;
@@ -147,24 +109,39 @@ colorSchemeNames.push_back(nam);
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "highpass", &mHighPassSplit )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateColorParam("Color 1", &mColor1, kMinColor, kMaxColor)
+    mInterface->addParam(CreateColorParam("Color 1", &mColor1(), kMinColor, kMaxColor)
                         .oscReceiver(mName,"color1"));
-    mInterface->addParam(CreateColorParam("Color 2", &mColor2, kMinColor, kMaxColor)
+    mInterface->addParam(CreateColorParam("Color 2", &mColor2(), kMinColor, kMaxColor)
                         .oscReceiver(mName,"color2"));
-    mInterface->addParam(CreateColorParam("Color 3", &mColor3, kMinColor, kMaxColor)
+    mInterface->addParam(CreateColorParam("Color 3", &mColor3(), kMinColor, kMaxColor)
                         .oscReceiver(mName,"color3"));
     
-    // shader
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Perlin Shader");
-    mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
-                         .oscReceiver(mName));
-    
-    
     mAudioInputHandler.setupInterface( mInterface );
+    
+    // particles
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("particles");
+    mInterface->addParam(CreateFloatParam( "decay", &mParticleDecay )
+                         .minValue(0.9f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "speed", &mParticleSpeed )
+                         .maxValue(20.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "spawnrate", &mParticleSpawnRate )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "spawnaudio", &mParticleSpawnByAudio )
+                         .oscReceiver(getName()));
+    vector<string> particleModeNames;
+#define PARTICLEMODE_ENTRY( nam, enm ) \
+particleModeNames.push_back(nam);
+    PARTICLEMODE_TUPLE
+#undef  PARTICLEMODE_ENTRY
+    mInterface->addEnum(CreateEnumParam( "particle_mode", (int*)(&mParticleMode) )
+                        .maxValue(PARTICLEMODE_COUNT)
+                        .oscReceiver(getName())
+                        .isVertical(), particleModeNames);
+
 }
 
 void Grid::setupDebugInterface()
@@ -176,28 +153,34 @@ void Grid::update(double dt)
 {
     Scene::update(dt);
     
-    gl::disableAlphaBlending();
+    // updates
+    switch (mGridMode)
+    {
+        case GRIDMODE_MOTION:
+            break;
+            
+        case GRIDMODE_PIXELS:
+            updatePixels();
+            break;
+        
+        case GRIDMODE_PARTICLES:
+            updateParticles(dt);
+            break;
+            
+        default:
+            break;
+    }
+    
+    // pre-draw
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
-	gl::color( Color( 1, 1, 1 ) );
     
-    // update noise
-	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
-	mTheta = time;//math<float>::sin( time );
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
-    if (mGridMode == GRIDMODE_SHADER)
+    gl::enableAlphaBlending();
+    if (mMotionBlurEnabled)
     {
-        drawDynamicTexture(); // always draw to fbo from update, not draw
-    }
-    else
-    {
-        mAudioInputHandler.update(dt, mApp->getAudioInput());
-        
-        gl::enableAlphaBlending();
-        if (mMotionBlurEnabled)
-        {
-            mMotionBlurRenderer.preDraw();
-        }
+        mMotionBlurRenderer.preDraw();
     }
 }
 
@@ -209,22 +192,15 @@ void Grid::draw()
 	gl::disableDepthRead();
 
 	gl::pushMatrices();
-    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
 
-    if (mGridMode == GRIDMODE_SHADER)
+    if (mMotionBlurEnabled)
     {
-        drawFromDynamicTexture();
+        mMotionBlurRenderer.draw();
     }
     else
     {
-        if (mMotionBlurEnabled)
-        {
-            mMotionBlurRenderer.preDraw();
-        }
-        else
-        {
-            drawPixels();
-        }
+        gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
+        drawScene();
     }
 
 	// restore camera and render states
@@ -237,119 +213,30 @@ void Grid::draw()
 	gl::disableAlphaBlending();
 }
 
-void Grid::shaderPreDraw()
+void Grid::drawScene()
 {
-    // Bind and configure dynamic texture shader
-    mShaders[mShaderType].bind();
-    
-    switch (mShaderType)
+    switch (mGridMode)
     {
-        case SHADER_NOISE:
-            mShaders[mShaderType].uniform( "theta", mTheta );
-            mShaders[mShaderType].uniform( "scale", mNoiseScale );
+        case GRIDMODE_MOTION:
+            break;
+            
+        case GRIDMODE_PIXELS:
+            drawPixels();
+            break;
+            
+        case GRIDMODE_PARTICLES:
+            drawParticles();
             break;
             
         default:
             break;
     }
-    
-}
-
-void Grid::shaderPostDraw()
-{
-    mShaders[mShaderType].unbind();
-}
-
-void Grid::drawDynamicTexture()
-{
-    // Bind FBO and set up window
-    mVtfFbo.bindFramebuffer();
-    gl::setViewport( mVtfFbo.getBounds() );
-    gl::setMatricesWindow( mVtfFbo.getSize() );
-    gl::clear();
-     
-    shaderPreDraw();
-    
-    // Draw shader output
-    gl::enable( GL_TEXTURE_2D );
-    gl::color( Colorf::white() );
-    gl::begin( GL_TRIANGLES );
-    
-    // Define quad vertices
-    Vec2f vert0( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y1 );
-    Vec2f vert1( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y1 );
-    Vec2f vert2( (float)mVtfFbo.getBounds().x1, (float)mVtfFbo.getBounds().y2 );
-    Vec2f vert3( (float)mVtfFbo.getBounds().x2, (float)mVtfFbo.getBounds().y2 );
-    
-    // Define quad texture coordinates
-    Vec2f uv0( 0.0f, 0.0f );
-    Vec2f uv1( 1.0f, 0.0f );
-    Vec2f uv2( 0.0f, 1.0f );
-    Vec2f uv3( 1.0f, 1.0f );
-    
-    // Draw quad (two triangles)
-    gl::texCoord( uv0 );
-    gl::vertex( vert0 );
-    gl::texCoord( uv2 );
-    gl::vertex( vert2 );
-    gl::texCoord( uv1 );
-    gl::vertex( vert1 );
-    
-    gl::texCoord( uv1 );
-    gl::vertex( vert1 );
-    gl::texCoord( uv2 );
-    gl::vertex( vert2 );
-    gl::texCoord( uv3 );
-    gl::vertex( vert3 );
-    
-    gl::end();
-    gl::disable( GL_TEXTURE_2D );
-    
-    // Unbind everything
-    shaderPostDraw();
-    mVtfFbo.unbindFramebuffer();
-    
-    ///////////////////////////////////////////////////////////////
-}
-
-void Grid::drawFromDynamicTexture()
-{
-    gl::enable( GL_TEXTURE_2D );
-    gl::color( Colorf::white() );
-    gl::setMatricesWindow( mApp->getViewportSize() );
-    
-    mVtfFbo.getTexture().bind(1);
-    //mTexture.bind(1);
-    
-    const float windowWidth = mApp->getViewportWidth();
-    const float windowHeight = mApp->getViewportHeight();
-    
-    float pixWidth = windowWidth / GRID_WIDTH;
-    float pixHeight = windowHeight / GRID_HEIGHT;
-    
-    mShaderPixelate.bind();
-    mShaderPixelate.uniform( "tex", 1 );
-    mShaderPixelate.uniform( "pixelWidth", pixWidth );
-    mShaderPixelate.uniform( "pixelHeight", pixHeight );
-    
-    mShaderPixelate.uniform( "imageWidth", windowWidth );
-    mShaderPixelate.uniform( "imageHeight", windowHeight );
-    
-    Rectf preview( 0.0f, 0.0f, windowWidth, windowHeight );
-    gl::drawSolidRect( preview );
-
-    mShaderPixelate.unbind();
-    mVtfFbo.getTexture().unbind();
-    //mTexture.unbind();
 }
 
 void Grid::drawDebug()
 {
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( getWindowSize() );
-    
-    Rectf preview( 200.0f, mApp->getWindowHeight() - mVtfFbo.getHeight(), 200.0f + mVtfFbo.getWidth(), mApp->getWindowHeight() );
-    gl::draw( mVtfFbo.getTexture(), mVtfFbo.getBounds(), preview );
     
     // grid
     gl::setMatricesWindow( mApp->getViewportSize() );
@@ -374,30 +261,13 @@ void Grid::drawDebug()
 
 #pragma mark - Pixels
 
-void Grid::drawPixels()
+void Grid::updatePixels()
 {
-    // dimensions
-    const float windowWidth = mApp->getViewportWidth();
-    const float windowHeight = mApp->getViewportHeight();
-    
-    const float pixWidth = windowWidth / GRID_WIDTH;
-    const float pixHeight = windowHeight / GRID_HEIGHT;
-    
-    // draw grid
-    gl::setMatricesWindow( mApp->getViewportSize() );
-    gl::disable( GL_TEXTURE_2D );
-    gl::color( ColorAf::white() );
-    float x = 0;
-    float y = 0;
-    
-    int index = 0;
-    
     AudioInputHandler::FftValues::const_iterator audioIt = mAudioInputHandler.fftValuesBegin();
     //AudioInputHandler::FftValues& fftValues = mAudioInputHandler.getFftValues();
     
     for (int row = 0; row < GRID_HEIGHT; ++row)
     {
-        x = 0;
         for (int col = 0; col < GRID_WIDTH; ++col)
         {
             if (audioIt == mAudioInputHandler.fftValuesEnd())
@@ -416,37 +286,169 @@ void Grid::drawPixels()
             
             mPixels[row][col].mValue = value;
             float freq = (float)(fftValue.mBandIndex) / (float)(mApp->getAudioInput().getFft()->getBinSize());
-            //mApp->console() << fftValue.mBandIndex << "\t(" << freq << ")\t" << value << std::endl;
-            if (freq < mLowPassSplit) {
-                float m = 1.0f - freq/mLowPassSplit;
-                gl::color( mColor1.r * m, mColor1.g * m, mColor1.b * m, value );
-            } else if (mHighPassSplit > mLowPassSplit && freq < mHighPassSplit) {
-                float m = freq/(mHighPassSplit-mLowPassSplit);
-                gl::color( mColor2.r * m, mColor2.g * m, mColor2.b * m, value );
-            } else {
-                float m = (1.0f - freq)/(1.0f - mHighPassSplit);
-                gl::color( mColor3.r * m, mColor3.g * m, mColor3.b * m, value );
-            }
-            drawSolidRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
-            
-            // draw grid
-//            gl::color( Colorf::white() );
-//            drawStrokedRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
-            
-            x += pixWidth;
+            mPixels[row][col].mFreq = freq;
+
             if (mGroupCols == 0 || ((col+1) % mGroupCols == 0))
             {
                 audioIt++;
             }
-            ++index;
         }
         if (mGroupCols > 0)
         {
             audioIt++;
         }
+    }
+}
+
+void Grid::drawPixels()
+{
+    // dimensions
+    const float windowWidth = mApp->getViewportWidth();
+    const float windowHeight = mApp->getViewportHeight();
+    
+    const float pixWidth = windowWidth / GRID_WIDTH;
+    const float pixHeight = windowHeight / GRID_HEIGHT;
+    
+    // draw grid
+    gl::setMatricesWindow( mApp->getViewportSize() );
+    gl::disable( GL_TEXTURE_2D );
+    gl::color( ColorAf::white() );
+    float x = 0;
+    float y = 0;
+    
+    for (int row = 0; row < GRID_HEIGHT; ++row)
+    {
+        x = 0;
+        for (int col = 0; col < GRID_WIDTH; ++col)
+        {
+            const float value = mPixels[row][col].mValue;
+            const float freq = mPixels[row][col].mFreq;
+
+            if (freq < mLowPassSplit) {
+                float m = 1.0f - freq/mLowPassSplit;
+                gl::color( mColor1().r * m, mColor1().g * m, mColor1().b * m, mColor1().a * value );
+            } else if (mHighPassSplit > mLowPassSplit && freq < mHighPassSplit) {
+                float m = freq/(mHighPassSplit-mLowPassSplit);
+                gl::color( mColor2().r * m, mColor2().g * m, mColor2().b * m, mColor2().a * value );
+            } else {
+                float m = (1.0f - freq)/(1.0f - mHighPassSplit);
+                gl::color( mColor3().r * m, mColor3().g * m, mColor3().b * m, mColor3().a * value );
+            }
+            drawSolidRect( Rectf( x, y, x+pixWidth, y+pixHeight ) );
+            
+            x += pixWidth;
+        }
         y += pixHeight;
     }
 }
+
+#pragma mark - Particles
+
+
+void Grid::updateParticles(double dt)
+{
+    const float windowWidth = mApp->getViewportWidth();
+    const float windowHeight = mApp->getViewportHeight();
+    
+    if (mParticleSpawnByAudio)
+    {
+        for( AudioInputHandler::FftValues::const_iterator audioIt = mAudioInputHandler.fftValuesBegin();
+            audioIt != mAudioInputHandler.fftValuesEnd(); ++audioIt)
+        {
+            const AudioInputHandler::tFftValue fftValue = (*audioIt);
+            float value = fftValue.mValue;
+            
+            if (value > (1.0f - mParticleSpawnRate))
+            {
+                mParticles.push_back(spawnParticle());
+            }
+        }
+    }
+    else
+    {
+        mParticleSpawnTime += dt;
+        if (mParticleSpawnTime >= mParticleSpawnRate)
+        {
+            mParticles.push_back(spawnParticle());
+            mParticleSpawnTime = 0.0f;
+        }
+    }
+    
+    // update
+    for( list<tParticle>::iterator partIt = mParticles.begin(); partIt != mParticles.end(); ++partIt )
+    {
+		partIt->mPos() += partIt->mVel;
+        partIt->mVel() *= mParticleDecay;
+        partIt->mAlpha() *= mParticleDecay;
+        
+        if( partIt->mPos().x > windowWidth || partIt->mPos().y > windowHeight || partIt->mPos().x < 0 || partIt->mPos().y < 0 || partIt->mAlpha() <= 0.000001f )
+        {
+			partIt = mParticles.erase(partIt);
+        }
+    }
+    
+}
+
+Grid::tParticle Grid::spawnParticle()
+{
+    const float windowWidth = mApp->getViewportWidth();
+    const float windowHeight = mApp->getViewportHeight();
+    const float pixWidth = windowWidth / GRID_WIDTH;
+    
+    switch (mParticleMode)
+    {
+        case PARTICLEMODE_CENTER:
+        {
+            float x = Rand::randInt(GRID_WIDTH) * pixWidth;
+            float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
+            speed *= Rand::randBool() ? -1.0f : 1.0f;
+            return tParticle( Vec2f( x, (GRID_HEIGHT / 2.0f)*pixWidth ), Vec2f( 0.0f, speed ) );
+        }
+            
+        case PARTICLEMODE_CENTERV:
+        {
+            float y = Rand::randInt(GRID_HEIGHT) * pixWidth;
+            float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
+            speed *= Rand::randBool() ? -1.0f : 1.0f;
+            return tParticle( Vec2f( (GRID_WIDTH / 2.0f)*pixWidth, y ), Vec2f( speed, 0.0f ) );
+        }
+            
+        case PARTICLEMODE_RAIN:
+        {
+            float x = Rand::randInt(GRID_WIDTH) * pixWidth;
+            float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
+            bool bottom = Rand::randBool();
+            speed *= bottom ? -1.0f : 1.0f;
+            return tParticle( Vec2f( x, bottom ? (windowHeight - pixWidth) : 0 ), Vec2f( 0.0f, speed ) );
+        }
+            
+        case PARTICLEMODE_SIDES:
+        {
+            float y = Rand::randInt(GRID_HEIGHT) * pixWidth;
+            float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
+            bool right = Rand::randBool();
+            speed *= right ? -1.0f : 1.0f;
+            return tParticle( Vec2f( right ? (windowWidth - pixWidth) : 0, y ), Vec2f( speed, 0.0f ) );
+        }
+    }
+}
+
+void Grid::drawParticles()
+{
+    const float windowWidth = mApp->getViewportWidth();
+    const float windowHeight = mApp->getViewportHeight();
+    
+    const float pixWidth = windowWidth / GRID_WIDTH;
+    const float pixHeight = windowHeight / GRID_HEIGHT;
+    
+    for( list<tParticle>::iterator partIt = mParticles.begin(); partIt != mParticles.end(); ++partIt )
+    {
+        gl::color( mColor1().r, mColor1().g, mColor1().b, mColor1().a * partIt->mAlpha );
+        Vec2f pos = partIt->mPos;
+        drawSolidRect( Rectf( pos.x, pos.y, pos.x+pixWidth, pos.y+pixHeight ) );
+    }
+}
+
 
 #pragma mark -
 
@@ -454,22 +456,27 @@ bool Grid::setColorScheme()
 {
     switch (mColorScheme)
     {
-        case COLORSCHEME_REDFIRE:
+        case COLORSCHEME_RED:
             mColor1 = ColorAf( 0.92f, 0.0f, 0.227f, 1.0f );
             mColor2 = ColorAf( 1.0f, 0.372f, 0.0f, 1.0f );
             mColor3 = ColorAf( 1.0f, 0.643f, 0.0f, 1.0f );
             break;
             
-        case COLORSCHEME_BLUEFIRE:
+        case COLORSCHEME_BLUE:
             break;
             
-        case COLORSCHEME_ICE:
+        case COLORSCHEME_TURQ:
             break;
             
         case COLORSCHEME_GREEN:
             break;
             
+        case COLORSCHEME_YELLOW:
+            break;
+            
         default:
             break;
     }
+    
+    return false;
 }

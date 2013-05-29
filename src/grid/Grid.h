@@ -21,7 +21,7 @@
 #include "cinder/gl/Vbo.h"
 #include "cinder/Surface.h"
 #include "cinder/Timeline.h"
-#include <deque>
+#include <list>
 
 
 // CONSTANTS
@@ -45,8 +45,6 @@ public:
     void draw();
     void drawDebug();
     
-    //HACKS!
-    ci::gl::Fbo& getVtfFbo() { return mVtfFbo; }
     
 protected:// from Scene
     void setupInterface();
@@ -55,48 +53,29 @@ protected:// from Scene
 private:
     void updateAudioResponse();
     
-    void setupDynamicTexture();
-    void shaderPreDraw();
-    void shaderPostDraw();
-    void drawDynamicTexture();
+    void drawScene();
     void drawFromDynamicTexture();
+    
+    void updatePixels();
     void drawPixels();
+    
+    
+    struct tParticle
+    {
+        ci::Anim<ci::Vec2f> mPos;
+        ci::Anim<ci::Vec2f> mVel;
+        ci::Anim<float> mAlpha;
+        
+        tParticle( ci::Vec2f pos, ci::Vec2f vel ) : mPos(pos), mVel(vel), mAlpha(1.0f) {}
+        tParticle() : mPos(Vec2f::zero()), mVel(Vec2f::zero()), mAlpha(1.0f) {}
+    };
+    void updateParticles(double dt);
+    void drawParticles();
+    tParticle spawnParticle();
     
     bool setColorScheme();
     
 private:
-    ci::gl::Texture             mTexture;
-    
-    // params
-#define SHADER_TUPLE \
-SHADER_ENTRY( "Noise", SHADER_NOISE ) \
-SHADER_ENTRY( "Tunnel", SHADER_TUNNEL ) \
-SHADER_ENTRY( "Fractal", SHADER_FRACTAL ) \
-//end tuple
-    
-    enum eShaderType
-    {
-#define SHADER_ENTRY( nam, enm ) \
-enm,
-        SHADER_TUPLE
-#undef  SHADER_ENTRY
-        
-        SHADER_COUNT
-    };
-    eShaderType                 mShaderType;
-    ci::gl::GlslProg			mShaders[SHADER_COUNT];
-    
-    // PERLIN
-    ci::gl::Fbo					mVtfFbo;
-	ci::gl::GlslProg			mShaderTex;
-	float						mDisplacementSpeed;
-    float                       mDisplacementHeight;
-	float						mTheta;
-    ci::Vec3f                   mNoiseScale;
-    
-    // TUNNEL
-    
-    
     // pixelate
     ci::gl::GlslProg			mShaderPixelate;
     
@@ -108,6 +87,7 @@ enm,
     struct tPixel
     {
         float mValue;
+        float mFreq;
     };
     tPixel                      mPixels[GRID_WIDTH][GRID_HEIGHT];
     
@@ -116,8 +96,10 @@ enm,
     
     // params
 #define GRIDMODE_TUPLE \
-GRIDMODE_ENTRY( "Shader", GRIDMODE_SHADER ) \
+GRIDMODE_ENTRY( "Motion", GRIDMODE_MOTION ) \
 GRIDMODE_ENTRY( "Pixels", GRIDMODE_PIXELS ) \
+GRIDMODE_ENTRY( "Tunnel", GRIDMODE_TUNNEL ) \
+GRIDMODE_ENTRY( "Particles", GRIDMODE_PARTICLES ) \
 //end tuple
     
     enum eGridMode
@@ -133,10 +115,11 @@ enm,
     
     // colors
 #define COLORSCHEME_TUPLE \
-COLORSCHEME_ENTRY( "RedFire", COLORSCHEME_REDFIRE ) \
-COLORSCHEME_ENTRY( "BlueFire", COLORSCHEME_BLUEFIRE ) \
-COLORSCHEME_ENTRY( "Ice", COLORSCHEME_ICE ) \
+COLORSCHEME_ENTRY( "Red", COLORSCHEME_RED ) \
+COLORSCHEME_ENTRY( "Blue", COLORSCHEME_BLUE ) \
+COLORSCHEME_ENTRY( "Turq", COLORSCHEME_TURQ ) \
 COLORSCHEME_ENTRY( "Green", COLORSCHEME_GREEN ) \
+COLORSCHEME_ENTRY( "Yellow", COLORSCHEME_YELLOW ) \
 //end tuple
     
     enum eColorScheme
@@ -150,14 +133,45 @@ enm,
     };
     eColorScheme    mColorScheme;
     
-    ci::ColorAf     mColor1;
-    ci::ColorAf     mColor2;
-    ci::ColorAf     mColor3;
+    ci::Anim<ci::ColorAf>    mColor1;
+    ci::Anim<ci::ColorAf>    mColor2;
+    ci::Anim<ci::ColorAf>    mColor3;
 
     float           mLowPassSplit;
     float           mHighPassSplit;
     
     int             mGroupCols;
     int             mGroupRows;
+    
+    
+    // PARTICLES
+    std::list<tParticle> mParticles;
+    int mNumParticles;
+    tParticle mEmitter;
+    
+    float mParticleDecay;
+    float mParticleSpeed;
+    float mParticleSpawnRate;
+    float mParticleSpawnTime;
+    bool mParticleSpawnByAudio;
+    
+#define PARTICLEMODE_TUPLE \
+PARTICLEMODE_ENTRY( "CenterH", PARTICLEMODE_CENTER ) \
+PARTICLEMODE_ENTRY( "Rain", PARTICLEMODE_RAIN ) \
+PARTICLEMODE_ENTRY( "CenterV", PARTICLEMODE_CENTERV ) \
+PARTICLEMODE_ENTRY( "SideEnter", PARTICLEMODE_SIDES ) \
+//GRIDMODE_ENTRY( "Perlin", GRIDMODE_PARTICLES ) \
+//end tuple
+    
+    enum eParticleMode
+    {
+#define PARTICLEMODE_ENTRY( nam, enm ) \
+enm,
+        PARTICLEMODE_TUPLE
+#undef  PARTICLEMODE_ENTRY
+        
+        PARTICLEMODE_COUNT
+    };
+    eParticleMode   mParticleMode;
 };
 
