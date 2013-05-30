@@ -55,6 +55,9 @@ void Grid::setup()
     mParticleSpawnTime      = 0.0f;
     mParticleSpawnRate      = 0.25f;
     mParticleSpawnByAudio   = true;
+    mParticleWidth          = 1;
+    mParticleHeight         = 1;
+    mParticleRandomSize     = false;
     
     mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Grid::drawScene, this ) );
     
@@ -123,13 +126,16 @@ colorSchemeNames.push_back(nam);
     mInterface->gui()->addLabel("particles");
     mInterface->addParam(CreateFloatParam( "decay", &mParticleDecay )
                          .minValue(0.9f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 1, 16));
     mInterface->addParam(CreateFloatParam( "speed", &mParticleSpeed )
                          .maxValue(20.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 1, 17));
     mInterface->addParam(CreateFloatParam( "spawnrate", &mParticleSpawnRate )
                          .maxValue(1.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 1, 18));
     mInterface->addParam(CreateBoolParam( "spawnaudio", &mParticleSpawnByAudio )
                          .oscReceiver(getName()));
     vector<string> particleModeNames;
@@ -141,6 +147,16 @@ particleModeNames.push_back(nam);
                         .maxValue(PARTICLEMODE_COUNT)
                         .oscReceiver(getName())
                         .isVertical(), particleModeNames);
+    mInterface->addParam(CreateIntParam( "particle_width", &mParticleWidth )
+                         .minValue(1)
+                         .maxValue(5)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "particle_height", &mParticleHeight )
+                         .minValue(1)
+                         .maxValue(GRID_HEIGHT)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "particle_randomsize", &mParticleRandomSize )
+                         .oscReceiver(getName()));
 
 }
 
@@ -358,7 +374,7 @@ void Grid::updateParticles(double dt)
             const AudioInputHandler::tFftValue fftValue = (*audioIt);
             float value = fftValue.mValue;
             
-            if (value > (1.0f - mParticleSpawnRate))
+            if (value > (1.0f - mParticleSpawnRate) && mParticles.size() < 6000)
             {
                 mParticles.push_back(spawnParticle());
             }
@@ -367,7 +383,7 @@ void Grid::updateParticles(double dt)
     else
     {
         mParticleSpawnTime += dt;
-        if (mParticleSpawnTime >= mParticleSpawnRate)
+        if (mParticleSpawnTime >= mParticleSpawnRate && mParticles.size() < 6000)
         {
             mParticles.push_back(spawnParticle());
             mParticleSpawnTime = 0.0f;
@@ -378,8 +394,12 @@ void Grid::updateParticles(double dt)
     for( list<tParticle>::iterator partIt = mParticles.begin(); partIt != mParticles.end(); ++partIt )
     {
 		partIt->mPos() += partIt->mVel;
-        partIt->mVel() *= mParticleDecay;
+        //partIt->mVel() *= mParticleDecay;
         partIt->mAlpha() *= mParticleDecay;
+        if (mParticles.size() > 300) {
+            // too many! double decay!
+            partIt->mAlpha() *= mParticleDecay;
+        }
         
         if( partIt->mPos().x > windowWidth || partIt->mPos().y > windowHeight || partIt->mPos().x < 0 || partIt->mPos().y < 0 || partIt->mAlpha() <= 0.000001f )
         {
@@ -395,6 +415,11 @@ Grid::tParticle Grid::spawnParticle()
     const float windowHeight = mApp->getViewportHeight();
     const float pixWidth = windowWidth / GRID_WIDTH;
     
+    int width = mParticleRandomSize ? Rand::randInt(1,mParticleWidth) : mParticleWidth;
+    int height = mParticleRandomSize ? Rand::randInt(1,mParticleHeight) : mParticleHeight;
+    
+    tParticle p;
+    
     switch (mParticleMode)
     {
         case PARTICLEMODE_CENTER:
@@ -402,7 +427,8 @@ Grid::tParticle Grid::spawnParticle()
             float x = Rand::randInt(GRID_WIDTH) * pixWidth;
             float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
             speed *= Rand::randBool() ? -1.0f : 1.0f;
-            return tParticle( Vec2f( x, (GRID_HEIGHT / 2.0f)*pixWidth ), Vec2f( 0.0f, speed ) );
+            p = tParticle( Vec2f( x, (GRID_HEIGHT / 2.0f)*pixWidth ), Vec2f( 0.0f, speed ), width, height );
+            break;
         }
             
         case PARTICLEMODE_CENTERV:
@@ -410,7 +436,8 @@ Grid::tParticle Grid::spawnParticle()
             float y = Rand::randInt(GRID_HEIGHT) * pixWidth;
             float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
             speed *= Rand::randBool() ? -1.0f : 1.0f;
-            return tParticle( Vec2f( (GRID_WIDTH / 2.0f)*pixWidth, y ), Vec2f( speed, 0.0f ) );
+            p = tParticle( Vec2f( (GRID_WIDTH / 2.0f)*pixWidth - pixWidth, y ), Vec2f( speed, 0.0f ), width, height );
+            break;
         }
             
         case PARTICLEMODE_RAIN:
@@ -419,7 +446,8 @@ Grid::tParticle Grid::spawnParticle()
             float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
             bool bottom = Rand::randBool();
             speed *= bottom ? -1.0f : 1.0f;
-            return tParticle( Vec2f( x, bottom ? (windowHeight - pixWidth) : 0 ), Vec2f( 0.0f, speed ) );
+            p = tParticle( Vec2f( x, bottom ? (windowHeight - pixWidth) : 0 ), Vec2f( 0.0f, speed ), width, height );
+            break;
         }
             
         case PARTICLEMODE_SIDES:
@@ -428,9 +456,28 @@ Grid::tParticle Grid::spawnParticle()
             float speed = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed );
             bool right = Rand::randBool();
             speed *= right ? -1.0f : 1.0f;
-            return tParticle( Vec2f( right ? (windowWidth - pixWidth) : 0, y ), Vec2f( speed, 0.0f ) );
+            p = tParticle( Vec2f( right ? (windowWidth - pixWidth) : 0, y ), Vec2f( speed, 0.0f ), width, height );
+            break;
         }
+            
+        case PARTICLEMODE_SPREAD:
+        {
+            float x = Rand::randInt(GRID_WIDTH) * pixWidth;
+            float y = Rand::randInt(GRID_HEIGHT) * pixWidth;
+            float speedx = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed ) * (Rand::randBool()  ? -1.0f : 1.0f);
+            float speedy = Rand::randFloat( mParticleSpeed/4.0f, mParticleSpeed ) * (Rand::randBool()  ? -1.0f : 1.0f);
+            p = tParticle( Vec2f( x, y ), Vec2f( speedx, speedy ), width, height );
+            break;
+        }
+            
+        default:
+            break;
     }
+    
+    //timeline().apply( &p.mVel, Vec2f::zero(), mAudioInputHandler.mFalloffTime, mAudioInputHandler.getFalloffFunction() );
+    //timeline().apply( &p.mAlpha, 0.0f, mAudioInputHandler.mFalloffTime, mAudioInputHandler.getFalloffFunction() );
+    
+    return p;
 }
 
 void Grid::drawParticles()
@@ -445,7 +492,7 @@ void Grid::drawParticles()
     {
         gl::color( mColor1().r, mColor1().g, mColor1().b, mColor1().a * partIt->mAlpha );
         Vec2f pos = partIt->mPos;
-        drawSolidRect( Rectf( pos.x, pos.y, pos.x+pixWidth, pos.y+pixHeight ) );
+        drawSolidRect( Rectf( pos.x, pos.y, pos.x+pixWidth*partIt->mWidth, pos.y+pixHeight*partIt->mHeight ) );
     }
 }
 

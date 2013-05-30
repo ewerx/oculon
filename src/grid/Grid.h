@@ -65,8 +65,10 @@ private:
         ci::Anim<ci::Vec2f> mPos;
         ci::Anim<ci::Vec2f> mVel;
         ci::Anim<float> mAlpha;
+        ci::Anim<int> mWidth;
+        ci::Anim<int> mHeight;
         
-        tParticle( ci::Vec2f pos, ci::Vec2f vel ) : mPos(pos), mVel(vel), mAlpha(1.0f) {}
+        tParticle( ci::Vec2f pos, ci::Vec2f vel, int width, int height ) : mPos(pos), mVel(vel), mAlpha(1.0f), mWidth(width), mHeight(height) {}
         tParticle() : mPos(Vec2f::zero()), mVel(Vec2f::zero()), mAlpha(1.0f) {}
     };
     void updateParticles(double dt);
@@ -96,10 +98,10 @@ private:
     
     // params
 #define GRIDMODE_TUPLE \
-GRIDMODE_ENTRY( "Motion", GRIDMODE_MOTION ) \
+GRIDMODE_ENTRY( "Shapes", GRIDMODE_MOTION ) \
 GRIDMODE_ENTRY( "Pixels", GRIDMODE_PIXELS ) \
-GRIDMODE_ENTRY( "Tunnel", GRIDMODE_TUNNEL ) \
 GRIDMODE_ENTRY( "Particles", GRIDMODE_PARTICLES ) \
+GRIDMODE_ENTRY( "Tunnel", GRIDMODE_TUNNEL ) \
 //end tuple
     
     enum eGridMode
@@ -155,12 +157,29 @@ enm,
     float mParticleSpawnTime;
     bool mParticleSpawnByAudio;
     
+#define PARTICLESPAWN_TUPLE \
+PARTICLESPAWNENTRY( "Manual", PARTICLESPAWN_MANUAL ) \
+PARTICLESPAWNENTRY( "Time", PARTICLESPAWN_TIME ) \
+PARTICLESPAWNENTRY( "Audio", PARTICLESPAWN_AUDIO ) \
+//end tuple
+    
+    enum eParticleSpawn
+    {
+#define PARTICLESPAWNENTRY( nam, enm ) \
+enm,
+        PARTICLESPAWN_TUPLE
+#undef  PARTICLESPAWNENTRY
+        
+        PARTICLESPAWN_COUNT
+    };
+    eParticleSpawn   mParticleSpawn;
+
 #define PARTICLEMODE_TUPLE \
 PARTICLEMODE_ENTRY( "CenterH", PARTICLEMODE_CENTER ) \
 PARTICLEMODE_ENTRY( "Rain", PARTICLEMODE_RAIN ) \
 PARTICLEMODE_ENTRY( "CenterV", PARTICLEMODE_CENTERV ) \
-PARTICLEMODE_ENTRY( "SideEnter", PARTICLEMODE_SIDES ) \
-//GRIDMODE_ENTRY( "Perlin", GRIDMODE_PARTICLES ) \
+PARTICLEMODE_ENTRY( "Sides", PARTICLEMODE_SIDES ) \
+PARTICLEMODE_ENTRY( "Spread", PARTICLEMODE_SPREAD ) \
 //end tuple
     
     enum eParticleMode
@@ -173,5 +192,9 @@ enm,
         PARTICLEMODE_COUNT
     };
     eParticleMode   mParticleMode;
+    
+    int mParticleWidth;
+    int mParticleHeight;
+    bool mParticleRandomSize;
 };
 

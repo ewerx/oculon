@@ -35,7 +35,7 @@ OscServer::~OscServer()
 
 // init
 //
-void OscServer::setup( Config& config )
+void OscServer::setup( Config& config, MidiInput* midiInput )
 {
     mListenPort = config.getInt("osc_listen_port"); 
     try 
@@ -58,6 +58,12 @@ void OscServer::setup( Config& config )
     
     setDestination( DEST_INTERFACE, config.getString("osc_interface_ip"), config.getInt("osc_interface_port") );
     setDestination( DEST_RESOLUME, config.getString("osc_resolume_ip"), config.getInt("osc_resolume_port") );
+    
+    mMidiInput = midiInput;
+    if( mMidiInput && mMidiInput->isEnabled() )
+    {
+        mCbMidiEvent = mMidiInput->registerMidiCallback(this, &OscServer::handleMidiMessage);
+    }
 }
 
 void OscServer::shutdown()
@@ -66,6 +72,11 @@ void OscServer::shutdown()
     mListener.shutdown();
     while( !mIncomingCallbackQueue.empty() )
         mIncomingCallbackQueue.pop();
+    
+    if( mMidiInput != NULL )
+    {
+        mMidiInput->unregisterMidiCallback(mCbMidiEvent);
+    }
 }
 
 #pragma MARK Listener
@@ -77,6 +88,7 @@ void OscServer::update()
     {
         if( mUseThread )
         {
+            // perform callbacks on main thread
             while( !mIncomingCallbackQueue.empty() )
             {
                 tIncomingCommand& cmd = mIncomingCallbackQueue.front();
@@ -285,4 +297,24 @@ void OscServer::sendMessage( ci::osc::Message& message, const eDestination dest,
             printMessage(message, (dest == DEST_RESOLUME) ? MSG_RELAY : MSG_SENT, loglevel);
         }
     }
+}
+
+#pragma mark - MIDI
+
+bool OscServer::handleMidiMessage(MidiEvent midiEvent)
+{
+    tMidiAddress address = std::make_pair( midiEvent.getChannel(), midiEvent.getNote() );
+    
+    tMidiMap::iterator it = mMidiCallbackMap.find(address);
+    if( it != mMidiCallbackMap.end() )
+    {
+        tOscCallback callback = it->second;
+        
+        osc::Message message;
+        message.addFloatArg( midiEvent.getValueRatio() );
+        
+        callback(message);
+    }
+    
+    return false;
 }

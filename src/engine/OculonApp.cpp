@@ -146,7 +146,7 @@ void OculonApp::setup()
  
     if( mEnableOscServer )
     {
-        mOscServer.setup( mConfig );
+        mOscServer.setup( mConfig, mEnableMidi ? &mMidiInput : NULL );
     }
     
     if( mEnableMindWave )

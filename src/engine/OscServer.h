@@ -9,6 +9,7 @@
 #ifndef __OSCSERVER_H__
 #define __OSCSERVER_H__
 
+#include "MidiInput.h"
 #include "OscListener.h"
 #include "OscSender.h"
 #include "Constants.h"
@@ -20,6 +21,8 @@
 
 typedef boost::function<void(const ci::osc::Message&)> tOscCallback;
 typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
+typedef std::pair<int,int> tMidiAddress;
+typedef boost::unordered_map<tMidiAddress, tOscCallback> tMidiMap;
 
 class OscServer
 {
@@ -36,7 +39,7 @@ public:
     OscServer();
     ~OscServer();
     
-    void setup( Config& config );
+    void setup( Config& config, MidiInput *midiInput =NULL );
     void shutdown();
     void update();
     
@@ -57,9 +60,29 @@ public:
         mCallbackMap.erase(address);
     }
     
+    // midi listener
+    template<typename T>
+    void registerMidiCallback( tMidiAddress address, T* obj, void (T::*callback)(const ci::osc::Message&) )
+    {
+        mMidiCallbackMap[address] = boost::bind( callback, obj, boost::arg<1>() );
+    }
+    
+    void registerMidiCallback( tMidiAddress address, tOscCallback callback )
+    {
+        mMidiCallbackMap[address] = callback;
+    }
+    
+    void unregisterMidiCallback( tMidiAddress address )
+    {
+        mMidiCallbackMap.erase(address);
+    }
+    
     // sender
     void setDestination( const eDestination index, const std::string& host, const int port );
     void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_QUIET );
+    
+    // callback from MidiInput
+    bool handleMidiMessage( MidiEvent midiEvent );
     
 private:
     typedef std::pair<ci::osc::Message,tOscCallback> tIncomingCommand;
@@ -92,6 +115,11 @@ private:
     bool                    mIsSending;
     
     bool                    mDebugPrint;
+    
+    // MIDI
+    MidiInput*              mMidiInput;
+    ci::CallbackId          mCbMidiEvent;
+    tMidiMap                mMidiCallbackMap;
 };
 
 #endif

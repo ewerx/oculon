@@ -41,7 +41,7 @@ public:
         PARAMTYPE_COUNT
     };
 public:
-    OscParam( const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback );
+    OscParam( const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const int midiPort, const int midiChannel, const int midiNote );
     virtual ~OscParam() { }
         
     const std::string& getOscRecvAddress() const    { return mOscRecvAddress; }
@@ -58,11 +58,14 @@ public:
 protected:
     eType mType;
     bool mIsSender;
-    //bool mCreateGui;
     
     std::string mOscRecvAddress;
     std::string mOscSendAddress;
     std::string mOscCreateCmd;
+    
+    int mMidiPort;
+    int mMidiChannel;
+    int mMidiNote;
 
     OscServer*  mOscServer;
 };
@@ -105,7 +108,7 @@ protected:
 class OscBoolParam : public OscParam
 {
 public:
-    OscBoolParam(OscServer* server, mowa::sgui::BoolVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
+    OscBoolParam(OscServer* server, mowa::sgui::BoolVarControl* guiControl, const CreateBoolParam& param);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -121,7 +124,7 @@ protected:
 class OscTriggerParam : public OscParam
 {
 public:
-    OscTriggerParam(OscServer* server, mowa::sgui::ButtonControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback);
+    OscTriggerParam(OscServer* server, mowa::sgui::ButtonControl* guiControl, const CreateTriggerParam& param);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     
@@ -202,6 +205,9 @@ public:
     , _feedback(false)
     , _altstyle(false)
     , _step(0)
+    , _midiPort(-1)
+    , _midiChannel(-1)
+    , _midiNote(-1)
     {
     }
     
@@ -214,6 +220,9 @@ public:
     , _recvAddr("")
     , _feedback(false)
     , _altstyle(false)
+    , _midiPort(-1)
+    , _midiChannel(-1)
+    , _midiNote(-1)
     {
     }
     
@@ -227,6 +236,9 @@ public:
     , _feedback(false)
     , _altstyle(false)
     , _step(0)
+    , _midiPort(-1)
+    , _midiChannel(-1)
+    , _midiNote(-1)
     {
         _recvAddr = "/oculon/" + sceneName + '/' + name;
         _sendAddr = _recvAddr; // default to send to same address
@@ -286,6 +298,14 @@ public:
         return *this; 
     }
     
+    inline CreateParam& midiInput( const int port, const int channel, const int note )
+    {
+        _midiPort = port;
+        _midiChannel = channel;
+        _midiNote = note;
+        return *this;
+    }
+    
 public:
     std::string _name;
     T*          _var;
@@ -296,5 +316,8 @@ public:
     bool        _feedback;
     bool        _altstyle;
     T           _step;
+    int         _midiPort;
+    int         _midiChannel;
+    int         _midiNote;
 };
 
