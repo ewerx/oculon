@@ -106,13 +106,18 @@ void OculonApp::setup()
     const int fboHeight = mConfig.getInt("capture_height"); 
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-    mFbo = gl::Fbo( fboWidth, fboHeight, format );
+    for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+    {
+        mFbo[layerIndex] = gl::Fbo( fboWidth, fboHeight, format );
+    }
     mDomeRenderer.setup( fboWidth, fboHeight );
     
     gl::enableVerticalSync(true);
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     mLastActiveScene    = -1;
+    
+    mVisibleLayerIndex = 0;
     
     // capture
     mFrameCaptureCount = 0;
@@ -160,7 +165,12 @@ void OculonApp::setup()
     }
     
     // syphon
-    mScreenSyphon.setName("oculon");
+    char nameBuf[256];
+    for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+    {
+        snprintf(nameBuf, 256, "oculon-%d", layerIndex+1);
+        mScreenSyphon[layerIndex].setName(nameBuf);
+    }
     
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
@@ -214,6 +224,7 @@ outputModeNames.push_back(nam);
 #undef  OUTPUTMODE_ENTRY
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
                         .maxValue(OUTPUT_COUNT), outputModeNames)->registerCallback( this, &OculonApp::onOutputModeChange );
+    mInterface->addParam(CreateIntParam("Visible Layer", &mVisibleLayerIndex));
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateFloatParam("BG Alpha", &mBackgroundAlpha));
@@ -251,6 +262,7 @@ bool OculonApp::toggleScene(const int sceneId)
         if( mScenes[sceneId]->isVisible() )
         {
             mLastActiveScene = sceneId;
+            mVisibleLayerIndex = mScenes[sceneId]->getLayerIndex();
         }
     }
     
@@ -276,6 +288,7 @@ bool OculonApp::showInterface(const int sceneId)
         mScenes[sceneId]->showInterface(true);
         mInterface->gui()->setEnabled(false);
         mLastActiveScene = sceneId;
+        mVisibleLayerIndex = mScenes[sceneId]->getLayerIndex();
     }
     
     return false;
@@ -803,11 +816,37 @@ void OculonApp::drawToFbo( gl::Fbo& fbo )
     gl::setViewport( fbo.getBounds() );
     gl::clear( ColorA(0.0f,0.0f,0.0f,mBackgroundAlpha) );
     
-    drawScenes();
+    drawScenes(0);
     
     fbo.unbindFramebuffer();
     
     gl::setViewport( prevViewport );
+}
+
+void OculonApp::drawToLayers()
+{
+    for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+    {
+        gl::Fbo& fbo = mFbo[layerIndex];
+        
+        Area prevViewport = gl::getViewport();
+        // bind the framebuffer - now everything we draw will go there
+        fbo.bindFramebuffer();
+        
+        gl::disableDepthRead();
+        gl::disableDepthWrite();
+        gl::disableAlphaBlending();
+        
+        // setup the viewport to match the dimensions of the FBO
+        gl::setViewport( fbo.getBounds() );
+        gl::clear( ColorA(0.0f,0.0f,0.0f,mBackgroundAlpha) );
+        
+        drawScenes(layerIndex);
+        
+        fbo.unbindFramebuffer();
+        
+        gl::setViewport( prevViewport );
+    }
 }
 
 void OculonApp::drawFromFbo( gl::Fbo& fbo )
@@ -851,7 +890,7 @@ void OculonApp::renderScenes()
 
 }
 
-void OculonApp::drawScenes()
+void OculonApp::drawScenes(int layerIndex)
 {
     if( mOutputMode == OUTPUT_MULTIFBO )
     {
@@ -875,7 +914,7 @@ void OculonApp::drawScenes()
         }
         else
         {
-            for (tSceneList::iterator sceneIt = mScenes.begin(); 
+            for (tSceneList::iterator sceneIt = mScenes.begin();
                  sceneIt != mScenes.end();
                  ++sceneIt )
             {
@@ -898,7 +937,7 @@ void OculonApp::drawScenes()
         {
             Scene* scene = (*sceneIt);
             assert( scene != NULL );
-            if( scene && scene->isVisible() )
+            if( scene && scene->isVisible() && scene->getLayerIndex() == layerIndex )
             {
                 scene->draw();
             }
@@ -916,9 +955,14 @@ void OculonApp::draw()
         return;
     }
     
-    if( mOutputMode == OUTPUT_FBO || mOutputMode == OUTPUT_DOME )
+    if( mOutputMode == OUTPUT_FBO )
     {
-        drawToFbo(mFbo);
+        //drawToFbo(mFbo[mVisibleLayerIndex]);
+        drawToLayers();
+    }
+    else if( mOutputMode == OUTPUT_DOME )
+    {
+        drawToFbo(mFbo[mVisibleLayerIndex]);
     }
     else
     {
@@ -950,11 +994,11 @@ void OculonApp::draw()
     
     if( mOutputMode == OUTPUT_FBO )
     {
-        drawFromFbo(mFbo);
+        drawFromFbo(mFbo[mVisibleLayerIndex]);
     }
     else if (mOutputMode == OUTPUT_DOME )
     {
-        mDomeRenderer.renderFboToDome( mFbo, getMayaCam() );
+        mDomeRenderer.renderFboToDome( mFbo[mVisibleLayerIndex], getMayaCam() );
         drawFromFbo( mDomeRenderer.getDomeProjectionFbo() );
     }
     
@@ -963,11 +1007,16 @@ void OculonApp::draw()
         switch( mOutputMode )
         {
             case OUTPUT_DIRECT:
-                mScreenSyphon.publishScreen();
+                mScreenSyphon[mVisibleLayerIndex].publishScreen();
                 break;
                 
             case OUTPUT_FBO:
-                mScreenSyphon.publishTexture(&mFbo.getTexture());
+            {
+                for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+                {
+                    mScreenSyphon[layerIndex].publishTexture(&mFbo[layerIndex].getTexture());
+                }
+            }
                 break;
                 
             case OUTPUT_MULTIFBO:
@@ -986,7 +1035,7 @@ void OculonApp::draw()
                 break;
                 
             case OUTPUT_DOME:
-                mScreenSyphon.publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture() );
+                mScreenSyphon[mVisibleLayerIndex].publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture() );
                 break;
             
             default:
@@ -1058,7 +1107,7 @@ void OculonApp::saveScreenshot()
     fs::path p = Utils::getUniquePath( "~/Desktop/oculon_screenshot.png" );
     if( mOutputMode == OUTPUT_FBO )
     {
-        writeImage( p, mFbo.getTexture() );
+        writeImage( p, mFbo[mVisibleLayerIndex].getTexture() );
     }
     else
     {
@@ -1158,7 +1207,7 @@ bool OculonApp::onOutputModeChange()
     {
         // uncomment for high-res capture
         //setWindowSize( 860, 860 );
-        resize( ResizeEvent(mFbo.getSize()) );
+        resize( ResizeEvent(mFbo[mVisibleLayerIndex].getSize()) );
     }
     else
     {
@@ -1172,7 +1221,7 @@ int OculonApp::getViewportWidth() const
 {
     if( mOutputMode == OUTPUT_FBO ) 
     {
-        return mFbo.getWidth();
+        return mFbo[mVisibleLayerIndex].getWidth();
     }
     else
     {
@@ -1184,7 +1233,7 @@ int OculonApp::getViewportHeight() const
 {
     if( mOutputMode == OUTPUT_FBO ) 
     {
-        return mFbo.getHeight();
+        return mFbo[mVisibleLayerIndex].getHeight();
     }
     else
     {
@@ -1196,7 +1245,7 @@ Area OculonApp::getViewportBounds() const
 {
     if( mOutputMode == OUTPUT_FBO ) 
     {
-        return Area( 0, 0, mFbo.getWidth(), mFbo.getHeight() );
+        return Area( 0, 0, mFbo[mVisibleLayerIndex].getWidth(), mFbo[mVisibleLayerIndex].getHeight() );
     }
     else
     {
@@ -1208,7 +1257,7 @@ Vec2i OculonApp::getViewportSize() const
 {
     if( mOutputMode == OUTPUT_FBO )
     {
-        return Vec2i( mFbo.getWidth(), mFbo.getHeight() );
+        return Vec2i( mFbo[mVisibleLayerIndex].getWidth(), mFbo[mVisibleLayerIndex].getHeight() );
     }
     else
     {
@@ -1220,7 +1269,7 @@ float OculonApp::getViewportAspectRatio() const
 {
     if( mOutputMode == OUTPUT_FBO )
     {
-        return (mFbo.getWidth() / (float)mFbo.getHeight());
+        return (mFbo[mVisibleLayerIndex].getWidth() / (float)mFbo[mVisibleLayerIndex].getHeight());
     }
     else
     {

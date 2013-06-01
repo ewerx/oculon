@@ -66,6 +66,7 @@ public:
     bool isVisible() const          { return mIsVisible; }
     bool isDebug() const            { return mIsDebug; }
     float getGain() const           { return mGain; }
+    int getLayerIndex() const       { return mLayerIndex; }
     
     void setRunning(bool running);
     void setVisible(bool visible);
@@ -124,6 +125,7 @@ private:
     // fbo
     ci::gl::Fbo             mFbo;
     syphonServer            mSyphon;
+    int                     mLayerIndex;
     
     // frustum culling
     enum

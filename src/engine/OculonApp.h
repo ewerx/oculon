@@ -137,9 +137,10 @@ public: // new
 protected: // new
     
     void drawToScreen();
-    void drawToFbo( gl::Fbo& fbo );
+    void drawToFbo(gl::Fbo& fbo);
+    void drawToLayers();
     void drawFromFbo( gl::Fbo& fbo );
-    void drawScenes();
+    void drawScenes(int layerIndex =0);
     void renderScenes();
     void drawDebug();
     void captureFrames();
@@ -186,7 +187,9 @@ private: // members
     
     
     eOutputMode             mOutputMode;
-    gl::Fbo                 mFbo;
+    enum { MAX_LAYERS = 2 };
+    gl::Fbo                 mFbo[MAX_LAYERS];
+    int                     mVisibleLayerIndex;
     float                   mBackgroundAlpha;
     
     DomeRenderer            mDomeRenderer;
@@ -221,7 +224,8 @@ private: // members
     bool                    mCaptureDebugOutput;
     
     // syphon
-    syphonServer            mScreenSyphon;
+    syphonServer            mScreenSyphon[MAX_LAYERS];
+    //syphonClient            mSyphonClient;
     bool                    mEnableSyphonServer;
     
     // fps
