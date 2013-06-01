@@ -63,7 +63,8 @@ void AudioInputHandler::setupInterface( Interface* interface )
     
     interface->addParam(CreateFloatParam( "falloff", &mFalloffTime )
                         .maxValue(5.0f)
-                        .oscReceiver(mScene->getName(),"audio/falloff"));
+                        .oscReceiver(mScene->getName(),"audio/falloff")
+                        .midiInput(1, 2, 22));
     interface->addParam(CreateBoolParam( "freq_falloff", &mFalloffByFreq )
                         .oscReceiver(mScene->getName(),"audio/freq_falloff"));
     

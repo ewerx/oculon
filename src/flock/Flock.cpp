@@ -841,10 +841,10 @@ void Flock::draw()
     Vec3f billboardUp;
     getCamera().getBillboardVectors( &billboardRight, &billboardUp );
     
-	gl::disableDepthRead();
-	gl::disableDepthWrite();
-	gl::enable( GL_TEXTURE_2D );
-	gl::enableAlphaBlending();
+//	gl::disableDepthRead();
+//	gl::disableDepthWrite();
+//	gl::enable( GL_TEXTURE_2D );
+//	gl::enableAlphaBlending();
 	
 	// DRAW ROOM
 	//mRoomFbo.bindTexture();
@@ -927,7 +927,7 @@ void Flock::draw()
 	mController.drawLanterns( &mLanternShader );
 	mLanternShader.unbind();
 
-	gl::disableDepthWrite();
+	//gl::disableDepthWrite();
 	gl::enableAlphaBlending();
 	
 	// DRAW PANEL

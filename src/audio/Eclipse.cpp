@@ -31,8 +31,8 @@ Eclipse::Eclipse(Scene* scene)
 : SubScene(scene,"eclipse")
 {
     mDim = 168; // cube dimension
-    mXOffset = 8;
-    mYOffset = 130;
+    mXOffset = 0;
+    mYOffset = 0;
     
     mRectsInRow[0] = ROW1_RECTS;
     mRectsInRow[1] = ROW2_RECTS;
@@ -82,7 +82,7 @@ void Eclipse::setup()
     mMode = MODE_SNAKES;
     mInverse = false;
     mDrawInnerLines = false;
-    mMaxThickness = mDim/2.0f;
+    mMaxThickness = 10.0f;
     mRandomizeFaces = false;
     mRandomizeSignal = false;
     mUseFftData = true;
@@ -94,10 +94,10 @@ void Eclipse::setup()
     mMaxSnakeSpeed = 15.0f;
     mSnakeDirMode = SNAKEDIR_ALTERNATE;
     mSnakeRounded = false;
-    mSnakeRandomSpeed = false;
-    mSnakeSpeedMultiplier = 1.0f;
+    mSnakeRandomSpeed = true;
+    mSnakeSpeedMultiplier = 2.0f;
     
-    mColor = Colorf::white();
+    mColor = Colorf(1.0f, 0.0f, 0.0f);
     
     reset();
 }
@@ -125,7 +125,7 @@ void Eclipse::setupInterface()
                         .oscReceiver(mName,"usefft"));
     interface->addParam(CreateFloatParam("Max Thickness", &mMaxThickness)
                         .minValue(2.0f)
-                        .maxValue((float)mDim/2.0f)
+                        .maxValue(20.0f)
                         .oscReceiver(mName,"maxthickness"));
     interface->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                         .minValue(1.0f)
@@ -138,12 +138,12 @@ void Eclipse::setupInterface()
                         .maxValue(mDim*4.0f)
                         .oscReceiver(mName,"snakelength"));
     interface->addParam(CreateFloatParam("Snake Min Speed", &mMinSnakeSpeed)
-                        .minValue(mDim/2.0f)
-                        .maxValue(mDim*2.0f)
+                        .minValue(0.0f)
+                        .maxValue(20.0f)
                         .oscReceiver(mName,"snakeminspeed"));
     interface->addParam(CreateFloatParam("Snake Max Speed", &mMaxSnakeSpeed)
-                        .minValue(mDim/2.0f)
-                        .maxValue(mDim*2.0f)
+                        .minValue(0.0f)
+                        .maxValue(20.0f)
                         .oscReceiver(mName,"snakemaxspeed"));
     interface->addParam(CreateBoolParam("Snake Random Speed", &mSnakeRandomSpeed)
                         .oscReceiver(mName,"snakespeedrandom"));
@@ -481,7 +481,7 @@ bool Eclipse::resetSnakes()
     // vertical
     for( int i=0; i < NUM_VLINES; ++i )
     {
-        mVSnakes[i].mHead.x = mXOffset + mDim*i;
+        mVSnakes[i].mHead.x = mDim*(i+1);
         
 //        if( mSnakeRandomStart )
 //        {
@@ -519,7 +519,7 @@ bool Eclipse::resetSnakes()
     for( int i=0; i < NUM_HLINES; ++i )
     {
         mHSnakes[i].mHead.x = 0.0f;
-        mHSnakes[i].mHead.y = mYOffset + mDim*i;
+        mHSnakes[i].mHead.y = mYOffset + mDim*(i+1);
         
         mHSnakes[i].mDir.y = 0.0f;
         

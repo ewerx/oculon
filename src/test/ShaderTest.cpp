@@ -235,6 +235,7 @@ void ShaderTest::shaderPreDraw()
         case SHADER_NOISE:
             shader.uniform( "theta", (float)(mApp->getElapsedSeconds() * mNoiseParams.mDisplacementSpeed) );
             shader.uniform( "scale", mNoiseParams.mNoiseScale );
+            shader.uniform( "color", mColorScale );
             break;
             
         case SHADER_SIMPLICITY:

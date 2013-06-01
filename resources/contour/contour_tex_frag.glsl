@@ -1,5 +1,6 @@
 uniform float theta;
 uniform vec3  scale;
+uniform vec3  colorScale;
 uniform sampler1D tex;
 
 varying vec2 uv;
@@ -146,16 +147,16 @@ void main( void )
     //color               = texture1D( tex, n );
     float levels = 64.0;
     float band = floor(levels * n);
-    float red = band / levels;
+    float value = band / levels;
 //    if (((levels * n) - band) < 0.05) {
 //        color.x = 0.0;
 //        color.y = 0.0;
 //        color.z = 0.0;
 //    } else {
     {
-        color.x = red;
-        color.y = red;
-        color.z = red;
+        color.x = colorScale.x * value;
+        color.y = colorScale.y * value;
+        color.z = colorScale.z * value;
     }
     gl_FragColor = color;
 }

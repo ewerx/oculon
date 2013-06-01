@@ -67,13 +67,14 @@ private:
         ci::Anim<float> mAlpha;
         ci::Anim<int> mWidth;
         ci::Anim<int> mHeight;
+        bool mExpand;
         
-        tParticle( ci::Vec2f pos, ci::Vec2f vel, int width, int height ) : mPos(pos), mVel(vel), mAlpha(1.0f), mWidth(width), mHeight(height) {}
-        tParticle() : mPos(Vec2f::zero()), mVel(Vec2f::zero()), mAlpha(1.0f) {}
+        tParticle( ci::Vec2f pos, ci::Vec2f vel, int width, int height ) : mPos(pos), mVel(vel), mAlpha(1.0f), mWidth(width), mHeight(height) , mExpand(false) {}
+        tParticle() : mPos(Vec2f::zero()), mVel(Vec2f::zero()), mAlpha(1.0f), mExpand(false) {}
     };
     void updateParticles(double dt);
     void drawParticles();
-    tParticle spawnParticle();
+    tParticle spawnParticle(int type =PARTICLEMODE_COUNT);
     
     bool setColorScheme();
     
@@ -101,7 +102,7 @@ private:
 GRIDMODE_ENTRY( "Shapes", GRIDMODE_MOTION ) \
 GRIDMODE_ENTRY( "Pixels", GRIDMODE_PIXELS ) \
 GRIDMODE_ENTRY( "Particles", GRIDMODE_PARTICLES ) \
-GRIDMODE_ENTRY( "Tunnel", GRIDMODE_TUNNEL ) \
+GRIDMODE_ENTRY( "Snake", GRIDMODE_SNAKE ) \
 //end tuple
     
     enum eGridMode
@@ -155,31 +156,31 @@ enm,
     float mParticleSpeed;
     float mParticleSpawnRate;
     float mParticleSpawnTime;
-    bool mParticleSpawnByAudio;
     
 #define PARTICLESPAWN_TUPLE \
-PARTICLESPAWNENTRY( "Manual", PARTICLESPAWN_MANUAL ) \
-PARTICLESPAWNENTRY( "Time", PARTICLESPAWN_TIME ) \
-PARTICLESPAWNENTRY( "Audio", PARTICLESPAWN_AUDIO ) \
+PARTICLESPAWN_ENTRY( "Manual", PARTICLESPAWN_MANUAL ) \
+PARTICLESPAWN_ENTRY( "Time", PARTICLESPAWN_TIME ) \
+PARTICLESPAWN_ENTRY( "Audio", PARTICLESPAWN_AUDIO ) \
 //end tuple
     
     enum eParticleSpawn
     {
-#define PARTICLESPAWNENTRY( nam, enm ) \
+#define PARTICLESPAWN_ENTRY( nam, enm ) \
 enm,
         PARTICLESPAWN_TUPLE
-#undef  PARTICLESPAWNENTRY
+#undef  PARTICLESPAWN_ENTRY
         
         PARTICLESPAWN_COUNT
     };
     eParticleSpawn   mParticleSpawn;
 
 #define PARTICLEMODE_TUPLE \
+PARTICLEMODE_ENTRY( "Spread", PARTICLEMODE_SPREAD ) \
 PARTICLEMODE_ENTRY( "CenterH", PARTICLEMODE_CENTER ) \
 PARTICLEMODE_ENTRY( "Rain", PARTICLEMODE_RAIN ) \
 PARTICLEMODE_ENTRY( "CenterV", PARTICLEMODE_CENTERV ) \
 PARTICLEMODE_ENTRY( "Sides", PARTICLEMODE_SIDES ) \
-PARTICLEMODE_ENTRY( "Spread", PARTICLEMODE_SPREAD ) \
+PARTICLEMODE_ENTRY( "Strips", PARTICLEMODE_STRIPS ) \
 //end tuple
     
     enum eParticleMode
@@ -196,5 +197,24 @@ enm,
     int mParticleWidth;
     int mParticleHeight;
     bool mParticleRandomSize;
+    int mSpawnAmount;
+    
+    bool mParticleExpand;
+    bool triggerSpawn(int type);
+    bool triggerBox(int pos);
+    void triggerOneBox(int pos);
+    bool mMirrorTriggers;
+    
+    int mNumVSnakes;
+    int mNumHSnakes;
+    std::vector<tParticle>  mVSnakes;
+    std::vector<tParticle>  mHSnakes;
+    float mSnakeLength;
+    
+    void updateSnakes(double dt);
+    void drawSnakes();
+    bool resetSnakes();
+    
+    float mSecondaryColorRate;
 };
 
