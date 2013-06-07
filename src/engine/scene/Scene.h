@@ -14,6 +14,7 @@
 #include "cinder/Vector.h"
 #include "cinder/Camera.h"
 #include "cinder/gl/Fbo.h"
+#include "cinder/gl/Texture.h"
 #include "cinder/params/Params.h"
 #include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
@@ -53,7 +54,8 @@ public:
     
     void drawToFbo();
     void publishToSyphon();
-    ci::gl::Fbo& getFbo()           { return mFbo; }
+    ci::gl::Fbo& getFbo()                   { return mFbo; }
+    ci::gl::Texture getFboTexture()         { return mFbo.getTexture(); }
     
     OculonApp* getApp() const               { return mApp; }
     const std::string& getName() const      { return mName; }

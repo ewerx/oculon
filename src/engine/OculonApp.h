@@ -117,6 +117,8 @@ public: // new
     
     inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
     
+    float getBackgroundAlpha() const                    { return mBackgroundAlpha; }
+    
     //TODO: hack
     Scene* getScene(const int index)                    { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     Scene* getScene(const std::string& name);
@@ -147,6 +149,7 @@ protected: // new
     void drawDebug();
     void captureFrames();
     void saveScreenshot();
+    bool triggerScreenshot();
     
     void setupInterface();
     void setupScenes();

@@ -109,6 +109,15 @@ void Scene::setupFbo()
     format.setSamples(4); // 4x AA
     
     mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+    
+    // clear the buffer
+    mFbo.bindFramebuffer();
+    gl::setMatricesWindow( mApp->getViewportSize(), false );
+    gl::setViewport( mApp->getViewportBounds() );
+    gl::clear( ColorA(0.0f,0.0f,0.0f,mApp->getBackgroundAlpha()) );
+    mFbo.unbindFramebuffer();
+    
+    mFbo.getTexture().setFlipped(true);
 }
 
 void Scene::resize()
@@ -185,7 +194,7 @@ void Scene::drawToFbo()
 
 void Scene::publishToSyphon()
 {
-    mSyphon.publishTexture(&mFbo.getTexture());
+    mSyphon.publishTexture(&mFbo.getTexture(), /*flipped=*/false);
 }
 
 void Scene::drawInterface()

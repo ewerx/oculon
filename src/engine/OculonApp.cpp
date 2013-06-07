@@ -219,7 +219,9 @@ void OculonApp::setupInterface()
     mInterface->addButton(CreateTriggerParam("sync", NULL)
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
     
+    
     // output mode
+    mInterface->gui()->addLabel("--render--");
     vector<string> outputModeNames;
 #define OUTPUTMODE_ENTRY( nam, enm ) \
 outputModeNames.push_back(nam);
@@ -227,14 +229,20 @@ outputModeNames.push_back(nam);
 #undef  OUTPUTMODE_ENTRY
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
                         .maxValue(OUTPUT_COUNT), outputModeNames)->registerCallback( this, &OculonApp::onOutputModeChange );
-    mInterface->addParam(CreateIntParam("Visible Layer", &mVisibleLayerIndex)
-                         .maxValue(MAX_LAYERS-1));
+    if (mOutputMode == OUTPUT_FBO)
+    {
+        mInterface->addParam(CreateIntParam("Visible Layer", &mVisibleLayerIndex)
+                             .maxValue(MAX_LAYERS-1));
+    }
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateFloatParam("BG Alpha", &mBackgroundAlpha));
     mInterface->addParam(CreateBoolParam("Draw FBOs", &mDrawToScreen));
+    
     // capture
     mInterface->gui()->addSeparator();
+    mInterface->gui()->addLabel("--capture--");
+    mInterface->addButton(CreateTriggerParam("Screenshot", NULL))->registerCallback(this, &OculonApp::triggerScreenshot);
     mInterface->addParam(CreateBoolParam("Capture Debug", &mCaptureDebugOutput));
     mInterface->addParam(CreateBoolParam("Capture Frames", &mIsCapturingFrames))->registerCallback( this, &OculonApp::onFrameCaptureToggle );
     mInterface->addParam(CreateFloatParam("Capture Duration", &mCaptureDuration)
@@ -242,6 +250,7 @@ outputModeNames.push_back(nam);
                          .maxValue(600.0f));
     // audio
     mInterface->gui()->addSeparator();
+    mInterface->gui()->addLabel("--audio--");
     mAudioInput.setupInterface( mInterface );
 }
 
@@ -352,9 +361,10 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     }
     mScenes.push_back(scene);
     mSceneMap[scene->getName()] = scene;
+    const int sceneIndex = mScenes.size()-1;
     
     // interface
-    if( (mScenes.size()-1) % 2 == 0 )
+    if( (sceneIndex) % 2 == 0 )
     {
         mInterface->gui()->addColumn();
     }
@@ -362,11 +372,15 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     {
         mInterface->gui()->addSeparator();
     }
-    mInterface->gui()->addButton(scene->getName())->registerCallback( boost::bind( &OculonApp::showInterface, this, mScenes.size()-1) );
+    std::stringstream labelss;
+    labelss << scene->getName() << " (" << sceneIndex+1 << ")";
+    mInterface->gui()->addButton(labelss.str())->registerCallback( boost::bind( &OculonApp::showInterface, this, sceneIndex) );
     // scene thumbnails
     if( scene->getFbo() )
     {
-        mThumbnailControls.push_back( mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture())) );
+        mowa::sgui::TextureVarControl* texControl = mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture()));
+        texControl->registerCallback( boost::bind( &OculonApp::showInterface, this, sceneIndex) );
+        mThumbnailControls.push_back( texControl );
     }
     //mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
     mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
@@ -790,18 +804,8 @@ void OculonApp::update()
 
 void OculonApp::drawToScreen()
 {
-    if( mOutputMode == OUTPUT_MULTIFBO )
+    if( mDrawToScreen )
     {
-        renderScenes();
-    }
-    
-    if( mOutputMode != OUTPUT_MULTIFBO || mDrawToScreen )
-    {
-        //gl::disableDepthRead();
-        //gl::disableDepthWrite();
-        //gl::enableAlphaBlending();
-        //gl::clear( ColorA(0.0f,0.0f,0.0f,1.0f) );
-        //gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
         drawScenes();
     }
 }
@@ -912,7 +916,7 @@ void OculonApp::drawScenes(int layerIndex)
                 if( scene && scene->isVisible() )
                 {
                     gl::Fbo& fbo = scene->getFbo();
-                    gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
+                    gl::draw( fbo.getTexture(), Rectf( 0, 0, fbo.getWidth(), fbo.getHeight() ) );
                 }
             }
         }
@@ -927,7 +931,7 @@ void OculonApp::drawScenes(int layerIndex)
                 if( scene && scene->isVisible() )
                 {
                     gl::Fbo& fbo = scene->getFbo();
-                    gl::draw( fbo.getTexture(), Rectf( 0, fbo.getHeight(), fbo.getWidth(), 0 ) );
+                    gl::draw( fbo.getTexture(), Rectf( 0, 0, fbo.getWidth(), fbo.getHeight() ) );
                 }
             }
         }
@@ -1002,18 +1006,28 @@ void OculonApp::draw()
         saveScreenshot();
 	}
     
-    if( mOutputMode == OUTPUT_FBO )
+    switch( mOutputMode )
     {
-        drawFromFbo(mFbo[mVisibleLayerIndex]);
-    }
-    else if (mOutputMode == OUTPUT_DOME )
-    {
-        mDomeRenderer.renderFboToDome( mFbo[mVisibleLayerIndex], getMayaCam() );
-        drawFromFbo( mDomeRenderer.getDomeProjectionFbo() );
+        case OUTPUT_FBO:
+            drawFromFbo(mFbo[mVisibleLayerIndex]);
+            break;
+            
+        case OUTPUT_DOME:
+            mDomeRenderer.renderFboToDome( mFbo[mVisibleLayerIndex], getMayaCam() );
+            drawFromFbo( mDomeRenderer.getDomeProjectionFbo() );
+            break;
+            
+        case OUTPUT_MULTIFBO:
+            drawToScreen();
+            break;
+            
+        default:
+            break;
     }
     
     if( mEnableSyphonServer )
     {
+        const bool flipTexture = false;
         switch( mOutputMode )
         {
             case OUTPUT_DIRECT:
@@ -1024,7 +1038,7 @@ void OculonApp::draw()
             {
                 for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
                 {
-                    mScreenSyphon[layerIndex].publishTexture(&mFbo[layerIndex].getTexture());
+                    mScreenSyphon[layerIndex].publishTexture(&mFbo[layerIndex].getTexture(), flipTexture);
                 }
             }
                 break;
@@ -1045,7 +1059,7 @@ void OculonApp::draw()
                 break;
                 
             case OUTPUT_DOME:
-                mScreenSyphon[mVisibleLayerIndex].publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture() );
+                mScreenSyphon[mVisibleLayerIndex].publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture(), flipTexture );
                 break;
             
             default:
@@ -1101,9 +1115,11 @@ void OculonApp::captureFrames()
     
     if( mOutputMode == OUTPUT_FBO )
     {
-        // TODO: the fbo is flipped, using the window surface instead
-        //writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo.getTexture() );
-        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", copyWindowSurface() );
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mFbo[mVisibleLayerIndex].getTexture() );
+    }
+    else if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
+    {
+        writeImage( mFrameCapturePath + "/" + Utils::leftPaddedString( toString(mFrameCaptureCount) ) + ".png", mScenes[mLastActiveScene]->getFboTexture() );
     }
     else
     {
@@ -1119,10 +1135,20 @@ void OculonApp::saveScreenshot()
     {
         writeImage( p, mFbo[mVisibleLayerIndex].getTexture() );
     }
+    else if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
+    {
+        writeImage( p, mScenes[mLastActiveScene]->getFboTexture() );
+    }
     else
     {
         writeImage( p, copyWindowSurface() );
     }
+}
+
+bool OculonApp::triggerScreenshot()
+{
+    mSaveNextFrame = true;
+    return false;
 }
 
 void OculonApp::setPresentationMode( bool enabled )
@@ -1191,8 +1217,17 @@ bool OculonApp::onFrameCaptureToggle()
     if( mIsCapturingFrames )
     {
         mFrameCaptureCount = 0;
-        fs::path outputPath = Utils::getUniquePath("~/Documents/oculon/capture/oculon_capture");
+        fs::path outputPath;
+        if( mOutputMode == OUTPUT_MULTIFBO  && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
+        {
+            outputPath = Utils::getUniquePath("~/Documents/oculon/capture/" + mScenes[mLastActiveScene]->getName());
+        }
+        else
+        {
+            outputPath = Utils::getUniquePath("~/Documents/oculon/capture/oculon_capture");
+        }
         mFrameCapturePath = outputPath.string();
+        
         if( fs::create_directory(outputPath) )
         {
             console() << "[main] frame capture started. location: " << mFrameCapturePath << std::endl;
