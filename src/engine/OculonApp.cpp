@@ -164,12 +164,15 @@ void OculonApp::setup()
         mKinectController.setup();
     }
     
-    // syphon
-    char nameBuf[256];
-    for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+    if( mOutputMode == OUTPUT_FBO )
     {
-        snprintf(nameBuf, 256, "oculon-%d", layerIndex+1);
-        mScreenSyphon[layerIndex].setName(nameBuf);
+        // syphon
+        char nameBuf[256];
+        for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+        {
+            snprintf(nameBuf, 256, "oculon-%d", layerIndex+1);
+            mScreenSyphon[layerIndex].setName(nameBuf);
+        }
     }
     
     mLastElapsedSeconds = getElapsedSeconds();
@@ -224,7 +227,8 @@ outputModeNames.push_back(nam);
 #undef  OUTPUTMODE_ENTRY
     mInterface->addEnum(CreateEnumParam("Output Mode", (int*)&mOutputMode)
                         .maxValue(OUTPUT_COUNT), outputModeNames)->registerCallback( this, &OculonApp::onOutputModeChange );
-    mInterface->addParam(CreateIntParam("Visible Layer", &mVisibleLayerIndex));
+    mInterface->addParam(CreateIntParam("Visible Layer", &mVisibleLayerIndex)
+                         .maxValue(MAX_LAYERS-1));
     mInterface->addParam(CreateBoolParam("Syphon", &mEnableSyphonServer)
                          .oscReceiver("master", "syphon"));
     mInterface->addParam(CreateFloatParam("BG Alpha", &mBackgroundAlpha));
@@ -955,23 +959,29 @@ void OculonApp::draw()
         return;
     }
     
-    if( mOutputMode == OUTPUT_FBO )
+    
+    switch( mOutputMode )
     {
-        //drawToFbo(mFbo[mVisibleLayerIndex]);
-        drawToLayers();
-    }
-    else if( mOutputMode == OUTPUT_DOME )
-    {
-        drawToFbo(mFbo[mVisibleLayerIndex]);
-    }
-    else
-    {
-        drawToScreen();
-        
-        if( mCaptureDebugOutput ) 
-        {
-            drawDebug();
-        }
+        case OUTPUT_FBO:
+            //drawToFbo(mFbo[mVisibleLayerIndex]);
+            drawToLayers();
+            break;
+            
+        case OUTPUT_MULTIFBO:
+            renderScenes();
+            break;
+            
+        case OUTPUT_DOME:
+            drawToFbo(mFbo[mVisibleLayerIndex]);
+            break;
+            
+        default:
+            drawToScreen();
+            if( mCaptureDebugOutput )
+            {
+                drawDebug();
+            }
+            break;
     }
     
     // capture video
