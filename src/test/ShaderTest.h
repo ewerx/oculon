@@ -32,7 +32,7 @@ public:
     
     // inherited from Scene
     void setup();
-    //void reset();
+    void reset();
     void update(double dt);
     void draw();
     void drawDebug();
@@ -57,7 +57,9 @@ private:
 
     bool                mMotionBlur;
     bool                mGrid;
-    gl::Texture         mTexture;
+    enum { MAX_TEXTURES = 4 };
+    gl::Texture         mTexture[MAX_TEXTURES];
+    int                 mTextureIndex;
     
     MotionBlurRenderer  mMotionBlurRenderer;
     GridRenderer        mGridRenderer;
@@ -69,6 +71,8 @@ private:
 SHADERS_ENTRY( "Noise", SHADER_NOISE ) \
 SHADERS_ENTRY( "Simplicity", SHADER_SIMPLICITY ) \
 SHADERS_ENTRY( "Menger", SHADER_MENGER ) \
+SHADERS_ENTRY( "KIFS", SHADER_PAINT ) \
+SHADERS_ENTRY( "Polychora", SHADER_POLYCHORA ) \
 //end tuple
     
     enum eShaderType
@@ -111,9 +115,32 @@ enm,
     {
         float						mDisplacementSpeed;
         ci::Vec3f                   mNoiseScale;
+        float                       mLevels;
+        float                       mEdgeThickness;
+        float                       mBrightness;
     };
     tNoiseParams        mNoiseParams;
     
+    struct tKaliParams
+    {
+        int iterations;
+        float scale;
+        ci::Vec2f fold;
+        ci::Vec2f translate;
+        float zoom;
+        float brightness;
+        float saturation;
+        float texturescale;
+        
+        float rotspeed;
+        
+        float colspeed;
+        
+        float antialias;
+    };
+    tKaliParams mKaliParams;
+    
+    double mElapsedTime;
 };
 
 #endif // __MOVIETEST_H__

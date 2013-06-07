@@ -1,7 +1,9 @@
 uniform float theta;
 uniform vec3  scale;
 uniform vec3  colorScale;
-uniform sampler1D tex;
+uniform float alpha;
+uniform float levels;
+uniform float edgeThickness;
 
 varying vec2 uv;
 const float twoPi = 3.1415926 * 2.0;
@@ -145,50 +147,16 @@ void main( void )
     //gl_FragColor = vec4( n, 0.0, 0.0, 1.0 );
     vec4 color			= vec4( 0.0, 0.0, 0.0, 1.0 );
     //color               = texture1D( tex, n );
-    float levels = 64.0;
     float band = floor(levels * n);
     float value = band / levels;
-//    if (((levels * n) - band) < 0.05) {
-//        color.x = 0.0;
-//        color.y = 0.0;
-//        color.z = 0.0;
-//    } else {
+    if (((levels * n) - band) < edgeThickness) 
     {
-        color.x = colorScale.x * value;
-        color.y = colorScale.y * value;
-        color.z = colorScale.z * value;
+        color.x = 0.0;
+        color.y = 0.0;
+        color.z = 0.0;
+    } else {
+        color.rgb = colorScale.rgb * (1.0 - value);
+        color.a = alpha;
     }
     gl_FragColor = color;
 }
-
-/*
-//
-
-// main()
-
-//
-
-void main( void )
-
-{
-
-// pixel coord for GL_TEXTURE_2D
-
-vec2 coord = gl_TexCoord[0].st;
-
-// pixel coord GL_TEXTURE_RECTANGLE_ARB
-
-//vec2 coord = gl_FragCoord.st / u_RenderSize;
-
-vec3 v = vec3( coord, u_time ) * u_scale;
-
-float n = snoise3d( v );
-
-vec4 the_color = vec4( n, n, n, 1.0 );
-
-the_color *= gl_Color;
-
-gl_FragColor = the_color;
-
-}
-*/

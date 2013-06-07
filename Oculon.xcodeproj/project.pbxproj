@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C01E471175A5DC50066E50A /* paint_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E470175A5DC50066E50A /* paint_frag.glsl */; };
+		7C01E473175A809B0066E50A /* kifs_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E472175A809B0066E50A /* kifs_frag.glsl */; };
+		7C01E475175A89490066E50A /* colortex1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E474175A89490066E50A /* colortex1.jpg */; };
+		7C01E479175A931F0066E50A /* colortex2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E476175A931F0066E50A /* colortex2.jpg */; };
+		7C01E47A175A931F0066E50A /* colortex3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E477175A931F0066E50A /* colortex3.jpg */; };
+		7C01E47B175A931F0066E50A /* colortex4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E478175A931F0066E50A /* colortex4.jpg */; };
+		7C01E47D175A95440066E50A /* polychora_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E47C175A95440066E50A /* polychora_frag.glsl */; };
+		7C01E47F175A97280066E50A /* voronoi_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C01E47E175A97280066E50A /* voronoi_frag.glsl */; };
+		7C01E482175AB7310066E50A /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C01E480175AB7310066E50A /* Triangle.cpp */; };
 		7C0CFC2516F1A8AB00CECB8B /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0CFC2316F1A8AB00CECB8B /* CameraController.cpp */; };
 		7C0F498015E3400B006CDE84 /* passThruFlock.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
 		7C0F498115E340CC006CDE84 /* passThruFlock.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C0F497F15E3400B006CDE84 /* passThruFlock.vert */; };
@@ -321,6 +330,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7C01E470175A5DC50066E50A /* paint_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = paint_frag.glsl; sourceTree = "<group>"; };
+		7C01E472175A809B0066E50A /* kifs_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = kifs_frag.glsl; sourceTree = "<group>"; };
+		7C01E474175A89490066E50A /* colortex1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colortex1.jpg; sourceTree = "<group>"; };
+		7C01E476175A931F0066E50A /* colortex2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colortex2.jpg; sourceTree = "<group>"; };
+		7C01E477175A931F0066E50A /* colortex3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colortex3.jpg; sourceTree = "<group>"; };
+		7C01E478175A931F0066E50A /* colortex4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colortex4.jpg; sourceTree = "<group>"; };
+		7C01E47C175A95440066E50A /* polychora_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polychora_frag.glsl; sourceTree = "<group>"; };
+		7C01E47E175A97280066E50A /* voronoi_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = voronoi_frag.glsl; sourceTree = "<group>"; };
+		7C01E480175AB7310066E50A /* Triangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Triangle.cpp; sourceTree = "<group>"; };
+		7C01E481175AB7310066E50A /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
 		7C0CFC2316F1A8AB00CECB8B /* CameraController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraController.cpp; sourceTree = "<group>"; };
 		7C0CFC2416F1A8AB00CECB8B /* CameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		7C0F497F15E3400B006CDE84 /* passThruFlock.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passThruFlock.vert; sourceTree = "<group>"; };
@@ -1515,6 +1534,10 @@
 		7C865645148C2BCD000E00B6 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7C01E474175A89490066E50A /* colortex1.jpg */,
+				7C01E476175A931F0066E50A /* colortex2.jpg */,
+				7C01E477175A931F0066E50A /* colortex3.jpg */,
+				7C01E478175A931F0066E50A /* colortex4.jpg */,
 				7C134464158992AD0032017E /* catalog */,
 				7C3BB43715F55DC400A4E384 /* corona */,
 				7C8F153615BB4B1700BAD08D /* flock */,
@@ -1561,6 +1584,10 @@
 				7CB585451747287E00A456C3 /* simplicity_frag.glsl */,
 				7CB5854C174743EA00A456C3 /* menger_frag.glsl */,
 				7C4752F417528B25005AE8A5 /* pixelate_frag.glsl */,
+				7C01E470175A5DC50066E50A /* paint_frag.glsl */,
+				7C01E472175A809B0066E50A /* kifs_frag.glsl */,
+				7C01E47C175A95440066E50A /* polychora_frag.glsl */,
+				7C01E47E175A97280066E50A /* voronoi_frag.glsl */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -1922,6 +1949,8 @@
 				7C1BA52F15E9408D005BE669 /* SignalScope.h */,
 				7C1BA53015E9408D005BE669 /* Barcode.cpp */,
 				7C1BA53115E9408D005BE669 /* Barcode.h */,
+				7C01E480175AB7310066E50A /* Triangle.cpp */,
+				7C01E481175AB7310066E50A /* Triangle.h */,
 			);
 			name = audiosignal;
 			path = audio;
@@ -2100,6 +2129,14 @@
 				7C206DCB17403CBA00DA71E9 /* contour_tex_frag.glsl in Resources */,
 				7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */,
 				7C4752F517528B25005AE8A5 /* pixelate_frag.glsl in Resources */,
+				7C01E471175A5DC50066E50A /* paint_frag.glsl in Resources */,
+				7C01E473175A809B0066E50A /* kifs_frag.glsl in Resources */,
+				7C01E475175A89490066E50A /* colortex1.jpg in Resources */,
+				7C01E479175A931F0066E50A /* colortex2.jpg in Resources */,
+				7C01E47A175A931F0066E50A /* colortex3.jpg in Resources */,
+				7C01E47B175A931F0066E50A /* colortex4.jpg in Resources */,
+				7C01E47D175A95440066E50A /* polychora_frag.glsl in Resources */,
+				7C01E47F175A97280066E50A /* voronoi_frag.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2257,6 +2294,7 @@
 				7CB5854D174743EA00A456C3 /* menger_frag.glsl in Sources */,
 				7C8927FD175194DE00683339 /* Grid.cpp in Sources */,
 				7CA529A91754661D00781E52 /* GridRenderer.cpp in Sources */,
+				7C01E482175AB7310066E50A /* Triangle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

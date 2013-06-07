@@ -77,7 +77,7 @@ void Scene::init(OculonApp* app)
                          .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onRunningChanged );
     mInterface->addParam(CreateIntParam("layer", &mLayerIndex)
                          .minValue(0)
-                         .maxValue(1)
+                         .maxValue(OculonApp::MAX_LAYERS-1)
                          .oscReceiver(mName).sendFeedback());
     mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
     mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
@@ -280,12 +280,15 @@ bool Scene::saveInterfaceParams()
 
 bool Scene::loadInterfaceParams(const int index)
 {
-    //std::stringstream filePath;
-    //filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
-    fs::path path = getOpenFilePath( kIniLocation );
-	if( ! path.empty() ) {
-        mInterface->gui()->load(path.string());
-    }
+    std::stringstream filePath;
+    filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
+    
+    fs::path iniPath = expandPath( fs::path( filePath.str() ) );
+    //fs::path filePath = getOpenFilePath( kIniLocation );
+//	if( ! filePath.empty() ) {
+//        mInterface->gui()->load(filePath.string());
+//    }
+    mInterface->gui()->load(iniPath.string());
     return false;//callback
 }
 

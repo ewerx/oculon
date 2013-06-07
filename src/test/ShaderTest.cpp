@@ -42,10 +42,18 @@ void ShaderTest::setup()
     
     setupShaders();
     
-    
+    mTexture[0] = gl::Texture( loadImage( loadResource( RES_COLORTEX1 ) ) );
+    mTexture[1] = gl::Texture( loadImage( loadResource( RES_COLORTEX2 ) ) );
+    mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ) );
+    mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
     // OSC TEST
     //mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
-    
+    mElapsedTime = 0.0f;
+}
+
+void ShaderTest::reset()
+{
+    mElapsedTime = 0.0f;
 }
 
 void ShaderTest::setupShaders()
@@ -62,13 +70,12 @@ void ShaderTest::setupShaders()
         
         mNoiseParams.mNoiseScale            = Vec3f(1.0f,1.0f,0.25f);
         mNoiseParams.mDisplacementSpeed     = 1.0f;
+        mNoiseParams.mLevels                = 64.0f;
+        mNoiseParams.mEdgeThickness         = 0.0f;
+        mNoiseParams.mBrightness            = 1.0f;
         
         // SIMPLICITY
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_SIMPLICITY_FRAG ) );
-        mShaders.push_back(shader);
-        
-        // MENGER
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
         mShaders.push_back(shader);
         
         mRedPower = 2;
@@ -87,6 +94,35 @@ void ShaderTest::setupShaders()
         mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
         mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
         mUVScale = 0.25f;
+        
+        // MENGER
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
+        mShaders.push_back(shader);
+        
+        // KALI
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_PAINT_FRAG ) );
+        mShaders.push_back(shader);
+        
+        mKaliParams.iterations=20;
+        mKaliParams.scale=1.35f;
+        mKaliParams.fold= Vec2f(0.5f,0.5f);
+        mKaliParams.translate= Vec2f(1.5f,1.5f);
+        mKaliParams.zoom=0.17f;
+        mKaliParams.brightness=7.f;
+        mKaliParams.saturation=0.2f;
+        mKaliParams.texturescale=0.15f;
+        
+        mKaliParams.rotspeed=0.005f;
+        
+        mKaliParams.colspeed=0.05f;
+        
+        mKaliParams.antialias=2.f;
+        mTextureIndex = 0;
+        
+        // POLYCHORA
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_POLYCHORA_FRAG ) );
+        mShaders.push_back(shader);
+    
         
 	}
 	catch( gl::GlslProgCompileExc &exc )
@@ -122,6 +158,16 @@ shaderNames.push_back(nam);
                          .oscReceiver(getName()));
     mInterface->addParam(CreateVec3fParam("noise/noise", &mNoiseParams.mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
                          .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "levels", &mNoiseParams.mLevels )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "brightness", &mNoiseParams.mBrightness )
+                         .oscReceiver(getName())
+                         .midiInput(0,2,16));
+
+    mInterface->addParam(CreateFloatParam( "edgeThickness", &mNoiseParams.mEdgeThickness )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Simplicity");
@@ -169,6 +215,45 @@ shaderNames.push_back(nam);
                          .minValue(0.01f)
                          .maxValue(4.0f));
     
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Kali");
+    mInterface->addParam(CreateIntParam( "texture", &mTextureIndex )
+                         .maxValue(MAX_TEXTURES-1)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "kali/iterations", &mKaliParams.iterations )
+                         .maxValue(64)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec2fParam("kali/fold", &mKaliParams.fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateVec2fParam("kali/translate", &mKaliParams.translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "kali/scale", &mKaliParams.scale )
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 2, 19));
+    mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
+                         .maxValue(20.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/saturation", &mKaliParams.saturation )
+                         .maxValue(2.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
+                         .maxValue(0.1f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 2, 20));
+    mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
+                         .maxValue(2.0f)
+                         .oscReceiver(getName()));
+    
     mAudioInputHandler.setupInterface(mInterface);
 
     mRadius = 100.0f;
@@ -188,6 +273,8 @@ void ShaderTest::update(double dt)
     {
         mMotionBlurRenderer.preDraw();
     }
+    
+    mElapsedTime += dt;
 }
 
 void ShaderTest::draw()
@@ -225,6 +312,8 @@ void ShaderTest::shaderPreDraw()
         mAudioInputHandler.getFbo().bindTexture(1);
     }
     
+    mTexture[mTextureIndex].bind(0);
+    
     gl::GlslProg shader = mShaders[mShaderType];
     shader.bind();
     
@@ -233,9 +322,12 @@ void ShaderTest::shaderPreDraw()
     switch( mShaderType )
     {
         case SHADER_NOISE:
-            shader.uniform( "theta", (float)(mApp->getElapsedSeconds() * mNoiseParams.mDisplacementSpeed) );
+            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
             shader.uniform( "scale", mNoiseParams.mNoiseScale );
-            shader.uniform( "color", mColorScale );
+            shader.uniform( "colorScale", mColorScale );
+            shader.uniform( "alpha", mNoiseParams.mBrightness );
+            shader.uniform( "levels", mNoiseParams.mLevels );
+            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
             break;
             
         case SHADER_SIMPLICITY:
@@ -256,14 +348,34 @@ void ShaderTest::shaderPreDraw()
             shader.uniform( "uvOffset", mUVOffset );
             shader.uniform( "uvScale", mUVScale );
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iGlobalTime", (float)mElapsedTime );
             break;
-        case SHADER_MENGER:
+        case SHADER_PAINT:
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            shader.uniform( "iChannel0", 0 );
+            shader.uniform( "iterations", mKaliParams.iterations );
+            shader.uniform( "scale", mKaliParams.scale );
+            shader.uniform( "fold", mKaliParams.fold );
+            shader.uniform( "translate", mKaliParams.translate );
+            shader.uniform( "zoom", mKaliParams.zoom );
+            shader.uniform( "brightness", mKaliParams.brightness );
+            shader.uniform( "saturation", mKaliParams.saturation );
+            shader.uniform( "texturescale", mKaliParams.texturescale );
+            shader.uniform( "rotspeed", mKaliParams.rotspeed );
+            shader.uniform( "colspeed", mKaliParams.colspeed );
+            shader.uniform( "antialias", mKaliParams.antialias );
             break;
             
+        case SHADER_POLYCHORA:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iMouse", mKaliParams.translate );
+
+        case SHADER_MENGER:
         default:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
             break;
     }
 }
@@ -314,6 +426,7 @@ void ShaderTest::shaderPostDraw()
     shader.unbind();
     
     mAudioInputHandler.getFbo().unbindTexture();
+    mTexture[mTextureIndex].unbind();
 }
 
 void ShaderTest::drawScene()

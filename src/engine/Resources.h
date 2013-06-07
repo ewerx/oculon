@@ -29,6 +29,13 @@
 #define RES_SHADER_SIMPLICITY_FRAG	CINDER_RESOURCE( ../resources/shaders/, simplicity_frag.glsl, 134, GLSL )
 #define RES_SHADER_MENGER_FRAG	CINDER_RESOURCE( ../resources/shaders/, menger_frag.glsl, 134, GLSL )
 #define RES_SHADER_PIXELATE_FRAG	CINDER_RESOURCE( ../resources/shaders/, pixelate_frag.glsl, 134, GLSL )
+#define RES_SHADER_PAINT_FRAG	CINDER_RESOURCE( ../resources/shaders/, kifs_frag.glsl, 134, GLSL )
+#define RES_SHADER_POLYCHORA_FRAG	CINDER_RESOURCE( ../resources/shaders/, polychora_frag.glsl, 134, GLSL )
+
+#define RES_COLORTEX1		CINDER_RESOURCE( ../resources/images/, colortex1.jpg,		138, IMAGE )
+#define RES_COLORTEX2		CINDER_RESOURCE( ../resources/images/, colortex2.jpg,		138, IMAGE )
+#define RES_COLORTEX3		CINDER_RESOURCE( ../resources/images/, colortex3.jpg,		138, IMAGE )
+#define RES_COLORTEX4		CINDER_RESOURCE( ../resources/images/, colortex4.jpg,		138, IMAGE )
 
 // tectonic
 #define RES_EARTH_FRAG		CINDER_RESOURCE( ../resources/shaders/, earth_frag.glsl, 128, GLSL )

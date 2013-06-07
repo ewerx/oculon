@@ -32,6 +32,7 @@
 #include <vector>
 #include <boost/unordered_map.hpp>
 
+
 // fwd decl
 class Scene;
 class Interface;
@@ -58,6 +59,7 @@ public:
         INTERFACE_NONE = -2
     };
     
+    enum { MAX_LAYERS = 3 };
 
 #define OUTPUTMODE_TUPLE \
 OUTPUTMODE_ENTRY( "Direct", OUTPUT_DIRECT ) \
@@ -187,7 +189,6 @@ private: // members
     
     
     eOutputMode             mOutputMode;
-    enum { MAX_LAYERS = 2 };
     gl::Fbo                 mFbo[MAX_LAYERS];
     int                     mVisibleLayerIndex;
     float                   mBackgroundAlpha;
