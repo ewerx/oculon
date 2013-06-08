@@ -617,6 +617,7 @@ void Flock::update(double dt)
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
 	gl::color( Color( 1, 1, 1 ) );
+    gl::pushMatrices();
     
     // AUDIO
     updateAudioResponse();
@@ -626,6 +627,8 @@ void Flock::update(double dt)
 	drawIntoPredatorVelocityFbo(dt);
 	drawIntoPredatorPositionFbo(dt);
 	drawIntoLanternsFbo();
+    
+    gl::popMatrices();
 }
 
 void Flock::updateAudioResponse()
@@ -834,8 +837,8 @@ void Flock::draw()
 	//gl::clear( ColorA( 0.1f, 0.1f, 0.1f, 0.0f ), true );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	
-	gl::setMatricesWindow( mApp->getViewportSize(), false );
-	gl::setViewport( getWindowBounds() );
+	//gl::setMatricesWindow( mApp->getViewportSize(), false );
+	//gl::setViewport( getViewportBounds() );
     
     Vec3f billboardRight;
     Vec3f billboardUp;
@@ -851,7 +854,7 @@ void Flock::draw()
 	//gl::drawSolidRect( getWindowBounds() );
 	
 	gl::setMatrices( getCamera() );
-	gl::setViewport( getWindowBounds() );
+	gl::setViewport( mApp->getViewportBounds() );
 	
 	gl::enableAlphaBlending();
 	gl::enable( GL_TEXTURE_2D );
