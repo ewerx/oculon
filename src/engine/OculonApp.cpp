@@ -905,7 +905,7 @@ void OculonApp::drawScenes(int layerIndex)
         // draw scene FBO textures
         gl::disableDepthRead();
         gl::disableDepthWrite();
-        gl::disableAlphaBlending();
+        gl::enableAlphaBlending();
         glEnable(GL_TEXTURE_2D);
         gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
         if( mDrawOnlyLastScene )
@@ -915,8 +915,7 @@ void OculonApp::drawScenes(int layerIndex)
                 Scene* scene = mScenes[mLastActiveScene];
                 if( scene && scene->isVisible() )
                 {
-                    gl::Fbo& fbo = scene->getFbo();
-                    gl::draw( fbo.getTexture(), Rectf( 0, 0, fbo.getWidth(), fbo.getHeight() ) );
+                    gl::draw( scene->getFboTexture(), Rectf( 0, 0, getWindowWidth(), getWindowHeight() ) );
                 }
             }
         }
@@ -981,30 +980,8 @@ void OculonApp::draw()
             
         default:
             drawToScreen();
-            if( mCaptureDebugOutput )
-            {
-                drawDebug();
-            }
             break;
     }
-    
-    // capture video
-	if( mIsCapturingVideo && mMovieWriter )
-    {
-		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
-    }
-    
-    // capture frames
-    if( mIsCapturingFrames )
-    {
-        captureFrames();
-    }
-    
-    // screenshot
-    if( mSaveNextFrame )
-    {
-        saveScreenshot();
-	}
     
     switch( mOutputMode )
     {
@@ -1024,6 +1001,29 @@ void OculonApp::draw()
         default:
             break;
     }
+    
+    if( mCaptureDebugOutput )
+    {
+        drawDebug();
+    }
+    
+    // capture video
+	if( mIsCapturingVideo && mMovieWriter )
+    {
+		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
+    }
+    
+    // capture frames
+    if( mIsCapturingFrames )
+    {
+        captureFrames();
+    }
+    
+    // screenshot
+    if( mSaveNextFrame )
+    {
+        saveScreenshot();
+	}
     
     if( mEnableSyphonServer )
     {
@@ -1137,7 +1137,7 @@ void OculonApp::saveScreenshot()
     }
     else if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
     {
-        writeImage( p, mScenes[mLastActiveScene]->getFboTexture() );
+        writeImage( p, copyWindowSurface() );
     }
     else
     {
