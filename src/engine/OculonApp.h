@@ -11,6 +11,7 @@
 #define __OCULONAPP_H__
 
 #include "AudioInput.h"
+#include "CameraController.h"
 #include "DomeRenderer.h"
 #include "InfoPanel.h"
 #include "KinectController.h"
@@ -30,6 +31,7 @@
 
 #include <vector>
 #include <boost/unordered_map.hpp>
+
 
 // fwd decl
 class Scene;
@@ -57,6 +59,7 @@ public:
         INTERFACE_NONE = -2
     };
     
+    enum { MAX_LAYERS = 3 };
 
 #define OUTPUTMODE_TUPLE \
 OUTPUTMODE_ENTRY( "Direct", OUTPUT_DIRECT ) \
@@ -96,22 +99,25 @@ public: // cinder interface
     float   getViewportAspectRatio() const;
     
 public: // new
-    inline AudioInput& getAudioInput()                  { return mAudioInput; }
-    inline MidiInput& getMidiInput()                    { return mMidiInput; }
-    inline MindWave& getMindWave()                      { return mMindWave; }
-    inline KinectController& getKinectController()      { return mKinectController; }
-    inline OscServer& getOscServer()                    { return mOscServer; }
-    
-    inline InfoPanel& getInfoPanel()                    { return mInfoPanel; }
-    inline params::InterfaceGl& getParams()             { return mParams; }
+    AudioInput& getAudioInput()                         { return mAudioInput; }
+    MidiInput& getMidiInput()                           { return mMidiInput; }
+    MindWave& getMindWave()                             { return mMindWave; }
+    KinectController& getKinectController()             { return mKinectController; }
+    OscServer& getOscServer()                           { return mOscServer; }
+                
+    InfoPanel& getInfoPanel()                           { return mInfoPanel; }
+    params::InterfaceGl& getParams()                    { return mParams; }
     
     inline bool isPresentationMode() const              { return mIsPresentationMode; }
     inline void setUseMayaCam(bool use)                 { mUseMayaCam = use; }
     
     void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    inline const Camera& getMayaCam() const             { return mMayaCam.getCamera();  }
+    const Camera& getMayaCam() const                    { return mMayaCam.getCamera(); }
+    //const Camera& getGlobalCam()                        { return mCameraController.getCamera(); }
     
     inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
+    
+    float getBackgroundAlpha() const                    { return mBackgroundAlpha; }
     
     //TODO: hack
     Scene* getScene(const int index)                    { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
@@ -135,13 +141,15 @@ public: // new
 protected: // new
     
     void drawToScreen();
-    void drawToFbo( gl::Fbo& fbo );
+    void drawToFbo(gl::Fbo& fbo);
+    void drawToLayers();
     void drawFromFbo( gl::Fbo& fbo );
-    void drawScenes();
+    void drawScenes(int layerIndex =0);
     void renderScenes();
     void drawDebug();
     void captureFrames();
     void saveScreenshot();
+    bool triggerScreenshot();
     
     void setupInterface();
     void setupScenes();
@@ -180,9 +188,13 @@ private: // members
     MayaCamUI               mMayaCam;
     bool                    mUseMayaCam;
     bool                    mDebugRender;
+    //CameraController        mCameraController;
+    
     
     eOutputMode             mOutputMode;
-    gl::Fbo                 mFbo;
+    gl::Fbo                 mFbo[MAX_LAYERS];
+    int                     mVisibleLayerIndex;
+    float                   mBackgroundAlpha;
     
     DomeRenderer            mDomeRenderer;
     
@@ -216,7 +228,8 @@ private: // members
     bool                    mCaptureDebugOutput;
     
     // syphon
-    syphonServer            mScreenSyphon;
+    syphonServer            mScreenSyphon[MAX_LAYERS];
+    //syphonClient            mSyphonClient;
     bool                    mEnableSyphonServer;
     
     // fps

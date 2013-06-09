@@ -19,7 +19,7 @@ using std::ostringstream;
 #pragma MARK OscParam
 
 // constructor
-OscParam::OscParam(const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
+OscParam::OscParam(const eType type, OscServer* server, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const int midiPort, const int midiChannel, const int midiNote)
 : mType(type)
 , mOscServer(server)
 , mOscRecvAddress(recvAddr)
@@ -41,7 +41,7 @@ bool OscParam::valueChangedCallback()
 #pragma MARK OscFloatParam
 
 OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const CreateFloatParam& param)
-: OscParam(OscParam::PARAMTYPE_FLOAT, server, param._recvAddr, param._sendAddr, param._feedback)
+: OscParam(OscParam::PARAMTYPE_FLOAT, server, param._recvAddr, param._sendAddr, param._feedback, param._midiPort, param._midiChannel, param._midiNote)
 , mControl(control)
 , mIsEncoder(param._altstyle)
 , mStep(param._step)
@@ -50,6 +50,10 @@ OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const 
     if( param._recvAddr.length() > 0 )
     {
         server->registerCallback( param._recvAddr, this, &OscFloatParam::handleOscMessage );
+    }
+    if( param._midiChannel != -1 && param._midiNote != -1 )
+    {
+        server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscFloatParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
@@ -93,7 +97,7 @@ void OscFloatParam::sendValue()
 #pragma MARK OscIntParam
 
 OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const CreateIntParam& param)
-: OscParam(OscParam::PARAMTYPE_INT, server, param._recvAddr, param._sendAddr, param._feedback)
+: OscParam(OscParam::PARAMTYPE_INT, server, param._recvAddr, param._sendAddr, param._feedback, param._midiPort, param._midiChannel, param._midiNote)
 , mControl(control)
 , mIsEncoder(param._altstyle)
 , mStep(param._step)
@@ -102,6 +106,10 @@ OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const Create
     if( param._recvAddr.length() > 0 )
     {
         server->registerCallback( param._recvAddr, this, &OscIntParam::handleOscMessage );
+    }
+    if( param._midiChannel != -1 && param._midiNote != -1 )
+    {
+        server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscIntParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
@@ -158,14 +166,18 @@ void OscIntParam::sendValue()
 
 #pragma MARK OscBoolParam
 
-OscBoolParam::OscBoolParam(OscServer* server, BoolVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
-: OscParam(OscParam::PARAMTYPE_BOOL, server, recvAddr, sendAddr, sendsFeedback)
+OscBoolParam::OscBoolParam(OscServer* server, BoolVarControl* control, const CreateBoolParam& param)
+: OscParam(OscParam::PARAMTYPE_BOOL, server, param._recvAddr, param._sendAddr, param._feedback, param._midiPort, param._midiChannel, param._midiNote)
 , mControl(control)
 {
     assert(mControl != NULL);
-    if( recvAddr.length() > 0 )
+    if( param._recvAddr.length() > 0 )
     {
-        server->registerCallback( recvAddr, this, &OscBoolParam::handleOscMessage );
+        server->registerCallback( param._recvAddr, this, &OscBoolParam::handleOscMessage );
+    }
+    if( param._midiChannel != -1 && param._midiNote != -1 )
+    {
+        server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscBoolParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
@@ -210,14 +222,18 @@ void OscBoolParam::sendValue()
 
 #pragma MARK OscTriggerParam
 
-OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback)
-: OscParam(OscParam::PARAMTYPE_TRIGGER, server, recvAddr, sendAddr, sendsFeedback)
+OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, const CreateTriggerParam& param)
+: OscParam(OscParam::PARAMTYPE_TRIGGER, server, param._recvAddr, param._sendAddr, param._feedback, param._midiPort, param._midiChannel, param._midiNote)
 , mControl(control)
 {
     assert(mControl != NULL);
-    if( recvAddr.length() > 0 )
+    if( param._recvAddr.length() > 0 )
     {
-        server->registerCallback( recvAddr, this, &OscTriggerParam::handleOscMessage );
+        server->registerCallback( param._recvAddr, this, &OscTriggerParam::handleOscMessage );
+    }
+    if( param._midiChannel != -1 && param._midiNote != -1 )
+    {
+        server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscTriggerParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
@@ -264,7 +280,7 @@ void OscTriggerParam::sendValue()
 #pragma MARK OscEnumParam
 
 OscEnumParam::OscEnumParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isVertical)
-: OscParam(OscParam::PARAMTYPE_ENUM, server, recvAddr, sendAddr, sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_ENUM, server, recvAddr, sendAddr, sendsFeedback, -1, -1, -1)
 , mControl(control)
 , mIsVertical(isVertical)
 {
@@ -329,7 +345,7 @@ void OscEnumParam::sendValue()
 #pragma MARK OscColorParam
 
 OscColorParam::OscColorParam(OscServer* server, ColorVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isGrouped)
-: OscParam(OscParam::PARAMTYPE_COLOR, server, recvAddr, sendAddr, sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_COLOR, server, recvAddr, sendAddr, sendsFeedback, -1, -1, -1)
 , mControl(control)
 , mIsGrouped(isGrouped)
 {
@@ -403,7 +419,7 @@ void OscColorParam::sendValue()
 
 template <typename T, unsigned int _size>
 OscVectorParam<T,_size>::OscVectorParam(OscServer* server, VectorVarControl<T,_size>* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isGrouped)
-: OscParam(OscParam::PARAMTYPE_VECTOR, server, recvAddr, sendAddr, sendsFeedback)
+: OscParam(OscParam::PARAMTYPE_VECTOR, server, recvAddr, sendAddr, sendsFeedback, -1, -1, -1)
 , mControl(control)
 , mIsGrouped(isGrouped)
 {

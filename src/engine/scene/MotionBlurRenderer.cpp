@@ -66,7 +66,7 @@ void MotionBlurRenderer::resize(const Vec2i& windowSize)
     
 }
 
-void MotionBlurRenderer::draw()
+void MotionBlurRenderer::preDraw()
 {
     Area viewport = gl::getViewport();
     //gl::setMatricesWindow(getWindowSize());
@@ -89,6 +89,12 @@ void MotionBlurRenderer::draw()
     // Advance FBO index
     mFboIndex = (mFboIndex + 1) % FBO_COUNT;
     
+    gl::setViewport( viewport );
+}
+
+void MotionBlurRenderer::draw()
+{
+    Area viewport = gl::getViewport();
     /****** DRAW GLSL MOTION BLUR ******/
     
     // Set up window
@@ -103,6 +109,7 @@ void MotionBlurRenderer::draw()
         mFbo[i].bindTexture(i);
         mShader.uniform("tex" + toString(i), i);
     }
+    mShader.uniform("pixelate", false);
     
     // Draw shader output
     gl::color(Color::white());

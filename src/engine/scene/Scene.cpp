@@ -17,7 +17,7 @@
 using namespace ci;
 using namespace mowa::sgui;
 
-/*static*/const char* const Scene::kIniLocation = "/Volumes/cruxpod/oculondata/params/";
+/*static*/const char* const Scene::kIniLocation = "~/Documents/oculon/params/";
 /*static*/const char* const Scene::kIniExt = ".ini";
 /*static*/const int         Scene::kIniDigits = 2;
 
@@ -75,6 +75,10 @@ void Scene::init(OculonApp* app)
                          .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onVisibleChanged );
     mInterface->addParam(CreateBoolParam("running", &mIsRunning)
                          .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onRunningChanged );
+    mInterface->addParam(CreateIntParam("layer", &mLayerIndex)
+                         .minValue(0)
+                         .maxValue(OculonApp::MAX_LAYERS-1)
+                         .oscReceiver(mName).sendFeedback());
     mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
     mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
@@ -84,15 +88,16 @@ void Scene::init(OculonApp* app)
                          .oscReceiver(mName).sendFeedback());
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
-    
-    setupInterface();
-    setupDebugInterface();
 }
 
 void Scene::setup()
 {
     mIsSetup = true;
     mGain = 1.0f;
+    mLayerIndex = 0;
+    
+    setupInterface();
+    setupDebugInterface();
 }
 
 void Scene::setupFbo()
@@ -104,6 +109,15 @@ void Scene::setupFbo()
     format.setSamples(4); // 4x AA
     
     mFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+    
+    // clear the buffer
+    mFbo.bindFramebuffer();
+    gl::setMatricesWindow( mApp->getViewportSize(), false );
+    gl::setViewport( mApp->getViewportBounds() );
+    gl::clear( ColorA(0.0f,0.0f,0.0f,mApp->getBackgroundAlpha()) );
+    mFbo.unbindFramebuffer();
+    
+    mFbo.getTexture().setFlipped(true);
 }
 
 void Scene::resize()
@@ -180,7 +194,7 @@ void Scene::drawToFbo()
 
 void Scene::publishToSyphon()
 {
-    mSyphon.publishTexture(&mFbo.getTexture());
+    mSyphon.publishTexture(&mFbo.getTexture(), /*flipped=*/false);
 }
 
 void Scene::drawInterface()
@@ -277,7 +291,13 @@ bool Scene::loadInterfaceParams(const int index)
 {
     std::stringstream filePath;
     filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
-    mInterface->gui()->load(filePath.str());
+    
+    fs::path iniPath = expandPath( fs::path( filePath.str() ) );
+    //fs::path filePath = getOpenFilePath( kIniLocation );
+//	if( ! filePath.empty() ) {
+//        mInterface->gui()->load(filePath.string());
+//    }
+    mInterface->gui()->load(iniPath.string());
     return false;//callback
 }
 

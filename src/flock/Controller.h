@@ -14,10 +14,13 @@
 #include "Nebula.h"
 #include <vector>
 
+class Interface;
+
 class Controller {
 public:
 	Controller();
 	Controller( int maxLanterns );
+    void setupInterface( Interface* interface );
 	void update(double dt);
 	void updatePredatorBodies( ci::gl::Fbo *fbo );
 	void drawLanterns( ci::gl::GlslProg *shader );
@@ -33,6 +36,8 @@ public:
 	std::vector<Lantern>	mLanterns;
 	std::vector<Glow>		mGlows;
 	std::vector<Nebula>		mNebulas;
+    
+    float mLanternPosX;
     
     bool mTick;
     float mTimer;

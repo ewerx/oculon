@@ -14,6 +14,7 @@
 #include "cinder/Vector.h"
 #include "cinder/Camera.h"
 #include "cinder/gl/Fbo.h"
+#include "cinder/gl/Texture.h"
 #include "cinder/params/Params.h"
 #include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
@@ -53,10 +54,11 @@ public:
     
     void drawToFbo();
     void publishToSyphon();
-    ci::gl::Fbo& getFbo()           { return mFbo; }
+    ci::gl::Fbo& getFbo()                   { return mFbo; }
+    ci::gl::Texture getFboTexture()         { return mFbo.getTexture(); }
     
-    OculonApp* getApp() const       { return mApp; }
-    const std::string& getName()    { return mName; }
+    OculonApp* getApp() const               { return mApp; }
+    const std::string& getName() const      { return mName; }
     
     Interface* getInterface()                       { return mInterface; }
     ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
@@ -65,6 +67,8 @@ public:
     bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
     bool isDebug() const            { return mIsDebug; }
+    float getGain() const           { return mGain; }
+    int getLayerIndex() const       { return mLayerIndex; }
     
     void setRunning(bool running);
     void setVisible(bool visible);
@@ -123,6 +127,7 @@ private:
     // fbo
     ci::gl::Fbo             mFbo;
     syphonServer            mSyphon;
+    int                     mLayerIndex;
     
     // frustum culling
     enum

@@ -76,7 +76,7 @@ void Tectonic::setup()
     mShowLabels = true;
     mShowAllPoints = false;
     mSendToBinned = true;
-    mDataSource = DATASOURCE_NUKES;
+    mDataSource = DATASOURCE_QUAKES;
     mMarkerColor = Color(1.0f,0.0f,0.0f);
     mEarthAlpha = 0.0f;
     mColorNukesByType = true;

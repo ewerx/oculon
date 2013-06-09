@@ -28,6 +28,7 @@ public:
     void resize();
     void update(double dt);
     void draw();
+    void drawDebug();
     const Camera& getCamera();
     
     // new
@@ -36,6 +37,8 @@ protected:
     // inherited from Scene
     void setupInterface();
     void setupDebugInterface();
+    
+    void updateAudioResponse();
     
     // new
     void loadMesh();
@@ -125,6 +128,36 @@ POLYHEDRON_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     eCamType                    mCamType;
     
     SplineCam                   mSplineCam;
+    
+    // AUDIO
+    int                 mAudioFboDim;
+    ci::Vec2f           mAudioFboSize;
+    ci::Area            mAudioFboBounds;
+    ci::gl::Fbo         mAudioFbo;
+    std::vector< ci::Anim<float> >    mFftFalloff;
+    float               mFalloff;
+    int                 mAudioRowShift;
+    float               mAudioRowShiftTime;
+    float               mAudioRowShiftDelay;
+    float               mDisplacementScale;
+    
+    typedef std::function<float (float)> tEaseFn;
+    tEaseFn getFalloffFunction();
+    tEaseFn getReverseFalloffFunction();
+    
+    enum eFalloffMode
+    {
+        FALLOFF_LINEAR,
+        FALLOFF_OUTQUAD,
+        FALLOFF_OUTEXPO,
+        FALLOFF_OUTBACK,
+        FALLOFF_OUTBOUNCE,
+        FALLOFF_OUTINEXPO,
+        FALLOFF_OUTINBACK,
+        
+        FALLOFF_COUNT
+    };
+    eFalloffMode mFalloffMode;
 };
 
 #endif // __Polyhedron_H__

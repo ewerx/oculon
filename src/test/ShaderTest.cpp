@@ -15,11 +15,14 @@
 #include <boost/format.hpp>
 #include "Interface.h"
 
+#include "Contour.h"
+
 using namespace ci;
 
 ShaderTest::ShaderTest()
 : Scene("shadertest")
 {
+    mAudioInputHandler.setup(this, true);
 }
 
 ShaderTest::~ShaderTest()
@@ -32,255 +35,258 @@ void ShaderTest::setup()
     
     Vec2f viewportSize( mApp->getViewportWidth(), mApp->getViewportHeight() );
     mMotionBlurRenderer.setup( viewportSize, boost::bind( &ShaderTest::drawScene, this ) );
+    mGridRenderer.setup( viewportSize, boost::bind( &ShaderTest::drawScene, this ) );
     
-    mUseFbo = false;
-    // setup FBO
-    gl::Fbo::Format format;
-    //format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-    const int fboWidth = mApp->getViewportWidth();
-    const int fboHeight = mApp->getViewportHeight();
-    //format.enableMipmapping(false);
-    format.enableDepthBuffer(false);
-	format.setCoverageSamples(8);
-	format.setSamples(4);
+    mMotionBlur = false;
+    mGrid       = false;
     
-    mFboIndex = 0;
+    setupShaders();
     
-    for( int i = 0; i < FBO_COUNT; ++i )
+    mTexture[0] = gl::Texture( loadImage( loadResource( RES_COLORTEX1 ) ) );
+    mTexture[1] = gl::Texture( loadImage( loadResource( RES_COLORTEX2 ) ) );
+    mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ) );
+    mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
+    // OSC TEST
+    //mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
+    mElapsedTime = 0.0f;
+}
+
+void ShaderTest::reset()
+{
+    mElapsedTime = 0.0f;
+}
+
+void ShaderTest::setupShaders()
+{
+    mShaderType = SHADER_SIMPLICITY;
+    
+    try
     {
-        mFbo[i] = gl::Fbo( fboWidth, fboHeight, format );
-    }
+        gl::GlslProg shader;
         
-    // blur shader
-    try 
-    {
-		//mShader = gl::GlslProg( loadResource( RES_BLUR2_VERT ), loadResource( RES_BLUR2_FRAG ) );
-        //mShader = gl::GlslProg( loadResource( RES_PASSTHRU_VERT ), loadResource( RES_BLUR_FRAG ) );
-        mShader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_MOTIONBLUR_FRAG ) );
+        // PERLIN NOISE
+        shader = gl::GlslProg( loadResource( RES_SHADER_CT_TEX_VERT ), loadResource( RES_SHADER_CT_TEX_FRAG ) );
+        mShaders.push_back(shader);
+        
+        mNoiseParams.mNoiseScale            = Vec3f(1.0f,1.0f,0.25f);
+        mNoiseParams.mDisplacementSpeed     = 1.0f;
+        mNoiseParams.mLevels                = 64.0f;
+        mNoiseParams.mEdgeThickness         = 0.0f;
+        mNoiseParams.mBrightness            = 1.0f;
+        
+        // SIMPLICITY
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_SIMPLICITY_FRAG ) );
+        mShaders.push_back(shader);
+        
+        mRedPower = 2;
+        mGreenPower = 1;
+        mBluePower = 0;
+        mColorScale = Vec3f(1.8f, 1.4f, 1.0f);
+        mStrengthFactor = 0.03f;
+        mStrengthMin = 7.0f;
+        mStrengthConst = 4373.11f;
+        mIterations = 32;
+        mAccumPower = 2.3f;
+        mMagnitude = Vec3f(-0.5f, -0.4f, -1.5f);
+        mFieldScale = 5.0f;
+        mFieldSubtract = 0.7f;
+        mTimeScale = 1.0f;
+        mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
+        mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
+        mUVScale = 0.25f;
+        
+        // MENGER
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
+        mShaders.push_back(shader);
+        
+        // KALI
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_PAINT_FRAG ) );
+        mShaders.push_back(shader);
+        
+        mKaliParams.iterations=20;
+        mKaliParams.scale=1.35f;
+        mKaliParams.fold= Vec2f(0.5f,0.5f);
+        mKaliParams.translate= Vec2f(1.5f,1.5f);
+        mKaliParams.zoom=0.17f;
+        mKaliParams.brightness=7.f;
+        mKaliParams.saturation=0.2f;
+        mKaliParams.texturescale=0.15f;
+        
+        mKaliParams.rotspeed=0.005f;
+        
+        mKaliParams.colspeed=0.05f;
+        
+        mKaliParams.antialias=2.f;
+        mTextureIndex = 0;
+        
+        // POLYCHORA
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_POLYCHORA_FRAG ) );
+        mShaders.push_back(shader);
+    
+        
 	}
-	catch( gl::GlslProgCompileExc &exc ) 
+	catch( gl::GlslProgCompileExc &exc )
     {
 		std::cout << "Shader compile error: " << std::endl;
 		std::cout << exc.what();
 	}
-	catch( ... ) 
+	catch( ... )
     {
 		std::cout << "Unable to load shader" << std::endl;
 	}
-    
-    /*
-    try 
-    {
-		mTexture = gl::Texture( loadImage( loadResource( RES_ORBITER_JUPITER ) ) );
-	}
-	catch( ... ) 
-    {
-		std::cout << "unable to load the texture file!" << std::endl;
-	}
-    
-    mTexture.bind(1);
-    */
-    
-    mVel = Vec2f(100.0f,0.0f);
-    mPos = Vec2f(0.0f,mApp->getViewportHeight()/2.0f);
-    mColor = ColorA(1.0f,0.0f,0.0f,1.0f);
-    
-    //mEnableShader = false;
-    mBlurAmount = 8.0f / mApp->getViewportWidth();
-    
-    
-    // OSC TEST
-    mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
-    
 }
 
 void ShaderTest::setupInterface()
 {
-    mInterface->addParam(CreateIntParam( "Radius", &mRadius )
-                         .minValue(1)
-                         .maxValue(300)
-                         .oscReceiver("/1/fader2")
-                         .oscSender("/1/fader2"));
+    vector<string> shaderNames;
+#define SHADERS_ENTRY( nam, enm ) \
+shaderNames.push_back(nam);
+    SHADERS_TUPLE
+#undef  SHADERS_ENTRY
+    mInterface->addEnum(CreateEnumParam( "Shader", (int*)(&mShaderType) )
+                        .maxValue(SHADERS_COUNT)
+                        .oscReceiver(getName(), "shader")
+                        .isVertical(), shaderNames);
     
-    mInterface->addParam(CreateBoolParam( "Shader", &mUseFbo )
-                         .oscReceiver("/1/toggle2")
-                         .oscSender("/1/toggle2"));
+    mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
+    mInterface->addParam(CreateBoolParam( "Grid Render", &mGrid ));
     
-    
-    //mInterface->gui()->addParam("pos", mPos.ptr(), Vec2f::zero(), Vec2f(mApp->getViewportWidth(),mApp->getViewportHeight()));
-    
-    mInterface->addParam(CreateVec2fParam("pos", &mPos, Vec2f::zero(), Vec2f(mApp->getViewportWidth(),mApp->getViewportHeight()))
-                         .oscReceiver(mName)
-                         .isXYPad());
-    //mInterface->gui()->addParam("vel", mVel.ptr(), Vec2f::zero());
-    
-    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Noise");
+    mInterface->addParam(CreateFloatParam( "noise/speed", &mNoiseParams.mDisplacementSpeed )
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec3fParam("noise/noise", &mNoiseParams.mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
                          .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "levels", &mNoiseParams.mLevels )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "brightness", &mNoiseParams.mBrightness )
+                         .oscReceiver(getName())
+                         .midiInput(0,2,16));
+
+    mInterface->addParam(CreateFloatParam( "edgeThickness", &mNoiseParams.mEdgeThickness )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Simplicity");
+    mInterface->addParam(CreateIntParam( "Red Power", &mRedPower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Green Power", &mGreenPower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Blue Power", &mBluePower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Iterations", &mIterations )
+                         .minValue(0)
+                         .maxValue(64));
+    mInterface->addParam(CreateFloatParam( "StrengthFactor", &mStrengthFactor )
+                         .minValue(0.0f)
+                         .maxValue(1.0f));
+    mInterface->addParam(CreateFloatParam( "StrengthMin", &mStrengthMin )
+                         .minValue(0.0f)
+                         .maxValue(20.0f));
+    mInterface->addParam(CreateFloatParam( "StrengthConst", &mStrengthConst )
+                         .minValue(4000.0f)
+                         .maxValue(5000.0f));
+    mInterface->addParam(CreateFloatParam( "AccumPower", &mAccumPower )
+                         .minValue(1.0f)
+                         .maxValue(4.0f));
+    mInterface->addParam(CreateFloatParam( "FieldScale", &mFieldScale )
+                         .minValue(1.0f)
+                         .maxValue(10.0f));
+    mInterface->addParam(CreateFloatParam( "FieldSubtract", &mFieldSubtract )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    mInterface->addParam(CreateVec3fParam("magnitude", &mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
+    mInterface->addParam(CreateVec3fParam("color_scale", &mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateVec3fParam("PanSpeed", &mPanSpeed, Vec3f::zero(), Vec3f(0.1f,0.1f,0.1f)));
+    mInterface->addParam(CreateVec3fParam("UVOffset", &mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
+    mInterface->addParam(CreateFloatParam( "UVScale", &mUVScale )
+                         .minValue(0.01f)
+                         .maxValue(4.0f));
+    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Kali");
+    mInterface->addParam(CreateIntParam( "texture", &mTextureIndex )
+                         .maxValue(MAX_TEXTURES-1)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "kali/iterations", &mKaliParams.iterations )
+                         .maxValue(64)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec2fParam("kali/fold", &mKaliParams.fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateVec2fParam("kali/translate", &mKaliParams.translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "kali/scale", &mKaliParams.scale )
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 2, 19));
+    mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
+                         .maxValue(20.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/saturation", &mKaliParams.saturation )
+                         .maxValue(2.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
+                         .maxValue(0.1f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 2, 20));
+    mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
+                         .maxValue(2.0f)
+                         .oscReceiver(getName()));
+    
+    mAudioInputHandler.setupInterface(mInterface);
 
     mRadius = 100.0f;
 }
 
 void ShaderTest::update(double dt)
 {
-    //mPos += mVel * dt;
-    
-    if( mPos.x > (mApp->getViewportWidth()-100) || mPos.x < 0.0f )
-    {
-        mVel.x *= -1.0f;
-    }
-    
     Scene::update(dt);
-}
-
-void ShaderTest::updateBlur()
-{
     
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
-    /*
-    mFboScene.bindFramebuffer();
+    if (mGrid)
     {
-        glDisable( GL_TEXTURE_2D );
-        //gl::clear(Color::black());
-        gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-        
+        mGridRenderer.preDraw();
     }
-	mFboScene.unbindFramebuffer();
+    else if (mMotionBlur)
+    {
+        mMotionBlurRenderer.preDraw();
+    }
     
-    /*
-    if (mEnableShader)
-	{
-        mShader.bind();
-        mShader.uniform("tex0", 0);
-        mShader.uniform("sampleOffset", Vec2f(mBlurAmount, 0.0f));
-	}
-    *
-    
-	mFbo[mFboPing].bindFramebuffer();
-    {
-        gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-        gl::enableAdditiveBlending();
-        
-        const float fadeSpeed = 0.005f;
-        const float c = 1.0f - fadeSpeed;
-        glColor4f(c, c, c, 1.0f);
-        glEnable( GL_TEXTURE_2D );
-        
-        mFbo[mFboPong].bindTexture(0);
-        gl::drawSolidRect(mFbo[mFboPing].getBounds());
-        mFbo[mFboPong].unbindTexture();
-        
-        mFboScene.bindTexture(0);
-        gl::drawSolidRect(mFbo[mFboPing].getBounds());
-        mFboScene.unbindTexture();
-    }
-	mFbo[mFboPing].unbindFramebuffer();
-    
-    if(mEnableShader) 
-    {
-        mShader.bind();
-        float invWidth = 1.0f/mFbo[mFboPong].getWidth();
-        float invHeight = 1.0f/mFbo[mFboPong].getHeight();
-        float i = 10.0f;//mBlurAmount;
-        //mShader.uniform("tex0", 0);
-        //mShader.uniform("blurCenterWeight", 0.5f);
-        mShader.uniform("amountX", 1 * invWidth * i);
-        mShader.uniform("amountY", 1 * invHeight * i);
-        
-    }
-	
-    if (mEnableShader)
-    {
-        //mShader.uniform("sampleOffset", Vec2f(0.0f, mBlurAmount));
-	}
-        
-	mFbo[mFboPong].bindFramebuffer();
-    {
-        gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
-        mFbo[mFboPing].bindTexture(0);
-        gl::drawSolidRect(mFbo[mFboPong].getBounds());
-        mFbo[mFboPing].unbindTexture();
-    }
-    mFbo[mFboPong].unbindFramebuffer();
-        
-    if (mEnableShader)
-    {
-        mShader.unbind();
-    }
-     */
+    mElapsedTime += dt;
 }
 
 void ShaderTest::draw()
 {
     gl::pushMatrices();
 
-    if( mUseFbo )
+    if( mGrid )
     {
-        // Set up OpenGL
-        glEnable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        glEnable(GL_LINE_SMOOTH);
-        glEnable(GL_POLYGON_SMOOTH);
-        glEnable(GL_POINT_SMOOTH);
-        gl::enableAlphaBlending();
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gl::disableDepthRead();
-        gl::disableDepthWrite();
-        
-        /*
-        Area viewport = gl::getViewport();
-        //gl::setMatricesWindow(mApp->getViewportSize());
-        //gl::setViewport(mApp->getViewportBounds());
-        
-        // ****** DRAW SCENE ONTO FBO ******
-        
-        // Bind FBO to draw on it
-        gl::setViewport(mFbo[mFboIndex].getBounds());
-        mFbo[mFboIndex].bindFramebuffer();
-        
-        // Set up scene
-        gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 1.0f), true);
-	    
-        drawScene();
-        
-        // Unbind FBO
-        mFbo[mFboIndex].unbindFramebuffer();
-        
-        // Advance FBO index
-        mFboIndex = (mFboIndex + 1) % FBO_COUNT;
-        
-        // ****** DRAW GLSL MOTION BLUR ******
-        
-        // Set up window
-        gl::clear(ColorAf::black());
-        gl::setViewport(mApp->getViewportBounds());
-        gl::setMatricesWindow(mApp->getViewportSize(), false);
-        
-        // Bind and configure shader
-        mShader.bind();
-        for (int32_t i = 0; i < FBO_COUNT; i++)
-        {
-            mFbo[i].bindTexture(i);
-            mShader.uniform("tex" + toString(i), i);
-        }
-        
-        // Draw shader output
-        gl::color(Color::white());
-        gl::drawSolidRect(mApp->getViewportBounds());
-        
-        // Unbind shader
-        mShader.unbind();
-        
-        // Unbind FBOs
-        for (int32_t i = 0; i < FBO_COUNT; i++)
-        {
-            mFbo[i].unbindTexture();
-        }
-        gl::setViewport( viewport );
-        */
-        
+        mGridRenderer.draw();
+    }
+    else if( mMotionBlur )
+    {
         mMotionBlurRenderer.draw();
     }
     else
@@ -291,47 +297,179 @@ void ShaderTest::draw()
     gl::popMatrices();
 }
 
+void ShaderTest::shaderPreDraw()
+{
+    //mAudioInputHandler.getFbo().bindTexture(1);
+    Scene* contourScene = mApp->getScene("contour");
+    
+    if( contourScene && contourScene->isRunning() )
+    {
+        Contour* contour = static_cast<Contour*>(contourScene);
+        contour->getVtfFbo().bindTexture(1);
+    }
+    else
+    {
+        mAudioInputHandler.getFbo().bindTexture(1);
+    }
+    
+    mTexture[mTextureIndex].bind(0);
+    
+    gl::GlslProg shader = mShaders[mShaderType];
+    shader.bind();
+    
+    Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
+    
+    switch( mShaderType )
+    {
+        case SHADER_NOISE:
+            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
+            shader.uniform( "scale", mNoiseParams.mNoiseScale );
+            shader.uniform( "colorScale", mColorScale );
+            shader.uniform( "alpha", mNoiseParams.mBrightness );
+            shader.uniform( "levels", mNoiseParams.mLevels );
+            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
+            break;
+            
+        case SHADER_SIMPLICITY:
+            shader.uniform( "colorScale", mColorScale );
+            shader.uniform( "rPower", mRedPower );
+            shader.uniform( "gPower", mGreenPower );
+            shader.uniform( "bPower", mBluePower );
+            shader.uniform( "strengthFactor", mStrengthFactor );
+            shader.uniform( "strengthMin", mStrengthMin );
+            shader.uniform( "strengthConst", mStrengthConst );
+            shader.uniform( "iterations", mIterations );
+            shader.uniform( "accumPower", mAccumPower );
+            shader.uniform( "magnitude", mMagnitude );
+            shader.uniform( "fieldScale", mFieldScale );
+            shader.uniform( "fieldSubtract", mFieldSubtract );
+            shader.uniform( "timeScale", mTimeScale );
+            shader.uniform( "panSpeed", mPanSpeed );
+            shader.uniform( "uvOffset", mUVOffset );
+            shader.uniform( "uvScale", mUVScale );
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            break;
+        case SHADER_PAINT:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            shader.uniform( "iChannel0", 0 );
+            shader.uniform( "iterations", mKaliParams.iterations );
+            shader.uniform( "scale", mKaliParams.scale );
+            shader.uniform( "fold", mKaliParams.fold );
+            shader.uniform( "translate", mKaliParams.translate );
+            shader.uniform( "zoom", mKaliParams.zoom );
+            shader.uniform( "brightness", mKaliParams.brightness );
+            shader.uniform( "saturation", mKaliParams.saturation );
+            shader.uniform( "texturescale", mKaliParams.texturescale );
+            shader.uniform( "rotspeed", mKaliParams.rotspeed );
+            shader.uniform( "colspeed", mKaliParams.colspeed );
+            shader.uniform( "antialias", mKaliParams.antialias );
+            break;
+            
+        case SHADER_POLYCHORA:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iMouse", mKaliParams.translate );
+
+        case SHADER_MENGER:
+        default:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            break;
+    }
+}
+
+void ShaderTest::drawShaderOutput()
+{
+    // Draw shader output
+    gl::enable( GL_TEXTURE_2D );
+    gl::color( Colorf::white() );
+    gl::begin( GL_TRIANGLES );
+    
+    // Define quad vertices
+    const Area& bounds = mApp->getViewportBounds();
+    
+    Vec2f vert0( (float)bounds.x1, (float)bounds.y1 );
+    Vec2f vert1( (float)bounds.x2, (float)bounds.y1 );
+    Vec2f vert2( (float)bounds.x1, (float)bounds.y2 );
+    Vec2f vert3( (float)bounds.x2, (float)bounds.y2 );
+    
+    // Define quad texture coordinates
+    Vec2f uv0( 0.0f, 0.0f );
+    Vec2f uv1( 1.0f, 0.0f );
+    Vec2f uv2( 0.0f, 1.0f );
+    Vec2f uv3( 1.0f, 1.0f );
+    
+    // Draw quad (two triangles)
+    gl::texCoord( uv0 );
+    gl::vertex( vert0 );
+    gl::texCoord( uv2 );
+    gl::vertex( vert2 );
+    gl::texCoord( uv1 );
+    gl::vertex( vert1 );
+    
+    gl::texCoord( uv1 );
+    gl::vertex( vert1 );
+    gl::texCoord( uv2 );
+    gl::vertex( vert2 );
+    gl::texCoord( uv3 );
+    gl::vertex( vert3 );
+    
+    gl::end();
+    gl::disable( GL_TEXTURE_2D );
+}
+
+void ShaderTest::shaderPostDraw()
+{
+    gl::GlslProg shader = mShaders[mShaderType];
+    shader.unbind();
+    
+    mAudioInputHandler.getFbo().unbindTexture();
+    mTexture[mTextureIndex].unbind();
+}
+
 void ShaderTest::drawScene()
 {
-    gl::setMatricesWindowPersp(mApp->getViewportSize());
-    glColor4f(mColor);
-    gl::drawSolidRect( Rectf(mPos.x, mPos.y, mPos.x + mRadius, mPos.y + mRadius) );
-}
-
-bool ShaderTest::handleKeyDown(const KeyEvent& keyEvent)
-{
-    bool handled = true;
+    gl::enableAlphaBlending();
     
-    switch (keyEvent.getChar()) 
-    {
-        case 'z':
-            mUseFbo = !mUseFbo;
-            break;
-        default:
-            handled = false;
-            break;
-    }
+    gl::disableDepthWrite();
+    gl::disableDepthRead();
     
-    return handled;    
+    gl::pushMatrices();
+    gl::setMatricesWindow( mApp->getViewportSize() );
+    
+    shaderPreDraw();
+    
+    drawShaderOutput();
+    
+    shaderPostDraw();
+    
+    gl::popMatrices();
+    
+    gl::disableDepthWrite();
+    gl::disableDepthRead();
+    
+    gl::disableAlphaBlending();
 }
 
-void ShaderTest::handleMouseDrag( const ci::app::MouseEvent& event )
+void ShaderTest::drawDebug()
 {
-    mPos = event.getPos();
+    mAudioInputHandler.drawDebug(mApp->getViewportSize());
 }
 
-void ShaderTest::handleOscMessage( const ci::osc::Message& message )
-{
-    if( message.getNumArgs() == 2 ) 
-    {
-        if( osc::TYPE_FLOAT == message.getArgType(0) )
-        {
-            mPos.x = message.getArgAsFloat(0) * mApp->getViewportWidth();
-        }
-        if( osc::TYPE_FLOAT == message.getArgType(1) )
-        {
-            mPos.y = message.getArgAsFloat(1) * mApp->getViewportHeight();
-        }        
-        console() << "[osc test] x: " << mPos.x << " y: " << mPos.y << std::endl;
-    }
-}
+//void ShaderTest::handleOscMessage( const ci::osc::Message& message )
+//{
+//    if( message.getNumArgs() == 2 ) 
+//    {
+//        if( osc::TYPE_FLOAT == message.getArgType(0) )
+//        {
+//            mPos.x = message.getArgAsFloat(0) * mApp->getViewportWidth();
+//        }
+//        if( osc::TYPE_FLOAT == message.getArgType(1) )
+//        {
+//            mPos.y = message.getArgAsFloat(1) * mApp->getViewportHeight();
+//        }        
+//        console() << "[osc test] x: " << mPos.x << " y: " << mPos.y << std::endl;
+//    }
+//}

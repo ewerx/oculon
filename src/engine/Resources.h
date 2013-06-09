@@ -25,6 +25,18 @@
 #define RES_MOTIONBLUR_FRAG         CINDER_RESOURCE( ../resources/shaders/, motionBlur.frag, 129, GLSL )
 #define RES_PASSTHRU2_VERT          CINDER_RESOURCE( ../resources/shaders/, passThru.vert, 129, GLSL )
 
+// shader test
+#define RES_SHADER_SIMPLICITY_FRAG	CINDER_RESOURCE( ../resources/shaders/, simplicity_frag.glsl, 134, GLSL )
+#define RES_SHADER_MENGER_FRAG	CINDER_RESOURCE( ../resources/shaders/, menger_frag.glsl, 134, GLSL )
+#define RES_SHADER_PIXELATE_FRAG	CINDER_RESOURCE( ../resources/shaders/, pixelate_frag.glsl, 134, GLSL )
+#define RES_SHADER_PAINT_FRAG	CINDER_RESOURCE( ../resources/shaders/, kifs_frag.glsl, 134, GLSL )
+#define RES_SHADER_POLYCHORA_FRAG	CINDER_RESOURCE( ../resources/shaders/, polychora_frag.glsl, 134, GLSL )
+
+#define RES_COLORTEX1		CINDER_RESOURCE( ../resources/images/, colortex1.jpg,		138, IMAGE )
+#define RES_COLORTEX2		CINDER_RESOURCE( ../resources/images/, colortex2.jpg,		138, IMAGE )
+#define RES_COLORTEX3		CINDER_RESOURCE( ../resources/images/, colortex3.jpg,		138, IMAGE )
+#define RES_COLORTEX4		CINDER_RESOURCE( ../resources/images/, colortex4.jpg,		138, IMAGE )
+
 // tectonic
 #define RES_EARTH_FRAG		CINDER_RESOURCE( ../resources/shaders/, earth_frag.glsl, 128, GLSL )
 #define RES_EARTHDIFFUSE	CINDER_RESOURCE( ../resources/images/tectonic/, earthDiffuse.png, 129, PNG )
@@ -92,6 +104,19 @@
 #define RES_CUBE4_ID		CINDER_RESOURCE( ../resources/, cubeNegX.jpg,		141, IMAGE )
 #define RES_CUBE5_ID		CINDER_RESOURCE( ../resources/, cubeNegY.jpg,		142, IMAGE )
 #define RES_CUBE6_ID		CINDER_RESOURCE( ../resources/, cubeNegZ.jpg,		143, IMAGE )
+
+// terrain
+#define RES_TERRAIN_FRAG    CINDER_RESOURCE( ../resources/terrain/, terrain_shader_frag.glsl,		160, GLSL )
+#define RES_TERRAIN_VERT    CINDER_RESOURCE( ../resources/terrain/, terrain_shader_vert.glsl,		160, GLSL )
+#define RES_TERRAIN_TEXTURE CINDER_RESOURCE( ../resources/terrain/, terrain_texture.jpg,			151, IMAGE )
+#define RES_SHADER_TEX_FRAG		CINDER_RESOURCE( ../resources/terrain/, terrain_tex_frag.glsl,	128, GLSL	)
+#define RES_SHADER_TEX_VERT		CINDER_RESOURCE( ../resources/terrain/, terrain_tex_vert.glsl,	129, GLSL	)
+#define RES_SHADER_VTF_FRAG		CINDER_RESOURCE( ../resources/terrain/, terrain_vtf_frag.glsl,	130, GLSL	)
+#define RES_SHADER_VTF_VERT		CINDER_RESOURCE( ../resources/terrain/, terrain_vtf_vert.glsl,	131, GLSL	)
+
+// contour
+#define RES_SHADER_CT_TEX_FRAG		CINDER_RESOURCE( ../resources/contour/, contour_tex_frag.glsl,	128, GLSL	)
+#define RES_SHADER_CT_TEX_VERT		CINDER_RESOURCE( ../resources/contour/, contour_tex_vert.glsl,	129, GLSL	)
 
 // objects
 #define RES_CUBE_OBJ		CINDER_RESOURCE( ../resources/, cube.obj, 128, DATA )
