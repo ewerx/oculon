@@ -11,7 +11,7 @@
 #define __KINECTEST_H__
 
 #include "Scene.h"
-#include "BlobTracker.h"
+//#include "BlobTracker.h"
 
 //
 // Audio input tests
@@ -36,7 +36,7 @@ private:
     
     float               mKinectTilt;
     
-    BlobTracker         mBlobTracker;
+//    BlobTracker         mBlobTracker;
     
     //Surface             mColorSurface;
     

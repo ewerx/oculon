@@ -187,9 +187,9 @@ void StarCam::mouseUp(  const Vec2i &mousePos  )
 	mDeltaD = avg.z;
 }
 
-void StarCam::resize( ResizeEvent event )
+void StarCam::resize()
 {
-	mCurrentCam.setAspectRatio(event.getAspectRatio());
+	//mCurrentCam.setAspectRatio(event.getAspectRatio());
 }
 
 const CameraPersp& StarCam::getCamera()  

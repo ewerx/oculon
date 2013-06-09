@@ -87,7 +87,7 @@ void MindWave::setup()
         if( mUseThread )
         {
             mIsCollectingData = true;
-            mThread = boost::thread(&MindWave::threadLoop, this);
+            mThread = std::thread(&MindWave::threadLoop, this);
         }
     }
 }

@@ -19,7 +19,7 @@
 #include "MidiMap.h"
 #include "BinnedParticleSystem.h"
 #include "OscMessage.h"
-#include "BlobTracker.h"
+//#include "BlobTracker.h"
 
 #include "Constants.h"
 #include "cinder/Timeline.h"
@@ -211,8 +211,8 @@ enm,
     
     
     //TEMP
-    bool                mEnableBlobTracker;
-    BlobTracker         mBlobTracker;
+//    bool                mEnableBlobTracker;
+//    BlobTracker         mBlobTracker;
 };
 
 #endif // __MAGNETOSPHERE_H__

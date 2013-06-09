@@ -32,13 +32,13 @@ void KinectTest::setup()
 {
     Scene::setup();
     
-    mBlobTracker.setup( mApp->getKinectController() );
+//    mBlobTracker.setup( mApp->getKinectController() );
     mKinectTilt = 0.0f;
 }
 
 void KinectTest::update(double dt)
 {
-    mBlobTracker.update();
+//    mBlobTracker.update();
     
     Scene::update(dt);
 }
@@ -54,7 +54,7 @@ void KinectTest::draw()
     
     gl::Texture depthTexture = kinectCtrl.getDepthTexture();
     gl::Texture colorTexture = kinectCtrl.getVideoTexture();
-    gl::Texture cvTexture = mBlobTracker.getCvTexture();
+//    gl::Texture cvTexture = mBlobTracker.getCvTexture();
     Surface depthSurface = kinectCtrl.getDepthSurface();
     
     if( depthTexture )
@@ -77,8 +77,8 @@ void KinectTest::draw()
         gl::draw( depthSurface, Rectf( mApp->getViewportWidth(), mApp->getViewportHeight()/2, centerX, mApp->getViewportHeight() ) );
     }
     
-    gl::color(Colorf(1.0f, 0.0f, 0.0f));
-    gl::drawSphere(mBlobTracker.getTargetPosition(), 10.0f);
+//    gl::color(Colorf(1.0f, 0.0f, 0.0f));
+//    gl::drawSphere(mBlobTracker.getTargetPosition(), 10.0f);
     
     gl::popMatrices();
 }

@@ -31,7 +31,7 @@ Sun::Sun(Orbiter* scene,
          double mass, 
          const ColorA& color) 
 : Body(scene,name,pos,vel,radius,rotSpeed,mass,color,loadImage(loadResource(RES_ORBITER_SUN)))
-, mMoviePlayer(scene)
+//, mMoviePlayer(scene)
 {
 }
 
@@ -41,7 +41,7 @@ Sun::~Sun()
 
 void Sun::setup()
 {
-    mMoviePlayer.setup();
+//    mMoviePlayer.setup();
     //mMoviePlayer.loadMoviePrompt();
 }
 
@@ -49,7 +49,7 @@ void Sun::update(double dt)
 {
     Body::update(dt);
     
-    mMoviePlayer.update(dt);
+//    mMoviePlayer.update(dt);
     
     //TODO: hack fix
     mPosition = Vec3d::zero();
@@ -73,18 +73,18 @@ void Sun::draw(const Matrix44d& transform, bool drawBody)
         
         
         gl::Texture texture;
-        if( mMoviePlayer.isPlaying() )
-        {
-            glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
-            glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
-            glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
-            glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
-            glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(1.0f, 1.0f, 1.0f) );
-            
-            texture = mMoviePlayer.getMovie().getTexture();
-            //glColor4f(1.0f,1.0f,1.0f,1.0f);
-        }
-        else
+//        if( mMoviePlayer.isPlaying() )
+//        {
+//            glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );
+//            glMaterialfv( GL_FRONT, GL_SPECULAR, Body::no_mat );
+//            glMaterialfv( GL_FRONT, GL_SHININESS, Body::no_shininess );
+//            glMaterialfv( GL_FRONT, GL_EMISSION, Body::mat_emission );
+//            glMaterialfv( GL_FRONT, GL_DIFFUSE,	ColorA(1.0f, 1.0f, 1.0f) );
+//            
+//            texture = mMoviePlayer.getMovie().getTexture();
+//            //glColor4f(1.0f,1.0f,1.0f,1.0f);
+//        }
+//        else
         {
             //glMaterialfv( GL_FRONT, GL_AMBIENT,	Orbiter::mat_ambient );
             glMaterialfv( GL_FRONT, GL_AMBIENT,	Body::no_mat );

@@ -11,7 +11,7 @@
 #define __SUN_H__
 
 #include "Body.h"
-#include "MoviePlayer.h"
+//#include "MoviePlayer.h"
 
 using namespace ci;
 
@@ -38,7 +38,7 @@ public:
     void draw(const Matrix44d& transform, bool drawBody);
     
 private:
-    MoviePlayer mMoviePlayer;
+    //MoviePlayer mMoviePlayer;
     
     static GLfloat mat_ambient[];
     static GLfloat mat_diffuse[];

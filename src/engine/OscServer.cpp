@@ -53,7 +53,7 @@ void OscServer::setup( Config& config, MidiInput* midiInput )
     
     if( mUseThread )
     {
-        mThread = boost::thread(&OscServer::threadLoop, this);
+        mThread = std::thread(&OscServer::threadLoop, this);
     }
     
     setDestination( DEST_INTERFACE, config.getString("osc_interface_ip"), config.getInt("osc_interface_port") );

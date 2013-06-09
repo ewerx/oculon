@@ -1,24 +1,10 @@
-/*
- *  OculonApp.h
- *  OculonApp
- *
- *  Created by Ehsan on 11-10-16.
- *  Copyright 2011 ewerx. All rights reserved.
- *
- */
-
-#include "cinder/gl/gl.h"
-#include "cinder/gl/TileRender.h"
-#include "cinder/gl/Fbo.h"
-#include "cinder/audio/Input.h"
-#include "cinder/Camera.h"
-#include "cinder/params/Params.h"
-#include "cinder/Filesystem.h"
-#include "cinder/Utilities.h"
-#include "cinder/ImageIo.h"
-#include <iostream>
-#include <vector>
-#include <boost/format.hpp>
+//
+//  OculonApp.cpp
+//  Oculon
+//
+//  Created by Ehsan Rezaie on 12-03-07.
+//  Copyright (c) 2013 ewerx. All rights reserved.
+//
 
 #include "OculonApp.h"
 #include "AudioInput.h"
@@ -34,7 +20,7 @@
 #include "Binned.h"
 #include "Graviton.h"
 #include "Tectonic.h"
-#include "Sol.h"
+//#include "Sol.h"
 #include "Catalog.h"
 #include "Flock.h"
 #include "Corona.h"
@@ -47,11 +33,24 @@
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
-#include "MovieTest.h"
+//#include "MovieTest.h"
 #include "ShaderTest.h"
-#include "KinectTest.h"
-#include "SkeletonTest.h"
+//#include "KinectTest.h"
+//#include "SkeletonTest.h" // TODO: kinect
 #include "FisheyeTest.h"
+
+#include <iostream>
+#include <vector>
+#include <boost/format.hpp>
+
+#include "cinder/gl/gl.h"
+#include "cinder/gl/Fbo.h"
+#include "cinder/audio/Input.h"
+#include "cinder/Camera.h"
+#include "cinder/params/Params.h"
+#include "cinder/Filesystem.h"
+#include "cinder/Utilities.h"
+#include "cinder/ImageIo.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -67,7 +66,6 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setWindowSize( mConfig.getInt("window_width"), mConfig.getInt("window_height") );
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
-    settings->enableSecondaryDisplayBlanking(false);
     settings->setTitle("Oculon");
     
     mSetupScenesOnStart = true;
@@ -103,7 +101,7 @@ void OculonApp::setup()
     
     // render
     const int fboWidth = mConfig.getInt("capture_width");
-    const int fboHeight = mConfig.getInt("capture_height"); 
+    const int fboHeight = mConfig.getInt("capture_height");
     gl::Fbo::Format format;
     format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
     for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
@@ -136,9 +134,9 @@ void OculonApp::setup()
     mMayaCam.setCurrentCam( cam );
     
     // params
-    mParams = params::InterfaceGl( "Parameters", Vec2i( 350, getWindowHeight()*0.8f ) );
-    mParams.hide();
-    //mParams.setOptions("","position='10 600'");
+    mParams = params::InterfaceGl::create( getWindow(), "Parameters", toPixels(Vec2i( 350, getWindowHeight()*0.8f )) );
+    mParams->hide();
+    //mParams->setOptions("","position='10 600'");
     setupInterface();
     
     // audio input
@@ -148,7 +146,7 @@ void OculonApp::setup()
     {
         mMidiInput.setup();
     }
- 
+    
     if( mEnableOscServer )
     {
         mOscServer.setup( mConfig, mEnableMidi ? &mMidiInput : NULL );
@@ -161,7 +159,7 @@ void OculonApp::setup()
     
     if( mEnableKinect )
     {
-        mKinectController.setup();
+//        mKinectController.setup(); // TODO: update kinect setup
     }
     
     if( mOutputMode == OUTPUT_FBO )
@@ -187,7 +185,7 @@ void OculonApp::shutdown()
 {
     console() << "[main] shutting down...\n";
     
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -257,7 +255,7 @@ outputModeNames.push_back(nam);
 bool OculonApp::syncInterface()
 {
     mInterface->sendAll();
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -287,7 +285,7 @@ bool OculonApp::showInterface(const int sceneId)
     if( sceneId < 0 )
     {
         // hide all scene interfaces
-        for (tSceneList::iterator sceneIt = mScenes.begin(); 
+        for (tSceneList::iterator sceneIt = mScenes.begin();
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -312,7 +310,7 @@ void OculonApp::setupScenes()
 {
     console() << "[main] creating scenes...\n";
     
-    mScenes.clear(); 
+    mScenes.clear();
     
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
     if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
@@ -331,7 +329,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
     if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
-    if( mConfig.getBool("sol") )        addScene( new Sol() );
+//    if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     
     // Test Scenes
@@ -339,7 +337,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
     if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
     //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
-    if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
+    //if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
     if( mEnableMindWave && mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );
 }
 
@@ -400,16 +398,16 @@ Scene* OculonApp::getScene(const std::string& name)
     }
 }
 
-void OculonApp::resize( ResizeEvent event )
+void OculonApp::resize()
 {
     CameraPersp cam = mMayaCam.getCamera();
     cam.setAspectRatio( getWindowAspectRatio() );
     mMayaCam.setCurrentCam( cam );
     
     int index = 0;
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
-        sceneIt != mScenes.end();
-        ++sceneIt )
+    for (tSceneList::iterator sceneIt = mScenes.begin();
+         sceneIt != mScenes.end();
+         ++sceneIt )
     {
         Scene* scene = (*sceneIt);
         if( scene && scene->isRunning() )
@@ -425,8 +423,8 @@ void OculonApp::resize( ResizeEvent event )
 }
 
 void OculonApp::mouseMove( MouseEvent event )
-{    
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+{
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -443,7 +441,7 @@ void OculonApp::mouseDown( MouseEvent event )
     // let the camera handle the interaction
     mMayaCam.mouseDown( event.getPos() );
     
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -461,9 +459,9 @@ void OculonApp::mouseDrag( MouseEvent event )
 {
     // let the camera handle the interaction
     mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
-
     
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -477,7 +475,7 @@ void OculonApp::mouseDrag( MouseEvent event )
 
 void OculonApp::mouseUp( MouseEvent event)
 {
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -494,17 +492,17 @@ void OculonApp::keyDown( KeyEvent event )
     bool passToScenes = false;
     
     switch( event.getCode() )
-    {            
-        // toggle pause-all
+    {
+            // toggle pause-all
         case KeyEvent::KEY_p:
         {
             if( event.isShiftDown() )
             {
-                mParams.show( !mParams.isVisible() );
+                mParams->show( !mParams->isVisible() );
             }
             else
             {
-                for (tSceneList::iterator sceneIt = mScenes.begin(); 
+                for (tSceneList::iterator sceneIt = mScenes.begin();
                      sceneIt != mScenes.end();
                      ++sceneIt )
                 {
@@ -519,7 +517,7 @@ void OculonApp::keyDown( KeyEvent event )
             break;
         }
             
-        // fullscreen
+            // fullscreen
         case KeyEvent::KEY_f:
             toggleFullscreen();
             break;
@@ -527,8 +525,8 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_i:
             setPresentationMode( !mIsPresentationMode );
             break;
-
-        // info panel
+            
+            // info panel
         case KeyEvent::KEY_SLASH:
             mInfoPanel.toggleState();
             break;
@@ -537,7 +535,7 @@ void OculonApp::keyDown( KeyEvent event )
             showInterface(INTERFACE_MAIN);
             break;
             
-        // scene toggle
+            // scene toggle
         case KeyEvent::KEY_1:
         case KeyEvent::KEY_2:
         case KeyEvent::KEY_3:
@@ -546,52 +544,52 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_6:
         case KeyEvent::KEY_7:
         case KeyEvent::KEY_8:
-            {
-                char index = event.getCode() - KeyEvent::KEY_1;
-                
-                if( index < mScenes.size() && mScenes[index] != NULL )
-                {
-                    if( event.isControlDown() )
-                    {
-                        mScenes[index]->setVisible( !mScenes[index]->isVisible() );
-                    }
-                    else if( event.isMetaDown() )
-                    {
-                        mScenes[index]->setRunning( !mScenes[index]->isRunning() );
-                    }
-                    else if( event.isAltDown() )
-                    {
-                        mScenes[index]->setDebug( !mScenes[index]->isDebug() );
-                    }
-                    else if( event.isShiftDown() )
-                    {
-                        showInterface(index);
-                    }
-                    else
-                    {
-                        mScenes[index]->toggleActiveVisible();
-                        if( mScenes[index]->isVisible() )
-                        {
-                            mLastActiveScene = index;
-                        }
-                    }
-                }
-            }
-            break;
+        {
+            char index = event.getCode() - KeyEvent::KEY_1;
             
-        // video capture
-        case KeyEvent::KEY_r:
-            if( event.isShiftDown() )
+            if( index < mScenes.size() && mScenes[index] != NULL )
             {
-                if( mIsCapturingVideo )
+                if( event.isControlDown() )
                 {
-                    stopVideoCapture();
+                    mScenes[index]->setVisible( !mScenes[index]->isVisible() );
+                }
+                else if( event.isMetaDown() )
+                {
+                    mScenes[index]->setRunning( !mScenes[index]->isRunning() );
+                }
+                else if( event.isAltDown() )
+                {
+                    mScenes[index]->setDebug( !mScenes[index]->isDebug() );
+                }
+                else if( event.isShiftDown() )
+                {
+                    showInterface(index);
                 }
                 else
                 {
-                    bool useDefaultSettings = event.isShiftDown() ? false : true;
-                    startVideoCapture(useDefaultSettings);
+                    mScenes[index]->toggleActiveVisible();
+                    if( mScenes[index]->isVisible() )
+                    {
+                        mLastActiveScene = index;
+                    }
                 }
+            }
+        }
+            break;
+            
+            // video capture
+        case KeyEvent::KEY_r:
+            if( event.isShiftDown() )
+            {
+//                if( mIsCapturingVideo )
+//                {
+//                    stopVideoCapture();
+//                }
+//                else
+//                {
+//                    bool useDefaultSettings = event.isShiftDown() ? false : true;
+//                    startVideoCapture(useDefaultSettings);
+//                }
             }
             else
             {
@@ -640,7 +638,7 @@ void OculonApp::keyDown( KeyEvent event )
     
     if( passToScenes )
     {
-        for (tSceneList::iterator sceneIt = mScenes.begin(); 
+        for (tSceneList::iterator sceneIt = mScenes.begin();
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -744,7 +742,7 @@ void OculonApp::update()
             mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         }
     }
-
+    
     if( mIsCapturingFrames )
     {
         const float elapsed = (mFrameCaptureCount/kCaptureFramerate);
@@ -772,12 +770,12 @@ void OculonApp::update()
     
     if( mEnableKinect )
     {
-        mKinectController.update();
+//        mKinectController.update(); // TODO: update kinect setup
     }
     
     // update scenes
     const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -870,7 +868,7 @@ void OculonApp::drawFromFbo( gl::Fbo& fbo )
     // draw the captured texture back to screen
     float width = getWindowWidth();
     float height = getWindowHeight();
-
+    
     gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
     gl::setMatricesWindow( getWindowSize() );
     
@@ -884,7 +882,7 @@ void OculonApp::drawFromFbo( gl::Fbo& fbo )
 void OculonApp::renderScenes()
 {
     // render scenes to FBO
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -895,7 +893,7 @@ void OculonApp::renderScenes()
             scene->drawToFbo();
         }
     }
-
+    
 }
 
 void OculonApp::drawScenes(int layerIndex)
@@ -938,7 +936,7 @@ void OculonApp::drawScenes(int layerIndex)
     else
     {
         // draw scenes directly
-        for (tSceneList::iterator sceneIt = mScenes.begin(); 
+        for (tSceneList::iterator sceneIt = mScenes.begin();
              sceneIt != mScenes.end();
              ++sceneIt )
         {
@@ -1008,10 +1006,11 @@ void OculonApp::draw()
     }
     
     // capture video
-	if( mIsCapturingVideo && mMovieWriter )
-    {
-		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
-    }
+    // TODO: quicktime removed due to build errors: https://forum.libcinder.org/topic/porting-windows-app-to-osx
+//	if( mIsCapturingVideo && mMovieWriter )
+//    {
+//		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
+//    }
     
     // capture frames
     if( mIsCapturingFrames )
@@ -1045,7 +1044,7 @@ void OculonApp::draw()
                 
             case OUTPUT_MULTIFBO:
                 // publish each scene separately
-                for (tSceneList::iterator sceneIt = mScenes.begin(); 
+                for (tSceneList::iterator sceneIt = mScenes.begin();
                      sceneIt != mScenes.end();
                      ++sceneIt )
                 {
@@ -1061,7 +1060,7 @@ void OculonApp::draw()
             case OUTPUT_DOME:
                 mScreenSyphon[mVisibleLayerIndex].publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture(), flipTexture );
                 break;
-            
+                
             default:
                 break;
         }
@@ -1077,7 +1076,7 @@ void OculonApp::drawDebug()
 {
     gl::pushMatrices();
     gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
-    for (tSceneList::iterator sceneIt = mScenes.begin(); 
+    for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
     {
@@ -1102,8 +1101,7 @@ void OculonApp::drawDebug()
     if( !mIsPresentationMode )
     {
         mInterface->draw();
-        params::InterfaceGl::draw();
-        mParams.draw();
+        mParams->draw();
     }
 }
 
@@ -1167,44 +1165,45 @@ void OculonApp::toggleFullscreen()
         showCursor();
 }
 
-void OculonApp::startVideoCapture(bool useDefaultPath)
-{
-    fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
-    qtime::MovieWriter::Format mwFormat;
-    bool ready = false;
-    
-    // spawn file dialog
-    // outputPath = getSaveFilePath();
-    
-    if( useDefaultPath )
-    {
-        // H.264, 30fps, high detail
-        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
-        mwFormat.setTimeScale(3000);
-        mwFormat.setDefaultDuration(1.0f/15.0f);
-        mwFormat.setQuality(0.99f);
-        ready = true;
-    }
-    else
-    {
-        // user prompt
-        ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
-    }
-    
-    if( ready )
-    {
-        console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
-        mMovieWriter = qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat );
-        mIsCapturingVideo = true;
-    }
-}
-
-void OculonApp::stopVideoCapture()
-{
-    console() << "[main] stop video capture\n";
-    mMovieWriter.finish();
-    mIsCapturingVideo = false;
-}
+// TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
+//void OculonApp::startVideoCapture(bool useDefaultPath)
+//{
+//    fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
+//    qtime::MovieWriter::Format mwFormat;
+//    bool ready = false;
+//    
+//    // spawn file dialog
+//    // outputPath = getSaveFilePath();
+//    
+//    if( useDefaultPath )
+//    {
+//        // H.264, 30fps, high detail
+//        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
+//        mwFormat.setTimeScale(3000);
+//        mwFormat.setDefaultDuration(1.0f/15.0f);
+//        mwFormat.setQuality(0.99f);
+//        ready = true;
+//    }
+//    else
+//    {
+//        // user prompt
+//        ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
+//    }
+//    
+//    if( ready )
+//    {
+//        console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
+//        mMovieWriter = qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat );
+//        mIsCapturingVideo = true;
+//    }
+//}
+//
+//void OculonApp::stopVideoCapture()
+//{
+//    console() << "[main] stop video capture\n";
+//    mMovieWriter.finish();
+//    mIsCapturingVideo = false;
+//}
 
 void OculonApp::enableFrameCapture( const bool enable )
 {
@@ -1252,11 +1251,11 @@ bool OculonApp::onOutputModeChange()
     {
         // uncomment for high-res capture
         //setWindowSize( 860, 860 );
-        resize( ResizeEvent(mFbo[mVisibleLayerIndex].getSize()) );
+        resize();
     }
     else
     {
-        resize( ResizeEvent(getWindowSize()) );
+        resize();
     }
     
     return false;
@@ -1264,7 +1263,7 @@ bool OculonApp::onOutputModeChange()
 
 int OculonApp::getViewportWidth() const
 {
-    if( mOutputMode == OUTPUT_FBO ) 
+    if( mOutputMode == OUTPUT_FBO )
     {
         return mFbo[mVisibleLayerIndex].getWidth();
     }
@@ -1276,7 +1275,7 @@ int OculonApp::getViewportWidth() const
 
 int OculonApp::getViewportHeight() const
 {
-    if( mOutputMode == OUTPUT_FBO ) 
+    if( mOutputMode == OUTPUT_FBO )
     {
         return mFbo[mVisibleLayerIndex].getHeight();
     }
@@ -1288,7 +1287,7 @@ int OculonApp::getViewportHeight() const
 
 Area OculonApp::getViewportBounds() const
 {
-    if( mOutputMode == OUTPUT_FBO ) 
+    if( mOutputMode == OUTPUT_FBO )
     {
         return Area( 0, 0, mFbo[mVisibleLayerIndex].getWidth(), mFbo[mVisibleLayerIndex].getHeight() );
     }
@@ -1332,4 +1331,4 @@ void OculonApp::setCamera(const Vec3f &eye, const Vec3f &look, const Vec3f &up)
     mMayaCam.setCurrentCam( cam );
 }
 
-CINDER_APP_BASIC( OculonApp, RendererGl(0) )
+CINDER_APP_NATIVE( OculonApp, RendererGl(0) )

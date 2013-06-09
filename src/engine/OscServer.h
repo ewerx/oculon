@@ -14,12 +14,12 @@
 #include "OscSender.h"
 #include "Constants.h"
 #include "Config.h"
-#include <boost/thread.hpp>
+#include "cinder/Thread.h"
 #include <boost/unordered_map.hpp>
 #include <boost/bind.hpp>
 #include <queue>
 
-typedef boost::function<void(const ci::osc::Message&)> tOscCallback;
+typedef std::function<void(const ci::osc::Message&)> tOscCallback;
 typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
 typedef std::pair<int,int> tMidiAddress;
 typedef boost::unordered_map<tMidiAddress, tOscCallback> tMidiMap;
@@ -105,7 +105,7 @@ private:
     tOscMap                         mCallbackMap;
     std::queue<tIncomingCommand>    mIncomingCallbackQueue;
     
-    boost::thread           mThread;
+    std::thread             mThread;
     bool                    mUseThread;
     
     //TODO: multiple destinations

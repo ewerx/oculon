@@ -11,7 +11,7 @@
 #include "Resources.h"
 #include "AudioInput.h" // compile errors if this is not before App.h
 #include "Interface.h"
-#include "OculonApp.h"//TODO: fix this dependency
+#include "OculonApp.h"
 #include "cinder/Rand.h"
 
 using namespace ci;

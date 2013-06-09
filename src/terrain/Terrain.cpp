@@ -948,7 +948,7 @@ bool Terrain::setupMesh()
         mTriMesh.appendIndices( &indices.front(), indices.size() );
         
         // use this custom function to create the normal buffer
-        mTriMesh.generateNormals();
+        mTriMesh.recalculateNormals();
     }
     else if (mMeshType == MESHTYPE_TUBE)
     {

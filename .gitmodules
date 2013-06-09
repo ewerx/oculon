@@ -1,0 +1,22 @@
+[submodule "blocks/KissFft"]
+	path = blocks/KissFft
+	url = https://github.com/BanTheRewind/Cinder-KissFft.git
+[submodule "blocks/Syphon"]
+	path = blocks/Syphon
+	url = https://github.com/ewerx/Cinder-Syphon.git
+[submodule "blocks/SimpleGUI"]
+	path = blocks/SimpleGUI
+	url = https://github.com/ewerx/MowaLibs.git
+[submodule "blocks/msalibs"]
+	path = blocks/msalibs
+	url = https://github.com/ewerx/msalibs.git
+[submodule "blocks/MeshHelper"]
+	path = blocks/MeshHelper
+	url = https://github.com/ewerx/Cinder-MeshHelper.git
+	branch = oculon
+[submodule "blocks/MIDI"]
+	path = blocks/MIDI
+	url = https://github.com/ewerx/Cinder-MIDI.git
+[submodule "blocks/Kinect"]
+	path = blocks/Kinect
+	url = https://github.com/cinder/Cinder-Kinect.git

@@ -15,6 +15,7 @@ using namespace ci;
 using namespace ci::app;
 
 KinectController::KinectController()
+: mKinect( Kinect::device() )
 {
 }
 
@@ -31,7 +32,7 @@ void KinectController::setup()
     console() << "[kinect] " << mNumKinects << " Kinects connected." << std::endl;
     if( mNumKinects > 0 )
     {   
-        mKinect = Kinect( Kinect::Device() ); // the default Device implies the first Kinect connected
+        //mKinect = Kinect( Kinect::Device() ); // the default Device implies the first Kinect connected
     }
 }
 

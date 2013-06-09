@@ -10,8 +10,8 @@
 #ifndef __MINDWAVE_H__
 #define __MINDWAVE_H__
 
+#include "cinder/Thread.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <boost/thread.hpp>
 
 #define TG_BAUD_1200 1200
 #define TG_BAUD_2400 2400
@@ -117,7 +117,7 @@ private:
     
     
     // thread
-    boost::thread           mThread;
+    std::thread             mThread;
     bool                    mIsCollectingData;
     bool                    mUseThread;
     

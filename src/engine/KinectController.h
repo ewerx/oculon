@@ -13,10 +13,9 @@
 
 #include "cinder/gl/Texture.h"
 #include "cinder/Surface.h"
-#include "Kinect.h"
+#include "CinderFreenect.h"
 
 using namespace std;
-using namespace ci;
 
 class KinectController 
 {
@@ -27,27 +26,27 @@ public:
     void setup();
 	void update();
     
-    gl::Texture getVideoTexture() const { return mVideoTexture; }
-    gl::Texture getDepthTexture() const { return mDepthTexture; }
-    Surface getDepthSurface() const     { return mDepthSurface; }
-    bool hasNewDepthFrame() const       { return mHasNewDepthFrame; }
-    bool hasNewVideoFrame() const       { return mHasNewVideoFrame; }
+    ci::gl::Texture getVideoTexture() const { return mVideoTexture; }
+    ci::gl::Texture getDepthTexture() const { return mDepthTexture; }
+    ci::Surface getDepthSurface() const     { return mDepthSurface; }
+    bool hasNewDepthFrame() const           { return mHasNewDepthFrame; }
+    bool hasNewVideoFrame() const           { return mHasNewVideoFrame; }
     
-    Kinect& getKinect()                 { return mKinect; }
+    ci::Kinect& getKinect()                 { return mKinect; }
 
 private:
-    Kinect              mKinect;
+    ci::Kinect              mKinect;
     
-    gl::Texture         mVideoTexture;
-    gl::Texture         mDepthTexture;
-    Surface             mDepthSurface;
+    ci::gl::Texture         mVideoTexture;
+    ci::gl::Texture         mDepthTexture;
+    ci::Surface             mDepthSurface;
     
-    bool                mHasNewDepthFrame;
-    bool                mHasNewVideoFrame;
+    bool                    mHasNewDepthFrame;
+    bool                    mHasNewVideoFrame;
     
-    int                 mNumKinects;
+    int                     mNumKinects;
     
-    //Surface             mColorSurface;
+    //ci::Surface               mColorSurface;
     
 };
 

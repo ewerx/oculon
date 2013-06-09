@@ -1,9 +1,9 @@
 /*
- *  Oculon.h
+ *  OculonApp.h
  *  Oculon
  *
  *  Created by Ehsan on 11-10-16.
- *  Copyright 2011 ewerx. All rights reserved.
+ *  Copyright 2013 ewerx. All rights reserved.
  *
  */
 
@@ -14,7 +14,7 @@
 #include "CameraController.h"
 #include "DomeRenderer.h"
 #include "InfoPanel.h"
-#include "KinectController.h"
+//#include "KinectController.h" // TODO: Kinect removed due to errors
 #include "MidiInput.h"
 #include "MindWave.h"
 #include "OscServer.h"
@@ -22,11 +22,11 @@
 
 #include "cinder/Camera.h"
 #include "cinder/MayaCamUI.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/AppNative.h"
 #include "cinder/audio/Input.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
-#include "cinder/qtime/MovieWriter.h"
+//#include "cinder/qtime/MovieWriter.h" // TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
 #include "cinderSyphon.h"
 
 #include <vector>
@@ -36,10 +36,6 @@
 // fwd decl
 class Scene;
 class Interface;
-
-using namespace ci;
-using namespace ci::app;
-using std::vector;
 
 // main app
 //
@@ -81,38 +77,38 @@ public: // cinder interface
     void prepareSettings( Settings *settings );
 	void setup();
 	void update();
-    void resize( ResizeEvent event );
+    void resize();
     void shutdown();
     
-    void mouseMove( MouseEvent event );
-	void mouseDrag( MouseEvent event );
-    void mouseDown( MouseEvent event );	
-    void mouseUp( MouseEvent event );
-    void keyDown( KeyEvent event );
+    void mouseMove( ci::app::MouseEvent event );
+	void mouseDrag( ci::app::MouseEvent event );
+    void mouseDown( ci::app::MouseEvent event );	
+    void mouseUp( ci::app::MouseEvent event );
+    void keyDown( ci::app::KeyEvent event );
 
 	void draw();
     
-    int     getViewportWidth() const;                 
-    int     getViewportHeight() const;
-    Area    getViewportBounds() const;
-    Vec2i   getViewportSize() const;
-    float   getViewportAspectRatio() const;
+    int         getViewportWidth() const;                 
+    int         getViewportHeight() const;
+    ci::Area    getViewportBounds() const;
+    ci::Vec2i   getViewportSize() const;
+    float       getViewportAspectRatio() const;
     
 public: // new
     AudioInput& getAudioInput()                         { return mAudioInput; }
     MidiInput& getMidiInput()                           { return mMidiInput; }
     MindWave& getMindWave()                             { return mMindWave; }
-    KinectController& getKinectController()             { return mKinectController; }
+    //KinectController& getKinectController()             { return mKinectController; }
     OscServer& getOscServer()                           { return mOscServer; }
                 
     InfoPanel& getInfoPanel()                           { return mInfoPanel; }
-    params::InterfaceGl& getParams()                    { return mParams; }
+    ci::params::InterfaceGlRef getParams()              { return mParams; }
     
     inline bool isPresentationMode() const              { return mIsPresentationMode; }
     inline void setUseMayaCam(bool use)                 { mUseMayaCam = use; }
     
-    void setCamera( const Vec3f& eye, const Vec3f& look, const Vec3f& up );
-    const Camera& getMayaCam() const                    { return mMayaCam.getCamera(); }
+    void setCamera( const ci::Vec3f& eye, const ci::Vec3f& look, const ci::Vec3f& up );
+    const ci::Camera& getMayaCam() const                    { return mMayaCam.getCamera(); }
     //const Camera& getGlobalCam()                        { return mCameraController.getCamera(); }
     
     inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
@@ -141,9 +137,9 @@ public: // new
 protected: // new
     
     void drawToScreen();
-    void drawToFbo(gl::Fbo& fbo);
+    void drawToFbo(ci::gl::Fbo& fbo);
     void drawToLayers();
-    void drawFromFbo( gl::Fbo& fbo );
+    void drawFromFbo( ci::gl::Fbo& fbo );
     void drawScenes(int layerIndex =0);
     void renderScenes();
     void drawDebug();
@@ -157,8 +153,9 @@ protected: // new
     void setPresentationMode( bool enabled );
     void toggleFullscreen();
     
-    void startVideoCapture( bool useDefaultPath =true );
-    void stopVideoCapture();
+    //TODO: quicktime removed due to compile errors
+//    void startVideoCapture( bool useDefaultPath =true );
+//    void stopVideoCapture();
     
     
 private: // members
@@ -178,21 +175,21 @@ private: // members
     OscServer               mOscServer;
     bool                    mEnableOscServer;
     
-    KinectController        mKinectController;
+//    KinectController        mKinectController; // TODO: kinect
     bool                    mEnableKinect;
     bool                    mEnableOpenNI;
     
     // render
     double                  mLastElapsedSeconds;
     double                  mElapsedSecondsThisFrame;
-    MayaCamUI               mMayaCam;
+    ci::MayaCamUI           mMayaCam;
     bool                    mUseMayaCam;
     bool                    mDebugRender;
     //CameraController        mCameraController;
     
     
     eOutputMode             mOutputMode;
-    gl::Fbo                 mFbo[MAX_LAYERS];
+    ci::gl::Fbo             mFbo[MAX_LAYERS];
     int                     mVisibleLayerIndex;
     float                   mBackgroundAlpha;
     
@@ -200,7 +197,7 @@ private: // members
     
     // scenes
     typedef boost::unordered_map<std::string, Scene*> tSceneMap;
-    typedef vector<Scene*>  tSceneList;
+    typedef std::vector<Scene*>  tSceneList;
     
     tSceneList              mScenes;
     tSceneMap               mSceneMap;
@@ -210,18 +207,18 @@ private: // members
     bool                    mSetupScenesOnStart;
     
     // ui
-    InfoPanel               mInfoPanel;
-    params::InterfaceGl		mParams;
-    Interface*              mInterface;
-    bool                    mIsPresentationMode;
+    InfoPanel                   mInfoPanel;
+    ci::params::InterfaceGlRef	mParams;
+    Interface*                  mInterface;
+    bool                        mIsPresentationMode;
     std::vector<mowa::sgui::TextureVarControl*> mThumbnailControls;
     
     // capture
     bool                    mIsCapturingVideo;
-    qtime::MovieWriter      mMovieWriter;
+    //ci::qtime::MovieWriter  mMovieWriter; // TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
     
     bool                    mIsCapturingFrames;
-    string                  mFrameCapturePath;
+    std::string             mFrameCapturePath;
     int                     mFrameCaptureCount;
     float                   mCaptureDuration;
     bool                    mSaveNextFrame;

@@ -21,7 +21,7 @@ public:
 	void		mouseDrag( const ci::Vec2i &mousePos, bool leftDown, bool middleDown, bool rightDown );
 	void		mouseUp( const ci::Vec2i &mousePos );
 
-	void		resize( ci::app::ResizeEvent event );
+	void		resize();
 
 	const ci::CameraPersp& getCamera();
 	void		setCurrentCam( const ci::CameraPersp &aCurrentCam );
