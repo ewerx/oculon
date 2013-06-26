@@ -60,7 +60,6 @@
 		7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */; };
 		7C2F90CD1690D3BB0062D6E0 /* SplineCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
-		7C3738DB14F36A4C00B24851 /* oculon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738DA14F36A4C00B24851 /* oculon.png */; };
 		7C3738F514F7359B00B24851 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738EA14F7359B00B24851 /* Color.cpp */; };
 		7C3738F614F7359B00B24851 /* MSACoreGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738F114F7359B00B24851 /* MSACoreGL.cpp */; };
 		7C37392614F736E300B24851 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738FA14F736E300B24851 /* changelog.txt */; };
@@ -137,7 +136,6 @@
 		7C6CB488169926250096EF7B /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB486169926250096EF7B /* Polyhedron.cpp */; };
 		7C6CB4A7169936030096EF7B /* MeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB4A5169936030096EF7B /* MeshHelper.cpp */; };
 		7C6E8175170742BE00CAFFC4 /* Tube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E8174170742BE00CAFFC4 /* Tube.cpp */; };
-		7C702038153BC57F0057D4EC /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C702037153BC57F0057D4EC /* Oculon.icns */; };
 		7C745515148C04C6009C0356 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745514148C04C6009C0356 /* Cocoa.framework */; };
 		7C745517148C04C6009C0356 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745516148C04C6009C0356 /* AppKit.framework */; };
 		7C745519148C04C6009C0356 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C745518148C04C6009C0356 /* Foundation.framework */; };
@@ -173,6 +171,7 @@
 		7C783E9515E99B4C00492299 /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783E9315E99B4C00492299 /* Planet.cpp */; };
 		7C783E9715E9C82900492299 /* starData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C783E9615E9C82900492299 /* starData.csv */; };
 		7C783EEA15F26ED000492299 /* StarCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C783EE815F26ED000492299 /* StarCam.cpp */; };
+		7C79CB361765335800E71F9D /* Oculon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C79CB351765335800E71F9D /* Oculon.icns */; };
 		7C7A5D64152EC0EF009C0DA0 /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */; };
 		7C7BD60C160D5F5F00783008 /* nukes.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7C7BD60B160D5F5F00783008 /* nukes.csv */; };
 		7C7FBC78173C97C500C053F1 /* Contour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7FBC76173C97C500C053F1 /* Contour.cpp */; };
@@ -386,7 +385,6 @@
 		7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SplineCam.cpp; sourceTree = "<group>"; };
 		7C2F90CC1690D3BB0062D6E0 /* SplineCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplineCam.h; sourceTree = "<group>"; };
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
-		7C3738DA14F36A4C00B24851 /* oculon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oculon.png; sourceTree = "<group>"; };
 		7C3738E814F7359B00B24851 /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
 		7C3738E914F7359B00B24851 /* CinderMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CinderMath.h; sourceTree = "<group>"; };
 		7C3738EA14F7359B00B24851 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
@@ -510,8 +508,8 @@
 		7C687E9E1617FD8D0006150F /* earthGray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = earthGray.png; path = resources/images/tectonic/earthGray.png; sourceTree = SOURCE_ROOT; };
 		7C6CB486169926250096EF7B /* Polyhedron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polyhedron.cpp; sourceTree = "<group>"; };
 		7C6CB487169926250096EF7B /* Polyhedron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Polyhedron.h; sourceTree = "<group>"; };
-		7C6CB4A5169936030096EF7B /* MeshHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshHelper.cpp; path = "../sdks/cinder/blocks/Cinder-MeshHelper/src/MeshHelper.cpp"; sourceTree = SOURCE_ROOT; };
-		7C6CB4A6169936030096EF7B /* MeshHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshHelper.h; path = "../sdks/cinder/blocks/Cinder-MeshHelper/src/MeshHelper.h"; sourceTree = SOURCE_ROOT; };
+		7C6CB4A5169936030096EF7B /* MeshHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshHelper.cpp; path = "../sdks/cinder_0.8.3/blocks/Cinder-MeshHelper/src/MeshHelper.cpp"; sourceTree = SOURCE_ROOT; };
+		7C6CB4A6169936030096EF7B /* MeshHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshHelper.h; path = "../sdks/cinder_0.8.3/blocks/Cinder-MeshHelper/src/MeshHelper.h"; sourceTree = SOURCE_ROOT; };
 		7C6E8173170742BE00CAFFC4 /* Tube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tube.h; sourceTree = "<group>"; };
 		7C6E8174170742BE00CAFFC4 /* Tube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tube.cpp; sourceTree = "<group>"; };
 		7C702037153BC57F0057D4EC /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
@@ -574,6 +572,7 @@
 		7C783E9615E9C82900492299 /* starData.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = starData.csv; path = data/starData.csv; sourceTree = "<group>"; };
 		7C783EE815F26ED000492299 /* StarCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StarCam.cpp; sourceTree = "<group>"; };
 		7C783EEB15F26F4300492299 /* StarCam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StarCam.h; sourceTree = "<group>"; };
+		7C79CB351765335800E71F9D /* Oculon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Oculon.icns; sourceTree = "<group>"; };
 		7C7A5D63152EC0EF009C0DA0 /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscParam.cpp; path = interface/OscParam.cpp; sourceTree = "<group>"; };
 		7C7A5D67152EC2AC009C0DA0 /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscParam.h; path = interface/OscParam.h; sourceTree = "<group>"; };
 		7C7BD60B160D5F5F00783008 /* nukes.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = nukes.csv; path = data/nukes.csv; sourceTree = "<group>"; };
@@ -662,8 +661,8 @@
 		7C8F207A14D79C7500AC2D64 /* Binned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Binned.h; sourceTree = "<group>"; };
 		7C90D66D156F21CD00685CB4 /* SolFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SolFrame.cpp; sourceTree = "<group>"; };
 		7C90D66F156F21F800685CB4 /* SolFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SolFrame.h; sourceTree = "<group>"; };
-		7C90D671156F2B4900685CB4 /* TextureManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureManager.cpp; path = ../sdks/cinder/blocks/TextureManager/TextureManager.cpp; sourceTree = SOURCE_ROOT; };
-		7C90D672156F2B4900685CB4 /* TextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureManager.h; path = ../sdks/cinder/blocks/TextureManager/TextureManager.h; sourceTree = SOURCE_ROOT; };
+		7C90D671156F2B4900685CB4 /* TextureManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureManager.cpp; path = ../sdks/cinder_0.8.3/blocks/TextureManager/TextureManager.cpp; sourceTree = SOURCE_ROOT; };
+		7C90D672156F2B4900685CB4 /* TextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureManager.h; path = ../sdks/cinder_0.8.3/blocks/TextureManager/TextureManager.h; sourceTree = SOURCE_ROOT; };
 		7C922867151C066400FB3773 /* BlobTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobTracker.cpp; sourceTree = "<group>"; };
 		7C922868151C066400FB3773 /* BlobTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobTracker.h; sourceTree = "<group>"; };
 		7C92286E151C098D00FB3773 /* KinectController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectController.cpp; sourceTree = "<group>"; };
@@ -733,8 +732,8 @@
 		7CEF0FC41528FEBB000DF027 /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
 		7CF23588151ADE7600445AD8 /* KinectTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTest.cpp; sourceTree = "<group>"; };
 		7CF23589151ADE7600445AD8 /* KinectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTest.h; sourceTree = "<group>"; };
-		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
-		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
+		7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CinderOpenCV.h; path = "../sdks/cinder_0.8.3/blocks/Cinder-OpenCV/include/CinderOpenCV.h"; sourceTree = SOURCE_ROOT; };
+		7CF235EB151AE80C00445AD8 /* Kinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kinect.cpp; path = "../sdks/cinder_0.8.3/blocks/Cinder-Kinect/src/Kinect.cpp"; sourceTree = SOURCE_ROOT; };
 		7CF3DF0015A542C200CC61D2 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config.cpp; sourceTree = "<group>"; };
 		7CF3DF0215A542CB00CC61D2 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1097,7 +1096,7 @@
 				7C52E11A14CCFCA6008507D3 /* src */,
 			);
 			name = osc;
-			path = ../sdks/cinder/blocks/osc;
+			path = ../sdks/cinder_0.8.3/blocks/osc;
 			sourceTree = SOURCE_ROOT;
 		};
 		7C52E10514CCFC9B008507D3 /* include */ = {
@@ -1188,7 +1187,7 @@
 				7C6CB4A6169936030096EF7B /* MeshHelper.h */,
 			);
 			name = "Cinder-MeshHelper";
-			path = "../../sdks/cinder/blocks/Cinder-MeshHelper/src";
+			path = "../sdks/cinder_0.8.3/blocks/Cinder-MeshHelper/src";
 			sourceTree = SOURCE_ROOT;
 		};
 		7C702036153BC57F0057D4EC /* macos */ = {
@@ -1202,10 +1201,10 @@
 		7C745505148C04C6009C0356 = {
 			isa = PBXGroup;
 			children = (
+				7C79CB351765335800E71F9D /* Oculon.icns */,
 				7C74552E148C04C6009C0356 /* Oculon */,
 				7C745513148C04C6009C0356 /* Frameworks */,
 				7C745511148C04C6009C0356 /* Products */,
-				7C3738DA14F36A4C00B24851 /* oculon.png */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1480,7 +1479,7 @@
 				7C865609148C2A97000E00B6 /* src */,
 			);
 			name = "Cinder-MIDI";
-			path = "../sdks/cinder/blocks/Cinder-MIDI";
+			path = "../sdks/cinder_0.8.3/blocks/Cinder-MIDI";
 			sourceTree = SOURCE_ROOT;
 		};
 		7C8655B5148C2A97000E00B6 /* include */ = {
@@ -1616,7 +1615,7 @@
 				7C8CD31E1500784E0009FF26 /* src */,
 			);
 			name = "Cinder-Syphon";
-			path = "../sdks/cinder/blocks/Cinder-Syphon";
+			path = "../sdks/cinder_0.8.3/blocks/Cinder-Syphon";
 			sourceTree = SOURCE_ROOT;
 		};
 		7C8CD3191500784E0009FF26 /* lib */ = {
@@ -1712,7 +1711,7 @@
 				7C90D672156F2B4900685CB4 /* TextureManager.h */,
 			);
 			name = TextureManager;
-			path = ../sdks/cinder/blocks/TextureManager;
+			path = ../sdks/cinder_0.8.3/blocks/TextureManager;
 			sourceTree = SOURCE_ROOT;
 		};
 		7C941F321589807A0099A0D3 /* catalog */ = {
@@ -1883,7 +1882,7 @@
 				7CEF0FC31528FEBB000DF027 /* src */,
 			);
 			name = SimpleGUI;
-			path = ../sdks/cinder/blocks/MowaLibs/SimpleGUI;
+			path = ../sdks/cinder_0.8.3/blocks/MowaLibs/SimpleGUI;
 			sourceTree = SOURCE_ROOT;
 		};
 		7CEF0F7A1528FEBB000DF027 /* include */ = {
@@ -1916,7 +1915,7 @@
 				7CF235A2151AE38E00445AD8 /* CinderOpenCV.h */,
 			);
 			name = include;
-			path = "../../sdks/cinder/blocks/Cinder-OpenCV/include";
+			path = "../sdks/cinder_0.8.3/blocks/Cinder-OpenCV/include";
 			sourceTree = "<group>";
 		};
 		7CF235E9151AE76600445AD8 /* Kinect */ = {
@@ -1933,7 +1932,7 @@
 				7CF235EB151AE80C00445AD8 /* Kinect.cpp */,
 			);
 			name = src;
-			path = "../../sdks/cinder/blocks/Cinder-Kinect/src";
+			path = "../sdks/cinder_0.8.3/blocks/Cinder-Kinect/src";
 			sourceTree = "<group>";
 		};
 		7CF3DF0315A559B400CC61D2 /* audiosignal */ = {
@@ -2067,7 +2066,6 @@
 				7C948F5414B3A1E7003A3DA8 /* uranusmap.jpg in Resources */,
 				7C948F5514B3A1E7003A3DA8 /* venusmap.jpg in Resources */,
 				7C3738C214F03AED00B24851 /* particle_white.png in Resources */,
-				7C3738DB14F36A4C00B24851 /* oculon.png in Resources */,
 				7C37392614F736E300B24851 /* changelog.txt in Resources */,
 				7C37393014F736E300B24851 /* install.xml in Resources */,
 				7C37393114F736E300B24851 /* LICENSE.txt in Resources */,
@@ -2078,7 +2076,6 @@
 				7C1749BC1505DA2800BFC351 /* gaussianBlur_frag.glsl in Resources */,
 				7C1749BE1505DA4400BFC351 /* passThru_vert.glsl in Resources */,
 				7C9A0548153121A500EB0452 /* pf_tempesta_seven.ttf in Resources */,
-				7C702038153BC57F0057D4EC /* Oculon.icns in Resources */,
 				7CE9C858154A6DDE0057E409 /* earth_frag.glsl in Resources */,
 				7CE9C859154A6DDE0057E409 /* quake_frag.glsl in Resources */,
 				7CE9C85A154A6DDE0057E409 /* quake_vert.glsl in Resources */,
@@ -2137,6 +2134,7 @@
 				7C01E47B175A931F0066E50A /* colortex4.jpg in Resources */,
 				7C01E47D175A95440066E50A /* polychora_frag.glsl in Resources */,
 				7C01E47F175A97280066E50A /* voronoi_frag.glsl in Resources */,
+				7C79CB361765335800E71F9D /* Oculon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2317,7 +2315,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = "/Users/$(USER)/dev/sdks/cinder";
+				CINDER_PATH = "/Users/$(USER)/dev/sdks/cinder_0.8.3";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2358,7 +2356,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = "/Users/$(USER)/dev/sdks/cinder";
+				CINDER_PATH = "/Users/$(USER)/dev/sdks/cinder_0.8.3";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
