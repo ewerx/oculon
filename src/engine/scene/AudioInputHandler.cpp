@@ -166,12 +166,14 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
 //    }
 	
     if (mAudioFboEnabled) {
+        gl::pushMatrices();
         gl::Texture fftTexture( fftSurface );
         mAudioFbo.bindFramebuffer();
         gl::setMatricesWindow( mAudioFboSize, false );
         gl::setViewport( mAudioFboBounds );
         gl::draw( fftTexture );
         mAudioFbo.unbindFramebuffer();
+        gl::popMatrices();
     }
 }
 
