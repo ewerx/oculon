@@ -95,9 +95,10 @@ void ShaderTest::setupShaders()
         mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
         mUVScale = 0.25f;
         
+        // too slow!
         // MENGER
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
-        mShaders.push_back(shader);
+//        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
+//        mShaders.push_back(shader);
         
         // KALI
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_PAINT_FRAG ) );
@@ -118,11 +119,80 @@ void ShaderTest::setupShaders()
         
         mKaliParams.antialias=2.f;
         mTextureIndex = 0;
+    
+        // VORONOI
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_VORONOI_FRAG ) );
+        mShaders.push_back(shader);
         
+        mVoronoiParams.mBorderColor = Vec3f( 1.0f, 0.6f, 0.1f );
+        mVoronoiParams.mZoom = 8.0f;
+        mVoronoiParams.mBorderIn = 0.04f;
+        mVoronoiParams.mBorderOut = 0.07f;
+        mVoronoiParams.mSeedColor = Vec3f( 1.0f, 0.6f, 0.1f );
+        mVoronoiParams.mSeedSize = 0.12f;
+        mVoronoiParams.mCellLayers = 8.0f;
+        mVoronoiParams.mCellBrightness = 0.5f;
+        mVoronoiParams.mCellBorderStrength = 0.5f;
+        mVoronoiParams.mCellColor = Vec3f( 1.0f, 1.0f, 1.0f );
+        mVoronoiParams.mSpeed = 1.0f;
+        mVoronoiParams.mDistortion = 1.0f;
+        
+        // FRAGMENT: ERROR: 0:180: Swizzle component 'z' indexes beyond end of input vector (length 2)
+        // METAHEXBALLS
+//        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_METAHEXBALLS_FRAG ) );
+//        mShaders.push_back(shader);
+        
+        // TRIPPING
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_TRIPPING_FRAG ) );
+        mShaders.push_back(shader);
+        
+        // STRIPES
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_STRIPES_FRAG ) );
+        mShaders.push_back(shader);
+        
+        mStripesParams.mTimeScale = 0.1f;
+        //mStripes.mColor1 = ColorAf::white();
+        //mStripes.mColor2 = ColorAf::black();
+        
+        // FLICKER
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_ENERGYFLICKER_FRAG ) );
+        mShaders.push_back(shader);
+        
+        // INVERSION
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_INVERSION_FRAG ) );
+        mShaders.push_back(shader);
+
+        
+// NEEDS AUDIO INPUT
+/*
+         // LIGHTGLOW
+         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_LIGHTGLOW_FRAG ) );
+         mShaders.push_back(shader);
+*/
+ 
+// TOO SLOW!
+/*
+         // GLASSFIELD
+         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_GLASSFIELD_FRAG ) );
+         mShaders.push_back(shader);
+
         // POLYCHORA
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_POLYCHORA_FRAG ) );
         mShaders.push_back(shader);
-    
+ 
+         // COSMOS
+         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_COSMOS_FRAG ) );
+         mShaders.push_back(shader);
+ 
+        // RASTERIZER
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_RASTERIZER_FRAG ) );
+        mShaders.push_back(shader);
+        
+         // CLOUD
+         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_CLOUD_FRAG ) );
+         mShaders.push_back(shader);
+ 
+*/
         
 	}
 	catch( gl::GlslProgCompileExc &exc )
@@ -254,6 +324,50 @@ shaderNames.push_back(nam);
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
     
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Voronoi");
+    mInterface->addParam(CreateFloatParam("voronoi/speed", &mVoronoiParams.mSpeed)
+                         .maxValue(10.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/zoom", &mVoronoiParams.mZoom)
+                         .maxValue(256.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/distortion", &mVoronoiParams.mDistortion)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateVec3fParam("voronoi/line_color", &mVoronoiParams.mBorderColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateFloatParam("voronoi/borderin", &mVoronoiParams.mBorderIn)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/borderout", &mVoronoiParams.mBorderOut)
+                         .oscReceiver(getName()));
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateVec3fParam("voronoi/seed_color", &mVoronoiParams.mSeedColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateFloatParam("voronoi/seedsize", &mVoronoiParams.mSeedSize)
+                         .oscReceiver(getName()));
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateVec3fParam("voronoi/cell_color", &mVoronoiParams.mCellColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateFloatParam("voronoi/cell_brightness", &mVoronoiParams.mCellBrightness)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/cell_strength", &mVoronoiParams.mCellBorderStrength)
+                         .oscReceiver(getName()));
+    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Stripes");
+    mInterface->addParam(CreateFloatParam("stripes/timescale", &mStripesParams.mTimeScale)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("stripes/countscale", &mStripesParams.mCountScale)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("stripes/countscalemult", &mStripesParams.mCountScale)
+                         .minValue(1.0f)
+                         .maxValue(1000.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateColorParam("stripes/color1", &mStripesParams.mColor1, kMinColor, kMaxColor));
+    mInterface->addParam(CreateColorParam("stripes/color2", &mStripesParams.mColor2, kMinColor, kMaxColor));
+    
+    
     mAudioInputHandler.setupInterface(mInterface);
 
     mRadius = 100.0f;
@@ -367,12 +481,38 @@ void ShaderTest::shaderPreDraw()
             shader.uniform( "antialias", mKaliParams.antialias );
             break;
             
-        case SHADER_POLYCHORA:
+        case SHADER_VORONOI:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
-            shader.uniform( "iMouse", mKaliParams.translate );
+            shader.uniform( "borderColor", mVoronoiParams.mBorderColor );
+            shader.uniform( "zoom", mVoronoiParams.mZoom );
+            shader.uniform( "speed", mVoronoiParams.mSpeed );
+            shader.uniform( "borderIn", mVoronoiParams.mBorderIn );
+            shader.uniform( "borderOut", mVoronoiParams.mBorderOut );
+            shader.uniform( "seedSize", mVoronoiParams.mSeedSize );
+            shader.uniform( "seedColor", mVoronoiParams.mSeedColor );
+            shader.uniform( "cellLayers", mVoronoiParams.mCellLayers );
+            shader.uniform( "cellColor", mVoronoiParams.mCellColor );
+            shader.uniform( "cellBorderStrength", mVoronoiParams.mCellBorderStrength );
+            shader.uniform( "cellBrightness", mVoronoiParams.mCellBrightness );
+            shader.uniform( "distortion", mVoronoiParams.mDistortion );
+            break;
+            
+        case SHADER_STRIPES:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "timeScale", mStripesParams.mTimeScale );
+            shader.uniform( "color1", mStripesParams.mColor1 );
+            shader.uniform( "color2", mStripesParams.mColor2 );
+            shader.uniform( "countScale", mStripesParams.mCountScale );
+            break;
+//        case SHADER_MENGER:
+//        case SHADER_POLYCHORA:
+//            shader.uniform( "iResolution", resolution );
+//            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+//            shader.uniform( "iMouse", mKaliParams.translate );
+//            break;
 
-        case SHADER_MENGER:
         default:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
@@ -417,7 +557,6 @@ void ShaderTest::drawShaderOutput()
     gl::vertex( vert3 );
     
     gl::end();
-    gl::disable( GL_TEXTURE_2D );
 }
 
 void ShaderTest::shaderPostDraw()
@@ -446,11 +585,6 @@ void ShaderTest::drawScene()
     shaderPostDraw();
     
     gl::popMatrices();
-    
-    gl::disableDepthWrite();
-    gl::disableDepthRead();
-    
-    gl::disableAlphaBlending();
 }
 
 void ShaderTest::drawDebug()

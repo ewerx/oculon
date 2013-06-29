@@ -1,6 +1,18 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
+uniform vec3      borderColor;
+uniform float     zoom;
+uniform float     speed;
+uniform float     borderIn;
+uniform float     borderOut;
+uniform float     seedSize;
+uniform vec3      seedColor;
+uniform float     cellLayers;
+uniform float     cellBorderStrength;
+uniform float     cellBrightness;
+uniform vec3      cellColor;
+uniform float     distortion;
+//uniform sampler2D iChannel0;
 
 // Created by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -45,7 +57,7 @@ vec3 voronoi( in vec2 x )
         vec2 g = vec2(float(i),float(j));
 		vec2 o = hash( n + g );
 		#ifdef ANIMATE
-        o = 0.5 + 0.5*sin( iGlobalTime + 6.2831*o );
+        o = 0.5 + 0.5*distortion*sin( iGlobalTime*speed + 6.2831*o );
         #endif	
         vec2 r = g + o - f;
         float d = dot(r,r);
@@ -68,7 +80,7 @@ vec3 voronoi( in vec2 x )
         vec2 g = mg + vec2(float(i),float(j));
 		vec2 o = hash( n + g );
 		#ifdef ANIMATE
-        o = 0.5 + 0.5*sin( iGlobalTime + 6.2831*o );
+        o = 0.5 + 0.5*distortion*sin( iGlobalTime*speed + 6.2831*o );
         #endif	
         vec2 r = g + o - f;
 
@@ -87,16 +99,17 @@ void main( void )
 {
     vec2 p = gl_FragCoord.xy/iResolution.xx;
 
-    vec3 c = voronoi( 8.0*p );
+    vec3 c = voronoi( zoom*p );
 
 	// isolines
-    vec3 col = c.x*(0.5 + 0.5*sin(64.0*c.x))*vec3(1.0);
+    vec3 col = c.x*(cellBrightness + cellBorderStrength*sin(8.0*cellLayers*c.x))*cellColor;
     // borders	
-    col = mix( vec3(1.0,0.6,0.0), col, smoothstep( 0.04, 0.07, c.x ) );
+    col = mix( borderColor, col, smoothstep( borderIn, borderOut, c.x ) );
     // feature points
 	float dd = length( c.yz );
-	col = mix( vec3(1.0,0.6,0.1), col, smoothstep( 0.0, 0.12, dd) );
-	col += vec3(1.0,0.6,0.1)*(1.0-smoothstep( 0.0, 0.04, dd));
+    col = mix( seedColor, col, smoothstep( 0.0, seedSize, dd) );
+    col += seedColor*(1.0-smoothstep( 0.0, seedSize/3.0, dd));
 
 	gl_FragColor = vec4(col,1.0);
 }
+
