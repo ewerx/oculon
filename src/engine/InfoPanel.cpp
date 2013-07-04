@@ -27,7 +27,7 @@ InfoPanel::~InfoPanel()
 
 void InfoPanel::createTexture()
 {
-    if( mLines.size() > 0 )
+    if( mLines.size() > 0 && mIsVisible )
     {
         TextLayout layout;
         
