@@ -169,6 +169,10 @@ void ShaderTest::setupShaders()
          shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_LIGHTGLOW_FRAG ) );
          mShaders.push_back(shader);
 */
+        
+        // RASTERIZER
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_RASTERIZER_FRAG ) );
+        mShaders.push_back(shader);
  
 // TOO SLOW!
 /*
@@ -183,10 +187,6 @@ void ShaderTest::setupShaders()
          // COSMOS
          shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_COSMOS_FRAG ) );
          mShaders.push_back(shader);
- 
-        // RASTERIZER
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_RASTERIZER_FRAG ) );
-        mShaders.push_back(shader);
         
          // CLOUD
          shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_CLOUD_FRAG ) );

@@ -59,6 +59,7 @@
 		7C206DCB17403CBA00DA71E9 /* contour_tex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DC917403CBA00DA71E9 /* contour_tex_frag.glsl */; };
 		7C206DCC17403CBA00DA71E9 /* contour_tex_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C206DCA17403CBA00DA71E9 /* contour_tex_vert.glsl */; };
 		7C2F90CD1690D3BB0062D6E0 /* SplineCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */; };
+		7C36876817CF026000B7E4D6 /* truchets_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C36876717CF026000B7E4D6 /* truchets_frag.glsl */; };
 		7C3738C214F03AED00B24851 /* particle_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C3738C114F03AED00B24851 /* particle_white.png */; };
 		7C3738F514F7359B00B24851 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738EA14F7359B00B24851 /* Color.cpp */; };
 		7C3738F614F7359B00B24851 /* MSACoreGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3738F114F7359B00B24851 /* MSACoreGL.cpp */; };
@@ -399,6 +400,7 @@
 		7C232C5D15283E7C00B671A5 /* SkeletonTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonTest.h; sourceTree = "<group>"; };
 		7C2F90CB1690D3BB0062D6E0 /* SplineCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SplineCam.cpp; sourceTree = "<group>"; };
 		7C2F90CC1690D3BB0062D6E0 /* SplineCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplineCam.h; sourceTree = "<group>"; };
+		7C36876717CF026000B7E4D6 /* truchets_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = truchets_frag.glsl; sourceTree = "<group>"; };
 		7C3738C114F03AED00B24851 /* particle_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white.png; sourceTree = "<group>"; };
 		7C3738E814F7359B00B24851 /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
 		7C3738E914F7359B00B24851 /* CinderMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CinderMath.h; sourceTree = "<group>"; };
@@ -1623,6 +1625,7 @@
 				7CB585451747287E00A456C3 /* simplicity_frag.glsl */,
 				7CD7E590177BE627005080DF /* stripes_frag.glsl */,
 				7CD7E58C177BE51F005080DF /* tripping_frag.glsl */,
+				7C36876717CF026000B7E4D6 /* truchets_frag.glsl */,
 				7C01E47E175A97280066E50A /* voronoi_frag.glsl */,
 				7C13445B158992950032017E /* brightStars.vert */,
 				7C13445D158992950032017E /* faintStars.vert */,
@@ -2195,6 +2198,7 @@
 				7CB3786C177D400E0064D705 /* glasswalls_frag.glsl in Resources */,
 				7CB3786E177D50E70064D705 /* clouds_frag.glsl in Resources */,
 				7CB37870177D52890064D705 /* furry_frag.glsl in Resources */,
+				7C36876817CF026000B7E4D6 /* truchets_frag.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
