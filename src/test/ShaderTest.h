@@ -70,9 +70,20 @@ private:
 #define SHADERS_TUPLE \
 SHADERS_ENTRY( "Noise", SHADER_NOISE ) \
 SHADERS_ENTRY( "Simplicity", SHADER_SIMPLICITY ) \
-SHADERS_ENTRY( "Menger", SHADER_MENGER ) \
 SHADERS_ENTRY( "KIFS", SHADER_PAINT ) \
-SHADERS_ENTRY( "Polychora", SHADER_POLYCHORA ) \
+SHADERS_ENTRY( "Voronoi", SHADER_VORONOI ) \
+SHADERS_ENTRY( "Tripping", SHADER_TRIPPING ) \
+SHADERS_ENTRY( "Stripes", SHADER_STRIPES ) \
+SHADERS_ENTRY( "Flicker", SHADER_FLICKER ) \
+SHADERS_ENTRY( "Inversion", SHADER_INVERSION ) \
+SHADERS_ENTRY( "Rasterizer", SHADER_RASTERIZER ) \
+//SHADERS_ENTRY( "Glassfield", SHADER_GLASSFIELD ) \
+//SHADERS_ENTRY( "Cosmos", SHADER_COSMOS ) \
+//SHADERS_ENTRY( "Glow", SHADER_LIGHTGLOW ) \
+//SHADERS_ENTRY( "Cloud", SHADER_CLOUD ) \
+//SHADERS_ENTRY( "MetaHexBalls", SHADER_METAHEXBALLS ) \
+//SHADERS_ENTRY( "Menger", SHADER_MENGER ) \
+//SHADERS_ENTRY( "Polychora", SHADER_POLYCHORA ) \
 //end tuple
     
     enum eShaderType
@@ -139,6 +150,50 @@ enm,
         float antialias;
     };
     tKaliParams mKaliParams;
+    
+    struct tVoronoiParams
+    {
+        ci::Vec3f mBorderColor;
+        float mSpeed;
+        float mZoom;
+        float mBorderIn;
+        float mBorderOut;
+        ci::Vec3f mSeedColor;
+        float mSeedSize;
+        float mCellLayers;
+        ci::Vec3f mCellColor;
+        float mCellBorderStrength;
+        float mCellBrightness;
+        float mDistortion;
+    };
+    tVoronoiParams mVoronoiParams;
+    
+    struct tInversionParams
+    {
+        float mWidth;
+        float mScale;
+        float mDetail;
+        ci::Vec3f mLightDir;
+        float mTimeScale;
+        float mShakeSpeed;
+        float mShakeAmount;
+        float mLightPow;
+        float mLightScale;
+        float mLightRange;
+        float mContrast;
+    };
+    tInversionParams mInversionParams;
+    
+    struct tStripesParams
+    {
+        float mTimeScale;
+        float mCountScale;
+        float mCountScaleMult;
+        ci::ColorAf mColor1;
+        ci::ColorAf mColor2;
+        
+    };
+    tStripesParams mStripesParams;
     
     double mElapsedTime;
 };

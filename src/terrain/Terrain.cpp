@@ -324,6 +324,7 @@ void Terrain::drawDynamicTexture()
     {
         
     }
+    gl::pushMatrices();
     
     // Bind FBO and set up window
 	mVtfFbo.bindFramebuffer();
@@ -377,6 +378,8 @@ void Terrain::drawDynamicTexture()
 	// Unbind everything
 	mShaderTex.unbind();
 	mVtfFbo.unbindFramebuffer();
+    
+    gl::popMatrices();
     
 	///////////////////////////////////////////////////////////////
 }
@@ -453,12 +456,14 @@ void Terrain::updateAudioResponse()
         }
     }
 	
+    gl::pushMatrices();
 	gl::Texture fftTexture( fftSurface );
 	mAudioFbo.bindFramebuffer();
 	gl::setMatricesWindow( mAudioFboSize, false );
 	gl::setViewport( mAudioFboBounds );
 	gl::draw( fftTexture );
 	mAudioFbo.unbindFramebuffer();
+    gl::popMatrices();
     
     if (mAudioEffectNoise)
     {

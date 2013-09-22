@@ -71,6 +71,7 @@ public:
     ~MindWave();
     
     void setup();
+    void shutdown();
     void update();
     
     bool  hasData() const           { return mHasData; }

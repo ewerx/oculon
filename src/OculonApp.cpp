@@ -205,6 +205,11 @@ void OculonApp::shutdown()
     }
     
     mAudioInput.shutdown();
+    
+    if( mEnableMindWave )
+    {
+        mMindWave.shutdown();
+    }
 }
 
 void OculonApp::setupInterface()
@@ -296,6 +301,9 @@ bool OculonApp::showInterface(const int sceneId)
     }
     else if( sceneId < mScenes.size() )
     {
+        // also enables the scene
+        mScenes[sceneId]->setVisible(true);
+        mScenes[sceneId]->setRunning(true);
         mScenes[sceneId]->showInterface(true);
         mInterface->gui()->setEnabled(false);
         mLastActiveScene = sceneId;

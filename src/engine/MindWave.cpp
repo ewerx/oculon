@@ -48,11 +48,19 @@ MindWave::MindWave()
 ,TG_SetDataLog(NULL)
 ,TG_EnableBlinkDetection(NULL)
 {
+}
+
+MindWave::~MindWave()
+{
+}
+
+void MindWave::setup()
+{
     CFURLRef bundleUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("ThinkGear"), CFSTR("bundle"), CFSTR(""));
     
     mThinkGearBundle = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
     
-    CFRelease(bundleUrl); 
+    CFRelease(bundleUrl);
     
     assert(mThinkGearBundle != NULL && "could not load ThinkGear.bundle");
     
@@ -69,19 +77,10 @@ MindWave::MindWave()
         TG_SetDataLog           = (TGSetDataLogPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_SetDataLog"));
         TG_EnableBlinkDetection = (TGEnableBlinkDetectionPtr)CFBundleGetFunctionPointerForName(mThinkGearBundle,CFSTR("TG_EnableBlinkDetection"));
         
-        assert( TG_GetDriverVersion && TG_GetNewConnectionId && TG_Connect && 
+        assert( TG_GetDriverVersion && TG_GetNewConnectionId && TG_Connect &&
                TG_ReadPackets && TG_GetValue && TG_GetValueStatus && TG_Disconnect && TG_FreeConnection && TG_SetDataLog && TG_EnableBlinkDetection );
     }
-}
-
-MindWave::~MindWave()
-{
-    endConnection();
-    CFRelease(mThinkGearBundle);
-}
-
-void MindWave::setup()
-{
+    
     if( 0 == setupNewConnection() )
     {
         if( mUseThread )
@@ -90,6 +89,12 @@ void MindWave::setup()
             mThread = std::thread(&MindWave::threadLoop, this);
         }
     }
+}
+
+void MindWave::shutdown()
+{
+    endConnection();
+    CFRelease(mThinkGearBundle);
 }
 
 void MindWave::threadLoop()
