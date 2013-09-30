@@ -64,6 +64,7 @@ private:
     
 private:
     Vec2i mMousePos;
+    bool mHandleMouseInput;
     
     float mTimeStep;
 	float mParticleNeighborhood;

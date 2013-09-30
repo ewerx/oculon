@@ -68,6 +68,7 @@ void Binned::setup()
     mMaxRadius = 100.0f;
     mAudioSensitivity = 1.0f;
     
+    mHandleMouseInput = false;
     mIsMousePressed = false;
     mApplyForcePattern = PATTERN_NONE;
     mPatternDuration = 0.0f;
@@ -281,6 +282,8 @@ void Binned::setupInterface()
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
                          .minValue(1).maxValue(64)
                          .oscReceiver(mName,"kparticles"));
+    mInterface->addParam(CreateBoolParam("Mouse Input", &mHandleMouseInput)
+                         .oscReceiver(mName,"mouseinput"));
     
     vector<string> formationNames;
 #define BINNED_FORMATION_ENTRY( nam, enm ) \
@@ -987,20 +990,26 @@ bool Binned::handleKeyDown( const KeyEvent& event )
 
 void Binned::handleMouseDown( const MouseEvent& event )
 {
-	mIsMousePressed = true;
-	mMousePos = Vec2i(event.getPos());
-    //mMousePos = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
+    if (mHandleMouseInput) {
+        mIsMousePressed = true;
+        mMousePos = Vec2i(event.getPos());
+        //mMousePos = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
+    }
 }
 
 void Binned::handleMouseUp( const MouseEvent& event )
 {
-	mIsMousePressed = false;
+    if (mHandleMouseInput) {
+        mIsMousePressed = false;
+    }
 }
 
 void Binned::handleMouseDrag( const MouseEvent& event )
 {
-	mMousePos = Vec2i(event.getPos());
-    //mMousePos = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
+    if (mHandleMouseInput) {
+        mMousePos = Vec2i(event.getPos());
+        //mMousePos = Vec2i(mApp->getViewportWidth()/2, mApp->getViewportHeight()/2);
+    }
 }
 
 void Binned::addRepulsionForce( const Vec2f& pos, float radius, float force )

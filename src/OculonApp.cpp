@@ -310,7 +310,7 @@ bool OculonApp::showInterface(const int sceneId)
         mVisibleLayerIndex = mScenes[sceneId]->getLayerIndex();
     }
     
-    return false;
+    return true;
 }
 
 //MARK: Setup Scenes
