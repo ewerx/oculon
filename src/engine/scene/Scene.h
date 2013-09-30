@@ -98,10 +98,14 @@ protected:
     
     bool saveInterfaceParams();
     bool loadInterfaceParams(const int index =0);
+    void setupLoadParamsInterface();
+    bool showLoadParamsInterface();
+    bool hideLoadParamsInterface();
     
     // frustum culling
     void calcFrustumPlane( ci::Vec3f &fNormal, ci::Vec3f& fPoint, float& fDist, const ci::Vec3f& v1, const ci::Vec3f& v2, const ci::Vec3f& v3 );
-	void calcNearAndFarClipCoordinates( const ci::Camera& cam );	
+	void calcNearAndFarClipCoordinates( const ci::Camera& cam );
+    
 
 protected:
     friend class OculonApp;
@@ -119,11 +123,15 @@ protected:
     float       mGain;
     
     Interface*              mInterface;
+    Interface*              mParamsInterface;
+    Interface*              mLoadParamsInterface;
     ci::params::InterfaceGl mDebugParams;
     
     bool mDoReset;
     
 private:
+    // ini files
+    std::vector<std::string> mIniFilenames;
     // fbo
     ci::gl::Fbo             mFbo;
     syphonServer            mSyphon;

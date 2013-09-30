@@ -13,6 +13,8 @@
 #include "Interface.h"
 #include "SimpleGUI.h"
 #include "Utils.h"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace ci;
 using namespace mowa::sgui;
@@ -30,6 +32,8 @@ Scene::Scene(const std::string& name)
 , mIsDebug(false)
 , mEnableFrustumCulling(false)
 , mInterface(NULL)
+, mParamsInterface(NULL)
+, mLoadParamsInterface(NULL)
 , mIsFrustumPlaneCached(false)
 , mDoReset(false)
 {
@@ -47,7 +51,9 @@ Scene::Scene(const std::string& name)
 
 Scene::~Scene()
 {
-    delete mInterface;
+    delete mParamsInterface;
+    delete mLoadParamsInterface;
+    mInterface = NULL;
 }
 
 void Scene::init(OculonApp* app)
@@ -62,7 +68,8 @@ void Scene::init(OculonApp* app)
     }
     
     // setup master interface
-    mInterface = new Interface( mApp, &mApp->getOscServer() );
+    mParamsInterface = new Interface( mApp, &mApp->getOscServer() );
+    mInterface = mParamsInterface;
     mInterface->gui()->addColumn();
     // bind to OculonApp::showInterface(0)
     mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
@@ -80,7 +87,7 @@ void Scene::init(OculonApp* app)
                          .maxValue(OculonApp::MAX_LAYERS-1)
                          .oscReceiver(mName).sendFeedback());
     mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
-    mInterface->gui()->addButton("LOAD")->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, 0) );
+    mInterface->gui()->addButton("LOAD")->registerCallback( this, &Scene::showLoadParamsInterface );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateFloatParam("gain", &mGain)
@@ -88,6 +95,9 @@ void Scene::init(OculonApp* app)
                          .oscReceiver(mName).sendFeedback());
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
+    
+    setupLoadParamsInterface();
+    mLoadParamsInterface->gui()->setEnabled(false);
 }
 
 void Scene::setup()
@@ -159,6 +169,51 @@ void Scene::setupDebugInterface()
                 break;
         }
     }
+}
+
+void Scene::setupLoadParamsInterface()
+{
+    if (mLoadParamsInterface)
+    {
+        if (mInterface == mLoadParamsInterface) {
+            mInterface = NULL;
+        }
+        delete mLoadParamsInterface;
+        mLoadParamsInterface = NULL;
+    }
+    
+    mLoadParamsInterface = new Interface( mApp, &mApp->getOscServer() );
+    if (mInterface == NULL)
+    {
+        mInterface = mLoadParamsInterface;
+    }
+    mLoadParamsInterface->gui()->addColumn();
+    mLoadParamsInterface->gui()->addButton("CANCEL")->registerCallback( this, &Scene::hideLoadParamsInterface );
+    mLoadParamsInterface->gui()->addSeparator();
+    
+    
+    mIniFilenames.clear();
+    // fetch list of ini file names
+    fs::path iniPath(expandPath(kIniLocation));
+    if (fs::is_directory(iniPath)) {
+        for ( fs::directory_iterator it( iniPath ); it != fs::directory_iterator(); ++it )
+        {
+            if ( fs::is_regular_file( *it ) )
+            {
+                string filename = it->path().filename().string();
+                if( boost::starts_with(filename, mName) )
+                {
+                    mLoadParamsInterface->gui()->addButton(filename)->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, mIniFilenames.size()) );
+                    mIniFilenames.push_back(it->path().string());
+                }
+            }
+        }
+    }
+    // store in vector
+    // create triggers with filename (stripped) as name, index in vector as bind param to function to load params
+    
+    
+    //mLoadParamsInterface->addButton(CreateTriggerParam("",NULL))->registerCallback( boost::bind() );
 }
 
 void Scene::update(double dt)
@@ -258,7 +313,7 @@ bool Scene::onRunningChanged()
 
 void Scene::setDebug(bool debug)
 {
-    mIsDebug = debug;
+    mIsDebug = debug; 
     onDebugChanged();
 }
 
@@ -281,24 +336,61 @@ void Scene::showInterface(bool show)
 
 bool Scene::saveInterfaceParams() 
 {
+    fs::path iniPath = fs::path(kIniLocation);
+    if (!fs::is_directory(iniPath)) {
+        createDirectories(iniPath);
+    }
+    
     const string pathBase = kIniLocation + getName() + kIniExt;
     fs::path filePath = Utils::getUniquePath(pathBase, kIniDigits, "");
     mInterface->gui()->save(filePath.string());
+    
+    // add newly saved file to load interface
+    mLoadParamsInterface->gui()->addButton(filePath.filename().string())->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, mIniFilenames.size()) );
+    mIniFilenames.push_back(filePath.string());
+    
     return false;//callback
 }
 
 bool Scene::loadInterfaceParams(const int index)
 {
-    std::stringstream filePath;
-    filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
+    //std::stringstream filePath;
+    //filePath << kIniLocation << getName() << setw(kIniDigits) << setfill('0') << index << kIniExt;
     
-    fs::path iniPath = expandPath( fs::path( filePath.str() ) );
+    //fs::path iniPath = expandPath( fs::path( filePath.str() ) );
     //fs::path filePath = getOpenFilePath( kIniLocation );
 //	if( ! filePath.empty() ) {
 //        mInterface->gui()->load(filePath.string());
 //    }
-    mInterface->gui()->load(iniPath.string());
-    return false;//callback
+    
+    if (index < 0 || index >= mIniFilenames.size())
+    {
+        assert(false && "ini filename index out of range");
+        return false;
+    }
+    
+    std::string &iniFilename = mIniFilenames[index];
+    
+    hideLoadParamsInterface();
+    mParamsInterface->gui()->load(iniFilename);
+    return true;//callback
+}
+
+bool Scene::showLoadParamsInterface()
+{
+    setupLoadParamsInterface();
+    mParamsInterface->gui()->setEnabled(false);
+    mLoadParamsInterface->gui()->setEnabled(true);
+    mInterface = mLoadParamsInterface;
+    return true;//callback
+}
+
+bool Scene::hideLoadParamsInterface()
+{
+    mParamsInterface->gui()->setEnabled(true);
+    mLoadParamsInterface->gui()->setEnabled(false);
+    mInterface = mParamsInterface;
+    return true;//callback
 }
 
 #pragma MARK: Frustum Culling
