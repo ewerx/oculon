@@ -30,6 +30,8 @@
 #include "TextOrbit.h"
 #include "Polyhedron.h"
 #include "Terrain.h"
+// shader scenes
+#include "Tilings.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -339,6 +341,9 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
 //    if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
+    
+    // Shader Scenes
+    if( mConfig.getBool("tilings") )    addScene( new Tilings() );
     
     // Test Scenes
     //addScene( new MovieTest() );

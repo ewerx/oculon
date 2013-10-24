@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "OculonApp.h"
 #include "Interface.h"
+#include "Resources.h"
 #include "SimpleGUI.h"
 #include "Utils.h"
 #include <boost/algorithm/string/predicate.hpp>
@@ -498,4 +499,27 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
 	}
 	
 	return( result );
+}
+
+#pragma mark - Helpers
+
+gl::GlslProg Scene::loadFragShader( const std::string& filename )
+{
+    gl::GlslProg shader;
+    
+    try
+    {
+        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( filename ) );
+    }
+    catch( gl::GlslProgCompileExc &exc )
+    {
+		console() << "Shader compile error: " << std::endl;
+		console() << exc.what();
+	}
+	catch( ... )
+    {
+		console() << "Unable to load shader" << std::endl;
+	}
+    
+    return shader;
 }

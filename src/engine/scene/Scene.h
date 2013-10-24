@@ -15,6 +15,7 @@
 #include "cinder/Camera.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/Texture.h"
+#include "cinder/gl/GlslProg.h"
 #include "cinder/params/Params.h"
 #include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
@@ -106,6 +107,8 @@ protected:
     void calcFrustumPlane( ci::Vec3f &fNormal, ci::Vec3f& fPoint, float& fDist, const ci::Vec3f& v1, const ci::Vec3f& v2, const ci::Vec3f& v3 );
 	void calcNearAndFarClipCoordinates( const ci::Camera& cam );
     
+    // helpers
+    ci::gl::GlslProg loadFragShader( const std::string& filename );
 
 protected:
     friend class OculonApp;

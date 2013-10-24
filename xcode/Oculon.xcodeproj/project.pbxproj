@@ -50,6 +50,7 @@
 		6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE541461BB6E47318E673CFF /* b2BroadPhase.cpp */; };
 		754B4CB40F424443A99DB50E /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD9DACED57C4F30B659A33B /* OscOutboundPacketStream.cpp */; };
 		75C76C78400B4451B6B8FA0D /* b2Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A501110D8A2431AB1044F72 /* b2Settings.cpp */; };
+		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */; };
 		7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE421764384B00E71F9D /* SyphonNameboundClient.m */; };
 		7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE471764384B00E71F9D /* syphonClient.mm */; };
@@ -329,6 +330,8 @@
 		7CAC9E9017EE6AE1007DB913 /* stripes_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAC9E8017EE6AE1007DB913 /* stripes_frag.glsl */; };
 		7CAC9E9117EE6AE1007DB913 /* tripping_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAC9E8117EE6AE1007DB913 /* tripping_frag.glsl */; };
 		7CAC9E9217EE6AE1007DB913 /* truchets_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAC9E8217EE6AE1007DB913 /* truchets_frag.glsl */; };
+		7CF3122618162F3500DB1286 /* tilings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF3122518162F3500DB1286 /* tilings_frag.glsl */; };
+		7CF3122818163C5100DB1286 /* rings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF3122718163C5100DB1286 /* rings_frag.glsl */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
 		845DE7D4DFB04764AACEA34C /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 512F72EDE8E9459AABC24F2C /* libfmodex.dylib */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -469,6 +472,8 @@
 		760E928A7AC841B4A0BA71CF /* b2ChainShape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2ChainShape.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Collision/Shapes/b2ChainShape.cpp; sourceTree = "<group>"; };
 		762B46BCC05E485AB77602C4 /* b2DynamicTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2DynamicTree.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Collision/b2DynamicTree.cpp; sourceTree = "<group>"; };
 		7A501110D8A2431AB1044F72 /* b2Settings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2Settings.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Common/b2Settings.cpp; sourceTree = "<group>"; };
+		7C5B69751819745800AB2C8D /* Tilings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tilings.cpp; sourceTree = "<group>"; };
+		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C79BDE61764384A00E71F9D /* GLQuadRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLQuadRender.h; sourceTree = "<group>"; };
 		7C79BDE71764384A00E71F9D /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
@@ -847,6 +852,8 @@
 		7CAC9E8017EE6AE1007DB913 /* stripes_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stripes_frag.glsl; sourceTree = "<group>"; };
 		7CAC9E8117EE6AE1007DB913 /* tripping_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tripping_frag.glsl; sourceTree = "<group>"; };
 		7CAC9E8217EE6AE1007DB913 /* truchets_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = truchets_frag.glsl; sourceTree = "<group>"; };
+		7CF3122518162F3500DB1286 /* tilings_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tilings_frag.glsl; sourceTree = "<group>"; };
+		7CF3122718163C5100DB1286 /* rings_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rings_frag.glsl; sourceTree = "<group>"; };
 		7DCD786D4D554035B5163028 /* b2CircleContact.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2CircleContact.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Dynamics/Contacts/b2CircleContact.cpp; sourceTree = "<group>"; };
 		845EF66E4A6845CBB3915FB6 /* TimerListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TimerListener.h; path = ../../sdks/cinder/blocks/OSC/src/ip/TimerListener.h; sourceTree = "<group>"; };
 		85040A01DF79463FAF728E02 /* b2Math.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = b2Math.h; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Common/b2Math.h; sourceTree = "<group>"; };
@@ -989,6 +996,7 @@
 				7C79CA0D17650FD700E71F9D /* orbiter */,
 				7C79C9DC17650FD700E71F9D /* polyhedron */,
 				7C79CA1417650FD700E71F9D /* pulsar */,
+				7C5B69741819745800AB2C8D /* shaders */,
 				7C79CA0817650FD700E71F9D /* sol */,
 				7C79C9DF17650FD700E71F9D /* tectonic */,
 				7C79C9E617650FD700E71F9D /* terrain */,
@@ -1210,6 +1218,16 @@
 				6E6967D37AC141DCA3AC7F6D /* Box2D */,
 			);
 			name = src;
+			sourceTree = "<group>";
+		};
+		7C5B69741819745800AB2C8D /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				7C5B69751819745800AB2C8D /* Tilings.cpp */,
+				7C5B69761819745800AB2C8D /* Tilings.h */,
+			);
+			name = shaders;
+			path = ../src/shaders;
 			sourceTree = "<group>";
 		};
 		7C79BDE31764384A00E71F9D /* SimpleGUI */ = {
@@ -1607,10 +1625,12 @@
 				7C79C8CE17650F8F00E71F9D /* quake_vert.glsl */,
 				7CAC9E7E17EE6AE1007DB913 /* rasterizer_frag.glsl */,
 				7C79C8CF17650F8F00E71F9D /* render_frag.glsl */,
+				7CF3122718163C5100DB1286 /* rings_frag.glsl */,
 				7C79C8D017650F8F00E71F9D /* shader.fsh */,
 				7CAC9E7F17EE6AE1007DB913 /* shapeshifter_frag.glsl */,
 				7C79C8D117650F8F00E71F9D /* simplicity_frag.glsl */,
 				7CAC9E8017EE6AE1007DB913 /* stripes_frag.glsl */,
+				7CF3122518162F3500DB1286 /* tilings_frag.glsl */,
 				7CAC9E8117EE6AE1007DB913 /* tripping_frag.glsl */,
 				7CAC9E8217EE6AE1007DB913 /* truchets_frag.glsl */,
 				7C79C8D217650F8F00E71F9D /* voronoi_frag.glsl */,
@@ -2298,6 +2318,7 @@
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
 				7C79C8F517650F8F00E71F9D /* colortex3.jpg in Resources */,
 				7C79C8F617650F8F00E71F9D /* colortex4.jpg in Resources */,
+				7CF3122618162F3500DB1286 /* tilings_frag.glsl in Resources */,
 				7C79C8F717650F8F00E71F9D /* bigGlow0.png in Resources */,
 				7C79C8F817650F8F00E71F9D /* bigGlow1.png in Resources */,
 				7C79C8F917650F8F00E71F9D /* corona.png in Resources */,
@@ -2339,6 +2360,7 @@
 				7C79C91717650F8F00E71F9D /* redgreenyellow.png in Resources */,
 				7C79C91817650F8F00E71F9D /* solmask.png in Resources */,
 				7C79C91917650F8F00E71F9D /* specExponent.png in Resources */,
+				7CF3122818163C5100DB1286 /* rings_frag.glsl in Resources */,
 				7C79C91A17650F8F00E71F9D /* earthDiffuse.png in Resources */,
 				7CAC9E9117EE6AE1007DB913 /* tripping_frag.glsl in Resources */,
 				7C79C91B17650F8F00E71F9D /* earthGray.png in Resources */,
@@ -2493,6 +2515,7 @@
 				7C79C93717650F8F00E71F9D /* nebula.frag in Sources */,
 				7C79C93817650F8F00E71F9D /* P_Position.frag in Sources */,
 				7C79C93917650F8F00E71F9D /* P_VboPos.frag in Sources */,
+				7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */,
 				7C79C93A17650F8F00E71F9D /* P_VboPos.vert in Sources */,
 				7C79C93B17650F8F00E71F9D /* P_Velocity.frag in Sources */,
 				7C79C93C17650F8F00E71F9D /* passThruFlock.vert in Sources */,

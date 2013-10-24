@@ -161,7 +161,14 @@ void ShaderTest::setupShaders()
         // INVERSION
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_INVERSION_FRAG ) );
         mShaders.push_back(shader);
+        
+        // TILINGS
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "tilings_frag.glsl" ) );
+        mShaders.push_back(shader);
 
+        // RINGS
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "rings_frag.glsl" ) );
+        mShaders.push_back(shader);
         
 // NEEDS AUDIO INPUT
 /*
