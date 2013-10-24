@@ -51,6 +51,7 @@
 		754B4CB40F424443A99DB50E /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD9DACED57C4F30B659A33B /* OscOutboundPacketStream.cpp */; };
 		75C76C78400B4451B6B8FA0D /* b2Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A501110D8A2431AB1044F72 /* b2Settings.cpp */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
+		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
 		7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */; };
 		7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE421764384B00E71F9D /* SyphonNameboundClient.m */; };
 		7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE471764384B00E71F9D /* syphonClient.mm */; };
@@ -474,6 +475,8 @@
 		7A501110D8A2431AB1044F72 /* b2Settings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2Settings.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Common/b2Settings.cpp; sourceTree = "<group>"; };
 		7C5B69751819745800AB2C8D /* Tilings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tilings.cpp; sourceTree = "<group>"; };
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
+		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rings.cpp; path = ../shaders/Rings.cpp; sourceTree = "<group>"; };
+		7C5B697918197A7F00AB2C8D /* Rings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rings.h; path = ../shaders/Rings.h; sourceTree = "<group>"; };
 		7C79BDE61764384A00E71F9D /* GLQuadRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLQuadRender.h; sourceTree = "<group>"; };
 		7C79BDE71764384A00E71F9D /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
@@ -2042,6 +2045,8 @@
 			children = (
 				7C79CA1517650FD700E71F9D /* Pulsar.cpp */,
 				7C79CA1617650FD700E71F9D /* Pulsar.h */,
+				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
+				7C5B697918197A7F00AB2C8D /* Rings.h */,
 			);
 			name = pulsar;
 			path = ../src/pulsar;
@@ -2434,6 +2439,7 @@
 				CDAA9EEFFFFD4DB39BB0BA93 /* b2DynamicTree.cpp in Sources */,
 				3F195DD00DEE43BE87A5B516 /* b2TimeOfImpact.cpp in Sources */,
 				2AE65599EB844A56A8FD913D /* b2ChainShape.cpp in Sources */,
+				7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */,
 				D698C40166CC43D3B0DAF533 /* b2CircleShape.cpp in Sources */,
 				B1233A49B5D147AB84356C9D /* b2EdgeShape.cpp in Sources */,
 				126D41216C734D5997032DB6 /* b2PolygonShape.cpp in Sources */,

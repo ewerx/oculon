@@ -32,6 +32,7 @@
 #include "Terrain.h"
 // shader scenes
 #include "Tilings.h"
+#include "Rings.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -344,6 +345,7 @@ void OculonApp::setupScenes()
     
     // Shader Scenes
     if( mConfig.getBool("tilings") )    addScene( new Tilings() );
+    if( mConfig.getBool("rings") )    addScene( new Rings() );
     
     // Test Scenes
     //addScene( new MovieTest() );
