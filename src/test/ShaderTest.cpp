@@ -42,7 +42,7 @@ void ShaderTest::setup()
     
     setupShaders();
     
-    mTexture[0] = gl::Texture( loadImage( loadResource( RES_COLORTEX1 ) ) );
+    mTexture[0] = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) );
     mTexture[1] = gl::Texture( loadImage( loadResource( RES_COLORTEX2 ) ) );
     mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ) );
     mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
@@ -162,12 +162,49 @@ void ShaderTest::setupShaders()
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_INVERSION_FRAG ) );
         mShaders.push_back(shader);
         
-        // TILINGS
-        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "tilings_frag.glsl" ) );
+        // CYMATICS -- too slow
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "cymatics_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // INVERSION
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "logistic_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // INTERSTELLAR
+        // -- star formation from noise texture not working
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "interstellar_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // STRIPEY
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "stripey_frag.glsl" ) );
         mShaders.push_back(shader);
 
-        // RINGS
-        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "rings_frag.glsl" ) );
+        // CIRCLEWAVE
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "circlewave_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // CELLS
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "cells_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // SHADER_MOIRE
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "moire_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // SHADER_VOLUMETRICLINES
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "volumetriclines_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // SHADER_SQUARENOISE
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "squarenoise_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // SHADER_AFTEREFFECT
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "aftereffect_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // SHADER_MAINSEQUENCE
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "mainsequence_frag.glsl" ) );
         mShaders.push_back(shader);
         
 // NEEDS AUDIO INPUT
@@ -177,12 +214,12 @@ void ShaderTest::setupShaders()
          mShaders.push_back(shader);
 */
         
+// TOO SLOW!
+/*
         // RASTERIZER
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_RASTERIZER_FRAG ) );
         mShaders.push_back(shader);
- 
-// TOO SLOW!
-/*
+
          // GLASSFIELD
          shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_GLASSFIELD_FRAG ) );
          mShaders.push_back(shader);
@@ -520,6 +557,19 @@ void ShaderTest::shaderPreDraw()
 //            shader.uniform( "iMouse", mKaliParams.translate );
 //            break;
 
+        case SHADER_CYMATICS:
+            shader.uniform( "iMouse", mKaliParams.translate );
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            break;
+            
+        case SHADER_INTERSTELLAR:
+        case SHADER_CIRCLEWAVE:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            shader.uniform( "iChannel0", 1 );
+            break;
+            
         default:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );

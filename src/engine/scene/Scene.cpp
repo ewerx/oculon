@@ -513,7 +513,7 @@ gl::GlslProg Scene::loadFragShader( const std::string& filename )
     }
     catch( gl::GlslProgCompileExc &exc )
     {
-		console() << "Shader compile error: " << std::endl;
+		console() << "Shader (" << filename << ") compile error: " << std::endl;
 		console() << exc.what();
 	}
 	catch( ... )
