@@ -32,6 +32,7 @@ public:
     void drawDebug(const Vec2f& size);
     
     // accessors
+    bool hasTexture() const { return mAudioFboEnabled; }
     ci::gl::Texture getTexture()
     {
         if (mAudioFboEnabled) return mAudioFbo.getTexture();

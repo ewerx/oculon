@@ -38,15 +38,16 @@ void AudioInputHandler::setup(const Scene *scene, bool fboEnabled)
     mFalloffByFreq      = true;
 
     // FBO
-    mAudioFboDim        = 23; // 512 bands
+    mAudioFboDim        = KISS_DEFAULT_DATASIZE; // 256 bands
     mAudioFboEnabled    = fboEnabled;
+    const int audioFboHeight = 2;
     if (mAudioFboEnabled)
     {
-        mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
-        mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
+        mAudioFboSize   = Vec2f( mAudioFboDim, audioFboHeight );
+        mAudioFboBounds = Area( 0, 0, mAudioFboDim, audioFboHeight );
         gl::Fbo::Format audioFboFormat;
         audioFboFormat.setColorInternalFormat( GL_RGB32F_ARB );
-        mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, audioFboFormat );
+        mAudioFbo       = gl::Fbo( mAudioFboDim, audioFboHeight, audioFboFormat );
     }
 }
 
@@ -54,6 +55,8 @@ void AudioInputHandler::setupInterface( Interface* interface )
 {
     interface->gui()->addColumn();
     interface->gui()->addLabel("audio");
+//    interface->addParam(CreateBoolParam( "texture", &mAudioFboEnabled )
+//                        .oscReceiver(mScene->getName(),"audio/texture"));
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
                          .oscReceiver(mScene->getName(),"audio/random"));
     interface->addParam(CreateBoolParam( "randomize", &mRandomEveryFrame )
@@ -92,31 +95,13 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             mFftFalloff.push_back( tFftValue( i, fftLogData[i].y ) );
         }
     }
-    
-    int32_t row = 0;
-    
-    if (mRandomEveryFrame) {
-        mRandomSeed = Rand::randInt();
-    }
-    Rand randIndex(mRandomSeed);
-
-	Surface32f fftSurface;
-    if (mAudioFboEnabled)
-    {
-        fftSurface = Surface32f( mAudioFbo.getTexture() );
-    }
     else
     {
-        const float size = mAudioFboDim*mAudioFboDim;
-        fftSurface = Surface32f( size, size, true );
-    }
-    
-	Surface32f::Iter it = fftSurface.getIter();
-    int32_t index = 0;
-	while( it.line() )
-    {
-        //int32_t index = row * mAudioFboDim;
-		while( it.pixel() && index < dataSize )
+        if (mRandomEveryFrame) {
+            mRandomSeed = Rand::randInt();
+        }
+        Rand randIndex(mRandomSeed);
+        for( int index=0; index< dataSize; ++index )
         {
             int32_t bandIndex = mRandomSignal ? randIndex.nextInt(dataSize) : index;
             
@@ -140,37 +125,52 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
                 mFftFalloff[index].mFalling = true;
                 timeline().apply( &mFftFalloff[index].mValue, 0.0f, falloff, getFalloffFunction() );
             }
-            
-			it.r() = mFftFalloff[index].mValue();
-            it.g() = 0.0f; // UNUSED
-			it.b() = 0.0f; // UNUSED
-			it.a() = 1.0f; // UNUSED
-            
-            ++index;
-		}
-        
-        ++row;
-        if (row >= mAudioFboDim)
-        {
-            row = 0;
         }
-	}
+    }
     
-//    if (mAudioRowShiftTime >= mAudioRowShiftDelay)
-//    {
-//        mAudioRowShiftTime = 0.0f;
-//        ++mAudioRowShift;
-//        if (mAudioRowShift >= mAudioFboDim) {
-//            mAudioRowShift = 0;
-//        }
-//    }
-	
-    if (mAudioFboEnabled) {
+    if (mAudioFboEnabled)
+    {
+        float * timeData = audioInput.getFft()->getData(); // normalized -1 to +1
+        Surface32f fftSurface = Surface32f( mAudioFbo.getTexture() );
+        
+        Surface32f::Iter it = fftSurface.getIter();
+        int32_t row = 0;
+        while( it.line() )
+        {
+            int32_t col = 0;
+            while( it.pixel() )
+            {
+                if (row == 0)
+                {
+                    it.r() = mFftFalloff[col].mValue();
+                    it.g() = mFftFalloff[col].mValue();
+                    it.b() = mFftFalloff[col].mValue();
+                    it.a() = 1.0f;
+                }
+                else
+                {
+                    float value = timeData[col];
+//                    if (mScene)
+//                    {
+//                        value *= mScene->getGain();
+//                    }
+                    it.r() = 0.5f + 0.5f * value;
+                    it.g() = 0.5f + 0.5f * value;
+                    it.b() = 0.5f + 0.5f * value;
+                    it.a() = 1.0f;
+                }
+                
+                ++col;
+            }
+            ++row;
+        }
+        
         gl::pushMatrices();
         gl::Texture fftTexture( fftSurface );
         mAudioFbo.bindFramebuffer();
         gl::setMatricesWindow( mAudioFboSize, false );
         gl::setViewport( mAudioFboBounds );
+        gl::clear();
         gl::draw( fftTexture );
         mAudioFbo.unbindFramebuffer();
         gl::popMatrices();

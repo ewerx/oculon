@@ -467,7 +467,10 @@ void ShaderTest::shaderPreDraw()
     }
     else
     {
-        mAudioInputHandler.getFbo().bindTexture(1);
+        if( mAudioInputHandler.hasTexture() )
+        {
+            mAudioInputHandler.getFbo().bindTexture(1);
+        }
     }
     
     mTexture[mTextureIndex].bind(0);
@@ -621,7 +624,10 @@ void ShaderTest::shaderPostDraw()
     gl::GlslProg shader = mShaders[mShaderType];
     shader.unbind();
     
-    mAudioInputHandler.getFbo().unbindTexture();
+    if( mAudioInputHandler.hasTexture() )
+    {
+        mAudioInputHandler.getFbo().unbindTexture();
+    }
     mTexture[mTextureIndex].unbind();
 }
 
