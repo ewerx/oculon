@@ -113,6 +113,9 @@ void OculonApp::setup()
     }
     mDomeRenderer.setup( fboWidth, fboHeight );
     
+    mViewportWidth = fboWidth;
+    mViewportHeight = fboHeight;
+    
     gl::enableVerticalSync(true);
     //wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -921,6 +924,7 @@ void OculonApp::drawScenes(int layerIndex)
         gl::enableAlphaBlending();
         glEnable(GL_TEXTURE_2D);
         gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
+        gl::setViewport( getWindowBounds() );
         if( mDrawOnlyLastScene )
         {
             if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
@@ -1089,6 +1093,7 @@ void OculonApp::draw()
 
 void OculonApp::drawDebug()
 {
+    gl::setViewport( getWindowBounds() );
     gl::pushMatrices();
     gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
     for (tSceneList::iterator sceneIt = mScenes.begin();
@@ -1108,6 +1113,8 @@ void OculonApp::drawDebug()
     }
     gl::popMatrices();
     
+    gl::pushMatrices();
+    gl::setMatricesWindow( Vec2i( getWindowWidth(), getWindowHeight() ) );
     if( mInfoPanel.isVisible() )
     {
         mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
@@ -1118,6 +1125,7 @@ void OculonApp::drawDebug()
         mInterface->draw();
         mParams->draw();
     }
+    gl::popMatrices();
 }
 
 #pragma MARK Capture
@@ -1284,7 +1292,7 @@ int OculonApp::getViewportWidth() const
     }
     else
     {
-        return getWindowWidth();
+        return mViewportWidth;
     }
 }
 
@@ -1296,7 +1304,7 @@ int OculonApp::getViewportHeight() const
     }
     else
     {
-        return getWindowHeight();
+        return mViewportHeight;
     }
 }
 

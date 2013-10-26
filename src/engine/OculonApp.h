@@ -55,7 +55,7 @@ public:
         INTERFACE_NONE = -2
     };
     
-    enum { MAX_LAYERS = 3 };
+    enum { MAX_LAYERS = 1 };
 
 #define OUTPUTMODE_TUPLE \
 OUTPUTMODE_ENTRY( "Direct", OUTPUT_DIRECT ) \
@@ -192,6 +192,8 @@ private: // members
     ci::gl::Fbo             mFbo[MAX_LAYERS];
     int                     mVisibleLayerIndex;
     float                   mBackgroundAlpha;
+    int                     mViewportWidth;
+    int                     mViewportHeight;
     
     DomeRenderer            mDomeRenderer;
     
