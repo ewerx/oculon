@@ -18,7 +18,7 @@ using namespace ci;
 Tilings::Tilings()
 : Scene("Tilings")
 {
-    mAudioInputHandler.setup(this, true);
+    //mAudioInputHandler.setup(this, true);
 }
 
 Tilings::~Tilings()
@@ -47,14 +47,14 @@ void Tilings::setupInterface()
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
-    mAudioInputHandler.setupInterface(mInterface);
+    //mAudioInputHandler.setupInterface(mInterface);
 }
 
 void Tilings::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    //mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mElapsedTime += dt;
 }
@@ -143,5 +143,5 @@ void Tilings::drawScene()
 
 void Tilings::drawDebug()
 {
-    mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
 }

@@ -18,7 +18,7 @@ using namespace ci;
 Rings::Rings()
 : Scene("Rings")
 {
-    mAudioInputHandler.setup(this, true);
+    //mAudioInputHandler.setup(this, true);
 }
 
 Rings::~Rings()
@@ -47,14 +47,14 @@ void Rings::setupInterface()
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
-    mAudioInputHandler.setupInterface(mInterface);
+    //mAudioInputHandler.setupInterface(mInterface);
 }
 
 void Rings::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    //mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mElapsedTime += dt;
 }
@@ -143,5 +143,5 @@ void Rings::drawScene()
 
 void Rings::drawDebug()
 {
-    mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
 }

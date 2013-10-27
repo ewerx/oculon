@@ -147,6 +147,7 @@ void OculonApp::setup()
     
     // audio input
     mAudioInput.setup();
+    mAudioInputHandler.setup(true);
     
     if( mEnableMidi )
     {
@@ -769,8 +770,11 @@ void OculonApp::update()
             enableFrameCapture(false);
         }
     }
+
+    const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
     
     mAudioInput.update();
+    mAudioInputHandler.update( dt, mAudioInput );
     
     if( mEnableMidi )
     {
@@ -792,7 +796,6 @@ void OculonApp::update()
     }
     
     // update scenes
-    const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
     for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )

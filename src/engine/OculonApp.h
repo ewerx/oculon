@@ -11,6 +11,7 @@
 #define __OCULONAPP_H__
 
 #include "AudioInput.h"
+#include "AudioInputHandler.h"
 #include "CameraController.h"
 #include "DomeRenderer.h"
 #include "InfoPanel.h"
@@ -96,6 +97,7 @@ public: // cinder interface
     
 public: // new
     AudioInput& getAudioInput()                         { return mAudioInput; }
+    AudioInputHandler& getAudioInputHandler()           { return mAudioInputHandler; }
     MidiInput& getMidiInput()                           { return mMidiInput; }
     MindWave& getMindWave()                             { return mMindWave; }
     //KinectController& getKinectController()             { return mKinectController; }
@@ -165,6 +167,7 @@ private: // members
     
     // input
     AudioInput              mAudioInput;
+    AudioInputHandler       mAudioInputHandler;
     
     MidiInput               mMidiInput;
     bool                    mEnableMidi;

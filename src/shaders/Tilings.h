@@ -51,7 +51,7 @@ private:
     ci::gl::GlslProg    mShader;
     
     // audio
-    AudioInputHandler   mAudioInputHandler;
+    //AudioInputHandler   mAudioInputHandler;
     
     // params
     ci::ColorAf         mColor1;

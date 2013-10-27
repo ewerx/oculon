@@ -112,7 +112,7 @@ enm,
     int                 mRadius;
     
     // audio
-    AudioInputHandler   mAudioInputHandler;
+    //AudioInputHandler   mAudioInputHandler;
     
     // SIMPLICITY
     ci::Vec3f           mColorScale;

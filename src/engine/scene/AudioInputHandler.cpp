@@ -8,7 +8,6 @@
 
 #include "AudioInputHandler.h"
 #include "Interface.h"
-#include "Scene.h"
 #include "cinder/Rand.h"
 
 using namespace std;
@@ -22,9 +21,8 @@ AudioInputHandler::~AudioInputHandler()
 {
 }
 
-void AudioInputHandler::setup(const Scene *scene, bool fboEnabled)
+void AudioInputHandler::setup(bool fboEnabled)
 {
-    mScene = scene;
     
     // SIGNAL
     mRandomSignal       = true;
@@ -51,25 +49,25 @@ void AudioInputHandler::setup(const Scene *scene, bool fboEnabled)
     }
 }
 
-void AudioInputHandler::setupInterface( Interface* interface )
+void AudioInputHandler::setupInterface( Interface* interface, const std::string &name )
 {
     interface->gui()->addColumn();
     interface->gui()->addLabel("audio");
 //    interface->addParam(CreateBoolParam( "texture", &mAudioFboEnabled )
-//                        .oscReceiver(mScene->getName(),"audio/texture"));
+//                        .oscReceiver(name,"audio/texture"));
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
-                         .oscReceiver(mScene->getName(),"audio/random"));
+                         .oscReceiver(name,"audio/random"));
     interface->addParam(CreateBoolParam( "randomize", &mRandomEveryFrame )
-                        .oscReceiver(mScene->getName(),"audio/randomize"));
+                        .oscReceiver(name,"audio/randomize"));
     interface->addParam(CreateBoolParam( "linear", &mLinearScale )
-                        .oscReceiver(mScene->getName(),"audio/linear"));
+                        .oscReceiver(name,"audio/linear"));
     
     interface->addParam(CreateFloatParam( "falloff", &mFalloffTime )
                         .maxValue(5.0f)
-                        .oscReceiver(mScene->getName(),"audio/falloff")
+                        .oscReceiver(name,"audio/falloff")
                         .midiInput(1, 2, 22));
     interface->addParam(CreateBoolParam( "freq_falloff", &mFalloffByFreq )
-                        .oscReceiver(mScene->getName(),"audio/freq_falloff"));
+                        .oscReceiver(name,"audio/freq_falloff"));
     
     vector<string> falloffModeNames;
 #define AUDIO_FALLOFF_MODE_ENTRY( nam, enm ) \
@@ -78,13 +76,18 @@ falloffModeNames.push_back(nam);
 #undef  AUDIO_FALLOFF_MODE_ENTRY
 interface->addEnum(CreateEnumParam( "falloff_mode", (int*)(&mFalloffMode) )
                         .maxValue(FALLOFFMODE_COUNT)
-                        .oscReceiver(mScene->getName(), "audio/falloff_mode")
+                        .oscReceiver(name, "audio/falloff_mode")
                         .isVertical(), falloffModeNames);
 
 }
 
-void AudioInputHandler::update(double dt, AudioInput& audioInput)
+void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
 {
+    if (audioInput.getFft() == NULL)
+    {
+        return;
+    }
+    
     int32_t dataSize = audioInput.getFft()->getBinSize();
     const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
@@ -108,10 +111,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             float falloff = mFalloffByFreq ? (mFalloffTime * (1.0f - bandIndex / dataSize)) : mFalloffTime;
             
             float value = mLinearScale ? (fftLogData[bandIndex].y * (1+bandIndex)) : fftLogData[bandIndex].y;
-            if (mScene)
-            {
-                value *= mScene->getGain();
-            }
+            value *= gain;
             
             if (value > mFftFalloff[index].mValue)
             {
@@ -150,10 +150,6 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
                 else
                 {
                     float value = timeData[col];
-//                    if (mScene)
-//                    {
-//                        value *= mScene->getGain();
-//                    }
                     it.r() = 0.5f + 0.5f * value;
                     it.g() = 0.5f + 0.5f * value;
                     it.b() = 0.5f + 0.5f * value;

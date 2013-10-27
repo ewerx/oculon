@@ -25,7 +25,7 @@ using namespace std;
 Grid::Grid()
 : Scene("grid")
 {
-    mAudioInputHandler.setup(this, false);
+    //mAudioInputHandler.setup(this, false);
 }
 
 Grid::~Grid()
@@ -151,7 +151,7 @@ colorSchemeNames.push_back(nam);
 //    mInterface->addParam(CreateColorParam("Color 3", &mColor3(), kMinColor, kMaxColor)
 //                        .oscReceiver(mName,"color3"));
     
-    mAudioInputHandler.setupInterface( mInterface );
+    //mAudioInputHandler.setupInterface( mInterface );
     
     // particles
     mInterface->gui()->addColumn();
@@ -293,7 +293,7 @@ void Grid::update(double dt)
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    //mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     gl::enableAlphaBlending();
     if (mMotionBlurEnabled)

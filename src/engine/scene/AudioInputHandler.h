@@ -25,9 +25,9 @@ public:
     AudioInputHandler();
     virtual ~AudioInputHandler();
     
-    void setup(const Scene *scene, bool fboEnabled =false);
-    void setupInterface( Interface *interface );
-    void update(double dt, AudioInput& audioInput);
+    void setup(bool fboEnabled =false);
+    void setupInterface( Interface *interface, const std::string &name );
+    void update(double dt, AudioInput& audioInput, float gain =1.0f);
     
     void drawDebug(const Vec2f& size);
     
@@ -99,8 +99,6 @@ enm,
     typedef std::function<float (float)> tEaseFn;
     tEaseFn getFalloffFunction();
     tEaseFn getReverseFalloffFunction();
-    
-    const Scene*        mScene;
 };
 
 #endif /* defined(__Oculon__AudioInputHandler__) */

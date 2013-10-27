@@ -22,7 +22,7 @@ using namespace ci;
 ShaderTest::ShaderTest()
 : Scene("shadertest")
 {
-    mAudioInputHandler.setup(this, true);
+    //mAudioInputHandler.setup(this, true);
 }
 
 ShaderTest::~ShaderTest()
@@ -412,7 +412,7 @@ shaderNames.push_back(nam);
     mInterface->addParam(CreateColorParam("stripes/color2", &mStripesParams.mColor2, kMinColor, kMaxColor));
     
     
-    mAudioInputHandler.setupInterface(mInterface);
+   //mAudioInputHandler.setupInterface(mInterface);
 
     mRadius = 100.0f;
 }
@@ -421,7 +421,7 @@ void ShaderTest::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    //mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     if (mGrid)
     {
@@ -467,9 +467,9 @@ void ShaderTest::shaderPreDraw()
     }
     else
     {
-        if( mAudioInputHandler.hasTexture() )
+        if( mApp->getAudioInputHandler().hasTexture() )
         {
-            mAudioInputHandler.getFbo().bindTexture(1);
+            mApp->getAudioInputHandler().getFbo().bindTexture(1);
         }
     }
     
@@ -624,9 +624,9 @@ void ShaderTest::shaderPostDraw()
     gl::GlslProg shader = mShaders[mShaderType];
     shader.unbind();
     
-    if( mAudioInputHandler.hasTexture() )
+    if( mApp->getAudioInputHandler().hasTexture() )
     {
-        mAudioInputHandler.getFbo().unbindTexture();
+        mApp->getAudioInputHandler().getFbo().unbindTexture();
     }
     mTexture[mTextureIndex].unbind();
 }
@@ -652,7 +652,7 @@ void ShaderTest::drawScene()
 
 void ShaderTest::drawDebug()
 {
-    mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
 }
 
 //void ShaderTest::handleOscMessage( const ci::osc::Message& message )
