@@ -1,5 +1,5 @@
 //
-//  Tilings.cpp
+//  CircleWave.cpp
 //  Oculon
 //
 //  Created by Ehsan on 13-10-24.
@@ -7,7 +7,7 @@
 //
 
 #include "OculonApp.h"
-#include "Tilings.h"
+#include "CircleWave.h"
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include <boost/format.hpp>
@@ -15,74 +15,57 @@
 
 using namespace ci;
 
-Tilings::Tilings()
-: Scene("Tilings")
+CircleWave::CircleWave()
+: Scene("CircleWave")
 {
     //mAudioInputHandler.setup(this, true);
 }
 
-Tilings::~Tilings()
+CircleWave::~CircleWave()
 {
 }
 
-void Tilings::setup()
+void CircleWave::setup()
 {
     Scene::setup();
     
-    mShader = loadFragShader("tilings_frag.glsl");
+    mShader = loadFragShader("circlewave_frag.glsl");
     
     reset();
 }
 
-void Tilings::reset()
+void CircleWave::reset()
 {
     mElapsedTime = 0.0f;
     
-    mIterations = 20;
-    mAngleP = 3;
-    mAngleQ = 5;
-    mAngleR = 2;
-    //mCenter = Vec3f(1.0f,1.0f,0.0f);
-    mThickness = 0.03f;
-    mColor1 = ColorA::white();
-    mColor2 = ColorA::black();
-    mTimeScale = 1.0f;
+    mSeparation = 0.06f;
+    mDetail = 0.5f;
+    mStrands = 60;
+    mScale = 1.0f;
+    
+    mColor2 = ColorA(0.25f, 0.15f, 0.25f, 1.0f);
 }
 
-void Tilings::setupInterface()
+void CircleWave::setupInterface()
 {
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
-                         .minValue(0.0f)
-                         .maxValue(10.0f));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateIntParam( "iterations", &mIterations )
-                         .minValue(1)
-                         .maxValue(100)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "anglep", &mAngleP )
-                         .minValue(1)
-                         .maxValue(100)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "angleq", &mAngleQ )
-                         .minValue(1)
-                         .maxValue(100)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "angler", &mAngleR )
-                         .minValue(1)
-                         .maxValue(100)
-                         .oscReceiver(getName()));
-    //mInterface->addParam(CreateVec3fParam("center", &mCenter, Vec3f::zero(), Vec3f::one()));
-    mInterface->addParam(CreateFloatParam( "Thickness", &mThickness )
+    mInterface->addParam(CreateFloatParam( "Separation", &mSeparation )
                          .minValue(0.0f)
                          .maxValue(2.0f));
-    
+    mInterface->addParam(CreateFloatParam( "Detail", &mDetail ));
+    mInterface->addParam(CreateIntParam( "Strands", &mStrands )
+                         .minValue(1)
+                         .maxValue(360));
+    mInterface->addParam(CreateFloatParam( "Scale", &mScale )
+                         .minValue(0.0f)
+                         .maxValue(10.0f));
     //mAudioInputHandler.setupInterface(mInterface);
 }
 
-void Tilings::update(double dt)
+void CircleWave::update(double dt)
 {
     Scene::update(dt);
     
@@ -91,7 +74,7 @@ void Tilings::update(double dt)
     mElapsedTime += dt;
 }
 
-void Tilings::draw()
+void CircleWave::draw()
 {
     gl::pushMatrices();
 
@@ -100,27 +83,31 @@ void Tilings::draw()
     gl::popMatrices();
 }
 
-void Tilings::shaderPreDraw()
+void CircleWave::shaderPreDraw()
 {
+    // audio texture
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().bindTexture(1);
+    }
+    
     mShader.bind();
     
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
     mShader.uniform( "iResolution", resolution );
     mShader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
-    
-    mShader.uniform( "iTimeScale", mTimeScale );
+    mShader.uniform( "iChannel0", 1 );
     mShader.uniform( "iColor1", mColor1 );
     mShader.uniform( "iColor2", mColor2 );
-    mShader.uniform( "iIterations", mIterations );
-    mShader.uniform( "iAngleP", mAngleP );
-    mShader.uniform( "iAngleQ", mAngleQ );
-    mShader.uniform( "iAngleR", mAngleR );
-    mShader.uniform( "iCenter", mCenter );
-    mShader.uniform( "iThickness", mThickness );
+    
+    mShader.uniform( "iSeparation", mSeparation );
+    mShader.uniform( "iDetail", mDetail );
+    mShader.uniform( "iStrands", mStrands );
+    mShader.uniform( "iScale", mScale );
 }
 
-void Tilings::drawShaderOutput()
+void CircleWave::drawShaderOutput()
 {
     // Draw shader output
     gl::enable( GL_TEXTURE_2D );
@@ -159,12 +146,17 @@ void Tilings::drawShaderOutput()
     gl::end();
 }
 
-void Tilings::shaderPostDraw()
+void CircleWave::shaderPostDraw()
 {
     mShader.unbind();
+    
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().unbindTexture();
+    }
 }
 
-void Tilings::drawScene()
+void CircleWave::drawScene()
 {
     gl::enableAlphaBlending();
     
@@ -183,7 +175,7 @@ void Tilings::drawScene()
     gl::popMatrices();
 }
 
-void Tilings::drawDebug()
+void CircleWave::drawDebug()
 {
-    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
 }

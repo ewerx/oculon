@@ -178,14 +178,6 @@ void ShaderTest::setupShaders()
         // STRIPEY
         shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "stripey_frag.glsl" ) );
         mShaders.push_back(shader);
-
-        // CIRCLEWAVE
-        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "circlewave_frag.glsl" ) );
-        mShaders.push_back(shader);
-        
-        // CELLS
-        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "cells_frag.glsl" ) );
-        mShaders.push_back(shader);
         
         // SHADER_MOIRE
         shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "moire_frag.glsl" ) );
@@ -567,7 +559,6 @@ void ShaderTest::shaderPreDraw()
             break;
             
         case SHADER_INTERSTELLAR:
-        case SHADER_CIRCLEWAVE:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mElapsedTime );
             shader.uniform( "iChannel0", 1 );

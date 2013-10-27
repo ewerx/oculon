@@ -59,6 +59,8 @@
 		7C4C6739181C613A003049AA /* squarenoise_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C6738181C613A003049AA /* squarenoise_frag.glsl */; };
 		7C4C673B181C618A003049AA /* moire_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C673A181C618A003049AA /* moire_frag.glsl */; };
 		7C4C673D181C62E9003049AA /* aftereffect_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C673C181C62E9003049AA /* aftereffect_frag.glsl */; };
+		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
+		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
 		7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */; };
@@ -494,10 +496,14 @@
 		7C4C6738181C613A003049AA /* squarenoise_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = squarenoise_frag.glsl; sourceTree = "<group>"; };
 		7C4C673A181C618A003049AA /* moire_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = moire_frag.glsl; sourceTree = "<group>"; };
 		7C4C673C181C62E9003049AA /* aftereffect_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aftereffect_frag.glsl; sourceTree = "<group>"; };
+		7C4C6740181C9928003049AA /* TextureShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureShaders.cpp; sourceTree = "<group>"; };
+		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
+		7C4C6744181CCD78003049AA /* CircleWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CircleWave.cpp; sourceTree = "<group>"; };
+		7C4C6745181CCD78003049AA /* CircleWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleWave.h; sourceTree = "<group>"; };
 		7C5B69751819745800AB2C8D /* Tilings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tilings.cpp; sourceTree = "<group>"; };
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
-		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rings.cpp; path = ../shaders/Rings.cpp; sourceTree = "<group>"; };
-		7C5B697918197A7F00AB2C8D /* Rings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rings.h; path = ../shaders/Rings.h; sourceTree = "<group>"; };
+		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
+		7C5B697918197A7F00AB2C8D /* Rings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rings.h; sourceTree = "<group>"; };
 		7C79BDE61764384A00E71F9D /* GLQuadRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLQuadRender.h; sourceTree = "<group>"; };
 		7C79BDE71764384A00E71F9D /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
@@ -1250,6 +1256,12 @@
 		7C5B69741819745800AB2C8D /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				7C4C6744181CCD78003049AA /* CircleWave.cpp */,
+				7C4C6745181CCD78003049AA /* CircleWave.h */,
+				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
+				7C5B697918197A7F00AB2C8D /* Rings.h */,
+				7C4C6740181C9928003049AA /* TextureShaders.cpp */,
+				7C4C6741181C9928003049AA /* TextureShaders.h */,
 				7C5B69751819745800AB2C8D /* Tilings.cpp */,
 				7C5B69761819745800AB2C8D /* Tilings.h */,
 			);
@@ -2081,8 +2093,6 @@
 			children = (
 				7C79CA1517650FD700E71F9D /* Pulsar.cpp */,
 				7C79CA1617650FD700E71F9D /* Pulsar.h */,
-				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
-				7C5B697918197A7F00AB2C8D /* Rings.h */,
 			);
 			name = pulsar;
 			path = ../src/pulsar;
@@ -2543,6 +2553,7 @@
 				7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */,
 				7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */,
 				7C79C69817643B1F00E71F9D /* Color.cpp in Sources */,
+				7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */,
 				7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */,
 				7C79C82717650D5F00E71F9D /* RtMidi.cpp in Sources */,
 				7C79C84D17650D5F00E71F9D /* MidiHub.cpp in Sources */,
@@ -2553,6 +2564,7 @@
 				7C79C92317650F8F00E71F9D /* corona.frag in Sources */,
 				7C79C92417650F8F00E71F9D /* dustCorona.frag in Sources */,
 				7C79C92517650F8F00E71F9D /* glowCorona.frag in Sources */,
+				7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */,
 				7C79C92617650F8F00E71F9D /* gradient.frag in Sources */,
 				7C79C92717650F8F00E71F9D /* nebulaCorona.frag in Sources */,
 				7C79C92817650F8F00E71F9D /* passThruColorCorona.vert in Sources */,

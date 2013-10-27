@@ -1,8 +1,18 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
-uniform vec2      iMouse;
+uniform float     iTimeScale;
+uniform int       iIterations;
+uniform int       iAngleP;// Pi/p: angle beween reflexion planes a and b .
 
+uniform int       iAngleQ;// Pi/q: angle beween reflexion planes b and c .
+uniform int       iAngleR;// Pi/r: angle beween reflexion planes c and a .
+
+uniform vec3      iCenter;// U,V,W are the 'barycentric' coordinate for the vertex.
+uniform float     iThickness;//Thickness of the lines
+uniform vec4      iColor1;
+uniform vec4      iColor2;
+
+// based on https://www.shadertoy.com/view/4sf3zX
 // triangular groups tessellations. Coxeter group p-q-r. Stereographic projection.
 // adapted from fragmentarium script.see: http://www.fractalforums.com/fragmentarium/triangle-groups-tessellation/
 // Licence: free.
@@ -14,25 +24,11 @@ uniform vec2      iMouse;
 // Distance estimation to lines and vertices is used for antialiasing.
 // You can still improve quality by using antialiasing.
 
-
-// Iteration number.
-const int Iterations=20;
-
-//these are the p, q and r parameters that define the coxeter/triangle group
-const int pParam=3;// Pi/p: angle beween reflexion planes a and b .
-const int qParam=5;// Pi/q: angle beween reflexion planes b and c .
-const int rParam=2;// Pi/r: angle beween reflexion planes c and a .
-
 // U,V,W are the 'barycentric' coordinate for the vertex.
 float U=1.;
 float V=1.;
 float W=0.;
 
-const float SRadius=0.01;//Thikness of the lines
-
-//Colors
-const vec3 segColor=vec3(0.,0.,0.);
-const vec3 backGroundColor=vec3(1.,1.,1.);
 
 #define PI 3.14159
 vec3 nb,nc;//with na(=vec3(1,0,0)) these are the normals of the reflexion planes
@@ -69,11 +65,11 @@ int sign(int v){
 }
 
 void init() {
-	spaceType=float(sign(qParam*rParam+pParam*rParam+pParam*qParam-pParam*qParam*rParam));//1./pParam+1./qParam+1./rParam-1.;
+	spaceType=float(sign(iAngleQ*iAngleR+iAngleP*iAngleR+iAngleP*iAngleQ-iAngleP*iAngleQ*iAngleR));//1./iAngleP+1./iAngleQ+1./iAngleR-1.;
     
-	float cospip=cos(PI/float(pParam)), sinpip=sin(PI/float(pParam));
-	float cospiq=cos(PI/float(qParam)), sinpiq=sin(PI/float(qParam));
-	float cospir=cos(PI/float(rParam)), sinpir=sin(PI/float(rParam));
+	float cospip=cos(PI/float(iAngleP)), sinpip=sin(PI/float(iAngleP));
+	float cospiq=cos(PI/float(iAngleQ)), sinpiq=sin(PI/float(iAngleQ));
+	float cospir=cos(PI/float(iAngleR)), sinpir=sin(PI/float(iAngleR));
 	float ncsincos=(cospiq+cospip*cospir)/sinpip;
     
 	//na is simply vec3(1.,0.,0.).
@@ -93,7 +89,7 @@ void init() {
 }
 
 vec3 fold(vec3 pos) {
-	for(int i=0;i<Iterations;i++){
+	for(int i=0;i<iIterations;i++){
 		pos.x=abs(pos.x);
 		float t=-2.*min(0.,dot(nb,pos)); pos+=t*nb*vec3(1.,1.,spaceType);
 		t=-2.*min(0.,dot(nc,pos)); pos+=t*nc*vec3(1.,1.,spaceType);
@@ -117,7 +113,7 @@ float dist2Segment(vec3 z, vec3 n, float r){
 	
 	vec3 pmin=hnormalizet(v.x*p+v.y*n);
 	float tha=hlengths(pmin-z)/hlengtht(pmin+z);
-	return DD((tha-SRadius)/(1.+spaceType*tha*SRadius),r);
+	return DD((tha-iThickness)/(1.+spaceType*tha*iThickness),r);
 }
 
 float dist2Segments(vec3 z, float r){
@@ -131,6 +127,9 @@ float dist2Segments(vec3 z, float r){
 float aaScale = 0.005;//anti-aliasing scale == half of pixel size.
 
 vec3 color(vec2 pos){
+    vec3 segColor=vec3(iColor1.x,iColor1.y,iColor1.z);
+    vec3 backGroundColor=vec3(iColor2.x,iColor2.y,iColor2.z);
+    
 	//todo: add here a möbius transform.
 	float r=length(pos);
 	vec3 z3=vec3(2.*pos,1.-spaceType*r*r)*1./(1.+spaceType*r*r);
@@ -159,10 +158,13 @@ void animUVW(float t){
 
 void main(void)
 {
+//    U = iCenter.x;
+//    V = iCenter.y;
+//    W = iCenter.z;
 	const float scaleFactor=2.1;
 	vec2 uv = scaleFactor*(gl_FragCoord.xy-0.5*iResolution.xy) / iResolution.y;
 	aaScale=0.5*scaleFactor/iResolution.y;
-	animUVW(0.5*PI*iGlobalTime);
+	animUVW(0.5*PI*iGlobalTime*iTimeScale);
 	init();
 	gl_FragColor = vec4(color(uv),1.0);
 }

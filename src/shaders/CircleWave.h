@@ -1,8 +1,8 @@
 //
-//  Tilings.h
+//  CircleWave.h
 //  Oculon
 //
-//  Created by Ehsan on 13-10-24.
+//  Created by Ehsan on 13-10-27.
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
@@ -22,11 +22,11 @@
 //
 // Audio input tests
 //
-class Tilings : public Scene
+class CircleWave : public Scene
 {
 public:
-    Tilings();
-    virtual ~Tilings();
+    CircleWave();
+    virtual ~CircleWave();
     
     // inherited from Scene
     void setup();
@@ -59,11 +59,9 @@ private:
     float               mTimeScale;
     double              mElapsedTime;
     
-    int                 mIterations;
-    int                 mAngleP;
-    int                 mAngleQ;
-    int                 mAngleR;
-    ci::Vec3f           mCenter;
-    float               mThickness;
+    float               mSeparation;
+    float               mDetail;
+    int                 mStrands;
+    float               mScale;
 };
 

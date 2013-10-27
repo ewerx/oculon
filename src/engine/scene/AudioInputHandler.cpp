@@ -149,7 +149,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
                 }
                 else
                 {
-                    float value = timeData[col];
+                    float value = timeData[col] * gain;
                     it.r() = 0.5f + 0.5f * value;
                     it.g() = 0.5f + 0.5f * value;
                     it.b() = 0.5f + 0.5f * value;

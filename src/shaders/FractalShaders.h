@@ -1,5 +1,5 @@
 //
-//  Tilings.h
+//  Rings.h
 //  Oculon
 //
 //  Created by Ehsan on 13-10-24.
@@ -22,11 +22,11 @@
 //
 // Audio input tests
 //
-class Tilings : public Scene
+class Rings : public Scene
 {
 public:
-    Tilings();
-    virtual ~Tilings();
+    Rings();
+    virtual ~Rings();
     
     // inherited from Scene
     void setup();
@@ -51,19 +51,12 @@ private:
     ci::gl::GlslProg    mShader;
     
     // audio
-    //AudioInputHandler   mAudioInputHandler;
+    AudioInputHandler   mAudioInputHandler;
     
     // params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
     float               mTimeScale;
     double              mElapsedTime;
-    
-    int                 mIterations;
-    int                 mAngleP;
-    int                 mAngleQ;
-    int                 mAngleR;
-    ci::Vec3f           mCenter;
-    float               mThickness;
 };
 

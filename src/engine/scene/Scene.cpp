@@ -37,6 +37,7 @@ Scene::Scene(const std::string& name)
 , mLoadParamsInterface(NULL)
 , mIsFrustumPlaneCached(false)
 , mDoReset(false)
+, mGain(1.0f)
 {
     // frustum culling
 	for( int i=0; i<SIDE_COUNT; i++ )

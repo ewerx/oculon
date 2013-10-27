@@ -1,6 +1,12 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
+uniform sampler2D iChannel0;       // audio texture
+uniform float     iSeparation;
+uniform float     iDetail;
+uniform int       iStrands;
+uniform float     iScale;
+uniform vec4      iColor1;
+uniform vec4      iColor2;
 
 // based on https://www.shadertoy.com/view/Xsf3WB
 const float tau = 6.28318530717958647692;
@@ -12,14 +18,12 @@ void main(void)
 	uv = vec2(abs(atan(uv.x,uv.y)/(.5*tau)),length(uv));
     
 	// adjust frequency to look pretty
-	uv.x *= 1.0/2.0;
+	uv.x *= iDetail;
 	
-    // TEMP
-	//float seperation = 0.06*(1.0-iMouse.x/iResolution.x);
-    float seperation = 0.06*(1.0);
+    float seperation = iSeparation;
     
 	vec3 wave = vec3(0.0);
-	const int n = 60;
+	int n = iStrands;
 	for ( int i=0; i < n; i++ )
 	{
         /*		float u = uv.x*255.0;
@@ -27,7 +31,7 @@ void main(void)
          f = f*f*(3.0-2.0*f);
          u = floor(u);
          float sound = mix( texture2D( iChannel0, vec2((u+.5)/256.0,.75) ).x, texture2D( iChannel0, vec2((u+1.5)/256.0,.75) ).x, f );*/
-		float sound = texture2D( iChannel0, vec2(uv.x,1.0) ).x;
+		float sound = iScale * texture2D( iChannel0, vec2(uv.x,1.0) ).x;
 		
 		// choose colour from spectrum
 		float a = .9*float(i)*tau/float(n)-.6;
@@ -48,7 +52,8 @@ void main(void)
 	col.yx += texture2D( iChannel0, vec2(.750,.25) ).xx;
 	col.yx += texture2D( iChannel0, vec2(.875,.25) ).xx*vec2(.5,1.5);
 	col.x  += texture2D( iChannel0, vec2(1.00,.25) ).x;
-	col /= vec3(4.0,7.0,4.0);
+    //col /= vec3(4.0,7.0,4.0);
+	col *= vec3(iColor2.x,iColor2.y,iColor2.z);
 	
 	// vignetting
 	col *= smoothstep( 1.2, 0.0, uv.y );

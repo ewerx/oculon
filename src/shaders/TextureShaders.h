@@ -1,5 +1,5 @@
 //
-//  Tilings.h
+//  TextureShaders.h
 //  Oculon
 //
 //  Created by Ehsan on 13-10-24.
@@ -22,11 +22,11 @@
 //
 // Audio input tests
 //
-class Tilings : public Scene
+class TextureShaders : public Scene
 {
 public:
-    Tilings();
-    virtual ~Tilings();
+    TextureShaders();
+    virtual ~TextureShaders();
     
     // inherited from Scene
     void setup();
@@ -40,6 +40,8 @@ protected:// from Scene
     //void setupDebugInterface();
     
 private:
+    void setupShaders();
+    
     void drawScene();
     
     void shaderPreDraw();
@@ -48,7 +50,7 @@ private:
     
 private:
 
-    ci::gl::GlslProg    mShader;
+    //ci::gl::GlslProg    mShader;
     
     // audio
     //AudioInputHandler   mAudioInputHandler;
@@ -59,11 +61,35 @@ private:
     float               mTimeScale;
     double              mElapsedTime;
     
-    int                 mIterations;
-    int                 mAngleP;
-    int                 mAngleQ;
-    int                 mAngleR;
-    ci::Vec3f           mCenter;
-    float               mThickness;
+#define SHADERS_TUPLE \
+SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
+//end tuple
+    
+    enum eShaderType
+    {
+#define SHADERS_ENTRY( nam, glsl, enm ) \
+enm,
+        SHADERS_TUPLE
+#undef  SHADERS_ENTRY
+        
+        SHADERS_COUNT
+    };
+    eShaderType   mShaderType;
+    
+    struct tCellsParams
+    {
+        float mCellSize; //
+        float mHighlight; // 6
+        float mTimeStep1;
+        float mTimeStep2;
+        float mTimeStep3;
+        float mTimeStep4;
+        float mTimeStep5;
+        float mTimeStep6;
+        float mTimeStep7;
+    };
+    tCellsParams    mCellsParams;
+    
+    std::vector<ci::gl::GlslProg> mShaders;
 };
 
