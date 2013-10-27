@@ -53,6 +53,7 @@ public:
     
     virtual const ci::Camera& getCamera();
     
+    void setupInterfaces();
     void drawToFbo();
     void publishToSyphon();
     ci::gl::Fbo& getFbo()                   { return mFbo; }

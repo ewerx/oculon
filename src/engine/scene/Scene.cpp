@@ -106,7 +106,10 @@ void Scene::setup()
     mIsSetup = true;
     mGain = 1.0f;
     mLayerIndex = 0;
-    
+}
+
+void Scene::setupInterfaces()
+{
     setupInterface();
     setupDebugInterface();
 }

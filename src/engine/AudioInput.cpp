@@ -25,6 +25,7 @@ AudioInput::AudioInput()
 : mInput(NULL)
 , mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
 , mFftLogPlot(KISS_DEFAULT_DATASIZE)
+, mGain(1.0f)
 {
 }
 

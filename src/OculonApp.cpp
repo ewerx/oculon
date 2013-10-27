@@ -143,11 +143,12 @@ void OculonApp::setup()
     mParams = params::InterfaceGl::create( getWindow(), "Parameters", toPixels(Vec2i( 350, getWindowHeight()*0.8f )) );
     mParams->hide();
     //mParams->setOptions("","position='10 600'");
-    setupInterface();
     
     // audio input
     mAudioInput.setup();
     mAudioInputHandler.setup(true);
+    
+    setupInterface();
     
     if( mEnableMidi )
     {
@@ -368,6 +369,7 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     if( mSetupScenesOnStart )
     {
         scene->setup();
+        scene->setupInterfaces();
     }
     
     if( autoStart )
@@ -809,6 +811,7 @@ void OculonApp::update()
                 if( !scene->isSetup() )
                 {
                     scene->setup();
+                    scene->setupInterfaces();
                 }
                 scene->update(dt);
                 labelColor = Color(0.75f, 0.4f, 0.4f);
