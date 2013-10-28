@@ -268,8 +268,8 @@ shaderNames.push_back(nam);
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "brightness", &mNoiseParams.mBrightness )
-                         .oscReceiver(getName())
-                         .midiInput(0,2,16));
+                         .oscReceiver(getName()));
+                         //.midiInput(0,2,16));
 
     mInterface->addParam(CreateFloatParam( "edgeThickness", &mNoiseParams.mEdgeThickness )
                          .maxValue(1.0f)
@@ -338,8 +338,8 @@ shaderNames.push_back(nam);
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
                          .maxValue(1.0f)
-                         .oscReceiver(getName())
-                         .midiInput(0, 2, 19));
+                         .oscReceiver(getName()));
+                         //.midiInput(0, 2, 19));
     mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
                          .maxValue(20.0f)
                          .oscReceiver(getName()));
@@ -351,8 +351,8 @@ shaderNames.push_back(nam);
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
                          .maxValue(0.1f)
-                         .oscReceiver(getName())
-                         .midiInput(0, 2, 20));
+                         .oscReceiver(getName()));
+                         //.midiInput(0, 2, 20));
     mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
                          .maxValue(1.0f)
                          .oscReceiver(getName()));

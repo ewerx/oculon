@@ -11,6 +11,7 @@
 #include <vector>
 #include "cinder/Cinder.h"
 #include "cinder/gl/Fbo.h"
+#include "cinder/gl/Texture.h"
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
@@ -34,6 +35,9 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
+    
+    // new
+    //ci::gl::Texture getCurrentTexture() const { return mShaders[mShaderType].getTexture(); }
     
 protected:// from Scene
     void setupInterface();
@@ -60,6 +64,10 @@ private:
     ci::ColorAf         mColor2;
     float               mTimeScale;
     double              mElapsedTime;
+    
+    bool                mHighlightAudioResponse;
+    float               mAudioResponseFreqMin;
+    float               mAudioResponseFreqMax;
     
 #define SHADERS_TUPLE \
 SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
@@ -91,5 +99,8 @@ enm,
     tCellsParams    mCellsParams;
     
     std::vector<ci::gl::GlslProg> mShaders;
+    
+    bool mDrawOnSphere;
+    ci::gl::Fbo mShaderFbo;
 };
 

@@ -39,6 +39,7 @@ void CircleWave::reset()
     mElapsedTime = 0.0f;
     
     mSeparation = 0.06f;
+    mColorSeparation = true;
     mDetail = 0.5f;
     mStrands = 60;
     mScale = 1.0f;
@@ -62,6 +63,7 @@ void CircleWave::setupInterface()
     mInterface->addParam(CreateFloatParam( "Scale", &mScale )
                          .minValue(0.0f)
                          .maxValue(10.0f));
+    mInterface->addParam(CreateBoolParam( "ColorSep", &mColorSeparation ));
     //mAudioInputHandler.setupInterface(mInterface);
 }
 
@@ -96,7 +98,7 @@ void CircleWave::shaderPreDraw()
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
     mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+    mShader.uniform( "iGlobalTime", (float)mElapsedTime );
     mShader.uniform( "iChannel0", 1 );
     mShader.uniform( "iColor1", mColor1 );
     mShader.uniform( "iColor2", mColor2 );
@@ -105,6 +107,7 @@ void CircleWave::shaderPreDraw()
     mShader.uniform( "iDetail", mDetail );
     mShader.uniform( "iStrands", mStrands );
     mShader.uniform( "iScale", mScale );
+    mShader.uniform( "iColorSep", mColorSeparation );
 }
 
 void CircleWave::drawShaderOutput()

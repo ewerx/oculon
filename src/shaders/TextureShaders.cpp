@@ -32,6 +32,17 @@ void TextureShaders::setup()
     setupShaders();
     
     mShaderType = SHADER_CELLS;
+
+    mDrawOnSphere = false;
+    gl::Fbo::Format format;
+    format.enableMipmapping(false);
+    format.enableDepthBuffer(false);
+    format.setCoverageSamples(8);
+    format.setSamples(4); // 4x AA
+	//format.setColorInternalFormat( GL_RGB32F_ARB );
+    mShaderFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+    
+    mHighlightAudioResponse = true;
     
     reset();
 }
@@ -42,6 +53,12 @@ void TextureShaders::setupShaders()
     mShaders.push_back( loadFragShader( glsl ) );
 SHADERS_TUPLE
 #undef SHADERS_ENTRY
+    
+    mColor1 = ColorA::white();
+    mColor2 = ColorA::black();
+    
+    mCellsParams.mCellSize = 1.0f;
+    mCellsParams.mHighlight = 0.6f;
     
     mCellsParams.mTimeStep1 = 1.0f;
     mCellsParams.mTimeStep2 = 0.5f;
@@ -76,21 +93,39 @@ SHADERS_TUPLE
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
+    mInterface->addParam(CreateFloatParam("color1alpha", &(mColor1.a))
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 22));
+    mInterface->addParam(CreateFloatParam("gain", &mGain)
+                         .maxValue(20.0f)
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 23));
+    mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 20));
+    mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 21));
+    
     // SHADER_CELLS
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("CELLS");
     mInterface->addParam(CreateFloatParam( "CellSize", &mCellsParams.mCellSize )
                          .maxValue(3.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 16));
     mInterface->addParam(CreateFloatParam( "Highlight", &mCellsParams.mHighlight )
                          .maxValue(6.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 17));
     mInterface->addParam(CreateFloatParam( "TimeStep1", &mCellsParams.mTimeStep1 )
                          .maxValue(2.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 18));
     mInterface->addParam(CreateFloatParam( "TimeStep2", &mCellsParams.mTimeStep2 )
                          .maxValue(2.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(1, 2, 19));
     mInterface->addParam(CreateFloatParam( "TimeStep3", &mCellsParams.mTimeStep3 )
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
@@ -117,6 +152,27 @@ void TextureShaders::update(double dt)
     //mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mElapsedTime += dt;
+    
+    if (mHighlightAudioResponse)
+    {
+        const float midHighVolume = mApp->getAudioInput().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
+        mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
+    }
+    
+    if (mDrawOnSphere)
+    {
+        gl::pushMatrices();
+        mShaderFbo.bindFramebuffer();
+        gl::setMatricesWindow( mShaderFbo.getSize(), false );
+        gl::setViewport( mShaderFbo.getBounds() );
+        gl::enableDepthWrite();
+        shaderPreDraw();
+        drawShaderOutput();
+        shaderPostDraw();
+        mShaderFbo.unbindFramebuffer();
+        mShaderFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
+        gl::popMatrices();
+    }
 }
 
 void TextureShaders::draw()
@@ -136,7 +192,8 @@ void TextureShaders::shaderPreDraw()
     Vec3f resolution( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
     shader.uniform( "iResolution", resolution );
-    shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+    shader.uniform( "iGlobalTime", (float)mElapsedTime );
+    shader.uniform( "iColor1", mColor1);
     
     switch (mShaderType) {
         case SHADER_CELLS:
@@ -210,16 +267,52 @@ void TextureShaders::drawScene()
     gl::pushMatrices();
     gl::setMatricesWindow( mApp->getViewportSize() );
     
-    shaderPreDraw();
-    
-    drawShaderOutput();
-    
-    shaderPostDraw();
+    if (mDrawOnSphere)
+    {
+        gl::enableAlphaBlending();
+        //gl::enable( GL_TEXTURE_2D );
+        gl::enableDepthRead();
+        gl::enableDepthWrite();
+        gl::setMatrices( getCamera() );
+        gl::setViewport( mApp->getViewportBounds() );
+        gl::color( ColorA::white() );
+        mShaderFbo.bindTexture();
+        
+        glEnable( GL_POLYGON_SMOOTH );
+        //glEnable( GL_LIGHTING );
+        //glEnable( GL_LIGHT0 );
+        
+        //GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        //glLightfv( GL_LIGHT0, GL_POSITION, light_position );
+        
+        gl::drawSphere(Vec3f::zero(), 640.0f, 64);
+        //gl::drawSolidRect(mApp->getViewportBounds());
+        
+        mShaderFbo.unbindTexture();
+        
+        //glDisable( GL_LIGHT0 );
+        //glDisable( GL_LIGHTING );
+    }
+    else
+    {
+        shaderPreDraw();
+        drawShaderOutput();
+        shaderPostDraw();
+    }
     
     gl::popMatrices();
 }
 
 void TextureShaders::drawDebug()
 {
-    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    //mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
+    
+    gl::enable( GL_TEXTURE_2D );
+    gl::setMatricesWindow( getWindowSize() );
+    
+    const Vec2f size(128,72);
+    Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );
+    gl::draw( mShaderFbo.getTexture(), mShaderFbo.getBounds(), preview );
+    
+    gl::disable( GL_TEXTURE_2D );
 }

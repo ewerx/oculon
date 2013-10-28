@@ -9,7 +9,8 @@ uniform float     iTimeStep4;
 uniform float     iTimeStep5;
 uniform float     iTimeStep6;
 uniform float     iTimeStep7;
-
+uniform vec4      iColor1;
+//uniform vec4      iColor2;
 
 // based on https://www.shadertoy.com/view/lsX3z4
 float length2(vec2 p) { return dot(p, p); }
@@ -44,5 +45,6 @@ void main() {
 	float t = fworley(uv * iResolution.xy / (iCellSize*1000.));
 	t *= exp(-length2(abs(2.*uv - 1.)));
 	float r = length(abs(2.*uv - 1.) * iResolution.xy);
-	gl_FragColor = vec4(t * vec3(1.8, 1.8*t, .1 + pow(t, 2.-t)), 1.);
+	//gl_FragColor = vec4(t * vec3(1.8, 1.8*t, .1 + pow(t, 2.-t)), 1.);
+    gl_FragColor = (3. * t) * iColor1;
 }

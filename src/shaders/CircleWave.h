@@ -63,5 +63,6 @@ private:
     float               mDetail;
     int                 mStrands;
     float               mScale;
+    bool                mColorSeparation;
 };
 

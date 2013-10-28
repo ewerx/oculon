@@ -467,7 +467,7 @@ void Terrain::updateAudioResponse()
     
     if (mAudioEffectNoise)
     {
-        float newHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange();
+        float newHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange(0.0f,1.0f);
         if (newHeight > mDisplacementHeight) {
             timeline().apply( &mDisplacementHeight, newHeight, mFalloff/2.0f, getReverseFalloffFunction() );
             timeline().appendTo(&mDisplacementHeight, 0.0f, mFalloff, getFalloffFunction() );

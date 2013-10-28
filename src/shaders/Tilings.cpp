@@ -107,7 +107,7 @@ void Tilings::shaderPreDraw()
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
     mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+    mShader.uniform( "iGlobalTime", (float)mElapsedTime );
     
     mShader.uniform( "iTimeScale", mTimeScale );
     mShader.uniform( "iColor1", mColor1 );

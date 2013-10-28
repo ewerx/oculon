@@ -7,6 +7,7 @@ uniform int       iStrands;
 uniform float     iScale;
 uniform vec4      iColor1;
 uniform vec4      iColor2;
+uniform bool      iColorSep;
 
 // based on https://www.shadertoy.com/view/Xsf3WB
 const float tau = 6.28318530717958647692;
@@ -35,7 +36,12 @@ void main(void)
 		
 		// choose colour from spectrum
 		float a = .9*float(i)*tau/float(n)-.6;
-		vec3 phase = smoothstep(-1.0,.5,vec3(cos(a),cos(a-tau/3.0),cos(a-tau*2.0/3.0)));
+		vec3 phase;
+        if (iColorSep) {
+            phase = smoothstep(-1.0,.5,vec3(cos(a),cos(a-tau/3.0),cos(a-tau*2.0/3.0)));
+        } else {
+            phase = smoothstep(-1.0,.5,vec3(cos(a-tau/3.0),cos(a-tau/3.0),cos(a-tau/3.0)));
+        }
 		
 		wave += phase*smoothstep(4.0/640.0, 0.0, abs(uv.y - sound*.3));
 		uv.x += seperation/float(n);
@@ -52,7 +58,6 @@ void main(void)
 	col.yx += texture2D( iChannel0, vec2(.750,.25) ).xx;
 	col.yx += texture2D( iChannel0, vec2(.875,.25) ).xx*vec2(.5,1.5);
 	col.x  += texture2D( iChannel0, vec2(1.00,.25) ).x;
-    //col /= vec3(4.0,7.0,4.0);
 	col *= vec3(iColor2.x,iColor2.y,iColor2.z);
 	
 	// vignetting

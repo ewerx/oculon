@@ -42,6 +42,7 @@ public:
     FftLogPlot::const_iterator   fftPlotEnd() const       { return mFftLogPlot.end(); }
     const FftLogPlot& getFftLogData() const { return mFftLogPlot; }
     
+    float getAverageVolumeByFrequencyRange(const float minRatio =0.0f, const float maxRatio =1.0f);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
     
     void setupInterface( Interface* interface );

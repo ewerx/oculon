@@ -199,7 +199,12 @@ void AudioInput::analyzeKissFft()
     }
 }
 
-float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=512*/)
+float AudioInput::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
+{
+    return getAverageVolumeByFrequencyRange( (int)(minRatio * KISS_DEFAULT_DATASIZE), (int)(maxRatio * KISS_DEFAULT_DATASIZE) );
+}
+
+float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=256*/)
 {
     float amplitude = 0.0f;
     
@@ -211,7 +216,7 @@ float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, con
         amplitude += mFftLogPlot[i].y;
     }
     
-    amplitude = amplitude / (float)maxIndex;
+    amplitude = amplitude / (float)(maxIndex-minIndex);
     
     return amplitude;
 }
