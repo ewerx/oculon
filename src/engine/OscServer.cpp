@@ -21,7 +21,7 @@ using namespace ci::audio;
 //
 OscServer::OscServer()
 : mIsListening(false)
-, mUseThread(true)
+, mUseThread(false)
 , mIsSending(false)
 , mDebugPrint(true)
 {
@@ -68,6 +68,10 @@ void OscServer::setup( Config& config, MidiInput* midiInput )
 
 void OscServer::shutdown()
 {
+    if (mUseThread)
+    {
+        mThread.join();
+    }
     mIsListening = false;
     mListener.shutdown();
     while( !mIncomingCallbackQueue.empty() )
@@ -111,6 +115,8 @@ void OscServer::update()
 
 void OscServer::threadLoop()
 {
+    ThreadSetup threadSetup;
+    
     while (mIsListening) 
     {
         while (mListener.hasWaitingMessages()) 
