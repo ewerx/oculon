@@ -63,7 +63,7 @@ private:
     ParticleList mUnusedPool;
     
     bool mEnabledForces[FORCE_COUNT];
-    Perlin mPerlin;
+    ci::Perlin mPerlin;
     
     bool mDrawAsBillboard;
     

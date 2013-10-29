@@ -3,7 +3,7 @@
 //  Oculon
 //
 //  Created by Ehsan Rezaie on 12-04-06.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 ewerx. All rights reserved.
 //
 
 #pragma once
@@ -11,18 +11,19 @@
 #include "SimpleGUI.h"
 #include "OscMessage.h"
 
+
 class OscServer;
 template<typename T>
 class CreateParam;
-typedef CreateParam<float>      CreateFloatParam;
-typedef CreateParam<int32_t>    CreateIntParam;
-typedef CreateParam<bool>       CreateBoolParam;
-typedef CreateParam<char>       CreateTriggerParam;
-typedef CreateParam<int>        CreateEnumParam;
-typedef CreateParam<ColorA>     CreateColorParam;
-typedef CreateParam<Vec2f>      CreateVec2fParam;
-typedef CreateParam<Vec3f>      CreateVec3fParam;
-typedef CreateParam<Vec4f>      CreateVec4fParam;
+typedef CreateParam<float>          CreateFloatParam;
+typedef CreateParam<int32_t>        CreateIntParam;
+typedef CreateParam<bool>           CreateBoolParam;
+typedef CreateParam<char>           CreateTriggerParam;
+typedef CreateParam<int>            CreateEnumParam;
+typedef CreateParam<ci::ColorA>     CreateColorParam;
+typedef CreateParam<ci::Vec2f>      CreateVec2fParam;
+typedef CreateParam<ci::Vec3f>      CreateVec3fParam;
+typedef CreateParam<ci::Vec4f>      CreateVec4fParam;
 
 
 class OscParam
@@ -79,7 +80,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
 
     void sendValue();
-    void handleOscMessage( const osc::Message& message );
+    void handleOscMessage( const ci::osc::Message& message );
     
 protected:
     mowa::sgui::FloatVarControl* mControl;
@@ -96,7 +97,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
     
     void sendValue();
-    void handleOscMessage( const osc::Message& message );
+    void handleOscMessage( const ci::osc::Message& message );
     
 protected:
     mowa::sgui::IntVarControl* mControl;
@@ -113,7 +114,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
     
     void sendValue();
-    void handleOscMessage( const osc::Message& message );
+    void handleOscMessage( const ci::osc::Message& message );
     
 protected:
     mowa::sgui::BoolVarControl* mControl;
@@ -129,7 +130,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
     
     void sendValue();
-    void handleOscMessage( const osc::Message& message );
+    void handleOscMessage( const ci::osc::Message& message );
     
 protected:
     mowa::sgui::ButtonControl* mControl;
@@ -144,7 +145,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
     
     void sendValue();
-    void handleOscMessage( const osc::Message& message, int index );
+    void handleOscMessage( const ci::osc::Message& message, int index );
     
 protected:
     mowa::sgui::IntVarControl* mControl;
@@ -160,7 +161,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
     
     void sendValue();
-    void handleOscMessage( const osc::Message& message, int index );
+    void handleOscMessage( const ci::osc::Message& message, int index );
     
 protected:
     mowa::sgui::ColorVarControl* mControl;
@@ -177,7 +178,7 @@ public:
     mowa::sgui::Control* getControl()   { return mControl; }
     
     void sendValue();
-    void handleOscMessage( const osc::Message& message, int index );
+    void handleOscMessage( const ci::osc::Message& message, int index );
     
 protected:
     mowa::sgui::VectorVarControl<T,_size>* mControl;

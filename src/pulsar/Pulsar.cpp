@@ -16,6 +16,7 @@
 
 
 using namespace ci;
+using namespace ci::app;
 
 Pulsar::Pulsar()
 : Scene("pulsar")

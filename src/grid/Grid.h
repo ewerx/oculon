@@ -70,7 +70,7 @@ private:
         bool mExpand;
         
         tParticle( ci::Vec2f pos, ci::Vec2f vel, int width, int height ) : mPos(pos), mVel(vel), mAlpha(1.0f), mWidth(width), mHeight(height) , mExpand(false) {}
-        tParticle() : mPos(Vec2f::zero()), mVel(Vec2f::zero()), mAlpha(1.0f), mExpand(false) {}
+        tParticle() : mPos(ci::Vec2f::zero()), mVel(ci::Vec2f::zero()), mAlpha(1.0f), mExpand(false) {}
     };
     void updateParticles(double dt);
     void drawParticles();

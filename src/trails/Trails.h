@@ -20,7 +20,6 @@
 #include "cinder/gl/Vbo.h"
 #include <deque>
 
-using namespace ci;
 
 //
 // Trails
@@ -37,7 +36,7 @@ public:
     //void resize();
     void update(double dt);
     void draw();
-    const Camera& getCamera();
+    const ci::Camera& getCamera();
     
 protected:// from Scene
     void setupInterface();
@@ -47,13 +46,13 @@ private:
     void updateAudioResponse();
     
 private:
-    gl::Texture			mTexture;
+    ci::gl::Texture			mTexture;
     
-    //gl::GlslProg		mShader;
+    //ci::gl::GlslProg		mShader;
     
-    gl::VboMesh			mVboMesh;
+    ci::gl::VboMesh			mVboMesh;
     
-    std::deque< Vec3f >	mTrail;
+    std::deque< ci::Vec3f >	mTrail;
     
     double				mTime;
     float				mAngle;

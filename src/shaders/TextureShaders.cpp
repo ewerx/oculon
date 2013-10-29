@@ -14,6 +14,8 @@
 #include "Interface.h"
 
 using namespace ci;
+using namespace ci::app;
+using namespace std;
 
 TextureShaders::TextureShaders()
 : Scene("TextureShaders")
@@ -308,7 +310,7 @@ void TextureShaders::drawDebug()
     //mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
     
     gl::enable( GL_TEXTURE_2D );
-    gl::setMatricesWindow( getWindowSize() );
+    gl::setMatricesWindow( mApp->getWindowSize() );
     
     const Vec2f size(128,72);
     Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );

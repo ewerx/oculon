@@ -21,6 +21,7 @@
 #include "Star.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 GLfloat Body::no_mat[]			= { 0.0f, 0.0, 0.0f, 1.0f };

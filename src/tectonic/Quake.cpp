@@ -21,6 +21,7 @@
 #include "cinder/Camera.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 

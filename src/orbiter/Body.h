@@ -18,9 +18,6 @@
 #include "Entity.h"
 #include "TextEntity.h"
 
-using namespace ci;
-using namespace std;
-
 class Scene;
 class Orbiter;
 
@@ -31,34 +28,34 @@ class Body : public Entity<double>
 {
 public:
     Body(Orbiter* orbiter,
-         string name,
-         const Vec3d& pos, 
-         const Vec3d& vel, 
+         std::string name,
+         const ci::Vec3d& pos,
+         const ci::Vec3d& vel,
          float radius, 
          double rotationSpeed,
          double mass, 
-         const ColorA& color);
+         const ci::ColorA& color);
     
     Body(Orbiter* orbiter,
-         string name,
-         const Vec3d& pos, 
-         const Vec3d& vel, 
+         std::string name,
+         const ci::Vec3d& pos,
+         const ci::Vec3d& vel,
          float radius, 
          double rotationSpeed,
          double mass, 
-         const ColorA& color,
-         ImageSourceRef textureImage);
+         const ci::ColorA& color,
+         ci::ImageSourceRef textureImage);
     
     virtual ~Body();
     
     // inherited from Entity
     virtual void setup();
     virtual void update(double dt);
-    virtual void draw(const Matrix44d& transform, bool drawBody);
+    virtual void draw(const ci::Matrix44d& transform, bool drawBody);
     
     // new methods
     void drawTrail();
-    const Vec3d& getVelocity() const { return mVelocity; }
+    const ci::Vec3d& getVelocity() const { return mVelocity; }
     const double& getAcceleration() const { return mAcceleration; }
     void applyForceFromBody(Body& otherBody, double dt, double gravConst);
     
@@ -66,7 +63,7 @@ public:
     float getBaseRadius() const { return mRadius; }
     double getMass() const { return mMass; }
     void applyFftBandValue( float fftBandValue );
-    const string& getName() const { return mName; }
+    const std::string& getName() const { return mName; }
     
     void setLabelVisible( bool visible ) { mIsLabelVisible = visible; }
     
@@ -78,7 +75,7 @@ protected:
     
 protected:
     Orbiter* mOrbiter;
-    Vec3d mVelocity;
+    ci::Vec3d mVelocity;
     double mAcceleration;
     double mMass;
     float mRadius;
@@ -87,13 +84,13 @@ protected:
     
     double mRotation;
     double mRotationSpeed;
-    string mName;
+    std::string mName;
     
-    ColorA mColor;
-    gl::Texture mTexture;
+    ci::ColorA mColor;
+    ci::gl::Texture mTexture;
     bool mHasTexture;
     
-    PolyLine<Vec3f> mMotionTrail;
+    ci::PolyLine<ci::Vec3f> mMotionTrail;
     
     TextEntity mLabel;
     //TextBox mLabel;
@@ -103,7 +100,7 @@ protected:
     
     //TEST
     float mEaseFactor;
-    vector<float> mLastFftValues;
+    std::vector<float> mLastFftValues;
     
     static GLfloat no_mat[];
     static GLfloat mat_ambient[];

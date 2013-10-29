@@ -15,7 +15,6 @@
 #include <boost/circular_buffer.hpp>
 #include "Entity.h"
 
-using namespace ci;
 
 class Particle : public Entity<float> 
 {
@@ -31,20 +30,20 @@ public:
     };
 public:
     Particle(Scene* scene);
-    Particle(Scene* scene,const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
+    Particle(Scene* scene,const ci::Vec3f& pos, const ci::Vec3f& vel, float radius, float mass, float charge, float lifespan);
     virtual ~Particle();
     
     // inherited from Entity
     virtual void update(double dt);
-    virtual void draw(bool useBillboard, const Vec3f& bbRight, const Vec3f& bbUp);
+    virtual void draw(bool useBillboard, const ci::Vec3f& bbRight, const ci::Vec3f& bbUp);
     
-    void reset(const Vec3f& pos, const Vec3f& vel, float radius, float mass, float charge, float lifespan);
+    void reset(const ci::Vec3f& pos, const ci::Vec3f& vel, float radius, float mass, float charge, float lifespan);
     
-    inline const Vec3f& getVelocity() const     { return mVelocity; }
-    inline void setVelocity( const Vec3f& vel ) { mVelocity = vel; }
+    inline const ci::Vec3f& getVelocity() const     { return mVelocity; }
+    inline void setVelocity( const ci::Vec3f& vel ) { mVelocity = vel; }
     
-    inline const Vec3f& getAccel() const        { return mAccel; }
-    inline void setAccel( const Vec3f& acc )    { mAccel = acc; }
+    inline const ci::Vec3f& getAccel() const        { return mAccel; }
+    inline void setAccel( const ci::Vec3f& acc )    { mAccel = acc; }
     
     inline float getCharge() const              { return mCharge; }
     
@@ -52,7 +51,7 @@ public:
     
     void drawTrail();
     void applyGravity(double dt);
-    void applyPerlin(Perlin& perlin, int counter, double dt);
+    void applyPerlin(ci::Perlin& perlin, int counter, double dt);
     void applyRepulsion(Particle& other, double dt);
     
 private:
@@ -63,8 +62,8 @@ private:
     
 public://private:
     //float   mInvLen;
-    Vec3f   mVelocity;
-    Vec3f   mAccel;
+    ci::Vec3f   mVelocity;
+    ci::Vec3f   mAccel;
     
     float   mRadius;
     float   mMass;
@@ -77,7 +76,7 @@ public://private:
     eState mState;
     
     enum { TRAIL_LENGTH = 15 };
-    boost::circular_buffer<Vec3f> mPosHistory;
+    boost::circular_buffer<ci::Vec3f> mPosHistory;
     
 };
 

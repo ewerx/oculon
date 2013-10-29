@@ -13,6 +13,7 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 
 MidiMap::MidiMap()
 : mMidiInput(NULL)

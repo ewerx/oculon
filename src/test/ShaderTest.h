@@ -58,7 +58,7 @@ private:
     bool                mMotionBlur;
     bool                mGrid;
     enum { MAX_TEXTURES = 4 };
-    gl::Texture         mTexture[MAX_TEXTURES];
+    ci::gl::Texture         mTexture[MAX_TEXTURES];
     int                 mTextureIndex;
     
     MotionBlurRenderer  mMotionBlurRenderer;

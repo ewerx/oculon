@@ -18,6 +18,7 @@
 #include "Contour.h"
 
 using namespace ci;
+using namespace ci::app;
 
 ShaderTest::ShaderTest()
 : Scene("shadertest")

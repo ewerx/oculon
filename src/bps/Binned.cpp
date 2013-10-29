@@ -21,6 +21,7 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 using namespace bps;
 
 Binned::Binned()

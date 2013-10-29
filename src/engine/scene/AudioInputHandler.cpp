@@ -10,6 +10,8 @@
 #include "Interface.h"
 #include "cinder/Rand.h"
 
+using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 AudioInputHandler::AudioInputHandler()
@@ -41,8 +43,8 @@ void AudioInputHandler::setup(bool fboEnabled)
     const int audioFboHeight = 2;
     if (mAudioFboEnabled)
     {
-        mAudioFboSize   = Vec2f( mAudioFboDim, audioFboHeight );
-        mAudioFboBounds = Area( 0, 0, mAudioFboDim, audioFboHeight );
+        mAudioFboSize   = ci::Vec2f( mAudioFboDim, audioFboHeight );
+        mAudioFboBounds = ci::Area( 0, 0, mAudioFboDim, audioFboHeight );
         gl::Fbo::Format audioFboFormat;
         audioFboFormat.setColorInternalFormat( GL_RGB32F_ARB );
         mAudioFbo       = gl::Fbo( mAudioFboDim, audioFboHeight, audioFboFormat );

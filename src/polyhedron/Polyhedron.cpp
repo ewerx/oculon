@@ -23,6 +23,7 @@
 #include <vector>
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 

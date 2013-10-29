@@ -38,7 +38,7 @@ void InfoPanel::createTexture()
         layout.setFont( Font( "ArialMT", 10 ) );
         layout.setColor( Color( 1.0f, 0.7f, 0.0f ) );
         
-        for (vector<InfoLine>::iterator lineIt = mLines.begin(); 
+        for (std::vector<InfoLine>::iterator lineIt = mLines.begin();
              lineIt != mLines.end(); 
              ++lineIt) 
         {
@@ -57,7 +57,7 @@ void InfoPanel::createTexture()
     }
 }
 
-void InfoPanel::addLine( const string& line, const Color& color )
+void InfoPanel::addLine( const std::string& line, const ci::Color& color )
 {
     InfoLine infoLine;
     infoLine.mString = line;

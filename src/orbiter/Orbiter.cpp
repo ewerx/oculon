@@ -20,7 +20,9 @@
 #include "Planet.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace boost;
+using namespace std;
 
 //TODO: read from data file (orbRad,    bodyRad, mass,          oVel,   rot,        tex)
 #define PLANETS_TUPLE \

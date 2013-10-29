@@ -10,6 +10,8 @@
 
 #include "cinder/ImageIo.h"
 
+using namespace ci;
+using namespace std;
 using namespace bps;
 
 ParticleSystem::ParticleSystem() :

@@ -15,6 +15,7 @@
 
 
 using namespace ci;
+using namespace ci::app;
 
 FisheyeTest::FisheyeTest()
 : Scene("fisheye")

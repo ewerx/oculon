@@ -12,6 +12,10 @@
 #include "MindWaveTest.h"
 #include <iostream>
 
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
 //MindWaveTest::MindWaveTest()
 //{
 //}
@@ -255,21 +259,21 @@ void MindWaveTest::drawGraphs()
     PolyLine<Vec2f>	meditation;
     int c = 0;
     
-    for(vector<float>::iterator it = mRawValues.begin(); it != mRawValues.end(); ++it)
+    for(std::vector<float>::iterator it = mRawValues.begin(); it != mRawValues.end(); ++it)
     {
         float y = (*it) / 50.f;
         raw.push_back( Vec2f( ( c * scale ), -y ) );
         ++c;
     }
     c=0;
-    for(vector<float>::iterator it = mMeditation.begin(); it != mMeditation.end(); ++it)
+    for(std::vector<float>::iterator it = mMeditation.begin(); it != mMeditation.end(); ++it)
     {
         float y = (*it);
         meditation.push_back( Vec2f( ( c * scale ), -y ) );
         ++c;
     }
     c=0;
-    for(vector<float>::iterator it = mAttention.begin(); it != mAttention.end(); ++it)
+    for(std::vector<float>::iterator it = mAttention.begin(); it != mAttention.end(); ++it)
     {
         float y = (*it);
         attention.push_back( Vec2f( ( c * scale ), -y ) );

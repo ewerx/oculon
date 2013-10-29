@@ -19,8 +19,8 @@ class ParticleSystem
 {
 protected:
 	float timeStep;
-	vector<Particle> particles;
-	vector< vector<Particle*> > bins;
+    std::vector<Particle> particles;
+	std::vector< std::vector<Particle*> > bins;
 	int width, height, k, xBins, yBins, binSize;
     const ci::ColorAf* mForceColor;
     
@@ -35,9 +35,9 @@ public:
 	void setTimeStep(float timeStep);
 
 	void add(Particle particle);
-	vector<Particle*> getNeighbors(Particle& particle, float radius);
-	vector<Particle*> getNeighbors(float x, float y, float radius);
-	vector<Particle*> getRegion(unsigned minX, unsigned minY, unsigned maxX, unsigned maxY);
+	std::vector<Particle*> getNeighbors(Particle& particle, float radius);
+	std::vector<Particle*> getNeighbors(float x, float y, float radius);
+	std::vector<Particle*> getRegion(unsigned minX, unsigned minY, unsigned maxX, unsigned maxY);
 	unsigned size() const;
 	Particle& operator[](unsigned i);
 

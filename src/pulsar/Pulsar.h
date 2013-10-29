@@ -20,9 +20,6 @@
 #include "ParticleController.h"
 #include "MidiMap.h"
 
-using namespace ci;
-using std::vector;
-
 //
 // Pulsar
 //
@@ -65,7 +62,7 @@ private:
     int mFrameCount;
     
     
-    gl::Texture		mEmitterTexture;
+    ci::gl::Texture		mEmitterTexture;
 	//gl::Texture		mParticleTexture;
 	//gl::Texture		mNormalTexture;
 	//gl::Texture		mHeightTexture;

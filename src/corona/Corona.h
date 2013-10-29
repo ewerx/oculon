@@ -68,7 +68,7 @@ public:
     //
 	void			drawIntoRoomFbo();
     void			createSphere( gl::VboMesh &mesh, int res );
-	void			drawSphereTri( Vec3f va, Vec3f vb, Vec3f vc, int div );
+	void			drawSphereTri( ci::Vec3f va, ci::Vec3f vb, ci::Vec3f vc, int div );
     void			toggleCanisMajoris();
 	void			randSeed();
 	void			setStage( int i );

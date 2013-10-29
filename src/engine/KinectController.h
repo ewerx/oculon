@@ -15,7 +15,6 @@
 #include "cinder/Surface.h"
 #include "CinderFreenect.h"
 
-using namespace std;
 
 class KinectController 
 {

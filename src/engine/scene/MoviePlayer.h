@@ -15,7 +15,6 @@
 #include "cinder/Surface.h"
 #include "Entity.h"
 
-using namespace ci;
 
 class MoviePlayer : public Entity<float>
 {
@@ -30,23 +29,23 @@ public:
     void draw();
     
 	void loadMovieUrl( const std::string &urlString );
-	void loadMovieFile( const fs::path &path );
+	void loadMovieFile( const ci::fs::path &path );
     void loadMoviePrompt();
     
-    bool isPlaying() const      { return mState == STATE_READY; }
-    qtime::MovieGl getMovie()   { return mMovie; }
+    bool isPlaying() const          { return mState == STATE_READY; }
+    ci::qtime::MovieGl getMovie()   { return mMovie; }
     
-    void setSize( const float width, const float height )   { mWidth = width; mHeight = height; }
-    void setColor( const ColorA& color )                    { mColor = color; }
+    void setSize( const float width, const float height )       { mWidth = width; mHeight = height; }
+    void setColor( const ci::ColorA& color )                    { mColor = color; }
     
 protected:
-    void setActiveMovie( qtime::MovieGl movie );
-    void drawFFT( const qtime::MovieBase &movie, float x, float y, float width, float height );
+    void setActiveMovie( ci::qtime::MovieGl movie );
+    void drawFFT( const ci::qtime::MovieBase &movie, float x, float y, float width, float height );
     
 private:
-    fs::path mPath;
-    qtime::MovieGl mMovie; // built-in smart pointer
-    qtime::MovieLoader mLoadingMovie; // built-in smart pointer 
+    ci::fs::path mPath;
+    ci::qtime::MovieGl mMovie; // built-in smart pointer
+    ci::qtime::MovieLoader mLoadingMovie; // built-in smart pointer
     
     float mWidth;
     float mHeight;
@@ -54,7 +53,7 @@ private:
     bool mLoop;
     bool mPalindrome;
     
-    ColorA mColor;
+    ci::ColorA mColor;
     
     enum eState
     {

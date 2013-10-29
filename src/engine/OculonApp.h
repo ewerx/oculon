@@ -27,7 +27,7 @@
 #include "cinder/audio/Input.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
-//#include "cinder/qtime/MovieWriter.h" // TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
+#include "cinder/qtime/MovieWriter.h" // TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
 #include "cinderSyphon.h"
 
 #include <vector>
@@ -40,7 +40,7 @@ class Interface;
 
 // main app
 //
-class OculonApp : public AppBasic 
+class OculonApp : public ci::app::AppBasic
 {
 public:
     //TODO: cleanup

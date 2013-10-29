@@ -18,6 +18,8 @@
 #include <boost/lexical_cast.hpp>
 
 using namespace ci;
+using namespace ci::app;
+using namespace std;
 using namespace mowa::sgui;
 
 /*static*/const char* const Scene::kIniLocation = "~/Documents/oculon/params/";

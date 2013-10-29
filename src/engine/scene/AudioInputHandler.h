@@ -29,7 +29,7 @@ public:
     void setupInterface( Interface *interface, const std::string &name );
     void update(double dt, AudioInput& audioInput, float gain =1.0f);
     
-    void drawDebug(const Vec2f& size);
+    void drawDebug(const ci::Vec2f& size);
     
     // accessors
     bool hasTexture() const { return mAudioFboEnabled; }

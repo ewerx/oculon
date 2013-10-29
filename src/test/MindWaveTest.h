@@ -31,9 +31,9 @@ public:
     
 private:
     void drawGraphs();
-    vector<float> mRawValues;
-    vector<float> mMeditation;
-    vector<float> mAttention;
+    std::vector<float> mRawValues;
+    std::vector<float> mMeditation;
+    std::vector<float> mAttention;
     int mMaxValues;
     
     /*

@@ -16,6 +16,7 @@
 #include "Binned.h"
 
 using namespace ci;
+using namespace ci::app;
 
 GLfloat Sun::mat_ambient[]		= { 0.5f, 0.5f, 0.5f, 1.0f };
 GLfloat Sun::mat_diffuse[]		= { 0.8f, 0.8f, 0.8f, 1.0f };

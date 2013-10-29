@@ -13,6 +13,9 @@
 #include <sstream>
 
 using namespace ci;
+using namespace ci::app;
+using namespace std;
+using namespace boost;
 using namespace mowa::sgui;
 using std::ostringstream;
 
@@ -296,7 +299,7 @@ OscEnumParam::OscEnumParam(OscServer* server, IntVarControl* control, const std:
             const int row = isVertical ? (enum_count - i) : 1;
             const int col = isVertical ? 1 : i+1;
             snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d/%d", recvAddr.c_str(), row, col );
-            server->registerCallback( buf, boost::bind( &OscEnumParam::handleOscMessage, this, _1, i) );
+            server->registerCallback( buf, std::bind( &OscEnumParam::handleOscMessage, this, std::_1, i) );
         }
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
@@ -358,7 +361,7 @@ OscColorParam::OscColorParam(OscServer* server, ColorVarControl* control, const 
         {
             // osc address is 1-based
             snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", recvAddr.c_str(), i+1 );
-            server->registerCallback( buf, boost::bind( &OscColorParam::handleOscMessage, this, _1, i+1) );
+            server->registerCallback( buf, std::bind( &OscColorParam::handleOscMessage, this, std::_1, i+1) );
         }
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
@@ -430,7 +433,7 @@ OscVectorParam<T,_size>::OscVectorParam(OscServer* server, VectorVarControl<T,_s
         if( mIsGrouped && _size == 2 )
         {
             // special case for XY pad
-            server->registerCallback( recvAddr, boost::bind( &OscVectorParam::handleOscMessage, this, _1, 0) );
+            server->registerCallback( recvAddr, std::bind( &OscVectorParam::handleOscMessage, this, std::_1, 0) );
         }
         else
         {
@@ -439,7 +442,7 @@ OscVectorParam<T,_size>::OscVectorParam(OscServer* server, VectorVarControl<T,_s
             {
                 // osc address is 1-based
                 snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", recvAddr.c_str(), i+1 );
-                server->registerCallback( buf, boost::bind( &OscVectorParam::handleOscMessage, this, _1, i) );
+                server->registerCallback( buf, std::bind( &OscVectorParam::handleOscMessage, this, std::_1, i) );
             }
         }
     }

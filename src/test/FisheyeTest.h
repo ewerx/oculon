@@ -31,12 +31,12 @@ public:
     //void reset();
     void update(double dt);
     void draw();
-    bool handleKeyDown(const KeyEvent& keyEvent);
+    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
     
 private:
-    bool                mUseShader;
-    gl::GlslProg        mShader;
-    gl::Texture         mTexture;
+    bool                    mUseShader;
+    ci::gl::GlslProg        mShader;
+    ci::gl::Texture         mTexture;
 };
 
 #endif // __FisheyeTest_H__

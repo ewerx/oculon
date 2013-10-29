@@ -23,7 +23,6 @@
 #include "cinder/Surface.h"
 #include <deque>
 
-using namespace ci;
 
 //
 // TextOrbit
@@ -40,7 +39,7 @@ public:
     //void resize();
     void update(double dt);
     void draw();
-    const Camera& getCamera();
+    const ci::Camera& getCamera();
     
 protected:// from Scene
     void setupInterface();
@@ -51,7 +50,7 @@ private:
     void updateAudioResponse();
     
 private:
-    gl::TextureFontRef	mTextureFont;
+    ci::gl::TextureFontRef	mTextureFont;
     
     std::vector<Character> mCharacters;
     

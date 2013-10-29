@@ -14,7 +14,6 @@
 
 #include "cinder/Timeline.h"
 
-using namespace std;
 
 class Tectonic;
 class QuakeEvent;

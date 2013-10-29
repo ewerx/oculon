@@ -29,7 +29,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-    const Camera& getCamera();
+    const ci::Camera& getCamera();
     
     // new
     

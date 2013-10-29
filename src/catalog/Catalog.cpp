@@ -24,6 +24,7 @@
 using namespace ci;
 using namespace ci::app;
 using namespace boost;
+using namespace std;
 
 const int Catalog::FBO_WIDTH = 78;
 const int Catalog::FBO_HEIGHT = 78;

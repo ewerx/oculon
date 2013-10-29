@@ -16,8 +16,6 @@
 #include "cinder/gl/TextureFont.h"
 #include <vector>
 
-using std::vector;
-
 class Body;
 class Sun;
 class TextEntity;
@@ -39,7 +37,7 @@ public:
     void update(double dt);
     void draw();
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
-    const Camera& getCamera();
+    const ci::Camera& getCamera();
     
     // callbacks
     bool prevTarget();
@@ -91,17 +89,17 @@ private:
 private:
     //Vec3f           mLightDirection;
     
-    typedef vector<Body*> BodyList;
+    typedef std::vector<Body*> BodyList;
     BodyList            mBodies;
     
     enum { NUM_PLANETS = 8 };
-    ImageSourceRef      mTextures[NUM_PLANETS];
+    ci::ImageSourceRef      mTextures[NUM_PLANETS];
     
     Sun*                mSun;
     int                 mFollowTargetIndex;
     Body*               mFollowTarget;
-    CameraPersp         mCam;
-    Matrix44d           mScaleMatrix;
+    ci::CameraPersp         mCam;
+    ci::Matrix44d           mScaleMatrix;
     
     int             mFrequencySpread;
     float           mMinRadiusMultiplier;
@@ -115,7 +113,7 @@ private:
     double          mDrawScale;
     double          mGravityConstant;
     
-    Quatd           mCameraRotation;
+    ci::Quatd           mCameraRotation;
     
     ci::Font                mFontLabel;
     ci::Font                mFontHud;

@@ -34,8 +34,6 @@
 #include <vector>
 #include <map>
 
-using namespace ci;
-
 class Catalog : public Scene
 {
 public:
@@ -69,15 +67,15 @@ protected:
     //
     void        initBrightVbo();
 	void        initFaintVbo();
-    void        setFboPositions( gl::Fbo &fbo );
-	void        parseStarData( const fs::path &path );
-	Vec3f       convertToCartesian( double ra, double dec, double dist );
+    void        setFboPositions( ci::gl::Fbo &fbo );
+	void        parseStarData( const ci::fs::path &path );
+    ci::Vec3f   convertToCartesian( double ra, double dec, double dist );
 	void        createStar( const std::string &text, int lineNumber );
 	void        setView( int homeIndex, int destIndex );
     void        selectStar( bool wasRightClick );
     //
     ////////------------------------------------------------------
-    void        parsePlanetData( const fs::path &path );
+    void        parsePlanetData( const ci::fs::path &path );
 	bool        createPlanet( const std::string &text, int lineNumber );
 	
     void        setHomeStar( Star* target );
@@ -101,23 +99,23 @@ private:
     StarCam             mStarCam;
 	
 	// SHADERS
-	gl::GlslProg		mBrightStarsShader;
-	gl::GlslProg		mFaintStarsShader;
+	ci::gl::GlslProg		mBrightStarsShader;
+	ci::gl::GlslProg		mFaintStarsShader;
 	
 	// TEXTURES
-	gl::Texture			mIconTex;
-	gl::Texture			mMilkyWayTex;
-	gl::Texture			mSpectrumTex;
+	ci::gl::Texture			mIconTex;
+	ci::gl::Texture			mMilkyWayTex;
+	ci::gl::Texture			mSpectrumTex;
 	
 	// POSITION/VELOCITY FBOS
-	gl::Fbo				mPositionFbo;
+	ci::gl::Fbo				mPositionFbo;
 	
 	// FONT
-	Font				mFontBlackT, mFontBlackS;
-	gl::TextureFontRef	mTextureFontT, mTextureFontS;
+	ci::Font				mFontBlackT, mFontBlackS;
+	ci::gl::TextureFontRef	mTextureFontT, mTextureFontS;
 	
 	// MOUSE
-	Vec2f				mMousePos, mMouseDownPos, mMouseOffset;
+	ci::Vec2f				mMousePos, mMouseDownPos, mMouseOffset;
 	bool				mMousePressed, mMouseRightPressed;
 	float				mMouseTimePressed;
 	float				mMouseTimeReleased;
@@ -125,8 +123,8 @@ private:
 	bool				mWasRightButtonLastClicked;
     
 	// STARS
-	gl::VboMesh			mBrightVbo;
-	gl::VboMesh			mFaintVbo;
+	ci::gl::VboMesh			mBrightVbo;
+	ci::gl::VboMesh			mFaintVbo;
 	
 	std::vector<Star*>	mStars;
 	std::vector<Star*>	mBrightStars;
@@ -138,9 +136,9 @@ private:
     tStarMap mStarsHD;
     std::vector<Star*>  mStarsWithPlanets;
 	
-	gl::Texture			mStarTex;
-	gl::Texture			mStarGlowTex;
-	gl::Texture			mDarkStarTex;
+	ci::gl::Texture			mStarTex;
+	ci::gl::Texture			mStarGlowTex;
+	ci::gl::Texture			mDarkStarTex;
 	
 	float				mScale, mScaleDest;
 	float				mScalePer, mMaxScale;

@@ -13,7 +13,6 @@
 #include "Body.h"
 //#include "MoviePlayer.h"
 
-using namespace ci;
 
 class Scene;
 class Orbiter;
@@ -23,19 +22,19 @@ class Sun : public Body
 public:
     Sun(Orbiter* scene,
         const std::string& name,
-        const Vec3d& pos, 
-        const Vec3d& vel, 
+        const ci::Vec3d& pos,
+        const ci::Vec3d& vel,
         float radius, 
         double rotSpeed,
         double mass, 
-        const ColorA& color);
+        const ci::ColorA& color);
     
     virtual ~Sun();
     
     // inherited from Body
     void setup();
     void update(double dt);
-    void draw(const Matrix44d& transform, bool drawBody);
+    void draw(const ci::Matrix44d& transform, bool drawBody);
     
 private:
     //MoviePlayer mMoviePlayer;

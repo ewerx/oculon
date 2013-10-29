@@ -14,9 +14,6 @@
 #include "cinder/gl/Texture.h"
 #include "KinectController.h"
 
-using namespace std;
-using namespace ci;
-
 
 class BlobTracker {
 public:
@@ -27,8 +24,8 @@ public:
 	void update();
 	void draw();
     
-    Vec3f getTargetPosition() const        { return mTargetPosition; }
-    gl::Texture getCvTexture() const       { return mCvTexture; }
+    ci::Vec3f getTargetPosition() const        { return mTargetPosition; }
+    ci::gl::Texture getCvTexture() const       { return mCvTexture; }
 
 private:
     KinectController* mKinectController;
@@ -38,9 +35,9 @@ private:
     float mBlobMax;
     float mKinectTilt;
     
-    gl::Texture mCvTexture; 
+    ci::gl::Texture mCvTexture;
     
-    Vec3f mTargetPosition;
+    ci::Vec3f mTargetPosition;
     
 };
 

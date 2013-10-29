@@ -1,6 +1,8 @@
 #include "Tube.h" 
 #include "cinder/gl/gl.h"
 
+using namespace ci;
+
 void addQuadToMesh( TriMesh& mesh, const Vec3f& P0, const Vec3f& P1, const Vec3f& P2, const Vec3f& P3 )
 {
 	mesh.appendVertex( P0 );

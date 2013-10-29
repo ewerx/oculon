@@ -36,7 +36,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-    const Camera& getCamera();
+    const ci::Camera& getCamera();
     
     // new
     
@@ -100,21 +100,21 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     bool            mEnableLight;
     bool            mEnableTexture;
     bool            mEnableShadow;
-	Vec3f			mLightPosition;
-	TriMesh			mTriMesh;
-	Matrix44f		mShadowMatrix;
-	CameraPersp		mShadowCamera;
+	ci::Vec3f			mLightPosition;
+	ci::TriMesh			mTriMesh;
+	ci::Matrix44f		mShadowMatrix;
+	ci::CameraPersp		mShadowCamera;
     
     // BTR
     ci::gl::Light   *mLight;
     
-    gl::VboMesh     mVboMesh[2];
+    ci::gl::VboMesh     mVboMesh[2];
     int             mCurMesh;
     int             mNextMesh;
     
-	gl::Fbo			mDepthFbo;
-	gl::GlslProg	mShader;
-	gl::Texture		mTexture;
+	ci::gl::Fbo			mDepthFbo;
+	ci::gl::GlslProg	mShader;
+	ci::gl::Texture		mTexture;
     
     // mesh type
 #define TERRAIN_MESHTYPE_TUPLE \
@@ -135,13 +135,13 @@ TERRAIN_MESHTYPE_ENTRY( "Torus", MESHTYPE_TORUS ) \
     };
     eMeshType   mMeshType;
     
-    Tube                        mTube;
-    BSpline3f                   mTubeSpline;
-    TriMesh                     mTubeMesh;
-    std::vector<Vec3f>          mBasePoints;
-	std::vector<Vec3f>          mCurPoints;
+    Tube                            mTube;
+    ci::BSpline3f                   mTubeSpline;
+    ci::TriMesh                     mTubeMesh;
+    std::vector<ci::Vec3f>          mBasePoints;
+	std::vector<ci::Vec3f>          mCurPoints;
     
-    float                       mScale;
+    float                           mScale;
 
     
     // Dynamic texture
@@ -154,7 +154,7 @@ TERRAIN_MESHTYPE_ENTRY( "Torus", MESHTYPE_TORUS ) \
     // Displacement
     ci::Anim<float>             mDisplacementHeight;
 	ci::gl::GlslProg			mShaderVtf;
-    Vec3f                       mNoiseScale;
+    ci::Vec3f                       mNoiseScale;
     
     // displacement
 #define TERRAIN_DISPLACEMODE_TUPLE \

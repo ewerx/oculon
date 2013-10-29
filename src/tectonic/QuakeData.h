@@ -3,7 +3,7 @@
 //  Oculon
 //
 //  Created by Ehsan Rezaie on 12-04-25.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 ewerx. All rights reserved.
 //
 
 #pragma once

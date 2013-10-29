@@ -23,7 +23,6 @@
 
 #include "contours.h"
 
-using namespace ci;
 
 // implementation of the CRaster class for contour lines creation
 class ValueMap : public CRaster
@@ -40,10 +39,10 @@ public:
 class SurfaceRaster : public CRaster
 {
 public:
-    SurfaceRaster( const Surface32f& image ) : mImage(image) {}
+    SurfaceRaster( const ci::Surface32f& image ) : mImage(image) {}
     
     double value(double x,double y) {
-        return mImage.getPixel( Vec2i(x,y) ).r;
+        return mImage.getPixel( ci::Vec2i(x,y) ).r;
     }
     SPoint upper_bound() { return SPoint(mImage.getWidth()-1, mImage.getHeight()-1); }
     SPoint lower_bound() { return SPoint(0,0); }
@@ -67,7 +66,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-    const Camera& getCamera();
+    const ci::Camera& getCamera();
     
     //HACKS!
     ci::gl::Fbo& getVtfFbo() { return mVtfFbo; }
@@ -86,7 +85,7 @@ private:
     void drawFromDynamicTexture();
     
 private:
-    gl::Texture			mTexture;
+    ci::gl::Texture			mTexture;
     
     // BOURKE
     CContourMap mContourMap;
@@ -94,7 +93,7 @@ private:
     float mMaxValue;
     int mLevels;
     
-    Vec2f mZoom;
+    ci::Vec2f mZoom;
     
     // PERLIN
     ci::gl::Fbo					mVtfFbo;
@@ -103,7 +102,7 @@ private:
     float                       mDisplacementHeight;
 	float						mTheta;
     ci::gl::GlslProg			mShaderVtf;
-    Vec3f                       mNoiseScale;
+    ci::Vec3f                       mNoiseScale;
     
     // 1D texture map
     ci::gl::Fbo					mStripFbo;

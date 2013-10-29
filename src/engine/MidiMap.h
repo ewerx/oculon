@@ -14,9 +14,6 @@
 #include <string>
 #include <map>
 
-using namespace ci;
-using namespace std;
-
 typedef std::function<void(MidiEvent)> tMidiCmdCallback;
 
 class MidiMap
@@ -30,7 +27,7 @@ public:
     
     // registerMidiEvent( string id, eEventType type, callback )
     template<typename T>
-    void registerMidiEvent( string name, int eventType, T* obj, void (T::*callback)(MidiEvent), int channel =UNDEFINED_CHANNEL, int note =UNDEFINED_NOTE )
+    void registerMidiEvent( std::string name, int eventType, T* obj, void (T::*callback)(MidiEvent), int channel =UNDEFINED_CHANNEL, int note =UNDEFINED_NOTE )
     {
         if( mIsLearning )
         {
@@ -44,7 +41,7 @@ public:
                                                   std::bind1st( std::mem_fun(callback), obj)) ) );
     }
     
-    void unregisterMidiEvent( string name );
+    void unregisterMidiEvent( std::string name );
     
     // callback from MidiInput
     bool handleMidiMessage( MidiEvent midiEvent );
@@ -92,16 +89,16 @@ private:
     };
     
     MidiInput* mMidiInput;
-    CallbackId mCbMidiEvent;
+    ci::CallbackId mCbMidiEvent;
     
     //TODO: serialization
-    std::map<string,MidiCommand> mCmdMap;
+    std::map<std::string,MidiCommand> mCmdMap;
         
     bool mIsLearning;
-    std::map<string,MidiCommand>::iterator mLearningIterator;
+    std::map<std::string,MidiCommand>::iterator mLearningIterator;
     
     
-    typedef std::map<string,MidiMap::MidiCommand> tMidiMapCmds;
+    typedef std::map<std::string,MidiMap::MidiCommand> tMidiMapCmds;
 };
 
 #endif // __MIDIMAP_H__

@@ -16,12 +16,10 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 
 struct InfoLine
 {
-    string mString;
+    std::string mString;
     ci::Color mColor;
 };
 
@@ -36,7 +34,7 @@ public:
     void setVisible(bool visible)   { mIsVisible = visible; }
     bool isVisible() const          { return mIsVisible; }
     
-    void addLine( const string& line, const ci::Color& color );
+    void addLine( const std::string& line, const ci::Color& color );
     
 protected:
     void createTexture();
@@ -47,7 +45,7 @@ private:
 	ci::gl::Texture     mTexture;
     bool                mTextureReady;
     
-    vector<InfoLine>      mLines;
+    std::vector<InfoLine>      mLines;
 };
 
 #endif // __INFOPANEL_H__

@@ -47,7 +47,7 @@ private:
     
 private:
     std::string         mString;
-    TextBox             mTextBox;
+    ci::TextBox             mTextBox;
     bool                mJustifyRight;
     bool                mJustifyBottom;
     float               mMarginRight;

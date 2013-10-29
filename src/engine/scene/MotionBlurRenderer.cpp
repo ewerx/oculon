@@ -13,6 +13,7 @@
 #include "cinder/Utilities.h"
 
 using namespace ci;
+using namespace ci::app;
 
 MotionBlurRenderer::MotionBlurRenderer()
 {

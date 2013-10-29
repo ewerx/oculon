@@ -13,6 +13,7 @@
 
 using namespace std;
 using namespace ci;
+using namespace ci::app;
 using namespace mowa::sgui;
 
 #pragma MARK Controls

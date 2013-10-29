@@ -11,9 +11,6 @@
 
 //#define BINNED_QUADS 1
 
-using namespace std;
-using namespace ci;
-
 namespace bps {
 
 class Particle {
@@ -74,7 +71,7 @@ public:
 		}
 	}
     
-    void bounceOffCircularWall(const Vec2f& center, float radius, float radius_sq, float damping = 0.3f)
+    void bounceOffCircularWall(const ci::Vec2f& center, float radius, float radius_sq, float damping = 0.3f)
     {
         const float xsq = (center.x - x) * (center.x - x);
         const float ysq = (center.y - y) * (center.y - y);

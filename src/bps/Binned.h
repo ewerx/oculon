@@ -24,9 +24,6 @@
 #include "Constants.h"
 #include "cinder/Timeline.h"
 
-using namespace ci;
-using std::vector;
-
 //
 // kBinned
 //
@@ -49,7 +46,7 @@ public:
 	void handleMouseDrag( const ci::app::MouseEvent& event );
     
     // new
-    void addRepulsionForce( const Vec2f& pos, float radius, float force );
+    void addRepulsionForce( const ci::Vec2f& pos, float radius, float force );
     
     void handleOscMultiTouch( const ci::osc::Message& message );
     
@@ -63,7 +60,7 @@ private:
     void applyForcePatterns();
     
 private:
-    Vec2i mMousePos;
+    ci::Vec2i mMousePos;
     bool mHandleMouseInput;
     
     float mTimeStep;
@@ -87,8 +84,8 @@ private:
     float mDamping;
     float mWallDamping;
     
-    ColorAf mPointColor;
-    ColorAf mForceColor;
+    ci::ColorAf mPointColor;
+    ci::ColorAf mForceColor;
     float mPointSize;
     float mLineWidth;
     
@@ -141,9 +138,9 @@ enm,
     float mPatternDuration;
     bool mShowForceIndicators;
     float mForceIndicatorScale;
-    ColorAf mForceIndicatorColor;
+    ci::ColorAf mForceIndicatorColor;
     
-    Vec2i mCrossForcePoint[4];
+    ci::Vec2i mCrossForcePoint[4];
     
     
     bool mIsOrbiterModeEnabled;
@@ -199,7 +196,7 @@ enm,
     
     struct tRepulsionForce
     {
-        Vec2f mPos;
+        ci::Vec2f mPos;
         float mRadius;
         float mForce;
     };
@@ -208,7 +205,7 @@ enm,
     
     // metropolis
     tMetropolisPattern mMetropolis;
-    Anim<float> mTraverse;
+    ci::Anim<float> mTraverse;
     
     
     //TEMP

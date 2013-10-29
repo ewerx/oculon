@@ -13,8 +13,6 @@
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 
-using namespace ci;
-
 class Scene;
 
 template<typename T>
@@ -22,18 +20,18 @@ class Entity
 {
 public:
     Entity(Scene* scene);
-    Entity(Scene* scene, const Vec3<T>& pos);
+    Entity(Scene* scene, const ci::Vec3<T>& pos);
     virtual ~Entity();
     
     virtual void setup() {}
     virtual void update(double dt) {}
     virtual void draw() {}
     
-    const Vec3<T>& getPosition() const      { return mPosition; }
-    void setPosition(const Vec3<T>& val)    { mPosition = val; }
+    const ci::Vec3<T>& getPosition() const      { return mPosition; }
+    void setPosition(const ci::Vec3<T>& val)    { mPosition = val; }
     
 protected:
-    Vec3<T> mPosition;
+    ci::Vec3<T> mPosition;
     
     Scene*  mParentScene;
 };

@@ -213,7 +213,6 @@
 		7C79CA2D17650FD800E71F9D /* AudioSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C96C17650FD700E71F9D /* AudioSignal.cpp */; };
 		7C79CA2E17650FD800E71F9D /* Barcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C96E17650FD700E71F9D /* Barcode.cpp */; };
 		7C79CA2F17650FD800E71F9D /* Circles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97017650FD700E71F9D /* Circles.cpp */; };
-		7C79CA3017650FD800E71F9D /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		7C79CA3117650FD800E71F9D /* Metropolis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97417650FD700E71F9D /* Metropolis.cpp */; };
 		7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97617650FD700E71F9D /* SignalScope.cpp */; };
 		7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97817650FD700E71F9D /* Triangle.cpp */; };
@@ -347,6 +346,7 @@
 		7CB0255A1819E3D200B5F0CD /* logistic_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CB025591819E3D200B5F0CD /* logistic_frag.glsl */; };
 		7CF3122618162F3500DB1286 /* tilings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF3122518162F3500DB1286 /* tilings_frag.glsl */; };
 		7CF3122818163C5100DB1286 /* rings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF3122718163C5100DB1286 /* rings_frag.glsl */; };
+		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
 		845DE7D4DFB04764AACEA34C /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 512F72EDE8E9459AABC24F2C /* libfmodex.dylib */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -541,7 +541,7 @@
 		7C79C50817643B1F00E71F9D /* MSAOpenCLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLBuffer.h; sourceTree = "<group>"; };
 		7C79C50917643B1F00E71F9D /* MSAOpenCLImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLImage.cpp; sourceTree = "<group>"; };
 		7C79C50A17643B1F00E71F9D /* MSAOpenCLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLImage.h; sourceTree = "<group>"; };
-		7C79C50B17643B1F00E71F9D /* MSAOpenCLImagePingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLImagePingPong.h; sourceTree = "<group>"; };
+		7C79C50B17643B1F00E71F9D /* MSAOpenCLImagePingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MSAOpenCLImagePingPong.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C50C17643B1F00E71F9D /* MSAOpenCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLKernel.cpp; sourceTree = "<group>"; };
 		7C79C50D17643B1F00E71F9D /* MSAOpenCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLKernel.h; sourceTree = "<group>"; };
 		7C79C50E17643B1F00E71F9D /* MSAOpenCLMemoryObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLMemoryObject.cpp; sourceTree = "<group>"; };
@@ -738,7 +738,7 @@
 		7C79C99B17650FD700E71F9D /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanel.h; sourceTree = "<group>"; };
 		7C79C99D17650FD700E71F9D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interface.h; sourceTree = "<group>"; };
 		7C79C99E17650FD700E71F9D /* OscParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscParam.cpp; sourceTree = "<group>"; };
-		7C79C99F17650FD700E71F9D /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscParam.h; sourceTree = "<group>"; };
+		7C79C99F17650FD700E71F9D /* OscParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OscParam.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9A017650FD700E71F9D /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		7C79C9A117650FD700E71F9D /* KinectController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectController.cpp; sourceTree = "<group>"; };
 		7C79C9A217650FD700E71F9D /* KinectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectController.h; sourceTree = "<group>"; };
@@ -776,17 +776,17 @@
 		7C79C9C617650FD700E71F9D /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7C79C9C717650FD700E71F9D /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		7C79C9C917650FD700E71F9D /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Controller.cpp; sourceTree = "<group>"; };
-		7C79C9CA17650FD700E71F9D /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
+		7C79C9CA17650FD700E71F9D /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Controller.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9CB17650FD700E71F9D /* Flock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flock.cpp; sourceTree = "<group>"; };
 		7C79C9CC17650FD700E71F9D /* Flock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flock.h; sourceTree = "<group>"; };
 		7C79C9CD17650FD700E71F9D /* Glow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Glow.cpp; sourceTree = "<group>"; };
-		7C79C9CE17650FD700E71F9D /* Glow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glow.h; sourceTree = "<group>"; };
+		7C79C9CE17650FD700E71F9D /* Glow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Glow.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9CF17650FD700E71F9D /* Lantern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lantern.cpp; sourceTree = "<group>"; };
-		7C79C9D017650FD700E71F9D /* Lantern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lantern.h; sourceTree = "<group>"; };
+		7C79C9D017650FD700E71F9D /* Lantern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Lantern.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9D117650FD700E71F9D /* Nebula.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nebula.cpp; sourceTree = "<group>"; };
-		7C79C9D217650FD700E71F9D /* Nebula.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nebula.h; sourceTree = "<group>"; };
+		7C79C9D217650FD700E71F9D /* Nebula.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Nebula.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9D317650FD700E71F9D /* Predator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Predator.cpp; sourceTree = "<group>"; };
-		7C79C9D417650FD700E71F9D /* Predator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Predator.h; sourceTree = "<group>"; };
+		7C79C9D417650FD700E71F9D /* Predator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Predator.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9D617650FD700E71F9D /* Graviton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Graviton.cpp; sourceTree = "<group>"; };
 		7C79C9D717650FD700E71F9D /* Graviton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Graviton.h; sourceTree = "<group>"; };
 		7C79C9DA17650FD700E71F9D /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
@@ -796,11 +796,11 @@
 		7C79C9E017650FD700E71F9D /* Quake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quake.cpp; sourceTree = "<group>"; };
 		7C79C9E117650FD700E71F9D /* Quake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quake.h; sourceTree = "<group>"; };
 		7C79C9E217650FD700E71F9D /* QuakeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuakeData.cpp; sourceTree = "<group>"; };
-		7C79C9E317650FD700E71F9D /* QuakeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuakeData.h; sourceTree = "<group>"; };
+		7C79C9E317650FD700E71F9D /* QuakeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = QuakeData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9E417650FD700E71F9D /* Tectonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tectonic.cpp; sourceTree = "<group>"; };
 		7C79C9E517650FD700E71F9D /* Tectonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tectonic.h; sourceTree = "<group>"; };
 		7C79C9E717650FD700E71F9D /* RDiffusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RDiffusion.cpp; sourceTree = "<group>"; };
-		7C79C9E817650FD700E71F9D /* RDiffusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDiffusion.h; sourceTree = "<group>"; };
+		7C79C9E817650FD700E71F9D /* RDiffusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = RDiffusion.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79C9E917650FD700E71F9D /* Terrain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Terrain.cpp; sourceTree = "<group>"; };
 		7C79C9EA17650FD700E71F9D /* Terrain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terrain.h; sourceTree = "<group>"; };
 		7C79C9EB17650FD700E71F9D /* Tube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tube.cpp; sourceTree = "<group>"; };
@@ -826,13 +826,13 @@
 		7C79CA0217650FD700E71F9D /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Planet.cpp; sourceTree = "<group>"; };
 		7C79CA0317650FD700E71F9D /* Planet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Planet.h; sourceTree = "<group>"; };
 		7C79CA0417650FD700E71F9D /* SpringCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpringCam.cpp; sourceTree = "<group>"; };
-		7C79CA0517650FD700E71F9D /* SpringCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringCam.h; sourceTree = "<group>"; };
+		7C79CA0517650FD700E71F9D /* SpringCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SpringCam.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79CA0617650FD700E71F9D /* Star.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Star.cpp; sourceTree = "<group>"; };
 		7C79CA0717650FD700E71F9D /* Star.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Star.h; sourceTree = "<group>"; };
 		7C79CA0917650FD700E71F9D /* Sol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sol.cpp; sourceTree = "<group>"; };
 		7C79CA0A17650FD700E71F9D /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
 		7C79CA0B17650FD700E71F9D /* SolFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SolFrame.cpp; sourceTree = "<group>"; };
-		7C79CA0C17650FD700E71F9D /* SolFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SolFrame.h; sourceTree = "<group>"; };
+		7C79CA0C17650FD700E71F9D /* SolFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SolFrame.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79CA0E17650FD700E71F9D /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Body.cpp; sourceTree = "<group>"; };
 		7C79CA0F17650FD700E71F9D /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Body.h; sourceTree = "<group>"; };
 		7C79CA1017650FD700E71F9D /* Orbiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Orbiter.cpp; sourceTree = "<group>"; };
@@ -848,11 +848,11 @@
 		7C79CA1D17650FD800E71F9D /* CoronaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaController.cpp; sourceTree = "<group>"; };
 		7C79CA1E17650FD800E71F9D /* CoronaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaController.h; sourceTree = "<group>"; };
 		7C79CA1F17650FD800E71F9D /* CoronaGlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaGlow.cpp; sourceTree = "<group>"; };
-		7C79CA2017650FD800E71F9D /* CoronaGlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaGlow.h; sourceTree = "<group>"; };
+		7C79CA2017650FD800E71F9D /* CoronaGlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CoronaGlow.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79CA2117650FD800E71F9D /* CoronaNebula.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaNebula.cpp; sourceTree = "<group>"; };
-		7C79CA2217650FD800E71F9D /* CoronaNebula.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaNebula.h; sourceTree = "<group>"; };
+		7C79CA2217650FD800E71F9D /* CoronaNebula.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CoronaNebula.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79CA2317650FD800E71F9D /* CoronaStar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoronaStar.cpp; sourceTree = "<group>"; };
-		7C79CA2417650FD800E71F9D /* CoronaStar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaStar.h; sourceTree = "<group>"; };
+		7C79CA2417650FD800E71F9D /* CoronaStar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CoronaStar.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79CA2517650FD800E71F9D /* CubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CubeMap.cpp; sourceTree = "<group>"; };
 		7C79CA2617650FD800E71F9D /* CubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CubeMap.h; sourceTree = "<group>"; };
 		7C79CA2717650FD800E71F9D /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Resources.h; sourceTree = "<group>"; };
@@ -2600,9 +2600,9 @@
 				7C79CA2D17650FD800E71F9D /* AudioSignal.cpp in Sources */,
 				7C79CA2E17650FD800E71F9D /* Barcode.cpp in Sources */,
 				7C79CA2F17650FD800E71F9D /* Circles.cpp in Sources */,
-				7C79CA3017650FD800E71F9D /* Eclipse.cpp in Sources */,
 				7C79CA3117650FD800E71F9D /* Metropolis.cpp in Sources */,
 				7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */,
+				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
 				7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */,
 				7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */,
 				7C79CA3517650FD800E71F9D /* BinnedParticleSystem.cpp in Sources */,
