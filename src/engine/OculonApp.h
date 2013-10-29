@@ -27,8 +27,9 @@
 #include "cinder/audio/Input.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
-#include "cinder/qtime/MovieWriter.h"
 #include "cinderSyphon.h"
+
+#include "cinderpane/ext/ThreadedMovieWriter.h"
 
 #include <vector>
 #include <boost/unordered_map.hpp>
@@ -219,7 +220,7 @@ private: // members
     
     // capture
     bool                    mIsCapturingVideo;
-    ci::qtime::MovieWriter  mMovieWriter;
+    cinderpane::ext::ThreadedMovieWriter     mMovieWriter;
     
     bool                    mIsCapturingFrames;
     std::string             mFrameCapturePath;

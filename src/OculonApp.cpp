@@ -195,6 +195,11 @@ void OculonApp::shutdown()
 {
     console() << "[main] shutting down...\n";
     
+    if( mIsCapturingVideo )
+    {
+        stopVideoCapture();
+    }
+    
     for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
          ++sceneIt )
@@ -744,6 +749,8 @@ void OculonApp::update()
         if( mIsCapturingVideo )
         {
             mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
+            snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
+            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         }
         
         if( mIsCapturingFrames )
@@ -1035,9 +1042,10 @@ void OculonApp::draw()
     }
     
     // capture video
-	if( mIsCapturingVideo && mMovieWriter )
+	if( mIsCapturingVideo )
     {
-		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
+        //TODO: capture direct from active scene FBO
+		mMovieWriter.addFrame( copyWindowSurface() );
     }
     
     // capture frames
@@ -1208,10 +1216,11 @@ void OculonApp::startVideoCapture(bool useDefaultPath)
     
     if( useDefaultPath )
     {
-        // H.264, 30fps, high detail
-        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
-        mwFormat.setTimeScale(3000);
-        mwFormat.setDefaultDuration(1.0f/15.0f);
+        // H.264, 30fps, high detail = 1635148593
+        // DXV, 30/60fps, alpha = 1146635337
+        mwFormat.setCodec(1146635337); // get this value from the output of the dialog
+        mwFormat.setTimeScale(3000); // 30 fps
+        mwFormat.setDefaultDuration(1.0f/30.0f);
         mwFormat.setQuality(0.99f);
         ready = true;
     }
@@ -1224,7 +1233,8 @@ void OculonApp::startVideoCapture(bool useDefaultPath)
     if( ready )
     {
         console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
-        mMovieWriter = qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat );
+        mMovieWriter.setWriter(qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat ));
+        mMovieWriter.start();
         mIsCapturingVideo = true;
     }
 }
@@ -1233,6 +1243,7 @@ void OculonApp::stopVideoCapture()
 {
     console() << "[main] stop video capture\n";
     mMovieWriter.finish();
+    mMovieWriter.stop();
     mIsCapturingVideo = false;
 }
 
