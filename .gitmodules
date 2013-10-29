@@ -20,3 +20,6 @@
 [submodule "blocks/Kinect"]
 	path = blocks/Kinect
 	url = https://github.com/cinder/Cinder-Kinect.git
+[submodule "blocks/cinderpane"]
+	path = blocks/cinderpane
+	url = https://github.com/aalpern/cinderpane.git
