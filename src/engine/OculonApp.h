@@ -27,7 +27,7 @@
 #include "cinder/audio/Input.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
-#include "cinder/qtime/MovieWriter.h" // TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
+#include "cinder/qtime/MovieWriter.h"
 #include "cinderSyphon.h"
 
 #include <vector>
@@ -155,9 +155,8 @@ protected: // new
     void setPresentationMode( bool enabled );
     void toggleFullscreen();
     
-    //TODO: quicktime removed due to compile errors
-//    void startVideoCapture( bool useDefaultPath =true );
-//    void stopVideoCapture();
+    void startVideoCapture( bool useDefaultPath =true );
+    void stopVideoCapture();
     
     
 private: // members
@@ -220,7 +219,7 @@ private: // members
     
     // capture
     bool                    mIsCapturingVideo;
-    //ci::qtime::MovieWriter  mMovieWriter; // TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
+    ci::qtime::MovieWriter  mMovieWriter;
     
     bool                    mIsCapturingFrames;
     std::string             mFrameCapturePath;

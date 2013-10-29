@@ -606,15 +606,15 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_r:
             if( event.isShiftDown() )
             {
-//                if( mIsCapturingVideo )
-//                {
-//                    stopVideoCapture();
-//                }
-//                else
-//                {
-//                    bool useDefaultSettings = event.isShiftDown() ? false : true;
-//                    startVideoCapture(useDefaultSettings);
-//                }
+                if( mIsCapturingVideo )
+                {
+                    stopVideoCapture();
+                }
+                else
+                {
+                    bool useDefaultSettings = event.isAltDown() ? false : true;
+                    startVideoCapture(useDefaultSettings);
+                }
             }
             else
             {
@@ -1035,11 +1035,10 @@ void OculonApp::draw()
     }
     
     // capture video
-    // TODO: quicktime removed due to build errors: https://forum.libcinder.org/topic/porting-windows-app-to-osx
-//	if( mIsCapturingVideo && mMovieWriter )
-//    {
-//		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
-//    }
+	if( mIsCapturingVideo && mMovieWriter )
+    {
+		mMovieWriter.addFrame( copyWindowSurface(), (float)mElapsedSecondsThisFrame );
+    }
     
     // capture frames
     if( mIsCapturingFrames )
@@ -1198,45 +1197,44 @@ void OculonApp::toggleFullscreen()
         showCursor();
 }
 
-// TODO: removed due to WindowRef compile error: https://forum.libcinder.org/topic/porting-windows-app-to-osx
-//void OculonApp::startVideoCapture(bool useDefaultPath)
-//{
-//    fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
-//    qtime::MovieWriter::Format mwFormat;
-//    bool ready = false;
-//    
-//    // spawn file dialog
-//    // outputPath = getSaveFilePath();
-//    
-//    if( useDefaultPath )
-//    {
-//        // H.264, 30fps, high detail
-//        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
-//        mwFormat.setTimeScale(3000);
-//        mwFormat.setDefaultDuration(1.0f/15.0f);
-//        mwFormat.setQuality(0.99f);
-//        ready = true;
-//    }
-//    else
-//    {
-//        // user prompt
-//        ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
-//    }
-//    
-//    if( ready )
-//    {
-//        console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
-//        mMovieWriter = qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat );
-//        mIsCapturingVideo = true;
-//    }
-//}
-//
-//void OculonApp::stopVideoCapture()
-//{
-//    console() << "[main] stop video capture\n";
-//    mMovieWriter.finish();
-//    mIsCapturingVideo = false;
-//}
+void OculonApp::startVideoCapture(bool useDefaultPath)
+{
+    fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
+    qtime::MovieWriter::Format mwFormat;
+    bool ready = false;
+    
+    // spawn file dialog
+    // outputPath = getSaveFilePath();
+    
+    if( useDefaultPath )
+    {
+        // H.264, 30fps, high detail
+        mwFormat.setCodec(1635148593); // get this value from the output of the dialog
+        mwFormat.setTimeScale(3000);
+        mwFormat.setDefaultDuration(1.0f/15.0f);
+        mwFormat.setQuality(0.99f);
+        ready = true;
+    }
+    else
+    {
+        // user prompt
+        ready = qtime::MovieWriter::getUserCompressionSettings( &mwFormat );
+    }
+    
+    if( ready )
+    {
+        console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
+        mMovieWriter = qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat );
+        mIsCapturingVideo = true;
+    }
+}
+
+void OculonApp::stopVideoCapture()
+{
+    console() << "[main] stop video capture\n";
+    mMovieWriter.finish();
+    mIsCapturingVideo = false;
+}
 
 void OculonApp::enableFrameCapture( const bool enable )
 {
