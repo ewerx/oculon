@@ -58,5 +58,8 @@ private:
     ci::ColorAf         mColor2;
     float               mTimeScale;
     double              mElapsedTime;
+    int                 mNumRings;
+    float               mSmoothing;
+    int                 mIntervals;
 };
 

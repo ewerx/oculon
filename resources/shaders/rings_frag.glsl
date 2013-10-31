@@ -1,33 +1,32 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
-uniform vec2      iMouse;
+uniform float        iRings;
+uniform float       iTimeScale;
+uniform float       iSmoothing;
+uniform vec4        iColor1;
+uniform vec4        iColor2;
+uniform float       iIntervals;
 
-#define TIME iGlobalTime
+// based on https://www.shadertoy.com/view/XsXGD8
 
-mat2 rotate(float a) { return mat2(cos(a),-sin(a),sin(a),cos(a)); }
+//const float velocity=-1.;
+//const float b = 0.003;		//size of the smoothed border
 
-float noise(float x) { return texture2D(iChannel0,vec2(x)).x;}
-
-#define WEBN 64.
-
-void main(void) {
-	vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-	float l = 0.0;
-	float mz = 0.0;
-    
-	for (float i=0.; i < WEBN; i+=1.0) {
-		float fi = 0.0;//i/WEBN*acos(-1.)*0.001;
-		float n = noise(fi);
-		
-		float z = 1.0-mod(TIME/7.0+i/WEBN,1.);
-		vec2 o = p;
-		//o -= vec2(sin(2.5*fi+TIME)*2.0,cos(2.0*fi+TIME))*z;
-		o *= rotate(TIME*n*1.0)/(z*1.);
-		l += (smoothstep(0.98,1.0,sin(mod(length(o),0.5)*30.0)))*(0.5-z);
-		mz = min(mz,z);
-	}
-	
-	vec3 col = mix(vec3(0.2,0.0,0.1),vec3(0.9,1.0,1.0),l*(0.55+mz));
-	gl_FragColor = vec4(col,1.0);
+void main()
+{
+    float b = iSmoothing;
+	vec2 position = gl_FragCoord.xy/iResolution.xy;
+    float aspect = iResolution.x/iResolution.y;
+	position.x *= aspect;
+	float dist = distance(position, vec2(aspect*0.5, 0.5));
+	float offset=iGlobalTime*iTimeScale;
+	float conv=iRings;
+	float v=dist*conv-offset;
+	float ringr=floor(v);
+	float color=smoothstep(-b, b, abs(dist- (ringr+float(fract(v)>0.5)+offset)/conv));
+	if(mod(ringr,iIntervals)==1.)
+		color=1.-color;
+	gl_FragColor = color * iColor1;//vec4(color, color, color, 1.);
 }
+

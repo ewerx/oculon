@@ -18,7 +18,7 @@ using namespace ci::app;
 using namespace std;
 
 TextureShaders::TextureShaders()
-: Scene("TextureShaders")
+: Scene("textureshaders")
 {
     //mAudioInputHandler.setup(true);
 }

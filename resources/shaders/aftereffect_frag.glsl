@@ -1,7 +1,7 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
-uniform int       pattern;
+uniform int       iPattern;
 
 // based on https://www.shadertoy.com/view/Msl3Dj
 float pattern0(vec2 p, float time) { return (sin((abs(p.x)+abs(p.y))*50.0+time*10.0)+1.0)/2.0; }
@@ -18,7 +18,7 @@ int getPosition(vec2 p) {
 
 void main(void) {
 	vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-	int mp = 0;//TODO: user pattern index as input
+	int mp = iPattern;
 	
 	float p0,p1;
 	

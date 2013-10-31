@@ -1051,7 +1051,16 @@ void OculonApp::draw()
     // capture video
 	if( mIsCapturingVideo )
     {
-        mMovieWriter.addFrame( copyWindowSurface() );
+        if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
+        {
+            //mMovieWriter.addFrame( Surface(mScenes[mLastActiveScene]->getFboTexture()) );
+            // not sure why but copyWindowSurface is faster...
+            mMovieWriter.addFrame( copyWindowSurface() );
+        }
+        else
+        {
+            mMovieWriter.addFrame( copyWindowSurface() );
+        }
     }
     
     // capture frames

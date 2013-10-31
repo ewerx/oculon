@@ -204,6 +204,12 @@ enm,
     };
     tStripesParams mStripesParams;
     
+    struct tAfterEffectsParams
+    {
+        int mEffect;
+    };
+    tAfterEffectsParams mAfterEffectParams;
+    
     double mElapsedTime;
 };
 

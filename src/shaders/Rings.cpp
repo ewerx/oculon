@@ -16,7 +16,7 @@
 using namespace ci;
 
 Rings::Rings()
-: Scene("Rings")
+: Scene("rings")
 {
     //mAudioInputHandler.setup(this, true);
 }
@@ -31,6 +31,13 @@ void Rings::setup()
     
     mShader = loadFragShader("rings_frag.glsl");
     
+    mColor1 = ColorA(0.2f,0.0f,0.1f,1.0f);
+    mColor2 = ColorA(0.9f,1.0f,1.0f,1.0f);
+    mTimeScale = 1.0f;
+    mNumRings = 64;
+    mSmoothing = 0.003f;
+    mIntervals = 2.0f;
+    
     reset();
 }
 
@@ -42,8 +49,17 @@ void Rings::reset()
 void Rings::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
+                         .minValue(-32.0f)
+                         .maxValue(32.0f));
+    mInterface->addParam(CreateFloatParam( "Smoothing", &mSmoothing )
                          .minValue(0.0f)
-                         .maxValue(2.0f));
+                         .maxValue(0.1f));
+    mInterface->addParam(CreateIntParam( "NumRings", &mNumRings )
+                         .minValue(1)
+                         .maxValue(256));
+    mInterface->addParam(CreateIntParam( "Intervals", &mIntervals )
+                         .minValue(0)
+                         .maxValue(128));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
@@ -76,6 +92,13 @@ void Rings::shaderPreDraw()
     
     mShader.uniform( "iResolution", resolution );
     mShader.uniform( "iGlobalTime", (float)mElapsedTime );
+    mShader.uniform( "iColor1", mColor1);
+    mShader.uniform( "iColor2", mColor2);
+    
+    mShader.uniform( "iTimeScale", mTimeScale );
+    mShader.uniform( "iRings", (float)mNumRings );
+    mShader.uniform( "iSmoothing", mSmoothing );
+    mShader.uniform( "iIntervals", (float)mIntervals );
 }
 
 void Rings::drawShaderOutput()

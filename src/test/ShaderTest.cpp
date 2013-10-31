@@ -196,6 +196,8 @@ void ShaderTest::setupShaders()
         shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "aftereffect_frag.glsl" ) );
         mShaders.push_back(shader);
         
+        mAfterEffectParams.mEffect = 0;
+        
         // SHADER_MAINSEQUENCE
         shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "mainsequence_frag.glsl" ) );
         mShaders.push_back(shader);
@@ -404,6 +406,12 @@ shaderNames.push_back(nam);
     mInterface->addParam(CreateColorParam("stripes/color1", &mStripesParams.mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("stripes/color2", &mStripesParams.mColor2, kMinColor, kMaxColor));
     
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("After Effect");
+    mInterface->addParam(CreateIntParam("aftereffect/pattern", &mAfterEffectParams.mEffect)
+                         .maxValue(2)
+                         .oscReceiver(getName()));
+    
     
    //mAudioInputHandler.setupInterface(mInterface);
 
@@ -560,10 +568,17 @@ void ShaderTest::shaderPreDraw()
             break;
             
         case SHADER_INTERSTELLAR:
+        case SHADER_MAINSEQUENCE:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mElapsedTime );
             shader.uniform( "iChannel0", 1 );
+            shader.uniform( "iChannel1", 1 );
             break;
+            
+        case SHADER_AFTEREFFECT:
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            shader.uniform( "iPattern", mAfterEffectParams.mEffect );
             
         default:
             shader.uniform( "iResolution", resolution );
