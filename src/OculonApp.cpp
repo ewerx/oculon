@@ -896,19 +896,17 @@ void OculonApp::drawFromFbo( gl::Fbo& fbo )
     {
         return;
     }
-    //gl::enableDepthRead();
-    //gl::enableDepthWrite();
-    //gl::disableAlphaBlending();
-    //glEnable(GL_TEXTURE_2D);
-    // draw the captured texture back to screen
-    float width = getWindowWidth();
-    float height = getWindowHeight();
     
+    // draw the captured texture back to screen
     gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
     gl::setMatricesWindow( getWindowSize() );
     
-    width = math<float>::min(getWindowWidth(), fbo.getWidth());
-    height = math<float>::min(getWindowHeight(), fbo.getHeight());
+    float width = math<float>::min(getWindowWidth(), fbo.getWidth());
+    float height = math<float>::min(getWindowHeight(), fbo.getHeight());
+    
+    // maintain aspect ratio
+    float ratio = fbo.getHeight() / fbo.getWidth();
+    height = math<float>::min(height, getWindowWidth() * ratio);
     
     // flip
     gl::draw( fbo.getTexture(), Rectf( 0, getWindowHeight(), width, getWindowHeight() - height ) );
@@ -942,6 +940,15 @@ void OculonApp::drawScenes(int layerIndex)
         glEnable(GL_TEXTURE_2D);
         gl::color( ColorA(1.0f,1.0f,1.0f,1.0f) );
         gl::setViewport( getWindowBounds() );
+        
+        float width = math<float>::min(getWindowWidth(), getViewportWidth());
+        float height = math<float>::min(getWindowHeight(), getViewportHeight());
+        // maintain aspect ratio
+        //float ratio = fbo.getHeight() / fbo.getWidth();
+        height = math<float>::min(height, getWindowWidth() / getViewportAspectRatio());
+        float y1 = getWindowHeight() - height;
+        float y2 = y1 + height;
+        
         if( mDrawOnlyLastScene )
         {
             if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
@@ -949,7 +956,7 @@ void OculonApp::drawScenes(int layerIndex)
                 Scene* scene = mScenes[mLastActiveScene];
                 if( scene && scene->isVisible() )
                 {
-                    gl::draw( scene->getFboTexture(), Rectf( 0, 0, getWindowWidth(), getWindowHeight() ) );
+                    gl::draw( scene->getFboTexture(), Rectf( 0, y1, width, y2 ) );
                 }
             }
         }
@@ -1335,7 +1342,7 @@ Area OculonApp::getViewportBounds() const
     }
     else
     {
-        return getWindowBounds();
+        return Area( 0, 0, mViewportWidth, mViewportHeight );
     }
 }
 
@@ -1347,7 +1354,7 @@ Vec2i OculonApp::getViewportSize() const
     }
     else
     {
-        return getWindowSize();
+        return Vec2i( mViewportWidth, mViewportHeight );
     }
 }
 
@@ -1359,7 +1366,7 @@ float OculonApp::getViewportAspectRatio() const
     }
     else
     {
-        return getWindowAspectRatio();
+        return ((float)mViewportWidth / (float)mViewportHeight);
     }
 }
 
