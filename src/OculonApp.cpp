@@ -1051,8 +1051,7 @@ void OculonApp::draw()
     // capture video
 	if( mIsCapturingVideo )
     {
-        //TODO: capture direct from active scene FBO
-		mMovieWriter.addFrame( copyWindowSurface() );
+        mMovieWriter.addFrame( copyWindowSurface() );
     }
     
     // capture frames
