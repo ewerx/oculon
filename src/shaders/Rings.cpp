@@ -92,6 +92,12 @@ void Rings::draw()
 
 void Rings::shaderPreDraw()
 {
+    // audio texture
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().bindTexture(1);
+    }
+    
     mShader.bind();
     
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
@@ -100,6 +106,8 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iGlobalTime", (float)mElapsedTime );
     mShader.uniform( "iColor1", mColor1);
     mShader.uniform( "iColor2", mColor2);
+    
+    mShader.uniform( "iChannel0", 1 ); // audio
     
     mShader.uniform( "iTimeScale", mTimeScale );
     mShader.uniform( "iRings", (float)mNumRings );
@@ -152,6 +160,12 @@ void Rings::drawShaderOutput()
 void Rings::shaderPostDraw()
 {
     mShader.unbind();
+    
+    // audio texture
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().unbindTexture();
+    }
 }
 
 void Rings::drawScene()
@@ -175,5 +189,5 @@ void Rings::drawScene()
 
 void Rings::drawDebug()
 {
-    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
 }

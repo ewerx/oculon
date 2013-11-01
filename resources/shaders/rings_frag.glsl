@@ -23,7 +23,10 @@ precision highp float;
 
 void main(void)
 {
-    float scale  = cos(iGlobalTime*iTimeScale) * 0.01 + 0.011;
+    vec2 uv = (gl_FragCoord.xy - iResolution.xy*.5)/iResolution.x;
+    float sound = texture2D( iChannel0, vec2(0.01,1.0) ).x;
+    
+    float scale  = sound + 0.011;
     vec2 offset  = iResolution.xy*0.5;
     //		           + vec2(sin(iGlobalTime*0.3), cos(iGlobalTime*0.6))*100.0;
     
@@ -36,32 +39,32 @@ void main(void)
     float dist2 = (dist*dist)/scale;
     
     //
-    float cx = iCoefficients.x * 0.1;
-    float cy = iCoefficients.y * 0.1;
-    float cz = iCoefficients.z * 0.1;
-    float rings1 = abs( tan(dist/scale*cx*iGlobalTime) * sin(dist*0.01/scale) * 0.1 );
-    float rings2 = abs( tan(dist/scale*cy*iGlobalTime) * 0.1);
-    float rings3 = abs( cos(dist2*cz*iGlobalTime) * cos(dist2*0.0067*iGlobalTime));
+    float cx = iCoefficients.x * 0.1 * texture2D( iChannel0, vec2(0.1,1.0) ).x;
+    float cy = iCoefficients.y * 0.1 * texture2D( iChannel0, vec2(0.2,1.0) ).x;
+    float cz = iCoefficients.z * 0.1 * texture2D( iChannel0, vec2(0.3,1.0) ).x;
+    float rings1 = abs( tan(dist/scale*cx*iGlobalTime*iTimeScale) * sin(dist*0.01/scale) * 0.1 );
+    float rings2 = abs( tan(dist/scale*cy*iGlobalTime*iTimeScale) * 0.1);
+    float rings3 = abs( cos(dist2*cz*iGlobalTime*iTimeScale) * cos(dist2*0.0067*iGlobalTime*iTimeScale));
     
     vec4 color;
     if (iColorMode == 0)
     {
         float grey = rings1+rings2+rings3;
-        color = vec4(grey,grey,grey,1.0);
+        color = vec4(grey*iColor1.x,grey*iColor1.y,grey*iColor1.z,iColor1.a);
     }
     else if (iColorMode == 1)
     {
-        color = vec4(rings1,
-                     rings2,
-                     rings3,
-                     1.0);
+        color = vec4(rings1*iColor1.x,
+                     rings2*iColor1.y,
+                     rings3*iColor1.z,
+                     iColor1.a);
     }
     else if (iColorMode == 2) {
         // space eye
         
-        color = vec4( abs( sin(pos.y*dist2*0.1/scale)),
-                     abs( sin(pos.y*dist2*0.3/scale)  * sin(dist*1.1/scale)),
-                     abs( sin(pos.y*dist2*0.2/scale)) * cos(dist*0.05/scale),
+        color = vec4( abs( sin(pos.y*dist2*cx/scale)),
+                     abs( sin(pos.y*dist2*cy/scale)  * sin(dist*1.1/scale)),
+                     abs( sin(pos.y*dist2*cz/scale)) * cos(dist*0.05/scale),
                      1.0);
     }
     else if (iColorMode == 3)
