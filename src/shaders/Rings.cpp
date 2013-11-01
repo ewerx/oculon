@@ -37,6 +37,8 @@ void Rings::setup()
     mNumRings = 64;
     mSmoothing = 0.003f;
     mIntervals = 2.0f;
+    mColorMode = 0;
+    mCoefficients = Vec3f(1.66f,1.33f,1.33f);
     
     reset();
 }
@@ -54,14 +56,18 @@ void Rings::setupInterface()
     mInterface->addParam(CreateFloatParam( "Smoothing", &mSmoothing )
                          .minValue(0.0f)
                          .maxValue(0.1f));
-    mInterface->addParam(CreateIntParam( "NumRings", &mNumRings )
-                         .minValue(1)
-                         .maxValue(256));
+    
+    mInterface->addParam(CreateIntParam( "ColorMode", &mColorMode )
+                         .minValue(0)
+                         .maxValue(3));
+    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
+    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    
+    mInterface->gui()->addColumn();
+    mInterface->addParam(CreateVec3fParam("coeffs", &mCoefficients, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
     mInterface->addParam(CreateIntParam( "Intervals", &mIntervals )
                          .minValue(0)
                          .maxValue(128));
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
     //mAudioInputHandler.setupInterface(mInterface);
 }
@@ -99,6 +105,9 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iRings", (float)mNumRings );
     mShader.uniform( "iSmoothing", mSmoothing );
     mShader.uniform( "iIntervals", (float)mIntervals );
+    
+    mShader.uniform( "iColorMode", mColorMode );
+    mShader.uniform( "iCoefficients", mCoefficients );
 }
 
 void Rings::drawShaderOutput()

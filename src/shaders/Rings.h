@@ -61,5 +61,7 @@ private:
     int                 mNumRings;
     float               mSmoothing;
     int                 mIntervals;
+    int                 mColorMode;
+    ci::Vec3f           mCoefficients;
 };
 
