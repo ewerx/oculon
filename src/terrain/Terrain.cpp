@@ -125,8 +125,8 @@ void Terrain::setup()
     mTunnelDistance = -300.0f;
     mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ), true );
     mTunnelCam.mRadius = 200.0f;
-    mStaticCamPos = Vec3f( 220.0f, 1.0f, 255.0f );
-	mStaticCam.lookAt( mStaticCamPos, Vec3f( 0.0f, 0.0f, 0.0f ) );
+    
+    edgeCamera();
 
     //mApp->setCamera(Vec3f( 0.0f, 40.0f, 0.0f ), Vec3f( 0.0f, 0.0f, 0.0f ), Vec3f(1.0f,1.0f,0.0f));
     
@@ -141,7 +141,7 @@ void Terrain::setup()
 	mLight->enable();
     
     // AUDIO
-    mAudioFboDim    = 16; // 256 bands
+    mAudioFboDim    = VTF_FBO_SIZE; // 256 bands
     mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
     mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
     gl::Fbo::Format audioFboFormat;
@@ -238,8 +238,11 @@ void Terrain::setupInterface()
                         .maxValue(CAM_COUNT)
                         .oscReceiver(getName(), "camtype")
                         .isVertical(), camTypeNames);
-    mInterface->addParam(CreateVec3fParam("static_cam_pos", &mStaticCamPos, Vec3f(200.0f,-50.0f,200.0f), Vec3f(260.0f, 50.0f, 260.0f))
+    mInterface->addParam(CreateVec3fParam("static_cam_pos", &mStaticCamPos, Vec3f(0.0f,-100.0f,0.0f), Vec3f(256.0f, 100.0f, 256.0f))
                          .oscReceiver(getName()))->registerCallback( this, &Terrain::updateStaticCamPos );
+    mInterface->addButton(CreateTriggerParam("edge cam", NULL))->registerCallback(this, &Terrain::edgeCamera);
+    mInterface->addButton(CreateTriggerParam("face cam", NULL))->registerCallback(this, &Terrain::faceCamera);
+    
     mSplineCam.setupInterface(mInterface, mName);
     mTunnelCam.setupInterface(mInterface, mName);
 }
@@ -420,13 +423,14 @@ void Terrain::updateAudioResponse()
 	while( it.line() )
     {
         //int32_t index = row * mAudioFboDim;
-		while( it.pixel() && index < dataSize )
+		while( it.pixel() )
         {
             int32_t bandIndex = Rand::randInt(dataSize);//randIndex.nextInt(dataSize);
-            if (fftLogData[bandIndex].y > mFftFalloff[index])
+            float value = fftLogData[bandIndex].y * mGain;
+            if (value > mFftFalloff[index])
             {
                 //mFftFalloff[index] = fftLogData[bandIndex].y;
-                timeline().apply( &mFftFalloff[index], fftLogData[bandIndex].y, mFalloff/2.0f, getReverseFalloffFunction() );
+                timeline().apply( &mFftFalloff[index], value, mFalloff/2.0f, getReverseFalloffFunction() );
                 timeline().appendTo(&mFftFalloff[index], 0.0f, mFalloff, getReverseFalloffFunction() );
                 //timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
             } else if (fftLogData[bandIndex].y < mFftFalloff[index]) {
@@ -439,6 +443,9 @@ void Terrain::updateAudioResponse()
 			it.a() = 1.0f; // UNUSED
             
             ++index;
+            if (index == dataSize) {
+                index = 0;
+            }
 		}
         
         ++row;
@@ -541,6 +548,11 @@ void Terrain::draw()
 	gl::popMatrices();
     // restore OpenGL state
 	glPopAttrib();
+}
+
+void Terrain::drawFlatMesh()
+{
+    gl::pushMatrices();
 }
 
 void Terrain::drawMesh()
@@ -647,9 +659,13 @@ void Terrain::drawMesh()
         } else {
             gl::scale( 1.0f, scale, 1.0f );
         }
-    } else if (mMeshType == MESHTYPE_TORUS) {
+    }
+    else if (mMeshType == MESHTYPE_TORUS) {
         scale = mScale;
         gl::scale( scale, scale, scale );
+    }
+    else if (mMeshType == MESHTYPE_FLAT) {
+        gl::scale( 6.0f, 1.0f, 1.0f );
     }
 	gl::draw( mVboMesh[mCurMesh] );
     
@@ -677,6 +693,8 @@ void Terrain::drawMesh()
             // Draw mesh
             mShaderVtf.uniform( "faceAlpha", mMeshFaceAlpha );
             mShaderVtf.uniform( "lineAlpha", mMeshLineAlpha );
+            
+            
             if (mMeshType == MESHTYPE_TORUS) {
                 gl::scale( scale, scale, scale );
             }
@@ -739,6 +757,7 @@ void Terrain::drawDebug()
 		mDepthFbo.unbindTexture();
 	}
     
+    gl::pushMatrices();
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( getWindowSize() );
     
@@ -750,6 +769,7 @@ void Terrain::drawDebug()
     gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
     
     gl::disable( GL_TEXTURE_2D );
+    gl::popMatrices();
 }
 
 const Camera& Terrain::getCamera()
@@ -1018,4 +1038,22 @@ void Terrain::setupDynamicTexture()
 	}
     
     //mPerlin = Perlin( 3, clock() & 65535 );
+}
+
+#pragma mark - Cameras
+
+bool Terrain::faceCamera()
+{
+    mStaticCamPos = Vec3f( 128, 100.0f, 128.0f );
+	mStaticCam.lookAt( mStaticCamPos, Vec3f( mStaticCamPos.x, -1.0f, mStaticCamPos.z ) );
+    
+    return false;
+}
+
+bool Terrain::edgeCamera()
+{
+    mStaticCamPos = Vec3f( 248.0f, 20.0f, 248.0f );
+	mStaticCam.lookAt( mStaticCamPos, Vec3f( 0.0f, 0.0f, 0.0f ) );
+    
+    return false;
 }

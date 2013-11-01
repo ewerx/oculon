@@ -18,7 +18,7 @@ void main( void )
 	uv				= gl_MultiTexCoord0.st;
 	vec4 color		= texture2D( displacement, uv );
 	float offset	= color.r * height;
-	position		= gl_Vertex * vec4( scale, 1.0 );
+	position		= gl_Vertex * vec4( scale.x, scale.y, scale.z*2.0, 1.0 );
 	position.xyz	+= normal * scale * offset;
 	gl_Position		= gl_ModelViewProjectionMatrix * position;
     

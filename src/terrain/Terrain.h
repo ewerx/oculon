@@ -58,8 +58,11 @@ protected:
     
     void drawDynamicTexture();
     void drawMesh();
+    void drawFlatMesh();
     
     bool updateStaticCamPos();
+    bool faceCamera();
+    bool edgeCamera();
     
 private:
     // camera
