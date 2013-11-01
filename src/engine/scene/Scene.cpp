@@ -326,7 +326,7 @@ void Scene::setDebug(bool debug)
 
 bool Scene::onDebugChanged()
 {
-    mDebugParams.show(mIsDebug && mIsVisible);
+    mDebugParams.show(false);//mIsDebug && mIsVisible);
     handleDebugChanged();
     return false;
 }
