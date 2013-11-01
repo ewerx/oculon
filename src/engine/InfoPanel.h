@@ -13,6 +13,7 @@
 #include "cinder/Vector.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Color.h"
+#include "cinder/gl/TextureFont.h"
 #include <vector>
 #include <string>
 
@@ -28,6 +29,7 @@ public:
 	InfoPanel();
     virtual ~InfoPanel();
     
+    void init();
 	void update();
 	void render( ci::Vec2f aWindowDim );
 	void toggleState();// TODO: make this an event listener
@@ -37,13 +39,13 @@ public:
     void addLine( const std::string& line, const ci::Color& color );
     
 protected:
-    void createTexture();
+    //void createTexture();
 	
 private:
 	float				mOpacity;
 	bool				mIsVisible;
-	ci::gl::Texture     mTexture;
-    bool                mTextureReady;
+    
+    ci::gl::TextureFontRef mTextureFont;
     
     std::vector<InfoLine>      mLines;
 };

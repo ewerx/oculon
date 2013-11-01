@@ -186,6 +186,8 @@ void OculonApp::setup()
     mLastElapsedSeconds = getElapsedSeconds();
     mElapsedSecondsThisFrame = 0.0f;
     
+    mInfoPanel.init();
+    
     console() << "[main] vsync: " << (gl::isVerticalSyncEnabled() ? "on" : "off") << std::endl;
     
     setupScenes();
@@ -765,7 +767,7 @@ void OculonApp::update()
             if( time > 60.f )
             {
                 const int min = time / 60;
-                snprintf(buf, BUFSIZE, "-- finish in %dm%ds", min, mod((int)time,60));
+                snprintf(buf, BUFSIZE, "-- finish in %dm%f.0s", min, fmod(time,60.0f));
             }
             else
             {
