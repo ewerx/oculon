@@ -6,7 +6,7 @@
  *  Copyright 2011 ewerx. All rights reserved.
  *
  */
-
+#if 0
 #ifndef __GRAVITON_H__
 #define __GRAVITON_H__
 
@@ -280,3 +280,4 @@ private:
 };
 
 #endif // __Graviton_H__
+#endif//0

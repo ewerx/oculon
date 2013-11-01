@@ -71,14 +71,6 @@
 		7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C1D61764396F00E71F9D /* kiss_fftr.c */; };
 		7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C1D81764396F00E71F9D /* KissFFT.cpp */; };
 		7C79C27F176439A000E71F9D /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79C27E176439A000E71F9D /* OpenCL.framework */; };
-		7C79C69817643B1F00E71F9D /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C44517643B1E00E71F9D /* Color.cpp */; };
-		7C79C69917643B1F00E71F9D /* MSACoreGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C44C17643B1E00E71F9D /* MSACoreGL.cpp */; };
-		7C79C6E117643B1F00E71F9D /* MSAOpenCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C50517643B1F00E71F9D /* MSAOpenCL.cpp */; };
-		7C79C6E217643B1F00E71F9D /* MSAOpenCLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C50717643B1F00E71F9D /* MSAOpenCLBuffer.cpp */; };
-		7C79C6E317643B1F00E71F9D /* MSAOpenCLImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C50917643B1F00E71F9D /* MSAOpenCLImage.cpp */; };
-		7C79C6E417643B1F00E71F9D /* MSAOpenCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C50C17643B1F00E71F9D /* MSAOpenCLKernel.cpp */; };
-		7C79C6E517643B1F00E71F9D /* MSAOpenCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C50E17643B1F00E71F9D /* MSAOpenCLMemoryObject.cpp */; };
-		7C79C6E617643B1F00E71F9D /* MSAOpenCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C51017643B1F00E71F9D /* MSAOpenCLProgram.cpp */; };
 		7C79C75117650AA900E71F9D /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79BE401764384B00E71F9D /* Syphon.framework */; };
 		7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C7A717650C5D00E71F9D /* MeshHelper.cpp */; };
 		7C79C82717650D5F00E71F9D /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C7E617650D5F00E71F9D /* RtMidi.cpp */; };
@@ -252,7 +244,6 @@
 		7C79CA5A17650FD800E71F9D /* Lantern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9CF17650FD700E71F9D /* Lantern.cpp */; };
 		7C79CA5B17650FD800E71F9D /* Nebula.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9D117650FD700E71F9D /* Nebula.cpp */; };
 		7C79CA5C17650FD800E71F9D /* Predator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9D317650FD700E71F9D /* Predator.cpp */; };
-		7C79CA5D17650FD800E71F9D /* Graviton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9D617650FD700E71F9D /* Graviton.cpp */; };
 		7C79CA5E17650FD800E71F9D /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9DA17650FD700E71F9D /* Grid.cpp */; };
 		7C79CA5F17650FD800E71F9D /* Polyhedron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9DD17650FD700E71F9D /* Polyhedron.cpp */; };
 		7C79CA6017650FD800E71F9D /* Quake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9E017650FD700E71F9D /* Quake.cpp */; };
@@ -282,7 +273,6 @@
 		7C79CA7D17650FD800E71F9D /* CoronaStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA2317650FD800E71F9D /* CoronaStar.cpp */; };
 		7C79CA7E17650FD800E71F9D /* CubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA2517650FD800E71F9D /* CubeMap.cpp */; };
 		7C79CA7F17650FD800E71F9D /* Room.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA2817650FD800E71F9D /* Room.cpp */; };
-		7C79CA8017650FD800E71F9D /* Magnetosphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA2B17650FD800E71F9D /* Magnetosphere.cpp */; };
 		7C79CB0117651E6800E71F9D /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79CB0017651E6700E71F9D /* CoreMIDI.framework */; };
 		7C79CB0517651E9300E71F9D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79CB0417651E9100E71F9D /* IOKit.framework */; };
 		7C79CB0A176527F900E71F9D /* pf_tempesta_seven.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C79CB09176527F900E71F9D /* pf_tempesta_seven.ttf */; };
@@ -522,33 +512,6 @@
 		7C79C1D81764396F00E71F9D /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
 		7C79C1D91764396F00E71F9D /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
 		7C79C27E176439A000E71F9D /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		7C79C44317643B1E00E71F9D /* ChanTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanTraits.h; sourceTree = "<group>"; };
-		7C79C44417643B1E00E71F9D /* CinderMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CinderMath.h; sourceTree = "<group>"; };
-		7C79C44517643B1E00E71F9D /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
-		7C79C44617643B1E00E71F9D /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
-		7C79C44717643B1E00E71F9D /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
-		7C79C44817643B1E00E71F9D /* MSACore-Cinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MSACore-Cinder.h"; sourceTree = "<group>"; };
-		7C79C44917643B1E00E71F9D /* MSACore-OF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MSACore-OF.h"; sourceTree = "<group>"; };
-		7C79C44A17643B1E00E71F9D /* MSACore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSACore.h; sourceTree = "<group>"; };
-		7C79C44B17643B1E00E71F9D /* MSACoreCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSACoreCommon.h; sourceTree = "<group>"; };
-		7C79C44C17643B1E00E71F9D /* MSACoreGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSACoreGL.cpp; sourceTree = "<group>"; };
-		7C79C44D17643B1E00E71F9D /* MSACoreGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSACoreGL.h; sourceTree = "<group>"; };
-		7C79C44E17643B1E00E71F9D /* MSACoreMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSACoreMath.h; sourceTree = "<group>"; };
-		7C79C50517643B1F00E71F9D /* MSAOpenCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCL.cpp; sourceTree = "<group>"; };
-		7C79C50617643B1F00E71F9D /* MSAOpenCL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCL.h; sourceTree = "<group>"; };
-		7C79C50717643B1F00E71F9D /* MSAOpenCLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLBuffer.cpp; sourceTree = "<group>"; };
-		7C79C50817643B1F00E71F9D /* MSAOpenCLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLBuffer.h; sourceTree = "<group>"; };
-		7C79C50917643B1F00E71F9D /* MSAOpenCLImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLImage.cpp; sourceTree = "<group>"; };
-		7C79C50A17643B1F00E71F9D /* MSAOpenCLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLImage.h; sourceTree = "<group>"; };
-		7C79C50B17643B1F00E71F9D /* MSAOpenCLImagePingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MSAOpenCLImagePingPong.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		7C79C50C17643B1F00E71F9D /* MSAOpenCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLKernel.cpp; sourceTree = "<group>"; };
-		7C79C50D17643B1F00E71F9D /* MSAOpenCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLKernel.h; sourceTree = "<group>"; };
-		7C79C50E17643B1F00E71F9D /* MSAOpenCLMemoryObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLMemoryObject.cpp; sourceTree = "<group>"; };
-		7C79C50F17643B1F00E71F9D /* MSAOpenCLMemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLMemoryObject.h; sourceTree = "<group>"; };
-		7C79C51017643B1F00E71F9D /* MSAOpenCLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSAOpenCLProgram.cpp; sourceTree = "<group>"; };
-		7C79C51117643B1F00E71F9D /* MSAOpenCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLProgram.h; sourceTree = "<group>"; };
-		7C79C51217643B1F00E71F9D /* MSAOpenCLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAOpenCLTypes.h; sourceTree = "<group>"; };
-		7C79C54F17643B1F00E71F9D /* MSAPingPong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAPingPong.h; sourceTree = "<group>"; };
 		7C79C7A717650C5D00E71F9D /* MeshHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshHelper.cpp; sourceTree = "<group>"; };
 		7C79C7A817650C5D00E71F9D /* MeshHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshHelper.h; sourceTree = "<group>"; };
 		7C79C7DF17650D5F00E71F9D /* MidiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiConstants.h; sourceTree = "<group>"; };
@@ -1044,7 +1007,6 @@
 				7C79C1561764396E00E71F9D /* KissFft */,
 				7C79C7A617650C5D00E71F9D /* MeshHelper */,
 				7C79C7DD17650D5F00E71F9D /* MIDI */,
-				7C79C28017643B1E00E71F9D /* msalibs */,
 				0E1715E9BB644818BD13AACA /* OSC */,
 				7C79BDE31764384A00E71F9D /* SimpleGUI */,
 				7C79BE301764384B00E71F9D /* Syphon */,
@@ -1420,97 +1382,6 @@
 				7C79C1D71764396F00E71F9D /* kiss_fftr.h */,
 			);
 			path = kiss;
-			sourceTree = "<group>";
-		};
-		7C79C28017643B1E00E71F9D /* msalibs */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C43F17643B1E00E71F9D /* MSACore */,
-				7C79C4E617643B1F00E71F9D /* MSAOpenCL */,
-				7C79C54D17643B1F00E71F9D /* MSAPingPong */,
-			);
-			name = msalibs;
-			path = ../../sdks/msalibs;
-			sourceTree = "<group>";
-		};
-		7C79C43F17643B1E00E71F9D /* MSACore */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C44117643B1E00E71F9D /* src */,
-			);
-			path = MSACore;
-			sourceTree = "<group>";
-		};
-		7C79C44117643B1E00E71F9D /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C44217643B1E00E71F9D /* cinder-lite */,
-				7C79C44817643B1E00E71F9D /* MSACore-Cinder.h */,
-				7C79C44917643B1E00E71F9D /* MSACore-OF.h */,
-				7C79C44A17643B1E00E71F9D /* MSACore.h */,
-				7C79C44B17643B1E00E71F9D /* MSACoreCommon.h */,
-				7C79C44C17643B1E00E71F9D /* MSACoreGL.cpp */,
-				7C79C44D17643B1E00E71F9D /* MSACoreGL.h */,
-				7C79C44E17643B1E00E71F9D /* MSACoreMath.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		7C79C44217643B1E00E71F9D /* cinder-lite */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C44317643B1E00E71F9D /* ChanTraits.h */,
-				7C79C44417643B1E00E71F9D /* CinderMath.h */,
-				7C79C44517643B1E00E71F9D /* Color.cpp */,
-				7C79C44617643B1E00E71F9D /* Color.h */,
-				7C79C44717643B1E00E71F9D /* Vector.h */,
-			);
-			path = "cinder-lite";
-			sourceTree = "<group>";
-		};
-		7C79C4E617643B1F00E71F9D /* MSAOpenCL */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C50417643B1F00E71F9D /* src */,
-			);
-			path = MSAOpenCL;
-			sourceTree = "<group>";
-		};
-		7C79C50417643B1F00E71F9D /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C50517643B1F00E71F9D /* MSAOpenCL.cpp */,
-				7C79C50617643B1F00E71F9D /* MSAOpenCL.h */,
-				7C79C50717643B1F00E71F9D /* MSAOpenCLBuffer.cpp */,
-				7C79C50817643B1F00E71F9D /* MSAOpenCLBuffer.h */,
-				7C79C50917643B1F00E71F9D /* MSAOpenCLImage.cpp */,
-				7C79C50A17643B1F00E71F9D /* MSAOpenCLImage.h */,
-				7C79C50B17643B1F00E71F9D /* MSAOpenCLImagePingPong.h */,
-				7C79C50C17643B1F00E71F9D /* MSAOpenCLKernel.cpp */,
-				7C79C50D17643B1F00E71F9D /* MSAOpenCLKernel.h */,
-				7C79C50E17643B1F00E71F9D /* MSAOpenCLMemoryObject.cpp */,
-				7C79C50F17643B1F00E71F9D /* MSAOpenCLMemoryObject.h */,
-				7C79C51017643B1F00E71F9D /* MSAOpenCLProgram.cpp */,
-				7C79C51117643B1F00E71F9D /* MSAOpenCLProgram.h */,
-				7C79C51217643B1F00E71F9D /* MSAOpenCLTypes.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		7C79C54D17643B1F00E71F9D /* MSAPingPong */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C54E17643B1F00E71F9D /* src */,
-			);
-			path = MSAPingPong;
-			sourceTree = "<group>";
-		};
-		7C79C54E17643B1F00E71F9D /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C54F17643B1F00E71F9D /* MSAPingPong.h */,
-			);
-			path = src;
 			sourceTree = "<group>";
 		};
 		7C79C7A617650C5D00E71F9D /* MeshHelper */ = {
@@ -2666,13 +2537,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6B5DD2F06F6B4B088DB99A04 /* OculonApp.cpp in Sources */,
-				7C79C69917643B1F00E71F9D /* MSACoreGL.cpp in Sources */,
-				7C79C6E117643B1F00E71F9D /* MSAOpenCL.cpp in Sources */,
-				7C79C6E217643B1F00E71F9D /* MSAOpenCLBuffer.cpp in Sources */,
-				7C79C6E317643B1F00E71F9D /* MSAOpenCLImage.cpp in Sources */,
-				7C79C6E417643B1F00E71F9D /* MSAOpenCLKernel.cpp in Sources */,
-				7C79C6E517643B1F00E71F9D /* MSAOpenCLMemoryObject.cpp in Sources */,
-				7C79C6E617643B1F00E71F9D /* MSAOpenCLProgram.cpp in Sources */,
 				6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */,
 				0F8E5D279996421AA4C7F140 /* b2CollideCircle.cpp in Sources */,
 				6441107BE6AC498F99714408 /* b2CollideEdge.cpp in Sources */,
@@ -2737,7 +2601,6 @@
 				7C79C2471764396F00E71F9D /* kiss_fft.c in Sources */,
 				7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */,
 				7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */,
-				7C79C69817643B1F00E71F9D /* Color.cpp in Sources */,
 				7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */,
 				7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */,
 				7C79C82717650D5F00E71F9D /* RtMidi.cpp in Sources */,
@@ -2825,7 +2688,6 @@
 				7C79CA5A17650FD800E71F9D /* Lantern.cpp in Sources */,
 				7C79CA5B17650FD800E71F9D /* Nebula.cpp in Sources */,
 				7C79CA5C17650FD800E71F9D /* Predator.cpp in Sources */,
-				7C79CA5D17650FD800E71F9D /* Graviton.cpp in Sources */,
 				7C79CA5E17650FD800E71F9D /* Grid.cpp in Sources */,
 				7C79CA5F17650FD800E71F9D /* Polyhedron.cpp in Sources */,
 				7C79CA6017650FD800E71F9D /* Quake.cpp in Sources */,
@@ -2855,7 +2717,6 @@
 				7C79CA7D17650FD800E71F9D /* CoronaStar.cpp in Sources */,
 				7C79CA7E17650FD800E71F9D /* CubeMap.cpp in Sources */,
 				7C79CA7F17650FD800E71F9D /* Room.cpp in Sources */,
-				7C79CA8017650FD800E71F9D /* Magnetosphere.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

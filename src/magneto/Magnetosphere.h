@@ -6,7 +6,7 @@
  *  Copyright 2011 ewerx. All rights reserved.
  *
  */
-
+#if 0
 #ifndef __MAGNETOSPHERE_H__
 #define __MAGNETOSPHERE_H__
 
@@ -173,3 +173,4 @@ private:
 };
 
 #endif // __MAGNETOSPHERE_H__
+#endif//0

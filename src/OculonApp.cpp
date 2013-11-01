@@ -339,7 +339,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("binned") )     addScene( new Binned() );
-    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
+//    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
     
     if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
     if( mConfig.getBool("flock") )      addScene( new Flock() );
@@ -351,7 +351,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
     
     if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
-    if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
+//    if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
 //    if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     
