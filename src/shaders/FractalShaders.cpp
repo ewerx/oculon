@@ -1,5 +1,5 @@
 //
-//  Rings.cpp
+//  FractalShaders.cpp
 //  Oculon
 //
 //  Created by Ehsan on 13-10-24.
@@ -7,7 +7,7 @@
 //
 
 #include "OculonApp.h"
-#include "Rings.h"
+#include "FractalShaders.h"
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include <boost/format.hpp>
@@ -15,42 +15,39 @@
 
 using namespace ci;
 
-Rings::Rings()
-: Scene("Rings")
-{
-    mAudioInputHandler.setup(this, true);
-}
-
-Rings::~Rings()
+FractalShaders::FractalShaders()
+: Scene("FractalShaders")
 {
 }
 
-void Rings::setup()
+FractalShaders::~FractalShaders()
+{
+}
+
+void FractalShaders::setup()
 {
     Scene::setup();
     
-    mShader = loadFragShader("rings_frag.glsl");
+    mShader = loadFragShader("FractalShaders_frag.glsl");
     
     reset();
 }
 
-void Rings::reset()
+void FractalShaders::reset()
 {
     mElapsedTime = 0.0f;
 }
 
-void Rings::setupInterface()
+void FractalShaders::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
                          .minValue(0.0f)
                          .maxValue(2.0f));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
-    
-    mAudioInputHandler.setupInterface(mInterface);
 }
 
-void Rings::update(double dt)
+void FractalShaders::update(double dt)
 {
     Scene::update(dt);
     
@@ -59,7 +56,7 @@ void Rings::update(double dt)
     mElapsedTime += dt;
 }
 
-void Rings::draw()
+void FractalShaders::draw()
 {
     gl::pushMatrices();
 
@@ -68,7 +65,7 @@ void Rings::draw()
     gl::popMatrices();
 }
 
-void Rings::shaderPreDraw()
+void FractalShaders::shaderPreDraw()
 {
     mShader.bind();
     
@@ -78,7 +75,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
 }
 
-void Rings::drawShaderOutput()
+void FractalShaders::drawShaderOutput()
 {
     // Draw shader output
     gl::enable( GL_TEXTURE_2D );
@@ -117,12 +114,12 @@ void Rings::drawShaderOutput()
     gl::end();
 }
 
-void Rings::shaderPostDraw()
+void FractalShaders::shaderPostDraw()
 {
     mShader.unbind();
 }
 
-void Rings::drawScene()
+void FractalShaders::drawScene()
 {
     gl::enableAlphaBlending();
     
@@ -141,7 +138,7 @@ void Rings::drawScene()
     gl::popMatrices();
 }
 
-void Rings::drawDebug()
+void FractalShaders::drawDebug()
 {
     mAudioInputHandler.drawDebug(mApp->getViewportSize());
 }

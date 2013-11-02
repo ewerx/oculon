@@ -53,39 +53,48 @@ private:
     void shaderPostDraw();
     
 private:
-
-    //ci::gl::GlslProg    mShader;
     
-    // audio
-    //AudioInputHandler   mAudioInputHandler;
-    
-    // params
+    // global params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
     float               mTimeScale;
     double              mElapsedTime;
     
-    bool                mHighlightAudioResponse;
     float               mAudioResponseFreqMin;
     float               mAudioResponseFreqMax;
     
-#define SHADERS_TUPLE \
-SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
+    // color maps
+    enum { MAX_COLORMAPS = 4 };
+    ci::gl::Texture     mColorMapTexture[MAX_COLORMAPS];
+    int                 mColorMapIndex;
+    
+    // shaders
+#define TS_SHADERS_TUPLE \
+TS_SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
+TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
 //end tuple
     
     enum eShaderType
     {
-#define SHADERS_ENTRY( nam, glsl, enm ) \
+#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
 enm,
-        SHADERS_TUPLE
-#undef  SHADERS_ENTRY
+        TS_SHADERS_TUPLE
+#undef  TS_SHADERS_ENTRY
         
         SHADERS_COUNT
     };
     eShaderType   mShaderType;
     
+    std::vector<ci::gl::GlslProg> mShaders;
+    
+    // rendering
+    bool mDrawOnSphere;
+    ci::gl::Fbo mShaderFbo;
+    
+    // shader params
     struct tCellsParams
     {
+        bool mHighlightAudioResponse;
         float mCellSize; //
         float mHighlight; // 6
         float mTimeStep1;
@@ -98,9 +107,23 @@ enm,
     };
     tCellsParams    mCellsParams;
     
-    std::vector<ci::gl::GlslProg> mShaders;
-    
-    bool mDrawOnSphere;
-    ci::gl::Fbo mShaderFbo;
+    struct tKaliParams
+    {
+        int iterations;
+        float scale;
+        ci::Vec2f fold;
+        ci::Vec2f translate;
+        float zoom;
+        float brightness;
+        float saturation;
+        float texturescale;
+        
+        float rotspeed;
+        
+        float colspeed;
+        
+        float antialias;
+    };
+    tKaliParams mKaliParams;
 };
 

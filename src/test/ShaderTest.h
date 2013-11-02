@@ -70,7 +70,6 @@ private:
 #define SHADERS_TUPLE \
 SHADERS_ENTRY( "Noise", SHADER_NOISE ) \
 SHADERS_ENTRY( "Simplicity", SHADER_SIMPLICITY ) \
-SHADERS_ENTRY( "KIFS", SHADER_PAINT ) \
 SHADERS_ENTRY( "Voronoi", SHADER_VORONOI ) \
 SHADERS_ENTRY( "Tripping", SHADER_TRIPPING ) \
 SHADERS_ENTRY( "Stripes", SHADER_STRIPES ) \
@@ -141,24 +140,7 @@ enm,
     };
     tNoiseParams        mNoiseParams;
     
-    struct tKaliParams
-    {
-        int iterations;
-        float scale;
-        ci::Vec2f fold;
-        ci::Vec2f translate;
-        float zoom;
-        float brightness;
-        float saturation;
-        float texturescale;
-        
-        float rotspeed;
-        
-        float colspeed;
-        
-        float antialias;
-    };
-    tKaliParams mKaliParams;
+    
     
     struct tVoronoiParams
     {

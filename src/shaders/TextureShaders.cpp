@@ -31,11 +31,6 @@ void TextureShaders::setup()
 {
     Scene::setup();
     
-    setupShaders();
-    
-    mShaderType = SHADER_CELLS;
-
-    mDrawOnSphere = false;
     gl::Fbo::Format format;
     format.enableMipmapping(false);
     format.enableDepthBuffer(false);
@@ -44,21 +39,37 @@ void TextureShaders::setup()
 	//format.setColorInternalFormat( GL_RGB32F_ARB );
     mShaderFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
     
-    mHighlightAudioResponse = true;
+    setupShaders();
+    
+    // color maps
+    mColorMapTexture[0] = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) );
+    mColorMapTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) );
+    mColorMapTexture[2] = gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ) );
+    mColorMapTexture[3] = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) );
+    mColorMapIndex = 0;
+    
+    mShaderType = SHADER_CELLS;
+
+    mDrawOnSphere = false;
+    
+    mAudioResponseFreqMin = 0.0f;
+    mAudioResponseFreqMax = 1.0f;
+    
+    mColor1 = ColorA::white();
+    mColor2 = ColorA::black();
     
     reset();
 }
 
 void TextureShaders::setupShaders()
 {
-#define SHADERS_ENTRY( nam, glsl, enm ) \
+#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
     mShaders.push_back( loadFragShader( glsl ) );
-SHADERS_TUPLE
-#undef SHADERS_ENTRY
+TS_SHADERS_TUPLE
+#undef TS_SHADERS_ENTRY
     
-    mColor1 = ColorA::white();
-    mColor2 = ColorA::black();
-    
+    // cells
+    mCellsParams.mHighlightAudioResponse = true;
     mCellsParams.mCellSize = 1.0f;
     mCellsParams.mHighlight = 0.6f;
     
@@ -70,6 +81,19 @@ SHADERS_TUPLE
     mCellsParams.mTimeStep6 = 0.065f;
     mCellsParams.mTimeStep7 = 0.0f;
     
+    // kali
+    mKaliParams.iterations=20;
+    mKaliParams.scale=1.35f;
+    mKaliParams.fold= Vec2f(0.5f,0.5f);
+    mKaliParams.translate= Vec2f(1.5f,1.5f);
+    mKaliParams.zoom=0.17f;
+    mKaliParams.brightness=7.f;
+    mKaliParams.saturation=0.2f;
+    mKaliParams.texturescale=0.15f;
+    mKaliParams.rotspeed=0.005f;
+    mKaliParams.colspeed=0.05f;
+    mKaliParams.antialias=2.f;
+    
 }
 
 void TextureShaders::reset()
@@ -80,10 +104,10 @@ void TextureShaders::reset()
 void TextureShaders::setupInterface()
 {
     vector<string> shaderNames;
-#define SHADERS_ENTRY( nam, glsl, enm ) \
+#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
     shaderNames.push_back(nam);
-SHADERS_TUPLE
-#undef  SHADERS_ENTRY
+TS_SHADERS_TUPLE
+#undef  TS_SHADERS_ENTRY
     mInterface->addEnum(CreateEnumParam( "Shader", (int*)(&mShaderType) )
                         .maxValue(SHADERS_COUNT)
                         .oscReceiver(getName(), "shader")
@@ -94,6 +118,10 @@ SHADERS_TUPLE
                          .maxValue(2.0f));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    
+    mInterface->addParam(CreateIntParam( "colormap", &mColorMapIndex )
+                         .maxValue(MAX_COLORMAPS-1)
+                         .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam("color1alpha", &(mColor1.a))
                          .oscReceiver(getName())
@@ -116,6 +144,8 @@ SHADERS_TUPLE
                          .maxValue(3.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 16));
+    mInterface->addParam(CreateBoolParam( "HighlightByAudio", &mCellsParams.mHighlightAudioResponse )
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "Highlight", &mCellsParams.mHighlight )
                          .maxValue(6.0f)
                          .oscReceiver(getName())
@@ -144,21 +174,62 @@ SHADERS_TUPLE
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
     
-    //mAudioInputHandler.setupInterface(mInterface);
+    // SHADER_KALI
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Kali");
+    mInterface->addParam(CreateIntParam( "kali/iterations", &mKaliParams.iterations )
+                         .maxValue(64)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec2fParam("kali/fold", &mKaliParams.fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateVec2fParam("kali/translate", &mKaliParams.translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "kali/scale", &mKaliParams.scale )
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    //.midiInput(0, 2, 19));
+    mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
+                         .maxValue(20.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/saturation", &mKaliParams.saturation )
+                         .maxValue(2.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
+                         .maxValue(0.1f)
+                         .oscReceiver(getName()));
+    //.midiInput(0, 2, 20));
+    mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
+                         .maxValue(2.0f)
+                         .oscReceiver(getName()));
 }
 
 void TextureShaders::update(double dt)
 {
     Scene::update(dt);
     
-    //mAudioInputHandler.update(dt, mApp->getAudioInput());
-    
     mElapsedTime += dt;
     
-    if (mHighlightAudioResponse)
+    switch (mShaderType)
     {
-        const float midHighVolume = mApp->getAudioInput().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
-        mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
+        case SHADER_CELLS:
+            if (mCellsParams.mHighlightAudioResponse)
+            {
+                const float midHighVolume = mApp->getAudioInput().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
+                mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
+            }
+            break;
+            
+        default:
+            break;
     }
     
     if (mDrawOnSphere)
@@ -188,6 +259,12 @@ void TextureShaders::draw()
 
 void TextureShaders::shaderPreDraw()
 {
+    mColorMapTexture[mColorMapIndex].bind(0);
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().bindTexture(1);
+    }
+    
     gl::GlslProg shader = mShaders[mShaderType];
     shader.bind();
     
@@ -208,6 +285,20 @@ void TextureShaders::shaderPreDraw()
             shader.uniform("iTimeStep5", mCellsParams.mTimeStep5);
             shader.uniform("iTimeStep6", mCellsParams.mTimeStep6);
             shader.uniform("iTimeStep7", mCellsParams.mTimeStep7);
+            break;
+        case SHADER_KALI:
+            shader.uniform( "iChannel0", 0 );
+            shader.uniform( "iterations", mKaliParams.iterations );
+            shader.uniform( "scale", mKaliParams.scale );
+            shader.uniform( "fold", mKaliParams.fold );
+            shader.uniform( "translate", mKaliParams.translate );
+            shader.uniform( "zoom", mKaliParams.zoom );
+            shader.uniform( "brightness", mKaliParams.brightness );
+            shader.uniform( "saturation", mKaliParams.saturation );
+            shader.uniform( "texturescale", mKaliParams.texturescale );
+            shader.uniform( "rotspeed", mKaliParams.rotspeed );
+            shader.uniform( "colspeed", mKaliParams.colspeed );
+            shader.uniform( "antialias", mKaliParams.antialias );
             break;
             
         default:
@@ -257,6 +348,12 @@ void TextureShaders::drawShaderOutput()
 void TextureShaders::shaderPostDraw()
 {
     mShaders[mShaderType].unbind();
+    
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().unbindTexture();
+    }
+    mColorMapTexture[mColorMapIndex].unbind();
 }
 
 void TextureShaders::drawScene()

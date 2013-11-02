@@ -100,26 +100,6 @@ void ShaderTest::setupShaders()
         // MENGER
 //        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
 //        mShaders.push_back(shader);
-        
-        // KALI
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_PAINT_FRAG ) );
-        mShaders.push_back(shader);
-        
-        mKaliParams.iterations=20;
-        mKaliParams.scale=1.35f;
-        mKaliParams.fold= Vec2f(0.5f,0.5f);
-        mKaliParams.translate= Vec2f(1.5f,1.5f);
-        mKaliParams.zoom=0.17f;
-        mKaliParams.brightness=7.f;
-        mKaliParams.saturation=0.2f;
-        mKaliParams.texturescale=0.15f;
-        
-        mKaliParams.rotspeed=0.005f;
-        
-        mKaliParams.colspeed=0.05f;
-        
-        mKaliParams.antialias=2.f;
-        mTextureIndex = 0;
     
         // VORONOI
         shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_VORONOI_FRAG ) );
@@ -324,44 +304,7 @@ shaderNames.push_back(nam);
                          .minValue(0.01f)
                          .maxValue(4.0f));
     
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Kali");
-    mInterface->addParam(CreateIntParam( "texture", &mTextureIndex )
-                         .maxValue(MAX_TEXTURES-1)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "kali/iterations", &mKaliParams.iterations )
-                         .maxValue(64)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec2fParam("kali/fold", &mKaliParams.fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateVec2fParam("kali/translate", &mKaliParams.translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "kali/scale", &mKaliParams.scale )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-                         //.midiInput(0, 2, 19));
-    mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
-                         .maxValue(20.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/saturation", &mKaliParams.saturation )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
-                         .maxValue(0.1f)
-                         .oscReceiver(getName()));
-                         //.midiInput(0, 2, 20));
-    mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
+    
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Voronoi");
@@ -512,22 +455,7 @@ void ShaderTest::shaderPreDraw()
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mElapsedTime );
             break;
-        case SHADER_PAINT:
-            shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mElapsedTime );
-            shader.uniform( "iChannel0", 0 );
-            shader.uniform( "iterations", mKaliParams.iterations );
-            shader.uniform( "scale", mKaliParams.scale );
-            shader.uniform( "fold", mKaliParams.fold );
-            shader.uniform( "translate", mKaliParams.translate );
-            shader.uniform( "zoom", mKaliParams.zoom );
-            shader.uniform( "brightness", mKaliParams.brightness );
-            shader.uniform( "saturation", mKaliParams.saturation );
-            shader.uniform( "texturescale", mKaliParams.texturescale );
-            shader.uniform( "rotspeed", mKaliParams.rotspeed );
-            shader.uniform( "colspeed", mKaliParams.colspeed );
-            shader.uniform( "antialias", mKaliParams.antialias );
-            break;
+        
             
         case SHADER_VORONOI:
             shader.uniform( "iResolution", resolution );
@@ -562,7 +490,7 @@ void ShaderTest::shaderPreDraw()
 //            break;
 
         case SHADER_CYMATICS:
-            shader.uniform( "iMouse", mKaliParams.translate );
+//            shader.uniform( "iMouse", mKaliParams.translate );
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
             break;
