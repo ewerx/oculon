@@ -72,9 +72,9 @@ void InfoPanel::render( Vec2f aWindowDim )
         float y = aWindowDim.y - h - 20.0f;
         
         glDisable( GL_TEXTURE_2D );
-        //const float pad = 4.0f;
-        //glColor4f( 0.1, 0.1, 0.1, mOpacity*0.8f );
-        //gl::drawSolidRect( Rectf( x-pad, y-pad, x+mTexture.getWidth()+pad, y+mTexture.getHeight()+pad ) );
+        const float pad = 4.0f;
+        gl::color( 0.1, 0.1, 0.1, mOpacity*0.8f );
+        gl::drawSolidRect( Rectf( x-pad, y-pad, x+w+pad, y+h+pad ) );
         
         glEnable( GL_TEXTURE_2D );
         glColor4f( 1, 1, 1, mOpacity );

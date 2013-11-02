@@ -511,20 +511,25 @@ bool Scene::isBoxInFrustum( const Vec3f &loc, const Vec3f &size )
 
 gl::GlslProg Scene::loadFragShader( const std::string& filename )
 {
+    return loadVertAndFragShaders(RES_PASSTHRU2_VERT, filename);
+}
+
+gl::GlslProg Scene::loadVertAndFragShaders(const std::string &vertShader, const std::string &fragShader)
+{
     gl::GlslProg shader;
     
     try
     {
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( filename ) );
+        shader = gl::GlslProg( loadResource( vertShader ), loadResource( fragShader ) );
     }
     catch( gl::GlslProgCompileExc &exc )
     {
-		console() << "Shader (" << filename << ") compile error: " << std::endl;
+		console() << "Shader (" << vertShader << " / " << fragShader << ") compile error: " << std::endl;
 		console() << exc.what();
 	}
 	catch( ... )
     {
-		console() << "Unable to load shader" << std::endl;
+		console() << "Unable to load shaders (" << vertShader << " / " << fragShader << ")"  << std::endl;
 	}
     
     return shader;

@@ -110,6 +110,7 @@ protected:
     
     // helpers
     ci::gl::GlslProg loadFragShader( const std::string& filename );
+    ci::gl::GlslProg loadVertAndFragShaders( const std::string& vertShader, const std::string& fragShader );
 
 protected:
     friend class OculonApp;

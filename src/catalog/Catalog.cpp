@@ -342,7 +342,7 @@ void Catalog::draw()
     //gl::clear( Color( 0, 0, 0 ) );
 	gl::color( ColorA( 1, 1, 1, 1 ) );
     
-	gl::setMatricesWindow( mApp->getViewportSize(), false );
+	//gl::setMatricesWindow( mApp->getViewportSize(), false );
 	gl::setViewport( mApp->getViewportBounds() );
     
 	gl::disableDepthRead();
@@ -356,7 +356,7 @@ void Catalog::draw()
 	mRoomFbo.bindTexture();
 	gl::drawSolidRect( mApp->getViewportBounds() );
 	*/
-	gl::setMatricesWindow( mApp->getViewportSize(), true );
+	//gl::setMatricesWindow( mApp->getViewportSize(), true );
 	
     const float starDrawMinAlpha = 0.001f;
 	float power = mStarfieldAlpha;
@@ -368,12 +368,6 @@ void Catalog::draw()
 	}
     
 	gl::setMatrices( getCamera() );
-	
-    /*
-	// DRAW PANEL
-	if( power < 0.1f )
-		drawInfoPanel();
-	*/
     
 	gl::enable( GL_TEXTURE_2D );
 	

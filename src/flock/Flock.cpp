@@ -195,12 +195,6 @@ void Flock::initialize()
 	
 	initVbo();
 	initPredatorVbo();
-    
-    // AUDIO
-    mAudioFboDim    = 16; // 256 bands
-    mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
-    mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
-    mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, mRgba16Format );
 }
 
 void Flock::setFboPositions( gl::Fbo fbo )
@@ -618,9 +612,6 @@ void Flock::update(double dt)
 	gl::disableDepthWrite();
 	gl::color( Color( 1, 1, 1 ) );
     gl::pushMatrices();
-    
-    // AUDIO
-    updateAudioResponse();
 
 	drawIntoVelocityFbo(dt);
 	drawIntoPositionFbo(dt);
@@ -629,40 +620,6 @@ void Flock::update(double dt)
 	drawIntoLanternsFbo();
     
     gl::popMatrices();
-}
-
-void Flock::updateAudioResponse()
-{
-    AudioInput& audioInput = mApp->getAudioInput();
-	
-    // Get data
-    //float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    int32_t index = 0;
-    
-	Surface32f fftSurface( mAudioFbo.getTexture() );
-	Surface32f::Iter it = fftSurface.getIter();
-	while( it.line() )
-    {
-		while( it.pixel() && index < dataSize )
-        {
-			it.r() = fftLogData[index].y;
-            it.g() = 0.0f; // UNUSED
-			it.b() = 0.0f; // UNUSED
-			it.a() = 1.0f; // UNUSED
-            ++index;
-		}
-	}
-	
-	gl::Texture fftTexture( fftSurface );
-	mAudioFbo.bindFramebuffer();
-	gl::setMatricesWindow( mAudioFboSize, false );
-	gl::setViewport( mAudioFboBounds );
-	gl::draw( fftTexture );
-	mAudioFbo.unbindFramebuffer();
 }
 
 #pragma mark - Draw
@@ -829,7 +786,6 @@ void Flock::draw()
     if( !mInitUpdateCalled )
         return;
     
-    //glDisable(GL_TEXTURE_2D);
     gl::pushMatrices();
     
     ////////------------------------------------------------------
@@ -933,9 +889,6 @@ void Flock::draw()
 	//gl::disableDepthWrite();
 	gl::enableAlphaBlending();
 	
-	// DRAW PANEL
-	//drawInfoPanel();
-	
 	mThisFbo	= ( mThisFbo + 1 ) % 2;
 	mPrevFbo	= ( mThisFbo + 1 ) % 2;
     //
@@ -963,9 +916,6 @@ void Flock::drawDebug()
     
     mVelocityFbos[ mPrevFbo ].bindTexture();
     gl::drawSolidRect( Rectf( 106.0f, 106.0f, 206.0f, 206.0f ) );
-    
-    mAudioFbo.bindTexture();
-    gl::drawSolidRect( Rectf( 5.0f, 207.0f, 105.0f, 307.0f ) );
     
     gl::popMatrices();
 }
