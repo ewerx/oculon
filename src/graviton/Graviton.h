@@ -1,12 +1,11 @@
-/*
- *  Graviton.h
- *  Oculon
- *
- *  Created by Ehsan on 11-11-26.
- *  Copyright 2011 ewerx. All rights reserved.
- *
- */
-#if 0
+//
+// Graviton.h
+// Oculon
+//
+// Created by Ehsan on 11-11-26.
+// Copyright 2011 ewerx. All rights reserved.
+//
+
 #ifndef __GRAVITON_H__
 #define __GRAVITON_H__
 
@@ -14,13 +13,13 @@
 #include "cinder/Vector.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Fbo.h"
+#include "cinder/gl/Vbo.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/Bspline.h"
 #include <vector>
 
-#include "MSAOpenCL.h"
-
 #include "Scene.h"
+#include "PingPongFbo.h"
 #include "MotionBlurRenderer.h"
 
 
@@ -53,42 +52,10 @@ protected:// from Scene
 private:
     enum
     {
-        kStep =                 1024,
-        kNumParticles =         (24 * kStep),
+        kStep =                 128,
+        kNumParticles =         (kStep * kStep),
         kFftBands =             512,
     };
-    
-#if defined (FREEOCL_VERSION)
-    enum eClArgs
-    {
-        ARG_POS_IN,
-        ARG_POS_OUT,
-        ARG_VEL_IN,
-        ARG_VEL_OUT,
-        ARG_COLOR,
-        ARG_FFT,
-        ARG_COUNT,
-        ARG_STEP,
-        ARG_DT,
-        ARG_DAMPING,
-        ARG_GRAVITY,
-        ARG_ALPHA,
-        ARG_FLAGS,
-        ARG_EPS
-        
-    };
-#else
-    enum eClArgs
-    {
-        ARG_POS_IN,
-        ARG_POS_OUT,
-        ARG_VEL,
-        ARG_PBLOCK,
-        ARG_DT,
-        ARG_EPS
-        
-    };
-#endif
     
     // INITIAL FORMATION
 #define GRAVITON_FORMATION_TUPLE \
@@ -160,45 +127,62 @@ enm,
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
-    eNodeFormation          mGravityNodeFormation;
-    vector<tGravityNode>    mGravityNodes;
+    eNodeFormation              mGravityNodeFormation;
+    std::vector<tGravityNode>    mGravityNodes;
     
     bool                    mIsMousePressed;
-    float2                  mMousePos;
+    ci::Vec2f               mMousePos;
     
-    // opencl
-    MSA::OpenCL             mOpenCl;
-    MSA::OpenCLProgram      *mClProgram;
-    MSA::OpenCLKernel       *mKernel;
+//    // opencl
+//    MSA::OpenCL             mOpenCl;
+//    MSA::OpenCLProgram      *mClProgram;
+//    MSA::OpenCLKernel       *mKernel;
+//    
+//    MSA::OpenCLBuffer       mClBufPos0;
+//    MSA::OpenCLBuffer       mClBufPos1;
+//    MSA::OpenCLBuffer       mClBufVel0;
+//    MSA::OpenCLBuffer       mClBufVel1;
+//    MSA::OpenCLBuffer       mClBufColor;
+//    MSA::OpenCLBuffer       mClBufFft;
+//    bool                    mSwap;
+//    
+//    MSA::OpenCLBuffer       mClBufPos;
+//    
+//    // opencl data
+//    float4                  mPosAndMass[kNumParticles];
+//    float4                  mVel[kNumParticles];
+//    float4                  mColor[kNumParticles];
+//    cl_float                mAudioFft[kFftBands];
+//    
+//    // opencl params
+//    cl_uint                 mStep;
+//    cl_uint                 mNumParticles;
+//    
+//    cl_float                mTimeStep;
+//    cl_float                mDamping;
+//    cl_float                mGravity;
+//    cl_float                mEps;
+//    cl_uint                 mFlags;
+//    float4                  mClColorScale;
+//    
+//    cl_int                  mNumNodes;
     
-    MSA::OpenCLBuffer       mClBufPos0;
-    MSA::OpenCLBuffer       mClBufPos1;
-    MSA::OpenCLBuffer       mClBufVel0;
-    MSA::OpenCLBuffer       mClBufVel1;
-    MSA::OpenCLBuffer       mClBufColor;
-    MSA::OpenCLBuffer       mClBufFft;
-    bool                    mSwap;
+    // simulation params
+    float mTimeStep;
+    float mDamping;
+    float mGravity;
+    float mEps;
+    int32_t mNumNodes;
+    uint32_t mFlags;
+    uint32_t mNumParticles;
     
-    MSA::OpenCLBuffer       mClBufPos;
     
-    // opencl data
-    float4                  mPosAndMass[kNumParticles];
-    float4                  mVel[kNumParticles];
-    float4                  mColor[kNumParticles];
-    cl_float                mAudioFft[kFftBands];
-    
-    // opencl params
-    cl_uint                 mStep;
-    cl_uint                 mNumParticles;
-    
-    cl_float                mTimeStep;
-    cl_float                mDamping;
-    cl_float                mGravity;
-    cl_float                mEps;
-    cl_uint                 mFlags;
-    float4                  mClColorScale;
-    
-    cl_int                  mNumNodes;
+    // particle system
+    PingPongFbo mParticlesFbo;
+    ci::gl::VboMesh mVboMesh;
+    ci::gl::GlslProg mParticlesShader;
+    ci::gl::GlslProg mDisplacementShader;
+    Vec3f mAttractor;
 
     // rendering
     GLuint              mVbo[2]; // pos and color VBOs
@@ -258,10 +242,12 @@ enm,
     MotionBlurRenderer  mMotionBlurRenderer;
 
 private:
+    void setupPingPongFbo();
+    void setupVBO();
     void initParticles();
-    void initOpenCl();
     
     void resetGravityNodes(const eNodeFormation formation);
+    void computeAttractorPosition();
     
     void updateAudioResponse();
     void updateNeuralResponse();
@@ -280,4 +266,3 @@ private:
 };
 
 #endif // __Graviton_H__
-#endif//0

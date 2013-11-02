@@ -19,6 +19,7 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 
 
 Graviton::Graviton()
@@ -75,25 +76,109 @@ void Graviton::setup()
     mResetCameraByBlink = false;
     mColorByMindWave = false;
     
-    if( gl::isExtensionAvailable("glPointParameterfARB") && gl::isExtensionAvailable("glPointParameterfvARB") )
+    if( gl::isExtensionAvailable("glPointParameterfARB") || gl::isExtensionAvailable("glPointParameterfvARB") )
     {
         mScalePointsByDistance = true;
     }
     else
     {
-        // it works anyway
         mScalePointsByDistance = true;
     }
     
-	initOpenCl();
+    // shaders
+    mParticlesShader = loadFragShader("graviton_particle_frag.glsl" );
+    mDisplacementShader = loadVertAndFragShaders("graviton_displacement_vert.glsl",  "graviton_displacement_frag.glsl");
     
-    mParticleTexture = gl::Texture( loadImage( app::loadResource( RES_PARTICLE_WHITE ) ) );
+    setupPingPongFbo();
+    // THE VBO HAS TO BE DRAWN AFTER FBO!
+    setupVBO();
+    
+    // textures
+    mParticleTexture = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
+    //mParticleTexture = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
     mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
     
-    reset();
-    
+    // renderers
     mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Graviton::drawParticles, this ) );
+    
+    reset();
+}
 
+void Graviton::setupPingPongFbo()
+{
+    //
+    // FROM gpuPS
+    //
+    
+    float scale = 8.0f;
+    // TODO: Test with more than 2 texture attachments
+	std::vector<Surface32f> surfaces;
+    // Position 2D texture array
+    surfaces.push_back( Surface32f( kStep, kStep, true) );
+    Surface32f::Iter pixelIter = surfaces[0].getIter();
+    while( pixelIter.line() ) {
+        while( pixelIter.pixel() ) {
+            /* Initial particle positions are passed in as R,G,B
+             float values. Alpha is used as particle invMass. */
+            surfaces[0].setPixel(pixelIter.getPos(),
+                                 ColorAf(scale*(Rand::randFloat()-0.5f),
+                                         scale*(Rand::randFloat()-0.5f),
+                                         scale*(Rand::randFloat()-0.5f),
+                                         Rand::randFloat(0.2f, 1.0f) ) );
+        }
+    }
+    
+    //Velocity 2D texture array
+    surfaces.push_back( Surface32f( kStep, kStep, true) );
+    pixelIter = surfaces[1].getIter();
+    while( pixelIter.line() ) {
+        while( pixelIter.pixel() ) {
+            /* Initial particle velocities are
+             passed in as R,G,B float values. */
+            surfaces[1].setPixel( pixelIter.getPos(), ColorAf( 0.0f, 0.0f, 0.0f, 1.0f ) );
+        }
+    }
+    mParticlesFbo = PingPongFbo( surfaces );
+}
+
+void Graviton::setupVBO()
+{
+    // A dummy VboMesh the same size as the texture to keep the vertices on the GPU
+    int totalVertices = kStep * kStep;
+    vector<Vec2f> texCoords;
+    vector<uint32_t> indices;
+    gl::VboMesh::Layout layout;
+    layout.setStaticIndices();
+    layout.setStaticPositions();
+    layout.setStaticTexCoords2d();
+    layout.setStaticNormals();
+    //layout.setDynamicColorsRGBA();
+    glPointSize(1.0f);
+    mVboMesh = gl::VboMesh( totalVertices, totalVertices, layout, GL_POINTS);
+    for( int x = 0; x < kStep; ++x ) {
+        for( int y = 0; y < kStep; ++y ) {
+            indices.push_back( x * kStep + y );
+            texCoords.push_back( Vec2f( x/(float)kStep, y/(float)kStep ) );
+        }
+    }
+    mVboMesh.bufferIndices( indices );
+    mVboMesh.bufferTexCoords2d( 0, texCoords );
+}
+
+void Graviton::computeAttractorPosition()
+{
+    // The attractor is positioned at the intersection of a ray
+    // from the mouse to a plane perpendicular to the camera.
+    float t = 0;
+    Vec3f right, up;
+    const Camera& cam = getCamera();
+    cam.getBillboardVectors(&right, &up);
+    float u = mMousePos.x / (float) mApp->getViewportWidth();
+    float v = mMousePos.y / (float) mApp->getViewportHeight();
+    Ray ray = cam.generateRay(u , 1.0f - v, cam.getAspectRatio() );
+    if (ray.calcPlaneIntersection(Vec3f(0.0f,0.0f,0.0f), right.cross(up), &t)) {
+        mAttractor.set(ray.calcPosition(t));
+    }
 }
 
 void Graviton::setupDebugInterface()
@@ -213,143 +298,145 @@ nodeFormationNames.push_back(nam);
                          .oscReceiver(getName(), "blinkcamera"));
     mInterface->addParam(CreateBoolParam( "Color by Mindwave", &mColorByMindWave )
                          .oscReceiver(getName(), "mindwavecolor"));
+    
+    mInterface->addParam(CreateBoolParam( "ScaleByDist", &mScalePointsByDistance ));
+    mInterface->addParam(CreateBoolParam( "ImagePoints", &mUseImageForPoints ));
 }
 
 void Graviton::initParticles()
 {
-    mStep = kStep;
-    mNumParticles = kNumParticles;
-    
-    const double r = mFormationRadius;
-    
-    for( size_t i = 0; i < kNumParticles; ++i )
-    {
-        if( (NODE_FORMATION_NONE != mGravityNodeFormation) && i < mNumNodes)
-        {
-            mPosAndMass[i].x = mGravityNodes[i].mPos.x;
-            mPosAndMass[i].y = mGravityNodes[i].mPos.y;
-            mPosAndMass[i].z = mGravityNodes[i].mPos.z;
-            mPosAndMass[i].w = 1.0f;
-            
-            mVel[i].x = mGravityNodes[i].mVel.x;
-            mVel[i].x = mGravityNodes[i].mVel.y;
-            mVel[i].x = mGravityNodes[i].mVel.z;
-            mVel[i].w = mGravityNodes[i].mMass;
-            
-            mColor[i].x = 1.0f;
-            mColor[i].y = 1.0f;
-            mColor[i].z = 1.0f;
-            mColor[i].w = 1.0f;
-        }
-        else
-        {
-            double x = 0.0f;
-            double y = 0.0f;
-            double z = 0.0f;
-            
-            double vx = 0.0f;
-            double vy = 0.0f;
-            double vz = 0.0f;
-            
-            double rho = 0.0f;
-            double theta = 0.0f;
-            
-            const float maxMass = 50.0f;
-            float mass = Rand::randFloat(1.0f,maxMass);
-            
-            switch( mInitialFormation )
-            {
-                case FORMATION_SPHERE:
-                {
-                    rho = Utils::randDouble() * (M_PI * 2.0);
-                    theta = Utils::randDouble() * (M_PI * 2.0);
-                    
-                    const float d = Rand::randFloat(10.0f, r);
-                    x = d * cos(rho) * sin(theta);
-                    y = d * sin(rho) * sin(theta);
-                    z = d * cos(theta);
-                }
-                    break;
-                    
-                case FORMATION_SPHERE_SHELL:
-                {
-                    rho = Utils::randDouble() * (M_PI * 2.0);
-                    theta = Utils::randDouble() * (M_PI * 2.0);
-                    
-                    x = r * cos(rho) * sin(theta);
-                    y = r * sin(rho) * sin(theta);
-                    z = r * cos(theta);
-                }
-                    break;
-                    
-                case FORMATION_DISC:
-                {
-                    rho = r * Utils::randDouble();//pow(Utils::randDouble(), 0.75);
-                    theta = Utils::randDouble() * (M_PI * 2.0);
-                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-                    
-                    const float thickness = 1.0f;
-                    
-                    x = rho * cos(theta);
-                    y = rho * sin(theta);
-                    z = thickness * 2.0 * Utils::randDouble() - 1.0;
-                    
-                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-                    vx = -a * sin(theta);
-                    vy = a * cos(theta);
-                    vz = 0.0f;
-                }
-                    break;
-                    
-                case FORMATION_GALAXY:
-                {
-                    rho = r * pow(Utils::randDouble(), 0.75);
-                    theta = Utils::randDouble() * (M_PI * 2.0);
-                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-                    
-                    x = rho * cos(theta);
-                    y = rho * sin(theta);
-                    
-                    const float dist = sqrt(x*x + y*y);
-                    const float maxThickness = r / 8.0f;
-                    const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / r);
-                    const float thickness =  maxThickness * coreDistanceRatio;
-                    
-                    z = thickness * (2.0 * Utils::randDouble() - 1.0);
-                    
-                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-                    vx = -a * sin(theta);
-                    vy = a * cos(theta);
-                    vz = 0.0f;
-                    
-                    mass = maxMass * coreDistanceRatio;
-                }
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            // pos
-            mPosAndMass[i].x = x;
-            mPosAndMass[i].y = y;
-            mPosAndMass[i].z = z;
-            mPosAndMass[i].w = 1.0f; //scale??
-            
-            // vel
-            
-            mVel[i].x = vx;
-            mVel[i].y = vy;
-            mVel[i].z = vz;
-            mVel[i].w = mass;
-            
-            // color
-            mColor[i].x = 1.0f;
-            mColor[i].y = 1.0f;
-            mColor[i].z = 1.0f;
-            mColor[i].w = 1.0f;
-        }
-    }
+//    mNumParticles = kNumParticles;
+//    
+//    const double r = mFormationRadius;
+//    
+//    for( size_t i = 0; i < kNumParticles; ++i )
+//    {
+//        if( (NODE_FORMATION_NONE != mGravityNodeFormation) && i < mNumNodes)
+//        {
+//            mPosAndMass[i].x = mGravityNodes[i].mPos.x;
+//            mPosAndMass[i].y = mGravityNodes[i].mPos.y;
+//            mPosAndMass[i].z = mGravityNodes[i].mPos.z;
+//            mPosAndMass[i].w = 1.0f;
+//            
+//            mVel[i].x = mGravityNodes[i].mVel.x;
+//            mVel[i].x = mGravityNodes[i].mVel.y;
+//            mVel[i].x = mGravityNodes[i].mVel.z;
+//            mVel[i].w = mGravityNodes[i].mMass;
+//            
+//            mColor[i].x = 1.0f;
+//            mColor[i].y = 1.0f;
+//            mColor[i].z = 1.0f;
+//            mColor[i].w = 1.0f;
+//        }
+//        else
+//        {
+//            double x = 0.0f;
+//            double y = 0.0f;
+//            double z = 0.0f;
+//            
+//            double vx = 0.0f;
+//            double vy = 0.0f;
+//            double vz = 0.0f;
+//            
+//            double rho = 0.0f;
+//            double theta = 0.0f;
+//            
+//            const float maxMass = 50.0f;
+//            float mass = Rand::randFloat(1.0f,maxMass);
+//            
+//            switch( mInitialFormation )
+//            {
+//                case FORMATION_SPHERE:
+//                {
+//                    rho = Utils::randDouble() * (M_PI * 2.0);
+//                    theta = Utils::randDouble() * (M_PI * 2.0);
+//                    
+//                    const float d = Rand::randFloat(10.0f, r);
+//                    x = d * cos(rho) * sin(theta);
+//                    y = d * sin(rho) * sin(theta);
+//                    z = d * cos(theta);
+//                }
+//                    break;
+//                    
+//                case FORMATION_SPHERE_SHELL:
+//                {
+//                    rho = Utils::randDouble() * (M_PI * 2.0);
+//                    theta = Utils::randDouble() * (M_PI * 2.0);
+//                    
+//                    x = r * cos(rho) * sin(theta);
+//                    y = r * sin(rho) * sin(theta);
+//                    z = r * cos(theta);
+//                }
+//                    break;
+//                    
+//                case FORMATION_DISC:
+//                {
+//                    rho = r * Utils::randDouble();//pow(Utils::randDouble(), 0.75);
+//                    theta = Utils::randDouble() * (M_PI * 2.0);
+//                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+//                    
+//                    const float thickness = 1.0f;
+//                    
+//                    x = rho * cos(theta);
+//                    y = rho * sin(theta);
+//                    z = thickness * 2.0 * Utils::randDouble() - 1.0;
+//                    
+//                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
+//                    vx = -a * sin(theta);
+//                    vy = a * cos(theta);
+//                    vz = 0.0f;
+//                }
+//                    break;
+//                    
+//                case FORMATION_GALAXY:
+//                {
+//                    rho = r * pow(Utils::randDouble(), 0.75);
+//                    theta = Utils::randDouble() * (M_PI * 2.0);
+//                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
+//                    
+//                    x = rho * cos(theta);
+//                    y = rho * sin(theta);
+//                    
+//                    const float dist = sqrt(x*x + y*y);
+//                    const float maxThickness = r / 8.0f;
+//                    const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / r);
+//                    const float thickness =  maxThickness * coreDistanceRatio;
+//                    
+//                    z = thickness * (2.0 * Utils::randDouble() - 1.0);
+//                    
+//                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
+//                    vx = -a * sin(theta);
+//                    vy = a * cos(theta);
+//                    vz = 0.0f;
+//                    
+//                    mass = maxMass * coreDistanceRatio;
+//                }
+//                    break;
+//                    
+//                default:
+//                    break;
+//            }
+//            
+//            // pos
+//            mPosAndMass[i].x = x;
+//            mPosAndMass[i].y = y;
+//            mPosAndMass[i].z = z;
+//            mPosAndMass[i].w = 1.0f; //scale??
+//            
+//            // vel
+//            
+//            mVel[i].x = vx;
+//            mVel[i].y = vy;
+//            mVel[i].z = vz;
+//            mVel[i].w = mass;
+//            
+//            // color
+//            mColor[i].x = 1.0f;
+//            mColor[i].y = 1.0f;
+//            mColor[i].z = 1.0f;
+//            mColor[i].w = 1.0f;
+//        }
+//    }
 }
                               
 void Graviton::resetGravityNodes(const eNodeFormation formation)
@@ -413,86 +500,11 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
     // random spline
     setupCameraSpline();
 }
-                              
-
-void Graviton::initOpenCl()
-{
-    mOpenCl.setupFromOpenGL();
-    
-    const size_t size = sizeof(float4) * kNumParticles;
-    
-    // init VBO
-    //
-    glGenBuffersARB(2, mVbo); // 2 VBOs, color and position
-    
-    // use VBO instead of CL buffer for positions to render directly
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
-	glVertexPointer(4, GL_FLOAT, 0, 0);
-	
-    // colors store in another vbo
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mColor, GL_STREAM_COPY_ARB);
-	glColorPointer(4, GL_FLOAT, 0, 0);
-    
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
-    
-    // init CL kernel
-    //
-    fs::path clPath = App::getResourcePath("Nbody.cl");
-	mOpenCl.loadProgramFromFile(clPath.string());
-	mKernel = mOpenCl.loadKernel("gravity");
-	
-    // init CL buffers
-    //
-    //mClBufPos0.initBuffer( size, CL_MEM_READ_WRITE, mPosAndMass );
-    mClBufPos0.initFromGLObject(mVbo[0]);
-    mClBufPos1.initBuffer( size, CL_MEM_READ_ONLY );
-    mClBufVel0.initBuffer( size, CL_MEM_READ_WRITE );
-    mClBufVel1.initBuffer( size, CL_MEM_READ_ONLY );
-    mClBufColor.initFromGLObject(mVbo[1]);
-    mClBufFft.initBuffer( sizeof(cl_float)*kFftBands, CL_MEM_READ_WRITE );
-
-}
 
 void Graviton::reset()
 {
     resetGravityNodes(mGravityNodeFormation);
     initParticles();
-    
-    const size_t size = sizeof(float4) * kNumParticles;
-	
-    // recreate the buffers (afaik there's no leak here)
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mPosAndMass, GL_STREAM_COPY_ARB);
-	glVertexPointer(4, GL_FLOAT, 0, 0);
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, mColor, GL_STREAM_COPY_ARB);
-	glColorPointer(4, GL_FLOAT, 0, 0);
-    
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
-    mClBufVel0.write( mVel, 0, sizeof(float4) * kNumParticles );
-    
-#if defined( FREEOCL_VERSION )
-    mKernel->setArg(ARG_POS_IN, mClBufPos0.getCLMem());
-    mKernel->setArg(ARG_POS_OUT, mClBufPos1.getCLMem());
-    mKernel->setArg(ARG_VEL_IN, mClBufVel0.getCLMem());
-    mKernel->setArg(ARG_VEL_OUT, mClBufVel1.getCLMem());
-    mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
-    mKernel->setArg(ARG_FFT, mClBufFft.getCLMem());
-    mKernel->setArg(ARG_COUNT, mNumParticles);
-    mKernel->setArg(ARG_STEP, mStep);
-#else
-    //TODO
-    mKernel->setArg(ARG_POS_IN, mSwap ? mClBufPos1.getCLMem() : mClBufPos0.getCLMem());
-    mKernel->setArg(ARG_POS_OUT, mSwap ? mClBufPos0.getCLMem() : mClBufPos1.getCLMem());
-    mKernel->setArg(ARG_VEL, mClBufVel0.getCLMem());
-#endif
-    
-    mSwap = false;
     
     // camera
     mCamAngle = 0.0f;
@@ -510,102 +522,30 @@ void Graviton::resize()
 
 void Graviton::update(double dt)
 {
-	//mDimensions.x = mApp->getViewportWidth();
-	//mDimensions.y = mApp->getViewportHeight();
-    
     updateAudioResponse();
     updateNeuralResponse();
 
-#if defined( FREEOCL_VERSION )
-    //mAnimTime += mTimeSpeed;
-    //mKernelUpdate->setArg(ARG_TIME, mAnimTime);
+    // update particle system
+    computeAttractorPosition();
     
-    // mStep = # of particles that act as gravitational attractors
-    mStep = (NODE_FORMATION_NONE != mGravityNodeFormation) ? mNumNodes : (mNumParticles / kStep) / 4;
+    gl::pushMatrices();
+    gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
+    gl::setViewport( mParticlesFbo.getBounds() );
     
-    mClColorScale.x = mColorScale.r;
-    mClColorScale.y = mColorScale.g;
-    mClColorScale.z = mColorScale.b;
-    mClColorScale.w = mColorScale.a;
-
-    mKernel->setArg(ARG_DT, mTimeStep);
-    mKernel->setArg(ARG_COUNT, mNumParticles);
-    mKernel->setArg(ARG_STEP, mStep);
-    mKernel->setArg(ARG_DAMPING, mDamping);
-    mKernel->setArg(ARG_GRAVITY, mGravity);
-    mKernel->setArg(ARG_ALPHA, mClColorScale);
+    mParticlesFbo.bindUpdate();
     
-    //mEps = Rand::randFloat(mFormationRadius/3.0f,mFormationRadius);
-    mKernel->setArg(ARG_EPS, mEps);
+    mParticlesShader.bind();
+    mParticlesShader.uniform( "positions", 0 );
+    mParticlesShader.uniform( "velocities", 1 );
+    mParticlesShader.uniform( "attractorPos", mAttractor);
+    gl::drawSolidRect(mParticlesFbo.getBounds());
+    mParticlesShader.unbind();
     
-    // update flags // TODO: cleanup
-    mFlags = PARTICLE_FLAGS_NONE;
-    switch( mColorMode )
-    {
-        case COLOR_SPEED:
-            mFlags |= PARTICLE_FLAGS_SHOW_SPEED;
-            break;
-        case COLOR_MASS:
-            mFlags |= PARTICLE_FLAGS_SHOW_MASS;
-            break;
-        default:
-            break;
-    }
-    if( mUseInvSquareCalc )
-        mFlags |= PARTICLE_FLAGS_INVSQR;
+    mParticlesFbo.unbindUpdate();
+    gl::popMatrices();
+    //
     
-    if( mConstrainParticles )
-        mFlags |= PARTICLE_FLAGS_CONSTRAIN;
-        
-    mKernel->setArg(ARG_FLAGS, mFlags);
-    
-    mKernel->run1D(mNumParticles);
-	
-    mKernel->setArg(ARG_POS_IN, mSwap ? mClBufPos1.getCLMem() : mClBufPos0.getCLMem());
-    mKernel->setArg(ARG_POS_OUT, mSwap ? mClBufPos0.getCLMem() : mClBufPos1.getCLMem());
-    mKernel->setArg(ARG_VEL_IN, mSwap ? mClBufVel1.getCLMem() : mClBufVel0.getCLMem());
-    mKernel->setArg(ARG_VEL_OUT, mSwap ? mClBufVel0.getCLMem() : mClBufVel1.getCLMem());
-    
-    mKernel->setArg(ARG_COLOR, mClBufColor.getCLMem());
-
-#else
-    int nparticle = 8192; /* MUST be a nice power of two for simplicity */
-    int nstep = 100;
-    int nburst = 20; /* MUST divide the value of nstep without remainder */
-    int nthread = 64; /* chosen for ATI Radeon HD 5870 */
-    
-    float dt1 = 0.0001;
-    float eps = 0.0001;
-    
-    mKernel->setArg(ARG_POS_IN, mSwap ? mClBufPos1.getCLMem() : mClBufPos0.getCLMem());
-    mKernel->setArg(ARG_POS_OUT, mSwap ? mClBufPos0.getCLMem() : mClBufPos1.getCLMem());
-    mKernel->setArg(ARG_VEL, mClBufVel0.getCLMem());
-    mKernel->setLocalArg(ARG_PBLOCK,nthread*sizeof(cl_float4));
-    
-    clmsync(stdgpu,0,pos1,CL_MEM_DEVICE|CL_EVENT_NOWAIT);
-    clmsync(stdgpu,0,vel,CL_MEM_DEVICE|CL_EVENT_NOWAIT);
-    for(int step=0; step<nstep; step+=nburst) {
-        
-        for(int burst=0; burst<nburst; burst+=2) {
-            
-            clarg_set_global(stdgpu,krn,2,pos1);
-            clarg_set_global(stdgpu,krn,3,pos2);
-            clfork(stdgpu,0,krn,&ndr,CL_EVENT_NOWAIT);
-            
-            clarg_set_global(stdgpu,krn,2,pos2);
-            clarg_set_global(stdgpu,krn,3,pos1);
-            clfork(stdgpu,0,krn,&ndr,CL_EVENT_NOWAIT);
-            
-        }
-        
-        clmsync(stdgpu,0,pos1,CL_MEM_HOST|CL_EVENT_NOWAIT);
-        
-        clwait(stdgpu,0,CL_KERNEL_EVENT|CL_MEM_EVENT|CL_EVENT_RELEASE);
-        
-    }
-#endif
-    
-    mSwap = !mSwap;
+    //mSwap = !mSwap;
     
     updateCamera(dt);
     
@@ -657,17 +597,6 @@ void Graviton::handleMouseDrag( const MouseEvent& event )
 //
 void Graviton::updateAudioResponse()
 {
-    AudioInput& audioInput = mApp->getAudioInput();
-    std::shared_ptr<float> fftDataRef = audioInput.getFftDataRef();
-    
-    unsigned int bandCount = audioInput.getFftBandCount();
-    float* fftBuffer = fftDataRef.get();
-    
-    if( fftBuffer )
-    {
-        mClBufFft.write( fftBuffer, 0, sizeof(cl_float) * bandCount );
-        mKernel->setArg( ARG_FFT, mClBufFft.getCLMem() );
-    }
 }
 
 void Graviton::updateNeuralResponse()
@@ -778,25 +707,7 @@ void Graviton::drawCamSpline()
 //
 void Graviton::draw()
 {
-    glPushMatrix();
-    
-    //gl::enableDepthWrite( false );
-	//gl::enableDepthRead( false );
-	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	/*
-    glColor3f(1.0f, 1.0f, 1.0f);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-#ifdef USE_OPENGL_CONTEXT
-	mOpenCl.finish();
-#else	
-	mOpencl.readBuffer(sizeof(Vec2f) * NUM_PARTICLES, mClMemPosVBO, mParticlesPos);
-	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(Vec2f) * NUM_PARTICLES, mParticlesPos);
-#endif	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_POINTS, 0, kNumParticles);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    */
+    gl::pushMatrices();
     
     if( mUseMotionBlur )
     {
@@ -807,7 +718,7 @@ void Graviton::draw()
         drawParticles();
     }
     
-    glPopMatrix();
+    gl::popMatrices();
 }
 
 const Camera& Graviton::getCamera()
@@ -841,23 +752,39 @@ const Camera& Graviton::getCamera()
 void Graviton::preRender() 
 {
     gl::setMatrices( getCamera() );
+    gl::setViewport( mApp->getViewportBounds() );
     
 	if(mUseImageForPoints) 
     {
         if( mScalePointsByDistance )
         {
-            glPointSize(mPointSize);
-            float quadratic[] =  { 0.0f, 0.0f, 0.00001f };
-            float sizes[] = { 3.0f, mPointSize };
-            glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes);
-            glDisable(GL_POINT_SPRITE);
-            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
-            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, sizes[1] );
-            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, sizes[0] );
-            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
-            glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
-            glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
-            glEnable( GL_POINT_SPRITE_ARB );
+            // enable point sprites and initialize it
+            gl::enable( GL_POINT_SPRITE_ARB );
+            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 1.0f );
+            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, 0.1f );
+            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, 200.0f );
+            
+            // allow vertex shader to change point size
+            gl::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
+            
+//            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+//            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+//            glEnable(GL_POINT_SPRITE);
+//            glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+            
+//            glPointSize(mPointSize);
+//            float quadratic[] =  { 0.0f, 0.0f, 0.00001f };
+//            float sizes[] = { 1.0f, mPointSize };
+//            glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes);
+//            glDisable(GL_POINT_SPRITE);
+//            glEnable( GL_POINT_SPRITE_ARB );
+//            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+//            glEnable(GL_PROGRAM_POINT_SIZE_EXT);
+//            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, sizes[1] );
+//            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, sizes[0] );
+//            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
+//            glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
+//            glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
         }
         else
         {
@@ -875,7 +802,7 @@ void Graviton::preRender()
 		glDisable(GL_POINT_SPRITE);
 	}
 	
-	if(mAdditiveBlending) 
+	if(mAdditiveBlending)
     {
         gl::enableAdditiveBlending();
 	} 
@@ -883,26 +810,26 @@ void Graviton::preRender()
     {
 		gl::enableAlphaBlending();
 	}
-	
-	if(mEnableLineSmoothing) 
-    {
-		glEnable(GL_LINE_SMOOTH);
-	}
-    else 
-    {
-		glDisable(GL_LINE_SMOOTH);
-	}
-	
-	if(mEnablePointSmoothing) 
-    {
-		glEnable(GL_POINT_SMOOTH);
-	} 
-    else 
-    {
-		glDisable(GL_POINT_SMOOTH);
-	}
-    
-	glLineWidth(mLineWidth);
+//
+//	if(mEnableLineSmoothing) 
+//    {
+//		glEnable(GL_LINE_SMOOTH);
+//	}
+//    else 
+//    {
+//		glDisable(GL_LINE_SMOOTH);
+//	}
+//	
+//	if(mEnablePointSmoothing) 
+//    {
+//		glEnable(GL_POINT_SMOOTH);
+//	} 
+//    else 
+//    {
+//		glDisable(GL_POINT_SMOOTH);
+//	}
+//
+//	glLineWidth(mLineWidth);
     
     gl::disableDepthWrite();
     
@@ -913,24 +840,34 @@ void Graviton::drawParticles()
 {
     preRender();
     
-    mOpenCl.flush();
-    
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-    glVertexPointer(4, GL_FLOAT, 0, 0);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-    glColorPointer(4, GL_FLOAT, 0, 0);
+//    glEnableClientState(GL_VERTEX_ARRAY);
+//    glEnableClientState(GL_COLOR_ARRAY);
+//    
+//    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
+//    glVertexPointer(4, GL_FLOAT, 0, 0);
+//    
+//    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
+//    glColorPointer(4, GL_FLOAT, 0, 0);
     
     if(mUseImageForPoints) 
     {
         glEnable(GL_TEXTURE_2D);
-        mParticleTexture.bind();
+        mParticleTexture.bind(2);
     }
     
-    glDrawArrays(GL_POINTS, 0, mNumParticles);
+//    glDrawArrays(GL_POINTS, 0, mNumParticles);
+    mParticlesFbo.bindTexture(0);
+    mParticlesFbo.bindTexture(1);
+    mDisplacementShader.bind();
+    mDisplacementShader.uniform("displacementMap", 0 );
+    mDisplacementShader.uniform("velocityMap", 1);
+    mDisplacementShader.uniform("pointSpriteTex", 2);
+    mDisplacementShader.uniform("scale", mPointSize);
+    mDisplacementShader.uniform("eyePos", getCamera().getEyePoint());
+    
+    gl::draw( mVboMesh );
+    mDisplacementShader.unbind();
+    mParticlesFbo.unbindTexture();
     
     if(mUseImageForPoints) 
     {
@@ -938,8 +875,8 @@ void Graviton::drawParticles()
         //glDisable(GL_TEXTURE_2D);
     }
     
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glDisableClientState(GL_COLOR_ARRAY);
+//    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+//    glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void Graviton::drawDebug()
@@ -952,16 +889,16 @@ void Graviton::drawDebug()
     
         CameraOrtho textCam(0.0f, mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f, 0.0f, 10.f);
         gl::setMatrices(textCam);
-    
-    
-        for( int i = 0; i < mNumNodes; ++i )
-        {
-            Vec3f worldCoords( mPosAndMass[i].x, mPosAndMass[i].y, mPosAndMass[i].z );
-            Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getViewportWidth(), mApp->getViewportHeight());
-            
-            gl::drawString(toString(mGravityNodes[i].mMass),textCoords,ColorAf(1.0,1.0,1.0,0.4));
-        }
-        
+//    
+//    
+//        for( int i = 0; i < mNumNodes; ++i )
+//        {
+//            Vec3f worldCoords( mPosAndMass[i].x, mPosAndMass[i].y, mPosAndMass[i].z );
+//            Vec2f textCoords = getCamera().worldToScreen(worldCoords, mApp->getViewportWidth(), mApp->getViewportHeight());
+//            
+//            gl::drawString(toString(mGravityNodes[i].mMass),textCoords,ColorAf(1.0,1.0,1.0,0.4));
+//        }
+//        
         gl::popMatrices();
     }
     
