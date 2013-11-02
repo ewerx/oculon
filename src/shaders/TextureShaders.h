@@ -72,6 +72,8 @@ private:
 #define TS_SHADERS_TUPLE \
 TS_SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
 TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
+TS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
+TS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
 //end tuple
     
     enum eShaderType
@@ -125,5 +127,15 @@ enm,
         float antialias;
     };
     tKaliParams mKaliParams;
+    
+    struct tMetaHexParams
+    {
+        float mSpeed;
+        float mLightSpeed;
+        int mNumObjects;
+        int mRenderSteps;
+        int mQuality;
+    };
+    tMetaHexParams mMetaHexParams;
 };
 

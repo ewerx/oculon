@@ -94,6 +94,13 @@ TS_SHADERS_TUPLE
     mKaliParams.colspeed=0.05f;
     mKaliParams.antialias=2.f;
     
+    // metahex
+    mMetaHexParams.mQuality = 4;
+    mMetaHexParams.mRenderSteps = 33;
+    mMetaHexParams.mLightSpeed = 1.0f;
+    mMetaHexParams.mSpeed = 1.0f;
+    mMetaHexParams.mNumObjects = 9;
+    
 }
 
 void TextureShaders::reset()
@@ -210,6 +217,25 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
+    
+    // SHADER_METAHEX
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("MetaHex");
+    mInterface->addParam(CreateIntParam( "metahex/objects", &mMetaHexParams.mNumObjects )
+                         .maxValue(24)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "metahex/steps", &mMetaHexParams.mRenderSteps )
+                         .maxValue(128)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "metahex/quality", &mMetaHexParams.mQuality )
+                         .maxValue(16)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "metahex/speed", &mMetaHexParams.mSpeed )
+                         .maxValue(10.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "metahex/lightspeed", &mMetaHexParams.mLightSpeed )
+                         .maxValue(10.0f)
+                         .oscReceiver(getName()));
 }
 
 void TextureShaders::update(double dt)
@@ -273,6 +299,7 @@ void TextureShaders::shaderPreDraw()
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mElapsedTime );
     shader.uniform( "iColor1", mColor1);
+    shader.uniform( "iColor2", mColor2);
     
     switch (mShaderType) {
         case SHADER_CELLS:
@@ -299,6 +326,14 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "rotspeed", mKaliParams.rotspeed );
             shader.uniform( "colspeed", mKaliParams.colspeed );
             shader.uniform( "antialias", mKaliParams.antialias );
+            break;
+            
+        case SHADER_METAHEX:
+            shader.uniform( "iObjSpeed", mMetaHexParams.mSpeed );
+            shader.uniform( "iLightSpeed", mMetaHexParams.mLightSpeed );
+            shader.uniform( "iNumObjects", mMetaHexParams.mNumObjects );
+            shader.uniform( "iRenderSteps", mMetaHexParams.mRenderSteps );
+            shader.uniform( "iQuality", mMetaHexParams.mQuality );
             break;
             
         default:
