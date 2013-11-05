@@ -317,6 +317,7 @@
 		7C79CB3417652BAD00E71F9D /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C79BE401764384B00E71F9D /* Syphon.framework */; };
 		7CA78BF11825835B00505794 /* retina_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CA78BF01825835B00505794 /* retina_frag.glsl */; };
 		7CA78BF31825838900505794 /* metahex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CA78BF21825838900505794 /* metahex_frag.glsl */; };
+		7CA78BF61825988100505794 /* ObjectShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA78BF41825988100505794 /* ObjectShaders.cpp */; };
 		7CAC9E8317EE6AE1007DB913 /* acidcontours_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAC9E7317EE6AE1007DB913 /* acidcontours_frag.glsl */; };
 		7CAC9E8417EE6AE1007DB913 /* cloud_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAC9E7417EE6AE1007DB913 /* cloud_frag.glsl */; };
 		7CAC9E8517EE6AE1007DB913 /* clouds_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAC9E7517EE6AE1007DB913 /* clouds_frag.glsl */; };
@@ -834,6 +835,8 @@
 		7C79CB311765299500E71F9D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		7CA78BF01825835B00505794 /* retina_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = retina_frag.glsl; sourceTree = "<group>"; };
 		7CA78BF21825838900505794 /* metahex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = metahex_frag.glsl; sourceTree = "<group>"; };
+		7CA78BF41825988100505794 /* ObjectShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectShaders.cpp; sourceTree = "<group>"; };
+		7CA78BF51825988100505794 /* ObjectShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectShaders.h; sourceTree = "<group>"; };
 		7CAC9E7317EE6AE1007DB913 /* acidcontours_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = acidcontours_frag.glsl; sourceTree = "<group>"; };
 		7CAC9E7417EE6AE1007DB913 /* cloud_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cloud_frag.glsl; sourceTree = "<group>"; };
 		7CAC9E7517EE6AE1007DB913 /* clouds_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = clouds_frag.glsl; sourceTree = "<group>"; };
@@ -1289,6 +1292,8 @@
 				7C4C6745181CCD78003049AA /* CircleWave.h */,
 				7C6276581824780000724B87 /* FractalShaders.cpp */,
 				7C6276591824780000724B87 /* FractalShaders.h */,
+				7CA78BF41825988100505794 /* ObjectShaders.cpp */,
+				7CA78BF51825988100505794 /* ObjectShaders.h */,
 				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
 				7C5B697918197A7F00AB2C8D /* Rings.h */,
 				7C4C6740181C9928003049AA /* TextureShaders.cpp */,
@@ -2639,6 +2644,7 @@
 				7C79C93517650F8F00E71F9D /* lantern.frag in Sources */,
 				7C79C93617650F8F00E71F9D /* lantern.vert in Sources */,
 				7C79C93717650F8F00E71F9D /* nebula.frag in Sources */,
+				7CA78BF61825988100505794 /* ObjectShaders.cpp in Sources */,
 				7C79C93817650F8F00E71F9D /* P_Position.frag in Sources */,
 				7C79C93917650F8F00E71F9D /* P_VboPos.frag in Sources */,
 				7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */,

@@ -1,13 +1,13 @@
 //
-//  TextureShaders.cpp
+//  ObjectShaders.cpp
 //  Oculon
 //
-//  Created by Ehsan on 13-10-24.
+//  Created by Ehsan on 13-11-02.
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
 #include "OculonApp.h"
-#include "TextureShaders.h"
+#include "ObjectShaders.h"
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include <boost/format.hpp>
@@ -17,17 +17,17 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-TextureShaders::TextureShaders()
-: Scene("textureshaders")
+ObjectShaders::ObjectShaders()
+: Scene("objectshaders")
 {
     //mAudioInputHandler.setup(true);
 }
 
-TextureShaders::~TextureShaders()
+ObjectShaders::~ObjectShaders()
 {
 }
 
-void TextureShaders::setup()
+void ObjectShaders::setup()
 {
     Scene::setup();
     
@@ -48,7 +48,7 @@ void TextureShaders::setup()
     mColorMapTexture[3] = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) );
     mColorMapIndex = 0;
     
-    mShaderType = SHADER_CELLS;
+    mShaderType = SHADER_METAHEX;
 
     mDrawOnSphere = false;
     
@@ -57,42 +57,19 @@ void TextureShaders::setup()
     
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
+    mColor3 = ColorA::white();
+    
+    mTimeScale = 1.0f;
     
     reset();
 }
 
-void TextureShaders::setupShaders()
+void ObjectShaders::setupShaders()
 {
-#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
+#define OS_SHADERS_ENTRY( nam, glsl, enm ) \
     mShaders.push_back( loadFragShader( glsl ) );
-TS_SHADERS_TUPLE
-#undef TS_SHADERS_ENTRY
-    
-    // cells
-    mCellsParams.mHighlightAudioResponse = true;
-    mCellsParams.mCellSize = 1.0f;
-    mCellsParams.mHighlight = 0.6f;
-    
-    mCellsParams.mTimeStep1 = 1.0f;
-    mCellsParams.mTimeStep2 = 0.5f;
-    mCellsParams.mTimeStep3 = 0.25f;
-    mCellsParams.mTimeStep4 = 0.125f;
-    mCellsParams.mTimeStep5 = 0.125f;
-    mCellsParams.mTimeStep6 = 0.065f;
-    mCellsParams.mTimeStep7 = 0.0f;
-    
-    // kali
-    mKaliParams.iterations=20;
-    mKaliParams.scale=1.35f;
-    mKaliParams.fold= Vec2f(0.5f,0.5f);
-    mKaliParams.translate= Vec2f(1.5f,1.5f);
-    mKaliParams.zoom=0.17f;
-    mKaliParams.brightness=7.f;
-    mKaliParams.saturation=0.2f;
-    mKaliParams.texturescale=0.15f;
-    mKaliParams.rotspeed=0.005f;
-    mKaliParams.colspeed=0.05f;
-    mKaliParams.antialias=2.f;
+OS_SHADERS_TUPLE
+#undef OS_SHADERS_ENTRY
     
     // metahex
     mMetaHexParams.mQuality = 4;
@@ -102,42 +79,50 @@ TS_SHADERS_TUPLE
     mMetaHexParams.mNumObjects = 9;
     mMetaHexParams.mCoeffecients = Vec3f(0.967f,0.423f,0.76321f);
     mMetaHexParams.mAudioCoeffs = false;
+    
+    // tilings
+    mTilingsParams.mIterations = 20;
+    mTilingsParams.mAngleP = 3;
+    mTilingsParams.mAngleQ = 5;
+    mTilingsParams.mAngleR = 2;
+    mTilingsParams.mThickness = 0.03f;
+    
+    // retina
+    mRetinaParams.mDialation = 0.2f;
+    mRetinaParams.mDialationScale = 1.0f;
+    mRetinaParams.mPatternAmp = 0.05f;
+    mRetinaParams.mPatternFreq = 20.0f;
+    mRetinaParams.mAudioPattern = false;
 }
 
-void TextureShaders::reset()
+void ObjectShaders::reset()
 {
     mElapsedTime = 0.0f;
 }
 
-void TextureShaders::setupInterface()
+void ObjectShaders::setupInterface()
 {
     vector<string> shaderNames;
-#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
+#define OS_SHADERS_ENTRY( nam, glsl, enm ) \
     shaderNames.push_back(nam);
-TS_SHADERS_TUPLE
-#undef  TS_SHADERS_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Shader", (int*)(&mShaderType) )
+OS_SHADERS_TUPLE
+#undef  OS_SHADERS_ENTRY
+    mInterface->addEnum(CreateEnumParam( "shader", (int*)(&mShaderType) )
                         .maxValue(SHADERS_COUNT)
                         .oscReceiver(getName(), "shader")
                         .isVertical(), shaderNames);
     
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
+    mInterface->addParam(CreateFloatParam( "timeScale", &mTimeScale )
                          .minValue(0.0f)
                          .maxValue(2.0f));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    mInterface->addParam(CreateColorParam("color3", &mColor3, kMinColor, kMaxColor));
     
     mInterface->addParam(CreateIntParam( "colormap", &mColorMapIndex )
                          .maxValue(MAX_COLORMAPS-1)
                          .oscReceiver(getName()));
     
-    mInterface->addParam(CreateFloatParam("color1alpha", &(mColor1.a))
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 22));
-    mInterface->addParam(CreateFloatParam("gain", &mGain)
-                         .maxValue(20.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 23));
     mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 20));
@@ -145,83 +130,9 @@ TS_SHADERS_TUPLE
                          .oscReceiver(getName())
                          .midiInput(1, 2, 21));
     
-    // SHADER_CELLS
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("CELLS");
-    mInterface->addParam(CreateFloatParam( "CellSize", &mCellsParams.mCellSize )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 16));
-    mInterface->addParam(CreateBoolParam( "HighlightByAudio", &mCellsParams.mHighlightAudioResponse )
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Highlight", &mCellsParams.mHighlight )
-                         .maxValue(6.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 17));
-    mInterface->addParam(CreateFloatParam( "TimeStep1", &mCellsParams.mTimeStep1 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 18));
-    mInterface->addParam(CreateFloatParam( "TimeStep2", &mCellsParams.mTimeStep2 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 19));
-    mInterface->addParam(CreateFloatParam( "TimeStep3", &mCellsParams.mTimeStep3 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep4", &mCellsParams.mTimeStep4 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep5", &mCellsParams.mTimeStep5 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep6", &mCellsParams.mTimeStep6 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep7", &mCellsParams.mTimeStep7 )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    
-    // SHADER_KALI
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Kali");
-    mInterface->addParam(CreateIntParam( "kali/iterations", &mKaliParams.iterations )
-                         .maxValue(64)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec2fParam("kali/fold", &mKaliParams.fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateVec2fParam("kali/translate", &mKaliParams.translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "kali/scale", &mKaliParams.scale )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    //.midiInput(0, 2, 19));
-    mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
-                         .maxValue(20.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/saturation", &mKaliParams.saturation )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
-                         .maxValue(0.1f)
-                         .oscReceiver(getName()));
-    //.midiInput(0, 2, 20));
-    mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    
     // SHADER_METAHEX
     mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("MetaHex");
+    mInterface->gui()->addLabel("metahex");
     mInterface->addParam(CreateIntParam( "metahex/objects", &mMetaHexParams.mNumObjects )
                          .maxValue(24)
                          .oscReceiver(getName()));
@@ -242,12 +153,58 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateBoolParam("metahex/audiocoeffs", &mMetaHexParams.mAudioCoeffs )
                          .oscReceiver(mName));
     
+    // SHADER_TILINGS
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("tilings");
+    mInterface->addParam(CreateIntParam( "tilings/iterations", &mTilingsParams.mIterations )
+                         .minValue(1)
+                         .maxValue(100)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "tilings/anglep", &mTilingsParams.mAngleP )
+                         .minValue(1)
+                         .maxValue(100)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "tilings/angleq", &mTilingsParams.mAngleQ )
+                         .minValue(1)
+                         .maxValue(100)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateIntParam( "tilings/angler", &mTilingsParams.mAngleR )
+                         .minValue(1)
+                         .maxValue(100)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "tilings/thickness", &mTilingsParams.mThickness )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    
+    // retina
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("retina");
+    mInterface->addParam(CreateBoolParam("retina/audiodialation", &mRetinaParams.mAudioDialation )
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("retina/dialation", &mRetinaParams.mDialation)
+                         .maxValue(2.0f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("retina/dialationscale", &mRetinaParams.mDialationScale)
+                         .minValue(1.0f)
+                         .maxValue(2.0f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("retina/pattamp", &mRetinaParams.mPatternAmp)
+                         .minValue(0.001f)
+                         .maxValue(0.5f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("retina/pattfreq", &mRetinaParams.mPatternFreq)
+                         .minValue(1.0f)
+                         .maxValue(40.0f)
+                         .oscReceiver(mName));
+    
+    mInterface->addParam(CreateBoolParam("retina/audiopattern", &mRetinaParams.mAudioPattern )
+                         .oscReceiver(mName));
     
     // audio input
     mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
 
-void TextureShaders::update(double dt)
+void ObjectShaders::update(double dt)
 {
     Scene::update(dt);
     
@@ -255,14 +212,6 @@ void TextureShaders::update(double dt)
     
     switch (mShaderType)
     {
-        case SHADER_CELLS:
-            if (mCellsParams.mHighlightAudioResponse)
-            {
-                const float midHighVolume = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
-                mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
-            }
-            break;
-            
         case SHADER_METAHEX:
             if (mMetaHexParams.mAudioCoeffs)
             {
@@ -273,6 +222,22 @@ void TextureShaders::update(double dt)
                 mMetaHexParams.mCoeffecients.z = 0.5f + lows;
                 mMetaHexParams.mCoeffecients.y = 0.5f + mids*3.0f;
                 mMetaHexParams.mCoeffecients.x = 0.5f + highs*2.0f;
+            }
+            break;
+            
+        case SHADER_RETINA:
+            if (mRetinaParams.mAudioDialation)
+            {
+                const float lows = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.0f, 0.25f) * mGain;
+                mRetinaParams.mDialation = 0.5f + lows;
+            }
+            if (mRetinaParams.mAudioPattern)
+            {
+                const float mids = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.25f, 0.75f) * mGain;
+                const float highs = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.75f, 1.0f) * mGain;
+                
+                mRetinaParams.mPatternAmp = 0.01f + 0.25f*mids;
+                mRetinaParams.mPatternFreq = 5.0f + 10.0f*highs;
             }
             break;
             
@@ -296,7 +261,7 @@ void TextureShaders::update(double dt)
     }
 }
 
-void TextureShaders::draw()
+void ObjectShaders::draw()
 {
     gl::pushMatrices();
 
@@ -305,7 +270,7 @@ void TextureShaders::draw()
     gl::popMatrices();
 }
 
-void TextureShaders::shaderPreDraw()
+void ObjectShaders::shaderPreDraw()
 {
     mColorMapTexture[mColorMapIndex].bind(0);
     if( mApp->getAudioInputHandler().hasTexture() )
@@ -320,36 +285,13 @@ void TextureShaders::shaderPreDraw()
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mElapsedTime );
+    shader.uniform( "iTimeScale", mTimeScale);
     shader.uniform( "iColor1", mColor1);
     shader.uniform( "iColor2", mColor2);
+    shader.uniform( "iColor3", mColor3);
+    shader.uniform( "iBackgroundAlpha", mBackgroundAlpha);
     
     switch (mShaderType) {
-        case SHADER_CELLS:
-            shader.uniform("iCellSize", mCellsParams.mCellSize);
-            shader.uniform("iHighlight", mCellsParams.mHighlight);
-            shader.uniform("iTimeStep1", mCellsParams.mTimeStep1);
-            shader.uniform("iTimeStep2", mCellsParams.mTimeStep2);
-            shader.uniform("iTimeStep3", mCellsParams.mTimeStep3);
-            shader.uniform("iTimeStep4", mCellsParams.mTimeStep4);
-            shader.uniform("iTimeStep5", mCellsParams.mTimeStep5);
-            shader.uniform("iTimeStep6", mCellsParams.mTimeStep6);
-            shader.uniform("iTimeStep7", mCellsParams.mTimeStep7);
-            break;
-        case SHADER_KALI:
-            shader.uniform( "iChannel0", 0 );
-            shader.uniform( "iterations", mKaliParams.iterations );
-            shader.uniform( "scale", mKaliParams.scale );
-            shader.uniform( "fold", mKaliParams.fold );
-            shader.uniform( "translate", mKaliParams.translate );
-            shader.uniform( "zoom", mKaliParams.zoom );
-            shader.uniform( "brightness", mKaliParams.brightness );
-            shader.uniform( "saturation", mKaliParams.saturation );
-            shader.uniform( "texturescale", mKaliParams.texturescale );
-            shader.uniform( "rotspeed", mKaliParams.rotspeed );
-            shader.uniform( "colspeed", mKaliParams.colspeed );
-            shader.uniform( "antialias", mKaliParams.antialias );
-            break;
-            
         case SHADER_METAHEX:
             shader.uniform( "iObjSpeed", mMetaHexParams.mSpeed );
             shader.uniform( "iLightSpeed", mMetaHexParams.mLightSpeed );
@@ -359,12 +301,27 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "iCoefficients", mMetaHexParams.mCoeffecients );
             break;
             
+        case SHADER_TILINGS:
+            shader.uniform( "iIterations", mTilingsParams.mIterations );
+            shader.uniform( "iAngleP", mTilingsParams.mAngleP );
+            shader.uniform( "iAngleQ", mTilingsParams.mAngleQ );
+            shader.uniform( "iAngleR", mTilingsParams.mAngleR );
+            shader.uniform( "iThickness", mTilingsParams.mThickness );
+            break;
+            
+        case SHADER_RETINA:
+            shader.uniform( "iDialation", mRetinaParams.mDialation );
+            shader.uniform( "iDialationScale", mRetinaParams.mDialationScale );
+            shader.uniform( "iPatternAmp", mRetinaParams.mPatternAmp );
+            shader.uniform( "iPatternFreq", mRetinaParams.mPatternFreq );
+            break;
+            
         default:
             break;
     }
 }
 
-void TextureShaders::drawShaderOutput()
+void ObjectShaders::drawShaderOutput()
 {
     // Draw shader output
     gl::enable( GL_TEXTURE_2D );
@@ -403,7 +360,7 @@ void TextureShaders::drawShaderOutput()
     gl::end();
 }
 
-void TextureShaders::shaderPostDraw()
+void ObjectShaders::shaderPostDraw()
 {
     mShaders[mShaderType].unbind();
     
@@ -414,7 +371,7 @@ void TextureShaders::shaderPostDraw()
     mColorMapTexture[mColorMapIndex].unbind();
 }
 
-void TextureShaders::drawScene()
+void ObjectShaders::drawScene()
 {
     gl::enableAlphaBlending();
     
@@ -460,7 +417,7 @@ void TextureShaders::drawScene()
     gl::popMatrices();
 }
 
-void TextureShaders::drawDebug()
+void ObjectShaders::drawDebug()
 {
     //mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
     

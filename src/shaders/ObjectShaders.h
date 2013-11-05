@@ -1,8 +1,8 @@
 //
-//  TextureShaders.h
+//  ObjectShaders.h
 //  Oculon
 //
-//  Created by Ehsan on 13-10-24.
+//  Created by Ehsan on 13-11-02.
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
@@ -23,11 +23,11 @@
 //
 // Audio input tests
 //
-class TextureShaders : public Scene
+class ObjectShaders : public Scene
 {
 public:
-    TextureShaders();
-    virtual ~TextureShaders();
+    ObjectShaders();
+    virtual ~ObjectShaders();
     
     // inherited from Scene
     void setup();
@@ -57,6 +57,7 @@ private:
     // global params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
+    ci::ColorAf         mColor3;
     float               mTimeScale;
     double              mElapsedTime;
     
@@ -69,19 +70,18 @@ private:
     int                 mColorMapIndex;
     
     // shaders
-#define TS_SHADERS_TUPLE \
-TS_SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
-TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
-TS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
-TS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
+#define OS_SHADERS_TUPLE \
+OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
+OS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
+OS_SHADERS_ENTRY( "Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
 //end tuple
     
     enum eShaderType
     {
-#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
+#define OS_SHADERS_ENTRY( nam, glsl, enm ) \
 enm,
-        TS_SHADERS_TUPLE
-#undef  TS_SHADERS_ENTRY
+        OS_SHADERS_TUPLE
+#undef  OS_SHADERS_ENTRY
         
         SHADERS_COUNT
     };
@@ -94,40 +94,6 @@ enm,
     ci::gl::Fbo mShaderFbo;
     
     // shader params
-    struct tCellsParams
-    {
-        bool mHighlightAudioResponse;
-        float mCellSize; //
-        float mHighlight; // 6
-        float mTimeStep1;
-        float mTimeStep2;
-        float mTimeStep3;
-        float mTimeStep4;
-        float mTimeStep5;
-        float mTimeStep6;
-        float mTimeStep7;
-    };
-    tCellsParams    mCellsParams;
-    
-    struct tKaliParams
-    {
-        int iterations;
-        float scale;
-        ci::Vec2f fold;
-        ci::Vec2f translate;
-        float zoom;
-        float brightness;
-        float saturation;
-        float texturescale;
-        
-        float rotspeed;
-        
-        float colspeed;
-        
-        float antialias;
-    };
-    tKaliParams mKaliParams;
-    
     struct tMetaHexParams
     {
         float mSpeed;
@@ -139,5 +105,26 @@ enm,
         bool mAudioCoeffs;
     };
     tMetaHexParams mMetaHexParams;
+    
+    struct tTilingsParams
+    {
+        int                 mIterations;
+        int                 mAngleP;
+        int                 mAngleQ;
+        int                 mAngleR;
+        float               mThickness;
+    };
+    tTilingsParams mTilingsParams;
+    
+    struct tRetinaParams
+    {
+        bool                mAudioDialation;
+        float               mDialation;
+        float               mDialationScale;
+        float               mPatternAmp;
+        float               mPatternFreq;
+        bool                mAudioPattern;
+    };
+    tRetinaParams mRetinaParams;
 };
 

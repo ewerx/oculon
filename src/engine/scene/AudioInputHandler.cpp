@@ -224,4 +224,27 @@ AudioInputHandler::tEaseFn AudioInputHandler::getReverseFalloffFunction()
     }
 }
 
+#pragma mark - Easy Accessors
+
+float AudioInputHandler::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
+{
+    return getAverageVolumeByFrequencyRange( (int)(minRatio * KISS_DEFAULT_DATASIZE), (int)(maxRatio * KISS_DEFAULT_DATASIZE) );
+}
+
+float AudioInputHandler::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=256*/)
+{
+    float amplitude = 0.0f;
+    
+    int minIndex = math<int>::max( 0, minBand );
+    int maxIndex = math<int>::min( mFftFalloff.size(), maxBand );
+    
+    for (int32_t i = minIndex; i < maxIndex; i++)
+    {
+        amplitude += mFftFalloff[i].mValue;
+    }
+    
+    amplitude = amplitude / (float)(maxIndex-minIndex);
+    
+    return amplitude;
+}
 

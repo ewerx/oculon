@@ -1,16 +1,13 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform float     iCellSize;
-uniform float     iHighlight;
-uniform float     iTimeStep1;
-uniform float     iTimeStep2;
-uniform float     iTimeStep3;
-uniform float     iTimeStep4;
-uniform float     iTimeStep5;
-uniform float     iTimeStep6;
-uniform float     iTimeStep7;
+uniform float     iBackgroundAlpha;
 uniform vec4      iColor1;
-//uniform vec4      iColor2;
+uniform vec4      iColor2;
+uniform vec4      iColor3;
+uniform float     iDialation;
+uniform float     iDialationScale;
+uniform float     iPatternAmp;
+uniform float     iPatternFreq;
 
 // based on https://www.shadertoy.com/view/lsfGRr
 // Created by beautypi - beautypi/2012
@@ -38,10 +35,12 @@ float noise( in vec2 x )
     return res;
 }
 
+// fractional brownian motion
 float fbm( vec2 p )
 {
     float f = 0.0;
     
+    // frequency = amp * noise
     f += 0.50000*noise( p ); p = m*p*2.02;
     f += 0.25000*noise( p ); p = m*p*2.03;
     f += 0.12500*noise( p ); p = m*p*2.01;
@@ -65,50 +64,65 @@ float length2( vec2 p )
 void main(void)
 {
     vec2 q = gl_FragCoord.xy / iResolution.xy;
+    // centered, left to right
     vec2 p = -1.0 + 2.0 * q;
+    
+    // r = dist from center
+    // a = atan of y/x
+    
     p.x *= iResolution.x/iResolution.y;
     
     float r = length( p );
     float a = atan( p.y, p.x );
     
-    
-    float dd = 0.2*sin(4.0*iGlobalTime);
+    // dd = dialation
+    float dd = 1.0 - iDialation*iDialationScale;//0.2*sin(4.0*iGlobalTime);
     float ss = 1.0 + clamp(1.0-r,0.0,1.0)*dd;
     
     r *= ss;
     
-    vec3 col = vec3( 0.0, 0.3, 0.4 );
+    // coloration
+    vec3 col = iColor1.xyz;
+    // col1 = vec3( 0.0, 0.3, 0.4 );
+    // col2 = vec3(0.2,0.5,0.4)
+    // col3 = vec3(0.9,0.6,0.2)
     
+    // f = noise for color
     float f = fbm( 5.0*p );
-    col = mix( col, vec3(0.2,0.5,0.4), f );
+    col = mix( col, iColor2.xyz, f );
     
-    col = mix( col, vec3(0.9,0.6,0.2), 1.0-smoothstep(0.2,0.6,r) );
+    col = mix( col, iColor3.xyz, 1.0-smoothstep(0.2,0.6,r) );
     
-    a += 0.05*fbm( 20.0*p );
+    // amp = 0.05
+    // freq = 20.0
+    a += iPatternAmp*fbm( iPatternFreq*p );
     
     f = smoothstep( 0.3, 1.0, fbm( vec2(20.0*a,6.0*r) ) );
     col = mix( col, vec3(1.0,1.0,1.0), f );
     
-    
+    // white strands
     f = smoothstep( 0.4, 0.9, fbm( vec2(15.0*a,10.0*r) ) );
     col *= 1.0-0.5*f;
     
+    // iris
     col *= 1.0-0.25*smoothstep( 0.6,0.8,r );
     
-    
+    // light
     f = 1.0-smoothstep( 0.0, 0.6, length2( mat2(0.6,0.8,-0.8,0.6)*(p-vec2(0.3,0.5) )*vec2(1.0,2.0)) );
     
     col += vec3(1.0,0.9,0.9)*f*0.985;
     
     col *= vec3(0.8+0.2*cos(r*a));
     
+    // edge to background
     f = 1.0-smoothstep( 0.2, 0.25, r );
     col = mix( col, vec3(0.0), f );
     
     f = smoothstep( 0.79, 0.82, r );
-    col = mix( col, vec3(1.0), f );
-    
     col *= 0.5 + 0.5*pow(16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y),0.1);
     
-	gl_FragColor = vec4(col,1.0);
+    // background
+    vec4 cola = mix( vec4(col,1.0), vec4(0.0,0.0,0.0,iBackgroundAlpha), f );
+
+	gl_FragColor = cola;//vec4(col,iBackgroundAlpha);
 }

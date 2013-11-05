@@ -38,12 +38,7 @@ void Tilings::reset()
 {
     mElapsedTime = 0.0f;
     
-    mIterations = 20;
-    mAngleP = 3;
-    mAngleQ = 5;
-    mAngleR = 2;
-    //mCenter = Vec3f(1.0f,1.0f,0.0f);
-    mThickness = 0.03f;
+    
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
     mTimeScale = 1.0f;

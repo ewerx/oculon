@@ -40,6 +40,9 @@ public:
     }
     ci::gl::Fbo& getFbo() { return mAudioFbo; }
     
+    float getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio);
+    float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
+    
     struct tFftValue
     {
         int32_t mBandIndex;

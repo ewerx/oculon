@@ -7,6 +7,7 @@ uniform float     iLightSpeed;
 uniform int       iQuality;
 uniform int       iRenderSteps;
 uniform int       iNumObjects;
+uniform vec3      iCoefficients;
 
 // based on https://www.shadertoy.com/view/Mss3WN
 /*by mu6k, Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -196,9 +197,9 @@ void main(void)
 	for (int i=0 ;i<object_count; i++) //position for each metaball
 	{
 		bpos[i] = 1.3*vec3(
-                           sin(t*0.967+float(i)*42.0),
-                           sin(t*.423+float(i)*152.0),
-                           sin(t*.76321+float(i)));
+                           iCoefficients.x*sin(t*0.967+float(i)*42.0),
+                           iCoefficients.y*sin(t*.423+float(i)*152.0),
+                           iCoefficients.z*sin(t*.76321+float(i)));
 	}
 	
 	//setup the camera
@@ -221,10 +222,17 @@ void main(void)
 		if (dd<.04 || dd>4.0) break;
 	}
 	
+    float alpha = 1.0;
+    
 	if (dd<0.5) //close enough
+    {
 		color = object_material(p,d);
+    }
 	else
+    {
 		color = vec3(0.);//background(d);
+        alpha = 0.0;
+    }
 	
 	//post procesing
 	color *=.85;
@@ -232,5 +240,5 @@ void main(void)
 	color -= hash(color.xy+uv.xy)*.015;
 	color -= length(uv)*.1;
 	color =cc(color,.5,.6);
-	gl_FragColor = vec4(color,1.0);
+	gl_FragColor = vec4(color,alpha);
 }

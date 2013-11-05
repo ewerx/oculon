@@ -125,6 +125,7 @@ protected:
     
     bool        mEnableFrustumCulling;
     
+    float       mBackgroundAlpha;
     float       mGain;
     
     Interface*              mInterface;

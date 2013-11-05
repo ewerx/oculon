@@ -40,6 +40,7 @@ Scene::Scene(const std::string& name)
 , mIsFrustumPlaneCached(false)
 , mDoReset(false)
 , mGain(1.0f)
+, mBackgroundAlpha(1.0f)
 {
     // frustum culling
 	for( int i=0; i<SIDE_COUNT; i++ )
@@ -94,6 +95,8 @@ void Scene::init(OculonApp* app)
     mInterface->gui()->addButton("LOAD")->registerCallback( this, &Scene::showLoadParamsInterface );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateFloatParam("bg_alpha", &mBackgroundAlpha)
+                         .oscReceiver(mName).sendFeedback());
     mInterface->addParam(CreateFloatParam("gain", &mGain)
                          .maxValue(50.0f)
                          .oscReceiver(mName).sendFeedback());
@@ -108,6 +111,7 @@ void Scene::setup()
 {
     mIsSetup = true;
     mGain = 1.0f;
+    mBackgroundAlpha = 1.0f;
     mLayerIndex = 0;
 }
 
@@ -131,7 +135,7 @@ void Scene::setupFbo()
     mFbo.bindFramebuffer();
     gl::setMatricesWindow( mApp->getViewportSize(), false );
     gl::setViewport( mApp->getViewportBounds() );
-    gl::clear( ColorA(0.0f,0.0f,0.0f,mApp->getBackgroundAlpha()) );
+    gl::clear( ColorA(0.0f,0.0f,0.0f,0.0f) );
     mFbo.unbindFramebuffer();
     
     mFbo.getTexture().setFlipped(true);
@@ -247,8 +251,7 @@ void Scene::drawToFbo()
     mFbo.bindFramebuffer();
     
     // draw scene
-    //gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 0.0f), true);
-    gl::clear( Color(0.0f,0.0f,0.0f) );
+    gl::clear( ColorA(0.0f,0.0f,0.0f,mBackgroundAlpha) );
     draw();
     
     mFbo.unbindFramebuffer();
