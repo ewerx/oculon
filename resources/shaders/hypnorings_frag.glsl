@@ -9,6 +9,8 @@ uniform float     iZoom;
 uniform float     iZoomScale;
 uniform float     iPower;
 uniform bool      iReverse;
+uniform float     iThickness;
+uniform float     iScale;
 
 // based on https://www.shadertoy.com/view/ldX3zr
 
@@ -28,11 +30,13 @@ void main(void)
     // fades intensity down towards edges of screen
     //float fade = 0.25*sin(PI*uv.y) + -0.5*sin(PI*uv.x);
     
-    vec4 texcol;
-    
+    float scale = iScale; // TODO: how does this affect size compared to iZoom?
+	float dist = length(pos);
+    float dist2 = (dist*dist)/scale;
+	
 	float x = pos.x;//(center.x-uv.x);
 	float y = pos.y;//(center.y-uv.y) *invAr;
-
+    
     // iPower contols desnity of lines as a function of distance to center
     // iPower range 0 - 1.0
     // iPower 0.5 = symetrical lines (square root of distance)
@@ -41,7 +45,12 @@ void main(void)
     //
     // zoom controls # of rings visible
     // zoom range 1 - 100 (iZoomScale 1-10, iZoom 1-10)
-    float r = 10. * iZoom * iZoomScale * pow((x*x + y*y),iPower);
+    //float r = iZoom * iZoomScale * pow((x*x + y*y),iPower);
+	float r = iZoom * iZoomScale * pow(dist2,iPower); // pretty sure this is the same as line above
+	
+	// experiments:
+	//float r = iZoom * sin(dist/scale*3.); // neat in and out simulatanous
+	//float r = abs( tan(dist/scale*15.) * thickness);// WTF is this???
     
     // reverse motion
     // TODO: make it variable by making zoomscale range -10 to +10 ?
@@ -50,8 +59,10 @@ void main(void)
         r *= -1.0;
     }
     
-	float z = 0.5 + 0.5*sin((r+iGlobalTime*iTimeScale));
+	float thickness = iThickness;//* sin(0.1*r);
+	float z = abs(tan((r+iGlobalTime*iTimeScale)) * thickness);
 	
+    vec4 texcol;
 	texcol.x = z;
 	texcol.y = z;
 	texcol.z = z;

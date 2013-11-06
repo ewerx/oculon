@@ -227,6 +227,10 @@ OS_SHADERS_TUPLE
                          .minValue(1.0f)
                          .maxValue(10.0f)
                          .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("rings/thickness", &mHypnoRingsParams.mThickness)
+                         .minValue(0.01f)
+                         .maxValue(5.0f)
+                         .oscReceiver(mName));
     
     // audio input
     mApp->getAudioInputHandler().setupInterface(mInterface, mName);
@@ -351,6 +355,8 @@ void ObjectShaders::shaderPreDraw()
             shader.uniform( "iZoomScale", mHypnoRingsParams.mZoomScale );
             shader.uniform( "iPower", mHypnoRingsParams.mPower );
             shader.uniform( "iReverse", mHypnoRingsParams.mAudioReactive );
+            
+            shader.uniform( "iThickness", mHypnoRingsParams.mThickness );
             break;
             
         default:

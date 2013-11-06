@@ -135,6 +135,7 @@ enm,
         float               mZoom;
         float               mPower;
         float               mTimeScalePower;
+        float               mThickness;
     };
     tHypnoRingParams mHypnoRingsParams;
 };
