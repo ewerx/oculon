@@ -65,11 +65,11 @@ void InfoPanel::render( Vec2f aWindowDim )
         gl::pushMatrices();
         gl::setMatricesWindow( aWindowDim );
         
-        float w = 70;
-        float h = 180;
+        float w = 70.0f;
+        float h = 10.0f * mLines.size();
         
         float x = aWindowDim.x - w - 20.0f;
-        float y = aWindowDim.y - h - 20.0f;
+        float y = (aWindowDim.y - h) - 20.0f;
         
         glDisable( GL_TEXTURE_2D );
         const float pad = 4.0f;
@@ -77,7 +77,9 @@ void InfoPanel::render( Vec2f aWindowDim )
         gl::drawSolidRect( Rectf( x-pad, y-pad, x+w+pad, y+h+pad ) );
         
         glEnable( GL_TEXTURE_2D );
-        glColor4f( 1, 1, 1, mOpacity );
+        gl::color( 1.0f, 1.0f, 1.0f, mOpacity );
+        
+        y += 8.0f;
         
         for (std::vector<InfoLine>::iterator lineIt = mLines.begin();
              lineIt != mLines.end();
@@ -85,7 +87,7 @@ void InfoPanel::render( Vec2f aWindowDim )
         {
             gl::color( (*lineIt).mColor );
             mTextureFont->drawString((*lineIt).mString, Vec2f(x,y) );
-            y += 10;
+            y += 10.0f;
         }
         mLines.clear();
         

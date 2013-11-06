@@ -74,6 +74,7 @@ private:
 OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
 OS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
 OS_SHADERS_ENTRY( "Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
+OS_SHADERS_ENTRY( "HypnoRings", "hypnorings_frag.glsl", SHADER_HYPNORINGS ) \
 //end tuple
     
     enum eShaderType
@@ -126,5 +127,15 @@ enm,
         bool                mAudioPattern;
     };
     tRetinaParams mRetinaParams;
+    
+    struct tHypnoRingParams
+    {
+        bool                mAudioReactive;
+        float               mZoomScale;
+        float               mZoom;
+        float               mPower;
+        float               mTimeScalePower;
+    };
+    tHypnoRingParams mHypnoRingsParams;
 };
 

@@ -12,6 +12,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
+#include "cinder/gl/Vbo.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
@@ -50,16 +51,20 @@ private:
 
     ci::gl::GlslProg    mShader;
     
+    std::vector<ci::gl::VboMesh> mRings;
+    
     // audio
     //AudioInputHandler   mAudioInputHandler;
     
     // params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
+    ci::ColorAf         mColor3;
     float               mTimeScale;
     double              mElapsedTime;
     int                 mNumRings;
-    float               mSmoothing;
+    float               mScale;
+    bool                mAudioScale;
     int                 mIntervals;
     int                 mColorMode;
     ci::Vec3f           mCoefficients;

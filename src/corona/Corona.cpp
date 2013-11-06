@@ -584,7 +584,7 @@ void Corona::drawIntoRoomFbo()
 void Corona::draw()
 {
 	//gl::clear( ColorA( 0, 0, 0, 0 ), true );
-	
+    gl::pushMatrices();
 	gl::setMatricesWindow( mApp->getViewportSize(), false );
 	gl::setViewport( mApp->getViewportBounds() );
 
@@ -683,6 +683,8 @@ void Corona::draw()
 	
 	mThisFbo	= ( mThisFbo + 1 ) % 2;
 	mPrevFbo	= ( mThisFbo + 1 ) % 2;
+    
+    gl::popMatrices();
 }
 
 void Corona::drawSphere()

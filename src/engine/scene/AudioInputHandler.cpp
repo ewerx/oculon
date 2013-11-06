@@ -55,6 +55,7 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
 {
     interface->gui()->addColumn();
     interface->gui()->addLabel("audio");
+    interface->gui()->addParam("audiodata", &mAudioFbo.getTexture());
 //    interface->addParam(CreateBoolParam( "texture", &mAudioFboEnabled )
 //                        .oscReceiver(name,"audio/texture"));
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )

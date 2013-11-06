@@ -87,10 +87,10 @@ void Scene::init(OculonApp* app)
                          .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onVisibleChanged );
     mInterface->addParam(CreateBoolParam("running", &mIsRunning)
                          .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onRunningChanged );
-    mInterface->addParam(CreateIntParam("layer", &mLayerIndex)
-                         .minValue(0)
-                         .maxValue(OculonApp::MAX_LAYERS-1)
-                         .oscReceiver(mName).sendFeedback());
+//    mInterface->addParam(CreateIntParam("layer", &mLayerIndex)
+//                         .minValue(0)
+//                         .maxValue(OculonApp::MAX_LAYERS-1)
+//                         .oscReceiver(mName).sendFeedback());
     mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
     mInterface->gui()->addButton("LOAD")->registerCallback( this, &Scene::showLoadParamsInterface );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );

@@ -93,6 +93,12 @@ OS_SHADERS_TUPLE
     mRetinaParams.mPatternAmp = 0.05f;
     mRetinaParams.mPatternFreq = 20.0f;
     mRetinaParams.mAudioPattern = false;
+    
+    // hypnorings
+    mHypnoRingsParams.mAudioReactive = false;
+    mHypnoRingsParams.mZoom = 1.0f;
+    mHypnoRingsParams.mZoomScale = 1.0f;
+    mHypnoRingsParams.mPower = 0.5f;
 }
 
 void ObjectShaders::reset()
@@ -200,6 +206,28 @@ OS_SHADERS_TUPLE
     mInterface->addParam(CreateBoolParam("retina/audiopattern", &mRetinaParams.mAudioPattern )
                          .oscReceiver(mName));
     
+    // rings
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("rings");
+    mInterface->addParam(CreateBoolParam("rings/audio", &mHypnoRingsParams.mAudioReactive )
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("rings/power", &mHypnoRingsParams.mPower)
+                         .minValue(0.1f)
+                         .maxValue(1.5f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("rings/timescalepower", &mHypnoRingsParams.mTimeScalePower)
+                         .minValue(1.0f)
+                         .maxValue(100.0f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("rings/zoom", &mHypnoRingsParams.mZoom)
+                         .minValue(1.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("rings/zoomscale", &mHypnoRingsParams.mZoomScale)
+                         .minValue(1.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(mName));
+    
     // audio input
     mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
@@ -285,11 +313,12 @@ void ObjectShaders::shaderPreDraw()
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mElapsedTime );
-    shader.uniform( "iTimeScale", mTimeScale);
     shader.uniform( "iColor1", mColor1);
     shader.uniform( "iColor2", mColor2);
     shader.uniform( "iColor3", mColor3);
     shader.uniform( "iBackgroundAlpha", mBackgroundAlpha);
+    
+    float timescale = mTimeScale;
     
     switch (mShaderType) {
         case SHADER_METAHEX:
@@ -316,9 +345,20 @@ void ObjectShaders::shaderPreDraw()
             shader.uniform( "iPatternFreq", mRetinaParams.mPatternFreq );
             break;
             
+        case SHADER_HYPNORINGS:
+            timescale *= mHypnoRingsParams.mTimeScalePower;
+            shader.uniform( "iZoom", mHypnoRingsParams.mZoom );
+            shader.uniform( "iZoomScale", mHypnoRingsParams.mZoomScale );
+            shader.uniform( "iPower", mHypnoRingsParams.mPower );
+            shader.uniform( "iReverse", mHypnoRingsParams.mAudioReactive );
+            break;
+            
         default:
             break;
     }
+    
+    
+    shader.uniform( "iTimeScale", timescale);
 }
 
 void ObjectShaders::drawShaderOutput()

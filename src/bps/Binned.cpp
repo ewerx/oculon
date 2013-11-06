@@ -368,6 +368,9 @@ audioPatternNames.push_back(nam);
     mInterface->addParam(CreateColorParam("Indicator Color", &mForceIndicatorColor, kMinColor, kMaxColor)
                          .oscReceiver(mName,"indicatorcolor"));
     
+    mInterface->addParam(CreateBoolParam("InvBassTime", &mInverseBassTime)
+                         .oscReceiver(mName));
+    
     // TouchOSC XY-pad
     const int maxTouches = 5;
     char buf[OSC_ADDRESS_SIZE];
@@ -380,7 +383,12 @@ audioPatternNames.push_back(nam);
 
 void Binned::update(double dt)
 {
-	mParticleSystem.setTimeStep(mTimeStep);
+    float timeStep = mTimeStep;
+    if (mInverseBassTime)
+    {
+        timeStep *= (10.0f - 10.0f*(mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.0f, 0.25f)));
+    }
+	mParticleSystem.setTimeStep(timeStep);
     
     Scene::update(dt);
 }

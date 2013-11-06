@@ -33,9 +33,10 @@ void Rings::setup()
     
     mColor1 = ColorA(0.2f,0.0f,0.1f,1.0f);
     mColor2 = ColorA(0.9f,1.0f,1.0f,1.0f);
+    mColor3 = ColorA::white();
     mTimeScale = 1.0f;
     mNumRings = 64;
-    mSmoothing = 0.003f;
+    mScale = 0.1f;
     mIntervals = 2.0f;
     mColorMode = 0;
     mCoefficients = Vec3f(1.66f,1.33f,1.33f);
@@ -53,15 +54,17 @@ void Rings::setupInterface()
     mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
                          .minValue(-32.0f)
                          .maxValue(32.0f));
-    mInterface->addParam(CreateFloatParam( "Smoothing", &mSmoothing )
+    mInterface->addParam(CreateFloatParam( "Scale", &mScale )
                          .minValue(0.0f)
-                         .maxValue(0.1f));
+                         .maxValue(1.0f));
+    mInterface->addParam(CreateBoolParam("AudioScale", &mAudioScale));
     
     mInterface->addParam(CreateIntParam( "ColorMode", &mColorMode )
                          .minValue(0)
                          .maxValue(3));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    mInterface->addParam(CreateColorParam("color3", &mColor3, kMinColor, kMaxColor));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateVec3fParam("coeffs", &mCoefficients, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
@@ -69,14 +72,12 @@ void Rings::setupInterface()
                          .minValue(0)
                          .maxValue(128));
     
-    //mAudioInputHandler.setupInterface(mInterface);
+    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
 
 void Rings::update(double dt)
 {
     Scene::update(dt);
-    
-    //mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mElapsedTime += dt;
 }
@@ -98,6 +99,12 @@ void Rings::shaderPreDraw()
         mApp->getAudioInputHandler().getFbo().bindTexture(1);
     }
     
+    float scale = mScale;
+    if (mAudioScale)
+    {
+        scale *= mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange();
+    }
+    
     mShader.bind();
     
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
@@ -106,16 +113,18 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iGlobalTime", (float)mElapsedTime );
     mShader.uniform( "iColor1", mColor1);
     mShader.uniform( "iColor2", mColor2);
+    mShader.uniform( "iColor3", mColor3);
     
     mShader.uniform( "iChannel0", 1 ); // audio
     
     mShader.uniform( "iTimeScale", mTimeScale );
     mShader.uniform( "iRings", (float)mNumRings );
-    mShader.uniform( "iSmoothing", mSmoothing );
+    mShader.uniform( "iScale", scale );
     mShader.uniform( "iIntervals", (float)mIntervals );
     
     mShader.uniform( "iColorMode", mColorMode );
     mShader.uniform( "iCoefficients", mCoefficients );
+    mShader.uniform( "iGain", mGain );
 }
 
 void Rings::drawShaderOutput()

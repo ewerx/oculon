@@ -119,7 +119,7 @@ void Polyhedron::loadMesh()
 
 void Polyhedron::createMeshes()
 {
-    //mCircle			= gl::VboMesh( MeshHelper::createCircle( Vec2i( mResolution, mResolution ) ) );
+    mCircle			= gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, 1 ), 2.0f ) );
 	//mCone			= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ), 0.0f, 1.0f, false, true ) );
 	mCube			= gl::VboMesh( MeshHelper::createCube( Vec3i( 4, 4, 4 ) ) );
 	//mCylinder		= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ) ) );
@@ -271,113 +271,6 @@ void Polyhedron::update(double dt)
     // Update light on every frame
 	mLight->update( getCamera() );
 }
-
-#pragma mark Audio
-
-void Polyhedron::updateAudioResponse()
-{
-    AudioInput& audioInput = mApp->getAudioInput();
-	
-    // Get data
-    //float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    if( mFftFalloff.size() == 0 )
-    {
-        for( int i=0; i< dataSize; ++i )
-        {
-            mFftFalloff.push_back( fftLogData[i].y );
-        }
-    }
-    
-    int32_t row = mAudioRowShift;
-    
-    Rand randIndex(0);
-	Surface32f fftSurface( mAudioFbo.getTexture() );
-	Surface32f::Iter it = fftSurface.getIter();
-    int32_t index = 0;
-	while( it.line() )
-    {
-        //int32_t index = row * mAudioFboDim;
-		while( it.pixel() && index < dataSize )
-        {
-            int32_t bandIndex = Rand::randInt(dataSize);//randIndex.nextInt(dataSize);
-            if (fftLogData[bandIndex].y > mFftFalloff[index])
-            {
-                //mFftFalloff[index] = fftLogData[bandIndex].y;
-                timeline().apply( &mFftFalloff[index], fftLogData[bandIndex].y, mFalloff/2.0f, getReverseFalloffFunction() );
-                timeline().appendTo(&mFftFalloff[index], 0.0f, mFalloff, getReverseFalloffFunction() );
-                //timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
-            } else if (fftLogData[bandIndex].y < mFftFalloff[index]) {
-                timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
-            }
-            
-			it.r() = mFftFalloff[index]();
-            it.g() = 0.0f; // UNUSED
-			it.b() = 0.0f; // UNUSED
-			it.a() = 1.0f; // UNUSED
-            
-            ++index;
-		}
-        
-        ++row;
-        if (row >= mAudioFboDim)
-        {
-            row = 0;
-        }
-	}
-    
-    if (mAudioRowShiftTime >= mAudioRowShiftDelay)
-    {
-        mAudioRowShiftTime = 0.0f;
-        ++mAudioRowShift;
-        if (mAudioRowShift >= mAudioFboDim) {
-            mAudioRowShift = 0;
-        }
-    }
-	
-	gl::Texture fftTexture( fftSurface );
-	mAudioFbo.bindFramebuffer();
-	gl::setMatricesWindow( mAudioFboSize, false );
-	gl::setViewport( mAudioFboBounds );
-	gl::draw( fftTexture );
-	mAudioFbo.unbindFramebuffer();
-}
-
-Polyhedron::tEaseFn Polyhedron::getFalloffFunction()
-{
-    switch( mFalloffMode )
-    {
-        case FALLOFF_LINEAR: return EaseNone();
-        case FALLOFF_OUTQUAD: return EaseOutQuad();
-        case FALLOFF_OUTEXPO: return EaseOutExpo();
-        case FALLOFF_OUTBACK: return EaseOutBack();
-        case FALLOFF_OUTBOUNCE: return EaseOutBounce();
-        case FALLOFF_OUTINEXPO: return EaseOutInExpo();
-        case FALLOFF_OUTINBACK: return EaseOutInBack();
-            
-        default: return EaseNone();
-    }
-}
-
-Polyhedron::tEaseFn Polyhedron::getReverseFalloffFunction()
-{
-    switch( mFalloffMode )
-    {
-        case FALLOFF_LINEAR: return EaseNone();
-        case FALLOFF_OUTQUAD: return EaseInQuad();
-        case FALLOFF_OUTEXPO: return EaseInExpo();
-        case FALLOFF_OUTBACK: return EaseInBack();
-        case FALLOFF_OUTBOUNCE: return EaseInBounce();
-        case FALLOFF_OUTINEXPO: return EaseInOutExpo();
-        case FALLOFF_OUTINBACK: return EaseInOutBack();
-            
-        default: return EaseNone();
-    }
-}
-
 
 // ----------------------------------------------------------------
 //
@@ -561,8 +454,8 @@ const ci::gl::VboMesh& Polyhedron::getMesh()
 {
     switch( mMeshType )
     {
-//        case MESH_TYPE_CIRCLE:
-//            return mCircle;
+        case MESH_TYPE_CIRCLE:
+            return mCircle;
 //        case MESH_TYPE_CONE:
 //            return mCone;
 //        case MESH_TYPE_CYLINDER:

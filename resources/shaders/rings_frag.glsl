@@ -3,12 +3,14 @@ uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
 uniform float        iRings;
 uniform float       iTimeScale;
-uniform float       iSmoothing;
+uniform float       iScale;
 uniform vec4        iColor1;
 uniform vec4        iColor2;
+uniform vec4        iColor3;
 uniform float       iIntervals;
 uniform int         iColorMode;
 uniform vec3        iCoefficients;
+uniform float       iGain;
 
 // based on https://www.shadertoy.com/view/XsXGD8
 
@@ -19,14 +21,14 @@ uniform vec3        iCoefficients;
 #ifdef GL_ES
 precision highp float;
 #endif
-#define EFFECT0 // 0..2
 
 void main(void)
 {
-    vec2 uv = (gl_FragCoord.xy - iResolution.xy*.5)/iResolution.x;
-    float sound = texture2D( iChannel0, vec2(0.01,1.0) ).x;
+    //vec2 uv = (gl_FragCoord.xy - iResolution.xy*.5)/iResolution.x;
+    vec2 uv = gl_FragCoord.xy / iResolution.xy;
+    //float sound = texture2D( iChannel0, vec2(0.01,1.0) ).x * iGain;
     
-    float scale  = sound + 0.011;
+    float scale  = iScale;//sound + 0.011;
     vec2 offset  = iResolution.xy*0.5;
     //		           + vec2(sin(iGlobalTime*0.3), cos(iGlobalTime*0.6))*100.0;
     
@@ -34,6 +36,9 @@ void main(void)
     vec2 pos = (gl_FragCoord.xy-offset) / iResolution.xy;
     float aspect = iResolution.x /iResolution.y;
     pos.x = pos.x*aspect;
+    
+    // pos --> x,y
+    
     
     float dist = length(pos);
     float dist2 = (dist*dist)/scale;
@@ -54,10 +59,12 @@ void main(void)
     }
     else if (iColorMode == 1)
     {
-        color = vec4(rings1*iColor1.x,
-                     rings2*iColor1.y,
-                     rings3*iColor1.z,
-                     iColor1.a);
+        vec4 color1 = iColor1 * rings1;
+        vec4 color2 = iColor2 * rings2;
+        vec4 color3 = iColor3 * rings3;
+        
+        color = color1 + color2 + color3;
+        color.w = 1.0;
     }
     else if (iColorMode == 2) {
         // space eye
