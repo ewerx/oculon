@@ -62,6 +62,13 @@ private:
     ci::ColorAf         mColor3;
     float               mTimeScale;
     double              mElapsedTime;
+    
+    ci::Vec3f           mThickness;
+    ci::Vec3f           mFrequency;
+
+//    enum { NUM_RING_SETS = 3 };
+//    tRingSetParams mRingSetParams[NUM_RING_SETS];
+
     int                 mNumRings;
     float               mScale;
     bool                mAudioScale;

@@ -19,16 +19,14 @@ float invAr = iResolution.y / iResolution.x;
 void main(void)
 {
 	vec2 uv = gl_FragCoord.xy / iResolution.xy;
-    vec2 pos = center - uv;
-    pos.y *= invAr;
+    vec2 pos = center - uv; // pos in -0.5 to 0.5 range
+    pos.y *= invAr; // compensate for aspect ratio
     // pos.y = pos.x ==> vertical lines
     // pos.x = pos.y ==> horizontal lines
     
     // color fade
     // fades intensity down towards edges of screen
     //float fade = 0.25*sin(PI*uv.y) + -0.5*sin(PI*uv.x);
-    
-	//vec4 lineColor = vec4(iColor1.x,iColor1.y,iColor1.z,iColor1.w);
     
     vec4 texcol;
     

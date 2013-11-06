@@ -73,7 +73,6 @@ private:
 TS_SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
 TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
 TS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
-TS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
 //end tuple
     
     enum eShaderType

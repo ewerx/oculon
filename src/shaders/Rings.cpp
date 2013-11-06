@@ -41,6 +41,8 @@ void Rings::setup()
     mColorMode = 0;
     mCoefficients = Vec3f(1.66f,1.33f,1.33f);
     
+    mThickness = 0.1f;
+    
     reset();
 }
 
@@ -125,6 +127,8 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iColorMode", mColorMode );
     mShader.uniform( "iCoefficients", mCoefficients );
     mShader.uniform( "iGain", mGain );
+    
+    mShader.uniform( "iThickness", mThickness );
 }
 
 void Rings::drawShaderOutput()
