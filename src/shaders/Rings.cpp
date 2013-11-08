@@ -146,24 +146,24 @@ void Rings::shaderPreDraw()
     float power2 = mRingSetParams[1].mZoom;
     float power3 = mRingSetParams[2].mZoom;
     
-    float fftlow = mGain * mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.0f, 0.333f);
-    float fftmid = mGain * mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.333f, 0.666f);
-    float ffthigh = mGain * mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.333f, 1.0f);
+    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
+    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq() * mGain;
+    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq() * mGain;
     
     if (mZoomByAudio)
     {
         float minZoom = 2.0f;
-        zoom1 *= fftlow + minZoom;
-        zoom2 *= fftmid + minZoom;
-        zoom3 *= ffthigh + minZoom;
+        zoom1 *= lows + minZoom;
+        zoom2 *= mids + minZoom;
+        zoom3 *= highs + minZoom;
     }
     
     if (mPowerByAudio)
     {
         float minPower = 0.01f;
-        power1 *= fftlow + minPower;
-        power2 *= fftmid + minPower;
-        power3 *= ffthigh + minPower;
+        power1 *= lows + minPower;
+        power2 *= mids + minPower;
+        power3 *= highs + minPower;
     }
     
     mShader.bind();

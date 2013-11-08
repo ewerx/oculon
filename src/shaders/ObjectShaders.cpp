@@ -242,15 +242,15 @@ void ObjectShaders::update(double dt)
     
     mElapsedTime += dt;
     
+    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
+    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq() * mGain;
+    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq() * mGain;
+    
     switch (mShaderType)
     {
         case SHADER_METAHEX:
             if (mMetaHexParams.mAudioCoeffs)
             {
-                const float lows = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.0f, 0.25f) * mGain;
-                const float mids = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.25f, 0.75f) * mGain;
-                const float highs = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.75f, 1.0f) * mGain;
-                
                 mMetaHexParams.mCoeffecients.z = 0.5f + lows;
                 mMetaHexParams.mCoeffecients.y = 0.5f + mids*3.0f;
                 mMetaHexParams.mCoeffecients.x = 0.5f + highs*2.0f;
@@ -260,14 +260,10 @@ void ObjectShaders::update(double dt)
         case SHADER_RETINA:
             if (mRetinaParams.mAudioDialation)
             {
-                const float lows = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.0f, 0.25f) * mGain;
                 mRetinaParams.mDialation = 0.5f + lows;
             }
             if (mRetinaParams.mAudioPattern)
             {
-                const float mids = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.25f, 0.75f) * mGain;
-                const float highs = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.75f, 1.0f) * mGain;
-                
                 mRetinaParams.mPatternAmp = 0.01f + 0.25f*mids;
                 mRetinaParams.mPatternFreq = 5.0f + 10.0f*highs;
             }
