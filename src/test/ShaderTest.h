@@ -68,8 +68,6 @@ private:
     
     // shaders
 #define SHADERS_TUPLE \
-SHADERS_ENTRY( "Noise", SHADER_NOISE ) \
-SHADERS_ENTRY( "Simplicity", SHADER_SIMPLICITY ) \
 SHADERS_ENTRY( "Voronoi", SHADER_VORONOI ) \
 SHADERS_ENTRY( "Tripping", SHADER_TRIPPING ) \
 SHADERS_ENTRY( "Stripes", SHADER_STRIPES ) \
@@ -107,40 +105,6 @@ enm,
     
     //TEST
     int                 mRadius;
-    
-    // audio
-    //AudioInputHandler   mAudioInputHandler;
-    
-    // SIMPLICITY
-    ci::Vec3f           mColorScale;
-    int                 mRedPower;
-    int                 mGreenPower;
-    int                 mBluePower;
-    float               mStrengthFactor;
-    float               mStrengthMin;
-    float               mStrengthConst;
-    int                 mIterations;
-    float               mAccumPower;
-    ci::Vec3f           mMagnitude;
-    float               mFieldScale;
-    float               mFieldSubtract;
-    float               mTimeScale;
-    ci::Vec3f           mPanSpeed;
-    ci::Vec3f           mUVOffset;
-    float               mUVScale;
-    
-    // NOISE
-    struct tNoiseParams
-    {
-        float						mDisplacementSpeed;
-        ci::Vec3f                   mNoiseScale;
-        float                       mLevels;
-        float                       mEdgeThickness;
-        float                       mBrightness;
-    };
-    tNoiseParams        mNoiseParams;
-    
-    
     
     struct tVoronoiParams
     {

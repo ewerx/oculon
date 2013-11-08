@@ -72,7 +72,8 @@ private:
 #define TS_SHADERS_TUPLE \
 TS_SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
 TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
-TS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
+TS_SHADERS_ENTRY( "Simplicity", "simplicity_frag.glsl", SHADER_SIMPLICITY ) \
+TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
 //end tuple
     
     enum eShaderType
@@ -93,6 +94,16 @@ enm,
     ci::gl::Fbo mShaderFbo;
     
     // shader params
+    struct tNoiseParams
+    {
+        float       mDisplacementSpeed;
+        ci::Vec3f   mNoiseScale;
+        float       mLevels;
+        float       mEdgeThickness;
+        float       mBrightness;
+    };
+    tNoiseParams        mNoiseParams;
+    
     struct tCellsParams
     {
         bool mHighlightAudioResponse;
@@ -127,16 +138,25 @@ enm,
     };
     tKaliParams mKaliParams;
     
-    struct tMetaHexParams
+    struct tSimplicityParams
     {
-        float mSpeed;
-        float mLightSpeed;
-        int mNumObjects;
-        int mRenderSteps;
-        int mQuality;
-        ci::Vec3f mCoeffecients;
-        bool mAudioCoeffs;
+        ci::Vec3f           mColorScale;
+        int                 mRedPower;
+        int                 mGreenPower;
+        int                 mBluePower;
+        float               mStrengthFactor;
+        float               mStrengthMin;
+        float               mStrengthConst;
+        int                 mIterations;
+        float               mAccumPower;
+        ci::Vec3f           mMagnitude;
+        float               mFieldScale;
+        float               mFieldSubtract;
+        float               mTimeScale;
+        ci::Vec3f           mPanSpeed;
+        ci::Vec3f           mUVOffset;
+        float               mUVScale;
     };
-    tMetaHexParams mMetaHexParams;
+    tSimplicityParams mSimplicityParams;
 };
 
