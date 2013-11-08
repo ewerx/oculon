@@ -76,15 +76,6 @@ void Graviton::setup()
     mResetCameraByBlink = false;
     mColorByMindWave = false;
     
-    if( gl::isExtensionAvailable("glPointParameterfARB") || gl::isExtensionAvailable("glPointParameterfvARB") )
-    {
-        mScalePointsByDistance = true;
-    }
-    else
-    {
-        mScalePointsByDistance = true;
-    }
-    
     // shaders
     mParticlesShader = loadFragShader("graviton_particle_frag.glsl" );
     mDisplacementShader = loadVertAndFragShaders("graviton_displacement_vert.glsl",  "graviton_displacement_frag.glsl");
@@ -94,9 +85,10 @@ void Graviton::setup()
     setupVBO();
     
     // textures
-    mParticleTexture = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
-    //mParticleTexture = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
-    mParticleTexture.setWrap( GL_REPEAT, GL_REPEAT );
+    mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
+    mParticleTexture2 = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
+    mParticleTexture1.setWrap( GL_REPEAT, GL_REPEAT );
+    mParticleTexture2.setWrap( GL_REPEAT, GL_REPEAT );
     
     // renderers
     mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Graviton::drawParticles, this ) );
@@ -110,7 +102,7 @@ void Graviton::setupPingPongFbo()
     // FROM gpuPS
     //
     
-    float scale = 8.0f;
+    float scale = 80.0f;
     // TODO: Test with more than 2 texture attachments
 	std::vector<Surface32f> surfaces;
     // Position 2D texture array
@@ -185,30 +177,29 @@ void Graviton::setupDebugInterface()
 {
     Scene::setupDebugInterface(); // add all interface params
     
-    mDebugParams.setOptions("Time Step", "step=0.0001 min=-1.0 max=1.0" );
-    mDebugParams.setOptions("Gravity", "step=0.1");
-    mDebugParams.setOptions("Alpha", "min=0.0 max=1.0 step=0.001");
-    
-    mDebugParams.setOptions("Particle Formation", "min=0 max=3 enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}'" );
-    mDebugParams.setOptions("Node Formation", "min=0 max=2");
-    mDebugParams.setOptions("Damping", "step=0.0001");
-    mDebugParams.setOptions("EPS", "min=0.0 step=0.001");
-    
-    mDebugParams.setOptions("Color Mode", "min=0 max=2");
-    
-    mDebugParams.setOptions("Cam Type", "min=0 max=3");
-    mDebugParams.setOptions("Cam Radius", "min=1.0");
-    mDebugParams.setOptions("Cam Distance", "min=0.0");
-    mDebugParams.setOptions("Cam Turn Rate", "step=0.01");
-    mDebugParams.setOptions("Cam Slide Rate", "step=0.1");
-    
-    mDebugParams.addSeparator();
-    mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
-    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
-    mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
-    mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
-    mDebugParams.addParam("Point Scaling", &mScalePointsByDistance, "");
-    mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
+//    mDebugParams.setOptions("Time Step", "step=0.0001 min=-1.0 max=1.0" );
+//    mDebugParams.setOptions("Gravity", "step=0.1");
+//    mDebugParams.setOptions("Alpha", "min=0.0 max=1.0 step=0.001");
+//    
+//    mDebugParams.setOptions("Particle Formation", "min=0 max=3 enum='0 {Sphere}, 1 {Shell}, 2 {Disc}, 3 {Galaxy}'" );
+//    mDebugParams.setOptions("Node Formation", "min=0 max=2");
+//    mDebugParams.setOptions("Damping", "step=0.0001");
+//    mDebugParams.setOptions("EPS", "min=0.0 step=0.001");
+//    
+//    mDebugParams.setOptions("Color Mode", "min=0 max=2");
+//    
+//    mDebugParams.setOptions("Cam Type", "min=0 max=3");
+//    mDebugParams.setOptions("Cam Radius", "min=1.0");
+//    mDebugParams.setOptions("Cam Distance", "min=0.0");
+//    mDebugParams.setOptions("Cam Turn Rate", "step=0.01");
+//    mDebugParams.setOptions("Cam Slide Rate", "step=0.1");
+//    
+//    mDebugParams.addSeparator();
+//    mDebugParams.addParam("Inv Square", &mUseInvSquareCalc );
+//    mDebugParams.addParam("Motion Blur", &mUseMotionBlur);
+//    mDebugParams.addParam("Point Smoothing", &mEnablePointSmoothing, "");
+//    mDebugParams.addParam("Point Sprites", &mUseImageForPoints, "");
+//    mDebugParams.addParam("Additive Blending", &mAdditiveBlending, "");
     
 }
 
@@ -265,8 +256,8 @@ nodeFormationNames.push_back(nam);
     mInterface->addParam(CreateColorParam("Color Scale", &mColorScale, kMinColor, kMaxColor)
                          .oscReceiver(mName,"colorscale"));
     mInterface->addParam(CreateFloatParam( "Point Size", &mPointSize )
-                         .minValue(1.0f)
-                         .maxValue(3.0f)
+                         .minValue(0.01f)
+                         .maxValue(2.0f)
                          .oscReceiver(getName(), "psize"));
     
     mInterface->gui()->addColumn();
@@ -299,7 +290,6 @@ nodeFormationNames.push_back(nam);
     mInterface->addParam(CreateBoolParam( "Color by Mindwave", &mColorByMindWave )
                          .oscReceiver(getName(), "mindwavecolor"));
     
-    mInterface->addParam(CreateBoolParam( "ScaleByDist", &mScalePointsByDistance ));
     mInterface->addParam(CreateBoolParam( "ImagePoints", &mUseImageForPoints ));
 }
 
@@ -753,59 +743,17 @@ void Graviton::preRender()
 {
     gl::setMatrices( getCamera() );
     gl::setViewport( mApp->getViewportBounds() );
-    
-	if(mUseImageForPoints) 
-    {
-        if( mScalePointsByDistance )
-        {
-            // enable point sprites and initialize it
-            gl::enable( GL_POINT_SPRITE_ARB );
-            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 1.0f );
-            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, 0.1f );
-            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, 200.0f );
-            
-            // allow vertex shader to change point size
-            gl::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
-            
-//            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
-//            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-//            glEnable(GL_POINT_SPRITE);
-//            glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-            
-//            glPointSize(mPointSize);
-//            float quadratic[] =  { 0.0f, 0.0f, 0.00001f };
-//            float sizes[] = { 1.0f, mPointSize };
-//            glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes);
-//            glDisable(GL_POINT_SPRITE);
-//            glEnable( GL_POINT_SPRITE_ARB );
-//            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
-//            glEnable(GL_PROGRAM_POINT_SIZE_EXT);
-//            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, sizes[1] );
-//            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, sizes[0] );
-//            glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
-//            glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
-//            glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
-        }
-        else
-        {
-            glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, mPointSize );
-            glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, mPointSize );
-            glDisable(GL_POINT_SPRITE_ARB);
-            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
-            glEnable(GL_POINT_SPRITE);
-            glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-            glPointSize(mPointSize);
-        }
-	} 
-    else 
-    {
-		glDisable(GL_POINT_SPRITE);
-	}
+
+    gl::enable(GL_POINT_SPRITE);
+    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
+    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
+    glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 	
 	if(mAdditiveBlending)
     {
         gl::enableAdditiveBlending();
-	} 
+	}
     else 
     {
 		gl::enableAlphaBlending();
@@ -839,20 +787,14 @@ void Graviton::preRender()
 void Graviton::drawParticles() 
 {
     preRender();
-    
-//    glEnableClientState(GL_VERTEX_ARRAY);
-//    glEnableClientState(GL_COLOR_ARRAY);
-//    
-//    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[0]);
-//    glVertexPointer(4, GL_FLOAT, 0, 0);
-//    
-//    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVbo[1]);
-//    glColorPointer(4, GL_FLOAT, 0, 0);
-    
-    if(mUseImageForPoints) 
+    glEnable(GL_TEXTURE_2D);
+    if(mUseImageForPoints)
     {
-        glEnable(GL_TEXTURE_2D);
-        mParticleTexture.bind(2);
+        mParticleTexture1.bind(2);
+    }
+    else
+    {
+        mParticleTexture2.bind(2);
     }
     
 //    glDrawArrays(GL_POINTS, 0, mNumParticles);
@@ -862,21 +804,23 @@ void Graviton::drawParticles()
     mDisplacementShader.uniform("displacementMap", 0 );
     mDisplacementShader.uniform("velocityMap", 1);
     mDisplacementShader.uniform("pointSpriteTex", 2);
-    mDisplacementShader.uniform("scale", mPointSize);
-    mDisplacementShader.uniform("eyePos", getCamera().getEyePoint());
+    mDisplacementShader.uniform("screenWidth", (float)getWindowWidth());
+    mDisplacementShader.uniform("spriteWidth", mPointSize);
+    mDisplacementShader.uniform("MV", getCamera().getModelViewMatrix());
+    mDisplacementShader.uniform("P", getCamera().getProjectionMatrix());
     
     gl::draw( mVboMesh );
     mDisplacementShader.unbind();
     mParticlesFbo.unbindTexture();
     
-    if(mUseImageForPoints) 
+    if(mUseImageForPoints)
     {
-        mParticleTexture.unbind();
-        //glDisable(GL_TEXTURE_2D);
+        mParticleTexture1.unbind();
     }
-    
-//    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-//    glDisableClientState(GL_COLOR_ARRAY);
+    else
+    {
+        mParticleTexture2.unbind();
+    }
 }
 
 void Graviton::drawDebug()

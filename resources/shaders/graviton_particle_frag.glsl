@@ -14,7 +14,8 @@ void main(void)
     vec3 p0 = texture2D( positions, texCoord.st).rgb;
     vec3 v0 = texture2D( velocities, texCoord.st).rgb;
     float invmass = texture2D( positions, texCoord.st).a;
-    
+ 
+    // the simulation
     float h = 1.0; //time step
     vec3 f = attractorPos-p0; //force
     float fMag = length(f); //force magnitude

@@ -52,7 +52,7 @@ protected:// from Scene
 private:
     enum
     {
-        kStep =                 128,
+        kStep =                 512,
         kNumParticles =         (kStep * kStep),
         kFftBands =             512,
     };
@@ -186,7 +186,8 @@ enm,
 
     // rendering
     GLuint              mVbo[2]; // pos and color VBOs
-    ci::gl::Texture     mParticleTexture;
+    ci::gl::Texture     mParticleTexture1;
+    ci::gl::Texture     mParticleTexture2;
     float				mPointSize;
     float				mLineWidth;
     //float               mParticleAlpha;
