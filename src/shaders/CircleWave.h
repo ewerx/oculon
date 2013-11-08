@@ -64,5 +64,25 @@ private:
     int                 mStrands;
     float               mScale;
     bool                mColorSeparation;
+    
+    // background
+//#define CIRCLEWAVE_BG_REACTION_TUPLE \
+//CIRCLEWAVE_BG_REACTION_ENTRY( "None", BG_REACTION_NONE ) \
+//CIRCLEWAVE_BG_REACTION_ENTRY( "White", BG_REACTION_WHITE ) \
+//CIRCLEWAVE_BG_REACTION_ENTRY( "Color", BG_REACTION_COLOR ) \
+////end tuple
+//    
+//    enum eBackgroundReaction
+//    {
+//#define CIRCLEWAVE_BG_REACTION_ENTRY( nam, enm ) \
+//enm,
+//        CIRCLEWAVE_BG_REACTION_TUPLE
+//#undef  CIRCLEWAVE_BG_REACTION_ENTRY
+//        
+//        BG_REACTION_COUNT
+//    };
+//    eBackgroundReaction mBackgroundReaction;
+    
+    bool                mBackgroundFlash;
 };
 

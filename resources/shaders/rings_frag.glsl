@@ -84,5 +84,5 @@ void main(void)
     vec4 ringset2 = iColor2 * calcRingSet( pos, iTime2, iZoom2, iScale2, iThickness2, iPower2 );
     vec4 ringset3 = iColor3 * calcRingSet( pos, iTime3, iZoom3, iScale3, iThickness3, iPower3 );
 	
-	gl_FragColor = ringset1 + ringset2 + ringset3;
+	gl_FragColor = ringset1 * iColor1.w + ringset2 * iColor2.w + ringset3 * iColor3.w;
 }

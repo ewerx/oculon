@@ -16,7 +16,7 @@
 using namespace ci;
 
 CircleWave::CircleWave()
-: Scene("CircleWave")
+: Scene("circlewave")
 {
     //mAudioInputHandler.setup(this, true);
 }
@@ -42,9 +42,12 @@ void CircleWave::reset()
     mColorSeparation = true;
     mDetail = 0.5f;
     mStrands = 60;
-    mScale = 1.0f;
+    mScale = 0.75f;
     
     mColor2 = ColorA(0.25f, 0.15f, 0.25f, 1.0f);
+    
+//    mBackgroundReaction = BG_REACTION_NONE;
+    mBackgroundFlash = false;
 }
 
 void CircleWave::setupInterface()
@@ -64,7 +67,20 @@ void CircleWave::setupInterface()
                          .minValue(0.0f)
                          .maxValue(10.0f));
     mInterface->addParam(CreateBoolParam( "ColorSep", &mColorSeparation ));
-    //mAudioInputHandler.setupInterface(mInterface);
+    mInterface->addParam(CreateBoolParam( "BackgroundFlash", &mBackgroundFlash ));
+    
+//    mInterface->gui()->addColumn();
+//    vector<string> bgReactionNames;
+//#define CIRCLEWAVE_BG_REACTION_ENTRY( nam, enm ) \
+//bgReactionNames.push_back(nam);
+//    CIRCLEWAVE_BG_REACTION_TUPLE
+//#undef  CIRCLEWAVE_BG_REACTION_ENTRY
+//    interface->addEnum(CreateEnumParam( "bg_reaction", (int*)(&mBackgroundReaction) )
+//                       .maxValue(BG_REACTION_COUNT)
+//                       .oscReceiver(name)
+//                       .isVertical(), bgReactionNames);
+    
+    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
 
 void CircleWave::update(double dt)
@@ -108,6 +124,8 @@ void CircleWave::shaderPreDraw()
     mShader.uniform( "iStrands", mStrands );
     mShader.uniform( "iScale", mScale );
     mShader.uniform( "iColorSep", mColorSeparation );
+    mShader.uniform( "iBackgroundFlash", mBackgroundFlash );
+    //mShader.unfirom( "iBgReaction", (int)mBackgroundReaction );
 }
 
 void CircleWave::drawShaderOutput()

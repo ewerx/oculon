@@ -12,7 +12,7 @@
 
 #include "cinder/app/AppBasic.h"
 #include "cinder/Utilities.h"
-//#include "cinder/gl/gl.h" <-- included in Particle.h
+#include "cinder/gl/gl.h"
 #include "cinder/Rand.h"
 #include "cinder/Easing.h"
 #include "OculonApp.h"
