@@ -40,9 +40,14 @@ public:
     }
     ci::gl::Fbo& getFbo() { return mAudioFbo; }
     
+    // AVG VOLUME
     float getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
-    
+    float getAverageVolumeLowFreq() const { return mLowAvgVolume; }
+    float getAverageVolumeMidFreq() const { return mMidAvgVolume; }
+    float getAverageVolumeHighFreq() const { return mHighAvgVolume; }
+
+    // RAW FFT VALUES
     struct tFftValue
     {
         int32_t mBandIndex;
@@ -66,12 +71,12 @@ public:
     ci::Area            mAudioFboBounds;
     ci::gl::Fbo         mAudioFbo;
     
+    // Distribution
     bool                mRandomSignal;
     bool                mRandomEveryFrame;
     int                 mRandomSeed;
     bool                mLinearScale;
 
-    
     // FALLOFF
 #define AUDIO_FALLOFF_MODE_TUPLE \
 AUDIO_FALLOFF_MODE_ENTRY( "None", FALLOFF_NONE ) \
@@ -102,6 +107,13 @@ enm,
     typedef std::function<float (float)> tEaseFn;
     tEaseFn getFalloffFunction();
     tEaseFn getReverseFalloffFunction();
+    
+    // Filtering
+    float   mLowPassFilter;
+    float   mHighPassFilter;
+    float   mLowAvgVolume;
+    float   mMidAvgVolume;
+    float   mHighAvgVolume;
 };
 
 #endif /* defined(__Oculon__AudioInputHandler__) */

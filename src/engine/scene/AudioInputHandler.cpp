@@ -25,8 +25,7 @@ AudioInputHandler::~AudioInputHandler()
 
 void AudioInputHandler::setup(bool fboEnabled)
 {
-    
-    // SIGNAL
+    // DISTRIBUTION
     mRandomSignal       = true;
     mRandomEveryFrame   = true;
     mRandomSeed         = 1234;
@@ -36,6 +35,13 @@ void AudioInputHandler::setup(bool fboEnabled)
     mFalloffTime        = 0.32f;
     mFalloffMode        = FALLOFF_OUTQUAD;
     mFalloffByFreq      = true;
+    
+    // FILTER
+    mLowPassFilter      = 0.25f;
+    mHighPassFilter     = 0.75f;
+    mLowAvgVolume       = 0.0f;
+    mMidAvgVolume       = 0.0f;
+    mHighAvgVolume      = 0.0f;
 
     // FBO
     mAudioFboDim        = KISS_DEFAULT_DATASIZE; // 256 bands
@@ -55,7 +61,20 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
 {
     interface->gui()->addColumn();
     interface->gui()->addLabel("audio");
-    interface->gui()->addParam("audiodata", &mAudioFbo.getTexture());
+    
+    interface->addParam(CreateFloatParam( "LPF", &mLowPassFilter ));
+    interface->addParam(CreateFloatParam( "HPF", &mHighPassFilter ));
+    interface->gui()->addSeparator();
+    // these are just to show a little equalizer
+    interface->addParam(CreateFloatParam( "Avg Vol: Low", &mLowAvgVolume ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Mid", &mMidAvgVolume ));
+    interface->addParam(CreateFloatParam( "Avg Vol: High", &mHighAvgVolume ));
+    
+    interface->gui()->addLabel("distribution");
+    if (mAudioFboEnabled)
+    {
+        interface->gui()->addParam("audiodata", &mAudioFbo.getTexture());
+    }
 //    interface->addParam(CreateBoolParam( "texture", &mAudioFboEnabled )
 //                        .oscReceiver(name,"audio/texture"));
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
@@ -65,6 +84,7 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     interface->addParam(CreateBoolParam( "linear", &mLinearScale )
                         .oscReceiver(name,"audio/linear"));
     
+    interface->gui()->addLabel("falloff");
     interface->addParam(CreateFloatParam( "falloff", &mFalloffTime )
                         .maxValue(5.0f)
                         .oscReceiver(name,"audio/falloff")
@@ -175,6 +195,11 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
         mAudioFbo.unbindFramebuffer();
         gl::popMatrices();
     }
+    
+    // calculate avg volumes for low/mid/high for quick access and visual display
+    mLowAvgVolume = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
+    mMidAvgVolume = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter);
+    mHighAvgVolume = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f);
 }
 
 void AudioInputHandler::drawDebug(const Vec2f& size)
