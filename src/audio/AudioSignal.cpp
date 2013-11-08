@@ -31,7 +31,7 @@ AudioSignal::AudioSignal()
 {
     mSubScenes.push_back( new SignalScope(this) );
     mSubScenes.push_back( new Barcode(this) );
-    mSubScenes.push_back( new Eclipse(this) );
+    //mSubScenes.push_back( new Eclipse(this) );
     mSubScenes.push_back( new Circles(this) );
 }
 
@@ -84,6 +84,8 @@ void AudioSignal::setupInterface()
     {
 		ss->setupInterface();
 	}
+    
+    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
 
 void AudioSignal::setupDebugInterface()
@@ -145,13 +147,15 @@ void AudioSignal::drawSubScenes()
 
 void AudioSignal::drawDebug()
 {
-    glPushMatrix();
+    gl::pushMatrices();
     gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     drawWaveform( mApp->getAudioInput().getPcmBuffer() );
     drawFft( mApp->getAudioInput().getFftDataRef() );
     
-    glPopMatrix();
+    mApp->getAudioInputHandler().drawDebug(mApp->getWindowSize());
+    
+    gl::popMatrices();
 }
 
 void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
@@ -176,9 +180,9 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
         
         int32_t	binSize = audioInput.getFft()->getBinSize();
         float * amplitude = audioInput.getFft()->getAmplitude();
-        float *	imaginary = audioInput.getFft()->getImaginary();
+        //float *	imaginary = audioInput.getFft()->getImaginary();
         float *	phase = audioInput.getFft()->getPhase();
-        float *	real = audioInput.getFft()->getReal();
+        //float *	real = audioInput.getFft()->getReal();
         
         const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
         
