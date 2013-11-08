@@ -169,6 +169,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
         mAudioFbo.bindFramebuffer();
         gl::setMatricesWindow( mAudioFboSize, false );
         gl::setViewport( mAudioFboBounds );
+        gl::color(ColorA::white());
         gl::clear();
         gl::draw( fftTexture );
         mAudioFbo.unbindFramebuffer();
@@ -178,6 +179,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
 
 void AudioInputHandler::drawDebug(const Vec2f& size)
 {
+    gl::pushMatrices();
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( getWindowSize() );
     
@@ -189,6 +191,7 @@ void AudioInputHandler::drawDebug(const Vec2f& size)
     //gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
     
     gl::disable( GL_TEXTURE_2D );
+    gl::popMatrices();
 }
 
 #pragma mark - Falloff Fucntions
