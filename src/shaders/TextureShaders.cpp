@@ -68,6 +68,13 @@ void TextureShaders::setupShaders()
 TS_SHADERS_TUPLE
 #undef TS_SHADERS_ENTRY
     
+    // noise
+    mNoiseParams.mNoiseScale            = Vec3f(1.0f,1.0f,0.25f);
+    mNoiseParams.mDisplacementSpeed     = 1.0f;
+    mNoiseParams.mLevels                = 64.0f;
+    mNoiseParams.mEdgeThickness         = 0.0f;
+    mNoiseParams.mBrightness            = 1.0f;
+    
     // cells
     mCellsParams.mHighlightAudioResponse = true;
     mCellsParams.mCellSize = 1.0f;
@@ -94,6 +101,23 @@ TS_SHADERS_TUPLE
     mKaliParams.colspeed=0.05f;
     mKaliParams.antialias=2.f;
     
+    // simplicity
+    mSimplicityParams.mRedPower = 2;
+    mSimplicityParams.mGreenPower = 1;
+    mSimplicityParams.mBluePower = 0;
+    mSimplicityParams.mColorScale = Vec3f(1.8f, 1.4f, 1.0f);
+    mSimplicityParams.mStrengthFactor = 0.03f;
+    mSimplicityParams.mStrengthMin = 7.0f;
+    mSimplicityParams.mStrengthConst = 4373.11f;
+    mSimplicityParams.mIterations = 32;
+    mSimplicityParams.mAccumPower = 2.3f;
+    mSimplicityParams.mMagnitude = Vec3f(-0.5f, -0.4f, -1.5f);
+    mSimplicityParams.mFieldScale = 5.0f;
+    mSimplicityParams.mFieldSubtract = 0.7f;
+    mSimplicityParams.mTimeScale = 1.0f;
+    mSimplicityParams.mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
+    mSimplicityParams.mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
+    mSimplicityParams.mUVScale = 0.25f;
 }
 
 void TextureShaders::reset()
@@ -139,7 +163,7 @@ TS_SHADERS_TUPLE
     
     // SHADER_CELLS
     mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("CELLS");
+    mInterface->gui()->addLabel("Cells");
     mInterface->addParam(CreateFloatParam( "CellSize", &mCellsParams.mCellSize )
                          .maxValue(3.0f)
                          .oscReceiver(getName())
@@ -210,6 +234,77 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
+    
+
+    // SHADER_SIMPLICITY
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Simplicity");
+    mInterface->addParam(CreateIntParam( "Red Power", &mSimplicityParams.mRedPower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Green Power", &mSimplicityParams.mGreenPower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Blue Power", &mSimplicityParams.mBluePower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver("/1/fader2"));
+    mInterface->addParam(CreateIntParam( "Iterations", &mSimplicityParams.mIterations )
+                         .minValue(0)
+                         .maxValue(64));
+    mInterface->addParam(CreateFloatParam( "StrengthFactor", &mSimplicityParams.mStrengthFactor )
+                         .minValue(0.0f)
+                         .maxValue(1.0f));
+    mInterface->addParam(CreateFloatParam( "StrengthMin", &mSimplicityParams.mStrengthMin )
+                         .minValue(0.0f)
+                         .maxValue(20.0f));
+    mInterface->addParam(CreateFloatParam( "StrengthConst", &mSimplicityParams.mStrengthConst )
+                         .minValue(4000.0f)
+                         .maxValue(5000.0f));
+    mInterface->addParam(CreateFloatParam( "AccumPower", &mSimplicityParams.mAccumPower )
+                         .minValue(1.0f)
+                         .maxValue(4.0f));
+    mInterface->addParam(CreateFloatParam( "FieldScale", &mSimplicityParams.mFieldScale )
+                         .minValue(1.0f)
+                         .maxValue(10.0f));
+    mInterface->addParam(CreateFloatParam( "FieldSubtract", &mSimplicityParams.mFieldSubtract )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    mInterface->addParam(CreateFloatParam( "TimeScale", &mSimplicityParams.mTimeScale )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    mInterface->addParam(CreateVec3fParam("magnitude", &mSimplicityParams.mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
+    mInterface->addParam(CreateVec3fParam("color_scale", &mSimplicityParams.mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateVec3fParam("PanSpeed", &mSimplicityParams.mPanSpeed, Vec3f::zero(), Vec3f(0.1f,0.1f,0.1f)));
+    mInterface->addParam(CreateVec3fParam("UVOffset", &mSimplicityParams.mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
+    mInterface->addParam(CreateFloatParam( "UVScale", &mSimplicityParams.mUVScale )
+                         .minValue(0.01f)
+                         .maxValue(4.0f));
+    
+    // SHADER_NOISE
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Noise");
+    mInterface->addParam(CreateFloatParam( "noise/speed", &mNoiseParams.mDisplacementSpeed )
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec3fParam("noise/noise", &mNoiseParams.mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "levels", &mNoiseParams.mLevels )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "brightness", &mNoiseParams.mBrightness )
+                         .oscReceiver(getName()));
+    //.midiInput(0,2,16));
+    
+    mInterface->addParam(CreateFloatParam( "edgeThickness", &mNoiseParams.mEdgeThickness )
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+
+    
+    // audio input
+    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
 
 void TextureShaders::update(double dt)
@@ -223,7 +318,7 @@ void TextureShaders::update(double dt)
         case SHADER_CELLS:
             if (mCellsParams.mHighlightAudioResponse)
             {
-                const float midHighVolume = mApp->getAudioInput().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
+                const float midHighVolume = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
                 mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
             }
             break;
@@ -273,6 +368,7 @@ void TextureShaders::shaderPreDraw()
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mElapsedTime );
     shader.uniform( "iColor1", mColor1);
+    shader.uniform( "iColor2", mColor2);
     
     switch (mShaderType) {
         case SHADER_CELLS:
@@ -300,6 +396,36 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "colspeed", mKaliParams.colspeed );
             shader.uniform( "antialias", mKaliParams.antialias );
             break;
+            
+        case SHADER_NOISE:
+            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
+            shader.uniform( "scale", mNoiseParams.mNoiseScale );
+            shader.uniform( "colorScale", mColor1 );
+            shader.uniform( "alpha", mNoiseParams.mBrightness );
+            shader.uniform( "levels", mNoiseParams.mLevels );
+            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
+            break;
+            
+        case SHADER_SIMPLICITY:
+            shader.uniform( "colorScale", mSimplicityParams.mColorScale );
+            shader.uniform( "rPower", mSimplicityParams.mRedPower );
+            shader.uniform( "gPower", mSimplicityParams.mGreenPower );
+            shader.uniform( "bPower", mSimplicityParams.mBluePower );
+            shader.uniform( "strengthFactor", mSimplicityParams.mStrengthFactor );
+            shader.uniform( "strengthMin", mSimplicityParams.mStrengthMin );
+            shader.uniform( "strengthConst", mSimplicityParams.mStrengthConst );
+            shader.uniform( "iterations", mSimplicityParams.mIterations );
+            shader.uniform( "accumPower", mSimplicityParams.mAccumPower );
+            shader.uniform( "magnitude", mSimplicityParams.mMagnitude );
+            shader.uniform( "fieldScale", mSimplicityParams.mFieldScale );
+            shader.uniform( "fieldSubtract", mSimplicityParams.mFieldSubtract );
+            shader.uniform( "timeScale", mSimplicityParams.mTimeScale );
+            shader.uniform( "panSpeed", mSimplicityParams.mPanSpeed );
+            shader.uniform( "uvOffset", mSimplicityParams.mUVOffset );
+            shader.uniform( "uvScale", mSimplicityParams.mUVScale );
+            break;
+            
+
             
         default:
             break;

@@ -18,7 +18,6 @@ using namespace ci;
 Rings::Rings()
 : Scene("rings")
 {
-    //mAudioInputHandler.setup(this, true);
 }
 
 Rings::~Rings()
@@ -31,54 +30,95 @@ void Rings::setup()
     
     mShader = loadFragShader("rings_frag.glsl");
     
-    mColor1 = ColorA(0.2f,0.0f,0.1f,1.0f);
-    mColor2 = ColorA(0.9f,1.0f,1.0f,1.0f);
-    mTimeScale = 1.0f;
-    mNumRings = 64;
-    mSmoothing = 0.003f;
-    mIntervals = 2.0f;
-    mColorMode = 0;
-    mCoefficients = Vec3f(1.66f,1.33f,1.33f);
+    mRingSetParams[0].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
+    mRingSetParams[0].mTimeScale = 1.0f;
+    mRingSetParams[0].mElapsedTime = 0.0f;
+    mRingSetParams[0].mZoom = 5.0f;
+    mRingSetParams[0].mScale = 1.0f;
+    mRingSetParams[0].mThickness = 0.5f;
+    mRingSetParams[0].mPower = 0.5f;
+    
+    mRingSetParams[1].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
+    mRingSetParams[1].mTimeScale = 1.0f;
+    mRingSetParams[1].mElapsedTime = 0.0f;
+    mRingSetParams[1].mZoom = 5.0f;
+    mRingSetParams[1].mScale = 1.0f;
+    mRingSetParams[1].mThickness = 0.5f;
+    mRingSetParams[1].mPower = 0.5f;
+    
+    mRingSetParams[2].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
+    mRingSetParams[2].mTimeScale = 1.0f;
+    mRingSetParams[2].mElapsedTime = 0.0f;
+    mRingSetParams[2].mZoom = 1.0f;
+    mRingSetParams[2].mScale = 5.0f;
+    mRingSetParams[2].mThickness = 0.5f;
+    mRingSetParams[2].mPower = 0.5f;
+    
+    mZoomByAudio = false;
+    mPowerByAudio = false;
     
     reset();
 }
 
 void Rings::reset()
 {
-    mElapsedTime = 0.0f;
+    for (int i = 0; i < NUM_RING_SETS; ++i)
+    {
+        mRingSetParams[i].mElapsedTime = 0.0f;
+    }
 }
 
 void Rings::setupInterface()
 {
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
-                         .minValue(-32.0f)
-                         .maxValue(32.0f));
-    mInterface->addParam(CreateFloatParam( "Smoothing", &mSmoothing )
-                         .minValue(0.0f)
-                         .maxValue(0.1f));
+    mInterface->addParam(CreateBoolParam("audiozoom", &mZoomByAudio)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("audiopower", &mPowerByAudio)
+                         .oscReceiver(mName));
     
-    mInterface->addParam(CreateIntParam( "ColorMode", &mColorMode )
-                         .minValue(0)
-                         .maxValue(3));
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    for (int i = 0; i < NUM_RING_SETS; ++i)
+    {
+        char name[256];
+        snprintf(name,256,"ring%d", i+1);
+        
+        mInterface->gui()->addColumn();
+        mInterface->gui()->addLabel(name);
+        
+        snprintf(name,256,"%s/ring%d", mName.c_str(), i+1);
+        
+        mInterface->addParam(CreateFloatParam("timescale", &mRingSetParams[i].mTimeScale)
+                             .minValue(-20.0f)
+                             .maxValue(20.0f)
+                             .oscReceiver(name));
+        mInterface->addParam(CreateFloatParam("power", &mRingSetParams[i].mPower)
+                             .minValue(0.1f)
+                             .maxValue(1.5f)
+                             .oscReceiver(name));
+        mInterface->addParam(CreateFloatParam("zoom", &mRingSetParams[i].mZoom)
+                             .minValue(0.00001f)
+                             .maxValue(200.0f)
+                             .oscReceiver(name));
+        mInterface->addParam(CreateFloatParam("scale", &mRingSetParams[i].mScale)
+                             .minValue(0.0001f)
+                             .maxValue(10.0f)
+                             .oscReceiver(name));
+        mInterface->addParam(CreateFloatParam("thickness", &mRingSetParams[i].mThickness)
+                             .minValue(0.001f)
+                             .maxValue(3.0f)
+                             .oscReceiver(name));
+        mInterface->addParam(CreateColorParam("color", &mRingSetParams[i].mColor, kMinColor, kMaxColor));
+    }
     
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateVec3fParam("coeffs", &mCoefficients, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateIntParam( "Intervals", &mIntervals )
-                         .minValue(0)
-                         .maxValue(128));
-    
-    //mAudioInputHandler.setupInterface(mInterface);
+    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
 
 void Rings::update(double dt)
 {
     Scene::update(dt);
     
-    //mAudioInputHandler.update(dt, mApp->getAudioInput());
-    
-    mElapsedTime += dt;
+    for (int i = 0; i < NUM_RING_SETS; ++i)
+    {
+        mRingSetParams[i].mElapsedTime += mRingSetParams[i].mTimeScale*dt;
+    }
 }
 
 void Rings::draw()
@@ -93,9 +133,37 @@ void Rings::draw()
 void Rings::shaderPreDraw()
 {
     // audio texture
-    if( mApp->getAudioInputHandler().hasTexture() )
+//    if( mApp->getAudioInputHandler().hasTexture() )
+//    {
+//        mApp->getAudioInputHandler().getFbo().bindTexture(1);
+//    }
+//    
+    float zoom1 = mRingSetParams[0].mZoom;
+    float zoom2 = mRingSetParams[1].mZoom;
+    float zoom3 = mRingSetParams[2].mZoom;
+    
+    float power1 = mRingSetParams[0].mZoom;
+    float power2 = mRingSetParams[1].mZoom;
+    float power3 = mRingSetParams[2].mZoom;
+    
+    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
+    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq() * mGain;
+    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq() * mGain;
+    
+    if (mZoomByAudio)
     {
-        mApp->getAudioInputHandler().getFbo().bindTexture(1);
+        float minZoom = 2.0f;
+        zoom1 *= lows + minZoom;
+        zoom2 *= mids + minZoom;
+        zoom3 *= highs + minZoom;
+    }
+    
+    if (mPowerByAudio)
+    {
+        float minPower = 0.01f;
+        power1 *= lows + minPower;
+        power2 *= mids + minPower;
+        power3 *= highs + minPower;
     }
     
     mShader.bind();
@@ -103,19 +171,28 @@ void Rings::shaderPreDraw()
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
     mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iGlobalTime", (float)mElapsedTime );
-    mShader.uniform( "iColor1", mColor1);
-    mShader.uniform( "iColor2", mColor2);
+    //mShader.uniform( "iGlobalTime", (float)mElapsedTime );
     
-    mShader.uniform( "iChannel0", 1 ); // audio
+    mShader.uniform( "iTime1", mRingSetParams[0].mElapsedTime);
+    mShader.uniform( "iColor1", mRingSetParams[0].mColor);
+    mShader.uniform( "iScale1", mRingSetParams[0].mScale);
+    mShader.uniform( "iZoom1", zoom1);
+    mShader.uniform( "iThickness1", mRingSetParams[0].mThickness);
+    mShader.uniform( "iPower1", power1);
     
-    mShader.uniform( "iTimeScale", mTimeScale );
-    mShader.uniform( "iRings", (float)mNumRings );
-    mShader.uniform( "iSmoothing", mSmoothing );
-    mShader.uniform( "iIntervals", (float)mIntervals );
+    mShader.uniform( "iTime2", mRingSetParams[1].mElapsedTime);
+    mShader.uniform( "iColor2", mRingSetParams[1].mColor);
+    mShader.uniform( "iScale2", mRingSetParams[1].mScale);
+    mShader.uniform( "iZoom2", zoom2);
+    mShader.uniform( "iThickness2", mRingSetParams[1].mThickness);
+    mShader.uniform( "iPower2", power2);
     
-    mShader.uniform( "iColorMode", mColorMode );
-    mShader.uniform( "iCoefficients", mCoefficients );
+    mShader.uniform( "iTime3", mRingSetParams[2].mElapsedTime);
+    mShader.uniform( "iColor3", mRingSetParams[2].mColor);
+    mShader.uniform( "iScale3", mRingSetParams[2].mScale);
+    mShader.uniform( "iZoom3", zoom3);
+    mShader.uniform( "iThickness3", mRingSetParams[2].mThickness);
+    mShader.uniform( "iPower3", power3);
 }
 
 void Rings::drawShaderOutput()

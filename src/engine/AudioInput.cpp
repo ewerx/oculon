@@ -69,7 +69,7 @@ void AudioInput::setupInterface( Interface* interface )
         ++index;
 	}
     
-    interface->addParam(CreateFloatParam("Input Gain", &mGain)
+    interface->addParam(CreateFloatParam("Global Input Gain", &mGain)
                         .maxValue(50.0f)
                         .oscReceiver("master", "gain")
                         .sendFeedback()

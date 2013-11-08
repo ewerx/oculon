@@ -59,42 +59,11 @@ void ShaderTest::reset()
 
 void ShaderTest::setupShaders()
 {
-    mShaderType = SHADER_SIMPLICITY;
+    mShaderType = SHADER_VORONOI;
     
     try
     {
         gl::GlslProg shader;
-        
-        // PERLIN NOISE
-        shader = gl::GlslProg( loadResource( RES_SHADER_CT_TEX_VERT ), loadResource( RES_SHADER_CT_TEX_FRAG ) );
-        mShaders.push_back(shader);
-        
-        mNoiseParams.mNoiseScale            = Vec3f(1.0f,1.0f,0.25f);
-        mNoiseParams.mDisplacementSpeed     = 1.0f;
-        mNoiseParams.mLevels                = 64.0f;
-        mNoiseParams.mEdgeThickness         = 0.0f;
-        mNoiseParams.mBrightness            = 1.0f;
-        
-        // SIMPLICITY
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_SIMPLICITY_FRAG ) );
-        mShaders.push_back(shader);
-        
-        mRedPower = 2;
-        mGreenPower = 1;
-        mBluePower = 0;
-        mColorScale = Vec3f(1.8f, 1.4f, 1.0f);
-        mStrengthFactor = 0.03f;
-        mStrengthMin = 7.0f;
-        mStrengthConst = 4373.11f;
-        mIterations = 32;
-        mAccumPower = 2.3f;
-        mMagnitude = Vec3f(-0.5f, -0.4f, -1.5f);
-        mFieldScale = 5.0f;
-        mFieldSubtract = 0.7f;
-        mTimeScale = 1.0f;
-        mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
-        mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
-        mUVScale = 0.25f;
         
         // too slow!
         // MENGER
@@ -240,72 +209,7 @@ shaderNames.push_back(nam);
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
     mInterface->addParam(CreateBoolParam( "Grid Render", &mGrid ));
     
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Noise");
-    mInterface->addParam(CreateFloatParam( "noise/speed", &mNoiseParams.mDisplacementSpeed )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec3fParam("noise/noise", &mNoiseParams.mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "levels", &mNoiseParams.mLevels )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "brightness", &mNoiseParams.mBrightness )
-                         .oscReceiver(getName()));
-                         //.midiInput(0,2,16));
-
-    mInterface->addParam(CreateFloatParam( "edgeThickness", &mNoiseParams.mEdgeThickness )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Simplicity");
-    mInterface->addParam(CreateIntParam( "Red Power", &mRedPower )
-                         .minValue(0)
-                         .maxValue(2)
-                         .oscReceiver("/1/fader2"));
-    mInterface->addParam(CreateIntParam( "Green Power", &mGreenPower )
-                         .minValue(0)
-                         .maxValue(2)
-                         .oscReceiver("/1/fader2"));
-    mInterface->addParam(CreateIntParam( "Blue Power", &mBluePower )
-                         .minValue(0)
-                         .maxValue(2)
-                         .oscReceiver("/1/fader2"));
-    mInterface->addParam(CreateIntParam( "Iterations", &mIterations )
-                         .minValue(0)
-                         .maxValue(64));
-    mInterface->addParam(CreateFloatParam( "StrengthFactor", &mStrengthFactor )
-                         .minValue(0.0f)
-                         .maxValue(1.0f));
-    mInterface->addParam(CreateFloatParam( "StrengthMin", &mStrengthMin )
-                         .minValue(0.0f)
-                         .maxValue(20.0f));
-    mInterface->addParam(CreateFloatParam( "StrengthConst", &mStrengthConst )
-                         .minValue(4000.0f)
-                         .maxValue(5000.0f));
-    mInterface->addParam(CreateFloatParam( "AccumPower", &mAccumPower )
-                         .minValue(1.0f)
-                         .maxValue(4.0f));
-    mInterface->addParam(CreateFloatParam( "FieldScale", &mFieldScale )
-                         .minValue(1.0f)
-                         .maxValue(10.0f));
-    mInterface->addParam(CreateFloatParam( "FieldSubtract", &mFieldSubtract )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
-    mInterface->addParam(CreateVec3fParam("magnitude", &mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
-    mInterface->addParam(CreateVec3fParam("color_scale", &mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateVec3fParam("PanSpeed", &mPanSpeed, Vec3f::zero(), Vec3f(0.1f,0.1f,0.1f)));
-    mInterface->addParam(CreateVec3fParam("UVOffset", &mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
-    mInterface->addParam(CreateFloatParam( "UVScale", &mUVScale )
-                         .minValue(0.01f)
-                         .maxValue(4.0f));
-    
-    
-    
+    // SHADER_VORONOI
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Voronoi");
     mInterface->addParam(CreateFloatParam("voronoi/speed", &mVoronoiParams.mSpeed)
@@ -426,37 +330,6 @@ void ShaderTest::shaderPreDraw()
     
     switch( mShaderType )
     {
-        case SHADER_NOISE:
-            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
-            shader.uniform( "scale", mNoiseParams.mNoiseScale );
-            shader.uniform( "colorScale", mColorScale );
-            shader.uniform( "alpha", mNoiseParams.mBrightness );
-            shader.uniform( "levels", mNoiseParams.mLevels );
-            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
-            break;
-            
-        case SHADER_SIMPLICITY:
-            shader.uniform( "colorScale", mColorScale );
-            shader.uniform( "rPower", mRedPower );
-            shader.uniform( "gPower", mGreenPower );
-            shader.uniform( "bPower", mBluePower );
-            shader.uniform( "strengthFactor", mStrengthFactor );
-            shader.uniform( "strengthMin", mStrengthMin );
-            shader.uniform( "strengthConst", mStrengthConst );
-            shader.uniform( "iterations", mIterations );
-            shader.uniform( "accumPower", mAccumPower );
-            shader.uniform( "magnitude", mMagnitude );
-            shader.uniform( "fieldScale", mFieldScale );
-            shader.uniform( "fieldSubtract", mFieldSubtract );
-            shader.uniform( "timeScale", mTimeScale );
-            shader.uniform( "panSpeed", mPanSpeed );
-            shader.uniform( "uvOffset", mUVOffset );
-            shader.uniform( "uvScale", mUVScale );
-            shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mElapsedTime );
-            break;
-        
-            
         case SHADER_VORONOI:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );

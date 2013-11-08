@@ -12,6 +12,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
+#include "cinder/gl/Vbo.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
@@ -50,18 +51,20 @@ private:
 
     ci::gl::GlslProg    mShader;
     
-    // audio
-    //AudioInputHandler   mAudioInputHandler;
+    struct tRingSetParams
+    {
+        ci::ColorAf     mColor;
+        float           mElapsedTime;
+        float           mTimeScale;
+        float           mThickness;
+        float           mZoom;
+        float           mScale;
+        float           mPower;
+    };
+    enum { NUM_RING_SETS = 3 };
+    tRingSetParams mRingSetParams[NUM_RING_SETS];
     
-    // params
-    ci::ColorAf         mColor1;
-    ci::ColorAf         mColor2;
-    float               mTimeScale;
-    double              mElapsedTime;
-    int                 mNumRings;
-    float               mSmoothing;
-    int                 mIntervals;
-    int                 mColorMode;
-    ci::Vec3f           mCoefficients;
-};
+    bool mZoomByAudio;
+    bool mPowerByAudio;
 
+};

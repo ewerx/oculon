@@ -207,6 +207,7 @@ enm,
     tMetropolisPattern mMetropolis;
     ci::Anim<float> mTraverse;
     
+    bool mInverseBassTime;
     
     //TEMP
 //    bool                mEnableBlobTracker;

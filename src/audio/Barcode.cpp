@@ -30,7 +30,7 @@ using namespace std;
 // 
 
 Barcode::Barcode(Scene* scene)
-: SubScene(scene,"lines")
+: SubScene(scene,"barcode")
 {
 }
 
@@ -49,10 +49,6 @@ void Barcode::setup()
     mAlphaByFft = true;
     
     mPositionMode = POSITION_SHIFT_RANDOM;
-    
-    mFalloff = 1.0f;
-    mFftFalloff = true;
-    mFalloffMode = FALLOFF_OUTEXPO;
     
     mNumBars = 1;
     mBarGap = 0;
@@ -100,24 +96,25 @@ void Barcode::setupInterface()
                         .maxValue(MAX_BARS)
                         .oscReceiver(mName,"numbars"));
     
+    vector<string> posModeNames;
+#define BARCODE_POS_MODE_ENTRY( nam, enm ) \
+posModeNames.push_back(nam);
+    BARCODE_POS_MODE_TUPLE
+#undef  BARCODE_POS_MODE_ENTRY
     interface->addEnum(CreateEnumParam("Position Mode", (int*)&mPositionMode)
                        .maxValue(POSITION_COUNT)
                        .oscReceiver(mName,"posmode")
-                       .isVertical());
+                       .isVertical(), posModeNames);
     
+    vector<string> widthModeNames;
+#define BARCODE_WIDTH_MODE_ENTRY( nam, enm ) \
+widthModeNames.push_back(nam);
+    BARCODE_WIDTH_MODE_TUPLE
+#undef  BARCODE_WIDTH_MODE_ENTRY
     interface->addEnum(CreateEnumParam("Width Mode", (int*)&mWidthMode)
                        .maxValue(WIDTH_MODE_COUNT)
                        .oscReceiver(mName,"widthmode")
-                       .isVertical());
-    
-    interface->addParam(CreateFloatParam("Falloff", &mFalloff)
-                        .minValue(0.0f)
-                        .maxValue(20.0f));
-    interface->addParam(CreateBoolParam("FFT Falloff", &mFftFalloff));
-    interface->addEnum(CreateEnumParam("Falloff Mode", (int*)&mFalloffMode)
-                       .maxValue(FALLOFF_COUNT)
-                       .oscReceiver(mName,"falloffmode")
-                       .isVertical());
+                       .isVertical(), widthModeNames);
 }
 
 void Barcode::setupDebugInterface()
@@ -161,22 +158,18 @@ void Barcode::drawBar(const int index)
     float barSize = mVertical ? (screenHeight / mNumBars) : (screenWidth / mNumBars);
     float barRange = mVertical ? screenWidth : screenHeight;
     float barOffset = barSize * index;
-
-    AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
 	
-    // Get data
-    //float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = math<int>::max( audioInput.getFft()->getBinSize(), MAX_LINES );
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    AudioInputHandler::FftValues& fftValues = mParentScene->getApp()->getAudioInputHandler().getFftValues();
+    int32_t dataSize = fftValues.size();
+    
+    AudioInputHandler::tEaseFn easeFn = mParentScene->getApp()->getAudioInputHandler().getFalloffFunction();
+    float falloff = mParentScene->getApp()->getAudioInputHandler().mFalloffTime;
     
     // Iterate through data
     for (int32_t i = 0; i < dataSize; i++)
     {
-        float x = fftLogData[i].x;
-        float y = fftLogData[i].y;
-        
-        float falloff = mFftFalloff ? (mFalloff * (1.0f - x / dataSize)) : mFalloff;
+        float x = fftValues[i].mBandIndex;
+        float y = fftValues[i].mValue;
         
         if( y > mThreshold )
         {
@@ -189,7 +182,7 @@ void Barcode::drawBar(const int index)
                     break;
                     
                 case WIDTH_FIXED_FREQ:
-                width = mBaseWidth+(1.0f-x/dataSize)*mMaxWidth;
+                    width = mBaseWidth+(1.0f-x/dataSize)*mMaxWidth;
                     break;
                 
                 case WIDTH_AUDIO_FREQ:
@@ -203,7 +196,7 @@ void Barcode::drawBar(const int index)
             if (width > mLines[index][i].mWidth)
             {
                 mLines[index][i].mWidth = width;
-                timeline().apply( &mLines[index][i].mWidth, 0.0f, falloff, getFalloffFunction() );
+                timeline().apply( &mLines[index][i].mWidth, 0.0f, falloff, easeFn );
             }
             width = mLines[index][i].mWidth;
             
@@ -216,11 +209,7 @@ void Barcode::drawBar(const int index)
             if( mAlphaByFft )
             {
                 alpha = mColor.a + y;
-                if( alpha > mLines[index][i].mAlpha )
-                {
-                    mLines[index][i].mAlpha = alpha;
-                    timeline().apply( &mLines[index][i].mAlpha, 0.0f, falloff, getFalloffFunction() );
-                }
+                mLines[index][i].mAlpha = alpha;
                 color.a = mLines[index][i].mAlpha;
             }
             
@@ -292,20 +281,4 @@ float Barcode::getPositionOffset( const int barIndex, const int lineIndex, const
     }
     
     return offset;
-}
-
-Barcode::tEaseFn Barcode::getFalloffFunction()
-{
-    switch( mFalloffMode )
-    {
-        case FALLOFF_LINEAR: return EaseNone();
-        case FALLOFF_OUTQUAD: return EaseOutQuad();
-        case FALLOFF_OUTEXPO: return EaseOutExpo();
-        case FALLOFF_OUTBACK: return EaseOutBack();
-        case FALLOFF_OUTBOUNCE: return EaseOutBounce();
-        case FALLOFF_OUTINEXPO: return EaseOutInExpo();
-        case FALLOFF_OUTINBACK: return EaseOutInBack();
-            
-        default: return EaseNone();
-    }
 }

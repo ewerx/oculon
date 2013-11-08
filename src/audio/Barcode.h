@@ -35,18 +35,13 @@ private:
     
     float getPositionOffset( const int barIndex, const int lineIndex, const float fftx, const float ffty, const float fftDataSize, const float barRange );
     
-    typedef std::function<float (float)> tEaseFn;
-    tEaseFn getFalloffFunction();
-    
     ci::ColorAf mColor;
     float       mBaseWidth;
     float       mMaxWidth;
     float       mThreshold;
-    float       mFalloff;
     
     bool        mWidthByFft;
     bool        mAlphaByFft;
-    bool        mFftFalloff;
     
     int         mNumBars;
     int         mBarGap;
@@ -64,40 +59,38 @@ private:
     };
     tLine mLines[MAX_BARS][MAX_LINES];
     
+    // POSITION MODE
+#define BARCODE_POS_MODE_TUPLE \
+BARCODE_POS_MODE_ENTRY( "Fixed-Center", POSITION_FIXED_CENTER ) \
+BARCODE_POS_MODE_ENTRY( "Fixed-Rand", POSITION_FIXED_RANDOM ) \
+BARCODE_POS_MODE_ENTRY( "Shift-Rand", POSITION_SHIFT_RANDOM ) \
+BARCODE_POS_MODE_ENTRY( "Shift-Linear", POSITION_SHIFT_LINEAR ) \
+//end tuple
     enum ePositionMode
     {
-        POSITION_FIXED_CENTER,
-        POSITION_FIXED_RANDOM,
-        POSITION_SHIFT_RANDOM,
-        POSITION_SHIFT_LINEAR,
+#define BARCODE_POS_MODE_ENTRY( nam, enm ) \
+enm,
+        BARCODE_POS_MODE_TUPLE
+#undef  BARCODE_POS_MODE_ENTRY
         
         POSITION_COUNT
     };
     ePositionMode mPositionMode;
-
-    float mShiftSpeed[MAX_BARS];
     
+    // WIDTH MODE
+#define BARCODE_WIDTH_MODE_TUPLE \
+BARCODE_WIDTH_MODE_ENTRY( "Fixed", WIDTH_FIXED ) \
+BARCODE_WIDTH_MODE_ENTRY( "FixedByFreq", WIDTH_FIXED_FREQ ) \
+BARCODE_WIDTH_MODE_ENTRY( "VariableByFreq", WIDTH_AUDIO_FREQ ) \
+//end tuple
     enum eWidthMode
     {
-        WIDTH_FIXED,
-        WIDTH_FIXED_FREQ,
-        WIDTH_AUDIO_FREQ,
+#define BARCODE_WIDTH_MODE_ENTRY( nam, enm ) \
+enm,
+        BARCODE_WIDTH_MODE_TUPLE
+#undef  BARCODE_WIDTH_MODE_ENTRY
         
         WIDTH_MODE_COUNT
     };
     eWidthMode mWidthMode;
-    
-    enum eFalloffMode
-    {
-        FALLOFF_LINEAR,
-        FALLOFF_OUTQUAD,
-        FALLOFF_OUTEXPO,
-        FALLOFF_OUTBACK,
-        FALLOFF_OUTBOUNCE,
-        FALLOFF_OUTINEXPO,
-        FALLOFF_OUTINBACK,
-        
-        FALLOFF_COUNT
-    };
-    eFalloffMode mFalloffMode;
 };
