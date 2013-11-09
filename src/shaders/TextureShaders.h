@@ -117,6 +117,7 @@ enm,
         float mTime[CELLS_NUM_LAYERS];
         
         float mIntensity;
+        bool mFftHighlight;
     };
     tCellsParams    mCellsParams;
     

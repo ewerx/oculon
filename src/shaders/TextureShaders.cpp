@@ -185,6 +185,8 @@ TS_SHADERS_TUPLE
                          .midiInput(1, 2, 16));
     mInterface->addParam(CreateBoolParam( "HighlightByAudio", &mCellsParams.mHighlightAudioResponse )
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "HighlightByFFT", &mCellsParams.mFftHighlight )
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "Highlight", &mCellsParams.mHighlight )
                          .maxValue(6.0f)
                          .oscReceiver(getName())
@@ -441,6 +443,29 @@ void TextureShaders::shaderPreDraw()
             shader.uniform("iFrequency6", mCellsParams.mFrequency[5]);
             shader.uniform("iFrequency7", mCellsParams.mFrequency[6]);
             shader.uniform("iIntensity", mCellsParams.mIntensity);
+            
+            if (mCellsParams.mFftHighlight)
+            {
+                AudioInputHandler &aih = mApp->getAudioInputHandler();
+                shader.uniform("iBrightness1", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * mGain);
+                shader.uniform("iBrightness2", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * mGain);
+                shader.uniform("iBrightness3", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * mGain);
+                shader.uniform("iBrightness4", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * mGain);
+                shader.uniform("iBrightness5", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * mGain);
+                shader.uniform("iBrightness6", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * mGain);
+                shader.uniform("iBrightness7", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * mGain);
+            }
+            else
+            {
+                shader.uniform("iBrightness1", mCellsParams.mHighlight);
+                shader.uniform("iBrightness2", mCellsParams.mHighlight);
+                shader.uniform("iBrightness3", mCellsParams.mHighlight);
+                shader.uniform("iBrightness4", mCellsParams.mHighlight);
+                shader.uniform("iBrightness5", mCellsParams.mHighlight);
+                shader.uniform("iBrightness6", mCellsParams.mHighlight);
+                shader.uniform("iBrightness7", mCellsParams.mHighlight);
+            }
+            
             break;
         case SHADER_KALI:
             shader.uniform( "iChannel0", 0 );
