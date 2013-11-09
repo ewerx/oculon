@@ -37,6 +37,7 @@ void Rings::setup()
     mRingSetParams[0].mScale = 1.0f;
     mRingSetParams[0].mThickness = 0.5f;
     mRingSetParams[0].mPower = 0.5f;
+    mRingSetParams[0].mCenter = Vec2f(0.5f,0.5f);
     
     mRingSetParams[1].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
     mRingSetParams[1].mTimeScale = 1.0f;
@@ -45,6 +46,7 @@ void Rings::setup()
     mRingSetParams[1].mScale = 1.0f;
     mRingSetParams[1].mThickness = 0.5f;
     mRingSetParams[1].mPower = 0.5f;
+    mRingSetParams[1].mCenter = Vec2f(0.5f,0.5f);
     
     mRingSetParams[2].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
     mRingSetParams[2].mTimeScale = 1.0f;
@@ -53,6 +55,7 @@ void Rings::setup()
     mRingSetParams[2].mScale = 5.0f;
     mRingSetParams[2].mThickness = 0.5f;
     mRingSetParams[2].mPower = 0.5f;
+    mRingSetParams[2].mCenter = Vec2f(0.5f,0.5f);
     
     mZoomByAudio = false;
     mPowerByAudio = false;
@@ -98,18 +101,54 @@ void Rings::setupInterface()
                              .maxValue(200.0f)
                              .oscReceiver(name));
         mInterface->addParam(CreateFloatParam("scale", &mRingSetParams[i].mScale)
-                             .minValue(0.0001f)
-                             .maxValue(10.0f)
+                             .minValue(0.00001f)
+                             .maxValue(1.0f)
                              .oscReceiver(name));
         mInterface->addParam(CreateFloatParam("thickness", &mRingSetParams[i].mThickness)
-                             .minValue(0.001f)
-                             .maxValue(3.0f)
+                             .minValue(0.01f)
+                             .maxValue(1.0f)
+                             .oscReceiver(name));
+        mInterface->addParam(CreateVec2fParam("center", &mRingSetParams[i].mCenter, Vec2f::zero(), Vec2f::one())
                              .oscReceiver(name));
         mInterface->addParam(CreateColorParam("color", &mRingSetParams[i].mColor, kMinColor, kMaxColor));
+        // color presets
+        mInterface->addButton(CreateTriggerParam("off", NULL)
+                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_NONE) );
+        mInterface->addButton(CreateTriggerParam("white", NULL)
+                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_WHITE) );
+        mInterface->addButton(CreateTriggerParam("red", NULL)
+                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_RED) );
+        
     }
     
     mApp->getAudioInputHandler().setupInterface(mInterface, mName);
 }
+
+#pragma mark - CALLBACKS
+
+bool Rings::setRingColor(const int ringIndex, const int colorIndex)
+{
+    switch (colorIndex) {
+        case COLOR_NONE:
+            mRingSetParams[ringIndex].mColor.a = 0.0f;
+            break;
+            
+        case COLOR_WHITE:
+            mRingSetParams[ringIndex].mColor = ColorA::white();
+            break;
+            
+        case COLOR_RED:
+            mRingSetParams[ringIndex].mColor = ColorA(1.0f,0.0f,0.0f,1.0f);
+            break;
+            
+        default:
+            break;
+    }
+    
+    return true;
+}
+
+#pragma mark - UPDATE/DRAW
 
 void Rings::update(double dt)
 {
@@ -142,9 +181,9 @@ void Rings::shaderPreDraw()
     float zoom2 = mRingSetParams[1].mZoom;
     float zoom3 = mRingSetParams[2].mZoom;
     
-    float power1 = mRingSetParams[0].mZoom;
-    float power2 = mRingSetParams[1].mZoom;
-    float power3 = mRingSetParams[2].mZoom;
+    float power1 = mRingSetParams[0].mPower;
+    float power2 = mRingSetParams[1].mPower;
+    float power3 = mRingSetParams[2].mPower;
     
     const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
     const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq() * mGain;
@@ -179,6 +218,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iZoom1", zoom1);
     mShader.uniform( "iThickness1", mRingSetParams[0].mThickness);
     mShader.uniform( "iPower1", power1);
+    mShader.uniform( "iCenter1", mRingSetParams[0].mCenter);
     
     mShader.uniform( "iTime2", mRingSetParams[1].mElapsedTime);
     mShader.uniform( "iColor2", mRingSetParams[1].mColor);
@@ -186,6 +226,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iZoom2", zoom2);
     mShader.uniform( "iThickness2", mRingSetParams[1].mThickness);
     mShader.uniform( "iPower2", power2);
+    mShader.uniform( "iCenter2", mRingSetParams[1].mCenter);
     
     mShader.uniform( "iTime3", mRingSetParams[2].mElapsedTime);
     mShader.uniform( "iColor3", mRingSetParams[2].mColor);
@@ -193,6 +234,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iZoom3", zoom3);
     mShader.uniform( "iThickness3", mRingSetParams[2].mThickness);
     mShader.uniform( "iPower3", power3);
+    mShader.uniform( "iCenter3", mRingSetParams[2].mCenter);
 }
 
 void Rings::drawShaderOutput()

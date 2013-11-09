@@ -1,4 +1,10 @@
-
+//
+//  rings_frag.glsl
+//  Oculon
+//
+//  Created by Ehsan on 13-10-24.
+//  Copyright 2013 ewerx. All rights reserved.
+//
 
 uniform vec3        iResolution;     // viewport resolution (in pixels)
 //uniform float       iGlobalTime;     // shader playback time (in seconds)
@@ -11,6 +17,7 @@ uniform float       iScale1;
 uniform float       iZoom1;
 uniform float       iThickness1;
 uniform float       iPower1;
+uniform vec2        iCenter1;
 
 // ringset2
 uniform float       iTime2;
@@ -19,6 +26,7 @@ uniform float       iScale2;
 uniform float       iZoom2;
 uniform float       iThickness2;
 uniform float       iPower2;
+uniform vec2        iCenter2;
 
 // ringset3
 uniform float       iTime3;
@@ -27,6 +35,7 @@ uniform float       iScale3;
 uniform float       iZoom3;
 uniform float       iThickness3;
 uniform float       iPower3;
+uniform vec2        iCenter3;
 
 
 #ifdef GL_ES
@@ -71,8 +80,13 @@ float invAr = iResolution.y / iResolution.x;
 void main(void)
 {
     vec2 uv = gl_FragCoord.xy / iResolution.xy;
-    vec2 pos = center - uv; // pos in -0.5 to 0.5 range
-    pos.y *= invAr; // compensate for aspect ratio
+    vec2 pos1 = iCenter1 - uv; // pos in -0.5 to 0.5 range
+    vec2 pos2 = iCenter2 - uv; // pos in -0.5 to 0.5 range
+    vec2 pos3 = iCenter3 - uv; // pos in -0.5 to 0.5 range
+    // compensate for aspect ratio
+    pos1.y *= invAr;
+    pos2.y *= invAr;
+    pos3.y *= invAr;
     // pos.y = pos.x ==> vertical lines
     // pos.x = pos.y ==> horizontal lines
     
@@ -80,9 +94,9 @@ void main(void)
     // fades intensity down towards edges of screen
     //float fade = 0.25*sin(PI*uv.y) + -0.5*sin(PI*uv.x);
     
-    vec4 ringset1 = iColor1 * calcRingSet( pos, iTime1, iZoom1, iScale1, iThickness1, iPower1 );
-    vec4 ringset2 = iColor2 * calcRingSet( pos, iTime2, iZoom2, iScale2, iThickness2, iPower2 );
-    vec4 ringset3 = iColor3 * calcRingSet( pos, iTime3, iZoom3, iScale3, iThickness3, iPower3 );
+    vec4 ringset1 = iColor1 * calcRingSet( pos1, iTime1, iZoom1, iScale1, iThickness1, iPower1 );
+    vec4 ringset2 = iColor2 * calcRingSet( pos2, iTime2, iZoom2, iScale2, iThickness2, iPower2 );
+    vec4 ringset3 = iColor3 * calcRingSet( pos3, iTime3, iZoom3, iScale3, iThickness3, iPower3 );
 	
 	gl_FragColor = ringset1 * iColor1.w + ringset2 * iColor2.w + ringset3 * iColor3.w;
 }

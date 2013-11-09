@@ -47,6 +47,15 @@ private:
     void drawShaderOutput();
     void shaderPostDraw();
     
+    // callbacks
+    enum eColorPresets
+    {
+        COLOR_NONE,
+        COLOR_WHITE,
+        COLOR_RED
+    };
+    bool setRingColor( const int ringIndex, const int colorIndex );
+    
 private:
 
     ci::gl::GlslProg    mShader;
@@ -60,6 +69,7 @@ private:
         float           mZoom;
         float           mScale;
         float           mPower;
+        ci::Vec2f       mCenter;
     };
     enum { NUM_RING_SETS = 3 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];
