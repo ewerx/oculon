@@ -118,7 +118,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
     {
         for( int i=0; i< dataSize; ++i )
         {
-            mFftFalloff.push_back( tFftValue( i, fftLogData[i].y ) );
+            mFftFalloff.push_back( tFftValue( i, 0.0f ) );
         }
     }
     else
