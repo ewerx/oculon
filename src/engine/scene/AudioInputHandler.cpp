@@ -202,13 +202,16 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
     mHighAvgVolume = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f);
 }
 
-void AudioInputHandler::drawDebug(const Vec2f& size)
+void AudioInputHandler::drawDebug(const Vec2f& windowSize)
 {
     gl::pushMatrices();
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( getWindowSize() );
     
-    Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );
+    const float size = 80.0f;
+    const float paddingX = 20.0f;
+    const float paddingY = 240.0f;
+    Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
     gl::draw( mAudioFbo.getTexture(), mAudioFbo.getBounds(), preview );
     
     //mAudioFbo.bindTexture();
