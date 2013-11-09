@@ -54,7 +54,7 @@ private:
     {
         kStep =                 512,
         kNumParticles =         (kStep * kStep),
-        kFftBands =             512,
+        kFftBands =             256,
     };
     
     // INITIAL FORMATION
@@ -97,6 +97,8 @@ enm,
         tGravityNode(const ci::Vec3f& pos, const ci::Vec3f& vel, const float mass)
         : mPos(pos), mVel(vel), mMass(mass)
         {}
+        
+        void applyGravityFrom(tGravityNode &other);
         
         ci::Vec3f   mPos;
         ci::Vec3f   mVel;
@@ -182,7 +184,10 @@ enm,
     ci::gl::VboMesh mVboMesh;
     ci::gl::GlslProg mParticlesShader;
     ci::gl::GlslProg mDisplacementShader;
-    Vec3f mAttractor;
+    ci::gl::GlslProg mFormationShader;
+    ci::Vec3f mAttractor1;
+    ci::Vec3f mAttractor2;
+    ci::Vec3f mAttractor3;
 
     // rendering
     GLuint              mVbo[2]; // pos and color VBOs
@@ -249,6 +254,7 @@ private:
     
     void resetGravityNodes(const eNodeFormation formation);
     void computeAttractorPosition();
+    void updateGravityNodes(const double dt);
     
     void updateAudioResponse();
     void updateNeuralResponse();

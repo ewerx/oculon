@@ -16,6 +16,7 @@
 #include "cinder/Easing.h"
 #include "Utils.h"
 #include "Interface.h"
+#include <boost/foreach.hpp>
 
 using namespace ci;
 using namespace ci::app;
@@ -44,7 +45,7 @@ void Graviton::setup()
     mConstrainParticles = false;
     
     mInitialFormation = FORMATION_SPHERE;
-    mFormationRadius = 50.0f;
+    mFormationRadius = 80.0f;
     
     mAdditiveBlending = true;
     mEnableLineSmoothing = false;
@@ -60,7 +61,7 @@ void Graviton::setup()
     mEps = 0.001f;//mFormationRadius * 0.5f;
     
     mNumNodes = 0;
-    mGravityNodeFormation = NODE_FORMATION_NONE;
+    mGravityNodeFormation = NODE_FORMATION_SYMMETRY;
     
     // camera
     mCamRadius = mFormationRadius * 3.0f;
@@ -79,6 +80,7 @@ void Graviton::setup()
     // shaders
     mParticlesShader = loadFragShader("graviton_particle_frag.glsl" );
     mDisplacementShader = loadVertAndFragShaders("graviton_displacement_vert.glsl",  "graviton_displacement_frag.glsl");
+    mFormationShader = loadVertAndFragShaders("graviton_formation_vert.glsl",  "graviton_formation_frag.glsl");
     
     setupPingPongFbo();
     // THE VBO HAS TO BE DRAWN AFTER FBO!
@@ -98,18 +100,18 @@ void Graviton::setup()
 
 void Graviton::setupPingPongFbo()
 {
-    //
-    // FROM gpuPS
-    //
+    // from gpuPS
     
-    float scale = 80.0f;
+    float scale = mFormationRadius;
     // TODO: Test with more than 2 texture attachments
 	std::vector<Surface32f> surfaces;
     // Position 2D texture array
     surfaces.push_back( Surface32f( kStep, kStep, true) );
     Surface32f::Iter pixelIter = surfaces[0].getIter();
-    while( pixelIter.line() ) {
-        while( pixelIter.pixel() ) {
+    while( pixelIter.line() )
+    {
+        while( pixelIter.pixel() )
+        {
             /* Initial particle positions are passed in as R,G,B
              float values. Alpha is used as particle invMass. */
             surfaces[0].setPixel(pixelIter.getPos(),
@@ -169,8 +171,37 @@ void Graviton::computeAttractorPosition()
     float v = mMousePos.y / (float) mApp->getViewportHeight();
     Ray ray = cam.generateRay(u , 1.0f - v, cam.getAspectRatio() );
     if (ray.calcPlaneIntersection(Vec3f(0.0f,0.0f,0.0f), right.cross(up), &t)) {
-        mAttractor.set(ray.calcPosition(t));
+        mAttractor1.set(ray.calcPosition(t));
     }
+}
+
+void Graviton::updateGravityNodes(const double dt)
+{
+    // slow naive algorithm
+    // TODO: make go faster! move to GPU?
+    for (int i = 0; i < mGravityNodes.size(); ++i)
+    {
+        for (int j = 0; j < mGravityNodes.size(); ++j)
+        {
+            if (i != j)
+            {
+                mGravityNodes[i].applyGravityFrom(mGravityNodes[j]);
+            }
+        }
+    }
+    
+    for (int i = 0; i < mGravityNodes.size(); ++i)
+    {
+        mGravityNodes[i].mPos += mGravityNodes[i].mVel * dt;
+    }
+}
+
+void Graviton::tGravityNode::applyGravityFrom(Graviton::tGravityNode &other)
+{
+    Vec3f dir = other.mPos - mPos;
+    double r2 = dir.dot(dir);
+    double ir3 = 1 / (r2 * sqrt(r2));
+    mVel += (other.mMass * ir3) * dir;
 }
 
 void Graviton::setupDebugInterface()
@@ -207,7 +238,7 @@ void Graviton::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "Time Step", &mTimeStep )
                          .minValue(0.0f)
-                         .maxValue(0.001f)
+                         .maxValue(100.001f)
                          .oscReceiver(getName(), "timestep"));
     mInterface->addParam(CreateFloatParam( "Damping", &mDamping )
                          .oscReceiver(getName(), "damping"));
@@ -295,6 +326,10 @@ nodeFormationNames.push_back(nam);
 
 void Graviton::initParticles()
 {
+//    setupPingPongFbo();
+//    setupVBO();
+    
+    
 //    mNumParticles = kNumParticles;
 //    
 //    const double r = mFormationRadius;
@@ -453,15 +488,14 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
                         break;
                         
                     case 1:
-                        
-                        pos.x = r*0.5f;
-                        pos.y = -r*0.5f;
-                        pos.z = r / 4.0f;
+                        pos.x = r*0.5f*randFloat();
+                        pos.y = -r*0.5f*randFloat();
+                        pos.z = r / 4.0f*randFloat();
                         break;
                     case 2:
-                        pos.x = -r*0.5f;
-                        pos.y = r*0.5f;
-                        pos.z = -r / 4.0f;
+                        pos.x = -r*0.5f*randFloat();
+                        pos.y = r*0.5f*randFloat();
+                        pos.z = -r / 4.0f*randFloat();
                         break;
                 }
                 
@@ -473,14 +507,17 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
             
         case NODE_FORMATION_BLACKHOLE_STAR:
         {
-            mNumNodes = 1;
+            mNumNodes = 3;
             
             const float mass = 10000.f;
             const float d = mFormationRadius * 3.0f;
             
             //Vec3f pos( d, d, d );
             Vec3f pos(0,0,0);
-            mGravityNodes.push_back( tGravityNode( pos, Vec3f::zero(), mass ) );
+            for(int i = 0; i < mNumNodes; ++i )
+            {
+                mGravityNodes.push_back( tGravityNode( pos, Vec3f::zero(), mass ) );
+            }
         } break;
             
         default:
@@ -516,7 +553,8 @@ void Graviton::update(double dt)
     updateNeuralResponse();
 
     // update particle system
-    computeAttractorPosition();
+    //computeAttractorPosition();
+    updateGravityNodes(dt * mTimeStep * 1000.f);
     
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
@@ -527,7 +565,12 @@ void Graviton::update(double dt)
     mParticlesShader.bind();
     mParticlesShader.uniform( "positions", 0 );
     mParticlesShader.uniform( "velocities", 1 );
-    mParticlesShader.uniform( "attractorPos", mAttractor);
+    mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 1000.f) );
+    mParticlesShader.uniform( "eps", mEps );
+    mParticlesShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
+    mParticlesShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
+    mParticlesShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
+    
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mParticlesShader.unbind();
     
@@ -604,8 +647,8 @@ void Graviton::updateNeuralResponse()
         
         if( mColorByMindWave )
         {
-            const float attention = mindWave.getAttention();
-            const float meditation = mindWave.getMeditation();
+//            const float attention = mindWave.getAttention();
+//            const float meditation = mindWave.getMeditation();
             
             
         }
@@ -758,29 +801,8 @@ void Graviton::preRender()
     {
 		gl::enableAlphaBlending();
 	}
-//
-//	if(mEnableLineSmoothing) 
-//    {
-//		glEnable(GL_LINE_SMOOTH);
-//	}
-//    else 
-//    {
-//		glDisable(GL_LINE_SMOOTH);
-//	}
-//	
-//	if(mEnablePointSmoothing) 
-//    {
-//		glEnable(GL_POINT_SMOOTH);
-//	} 
-//    else 
-//    {
-//		glDisable(GL_POINT_SMOOTH);
-//	}
-//
-//	glLineWidth(mLineWidth);
     
     gl::disableDepthWrite();
-    
 }
 
 
@@ -797,7 +819,6 @@ void Graviton::drawParticles()
         mParticleTexture2.bind(2);
     }
     
-//    glDrawArrays(GL_POINTS, 0, mNumParticles);
     mParticlesFbo.bindTexture(0);
     mParticlesFbo.bindTexture(1);
     mDisplacementShader.bind();
