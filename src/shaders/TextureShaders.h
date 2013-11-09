@@ -107,15 +107,16 @@ enm,
     struct tCellsParams
     {
         bool mHighlightAudioResponse;
-        float mCellSize; //
+        float mZoom; //
         float mHighlight; // 6
-        float mTimeStep1;
-        float mTimeStep2;
-        float mTimeStep3;
-        float mTimeStep4;
-        float mTimeStep5;
-        float mTimeStep6;
-        float mTimeStep7;
+        
+        enum { CELLS_NUM_LAYERS = 7 };
+        
+        float mTimeStep[CELLS_NUM_LAYERS];
+        float mFrequency[CELLS_NUM_LAYERS];
+        float mTime[CELLS_NUM_LAYERS];
+        
+        float mIntensity;
     };
     tCellsParams    mCellsParams;
     

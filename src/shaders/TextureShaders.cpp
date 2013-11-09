@@ -77,16 +77,25 @@ TS_SHADERS_TUPLE
     
     // cells
     mCellsParams.mHighlightAudioResponse = true;
-    mCellsParams.mCellSize = 1.0f;
+    mCellsParams.mZoom = 1.0f;
     mCellsParams.mHighlight = 0.6f;
+    mCellsParams.mIntensity = 1.0f;
     
-    mCellsParams.mTimeStep1 = 1.0f;
-    mCellsParams.mTimeStep2 = 0.5f;
-    mCellsParams.mTimeStep3 = 0.25f;
-    mCellsParams.mTimeStep4 = 0.125f;
-    mCellsParams.mTimeStep5 = 0.125f;
-    mCellsParams.mTimeStep6 = 0.065f;
-    mCellsParams.mTimeStep7 = 0.0f;
+    mCellsParams.mTimeStep[0] = 1.0f;
+    mCellsParams.mTimeStep[1] = 0.5f;
+    mCellsParams.mTimeStep[2] = 0.25f;
+    mCellsParams.mTimeStep[3] = 0.125f;
+    mCellsParams.mTimeStep[4] = 0.125f;
+    mCellsParams.mTimeStep[5] = 0.065f;
+    mCellsParams.mTimeStep[6] = 0.0f;
+    
+    mCellsParams.mFrequency[0] = 1.0f;
+    mCellsParams.mFrequency[1] = 2.0f;
+    mCellsParams.mFrequency[2] = 4.0f;
+    mCellsParams.mFrequency[3] = 8.0f;
+    mCellsParams.mFrequency[4] = 32.0f;
+    mCellsParams.mFrequency[5] = 64.0f;
+    mCellsParams.mFrequency[6] = 128.0f;
     
     // kali
     mKaliParams.iterations=20;
@@ -123,6 +132,11 @@ TS_SHADERS_TUPLE
 void TextureShaders::reset()
 {
     mElapsedTime = 0.0f;
+    
+    for (int i = 0; i < tCellsParams::CELLS_NUM_LAYERS; ++i)
+    {
+        mCellsParams.mTime[i] = 0.0f;
+    }
 }
 
 void TextureShaders::setupInterface()
@@ -164,7 +178,8 @@ TS_SHADERS_TUPLE
     // SHADER_CELLS
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Cells");
-    mInterface->addParam(CreateFloatParam( "CellSize", &mCellsParams.mCellSize )
+    mInterface->addParam(CreateFloatParam( "Zoom", &mCellsParams.mZoom )
+                         .minValue(0.01f)
                          .maxValue(3.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 16));
@@ -174,28 +189,60 @@ TS_SHADERS_TUPLE
                          .maxValue(6.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 17));
-    mInterface->addParam(CreateFloatParam( "TimeStep1", &mCellsParams.mTimeStep1 )
+    mInterface->addParam(CreateFloatParam( "Intensity", &mCellsParams.mIntensity )
+                         .minValue(1.0f)
+                         .maxValue(8.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "TimeStep1", &mCellsParams.mTimeStep[0] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 18));
-    mInterface->addParam(CreateFloatParam( "TimeStep2", &mCellsParams.mTimeStep2 )
+    mInterface->addParam(CreateFloatParam( "TimeStep2", &mCellsParams.mTimeStep[1] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 19));
-    mInterface->addParam(CreateFloatParam( "TimeStep3", &mCellsParams.mTimeStep3 )
+    mInterface->addParam(CreateFloatParam( "TimeStep3", &mCellsParams.mTimeStep[2] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep4", &mCellsParams.mTimeStep4 )
+    mInterface->addParam(CreateFloatParam( "TimeStep4", &mCellsParams.mTimeStep[3] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep5", &mCellsParams.mTimeStep5 )
+    mInterface->addParam(CreateFloatParam( "TimeStep5", &mCellsParams.mTimeStep[4] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep6", &mCellsParams.mTimeStep6 )
+    mInterface->addParam(CreateFloatParam( "TimeStep6", &mCellsParams.mTimeStep[5] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep7", &mCellsParams.mTimeStep7 )
+    mInterface->addParam(CreateFloatParam( "TimeStep7", &mCellsParams.mTimeStep[6] )
+                         .minValue(-2.0f)
                          .maxValue(2.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency1", &mCellsParams.mFrequency[0] )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency2", &mCellsParams.mFrequency[1] )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency3", &mCellsParams.mFrequency[2] )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency4", &mCellsParams.mFrequency[3] )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency5", &mCellsParams.mFrequency[4] )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency6", &mCellsParams.mFrequency[5] )
+                         .maxValue(128.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "Frequency7", &mCellsParams.mFrequency[6] )
+                         .maxValue(128.0f)
                          .oscReceiver(getName()));
     
     // SHADER_KALI
@@ -321,6 +368,10 @@ void TextureShaders::update(double dt)
                 const float midHighVolume = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
                 mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
             }
+            for (int i = 0; i < tCellsParams::CELLS_NUM_LAYERS; ++i)
+            {
+                mCellsParams.mTime[i] += dt * mCellsParams.mTimeStep[i];
+            }
             break;
             
         default:
@@ -372,15 +423,24 @@ void TextureShaders::shaderPreDraw()
     
     switch (mShaderType) {
         case SHADER_CELLS:
-            shader.uniform("iCellSize", mCellsParams.mCellSize);
+            shader.uniform("iZoom", mCellsParams.mZoom);
             shader.uniform("iHighlight", mCellsParams.mHighlight);
-            shader.uniform("iTimeStep1", mCellsParams.mTimeStep1);
-            shader.uniform("iTimeStep2", mCellsParams.mTimeStep2);
-            shader.uniform("iTimeStep3", mCellsParams.mTimeStep3);
-            shader.uniform("iTimeStep4", mCellsParams.mTimeStep4);
-            shader.uniform("iTimeStep5", mCellsParams.mTimeStep5);
-            shader.uniform("iTimeStep6", mCellsParams.mTimeStep6);
-            shader.uniform("iTimeStep7", mCellsParams.mTimeStep7);
+            shader.uniform("iTimeStep1", mCellsParams.mTime[0]);
+            shader.uniform("iTimeStep2", mCellsParams.mTime[1]);
+            shader.uniform("iTimeStep3", mCellsParams.mTime[2]);
+            shader.uniform("iTimeStep4", mCellsParams.mTime[3]);
+            shader.uniform("iTimeStep5", mCellsParams.mTime[4]);
+            shader.uniform("iTimeStep6", mCellsParams.mTime[5]);
+            shader.uniform("iTimeStep7", mCellsParams.mTime[6]);
+            
+            shader.uniform("iFrequency1", mCellsParams.mFrequency[0]);
+            shader.uniform("iFrequency2", mCellsParams.mFrequency[1]);
+            shader.uniform("iFrequency3", mCellsParams.mFrequency[2]);
+            shader.uniform("iFrequency4", mCellsParams.mFrequency[3]);
+            shader.uniform("iFrequency5", mCellsParams.mFrequency[4]);
+            shader.uniform("iFrequency6", mCellsParams.mFrequency[5]);
+            shader.uniform("iFrequency7", mCellsParams.mFrequency[6]);
+            shader.uniform("iIntensity", mCellsParams.mIntensity);
             break;
         case SHADER_KALI:
             shader.uniform( "iChannel0", 0 );
