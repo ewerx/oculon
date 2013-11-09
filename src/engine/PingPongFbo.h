@@ -14,14 +14,12 @@
 
 #include <vector>
 
-using namespace ci;
-
 class PingPongFbo
 {
 public:
     PingPongFbo() {};
     //! Create a ping-pong fbo with n texture attachments.
-    PingPongFbo( const std::vector<Surface32f>& surfaces );
+    PingPongFbo( const std::vector<ci::Surface32f>& surfaces );
     //! Rerender initial textures into both fbos.
     void reset();
 
@@ -36,26 +34,26 @@ public:
     void unbindTexture();
 	
     //! Get the fbo/texture size.
-    Vec2i getSize() const;
+    ci::Vec2i getSize() const;
     //! Get the fbo/texture size.
-    Area getBounds() const;
+    ci::Area getBounds() const;
 
 private:
 	//! Swap the two alternating fbos.
     void swap();
 	
-	Vec2i mTextureSize;
+	ci::Vec2i mTextureSize;
     int mCurrentFbo; //either 0 or 1
     
     //! Texture attachments per framebuffer.
-    std::vector<gl::Texture> mTextures;
+    std::vector<ci::gl::Texture> mTextures;
     //! GLenum texure attachments */
     std::vector<GLenum> mAttachments;
     //! Two alternating framebuffers */
-    gl::Fbo	mFbos[2];
+    ci::gl::Fbo	mFbos[2];
     /*!
      * Add texture attachements to the ping-pong fbo.
      * @param surface Surface32f internally copied into a texture.
      */
-    void addTexture(const Surface32f &surface);
+    void addTexture(const ci::Surface32f &surface);
 };

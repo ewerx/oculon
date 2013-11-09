@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <utility>
 
+using namespace ci;
 
 PingPongFbo::PingPongFbo( const std::vector<Surface32f>& surfaces )
 : mCurrentFbo(0)
