@@ -43,10 +43,11 @@ void ShaderTest::setup()
     
     setupShaders();
     
-    mTexture[0] = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) );
-    mTexture[1] = gl::Texture( loadImage( loadResource( RES_COLORTEX2 ) ) );
+    mTexture[0] = gl::Texture( loadImage( loadResource( "gaussian_noise_256_3c.png" ) ) );
+    mTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) );
     mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ) );
     mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
+    mTextureIndex = 0;
     // OSC TEST
     //mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
     mElapsedTime = 0.0f;
@@ -149,6 +150,10 @@ void ShaderTest::setupShaders()
         
         // SHADER_MAINSEQUENCE
         shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "mainsequence_frag.glsl" ) );
+        mShaders.push_back(shader);
+        
+        // SHADER_MAINSEQUENCE
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "infinitefall_frag.glsl" ) );
         mShaders.push_back(shader);
         
 // NEEDS AUDIO INPUT
@@ -370,9 +375,10 @@ void ShaderTest::shaderPreDraw()
             
         case SHADER_INTERSTELLAR:
         case SHADER_MAINSEQUENCE:
+        case SHADER_INFINITEFALL:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mElapsedTime );
-            shader.uniform( "iChannel0", 1 );
+            shader.uniform( "iChannel0", 0 );
             shader.uniform( "iChannel1", 1 );
             break;
             

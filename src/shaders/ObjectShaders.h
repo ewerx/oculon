@@ -69,12 +69,16 @@ private:
     ci::gl::Texture     mColorMapTexture[MAX_COLORMAPS];
     int                 mColorMapIndex;
     
+    // noise texture
+    ci::gl::Texture     mNoiseTexture;
+    
     // shaders
 #define OS_SHADERS_TUPLE \
 OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
 OS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
 OS_SHADERS_ENTRY( "Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
-OS_SHADERS_ENTRY( "HypnoRings", "hypnorings_frag.glsl", SHADER_HYPNORINGS ) \
+OS_SHADERS_ENTRY( "TEST-Fireball", "fireball_frag.glsl", SHADER_FIREBALL ) \
+OS_SHADERS_ENTRY( "TEST-BioFractal", "livingkifs_frag.glsl", SHADER_BIOFRACTAL ) \
 //end tuple
     
     enum eShaderType
@@ -128,15 +132,13 @@ enm,
     };
     tRetinaParams mRetinaParams;
     
-    struct tHypnoRingParams
+    struct tFireballParams
     {
-        bool                mAudioReactive;
-        float               mZoomScale;
-        float               mZoom;
-        float               mPower;
-        float               mTimeScalePower;
-        float               mThickness;
+        float               mRotationSpeed;
+        float               mDensity;
+        bool                mAudioDensity;
+        bool                mAudioRotation;
     };
-    tHypnoRingParams mHypnoRingsParams;
+    tFireballParams mFireballParams;
 };
 

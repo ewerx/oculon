@@ -48,6 +48,8 @@ void ObjectShaders::setup()
     mColorMapTexture[3] = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) );
     mColorMapIndex = 0;
     
+    mNoiseTexture = gl::Texture( loadImage( loadResource( "gaussian_noise_256_3c.png" ) ) );
+    
     mShaderType = SHADER_METAHEX;
 
     mDrawOnSphere = false;
@@ -94,11 +96,9 @@ OS_SHADERS_TUPLE
     mRetinaParams.mPatternFreq = 20.0f;
     mRetinaParams.mAudioPattern = false;
     
-    // hypnorings
-    mHypnoRingsParams.mAudioReactive = false;
-    mHypnoRingsParams.mZoom = 1.0f;
-    mHypnoRingsParams.mZoomScale = 1.0f;
-    mHypnoRingsParams.mPower = 0.5f;
+    // fireball
+    mFireballParams.mRotationSpeed = 1.0f;
+    mFireballParams.mDensity = 1.0f;
 }
 
 void ObjectShaders::reset()
@@ -206,30 +206,12 @@ OS_SHADERS_TUPLE
     mInterface->addParam(CreateBoolParam("retina/audiopattern", &mRetinaParams.mAudioPattern )
                          .oscReceiver(mName));
     
-    // rings
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("rings");
-    mInterface->addParam(CreateBoolParam("rings/audio", &mHypnoRingsParams.mAudioReactive )
+    // fireball
+    mInterface->addParam(CreateBoolParam("fireball/audiodensity", &mFireballParams.mAudioRotation )
                          .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("rings/power", &mHypnoRingsParams.mPower)
-                         .minValue(0.1f)
-                         .maxValue(1.5f)
+    mInterface->addParam(CreateFloatParam("fireball/density", &mFireballParams.mDensity)
                          .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("rings/timescalepower", &mHypnoRingsParams.mTimeScalePower)
-                         .minValue(1.0f)
-                         .maxValue(100.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("rings/zoom", &mHypnoRingsParams.mZoom)
-                         .minValue(1.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("rings/zoomscale", &mHypnoRingsParams.mZoomScale)
-                         .minValue(1.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("rings/thickness", &mHypnoRingsParams.mThickness)
-                         .minValue(0.01f)
-                         .maxValue(5.0f)
+    mInterface->addParam(CreateFloatParam("fireball/rotationspeed", &mFireballParams.mRotationSpeed)
                          .oscReceiver(mName));
     
     // audio input
@@ -300,11 +282,12 @@ void ObjectShaders::draw()
 
 void ObjectShaders::shaderPreDraw()
 {
-    mColorMapTexture[mColorMapIndex].bind(0);
+    //mColorMapTexture[mColorMapIndex].bind(0);
     if( mApp->getAudioInputHandler().hasTexture() )
     {
         mApp->getAudioInputHandler().getFbo().bindTexture(1);
     }
+    mNoiseTexture.bind(0);
     
     gl::GlslProg shader = mShaders[mShaderType];
     shader.bind();
@@ -345,14 +328,10 @@ void ObjectShaders::shaderPreDraw()
             shader.uniform( "iPatternFreq", mRetinaParams.mPatternFreq );
             break;
             
-        case SHADER_HYPNORINGS:
-            timescale *= mHypnoRingsParams.mTimeScalePower;
-            shader.uniform( "iZoom", mHypnoRingsParams.mZoom );
-            shader.uniform( "iZoomScale", mHypnoRingsParams.mZoomScale );
-            shader.uniform( "iPower", mHypnoRingsParams.mPower );
-            shader.uniform( "iReverse", mHypnoRingsParams.mAudioReactive );
-            
-            shader.uniform( "iThickness", mHypnoRingsParams.mThickness );
+        case SHADER_FIREBALL:
+            shader.uniform( "iRotationSpeed", mFireballParams.mRotationSpeed );
+            shader.uniform( "iDensity", mFireballParams.mDensity );
+            shader.uniform( "iChannel0", 0 );
             break;
             
         default:
