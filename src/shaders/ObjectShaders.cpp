@@ -95,6 +95,7 @@ OS_SHADERS_TUPLE
     mRetinaParams.mPatternAmp = 0.05f;
     mRetinaParams.mPatternFreq = 20.0f;
     mRetinaParams.mAudioPattern = false;
+    mRetinaParams.mScale = 1.0f;
     
     // fireball
     mFireballParams.mRotationSpeed = 1.0f;
@@ -185,14 +186,17 @@ OS_SHADERS_TUPLE
     // retina
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("retina");
+    mInterface->addParam(CreateFloatParam("retina/scale", &mRetinaParams.mScale)
+                         .maxValue(4.0f)
+                         .oscReceiver(mName));
     mInterface->addParam(CreateBoolParam("retina/audiodialation", &mRetinaParams.mAudioDialation )
                          .oscReceiver(mName));
     mInterface->addParam(CreateFloatParam("retina/dialation", &mRetinaParams.mDialation)
-                         .maxValue(2.0f)
+                         .maxValue(4.0f)
                          .oscReceiver(mName));
     mInterface->addParam(CreateFloatParam("retina/dialationscale", &mRetinaParams.mDialationScale)
                          .minValue(1.0f)
-                         .maxValue(2.0f)
+                         .maxValue(4.0f)
                          .oscReceiver(mName));
     mInterface->addParam(CreateFloatParam("retina/pattamp", &mRetinaParams.mPatternAmp)
                          .minValue(0.001f)
@@ -240,10 +244,6 @@ void ObjectShaders::update(double dt)
             break;
             
         case SHADER_RETINA:
-            if (mRetinaParams.mAudioDialation)
-            {
-                mRetinaParams.mDialation = 0.5f + lows;
-            }
             if (mRetinaParams.mAudioPattern)
             {
                 mRetinaParams.mPatternAmp = 0.01f + 0.25f*mids;
@@ -303,6 +303,8 @@ void ObjectShaders::shaderPreDraw()
     
     float timescale = mTimeScale;
     
+    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
+    
     switch (mShaderType) {
         case SHADER_METAHEX:
             shader.uniform( "iObjSpeed", mMetaHexParams.mSpeed );
@@ -322,10 +324,20 @@ void ObjectShaders::shaderPreDraw()
             break;
             
         case SHADER_RETINA:
-            shader.uniform( "iDialation", mRetinaParams.mDialation );
+        {
+            float dialation = mRetinaParams.mDialation * mRetinaParams.mDialationScale;
+            
+            if (mRetinaParams.mAudioDialation)
+            {
+                dialation = mRetinaParams.mDialation + lows * mRetinaParams.mDialationScale;
+            }
+        
+            shader.uniform( "iDialation", dialation );
             shader.uniform( "iDialationScale", mRetinaParams.mDialationScale );
             shader.uniform( "iPatternAmp", mRetinaParams.mPatternAmp );
             shader.uniform( "iPatternFreq", mRetinaParams.mPatternFreq );
+            shader.uniform( "iScale", mRetinaParams.mScale );
+        }
             break;
             
         case SHADER_FIREBALL:

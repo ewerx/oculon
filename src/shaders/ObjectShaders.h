@@ -124,6 +124,7 @@ enm,
     struct tRetinaParams
     {
         bool                mAudioDialation;
+        float               mScale;
         float               mDialation;
         float               mDialationScale;
         float               mPatternAmp;

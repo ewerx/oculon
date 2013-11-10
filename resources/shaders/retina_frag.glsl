@@ -5,12 +5,11 @@ uniform vec4      iColor1;
 uniform vec4      iColor2;
 uniform vec4      iColor3;
 uniform float     iDialation;
-uniform float     iDialationScale;
 uniform float     iPatternAmp;
 uniform float     iPatternFreq;
+uniform float     iScale;
 
 // based on https://www.shadertoy.com/view/lsfGRr
-// Created by beautypi - beautypi/2012
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
 mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );
@@ -66,6 +65,7 @@ void main(void)
     vec2 q = gl_FragCoord.xy / iResolution.xy;
     // centered, left to right
     vec2 p = -1.0 + 2.0 * q;
+    p /= iScale;
     
     // r = dist from center
     // a = atan of y/x
@@ -76,7 +76,7 @@ void main(void)
     float a = atan( p.y, p.x );
     
     // dd = dialation
-    float dd = 1.0 - iDialation*iDialationScale;//0.2*sin(4.0*iGlobalTime);
+    float dd = 1.0 - iDialation;//0.2*sin(4.0*iGlobalTime);
     float ss = 1.0 + clamp(1.0-r,0.0,1.0)*dd;
     
     r *= ss;
@@ -97,10 +97,13 @@ void main(void)
     // freq = 20.0
     a += iPatternAmp*fbm( iPatternFreq*p );
     
-    f = smoothstep( 0.3, 1.0, fbm( vec2(20.0*a,6.0*r) ) );
+    // white strands
+    // brightness range, lower f = more white
+    // x = frequency, y = length ... adjust x to hide seam
+    f = smoothstep( 0.3, 1.0, fbm( vec2(19.0*a,6.0*r) ) );
     col = mix( col, vec3(1.0,1.0,1.0), f );
     
-    // white strands
+    // dark strands
     f = smoothstep( 0.4, 0.9, fbm( vec2(15.0*a,10.0*r) ) );
     col *= 1.0-0.5*f;
     
@@ -110,11 +113,12 @@ void main(void)
     // light
     f = 1.0-smoothstep( 0.0, 0.6, length2( mat2(0.6,0.8,-0.8,0.6)*(p-vec2(0.3,0.5) )*vec2(1.0,2.0)) );
     
-    col += vec3(1.0,0.9,0.9)*f*0.985;
+    col += vec3(1.0,0.9,0.9)*f*0.585;
     
+    // dark tint
     col *= vec3(0.8+0.2*cos(r*a));
     
-    // edge to background
+    // iris edge gradient
     f = 1.0-smoothstep( 0.2, 0.25, r );
     col = mix( col, vec3(0.0), f );
     

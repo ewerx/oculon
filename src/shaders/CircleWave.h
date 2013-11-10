@@ -64,6 +64,7 @@ private:
     int                 mStrands;
     float               mScale;
     bool                mColorSeparation;
+    float               mThickness;
     
     // background
 //#define CIRCLEWAVE_BG_REACTION_TUPLE \

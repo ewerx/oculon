@@ -41,10 +41,12 @@ void CircleWave::reset()
     mSeparation = 0.06f;
     mColorSeparation = true;
     mDetail = 0.5f;
-    mStrands = 60;
+    mStrands = 30;
     mScale = 0.75f;
+    mThickness = 0.0625f;
     
-    mColor2 = ColorA(0.25f, 0.15f, 0.25f, 1.0f);
+    mColor1 = ColorA::white();
+    mColor2 = ColorA::black();
     
 //    mBackgroundReaction = BG_REACTION_NONE;
     mBackgroundFlash = false;
@@ -62,10 +64,12 @@ void CircleWave::setupInterface()
     mInterface->addParam(CreateFloatParam( "Detail", &mDetail ));
     mInterface->addParam(CreateIntParam( "Strands", &mStrands )
                          .minValue(1)
-                         .maxValue(360));
+                         .maxValue(50));
     mInterface->addParam(CreateFloatParam( "Scale", &mScale )
                          .minValue(0.0f)
                          .maxValue(10.0f));
+    mInterface->addParam(CreateFloatParam( "Thickness", &mThickness )
+                         .minValue(0.001f));
     mInterface->addParam(CreateBoolParam( "ColorSep", &mColorSeparation ));
     mInterface->addParam(CreateBoolParam( "BackgroundFlash", &mBackgroundFlash ));
     
@@ -124,6 +128,7 @@ void CircleWave::shaderPreDraw()
     mShader.uniform( "iStrands", mStrands );
     mShader.uniform( "iScale", mScale );
     mShader.uniform( "iColorSep", mColorSeparation );
+    mShader.uniform( "iThickness", mThickness );
     mShader.uniform( "iBackgroundFlash", mBackgroundFlash );
     //mShader.unfirom( "iBgReaction", (int)mBackgroundReaction );
 }
