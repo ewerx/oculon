@@ -347,6 +347,10 @@
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
 		7CF25201182F3C530005227C /* livingkifs_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF25200182F3C530005227C /* livingkifs_frag.glsl */; };
 		7CF25203182F40100005227C /* infinitefall_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF25202182F40100005227C /* infinitefall_frag.glsl */; };
+		7CF2520A182F5BB80005227C /* Deformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF25208182F5BB80005227C /* Deformer.cpp */; };
+		7CF2520C182F7A400005227C /* black_grid.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CF2520B182F7A400005227C /* black_grid.jpg */; };
+		7CF2520E18301C170005227C /* black_grid_2level.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CF2520D18301C170005227C /* black_grid_2level.jpg */; };
+		7CF25210183023450005227C /* wireframe_geom.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF2520F183023450005227C /* wireframe_geom.glsl */; };
 		7CF3122618162F3500DB1286 /* tilings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF3122518162F3500DB1286 /* tilings_frag.glsl */; };
 		7CF3122818163C5100DB1286 /* rings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF3122718163C5100DB1286 /* rings_frag.glsl */; };
 		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
@@ -876,6 +880,11 @@
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
 		7CF25200182F3C530005227C /* livingkifs_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = livingkifs_frag.glsl; sourceTree = "<group>"; };
 		7CF25202182F40100005227C /* infinitefall_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = infinitefall_frag.glsl; sourceTree = "<group>"; };
+		7CF25208182F5BB80005227C /* Deformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Deformer.cpp; sourceTree = "<group>"; };
+		7CF25209182F5BB80005227C /* Deformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Deformer.h; sourceTree = "<group>"; };
+		7CF2520B182F7A400005227C /* black_grid.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = black_grid.jpg; path = ../../../../Downloads/black_grid.jpg; sourceTree = "<group>"; };
+		7CF2520D18301C170005227C /* black_grid_2level.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = black_grid_2level.jpg; sourceTree = "<group>"; };
+		7CF2520F183023450005227C /* wireframe_geom.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wireframe_geom.glsl; sourceTree = "<group>"; };
 		7CF3122518162F3500DB1286 /* tilings_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tilings_frag.glsl; sourceTree = "<group>"; };
 		7CF3122718163C5100DB1286 /* rings_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rings_frag.glsl; sourceTree = "<group>"; };
 		7CF735B2181F81D500B21DE9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
@@ -1073,6 +1082,7 @@
 				7C79C9FF17650FD700E71F9D /* catalog */,
 				7C79C98017650FD700E71F9D /* contour */,
 				7C79CA1A17650FD700E71F9D /* corona */,
+				7CF25207182F5BB80005227C /* deformer */,
 				7C79C98517650FD700E71F9D /* engine */,
 				7C79C9C817650FD700E71F9D /* flock */,
 				7C79C9D517650FD700E71F9D /* graviton */,
@@ -1493,6 +1503,8 @@
 		7C79C85E17650F8F00E71F9D /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7CF2520B182F7A400005227C /* black_grid.jpg */,
+				7CF2520D18301C170005227C /* black_grid_2level.jpg */,
 				7C79C85F17650F8F00E71F9D /* bump.png */,
 				7C79C86017650F8F00E71F9D /* catalog */,
 				7C79C86617650F8F00E71F9D /* colortex1.jpg */,
@@ -1732,6 +1744,7 @@
 				7C79C8D917650F8F00E71F9D /* terrain_texture.jpg */,
 				7C79C8DA17650F8F00E71F9D /* terrain_vtf_frag.glsl */,
 				7C79C8DB17650F8F00E71F9D /* terrain_vtf_vert.glsl */,
+				7CF2520F183023450005227C /* wireframe_geom.glsl */,
 			);
 			name = terrain;
 			path = ../resources/terrain;
@@ -2126,6 +2139,16 @@
 			path = SimpleGUI/resources;
 			sourceTree = "<group>";
 		};
+		7CF25207182F5BB80005227C /* deformer */ = {
+			isa = PBXGroup;
+			children = (
+				7CF25208182F5BB80005227C /* Deformer.cpp */,
+				7CF25209182F5BB80005227C /* Deformer.h */,
+			);
+			name = deformer;
+			path = ../src/deformer;
+			sourceTree = "<group>";
+		};
 		7CF735AF181F81D500B21DE9 /* cinderpane */ = {
 			isa = PBXGroup;
 			children = (
@@ -2390,6 +2413,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				ORGANIZATIONNAME = ewerx;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2470,6 +2494,7 @@
 				7CAC9E8E17EE6AE1007DB913 /* rasterizer_frag.glsl in Resources */,
 				7C79C8EB17650F8F00E71F9D /* contour_tex_frag.glsl in Resources */,
 				7C79C8EC17650F8F00E71F9D /* contour_tex_vert.glsl in Resources */,
+				7CF2520E18301C170005227C /* black_grid_2level.jpg in Resources */,
 				7C4C673B181C618A003049AA /* moire_frag.glsl in Resources */,
 				7C79C8ED17650F8F00E71F9D /* bump.png in Resources */,
 				7C79C8EE17650F8F00E71F9D /* darkStar.png in Resources */,
@@ -2490,6 +2515,7 @@
 				7C79C8FB17650F8F00E71F9D /* cubeNegY.jpg in Resources */,
 				7C79C8FC17650F8F00E71F9D /* cubeNegZ.jpg in Resources */,
 				7CAC9E8417EE6AE1007DB913 /* cloud_frag.glsl in Resources */,
+				7CF25210183023450005227C /* wireframe_geom.glsl in Resources */,
 				7C79C8FD17650F8F00E71F9D /* cubePosX.jpg in Resources */,
 				7C79C8FE17650F8F00E71F9D /* cubePosY.jpg in Resources */,
 				7C79C8FF17650F8F00E71F9D /* cubePosZ.jpg in Resources */,
@@ -2567,6 +2593,7 @@
 				7C79C95917650F8F00E71F9D /* terrain_shader_vert.glsl in Resources */,
 				7C79C95A17650F8F00E71F9D /* terrain_tex_frag.glsl in Resources */,
 				7C79C95B17650F8F00E71F9D /* terrain_tex_vert.glsl in Resources */,
+				7CF2520C182F7A400005227C /* black_grid.jpg in Resources */,
 				7C79C95C17650F8F00E71F9D /* terrain_texture.jpg in Resources */,
 				7C79C95D17650F8F00E71F9D /* terrain_vtf_frag.glsl in Resources */,
 				7C79C95E17650F8F00E71F9D /* terrain_vtf_vert.glsl in Resources */,
@@ -2668,6 +2695,7 @@
 				7C79C92417650F8F00E71F9D /* dustCorona.frag in Sources */,
 				7C79C92517650F8F00E71F9D /* glowCorona.frag in Sources */,
 				7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */,
+				7CF2520A182F5BB80005227C /* Deformer.cpp in Sources */,
 				7C79C92617650F8F00E71F9D /* gradient.frag in Sources */,
 				7C79C92717650F8F00E71F9D /* nebulaCorona.frag in Sources */,
 				7C79C92817650F8F00E71F9D /* passThruColorCorona.vert in Sources */,
