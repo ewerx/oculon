@@ -1192,7 +1192,7 @@ void OculonApp::saveScreenshot()
     }
     else if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
     {
-        writeImage( p, copyWindowSurface() );
+        writeImage( p, mScenes[mLastActiveScene]->getFboTexture() );
     }
     else
     {
