@@ -28,8 +28,8 @@ AudioInputHandler::~AudioInputHandler()
 void AudioInputHandler::setup(bool fboEnabled)
 {
     // DISTRIBUTION
-    mRandomSignal       = true;
-    mRandomEveryFrame   = true;
+    mRandomSignal       = false;
+    mRandomEveryFrame   = false;
     mRandomSeed         = 1234;
     mLinearScale        = false;
     
@@ -123,6 +123,10 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
     int32_t dataSize = audioInput.getFft()->getBinSize();
     const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
+    //TODO: calc average in the main loop
+    //int lowPassBand = (int)(mLowPassFilter * KISS_DEFAULT_DATASIZE);
+    //int highPassBand = (int)(mHighPassFilter * KISS_DEFAULT_DATASIZE);
+    
     if( mFftFalloff.size() == 0 )
     {
         for( int i=0; i< dataSize; ++i )
@@ -149,9 +153,9 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
             {
                 mFftFalloff[index].mFalling = false;
                 mFftFalloff[index].mBandIndex = bandIndex;
-                // fade in
-                timeline().apply( &mFftFalloff[index].mValue, value, mFalloffTime*0.1f, EaseNone() );
-                //timeline().appendTo(&mFftFalloff[index].mValue, 0.0f, falloff, getFalloffFunction() );
+                // fade in (20ms)
+                timeline().apply( &mFftFalloff[index].mValue, value, 0.02f, EaseNone() );
+                //mFftFalloff[index].mValue = value;
             } else if (!mFftFalloff[index].mFalling && value < (mFftFalloff[index].mValue*0.5f)) {
                 // fade out
                 mFftFalloff[index].mFalling = true;
