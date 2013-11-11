@@ -55,6 +55,7 @@ private:
         COLOR_RED
     };
     bool setRingColor( const int ringIndex, const int colorIndex );
+    bool syncParams( const int srcIndex, const int destIndex );
     
 private:
 

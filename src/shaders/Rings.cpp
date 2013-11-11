@@ -88,6 +88,16 @@ void Rings::setupInterface()
         
         snprintf(name,256,"%s/ring%d", mName.c_str(), i+1);
         
+        if (i == 0) {
+            mInterface->addButton(CreateTriggerParam("sync all", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 0, 0) );
+        }
+        if (i == 1) {
+            mInterface->addButton(CreateTriggerParam("sync <--", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 2, 1) );
+        }
+        else if (i == 2) {
+            mInterface->addButton(CreateTriggerParam("--> sync", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 1, 2) );
+        }
+        
         mInterface->addParam(CreateFloatParam("timescale", &mRingSetParams[i].mTimeScale)
                              .minValue(-20.0f)
                              .maxValue(20.0f)
@@ -149,6 +159,23 @@ bool Rings::setRingColor(const int ringIndex, const int colorIndex)
             break;
     }
     
+    return true;
+}
+
+bool Rings::syncParams( const int srcIndex, const int destIndex )
+{
+    if (destIndex == srcIndex)
+    {
+        mRingSetParams[1] = mRingSetParams[srcIndex];
+        mRingSetParams[2] = mRingSetParams[srcIndex];
+    }
+    else
+    {
+        Vec2f center = mRingSetParams[destIndex].mCenter;
+        mRingSetParams[destIndex] = mRingSetParams[srcIndex];
+        // because i'm lazy
+        mRingSetParams[destIndex].mCenter = center;
+    }
     return true;
 }
 
