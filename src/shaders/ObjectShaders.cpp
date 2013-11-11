@@ -219,7 +219,7 @@ OS_SHADERS_TUPLE
                          .oscReceiver(mName));
     
     // audio input
-    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
+    mApp->getAudioInputHandler().setupInterface(mInterface, "global");
 }
 
 void ObjectShaders::update(double dt)

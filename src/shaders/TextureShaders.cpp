@@ -31,6 +31,8 @@ void TextureShaders::setup()
 {
     Scene::setup();
     
+    mAudioInputHandler.setup(false);
+    
     gl::Fbo::Format format;
     format.enableMipmapping(false);
     format.enableDepthBuffer(false);
@@ -76,7 +78,7 @@ TS_SHADERS_TUPLE
     mNoiseParams.mBrightness            = 1.0f;
     
     // cells
-    mCellsParams.mHighlightAudioResponse = true;
+    mCellsParams.mAudioResponseType = AUDIO_RESPONSE_SINGLE;
     mCellsParams.mZoom = 1.0f;
     mCellsParams.mHighlight = 0.6f;
     mCellsParams.mIntensity = 1.0f;
@@ -181,14 +183,20 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateFloatParam( "Zoom", &mCellsParams.mZoom )
                          .minValue(0.01f)
                          .maxValue(3.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 16));
-    mInterface->addParam(CreateBoolParam( "HighlightByAudio", &mCellsParams.mHighlightAudioResponse )
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "HighlightByFFT", &mCellsParams.mFftHighlight )
-                         .oscReceiver(getName()));
+    
+    vector<string> audioResponseTypeNames;
+#define AUDIO_RESPONSE_TYPE_ENTRY( nam, enm ) \
+audioResponseTypeNames.push_back(nam);
+    AUDIO_RESPONSE_TYPE_TUPLE
+#undef  AUDIO_RESPONSE_TYPE_ENTRY
+    mInterface->addEnum(CreateEnumParam( "AudioResponse", (int*)(&mCellsParams.mAudioResponseType) )
+                        .maxValue(AUDIO_RESPONSE_TYPE_COUNT)
+                        .oscReceiver(getName())
+                        .isVertical(), audioResponseTypeNames);
+
     mInterface->addParam(CreateFloatParam( "Highlight", &mCellsParams.mHighlight )
-                         .maxValue(6.0f)
+                         .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 17));
     mInterface->addParam(CreateFloatParam( "Intensity", &mCellsParams.mIntensity )
@@ -353,23 +361,20 @@ TS_SHADERS_TUPLE
 
     
     // audio input
-    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 void TextureShaders::update(double dt)
 {
     Scene::update(dt);
     
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    
     mElapsedTime += dt;
     
     switch (mShaderType)
     {
         case SHADER_CELLS:
-            if (mCellsParams.mHighlightAudioResponse)
-            {
-                const float midHighVolume = mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
-                mCellsParams.mHighlight = 100.0f * mGain * midHighVolume;
-            }
             for (int i = 0; i < tCellsParams::CELLS_NUM_LAYERS; ++i)
             {
                 mCellsParams.mTime[i] += dt * mCellsParams.mTimeStep[i];
@@ -408,10 +413,10 @@ void TextureShaders::draw()
 void TextureShaders::shaderPreDraw()
 {
     mColorMapTexture[mColorMapIndex].bind(0);
-    if( mApp->getAudioInputHandler().hasTexture() )
-    {
-        mApp->getAudioInputHandler().getFbo().bindTexture(1);
-    }
+//    if( mAudioInputHandler.hasTexture() )
+//    {
+//        mAudioInputHandler.getFbo().bindTexture(1);
+//    }
     
     gl::GlslProg shader = mShaders[mShaderType];
     shader.bind();
@@ -444,26 +449,33 @@ void TextureShaders::shaderPreDraw()
             shader.uniform("iFrequency7", mCellsParams.mFrequency[6]);
             shader.uniform("iIntensity", mCellsParams.mIntensity);
             
-            if (mCellsParams.mFftHighlight)
+            if (mCellsParams.mAudioResponseType == AUDIO_RESPONSE_MULTI)
             {
-                AudioInputHandler &aih = mApp->getAudioInputHandler();
-                shader.uniform("iBrightness1", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * mGain);
-                shader.uniform("iBrightness2", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * mGain);
-                shader.uniform("iBrightness3", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * mGain);
-                shader.uniform("iBrightness4", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * mGain);
-                shader.uniform("iBrightness5", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * mGain);
-                shader.uniform("iBrightness6", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * mGain);
-                shader.uniform("iBrightness7", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * mGain);
+                AudioInputHandler &aih = mAudioInputHandler;
+                shader.uniform("iBrightness1", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * mGain * 50.0f);
+                shader.uniform("iBrightness2", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * mGain * 50.0f);
+                shader.uniform("iBrightness3", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * mGain * 20.0f);
+                shader.uniform("iBrightness4", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * mGain * 50.0f);
+                shader.uniform("iBrightness5", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * mGain * 50.0f);
+                shader.uniform("iBrightness6", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * mGain * 50.0f);
+                shader.uniform("iBrightness7", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * mGain * 50.0f);
             }
             else
             {
-                shader.uniform("iBrightness1", mCellsParams.mHighlight);
-                shader.uniform("iBrightness2", mCellsParams.mHighlight);
-                shader.uniform("iBrightness3", mCellsParams.mHighlight);
-                shader.uniform("iBrightness4", mCellsParams.mHighlight);
-                shader.uniform("iBrightness5", mCellsParams.mHighlight);
-                shader.uniform("iBrightness6", mCellsParams.mHighlight);
-                shader.uniform("iBrightness7", mCellsParams.mHighlight);
+                float brightness = mCellsParams.mHighlight;
+                
+                if (mCellsParams.mAudioResponseType == AUDIO_RESPONSE_SINGLE)
+                {
+                    brightness *= 100.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax) * mGain;
+                }
+                
+                shader.uniform("iBrightness1", brightness);
+                shader.uniform("iBrightness2", brightness);
+                shader.uniform("iBrightness3", brightness);
+                shader.uniform("iBrightness4", brightness);
+                shader.uniform("iBrightness5", brightness);
+                shader.uniform("iBrightness6", brightness);
+                shader.uniform("iBrightness7", brightness);
             }
             
             break;
@@ -560,10 +572,10 @@ void TextureShaders::shaderPostDraw()
 {
     mShaders[mShaderType].unbind();
     
-    if( mApp->getAudioInputHandler().hasTexture() )
-    {
-        mApp->getAudioInputHandler().getFbo().unbindTexture();
-    }
+//    if( mAudioInputHandler.hasTexture() )
+//    {
+//        mAudioInputHandler.getFbo().unbindTexture();
+//    }
     mColorMapTexture[mColorMapIndex].unbind();
 }
 
@@ -615,7 +627,7 @@ void TextureShaders::drawScene()
 
 void TextureShaders::drawDebug()
 {
-    //mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
+    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
     
     gl::enable( GL_TEXTURE_2D );
     gl::setMatricesWindow( mApp->getWindowSize() );

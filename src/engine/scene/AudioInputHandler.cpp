@@ -9,10 +9,12 @@
 #include "AudioInputHandler.h"
 #include "Interface.h"
 #include "cinder/Rand.h"
+#include <sstream>
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+using std::ostringstream;
 
 AudioInputHandler::AudioInputHandler()
 {
@@ -54,21 +56,28 @@ void AudioInputHandler::setup(bool fboEnabled)
         gl::Fbo::Format audioFboFormat;
         audioFboFormat.setColorInternalFormat( GL_RGB32F_ARB );
         mAudioFbo       = gl::Fbo( mAudioFboDim, audioFboHeight, audioFboFormat );
+        
+        mAudioFbo.bindFramebuffer();
+        gl::setViewport( mAudioFbo.getBounds() );
+        gl::clear();
+        mAudioFbo.unbindFramebuffer();
     }
 }
 
 void AudioInputHandler::setupInterface( Interface* interface, const std::string &name )
 {
     interface->gui()->addColumn();
-    interface->gui()->addLabel("audio");
+    std::stringstream labelss;
+    labelss << name << "/" << "audio";
+    interface->gui()->addLabel(labelss.str());
     
     interface->addParam(CreateFloatParam( "LPF", &mLowPassFilter ));
     interface->addParam(CreateFloatParam( "HPF", &mHighPassFilter ));
     interface->gui()->addSeparator();
     // these are just to show a little equalizer
-    interface->addParam(CreateFloatParam( "Avg Vol: Low", &mLowAvgVolume ));
-    interface->addParam(CreateFloatParam( "Avg Vol: Mid", &mMidAvgVolume ));
-    interface->addParam(CreateFloatParam( "Avg Vol: High", &mHighAvgVolume ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Low", &mLowAvgVolume() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Mid", &mMidAvgVolume() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: High", &mHighAvgVolume() ));
     
     interface->gui()->addLabel("distribution");
     if (mAudioFboEnabled)
@@ -204,22 +213,26 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
 
 void AudioInputHandler::drawDebug(const Vec2f& windowSize)
 {
-    gl::pushMatrices();
-    gl::enable( GL_TEXTURE_2D );
-    gl::setMatricesWindow( getWindowSize() );
-    
-    const float size = 80.0f;
-    const float paddingX = 20.0f;
-    const float paddingY = 240.0f;
-    Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
-    gl::draw( mAudioFbo.getTexture(), mAudioFbo.getBounds(), preview );
-    
-    //mAudioFbo.bindTexture();
-    //TODO: make utility func for making rects with origin/size
-    //gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
-    
-    gl::disable( GL_TEXTURE_2D );
-    gl::popMatrices();
+    if (mAudioFboEnabled)
+    {
+        gl::pushMatrices();
+        glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT);
+        gl::enable( GL_TEXTURE_2D );
+        gl::setMatricesWindow( getWindowSize() );
+        
+        const float size = 80.0f;
+        const float paddingX = 20.0f;
+        const float paddingY = 240.0f;
+        Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
+        gl::draw( mAudioFbo.getTexture(), mAudioFbo.getBounds(), preview );
+        
+        //mAudioFbo.bindTexture();
+        //TODO: make utility func for making rects with origin/size
+        //gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
+        
+        glPopAttrib();
+        gl::popMatrices();
+    }
 }
 
 #pragma mark - Falloff Fucntions

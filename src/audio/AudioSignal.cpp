@@ -47,6 +47,8 @@ void AudioSignal::setup()
 {
     Scene::setup();
     
+    mAudioInputHandler.setup(false);
+    
     mUseMotionBlur = false;
     mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &AudioSignal::drawSubScenes, this ) );
     
@@ -85,7 +87,7 @@ void AudioSignal::setupInterface()
 		ss->setupInterface();
 	}
     
-    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 void AudioSignal::setupDebugInterface()
@@ -101,6 +103,8 @@ void AudioSignal::setupDebugInterface()
 void AudioSignal::update(double dt)
 {
     Scene::update(dt);
+    
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     BOOST_FOREACH( SubScene* &ss, mSubScenes )
     {
@@ -147,15 +151,17 @@ void AudioSignal::drawSubScenes()
 
 void AudioSignal::drawDebug()
 {
+    glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT|GL_CURRENT_BIT);
     gl::pushMatrices();
-    gl::setMatricesWindow( mApp->getViewportWidth(), mApp->getViewportHeight() );
+    gl::setMatricesWindow( mApp->getWindowSize() );
     
     drawWaveform( mApp->getAudioInput().getPcmBuffer() );
     drawFft( mApp->getAudioInput().getFftDataRef() );
     
-    mApp->getAudioInputHandler().drawDebug(mApp->getWindowSize());
+    mAudioInputHandler.drawDebug(mApp->getWindowSize());
     
     gl::popMatrices();
+    glPopAttrib();
 }
 
 void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )

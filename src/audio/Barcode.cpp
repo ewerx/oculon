@@ -159,11 +159,11 @@ void Barcode::drawBar(const int index)
     float barRange = mVertical ? screenWidth : screenHeight;
     float barOffset = barSize * index;
 	
-    AudioInputHandler::FftValues& fftValues = mParentScene->getApp()->getAudioInputHandler().getFftValues();
+    AudioInputHandler::FftValues& fftValues = mParentScene->getAudioInputHandler().getFftValues();
     int32_t dataSize = fftValues.size();
     
-    AudioInputHandler::tEaseFn easeFn = mParentScene->getApp()->getAudioInputHandler().getFalloffFunction();
-    float falloff = mParentScene->getApp()->getAudioInputHandler().mFalloffTime;
+    AudioInputHandler::tEaseFn easeFn = mParentScene->getAudioInputHandler().getFalloffFunction();
+    float falloff = mParentScene->getAudioInputHandler().mFalloffTime;
     
     // Iterate through data
     for (int32_t i = 0; i < dataSize; i++)

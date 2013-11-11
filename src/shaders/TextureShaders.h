@@ -60,6 +60,8 @@ private:
     float               mTimeScale;
     double              mElapsedTime;
     
+    AudioInputHandler   mAudioInputHandler;
+    
     float               mAudioResponseFreqMin;
     float               mAudioResponseFreqMax;
     
@@ -104,9 +106,25 @@ enm,
     };
     tNoiseParams        mNoiseParams;
     
+    // shaders
+#define AUDIO_RESPONSE_TYPE_TUPLE \
+AUDIO_RESPONSE_TYPE_ENTRY( "None", AUDIO_RESPONSE_NONE ) \
+AUDIO_RESPONSE_TYPE_ENTRY( "SingleBand", AUDIO_RESPONSE_SINGLE ) \
+AUDIO_RESPONSE_TYPE_ENTRY( "MultiBand", AUDIO_RESPONSE_MULTI ) \
+//end tuple
+    
+    enum eAudioRessponseType
+    {
+#define AUDIO_RESPONSE_TYPE_ENTRY( nam, enm ) \
+enm,
+        AUDIO_RESPONSE_TYPE_TUPLE
+#undef  AUDIO_RESPONSE_TYPE_ENTRY
+        
+        AUDIO_RESPONSE_TYPE_COUNT
+    };
+    
     struct tCellsParams
     {
-        bool mHighlightAudioResponse;
         float mZoom; //
         float mHighlight; // 6
         
@@ -117,7 +135,7 @@ enm,
         float mTime[CELLS_NUM_LAYERS];
         
         float mIntensity;
-        bool mFftHighlight;
+        eAudioRessponseType mAudioResponseType;
     };
     tCellsParams    mCellsParams;
     

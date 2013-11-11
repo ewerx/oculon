@@ -280,6 +280,11 @@ const Camera& Scene::getCamera()
     return mApp->getMayaCam();
 }
 
+AudioInputHandler& Scene::getAudioInputHandler()
+{
+    return mApp->getAudioInputHandler();
+}
+
 bool Scene::toggleActiveVisible()
 {
     setVisible(!mIsVisible);

@@ -84,7 +84,7 @@ void CircleWave::setupInterface()
 //                       .oscReceiver(name)
 //                       .isVertical(), bgReactionNames);
     
-    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
+    mApp->getAudioInputHandler().setupInterface(mInterface, "global");
 }
 
 void CircleWave::update(double dt)

@@ -76,5 +76,7 @@ private:
     
     bool mZoomByAudio;
     bool mPowerByAudio;
+    
+    AudioInputHandler mAudioInputHandler;
 
 };

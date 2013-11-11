@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "cinder/Timeline.h"
 #include "MotionBlurRenderer.h"
+#include "AudioInputHandler.h"
 
 class SubScene;
 
@@ -33,6 +34,7 @@ public:
     void draw();
     void drawDebug();
     bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
+    AudioInputHandler& getAudioInputHandler() { return mAudioInputHandler; }
     
 protected:
     void setupInterface();
@@ -56,5 +58,7 @@ private:
     
     // sub scenes
     std::vector<SubScene*> mSubScenes;
+    
+    AudioInputHandler mAudioInputHandler;
 };
 

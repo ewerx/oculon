@@ -20,6 +20,7 @@
 #include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
 #include "cinderSyphon.h"
+#include "AudioInputHandler.h"
 
 // fwd decl
 class OculonApp;
@@ -52,6 +53,7 @@ public:
     virtual void handleDebugChanged()                                       { }
     
     virtual const ci::Camera& getCamera();
+    virtual AudioInputHandler& getAudioInputHandler();
     
     void setupInterfaces();
     void drawToFbo();

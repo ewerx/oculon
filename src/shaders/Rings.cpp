@@ -28,6 +28,8 @@ void Rings::setup()
 {
     Scene::setup();
     
+    mAudioInputHandler.setup(false);
+    
     mShader = loadFragShader("rings_frag.glsl");
     
     mRingSetParams[0].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
@@ -96,7 +98,7 @@ void Rings::setupInterface()
                              .minValue(0.1f)
                              .maxValue(1.5f)
                              .oscReceiver(name));
-        mInterface->addParam(CreateFloatParam("zoom", &mRingSetParams[i].mZoom)
+        mInterface->addParam(CreateFloatParam("frequency", &mRingSetParams[i].mZoom)
                              .minValue(0.00001f)
                              .maxValue(200.0f)
                              .oscReceiver(name));
@@ -121,7 +123,7 @@ void Rings::setupInterface()
         
     }
     
-    mApp->getAudioInputHandler().setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 #pragma mark - CALLBACKS
@@ -154,6 +156,8 @@ void Rings::update(double dt)
 {
     Scene::update(dt);
     
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
         mRingSetParams[i].mElapsedTime += mRingSetParams[i].mTimeScale*dt;
@@ -172,9 +176,9 @@ void Rings::draw()
 void Rings::shaderPreDraw()
 {
     // audio texture
-//    if( mApp->getAudioInputHandler().hasTexture() )
+//    if( mAudioInputHandler.hasTexture() )
 //    {
-//        mApp->getAudioInputHandler().getFbo().bindTexture(1);
+//        mAudioInputHandler.getFbo().bindTexture(1);
 //    }
 //    
     float zoom1 = mRingSetParams[0].mZoom;
@@ -185,9 +189,9 @@ void Rings::shaderPreDraw()
     float power2 = mRingSetParams[1].mPower;
     float power3 = mRingSetParams[2].mPower;
     
-    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
-    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq() * mGain;
-    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq() * mGain;
+    const float lows = mAudioInputHandler.getAverageVolumeLowFreq() * mGain;
+    const float mids = mAudioInputHandler.getAverageVolumeMidFreq() * mGain;
+    const float highs = mAudioInputHandler.getAverageVolumeHighFreq() * mGain;
     
     if (mZoomByAudio)
     {
@@ -281,10 +285,10 @@ void Rings::shaderPostDraw()
     mShader.unbind();
     
     // audio texture
-    if( mApp->getAudioInputHandler().hasTexture() )
-    {
-        mApp->getAudioInputHandler().getFbo().unbindTexture();
-    }
+//    if( mAudioInputHandler.hasTexture() )
+//    {
+//        mAudioInputHandler.getFbo().unbindTexture();
+//    }
 }
 
 void Rings::drawScene()
@@ -308,5 +312,5 @@ void Rings::drawScene()
 
 void Rings::drawDebug()
 {
-    mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
+    mAudioInputHandler.drawDebug(mApp->getViewportSize());
 }

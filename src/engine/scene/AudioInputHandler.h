@@ -109,11 +109,12 @@ enm,
     tEaseFn getReverseFalloffFunction();
     
     // Filtering
+    bool    mFalloffAveragesOnly;
     float   mLowPassFilter;
     float   mHighPassFilter;
-    float   mLowAvgVolume;
-    float   mMidAvgVolume;
-    float   mHighAvgVolume;
+    ci::Anim<float>   mLowAvgVolume;
+    ci::Anim<float>   mMidAvgVolume;
+    ci::Anim<float>   mHighAvgVolume;
 };
 
 #endif /* defined(__Oculon__AudioInputHandler__) */
