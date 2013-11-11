@@ -70,12 +70,11 @@ private:
         float           mScale;
         float           mPower;
         ci::Vec2f       mCenter;
+        bool            mScaleByAudio;
+        bool            mPowerByAudio;
     };
     enum { NUM_RING_SETS = 3 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];
-    
-    bool mZoomByAudio;
-    bool mPowerByAudio;
     
     AudioInputHandler mAudioInputHandler;
 

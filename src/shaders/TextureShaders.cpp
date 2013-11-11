@@ -166,10 +166,6 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateFloatParam("color1alpha", &(mColor1.a))
                          .oscReceiver(getName())
                          .midiInput(1, 2, 22));
-    mInterface->addParam(CreateFloatParam("gain", &mGain)
-                         .maxValue(20.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 23));
     mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 20));
