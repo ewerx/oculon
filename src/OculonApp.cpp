@@ -753,15 +753,16 @@ void OculonApp::update()
         if( mIsCapturingVideo )
         {
             mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
-            snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
-            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
         }
         
         if( mIsCapturingFrames )
         {
             snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
             mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
-            
+        }
+        
+        if( mIsCapturingVideo || mIsCapturingFrames )
+        {
             snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
             mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
             
@@ -779,6 +780,7 @@ void OculonApp::update()
         }
     }
     
+    // TODO: clean up this mess!
     if( mIsCapturingFrames )
     {
         const float elapsed = (mFrameCaptureCount/kCaptureFramerate);
@@ -787,8 +789,17 @@ void OculonApp::update()
             enableFrameCapture(false);
         }
     }
+    
+    if( mIsCapturingVideo )
+    {
+        const float elapsed = (mFrameCaptureCount/kCaptureFramerate);
+        if( elapsed >= mCaptureDuration )
+        {
+            stopVideoCapture();
+        }
+    }
 
-    const float dt = mIsCapturingFrames ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
+    const float dt = (mIsCapturingFrames || mIsCapturingVideo) ? (1.0f/kCaptureFramerate) : mElapsedSecondsThisFrame;
     
     mAudioInput.update();
     mAudioInputHandler.update( dt, mAudioInput );
@@ -1055,11 +1066,12 @@ void OculonApp::draw()
     // capture video
 	if( mIsCapturingVideo )
     {
+        ++mFrameCaptureCount;
         if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
         {
-            //mMovieWriter.addFrame( Surface(mScenes[mLastActiveScene]->getFboTexture()) );
+            mMovieWriter.addFrame( Surface(mScenes[mLastActiveScene]->getFbo().getTexture()) );
             // not sure why but copyWindowSurface is faster...
-            mMovieWriter.addFrame( copyWindowSurface() );
+            //mMovieWriter.addFrame( copyWindowSurface() );
         }
         else
         {
@@ -1252,7 +1264,7 @@ void OculonApp::startVideoCapture(bool useDefaultPath)
     if( ready )
     {
         console() << "[main] start video capture" << "\n\tFile: " << outputPath.string() << "\n\tFramerate: " << (1.0f / mwFormat.getDefaultDuration()) << "\n\tQuality: " << mwFormat.getQuality() << std::endl;
-        mMovieWriter.setWriter(qtime::MovieWriter( outputPath, getWindowWidth(), getWindowHeight(), mwFormat ));
+        mMovieWriter.setWriter(qtime::MovieWriter( outputPath, getViewportWidth(), getViewportHeight(), mwFormat ));
         mMovieWriter.start();
         mIsCapturingVideo = true;
     }
