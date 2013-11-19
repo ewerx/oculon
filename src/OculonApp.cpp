@@ -31,6 +31,7 @@
 #include "Polyhedron.h"
 #include "Terrain.h"
 // shader scenes
+#include "Cells.h"
 #include "CircleWave.h"
 #include "ObjectShaders.h"
 #include "Rings.h"
@@ -358,10 +359,11 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     
     // Shader Scenes
+    if( mConfig.getBool("cells") )              addScene( new Cells() );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
-    if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders() );
+    if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     
     // Test Scenes
     //addScene( new MovieTest() );

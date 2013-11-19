@@ -68,7 +68,6 @@ private:
     
     // shaders
 #define SHADERS_TUPLE \
-SHADERS_ENTRY( "Voronoi", SHADER_VORONOI ) \
 SHADERS_ENTRY( "Tripping", SHADER_TRIPPING ) \
 SHADERS_ENTRY( "Stripes", SHADER_STRIPES ) \
 SHADERS_ENTRY( "Flicker", SHADER_FLICKER ) \
@@ -106,23 +105,6 @@ enm,
     
     //TEST
     int                 mRadius;
-    
-    struct tVoronoiParams
-    {
-        ci::Vec3f mBorderColor;
-        float mSpeed;
-        float mZoom;
-        float mBorderIn;
-        float mBorderOut;
-        ci::Vec3f mSeedColor;
-        float mSeedSize;
-        float mCellLayers;
-        ci::Vec3f mCellColor;
-        float mCellBorderStrength;
-        float mCellBrightness;
-        float mDistortion;
-    };
-    tVoronoiParams mVoronoiParams;
     
     struct tInversionParams
     {

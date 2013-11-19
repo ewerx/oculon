@@ -17,8 +17,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-TextureShaders::TextureShaders()
-: Scene("textureshaders")
+TextureShaders::TextureShaders(const std::string& name)
+: Scene(name)
 {
     //mAudioInputHandler.setup(true);
 }
@@ -50,7 +50,7 @@ void TextureShaders::setup()
     mColorMapTexture[3] = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) );
     mColorMapIndex = 0;
     
-    mShaderType = SHADER_CELLS;
+    mShaderType = SHADER_KALI;
 
     mDrawOnSphere = false;
     
@@ -76,28 +76,6 @@ TS_SHADERS_TUPLE
     mNoiseParams.mLevels                = 64.0f;
     mNoiseParams.mEdgeThickness         = 0.0f;
     mNoiseParams.mBrightness            = 1.0f;
-    
-    // cells
-    mCellsParams.mAudioResponseType = AUDIO_RESPONSE_SINGLE;
-    mCellsParams.mZoom = 1.0f;
-    mCellsParams.mHighlight = 0.6f;
-    mCellsParams.mIntensity = 1.0f;
-    
-    mCellsParams.mTimeStep[0] = 1.0f;
-    mCellsParams.mTimeStep[1] = 0.5f;
-    mCellsParams.mTimeStep[2] = 0.25f;
-    mCellsParams.mTimeStep[3] = 0.125f;
-    mCellsParams.mTimeStep[4] = 0.125f;
-    mCellsParams.mTimeStep[5] = 0.065f;
-    mCellsParams.mTimeStep[6] = 0.0f;
-    
-    mCellsParams.mFrequency[0] = 1.0f;
-    mCellsParams.mFrequency[1] = 2.0f;
-    mCellsParams.mFrequency[2] = 4.0f;
-    mCellsParams.mFrequency[3] = 8.0f;
-    mCellsParams.mFrequency[4] = 32.0f;
-    mCellsParams.mFrequency[5] = 64.0f;
-    mCellsParams.mFrequency[6] = 128.0f;
     
     // kali
     mKaliParams.iterations=20;
@@ -129,16 +107,26 @@ TS_SHADERS_TUPLE
     mSimplicityParams.mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
     mSimplicityParams.mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
     mSimplicityParams.mUVScale = 0.25f;
+    
+    // voronoi
+    mVoronoiParams.mBorderColor = Vec3f( 1.0f, 1.0f, 1.0f );
+    mVoronoiParams.mZoom = 60.0f;
+    mVoronoiParams.mBorderIn = 0.0f;
+    mVoronoiParams.mBorderOut = 0.075f;
+    mVoronoiParams.mSeedColor = Vec3f( 1.0f, 1.0f, 1.0f );
+    mVoronoiParams.mSeedSize = 0.0f;
+    mVoronoiParams.mCellLayers = 8.0f;
+    mVoronoiParams.mCellBrightness = 0.5f;
+    mVoronoiParams.mCellBorderStrength = 0.5f;
+    mVoronoiParams.mCellColor = Vec3f( 0.0f, 0.0f, 0.0f );
+    mVoronoiParams.mSpeed = 1.00f;
+    mVoronoiParams.mDistortion = 0.0f;
+    mVoronoiParams.mAudioDistortion = true;
 }
 
 void TextureShaders::reset()
 {
     mElapsedTime = 0.0f;
-    
-    for (int i = 0; i < tCellsParams::CELLS_NUM_LAYERS; ++i)
-    {
-        mCellsParams.mTime[i] = 0.0f;
-    }
 }
 
 void TextureShaders::setupInterface()
@@ -172,84 +160,6 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 21));
-    
-    // SHADER_CELLS
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Cells");
-    mInterface->addParam(CreateFloatParam( "Zoom", &mCellsParams.mZoom )
-                         .minValue(0.01f)
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    
-    vector<string> audioResponseTypeNames;
-#define AUDIO_RESPONSE_TYPE_ENTRY( nam, enm ) \
-audioResponseTypeNames.push_back(nam);
-    AUDIO_RESPONSE_TYPE_TUPLE
-#undef  AUDIO_RESPONSE_TYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "AudioResponse", (int*)(&mCellsParams.mAudioResponseType) )
-                        .maxValue(AUDIO_RESPONSE_TYPE_COUNT)
-                        .oscReceiver(getName())
-                        .isVertical(), audioResponseTypeNames);
-
-    mInterface->addParam(CreateFloatParam( "Highlight", &mCellsParams.mHighlight )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 17));
-    mInterface->addParam(CreateFloatParam( "Intensity", &mCellsParams.mIntensity )
-                         .minValue(1.0f)
-                         .maxValue(8.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep1", &mCellsParams.mTimeStep[0] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 18));
-    mInterface->addParam(CreateFloatParam( "TimeStep2", &mCellsParams.mTimeStep[1] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 19));
-    mInterface->addParam(CreateFloatParam( "TimeStep3", &mCellsParams.mTimeStep[2] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep4", &mCellsParams.mTimeStep[3] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep5", &mCellsParams.mTimeStep[4] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep6", &mCellsParams.mTimeStep[5] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep7", &mCellsParams.mTimeStep[6] )
-                         .minValue(-2.0f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency1", &mCellsParams.mFrequency[0] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency2", &mCellsParams.mFrequency[1] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency3", &mCellsParams.mFrequency[2] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency4", &mCellsParams.mFrequency[3] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency5", &mCellsParams.mFrequency[4] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency6", &mCellsParams.mFrequency[5] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency7", &mCellsParams.mFrequency[6] )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
     
     // SHADER_KALI
     mInterface->gui()->addColumn();
@@ -294,8 +204,7 @@ audioResponseTypeNames.push_back(nam);
     mInterface->gui()->addLabel("Simplicity");
     mInterface->addParam(CreateIntParam( "Red Power", &mSimplicityParams.mRedPower )
                          .minValue(0)
-                         .maxValue(2)
-                         .oscReceiver("/1/fader2"));
+                         .maxValue(2));
     mInterface->addParam(CreateIntParam( "Green Power", &mSimplicityParams.mGreenPower )
                          .minValue(0)
                          .maxValue(2)
@@ -336,6 +245,37 @@ audioResponseTypeNames.push_back(nam);
                          .minValue(0.01f)
                          .maxValue(4.0f));
     
+    // SHADER_VORONOI
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Voronoi");
+    mInterface->addParam(CreateFloatParam("voronoi/speed", &mVoronoiParams.mSpeed)
+                         .maxValue(10.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/zoom", &mVoronoiParams.mZoom)
+                         .maxValue(256.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/distortion", &mVoronoiParams.mDistortion)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam("voronoi/audio_distortion", &mVoronoiParams.mAudioDistortion)
+                         .oscReceiver(getName()));
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateVec3fParam("voronoi/line_color", &mVoronoiParams.mBorderColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateFloatParam("voronoi/borderin", &mVoronoiParams.mBorderIn)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/borderout", &mVoronoiParams.mBorderOut)
+                         .oscReceiver(getName()));
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateVec3fParam("voronoi/seed_color", &mVoronoiParams.mSeedColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateFloatParam("voronoi/seedsize", &mVoronoiParams.mSeedSize)
+                         .oscReceiver(getName()));
+    mInterface->gui()->addSeparator();
+    mInterface->addParam(CreateVec3fParam("voronoi/cell_color", &mVoronoiParams.mCellColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateFloatParam("voronoi/cell_brightness", &mVoronoiParams.mCellBrightness)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("voronoi/cell_strength", &mVoronoiParams.mCellBorderStrength)
+                         .oscReceiver(getName()));
+    
     // SHADER_NOISE
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Noise");
@@ -370,12 +310,7 @@ void TextureShaders::update(double dt)
     
     switch (mShaderType)
     {
-        case SHADER_CELLS:
-            for (int i = 0; i < tCellsParams::CELLS_NUM_LAYERS; ++i)
-            {
-                mCellsParams.mTime[i] += dt * mCellsParams.mTimeStep[i];
-            }
-            break;
+
             
         default:
             break;
@@ -425,56 +360,6 @@ void TextureShaders::shaderPreDraw()
     shader.uniform( "iColor2", mColor2);
     
     switch (mShaderType) {
-        case SHADER_CELLS:
-            shader.uniform("iZoom", mCellsParams.mZoom);
-            shader.uniform("iHighlight", mCellsParams.mHighlight);
-            shader.uniform("iTimeStep1", mCellsParams.mTime[0]);
-            shader.uniform("iTimeStep2", mCellsParams.mTime[1]);
-            shader.uniform("iTimeStep3", mCellsParams.mTime[2]);
-            shader.uniform("iTimeStep4", mCellsParams.mTime[3]);
-            shader.uniform("iTimeStep5", mCellsParams.mTime[4]);
-            shader.uniform("iTimeStep6", mCellsParams.mTime[5]);
-            shader.uniform("iTimeStep7", mCellsParams.mTime[6]);
-            
-            shader.uniform("iFrequency1", mCellsParams.mFrequency[0]);
-            shader.uniform("iFrequency2", mCellsParams.mFrequency[1]);
-            shader.uniform("iFrequency3", mCellsParams.mFrequency[2]);
-            shader.uniform("iFrequency4", mCellsParams.mFrequency[3]);
-            shader.uniform("iFrequency5", mCellsParams.mFrequency[4]);
-            shader.uniform("iFrequency6", mCellsParams.mFrequency[5]);
-            shader.uniform("iFrequency7", mCellsParams.mFrequency[6]);
-            shader.uniform("iIntensity", mCellsParams.mIntensity);
-            
-            if (mCellsParams.mAudioResponseType == AUDIO_RESPONSE_MULTI)
-            {
-                AudioInputHandler &aih = mAudioInputHandler;
-                shader.uniform("iBrightness1", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * mGain * 50.0f);
-                shader.uniform("iBrightness2", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * mGain * 50.0f);
-                shader.uniform("iBrightness3", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * mGain * 20.0f);
-                shader.uniform("iBrightness4", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * mGain * 50.0f);
-                shader.uniform("iBrightness5", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * mGain * 50.0f);
-                shader.uniform("iBrightness6", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * mGain * 50.0f);
-                shader.uniform("iBrightness7", mCellsParams.mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * mGain * 50.0f);
-            }
-            else
-            {
-                float brightness = mCellsParams.mHighlight;
-                
-                if (mCellsParams.mAudioResponseType == AUDIO_RESPONSE_SINGLE)
-                {
-                    brightness *= 100.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax) * mGain;
-                }
-                
-                shader.uniform("iBrightness1", brightness);
-                shader.uniform("iBrightness2", brightness);
-                shader.uniform("iBrightness3", brightness);
-                shader.uniform("iBrightness4", brightness);
-                shader.uniform("iBrightness5", brightness);
-                shader.uniform("iBrightness6", brightness);
-                shader.uniform("iBrightness7", brightness);
-            }
-            
-            break;
         case SHADER_KALI:
             shader.uniform( "iChannel0", 0 );
             shader.uniform( "iterations", mKaliParams.iterations );
@@ -490,14 +375,14 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "antialias", mKaliParams.antialias );
             break;
             
-        case SHADER_NOISE:
-            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
-            shader.uniform( "scale", mNoiseParams.mNoiseScale );
-            shader.uniform( "colorScale", mColor1 );
-            shader.uniform( "alpha", mNoiseParams.mBrightness );
-            shader.uniform( "levels", mNoiseParams.mLevels );
-            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
-            break;
+//        case SHADER_NOISE:
+//            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
+//            shader.uniform( "scale", mNoiseParams.mNoiseScale );
+//            shader.uniform( "colorScale", mColor1 );
+//            shader.uniform( "alpha", mNoiseParams.mBrightness );
+//            shader.uniform( "levels", mNoiseParams.mLevels );
+//            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
+//            break;
             
         case SHADER_SIMPLICITY:
             shader.uniform( "colorScale", mSimplicityParams.mColorScale );
@@ -518,7 +403,31 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "uvScale", mSimplicityParams.mUVScale );
             break;
             
-
+        case SHADER_VORONOI:
+        {
+            shader.uniform( "iResolution", resolution );
+            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "borderColor", mVoronoiParams.mBorderColor );
+            shader.uniform( "zoom", mVoronoiParams.mZoom );
+            shader.uniform( "speed", mVoronoiParams.mSpeed );
+            shader.uniform( "borderIn", mVoronoiParams.mBorderIn );
+            shader.uniform( "borderOut", mVoronoiParams.mBorderOut );
+            shader.uniform( "seedSize", mVoronoiParams.mSeedSize );
+            shader.uniform( "seedColor", mVoronoiParams.mSeedColor );
+            shader.uniform( "cellLayers", mVoronoiParams.mCellLayers );
+            shader.uniform( "cellColor", mVoronoiParams.mCellColor );
+            shader.uniform( "cellBorderStrength", mVoronoiParams.mCellBorderStrength );
+            shader.uniform( "cellBrightness", mVoronoiParams.mCellBrightness );
+            
+            float distortion = mVoronoiParams.mDistortion;
+            if (mVoronoiParams.mAudioDistortion)
+            {
+                distortion += 10.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax) * mGain;
+                distortion = math<float>::min(distortion, 1.0f);
+            }
+            shader.uniform( "distortion", distortion );
+        }
+            break;
             
         default:
             break;

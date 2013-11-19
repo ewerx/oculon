@@ -60,7 +60,7 @@ void ShaderTest::reset()
 
 void ShaderTest::setupShaders()
 {
-    mShaderType = SHADER_VORONOI;
+    mShaderType = SHADER_AFTEREFFECT;
     
     try
     {
@@ -70,23 +70,6 @@ void ShaderTest::setupShaders()
         // MENGER
 //        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
 //        mShaders.push_back(shader);
-    
-        // VORONOI
-        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_VORONOI_FRAG ) );
-        mShaders.push_back(shader);
-        
-        mVoronoiParams.mBorderColor = Vec3f( 1.0f, 0.6f, 0.1f );
-        mVoronoiParams.mZoom = 8.0f;
-        mVoronoiParams.mBorderIn = 0.04f;
-        mVoronoiParams.mBorderOut = 0.07f;
-        mVoronoiParams.mSeedColor = Vec3f( 1.0f, 0.6f, 0.1f );
-        mVoronoiParams.mSeedSize = 0.12f;
-        mVoronoiParams.mCellLayers = 8.0f;
-        mVoronoiParams.mCellBrightness = 0.5f;
-        mVoronoiParams.mCellBorderStrength = 0.5f;
-        mVoronoiParams.mCellColor = Vec3f( 1.0f, 1.0f, 1.0f );
-        mVoronoiParams.mSpeed = 1.0f;
-        mVoronoiParams.mDistortion = 1.0f;
         
         // FRAGMENT: ERROR: 0:180: Swizzle component 'z' indexes beyond end of input vector (length 2)
         // METAHEXBALLS
@@ -214,35 +197,7 @@ shaderNames.push_back(nam);
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
     mInterface->addParam(CreateBoolParam( "Grid Render", &mGrid ));
     
-    // SHADER_VORONOI
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Voronoi");
-    mInterface->addParam(CreateFloatParam("voronoi/speed", &mVoronoiParams.mSpeed)
-                         .maxValue(10.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/zoom", &mVoronoiParams.mZoom)
-                         .maxValue(256.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/distortion", &mVoronoiParams.mDistortion)
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateVec3fParam("voronoi/line_color", &mVoronoiParams.mBorderColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateFloatParam("voronoi/borderin", &mVoronoiParams.mBorderIn)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/borderout", &mVoronoiParams.mBorderOut)
-                         .oscReceiver(getName()));
-    mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateVec3fParam("voronoi/seed_color", &mVoronoiParams.mSeedColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateFloatParam("voronoi/seedsize", &mVoronoiParams.mSeedSize)
-                         .oscReceiver(getName()));
-    mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateVec3fParam("voronoi/cell_color", &mVoronoiParams.mCellColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateFloatParam("voronoi/cell_brightness", &mVoronoiParams.mCellBrightness)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/cell_strength", &mVoronoiParams.mCellBorderStrength)
-                         .oscReceiver(getName()));
-    
+    // SHADER_STRIPES
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Stripes");
     mInterface->addParam(CreateFloatParam("stripes/timescale", &mStripesParams.mTimeScale)
@@ -334,24 +289,7 @@ void ShaderTest::shaderPreDraw()
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
     switch( mShaderType )
-    {
-        case SHADER_VORONOI:
-            shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
-            shader.uniform( "borderColor", mVoronoiParams.mBorderColor );
-            shader.uniform( "zoom", mVoronoiParams.mZoom );
-            shader.uniform( "speed", mVoronoiParams.mSpeed );
-            shader.uniform( "borderIn", mVoronoiParams.mBorderIn );
-            shader.uniform( "borderOut", mVoronoiParams.mBorderOut );
-            shader.uniform( "seedSize", mVoronoiParams.mSeedSize );
-            shader.uniform( "seedColor", mVoronoiParams.mSeedColor );
-            shader.uniform( "cellLayers", mVoronoiParams.mCellLayers );
-            shader.uniform( "cellColor", mVoronoiParams.mCellColor );
-            shader.uniform( "cellBorderStrength", mVoronoiParams.mCellBorderStrength );
-            shader.uniform( "cellBrightness", mVoronoiParams.mCellBrightness );
-            shader.uniform( "distortion", mVoronoiParams.mDistortion );
-            break;
-            
+    {            
         case SHADER_STRIPES:
             shader.uniform( "iResolution", resolution );
             shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );

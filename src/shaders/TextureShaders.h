@@ -26,7 +26,7 @@
 class TextureShaders : public Scene
 {
 public:
-    TextureShaders();
+    TextureShaders(const std::string& name);
     virtual ~TextureShaders();
     
     // inherited from Scene
@@ -72,10 +72,10 @@ private:
     
     // shaders
 #define TS_SHADERS_TUPLE \
-TS_SHADERS_ENTRY( "Cells", "cells_frag.glsl", SHADER_CELLS ) \
 TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
 TS_SHADERS_ENTRY( "Simplicity", "simplicity_frag.glsl", SHADER_SIMPLICITY ) \
-TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
+TS_SHADERS_ENTRY( "Voronoi", "voronoi_frag.glsl", SHADER_VORONOI ) \
+//TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
 //end tuple
     
     enum eShaderType
@@ -106,7 +106,7 @@ enm,
     };
     tNoiseParams        mNoiseParams;
     
-    // shaders
+    // audio respons types
 #define AUDIO_RESPONSE_TYPE_TUPLE \
 AUDIO_RESPONSE_TYPE_ENTRY( "None", AUDIO_RESPONSE_NONE ) \
 AUDIO_RESPONSE_TYPE_ENTRY( "SingleBand", AUDIO_RESPONSE_SINGLE ) \
@@ -122,22 +122,6 @@ enm,
         
         AUDIO_RESPONSE_TYPE_COUNT
     };
-    
-    struct tCellsParams
-    {
-        float mZoom; //
-        float mHighlight; // 6
-        
-        enum { CELLS_NUM_LAYERS = 7 };
-        
-        float mTimeStep[CELLS_NUM_LAYERS];
-        float mFrequency[CELLS_NUM_LAYERS];
-        float mTime[CELLS_NUM_LAYERS];
-        
-        float mIntensity;
-        eAudioRessponseType mAudioResponseType;
-    };
-    tCellsParams    mCellsParams;
     
     struct tKaliParams
     {
@@ -178,5 +162,23 @@ enm,
         float               mUVScale;
     };
     tSimplicityParams mSimplicityParams;
+    
+    struct tVoronoiParams
+    {
+        ci::Vec3f mBorderColor;
+        float mSpeed;
+        float mZoom;
+        float mBorderIn;
+        float mBorderOut;
+        ci::Vec3f mSeedColor;
+        float mSeedSize;
+        float mCellLayers;
+        ci::Vec3f mCellColor;
+        float mCellBorderStrength;
+        float mCellBrightness;
+        float mDistortion;
+        bool mAudioDistortion;
+    };
+    tVoronoiParams mVoronoiParams;
 };
 
