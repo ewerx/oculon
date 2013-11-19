@@ -51,7 +51,7 @@ void Binned::setup()
 	mSlowMotion = false;
     mBounceOffWalls = true;
     mCircularWall = false;
-    mWallPadding = 0.0f;
+    mWallPadding = 0.01f;
     
     mCircularWallRadius = (mApp->getViewportWidth()/2)*1.2f;
     
@@ -75,14 +75,14 @@ void Binned::setup()
     mPatternDuration = 0.0f;
     mAudioPattern = AUDIO_PATTERN_SEGMENTS;
     
-    mShowForceIndicators = true;
+    mShowForceIndicators = false;
     mForceIndicatorScale = 0.25f;
     mForceIndicatorColor = ColorAf(1.0f, 0.0f, 0.0f, 0.5f);
     
     mPointColor.r = 1.0f;
     mPointColor.g = 1.0f;
     mPointColor.b = 1.0f;
-    mPointColor.a = 0.5f;
+    mPointColor.a = 0.35f;
     
     mForceColor.r = 0.85f;
     mForceColor.g = 0.85f;

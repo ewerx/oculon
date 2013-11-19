@@ -178,7 +178,7 @@ void Terrain::setupInterface()
     mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "disp_height", &mDisplacementHeight() )
+    mInterface->addParam(CreateFloatParam( "disp_height", mDisplacementHeight.ptr() )
                          .maxValue(20.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
