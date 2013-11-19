@@ -211,8 +211,9 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
     
     // calculate avg volumes for low/mid/high for quick access and visual display
     mLowAvgVolume = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
-    mMidAvgVolume = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter);
-    mHighAvgVolume = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f);
+    //HACKHACK: need to figure out why mid/high are always so low compared to bass
+    mMidAvgVolume = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter) * 10.0f;
+    mHighAvgVolume = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f) * 5.0f;
 }
 
 void AudioInputHandler::drawDebug(const Vec2f& windowSize)
