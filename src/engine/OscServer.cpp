@@ -276,9 +276,17 @@ void OscServer::setDestination( const eDestination index, const std::string& hos
 {
     if( index < DEST_COUNT )
     {
-        mSender[index].setup( host, port );
-        mIsSending = true;
-        console() << "[osc] send destination " << (int)(index) << ": " << host << ":" << port << std::endl;
+        try
+        {
+            mSender[index].setup( host, port );
+            mIsSending = true;
+            console() << "[osc] send destination " << (int)(index) << ": " << host << ":" << port << std::endl;
+        }
+        catch (...)
+        {
+            console() << "[osc] ERROR creating destination socket " << host << ":" << port << std::endl;
+            return;
+        }
     }
 }
 
