@@ -14,7 +14,7 @@ uniform vec3        iResolution;     // viewport resolution (in pixels)
 uniform float       iTime1;
 uniform vec4        iColor1;
 uniform float       iScale1;
-uniform float       iZoom1;
+uniform float       iFrequency1;
 uniform float       iThickness1;
 uniform float       iPower1;
 uniform vec2        iCenter1;
@@ -23,7 +23,7 @@ uniform vec2        iCenter1;
 uniform float       iTime2;
 uniform vec4        iColor2;
 uniform float       iScale2;
-uniform float       iZoom2;
+uniform float       iFrequency2;
 uniform float       iThickness2;
 uniform float       iPower2;
 uniform vec2        iCenter2;
@@ -32,7 +32,7 @@ uniform vec2        iCenter2;
 uniform float       iTime3;
 uniform vec4        iColor3;
 uniform float       iScale3;
-uniform float       iZoom3;
+uniform float       iFrequency3;
 uniform float       iThickness3;
 uniform float       iPower3;
 uniform vec2        iCenter3;
@@ -42,9 +42,9 @@ uniform vec2        iCenter3;
 precision highp float;
 #endif
 
-vec4 calcRingSet(vec2 pos, float time, float zoom, float scale, float thickness, float power)
+vec4 calcRingSet(vec2 pos, float time, float frequency, float scale, float thickness, float power)
 {
-    // TODO: figure out relationship between scale and zoom...
+    // TODO: figure out relationship between scale and frequency...
 	float dist = length(pos);
     float dist2 = (dist*dist)/scale;
     
@@ -54,12 +54,12 @@ vec4 calcRingSet(vec2 pos, float time, float zoom, float scale, float thickness,
     // iPower > 0.5 = bulge in center
     // iPower < 0.5 = squeeze in center
     //
-    // zoom controls # of rings visible
-    // zoom range 1 - 100
-	float r = zoom * pow(dist2,power);
+    // frequency controls # of rings visible
+    // frequency range 1 - 100
+	float r = frequency * pow(dist2,power);
 	
 	// experiments:
-	//float r = zoom * sin(dist/scale*3.); // neat in and out simulatanous
+	//float r = frequency * sin(dist/scale*3.); // neat in and out simulatanous
 	//float r = abs( tan(dist/scale*15.) * thickness);// WTF is this???
 	//thickness *= sin(0.1*r); // relative thickness
     
@@ -94,9 +94,9 @@ void main(void)
     // fades intensity down towards edges of screen
     //float fade = 0.25*sin(PI*uv.y) + -0.5*sin(PI*uv.x);
     
-    vec4 ringset1 = iColor1 * calcRingSet( pos1, iTime1, iZoom1, iScale1, iThickness1, iPower1 );
-    vec4 ringset2 = iColor2 * calcRingSet( pos2, iTime2, iZoom2, iScale2, iThickness2, iPower2 );
-    vec4 ringset3 = iColor3 * calcRingSet( pos3, iTime3, iZoom3, iScale3, iThickness3, iPower3 );
+    vec4 ringset1 = iColor1 * calcRingSet( pos1, iTime1, iFrequency1, iScale1, iThickness1, iPower1 );
+    vec4 ringset2 = iColor2 * calcRingSet( pos2, iTime2, iFrequency2, iScale2, iThickness2, iPower2 );
+    vec4 ringset3 = iColor3 * calcRingSet( pos3, iTime3, iFrequency3, iScale3, iThickness3, iPower3 );
 	
 	gl_FragColor = ringset1 * iColor1.w + ringset2 * iColor2.w + ringset3 * iColor3.w;
 }

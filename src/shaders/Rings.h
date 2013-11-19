@@ -56,6 +56,9 @@ private:
     };
     bool setRingColor( const int ringIndex, const int colorIndex );
     bool syncParams( const int srcIndex, const int destIndex );
+    bool zoomIn( const int ringIndex );
+    bool zoomOut( const int ringIndex );
+    bool zoomRestore( const int ringIndex );
     
 private:
 
@@ -63,16 +66,18 @@ private:
     
     struct tRingSetParams
     {
-        ci::ColorAf     mColor;
+        ci::Anim<ci::ColorAf>     mColor;
         float           mElapsedTime;
         float           mTimeScale;
         float           mThickness;
-        float           mZoom;
-        float           mScale;
-        float           mPower;
+        ci::Anim<float>             mFrequency;
+        ci::Anim<float>             mScale;
+        ci::Anim<float>             mPower;
         ci::Vec2f       mCenter;
         bool            mScaleByAudio;
         bool            mPowerByAudio;
+        float           mPrevFrequency;
+        float           mPrevPower;
     };
     enum { NUM_RING_SETS = 3 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];
