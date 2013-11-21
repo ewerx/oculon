@@ -346,6 +346,10 @@ void ObjectShaders::shaderPreDraw()
             shader.uniform( "iChannel0", 0 );
             break;
             
+        case SHADER_CLOUDS:
+            shader.uniform( "iChannel0", 0 );
+            break;
+            
         default:
             break;
     }

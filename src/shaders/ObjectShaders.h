@@ -77,6 +77,7 @@ private:
 OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
 OS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
 OS_SHADERS_ENTRY( "Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
+OS_SHADERS_ENTRY( "TEST-Clouds", "clouds_frag.glsl", SHADER_CLOUDS ) \
 OS_SHADERS_ENTRY( "TEST-Fireball", "fireball_frag.glsl", SHADER_FIREBALL ) \
 OS_SHADERS_ENTRY( "TEST-BioFractal", "livingkifs_frag.glsl", SHADER_BIOFRACTAL ) \
 //end tuple

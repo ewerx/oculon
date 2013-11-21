@@ -3,246 +3,132 @@ uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
 uniform vec2      iMouse;
 
-const float timeEffect=1.0;
+// Created by inigo quilez - iq/2013
+// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
-//-----------------------------------------------------------------------------
-// Maths utils
-//-----------------------------------------------------------------------------
-mat3 m = mat3( 0.00,  0.80,  0.60,
-              -0.80,  0.36, -0.48,
-              -0.60, -0.48,  0.64 );
+//#define FULL_PROCEDURAL
+
+
+#ifdef FULL_PROCEDURAL
+
+// hash based 3d value noise
 float hash( float n )
 {
     return fract(sin(n)*43758.5453);
 }
-
 float noise( in vec3 x )
 {
     vec3 p = floor(x);
     vec3 f = fract(x);
-
+    
     f = f*f*(3.0-2.0*f);
-
     float n = p.x + p.y*57.0 + 113.0*p.z;
-
-    float res = mix(mix(mix( hash(n+  0.0), hash(n+  1.0),f.x),
-                        mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y),
-                    mix(mix( hash(n+113.0), hash(n+114.0),f.x),
-                        mix( hash(n+170.0), hash(n+171.0),f.x),f.y),f.z);
-    return res*2.0-1.0;
+    return mix(mix(mix( hash(n+  0.0), hash(n+  1.0),f.x),
+                   mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y),
+               mix(mix( hash(n+113.0), hash(n+114.0),f.x),
+                   mix( hash(n+170.0), hash(n+171.0),f.x),f.y),f.z);
 }
+#else
 
-float fbm( vec3 p )
+// LUT based 3d value noise
+float noise( in vec3 x )
 {
-    float f;
-    f  = 0.5000*noise( p ); p = m*p*2.02;
-    f += 0.2500*noise( p ); p = m*p*2.03;
-    f += 0.1250*noise( p );
-    return f;
-}
-
-float triangleWave(float value)
-{
-	float hval = value*0.5;
-	return 2.0*abs(2.0*(hval-floor(hval+0.5)))-1.0;
-}
-
-// Mattias' drawing functions ( http://sociart.net/ )
-// Terminals
-vec4 simplex_color(vec2 p) 
-{
-	const float offset=5.0;
-	float x = p.x*1.5;
-	float y = p.y*1.5;
-	vec4 col= vec4(
-		fbm(vec3(x,y, offset)),
-		fbm(vec3(x,y, offset*2.0)),
-		fbm(vec3(x,y, offset*3.0)),
-		fbm(vec3(x,y, offset*4.0)));
+    vec3 p = floor(x);
+    vec3 f = fract(x);
+	f = f*f*(3.0-2.0*f);
 	
-	return col-0.2;
+	vec2 uv = (p.xy+vec2(37.0,17.0)*p.z) + f.xy;
+	vec2 rg = texture2D( iChannel0, (uv+ 0.5)/256.0, -100.0 ).yx;
+	return mix( rg.x, rg.y, f.z );
 }
+#endif
 
-float ridged( vec3 p )
+vec4 map( in vec3 p )
 {
-   	float f = abs(noise(p));				  
-	f += abs(0.5000*noise( p )); p = m*p*2.02;
-	f += abs(0.2500*noise( p )); p = m*p*2.03;
-	f += abs(0.1250*noise( p ));
-	return f;
-}
-
-vec4 ridged_color(vec2 p)
-{
-	const float offset=0.2;
-	float x = p.x*2.5;
-	float y = p.y*2.5;
-	vec4 col= vec4(
-		1.0-ridged(vec3(x,y, offset)),
-		1.0-ridged(vec3(x,y, offset*2.0)),
-		1.0-ridged(vec3(x,y, offset*3.0)),
-		1.0-ridged(vec3(x,y, offset*4.0)));
+	float d = 0.2 - p.y;
+    
+	vec3 q = p - vec3(1.0,0.1,0.0)*iGlobalTime;
+	float f;
+    f  = 0.5000*noise( q ); q = q*2.02;
+    f += 0.2500*noise( q ); q = q*2.03;
+    f += 0.1250*noise( q ); q = q*2.01;
+    f += 0.0625*noise( q );
+    
+	d += 3.0 * f;
+    
+	d = clamp( d, 0.0, 1.0 );
 	
-	return col-0.55;
-}
-
-vec4 y(vec2 p)
-{	
-	float val=triangleWave(p.y);
-	return vec4(val, val, val, val);
-}
-
-vec4 x(vec2 p)
-{	
-	float val=triangleWave(p.x);
-	return vec4(val, val, val, val);
-}
-
-vec2 zoom2(vec2 a, vec4 b)
-{
-	return vec2(a.x*b.x, a.y*b.y);
-}
-
-// Functions
-vec4 dist(vec2 pos)
-{
-	float d = triangleWave(length(pos));	
-	return vec4(d, d, d, d);
-}
-
-const float pi=3.14159;
-const float piDiv=1.0/pi;
-vec4 ang(vec2 pos)
-{
-	float angle = atan(pos.y, pos.x)*piDiv;
-	float val = triangleWave(angle);
-	return vec4(val, val, val, val);
-}
-
-vec4 triangleWave(vec4 col)
-{
-	return 
-		vec4(
-			triangleWave(col.x),
-			triangleWave(col.y),
-			triangleWave(col.z),
-			triangleWave(col.w));
-}
-
-// Warpers
-vec2 swirl(vec2 p)
-{
-	float swirlFactor = 3.0+timeEffect*(sin(iGlobalTime+0.22)-1.5);
-	float radius = length(p);
-	float angle = atan(p.y, p.x);
-	float inner = angle-cos(radius*swirlFactor);
-	return vec2(radius * cos(inner), radius*sin(inner));
-}
-
-vec2 horseShoe(vec2 p)
-{
-	float radius = length(p);
-	float angle = 2.0*atan(p.y, p.x);
-	return vec2(radius * cos(angle), radius*sin(angle));
-}
-
-vec2 wrap(vec2 p)
-{
-	float zoomFactor = 1.5-timeEffect*(sin(iGlobalTime+0.36));
-	float repeatFactor = 3.0;
-	float radius = length(p)*zoomFactor;
-	float angle = atan(p.y, p.x)*repeatFactor;
-	return vec2(radius * cos(angle), radius*sin(angle));
-}
-
-vec2 array(vec2 p)
-{
-	const float zoomOutFactor=1.5;
-	return vec2(triangleWave(p.x*zoomOutFactor), triangleWave(p.y*zoomOutFactor));
-}
-
-vec2 pan_rotate_zoom(vec2 pos, vec4 val)
-{
-	vec2 pan = vec2(val.w, val.x);
-	float angle= pi*val.y+timeEffect*(sin(iGlobalTime+1.2+(gl_FragCoord.x+gl_FragCoord.y)/iResolution.x*2.0)-1.0);
-	float zoom = val.z;
+	vec4 res = vec4( d );
+    
+	res.xyz = mix( 1.15*vec3(1.0,0.95,0.8), vec3(0.7,0.7,0.7), res.x );
 	
-	float sinAngle = sin(angle);
-	float cosAngle = cos(angle);
-	
-	// Pan
-	vec2 next = pos+pan;
-	// Rotate
-	next = 
-		vec2(
-			cosAngle*next.x-sinAngle*next.y,
-			sinAngle*next.x+cosAngle*next.y);
-	// Zoom
-	next *= 1.0+zoom;
-	return next;
+	return res;
 }
 
 
-vec2 rotate(vec2 pos, vec4 rotation)	
-{
-	float simpleSum = rotation.x + rotation.y + rotation.z + rotation.w;
-	float angle = pi * simpleSum * 0.25;
-	float sinAngle = sin(angle);
-	float cosAngle = cos(angle);
-	return
-		vec2(
-			cosAngle * pos.x - sinAngle * pos.y,
-			sinAngle * pos.x + cosAngle * pos.y);
-}
+vec3 sundir = vec3(-1.0,0.0,0.0);
 
-vec2 rotate(vec2 pos, float angle)	
-{
-	angle = pi * angle;
-	float sinAngle = sin(angle);
-	float cosAngle = cos(angle);
-	return
-		vec2(
-			cosAngle * pos.x - sinAngle * pos.y,
-			sinAngle * pos.x + cosAngle * pos.y);
-}
 
-// FUNCTION
-/* (bump
-  (pan-rotate-zoom
-    (array
-      (zoom2 ang y))
-    (normalize
-      (+ ridged-color dist)))) */
-
-vec4 inner(vec2 pos)
+vec4 raymarch( in vec3 ro, in vec3 rd )
 {
-	vec2 p2=rotate(array(pos), sin(iGlobalTime*1.2+gl_FragCoord.x*0.03)*0.02);	
-	vec4 p3=y(zoom2(p2, ang(p2)));
-	vec2 prz = pan_rotate_zoom(pos, p3);
-	return normalize(triangleWave(ridged_color(prz)+dist(prz)));
-}
-
-vec4 imageFunction(vec2 pos)
-{
-	float bumpOffset = 0.01;//+abs(sin(iGlobalTime*1.5)*0.01);
-	vec4 originalColor = inner(pos);
-	
-	vec2 bumpPos = pos+bumpOffset;
-	vec4 bumpColor = inner(bumpPos);
+	vec4 sum = vec4(0, 0, 0, 0);
+    
+	float t = 0.0;
+	for(int i=0; i<64; i++)
+	{
+		if( sum.a > 0.99 ) continue;
+        
+		vec3 pos = ro + t*rd;
+		vec4 col = map( pos );
 		
-	float dh = 1.0+ (originalColor.w-bumpColor.w)*3.0;
-	return originalColor*dh;
+#if 1
+		float dif =  clamp((col.w - map(pos+0.3*sundir).w)/0.6, 0.0, 1.0 );
+        
+        vec3 lin = vec3(0.65,0.68,0.7)*1.35 + 0.45*vec3(0.7, 0.5, 0.3)*dif;
+		col.xyz *= lin;
+#endif
+		
+		col.a *= 0.35;
+		col.rgb *= col.a;
+        
+		sum = sum + col*(1.0 - sum.a);
+        
+#if 0
+		t += 0.1;
+#else
+		t += max(0.1,0.025*t);
+#endif
+	}
+    
+	sum.xyz /= (0.001+sum.w);
+    
+	return clamp( sum, 0.0, 1.0 );
 }
 
-// RENDER
 void main(void)
 {
 	vec2 q = gl_FragCoord.xy / iResolution.xy;
-    vec2 pos = -1.0 + 2.0*q;
-    pos.x *= iResolution.x/ iResolution.y;	
-	vec4 res = imageFunction(pos);
-	vec4 color = imageFunction(pos);
-	color = (color+1.0)*0.5;	
-	color.w=1.0;
-	gl_FragColor = color;		
+    vec2 p = -1.0 + 2.0*q;
+    p.x *= iResolution.x/ iResolution.y;
+    vec2 mo = -1.0 + 2.0*iMouse.xy / iResolution.xy;
+    
+    // camera
+    vec3 ro = 4.0*normalize(vec3(cos(2.75-3.0*mo.x), 0.7+(mo.y+1.0), sin(2.75-3.0*mo.x)));
+	vec3 ta = vec3(0.0, 1.0, 0.0);
+    vec3 ww = normalize( ta - ro);
+    vec3 uu = normalize(cross( vec3(0.0,1.0,0.0), ww ));
+    vec3 vv = normalize(cross(ww,uu));
+    vec3 rd = normalize( p.x*uu + p.y*vv + 1.5*ww );
+    
+	
+    vec4 res = raymarch( ro, rd );
+    
+	float sun = clamp( dot(sundir,rd), 0.0, 1.0 );
+	vec3 col = vec3(0.6,0.71,0.75) - rd.y*0.2*vec3(1.0,0.5,1.0) + 0.15*0.5;
+	col += 0.2*vec3(1.0,.6,0.1)*pow( sun, 8.0 );
+	col *= 0.95;
+	col = mix( col, res.xyz, res.w );
+	col += 0.1*vec3(1.0,0.4,0.2)*pow( sun, 3.0 );
+    
+    gl_FragColor = vec4( col, 1.0 );
 }
