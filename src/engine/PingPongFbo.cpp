@@ -1,6 +1,5 @@
 //
-//  SwapTexture.cpp
-//  gpuPS
+//  PingPongFbo
 //
 //  Created by Éric Renaud-Houde on 2013-01-06.
 //
@@ -26,7 +25,7 @@ PingPongFbo::PingPongFbo( const std::vector<Surface32f>& surfaces )
 	}
 	
 	int max =gl::Fbo::getMaxAttachments();
-	std::cout << "Maximum supported number of texture attachments: " << max << std::endl;
+	std::cout << "[PINGPONG] maximum supported number of texture attachments: " << max << std::endl;
 	assert(surfaces.size() < max);
 	
 	gl::Fbo::Format format;
@@ -55,8 +54,36 @@ void PingPongFbo::addTexture(const Surface32f &surface)
     mTextures.push_back( tex );
 }
 
+void PingPongFbo::setTextures(const std::vector<ci::Surface32f> &surfaces)
+{
+    assert( surfaces.size() == mTextures.size() );
+    if (surfaces.size() != mTextures.size()) return;
+    
+    mTextures.clear();
+	for( const Surface32f& s : surfaces)
+    {
+        addTexture(s);
+    }
+    
+    reset();
+}
+
+void PingPongFbo::setTexture(const int index, const ci::Surface32f &surface)
+{
+    assert( index < mTextures.size() );
+    
+    gl::Texture::Format format;
+    format.setInternalFormat( GL_RGBA32F_ARB );
+	gl::Texture tex = gl::Texture( surface, format );
+    tex.setWrap( GL_REPEAT, GL_REPEAT );
+    tex.setMinFilter( GL_NEAREST );
+    tex.setMagFilter( GL_NEAREST );
+    mTextures[index] = tex;
+}
+
 void PingPongFbo::reset()
 {
+    // redraws the textures into the FBO
 	mFbos[mCurrentFbo].bindFramebuffer();
     gl::setMatricesWindow( getSize(), false );
     gl::setViewport( getBounds() );
@@ -106,6 +133,11 @@ void PingPongFbo::bindTexture(int textureUnit)
 void PingPongFbo::unbindTexture()
 {
     mFbos[mCurrentFbo].unbindTexture();
+}
+
+gl::Texture& PingPongFbo::getTexture(int attachment)
+{
+    return mFbos[mCurrentFbo].getTexture(attachment);
 }
 
 Vec2i PingPongFbo::getSize() const

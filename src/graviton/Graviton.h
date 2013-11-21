@@ -21,6 +21,7 @@
 #include "Scene.h"
 #include "PingPongFbo.h"
 #include "MotionBlurRenderer.h"
+#include "AudioInputHandler.h"
 
 
 #define FREEOCL_VERSION
@@ -48,6 +49,9 @@ public:
 protected:// from Scene
     void setupInterface();
     void setupDebugInterface();
+    
+    ci::Surface32f generatePositionSurface();
+    ci::Surface32f generateVelocitySurface();
 
 private:
     enum
@@ -59,6 +63,7 @@ private:
     
     // INITIAL FORMATION
 #define GRAVITON_FORMATION_TUPLE \
+GRAVITON_FORMATION_ENTRY( "Cube", FORMATION_CUBE ) \
 GRAVITON_FORMATION_ENTRY( "Sphere", FORMATION_SPHERE ) \
 GRAVITON_FORMATION_ENTRY( "Shell", FORMATION_SPHERE_SHELL ) \
 GRAVITON_FORMATION_ENTRY( "Disc", FORMATION_DISC ) \
@@ -246,6 +251,8 @@ enm,
     ci::ColorAf         mColorScale;
     
     MotionBlurRenderer  mMotionBlurRenderer;
+    
+    AudioInputHandler   mAudioInputHandler;
 
 private:
     void setupPingPongFbo();

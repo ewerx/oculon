@@ -22,6 +22,10 @@ public:
     PingPongFbo( const std::vector<ci::Surface32f>& surfaces );
     //! Rerender initial textures into both fbos.
     void reset();
+    //! Replace the content of the textures
+    void setTextures( const std::vector<ci::Surface32f>& surfaces );
+    //! Replace a single texture at index
+    void setTexture( const int index, const ci::Surface32f& surface );
 
     //! Bind one fbo as the source, and the other as a target texture to update the texture.
     void bindUpdate();
@@ -37,6 +41,8 @@ public:
     ci::Vec2i getSize() const;
     //! Get the fbo/texture size.
     ci::Area getBounds() const;
+    
+    ci::gl::Texture& getTexture(int attachment);
 
 private:
 	//! Swap the two alternating fbos.

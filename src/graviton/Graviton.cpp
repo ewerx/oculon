@@ -1,15 +1,14 @@
-/*
- *  Graviton.cpp
- *  Oculon
- *
- *  Created by Ehsan on 11-11-26.
- *  Copyright 2011 ewerx. All rights reserved.
- *
- */
+//
+// Graviton.cpp
+// Oculon
+//
+// Created by Ehsan on 11-11-26.
+// Copyright 2011 ewerx. All rights reserved.
+//
+
 
 #include "Graviton.h"
 #include "Resources.h"
-#include "AudioInput.h" // compile errors if this is not before App.h
 #include "MindWave.h"
 #include "OculonApp.h"//TODO: fix this dependency
 #include "cinder/Rand.h"
@@ -80,11 +79,11 @@ void Graviton::setup()
     // shaders
     mParticlesShader = loadFragShader("graviton_particle_frag.glsl" );
     mDisplacementShader = loadVertAndFragShaders("graviton_displacement_vert.glsl",  "graviton_displacement_frag.glsl");
-    mFormationShader = loadVertAndFragShaders("graviton_formation_vert.glsl",  "graviton_formation_frag.glsl");
+    mFormationShader = loadFragShader("graviton_formation_frag.glsl");
     
     setupPingPongFbo();
     // THE VBO HAS TO BE DRAWN AFTER FBO!
-    setupVBO();
+    setupVBO(); 
     
     // textures
     mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
@@ -95,44 +94,105 @@ void Graviton::setup()
     // renderers
     mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Graviton::drawParticles, this ) );
     
+    // random spline
+    setupCameraSpline();
+    // camera
+    mCamAngle = 0.0f;
+    mCamLateralPosition = -mCamMaxDistance;
+    mCamTarget = Vec3f::zero();
+    mCam.setFov(60.0f);
+    mCam.setAspectRatio(mApp->getViewportAspectRatio());
+    
+    
+    
     reset();
 }
 
 void Graviton::setupPingPongFbo()
 {
-    // from gpuPS
-    
-    float scale = mFormationRadius;
-    // TODO: Test with more than 2 texture attachments
+    // TODO: Test with more than 2 texture attachments -- what for?
 	std::vector<Surface32f> surfaces;
     // Position 2D texture array
-    surfaces.push_back( Surface32f( kStep, kStep, true) );
-    Surface32f::Iter pixelIter = surfaces[0].getIter();
+    surfaces.push_back( generatePositionSurface() );
+    
+    //Velocity 2D texture array
+    surfaces.push_back( generateVelocitySurface() );
+    mParticlesFbo = PingPongFbo( surfaces );
+}
+
+Surface32f Graviton::generatePositionSurface()
+{
+    float r = mFormationRadius;
+    
+    Surface32f surface( kStep, kStep, true );
+    Surface32f::Iter pixelIter = surface.getIter();
     while( pixelIter.line() )
     {
         while( pixelIter.pixel() )
         {
-            /* Initial particle positions are passed in as R,G,B
-             float values. Alpha is used as particle invMass. */
-            surfaces[0].setPixel(pixelIter.getPos(),
-                                 ColorAf(scale*(Rand::randFloat()-0.5f),
-                                         scale*(Rand::randFloat()-0.5f),
-                                         scale*(Rand::randFloat()-0.5f),
-                                         Rand::randFloat(0.2f, 1.0f) ) );
+            double x = 0.0f;
+            double y = 0.0f;
+            double z = 0.0f;
+            double mass = Rand::randFloat(0.2f, 1.0f);
+            
+            
+            switch( mInitialFormation )
+            {
+                case FORMATION_SPHERE:
+                {
+                    double rho = Utils::randDouble() * (M_PI * 2.0);
+                    double theta = Utils::randDouble() * (M_PI * 2.0);
+                    
+                    const float d = Rand::randFloat(10.0f, r);
+                    x = d * cos(rho) * sin(theta);
+                    y = d * sin(rho) * sin(theta);
+                    z = d * cos(theta);
+                }
+                    break;
+                    
+                case FORMATION_SPHERE_SHELL:
+                {
+                    double rho = Utils::randDouble() * (M_PI * 2.0);
+                    double theta = Utils::randDouble() * (M_PI * 2.0);
+                    
+                    x = r * cos(rho) * sin(theta);
+                    y = r * sin(rho) * sin(theta);
+                    z = r * cos(theta);
+                }
+                    break;
+                    
+                case FORMATION_CUBE:
+                    x = r*(Rand::randFloat()-0.5f);
+                    y = r*(Rand::randFloat()-0.5f);
+                    z = r*(Rand::randFloat()-0.5f);
+                    break;
+                    
+                default:
+                    break;
+            }
+
+            // RGB = position
+            // A = mass
+            surface.setPixel(pixelIter.getPos(), ColorAf(x, y, z, mass) );
         }
     }
     
-    //Velocity 2D texture array
-    surfaces.push_back( Surface32f( kStep, kStep, true) );
-    pixelIter = surfaces[1].getIter();
+    return surface;
+}
+
+Surface32f Graviton::generateVelocitySurface()
+{
+    Surface32f surface( kStep, kStep, true );
+    Surface32f::Iter pixelIter = surface.getIter();
     while( pixelIter.line() ) {
         while( pixelIter.pixel() ) {
             /* Initial particle velocities are
              passed in as R,G,B float values. */
-            surfaces[1].setPixel( pixelIter.getPos(), ColorAf( 0.0f, 0.0f, 0.0f, 1.0f ) );
+            surface.setPixel( pixelIter.getPos(), ColorAf( 0.0f, 0.0f, 0.0f, 1.0f ) );
         }
     }
-    mParticlesFbo = PingPongFbo( surfaces );
+    
+    return surface;
 }
 
 void Graviton::setupVBO()
@@ -326,6 +386,45 @@ nodeFormationNames.push_back(nam);
 
 void Graviton::initParticles()
 {
+    gl::Texture::Format format;
+    format.setInternalFormat( GL_RGBA32F_ARB );
+    
+	gl::Texture posTexture = gl::Texture( generatePositionSurface(), format );
+    posTexture.setWrap( GL_REPEAT, GL_REPEAT );
+    posTexture.setMinFilter( GL_NEAREST );
+    posTexture.setMagFilter( GL_NEAREST );
+    
+    gl::Texture velTexture = gl::Texture( generateVelocitySurface(), format );
+    velTexture.setWrap( GL_REPEAT, GL_REPEAT );
+    velTexture.setMinFilter( GL_NEAREST );
+    velTexture.setMagFilter( GL_NEAREST );
+    
+    posTexture.bind(3);
+    velTexture.bind(2);
+    
+    mFormationShader.bind();
+    mFormationShader.uniform( "positions", 3 );
+    mFormationShader.uniform( "velocities", 2 );
+    
+    // draw to particle fbo
+    gl::pushMatrices();
+    gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
+    gl::setViewport( mParticlesFbo.getBounds() );
+    
+    mParticlesFbo.bindUpdate();
+    gl::drawSolidRect(mParticlesFbo.getBounds());
+    mParticlesFbo.unbindUpdate();
+    
+    mParticlesFbo.bindUpdate();
+    gl::drawSolidRect(mParticlesFbo.getBounds());
+    mParticlesFbo.unbindUpdate();
+    
+    gl::popMatrices();
+    
+    posTexture.unbind();
+    velTexture.unbind();
+    mFormationShader.unbind();
+    
 //    setupPingPongFbo();
 //    setupVBO();
     
@@ -523,9 +622,6 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
         default:
             break;
     }
-    
-    // random spline
-    setupCameraSpline();
 }
 
 void Graviton::reset()
@@ -533,12 +629,8 @@ void Graviton::reset()
     resetGravityNodes(mGravityNodeFormation);
     initParticles();
     
-    // camera
-    mCamAngle = 0.0f;
-    mCamLateralPosition = -mCamMaxDistance;
-    mCamTarget = Vec3f::zero();
-    mCam.setFov(60.0f);
-    mCam.setAspectRatio(mApp->getViewportAspectRatio());
+//    mParticlesFbo.setTexture(0, generatePositionSurface());
+//    mParticlesFbo.reset();
 }
 
 void Graviton::resize()
@@ -554,7 +646,7 @@ void Graviton::update(double dt)
 
     // update particle system
     //computeAttractorPosition();
-    updateGravityNodes(dt * mTimeStep * 1000.f);
+    //updateGravityNodes(dt * 0.005f);
     
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
@@ -565,7 +657,7 @@ void Graviton::update(double dt)
     mParticlesShader.bind();
     mParticlesShader.uniform( "positions", 0 );
     mParticlesShader.uniform( "velocities", 1 );
-    mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 1000.f) );
+    mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 100.f) );
     mParticlesShader.uniform( "eps", mEps );
     mParticlesShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
     mParticlesShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
@@ -790,7 +882,13 @@ void Graviton::preRender()
     gl::enable(GL_POINT_SPRITE);
     gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
     glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-    glTexEnvf(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+    // when false, point sprites just have one texture coordinate
+    // when true, iterates over the point sprite texture...
+    // TODO: understand what the difference is!
+    // when it is on, the color param from the displacement_vert shaders cannot be applied to the frag color in displacement_frag, it always looks like a gradient between green/yellow instead... have on idea why
+    // also don't really know what enabling this actually does so leaving it off
+    // until i understand...
+    //glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 	
 	if(mAdditiveBlending)
@@ -808,6 +906,7 @@ void Graviton::preRender()
 
 void Graviton::drawParticles() 
 {
+    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
     preRender();
     glEnable(GL_TEXTURE_2D);
     if(mUseImageForPoints)
@@ -819,16 +918,23 @@ void Graviton::drawParticles()
         mParticleTexture2.bind(2);
     }
     
+    if (mApp->getAudioInputHandler().hasTexture())
+    {
+        mApp->getAudioInputHandler().getFbo().bindTexture(3);
+    }
+    
     mParticlesFbo.bindTexture(0);
     mParticlesFbo.bindTexture(1);
     mDisplacementShader.bind();
     mDisplacementShader.uniform("displacementMap", 0 );
     mDisplacementShader.uniform("velocityMap", 1);
     mDisplacementShader.uniform("pointSpriteTex", 2);
-    mDisplacementShader.uniform("screenWidth", (float)getWindowWidth());
+    mDisplacementShader.uniform("intensityMap", 3);
+    mDisplacementShader.uniform("screenWidth", (float)mApp->getViewportWidth());
     mDisplacementShader.uniform("spriteWidth", mPointSize);
     mDisplacementShader.uniform("MV", getCamera().getModelViewMatrix());
     mDisplacementShader.uniform("P", getCamera().getProjectionMatrix());
+    mDisplacementShader.uniform("colorScale", mColorScale);
     
     gl::draw( mVboMesh );
     mDisplacementShader.unbind();
@@ -842,6 +948,11 @@ void Graviton::drawParticles()
     {
         mParticleTexture2.unbind();
     }
+    if (mApp->getAudioInputHandler().hasTexture())
+    {
+        mApp->getAudioInputHandler().getFbo().unbindTexture();
+    }
+    glPopAttrib();
 }
 
 void Graviton::drawDebug()
@@ -866,6 +977,33 @@ void Graviton::drawDebug()
 //        
         gl::popMatrices();
     }
+    
+    gl::pushMatrices();
+    glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT);
+    gl::enable( GL_TEXTURE_2D );
+    const Vec2f& windowSize( getWindowSize() );
+    gl::setMatricesWindow( windowSize );
+    
+    const float size = 80.0f;
+    const float paddingX = 20.0f;
+    const float paddingY = 240.0f;
+    Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
+    
+//    mParticlesFbo.bindTexture(0);
+//    gl::drawSolidRect( preview );
+//    mParticlesFbo.unbindTexture();
+    gl::draw( mParticlesFbo.getTexture(0), preview );
+    
+    Rectf preview2 = preview - Vec2f(size+paddingX, 0.0f);
+    
+    //mParticlesFbo.bindTexture(1);
+    //gl::drawSolidRect( preview2 );
+    gl::draw( mParticlesFbo.getTexture(1), preview2 );
+    //mParticlesFbo.unbindTexture();
+    
+    glPopAttrib();
+    gl::popMatrices();
+    
     
     drawCamSpline();
 }

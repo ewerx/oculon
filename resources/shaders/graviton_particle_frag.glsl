@@ -18,7 +18,6 @@ void main(void)
     float invmass = texture2D( positions, texCoord.st).a;
  
     // the simulation
-    //float dt = 1.0; //time step
     
     vec3 f1 = attractorPos1-p0; //force
     float f1Mag = length(f1); //force magnitude
@@ -40,6 +39,6 @@ void main(void)
     //Render to positions texture
     gl_FragData[0] = vec4(p1, invmass);
     //Render to velocities texture
-    gl_FragData[1] = vec4(v1, length(v0)); //alpha component used for coloring
+    gl_FragData[1] = vec4(v1, 0.5+length(v0)); //alpha component used for coloring
 } 
 
