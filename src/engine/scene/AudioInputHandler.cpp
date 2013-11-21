@@ -229,7 +229,7 @@ void AudioInputHandler::drawDebug(const Vec2f& windowSize)
         const float paddingX = 20.0f;
         const float paddingY = 240.0f;
         Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
-        gl::draw( mAudioFbo.getTexture(), mAudioFbo.getBounds(), preview );
+        gl::draw( mAudioFbo.getTexture(), preview );
         
         //mAudioFbo.bindTexture();
         //TODO: make utility func for making rects with origin/size

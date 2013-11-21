@@ -284,8 +284,8 @@ void AudioSignal::drawWaveform( audio::PcmBuffer32fRef pcmBufferRef )
 void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
 {
     AudioInput& audioInput = mApp->getAudioInput();
-	float ht = mApp->getViewportHeight() / 3.0f;
-	float bottom = mApp->getViewportHeight() - 80.f;
+	float ht = mApp->getWindowHeight() / 3.0f;
+	float bottom = mApp->getWindowHeight() - 80.f;
     const float width = 5.0f;
     const float space = width + 0.0f;
     
