@@ -220,3 +220,43 @@ float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, con
     
     return amplitude;
 }
+
+#pragma mark - OSC LiveGrabber Handlers
+
+void AudioInput::setupLiveGrabberInput(OscServer &oscServer)
+{
+    oscServer.registerCallback( "/HiFollower", this, &AudioInput::handleHighOsc );
+    oscServer.registerCallback( "/MidFollower", this, &AudioInput::handleMidOsc );
+    oscServer.registerCallback( "/LowFollower", this, &AudioInput::handleLowOsc );
+}
+
+// TODO: send same message and use param for specifying low/mid/high
+void AudioInput::handleHighOsc(const ci::osc::Message &message)
+{
+    if( message.getNumArgs() == 2 )
+    {
+        int track = message.getArgAsInt32(0);
+        float val = message.getArgAsFloat(1);
+        mLiveTrackData[track].mHighLevel = val;
+    }
+}
+
+void AudioInput::handleMidOsc(const ci::osc::Message &message)
+{
+    if( message.getNumArgs() == 2 )
+    {
+        int track = message.getArgAsInt32(0);
+        float val = message.getArgAsFloat(1);
+        mLiveTrackData[track].mMidLevel = val;
+    }
+}
+
+void AudioInput::handleLowOsc(const ci::osc::Message &message)
+{
+    if( message.getNumArgs() == 2 )
+    {
+        int track = message.getArgAsInt32(0);
+        float val = message.getArgAsFloat(1);
+        mLiveTrackData[track].mLowLevel = val;
+    }
+}

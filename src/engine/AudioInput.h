@@ -15,6 +15,7 @@
 #include "cinder/Vector.h"
 #include "KissFFT.h"
 #include "Interface.h"
+#include "OscServer.h"
 
 #define KISS_DEFAULT_DATASIZE 256
 
@@ -48,6 +49,12 @@ public:
     void setupInterface( Interface* interface );
     bool changeInput( const int index );
     
+    // OSC audio levels from Ableton LiveGrabber
+    void setupLiveGrabberInput( OscServer& oscServer );
+    void handleHighOsc( const ci::osc::Message& message );
+    void handleMidOsc( const ci::osc::Message& message );
+    void handleLowOsc( const ci::osc::Message& message );
+    
 private:
     void analyzeKissFft();
     
@@ -69,6 +76,16 @@ private:
 	int32_t mInputSize;
 	float * mInputData;
 	float * mTimeData;
+    
+    // LiveGrabber Data
+    enum { NUM_TRACKS = 4 };
+    struct tLiveTrackData
+    {
+        float mHighLevel;
+        float mMidLevel;
+        float mLowLevel;
+    };
+    tLiveTrackData mLiveTrackData[NUM_TRACKS];
 };
 
 #endif

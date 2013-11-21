@@ -160,7 +160,9 @@ void OculonApp::setup()
     
     if( mEnableOscServer )
     {
+        // TODO: decouple OSC and MIDI or create a wrapper class
         mOscServer.setup( mConfig, mEnableMidi ? &mMidiInput : NULL );
+        mAudioInput.setupLiveGrabberInput(mOscServer);
     }
     
     if( mEnableMindWave )
