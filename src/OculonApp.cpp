@@ -173,14 +173,21 @@ void OculonApp::setup()
 //        mKinectController.setup(); // TODO: update kinect setup
     }
     
-    if( mOutputMode == OUTPUT_FBO )
+    if( mEnableSyphonServer )
     {
-        // syphon
-        char nameBuf[256];
-        for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+        if( mOutputMode == OUTPUT_FBO )
         {
-            snprintf(nameBuf, 256, "oculon-%d", layerIndex+1);
-            mScreenSyphon[layerIndex].setName(nameBuf);
+            // syphon
+            char nameBuf[256];
+            for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
+            {
+                snprintf(nameBuf, 256, "oculon-%d", layerIndex+1);
+                mScreenSyphon[layerIndex].setName(nameBuf);
+            }
+        }
+        else
+        {
+            mScreenSyphon[0].setName("DEBUG");
         }
     }
     
@@ -405,7 +412,14 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
         mInterface->gui()->addSeparator();
     }
     std::stringstream labelss;
-    labelss << scene->getName() << " (" << sceneIndex+1 << ")";
+    if (sceneIndex < 10)
+    {
+        labelss << scene->getName() << " (" << sceneIndex+1 << ")";
+    }
+    else
+    {
+        labelss << scene->getName();
+    }
     mInterface->gui()->addButton(labelss.str())->registerCallback( boost::bind( &OculonApp::showInterface, this, sceneIndex) );
     // scene thumbnails
     if( scene->getFbo() )
@@ -1061,6 +1075,11 @@ void OculonApp::draw()
     if( mCaptureDebugOutput )
     {
         drawDebug();
+        // HACKHACK: to show interface through Resolume
+        if( mEnableSyphonServer )
+        {
+            mScreenSyphon[0].publishScreen();
+        }
     }
     
     // capture video
