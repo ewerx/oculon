@@ -72,7 +72,7 @@ void Dust::setupFBO()
             float x = Rand::randFloat(mApp->getViewportWidth()) / (float)mApp->getViewportWidth();
             float y = Rand::randFloat(mApp->getViewportHeight()) / (float)mApp->getViewportHeight();
             float z = 0.0f;
-            float mass = Rand::randFloat(.005f,.02f);
+            float mass = Rand::randFloat(0.01f,1.0f);
             
             // position + mass
 			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
@@ -102,7 +102,7 @@ void Dust::setupFBO()
             float angle = noise * 15.0f;
             
             noiseSurface.setPixel(iterator.getPos(),
-                                  ColorA( cos( angle ) * Rand::randFloat(.0005f,.002f), sin( angle ) * Rand::randFloat(.0005f,.002f), 0.0f, 1.0f ));
+                                  ColorA( cos( angle ) * Rand::randFloat(.1f,.4f), sin( angle ) * Rand::randFloat(.1f,.4f), 0.25f, 1.0f ));
 		}
 	}
     
@@ -173,7 +173,7 @@ void Dust::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
                          .minValue(0.0f)
-                         .maxValue(100.0f));
+                         .maxValue(10.0f));
     
     mInterface->addParam(CreateFloatParam( "point_size", &mPointSize )
                          .minValue(0.01f)
@@ -181,7 +181,7 @@ void Dust::setupInterface()
     
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
-                         .maxValue(10.0f));
+                         .maxValue(1.0f));
 }
 
 #pragma mark - Update

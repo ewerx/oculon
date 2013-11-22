@@ -31,9 +31,10 @@ void main()
     
     age += dt * decay * decayRate;
     
+    //vec3 force = vec3(noise - pos.xy,0.0);
     vec3 force = vec3(noise.x,noise.y,0.0);
     float fMag = length(force);
-    vec3 a = invMass * force/(fMag*fMag + eps);
+    vec3 a = invMass * force;// * pow(fMag,0.9);
 	vel += dt * a;
     
     pos.x += vel.x * dt;
