@@ -217,6 +217,7 @@ void Graviton::setupVBO()
     }
     mVboMesh.bufferIndices( indices );
     mVboMesh.bufferTexCoords2d( 0, texCoords );
+    mVboMesh.unbindBuffers();
 }
 
 void Graviton::computeAttractorPosition()

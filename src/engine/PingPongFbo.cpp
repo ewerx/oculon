@@ -25,7 +25,7 @@ PingPongFbo::PingPongFbo( const std::vector<Surface32f>& surfaces )
 	}
 	
 	int max =gl::Fbo::getMaxAttachments();
-	std::cout << "[PINGPONG] maximum supported number of texture attachments: " << max << std::endl;
+	std::cout << "[PINGPONG] setting up FBOs with " << surfaces.size() << " attachments. max: " << max << std::endl;
 	assert(surfaces.size() < max);
 	
 	gl::Fbo::Format format;

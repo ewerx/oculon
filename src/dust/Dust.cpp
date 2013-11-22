@@ -40,9 +40,13 @@ void Dust::setup()
     mSpriteTex = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
     
     setupFBO();
-    //setupVBO();
+    setupVBO();
     
     //mAudioInputHandler.setup(false);
+    
+    // params
+    mTimeStep = 0.01f;
+    mPointSize = 1.0f;
 }
 
 void Dust::setupFBO()
@@ -102,8 +106,6 @@ void Dust::setupFBO()
     surfaces.push_back( velSurface );
     mParticlesFbo = PingPongFbo( surfaces );
     
-    setupVBO();
-    
     gl::Texture::Format format;
     format.setInternalFormat( GL_RGBA32F_ARB );
     
@@ -148,6 +150,7 @@ void Dust::setupVBO()
     }
     mVboMesh.bufferIndices( indices );
     mVboMesh.bufferTexCoords2d( 0, texCoords );
+    mVboMesh.unbindBuffers();
 }
 
 //vector<Surface32f> Dust::generateInitialSurfaces()
@@ -163,7 +166,13 @@ void Dust::reset()
 
 void Dust::setupInterface()
 {
+    mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
+                         .minValue(0.0f)
+                         .maxValue(100.0f));
     
+    mInterface->addParam(CreateFloatParam( "point_size", &mPointSize )
+                         .minValue(0.01f)
+                         .maxValue(3.0f));
 }
 
 #pragma mark - Update
@@ -188,6 +197,7 @@ void Dust::update(double dt)
 	mSimulationShader.uniform( "oVelocities", 3);
 	mSimulationShader.uniform( "oPositions", 4);
   	mSimulationShader.uniform( "noiseTex", 5);
+    mSimulationShader.uniform( "dt", (float)(dt*mTimeStep) );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
@@ -235,7 +245,7 @@ void Dust::draw()
     mRenderShader.uniform("velMap", 1);
     mRenderShader.uniform("spriteTex", 2);
     mRenderShader.uniform("screenWidth", (float)mApp->getViewportWidth());
-    mRenderShader.uniform("spriteWidth", 1.0f);
+    mRenderShader.uniform("spriteWidth", mPointSize);
     mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
     mRenderShader.uniform("P", getCamera().getProjectionMatrix());
     

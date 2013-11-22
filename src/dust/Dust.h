@@ -68,7 +68,9 @@ private:
     
     ci::gl::Texture mSpriteTex;
     
-    
+    // params
+    float mTimeStep;
+    float mPointSize;
     
     //AudioInputHandler   mAudioInputHandler;
     
