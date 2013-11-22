@@ -44,6 +44,8 @@ void Dust::setup()
     
     //mAudioInputHandler.setup(false);
     
+    mReset = false;
+    
     // params
     mTimeStep = 0.01f;
     mPointSize = 1.0f;
@@ -79,13 +81,13 @@ void Dust::setupFBO()
             float vx = Rand::randFloat(-.005f,.005f);
             float vy = Rand::randFloat(-.005f,.005f);
             float vz = 1.0f;
-            float age = Rand::randFloat(.007f,1.0f);
+            float age = Rand::randFloat(.007f,0.9f);
             
 			// velocity + age
 			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
             
 			// decay + max age
-            float decay = Rand::randFloat(.01f,1.00f);
+            float decay = Rand::randFloat(.01f,10.00f);
             float maxAge = 1.0f;
 			infoSurface.setPixel(iterator.getPos(),
                                  ColorA(decay, maxAge, 0.0f, 0.0f));
@@ -162,7 +164,7 @@ void Dust::setupVBO()
 
 void Dust::reset()
 {
-    
+    mReset = true;
 }
 
 #pragma mark - Interface
@@ -179,7 +181,7 @@ void Dust::setupInterface()
     
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
-                         .maxValue(5.0f));
+                         .maxValue(10.0f));
 }
 
 #pragma mark - Update
@@ -207,6 +209,7 @@ void Dust::update(double dt)
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", (float)(dt*mTimeStep) );
     mSimulationShader.uniform( "decayRate", mDecayRate );
+    mSimulationShader.uniform( "reset", mReset );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
@@ -218,6 +221,8 @@ void Dust::update(double dt)
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
+    
+    mReset = false;
     
     Scene::update(dt);
 }
@@ -240,8 +245,10 @@ void Dust::draw()
     
     gl::enableAlphaBlending();
     //gl::enableAdditiveBlending();
-    gl::disableDepthWrite();
+//    gl::disableDepthWrite();
 //    gl::disableDepthRead();
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
     
     glEnable(GL_TEXTURE_2D);
     

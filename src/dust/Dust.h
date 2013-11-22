@@ -73,6 +73,8 @@ private:
     float mPointSize;
     float mDecayRate;
     
+    bool mReset;
+    
     //AudioInputHandler   mAudioInputHandler;
     
 };

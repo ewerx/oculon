@@ -23,7 +23,7 @@ void main()
 	newVertexPos = vec4(screenWidth * dv.x, screenWidth * dv.y, screenWidth * dv.z, 1.0);
 	
     // particles shrink with age
-	gl_PointSize = 4.0 * spriteWidth - (4.0 * spriteWidth * age);
+	gl_PointSize = 6.0 * spriteWidth - (6.0 * spriteWidth * age);
 
 	gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
 	gl_TexCoord[0] = gl_MultiTexCoord0;
