@@ -32,19 +32,34 @@ void main()
     pos.x += vel.x * dt * 10.0;
     pos.y += vel.y * dt * 10.0;
 	
+    // reincarnation
 	if( age >= maxAge )
     {
         vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
         vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
         
-        age = 0.0;
+        age = decay * 0.001;
         
-        if(pos.x > 1.0 || pos.x < 0.0 || pos.y > 1.0 || pos.y < 0.0 )
+        if(pos.x > 1024.0 || pos.x < 0.0 || pos.y > 1024.0 || pos.y < 0.0 ) {
             pos = origPos;
-        else
-            pos = vec3(vel.x,vel.y,0.0) + origPos;
+        } else {
+            pos = origPos + vel;
+        }
+        
         vel = origVel;
     }
+    
+    // bounce off walls
+    if (pos.x > 1024.0 || pos.x < 0.0 || pos.y > 1024.0 || pos.y < 0.0)
+    {
+        vel *= -0.9;
+        age *= 0.85;
+    }
+    
+    // no stragglers
+//    if (age > 0.9 && vel.x < 0.0001 && vel.y < 0.0001) {
+//        vel *= 2.0;
+//    }
 	
     //position + mass
 	gl_FragData[0] = vec4(pos, mass);

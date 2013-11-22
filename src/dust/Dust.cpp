@@ -258,7 +258,7 @@ void Dust::draw()
     mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
     mRenderShader.uniform("P", getCamera().getProjectionMatrix());
     
-    //glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
+    glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
     
     gl::draw( mVboMesh );
     
