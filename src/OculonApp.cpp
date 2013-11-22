@@ -22,6 +22,7 @@
 #include "Tectonic.h"
 //#include "Sol.h"
 #include "Catalog.h"
+#include "Dust.h"
 #include "Flock.h"
 #include "Corona.h"
 #include "Trails.h"
@@ -352,6 +353,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
     if( mConfig.getBool("binned") )     addScene( new Binned() );
     if( mConfig.getBool("graviton") )   addScene( new Graviton() );
+    if( mConfig.getBool("dust") )       addScene( new Dust() );
     
     if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
     if( mConfig.getBool("flock") )      addScene( new Flock() );
