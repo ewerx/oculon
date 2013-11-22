@@ -27,6 +27,9 @@ AudioInputHandler::~AudioInputHandler()
 
 void AudioInputHandler::setup(bool fboEnabled)
 {
+    // SOURCE
+    mInputSource        = SOURCE_AUDIO;
+    
     // DISTRIBUTION
     mRandomSignal       = false;
     mRandomEveryFrame   = false;
@@ -41,9 +44,9 @@ void AudioInputHandler::setup(bool fboEnabled)
     // FILTER
     mLowPassFilter      = 0.25f;
     mHighPassFilter     = 0.75f;
-    mLowAvgVolume       = 0.0f;
-    mMidAvgVolume       = 0.0f;
-    mHighAvgVolume      = 0.0f;
+    mAvgVolume[BAND_LOW]       = 0.0f;
+    mAvgVolume[BAND_MID]       = 0.0f;
+    mAvgVolume[BAND_HIGH]      = 0.0f;
 
     // FBO
     mAudioFboDim        = KISS_DEFAULT_DATASIZE; // 256 bands
@@ -71,13 +74,23 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     labelss << name << "/" << "audio";
     interface->gui()->addLabel(labelss.str());
     
+    vector<string> sourceNames;
+#define AUDIO_SOURCE_ENTRY( nam, enm ) \
+sourceNames.push_back(nam);
+    AUDIO_SOURCE_TUPLE
+#undef  AUDIO_SOURCE_ENTRY
+    interface->addEnum(CreateEnumParam( "input_source", (int*)(&mInputSource) )
+                       .maxValue(AUDIO_SOURCE_COUNT)
+                       .oscReceiver(name, "audio/input_source")
+                       .isVertical(), sourceNames);
+
     interface->addParam(CreateFloatParam( "LPF", &mLowPassFilter ));
     interface->addParam(CreateFloatParam( "HPF", &mHighPassFilter ));
     interface->gui()->addSeparator();
     // these are just to show a little equalizer
-    interface->addParam(CreateFloatParam( "Avg Vol: Low", &mLowAvgVolume() ));
-    interface->addParam(CreateFloatParam( "Avg Vol: Mid", &mMidAvgVolume() ));
-    interface->addParam(CreateFloatParam( "Avg Vol: High", &mHighAvgVolume() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Low", &mAvgVolume[BAND_LOW]() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Mid", &mAvgVolume[BAND_MID]() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: High", &mAvgVolume[BAND_HIGH]() ));
     
     interface->gui()->addLabel("distribution");
     if (mAudioFboEnabled)
@@ -117,6 +130,30 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
 {
     if (audioInput.getFft() == NULL)
     {
+        return;
+    }
+    
+    if (mInputSource > SOURCE_AUDIO)
+    {
+        float values[BAND_COUNT];
+        values[BAND_LOW] = audioInput.getLowLevelForLiveTrack(mInputSource-1);
+        values[BAND_MID] = audioInput.getMidLevelForLiveTrack(mInputSource-1);
+        values[BAND_HIGH] = audioInput.getHighLevelForLiveTrack(mInputSource-1);
+        
+//        for (int i = 0; i < BANDS; ++i) {
+//        if (values[i] > mAvgVolume[i])
+//        {
+//            mFftFalloff[i].mFalling = false;
+//            // fade in (20ms)
+//            //timeline().apply( &mFftFalloff[i].mValue, values[i], 0.02f, EaseNone() );
+//            mFftFalloff[index].mValue = value;
+//        } else if (value < (mFftFalloff[index].mValue*0.5f)) {
+//            // fade out
+//            mFftFalloff[index].mFalling = true;
+//            timeline().apply( &mFftFalloff[index].mValue, 0.0f, falloff, getFalloffFunction() );
+//        }
+//        }
+        
         return;
     }
     
@@ -210,10 +247,10 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
     }
     
     // calculate avg volumes for low/mid/high for quick access and visual display
-    mLowAvgVolume = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
+    mAvgVolume[BAND_LOW] = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
     //HACKHACK: need to figure out why mid/high are always so low compared to bass
-    mMidAvgVolume = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter) * 10.0f;
-    mHighAvgVolume = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f) * 5.0f;
+    mAvgVolume[BAND_MID] = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter) * 10.0f;
+    mAvgVolume[BAND_HIGH] = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f) * 5.0f;
 }
 
 void AudioInputHandler::drawDebug(const Vec2f& windowSize)

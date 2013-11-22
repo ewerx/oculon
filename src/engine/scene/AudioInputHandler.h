@@ -43,9 +43,9 @@ public:
     // AVG VOLUME
     float getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
-    float getAverageVolumeLowFreq() const { return mLowAvgVolume; }
-    float getAverageVolumeMidFreq() const { return mMidAvgVolume; }
-    float getAverageVolumeHighFreq() const { return mHighAvgVolume; }
+    float getAverageVolumeLowFreq() const { return mAvgVolume[BAND_LOW]; }
+    float getAverageVolumeMidFreq() const { return mAvgVolume[BAND_MID]; }
+    float getAverageVolumeHighFreq() const { return mAvgVolume[BAND_HIGH]; }
 
     // RAW FFT VALUES
     struct tFftValue
@@ -112,9 +112,38 @@ enm,
     bool    mFalloffAveragesOnly;
     float   mLowPassFilter;
     float   mHighPassFilter;
-    ci::Anim<float>   mLowAvgVolume;
-    ci::Anim<float>   mMidAvgVolume;
-    ci::Anim<float>   mHighAvgVolume;
+    
+    enum eBands
+    {
+        BAND_LOW,
+        BAND_MID,
+        BAND_HIGH,
+        
+        BAND_COUNT
+    };
+    ci::Anim<float>   mAvgVolume[BAND_COUNT];
+    
+    // OSC Tracks
+#define AUDIO_SOURCE_TUPLE \
+AUDIO_SOURCE_ENTRY( "Audio", SOURCE_AUDIO ) \
+AUDIO_SOURCE_ENTRY( "OSC-Track1", SOURCE_TRACK1 ) \
+AUDIO_SOURCE_ENTRY( "OSC-Track2", SOURCE_TRACK2 ) \
+AUDIO_SOURCE_ENTRY( "OSC-Track3", SOURCE_TRACK3 ) \
+AUDIO_SOURCE_ENTRY( "OSC-Track4", SOURCE_TRACK4 ) \
+//end tuple
+    
+    enum eInputSource
+    {
+#define AUDIO_SOURCE_ENTRY( nam, enm ) \
+enm,
+        AUDIO_SOURCE_TUPLE
+#undef  AUDIO_SOURCE_ENTRY
+        
+        AUDIO_SOURCE_COUNT
+    };
+    eInputSource mInputSource;
+    
+    
 };
 
 #endif /* defined(__Oculon__AudioInputHandler__) */

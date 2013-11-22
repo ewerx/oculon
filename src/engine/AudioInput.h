@@ -46,6 +46,23 @@ public:
     float getAverageVolumeByFrequencyRange(const float minRatio =0.0f, const float maxRatio =1.0f);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
     
+    // TODO: refactor
+    inline float getHighLevelForLiveTrack( const int trackIndex )
+    {
+        assert(trackIndex < NUM_TRACKS);
+        return mLiveTrackData[trackIndex].mHighLevel;
+    }
+    inline float getMidLevelForLiveTrack( const int trackIndex )
+    {
+        assert(trackIndex < NUM_TRACKS);
+        return mLiveTrackData[trackIndex].mMidLevel;
+    }
+    inline float getLowLevelForLiveTrack( const int trackIndex )
+    {
+        assert(trackIndex < NUM_TRACKS);
+        return mLiveTrackData[trackIndex].mLowLevel;
+    }
+    
     void setupInterface( Interface* interface );
     bool changeInput( const int index );
     
