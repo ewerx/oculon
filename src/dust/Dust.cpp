@@ -72,7 +72,7 @@ void Dust::setupFBO()
             float x = Rand::randFloat(mApp->getViewportWidth()) / (float)mApp->getViewportWidth();
             float y = Rand::randFloat(mApp->getViewportHeight()) / (float)mApp->getViewportHeight();
             float z = 0.0f;
-            float mass = 1.0f;//Rand::randFloat(.00005f,.0002f);
+            float mass = Rand::randFloat(.005f,.02f);
             
             // position + mass
 			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
@@ -102,7 +102,7 @@ void Dust::setupFBO()
             float angle = noise * 15.0f;
             
             noiseSurface.setPixel(iterator.getPos(),
-                                  ColorA( cos( angle ) * Rand::randFloat(.00005f,.0002f), sin( angle ) * Rand::randFloat(.00005f,.0002f), 0.0f, 1.0f ));
+                                  ColorA( cos( angle ) * Rand::randFloat(.0005f,.002f), sin( angle ) * Rand::randFloat(.0005f,.002f), 0.0f, 1.0f ));
 		}
 	}
     

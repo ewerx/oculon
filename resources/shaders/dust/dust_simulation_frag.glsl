@@ -13,11 +13,13 @@ uniform bool reset;
 
 varying vec4 texCoord;
 
+const float eps = 0.001;
+
 void main()
 {
     
 	vec3 pos = texture2D( positions, texCoord.st ).rgb;
-	float mass = texture2D( positions, texCoord.st ).a;
+	float invMass = texture2D( positions, texCoord.st ).a;
 
 	vec3 vel = texture2D( velocities, texCoord.st ).rgb;
 	float age = texture2D( velocities, texCoord.st ).a;
@@ -29,7 +31,10 @@ void main()
     
     age += dt * decay * decayRate;
     
-	vel += vec3(noise.x,noise.y,0.0);
+    vec3 force = vec3(noise.x,noise.y,0.0);
+    float fMag = length(force);
+    vec3 a = invMass * force/(fMag*fMag + eps);
+	vel += dt * a;
     
     pos.x += vel.x * dt;
     pos.y += vel.y * dt;
@@ -43,7 +48,11 @@ void main()
         
         age = 0.0;
         
-        if(pos.x > 1024.0 || pos.x < 0.0 || pos.y > 1024.0 || pos.y < 0.0 || reset) {
+        if (reset) {
+            age = 0.5 * decay * 100.0;
+        }
+        
+        if(pos.x > 1.0 || pos.x < 0.0 || pos.y > 1.0 || pos.y < 0.0 || reset) {
             pos = origPos;
         }
 //        else {
@@ -54,11 +63,16 @@ void main()
     }
     
     // bounce off walls
-//    if (pos.x > 1024.0 || pos.x < 0.0 || pos.y > 1024.0 || pos.y < 0.0)
-//    {
-//        vel *= -0.9;
-//        age *= 0.85;
-//    }
+    if (pos.x > 1.0 || pos.x < 0.0)
+    {
+        vel = vec3(vel.x*(-0.85), vel.y*0.9, 0.0);
+        age *= 1.1;
+    }
+    if (pos.y > 1.0 || pos.y < 0.0)
+    {
+        vel = vec3(vel.x*0.9, -vel.y*(-0.85), 0.0);
+        age *= 1.1;
+    }
     
     // no stragglers
 //    if (age > 0.9 && vel.x < 0.0001 && vel.y < 0.0001) {
@@ -66,7 +80,7 @@ void main()
 //    }
 	
     //position + mass
-	gl_FragData[0] = vec4(pos, mass);
+	gl_FragData[0] = vec4(pos, invMass);
     //velocity + decay
 	gl_FragData[1] = vec4(vel, age);
     //age information
