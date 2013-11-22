@@ -5,8 +5,8 @@ uniform sampler2D velMap;
 
 uniform sampler2D spriteTex;
 
-
 varying float age;
+varying float maxAge;
 
 void main()
 {
@@ -21,7 +21,7 @@ void main()
     
     // alpha/color peaks at half-life
     float alpha;
-    float aF = age - 0.5;
+    float aF = age - (maxAge * 0.4);
     alpha = 1.0 - abs(aF * 2.0);
     colFac *= alpha;
     

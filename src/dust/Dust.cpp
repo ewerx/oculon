@@ -88,7 +88,7 @@ void Dust::setupFBO()
             
 			// decay + max age
             float decay = Rand::randFloat(.01f,10.00f);
-            float maxAge = 1.0f;
+            float maxAge = Rand::randFloat(1.0f,10.0f);
 			infoSurface.setPixel(iterator.getPos(),
                                  ColorA(decay, maxAge, 0.0f, 0.0f));
             
@@ -255,11 +255,13 @@ void Dust::draw()
     mParticlesFbo.bindTexture(0);
     mParticlesFbo.bindTexture(1);
     mSpriteTex.bind(2);
+    mParticleDataTex.bind(3);
     
     mRenderShader.bind();
     mRenderShader.uniform("posMap", 0);
     mRenderShader.uniform("velMap", 1);
     mRenderShader.uniform("spriteTex", 2);
+    mRenderShader.uniform("information", 3);
     mRenderShader.uniform("screenWidth", (float)kBufSize);
     mRenderShader.uniform("spriteWidth", mPointSize);
     mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
@@ -270,6 +272,7 @@ void Dust::draw()
     gl::draw( mVboMesh );
     
     mRenderShader.unbind();
+    mParticleDataTex.unbind();
     mSpriteTex.unbind();
     mParticlesFbo.unbindTexture();
     
