@@ -83,7 +83,7 @@ void Graviton::setup()
     
     setupPingPongFbo();
     // THE VBO HAS TO BE DRAWN AFTER FBO!
-    setupVBO(); 
+    setupVBO();
     
     // textures
     mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
@@ -350,6 +350,7 @@ nodeFormationNames.push_back(nam);
                          .minValue(0.01f)
                          .maxValue(2.0f)
                          .oscReceiver(getName(), "psize"));
+    mInterface->addParam(CreateBoolParam( "ImagePoints", &mUseImageForPoints ));
     
     mInterface->gui()->addColumn();
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
@@ -375,13 +376,12 @@ nodeFormationNames.push_back(nam);
                           .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );
     
     // mindwave
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateBoolParam( "Reset Camera by Blink", &mResetCameraByBlink )
-                         .oscReceiver(getName(), "blinkcamera"));
-    mInterface->addParam(CreateBoolParam( "Color by Mindwave", &mColorByMindWave )
-                         .oscReceiver(getName(), "mindwavecolor"));
+//    mInterface->gui()->addColumn();
+//    mInterface->addParam(CreateBoolParam( "Reset Camera by Blink", &mResetCameraByBlink )
+//                         .oscReceiver(getName(), "blinkcamera"));
+//    mInterface->addParam(CreateBoolParam( "Color by Mindwave", &mColorByMindWave )
+//                         .oscReceiver(getName(), "mindwavecolor"));
     
-    mInterface->addParam(CreateBoolParam( "ImagePoints", &mUseImageForPoints ));
 }
 
 void Graviton::initParticles()

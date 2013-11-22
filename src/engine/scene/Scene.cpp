@@ -229,6 +229,7 @@ void Scene::setupLoadParamsInterface()
 
 void Scene::update(double dt)
 {
+    // TODO: refactor so derived scenes don't have to explicitly call Scene::update
     if( mDoReset )
     {
         mDoReset = false;

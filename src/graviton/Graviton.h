@@ -24,9 +24,6 @@
 #include "AudioInputHandler.h"
 
 
-#define FREEOCL_VERSION
-
-
 class Graviton : public Scene
 {
 public:
