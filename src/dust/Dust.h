@@ -48,6 +48,14 @@ private:
     void updateParticles();
     void drawParticles();
     
+    void setupDynamicTexture();
+    void generateDynamicTexture();
+    ci::gl::Fbo mDynamicTexFbo;
+    ci::gl::GlslProg mDynamicTexShader;
+    float mNoiseSpeed;
+	float mNoiseTheta;
+    ci::Vec3f mNoiseScale;
+    
 private:
     // particle system
     enum
@@ -73,6 +81,7 @@ private:
     float mPointSize;
     float mDecayRate;
     
+    bool mUseDynamicTex;
     bool mReset;
     
     //AudioInputHandler   mAudioInputHandler;

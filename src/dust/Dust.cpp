@@ -12,6 +12,8 @@
 #include "cinder/Perlin.h"
 #include "cinder/Rand.h"
 
+#include "Resources.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -47,9 +49,32 @@ void Dust::setup()
     mReset = false;
     
     // params
-    mTimeStep = 0.01f;
+    mTimeStep = 0.1f;
     mPointSize = 1.0f;
-    mDecayRate = 1.0f;
+    mDecayRate = 0.5f;
+    
+    mUseDynamicTex = false;
+    setupDynamicTexture();
+}
+
+void Dust::setupDynamicTexture()
+{
+    mNoiseTheta = 0.0f;
+    mNoiseSpeed = 0.1f;
+    mNoiseScale = Vec3f(1.0f,1.0f,0.25f);
+    
+    mDynamicTexShader = loadFragShader("simplex_frag.glsl");
+    
+    gl::Fbo::Format format;
+	format.setColorInternalFormat( GL_RGB32F_ARB );
+	mDynamicTexFbo = gl::Fbo( kBufSize, kBufSize, format );
+    
+    // initialize
+    mDynamicTexFbo.bindFramebuffer();
+	gl::setViewport( mDynamicTexFbo.getBounds() );
+	gl::clear();
+	mDynamicTexFbo.unbindFramebuffer();
+	mDynamicTexFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
 }
 
 void Dust::setupFBO()
@@ -172,8 +197,8 @@ void Dust::reset()
 void Dust::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
-                         .minValue(0.0f)
-                         .maxValue(10.0f));
+                         .minValue(0.001f)
+                         .maxValue(3.0f));
     
     mInterface->addParam(CreateFloatParam( "point_size", &mPointSize )
                          .minValue(0.01f)
@@ -182,6 +207,13 @@ void Dust::setupInterface()
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
                          .maxValue(1.0f));
+    
+    mInterface->addParam(CreateBoolParam("dynamic noise", &mUseDynamicTex));
+    mInterface->addParam(CreateFloatParam("noise_speed", &mNoiseSpeed )
+                         .maxValue(1.0f)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
+                         .oscReceiver(mName));
 }
 
 #pragma mark - Update
@@ -189,6 +221,15 @@ void Dust::setupInterface()
 void Dust::update(double dt)
 {
     gl::disableAlphaBlending();
+    
+    gl::disableAlphaBlending();
+	gl::disableDepthRead();
+	gl::disableDepthWrite();
+    mNoiseTheta += dt * mNoiseSpeed;
+    //float time = (float)getElapsedSeconds();
+	//mNoiseTheta = time;
+    generateDynamicTexture();
+    
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
     gl::setViewport( mParticlesFbo.getBounds() );
@@ -198,7 +239,16 @@ void Dust::update(double dt)
     mParticleDataTex.bind(2);
     mInitialVelTex.bind(3);
     mInitialPosTex.bind(4);
-    mNoiseTex.bind(5);
+    //mNoiseTex.bind(5);
+    
+    if (mUseDynamicTex)
+    {
+        mDynamicTexFbo.bindTexture(5);
+    }
+    else
+    {
+        mNoiseTex.bind(5);
+    }
     
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );
@@ -214,7 +264,14 @@ void Dust::update(double dt)
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
     
-    mNoiseTex.unbind();
+    if (mUseDynamicTex)
+    {
+        mDynamicTexFbo.unbindTexture();
+    }
+    else
+    {
+        mNoiseTex.unbind();
+    }
     mInitialPosTex.unbind();
     mInitialVelTex.unbind();
     mParticleDataTex.unbind();
@@ -301,8 +358,77 @@ void Dust::drawDebug()
     gl::draw( mParticlesFbo.getTexture(1), preview2 );
     
     Rectf preview3 = preview2 - Vec2f(size+paddingX, 0.0f);
-    gl::draw(mNoiseTex, preview3);
+    if (mUseDynamicTex)
+    {
+        gl::draw(mDynamicTexFbo.getTexture(), preview3);
+    }
+    else
+    {
+        gl::draw(mNoiseTex, preview3);
+    }
     
     glPopAttrib();
     gl::popMatrices();
+}
+
+#pragma mark - Texture Geneator
+
+void Dust::generateDynamicTexture()
+{
+    gl::pushMatrices();
+    
+    // Bind FBO and set up window
+	mDynamicTexFbo.bindFramebuffer();
+	gl::setViewport( mDynamicTexFbo.getBounds() );
+	gl::setMatricesWindow( mDynamicTexFbo.getSize() );
+	gl::clear();
+    
+	// Bind and configure dynamic texture shader
+	mDynamicTexShader.bind();
+	mDynamicTexShader.uniform( "theta", mNoiseTheta );
+    mDynamicTexShader.uniform( "scale", mNoiseScale );
+    
+	// Draw shader output
+	gl::enable( GL_TEXTURE_2D );
+	gl::color( Colorf::white() );
+	gl::begin( GL_TRIANGLES );
+    
+     // TODO: cleanup
+	// Define quad vertices
+	Vec2f vert0( (float)mDynamicTexFbo.getBounds().x1, (float)mDynamicTexFbo.getBounds().y1 );
+	Vec2f vert1( (float)mDynamicTexFbo.getBounds().x2, (float)mDynamicTexFbo.getBounds().y1 );
+	Vec2f vert2( (float)mDynamicTexFbo.getBounds().x1, (float)mDynamicTexFbo.getBounds().y2 );
+	Vec2f vert3( (float)mDynamicTexFbo.getBounds().x2, (float)mDynamicTexFbo.getBounds().y2 );
+    
+	// Define quad texture coordinates
+	Vec2f uv0( 0.0f, 0.0f );
+	Vec2f uv1( 1.0f, 0.0f );
+	Vec2f uv2( 0.0f, 1.0f );
+	Vec2f uv3( 1.0f, 1.0f );
+    
+	// Draw quad (two triangles)
+	gl::texCoord( uv0 );
+	gl::vertex( vert0 );
+	gl::texCoord( uv2 );
+	gl::vertex( vert2 );
+	gl::texCoord( uv1 );
+	gl::vertex( vert1 );
+    
+	gl::texCoord( uv1 );
+	gl::vertex( vert1 );
+	gl::texCoord( uv2 );
+	gl::vertex( vert2 );
+	gl::texCoord( uv3 );
+	gl::vertex( vert3 );
+    
+	gl::end();
+    gl::disable( GL_TEXTURE_2D );
+    
+	// Unbind everything
+	mDynamicTexShader.unbind();
+	mDynamicTexFbo.unbindFramebuffer();
+    
+    gl::popMatrices();
+    
+	///////////////////////////////////////////////////////////////
 }

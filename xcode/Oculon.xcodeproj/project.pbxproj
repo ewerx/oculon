@@ -348,6 +348,8 @@
 		7CC3C02E183EE3B50082C322 /* dust_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C02A183EE3B50082C322 /* dust_render_vert.glsl */; };
 		7CC3C02F183EE3B50082C322 /* dust_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C02B183EE3B50082C322 /* dust_simulation_frag.glsl */; };
 		7CC3C030183EE3B50082C322 /* dust_simulation_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C02C183EE3B50082C322 /* dust_simulation_vert.glsl */; };
+		7CC3C033183FECCE0082C322 /* TextureGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */; };
+		7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C034183FF64C0082C322 /* simplex_frag.glsl */; };
 		7CC562621836BB3100B128D4 /* Cells.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC562601836BB3100B128D4 /* Cells.cpp */; };
 		7CF20BB5182891240042A6A0 /* hypnorings_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF20BB4182891240042A6A0 /* hypnorings_frag.glsl */; };
 		7CF251FD182F31A40005227C /* fireball_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FC182F31A40005227C /* fireball_frag.glsl */; };
@@ -885,6 +887,9 @@
 		7CC3C02A183EE3B50082C322 /* dust_render_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dust_render_vert.glsl; sourceTree = "<group>"; };
 		7CC3C02B183EE3B50082C322 /* dust_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dust_simulation_frag.glsl; sourceTree = "<group>"; };
 		7CC3C02C183EE3B50082C322 /* dust_simulation_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dust_simulation_vert.glsl; sourceTree = "<group>"; };
+		7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureGenerator.cpp; sourceTree = "<group>"; };
+		7CC3C032183FECCE0082C322 /* TextureGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureGenerator.h; sourceTree = "<group>"; };
+		7CC3C034183FF64C0082C322 /* simplex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simplex_frag.glsl; sourceTree = "<group>"; };
 		7CC562601836BB3100B128D4 /* Cells.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cells.cpp; sourceTree = "<group>"; };
 		7CC562611836BB3100B128D4 /* Cells.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cells.h; sourceTree = "<group>"; };
 		7CF20BB4182891240042A6A0 /* hypnorings_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hypnorings_frag.glsl; sourceTree = "<group>"; };
@@ -1689,6 +1694,7 @@
 				7C4C6736181C6124003049AA /* volumetriclines_frag.glsl */,
 				7C79C8D217650F8F00E71F9D /* voronoi_frag.glsl */,
 				7C79C8D317650F8F00E71F9D /* water_ripple.fsh */,
+				7CC3C034183FF64C0082C322 /* simplex_frag.glsl */,
 			);
 			name = shaders;
 			path = ../resources/shaders;
@@ -1874,6 +1880,8 @@
 				7C79C9AF17650FD700E71F9D /* scene */,
 				7C79C9C617650FD700E71F9D /* Utils.cpp */,
 				7C79C9C717650FD700E71F9D /* Utils.h */,
+				7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */,
+				7CC3C032183FECCE0082C322 /* TextureGenerator.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -2526,6 +2534,7 @@
 				7C79C8F617650F8F00E71F9D /* colortex4.jpg in Resources */,
 				7CF3122618162F3500DB1286 /* tilings_frag.glsl in Resources */,
 				7C79C8F717650F8F00E71F9D /* bigGlow0.png in Resources */,
+				7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */,
 				7C79C8F817650F8F00E71F9D /* bigGlow1.png in Resources */,
 				7C79C8F917650F8F00E71F9D /* corona.png in Resources */,
 				7C79C8FA17650F8F00E71F9D /* cubeNegX.jpg in Resources */,
@@ -2757,6 +2766,7 @@
 				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
 				7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */,
 				7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */,
+				7CC3C033183FECCE0082C322 /* TextureGenerator.cpp in Sources */,
 				7C79CA3517650FD800E71F9D /* BinnedParticleSystem.cpp in Sources */,
 				7C79CA3617650FD800E71F9D /* Contour.cpp in Sources */,
 				7C79CA3717650FD800E71F9D /* contours.cpp in Sources */,

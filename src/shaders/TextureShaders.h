@@ -36,9 +36,6 @@ public:
     void draw();
     void drawDebug();
     
-    // new
-    //ci::gl::Texture getCurrentTexture() const { return mShaders[mShaderType].getTexture(); }
-    
 protected:// from Scene
     void setupInterface();
     //void setupDebugInterface();
