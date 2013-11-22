@@ -37,7 +37,7 @@ void Dust::setup()
     mSimulationShader = loadVertAndFragShaders("dust_simulation_vert.glsl", "dust_simulation_frag.glsl");
     mRenderShader = loadVertAndFragShaders("dust_render_vert.glsl", "dust_render_frag.glsl");
     
-    mSpriteTex = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
+    mSpriteTex = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
     
     setupFBO();
     setupVBO();
@@ -47,10 +47,12 @@ void Dust::setup()
     // params
     mTimeStep = 0.01f;
     mPointSize = 1.0f;
+    mDecayRate = 1.0f;
 }
 
 void Dust::setupFBO()
 {
+    console() << "[dust] initializing " << kNumParticles << " particles, hang on!" << std::endl;
     //initialize buffer
 	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
 	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
@@ -59,7 +61,7 @@ void Dust::setupFBO()
     
 	Surface32f::Iter iterator = posSurface.getIter();
 	
-    //Perlin perlin(32, clock() * .1f);
+    Perlin perlin(32, clock() * .1f);
     
 	while(iterator.line())
 	{
@@ -76,10 +78,11 @@ void Dust::setupFBO()
             // velocity
             float vx = Rand::randFloat(-.005f,.005f);
             float vy = Rand::randFloat(-.005f,.005f);
-            float vz = 0.0f;
+            float vz = 1.0f;
+            float age = Rand::randFloat(.007f,1.0f);
             
 			// velocity + age
-			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,0.0f));
+			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
             
 			// decay + max age
             float decay = Rand::randFloat(.01f,1.00f);
@@ -92,7 +95,7 @@ void Dust::setupFBO()
             float nY = iterator.y() * 0.005f;
             float nZ = app::getElapsedSeconds() * 0.1f;
             Vec3f v( nX, nY, nZ );
-            float noise = 1.0f;//perlin.fBm( v );
+            float noise = perlin.fBm( v );
             
             float angle = noise * 15.0f;
             
@@ -173,12 +176,17 @@ void Dust::setupInterface()
     mInterface->addParam(CreateFloatParam( "point_size", &mPointSize )
                          .minValue(0.01f)
                          .maxValue(3.0f));
+    
+    mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
+                         .minValue(0.0f)
+                         .maxValue(5.0f));
 }
 
 #pragma mark - Update
 
 void Dust::update(double dt)
 {
+    gl::disableAlphaBlending();
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
     gl::setViewport( mParticlesFbo.getBounds() );
@@ -198,6 +206,7 @@ void Dust::update(double dt)
 	mSimulationShader.uniform( "oPositions", 4);
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", (float)(dt*mTimeStep) );
+    mSimulationShader.uniform( "decayRate", mDecayRate );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
@@ -205,7 +214,7 @@ void Dust::update(double dt)
     mNoiseTex.unbind();
     mInitialPosTex.unbind();
     mInitialVelTex.unbind();
-    mInitialPosTex.unbind();
+    mParticleDataTex.unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -220,8 +229,8 @@ void Dust::draw()
     gl::pushMatrices();
     glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
     
-    gl::setMatrices( getCamera() );
-    //gl::setMatricesWindow( getWindowSize() );
+    //gl::setMatrices( getCamera() );
+    gl::setMatricesWindow( getWindowSize() );
     gl::setViewport( mApp->getViewportBounds() );
     
     gl::enable(GL_POINT_SPRITE);
@@ -230,9 +239,9 @@ void Dust::draw()
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     
     gl::enableAlphaBlending();
+    //gl::enableAdditiveBlending();
     gl::disableDepthWrite();
 //    gl::disableDepthRead();
-    glDisable(GL_DEPTH_TEST);
     
     glEnable(GL_TEXTURE_2D);
     
@@ -244,10 +253,12 @@ void Dust::draw()
     mRenderShader.uniform("posMap", 0);
     mRenderShader.uniform("velMap", 1);
     mRenderShader.uniform("spriteTex", 2);
-    mRenderShader.uniform("screenWidth", (float)mApp->getViewportWidth());
+    mRenderShader.uniform("screenWidth", (float)kBufSize);
     mRenderShader.uniform("spriteWidth", mPointSize);
     mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
     mRenderShader.uniform("P", getCamera().getProjectionMatrix());
+    
+    //glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
     
     gl::draw( mVboMesh );
     

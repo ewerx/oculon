@@ -6,10 +6,10 @@ uniform sampler2D information;
 uniform sampler2D oVelocities;
 uniform sampler2D oPositions;
 uniform sampler2D noiseTex;
+uniform float dt;
+uniform float decayRate;
 
 varying vec4 texCoord;
-
-float tStep = .01;
 
 void main()
 {
@@ -25,14 +25,14 @@ void main()
 
     vec2 noise = texture2D( noiseTex, pos.xy).rg;
     
-    age += tStep;
+    age += dt * decay * decayRate;
     
 	vel += vec3(noise.x,noise.y,0.0);
     
-    pos.x += vel.x * tStep * 10.0;
-    pos.y += vel.y * tStep * 10.0;
+    pos.x += vel.x * dt * 10.0;
+    pos.y += vel.y * dt * 10.0;
 	
-	if( age >= maxAge ) //|| pos.x > 1.0 || pos.x < 0.0 || pos.y > 1.0 || pos.y < 0.0 )
+	if( age >= maxAge )
     {
         vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
         vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
@@ -41,8 +41,8 @@ void main()
         
         if(pos.x > 1.0 || pos.x < 0.0 || pos.y > 1.0 || pos.y < 0.0 )
             pos = origPos;
-//        else
-//            pos = vec3(vel.x,vel.y,0.0) + origPos;
+        else
+            pos = vec3(vel.x,vel.y,0.0) + origPos;
         vel = origVel;
     }
 	

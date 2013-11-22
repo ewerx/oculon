@@ -52,7 +52,7 @@ private:
     // particle system
     enum
     {
-        kBufSize = 512,
+        kBufSize = 1024,
         kNumParticles = (kBufSize * kBufSize)
     };
     
@@ -71,6 +71,7 @@ private:
     // params
     float mTimeStep;
     float mPointSize;
+    float mDecayRate;
     
     //AudioInputHandler   mAudioInputHandler;
     
