@@ -401,6 +401,7 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
         scene->setRunning(true);
         scene->setVisible(true);
         scene->setDebug(true);
+        mLastActiveScene = mScenes.size();
     }
     mScenes.push_back(scene);
     mSceneMap[scene->getName()] = scene;
@@ -1264,6 +1265,7 @@ void OculonApp::startVideoCapture(bool useDefaultPath)
     fs::path outputPath = Utils::getUniquePath("~/Desktop/oculon_video.mov");
     qtime::MovieWriter::Format mwFormat;
     bool ready = false;
+    mFrameCaptureCount = 0;
     
     // spawn file dialog
     // outputPath = getSaveFilePath();
@@ -1299,6 +1301,7 @@ void OculonApp::stopVideoCapture()
     mMovieWriter.finish();
     mMovieWriter.stop();
     mIsCapturingVideo = false;
+    mFrameCaptureCount = 0;
 }
 
 void OculonApp::enableFrameCapture( const bool enable )
