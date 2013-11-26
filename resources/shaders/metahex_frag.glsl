@@ -2,8 +2,8 @@ uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform vec4      iColor1;
 uniform vec4      iColor2;
-uniform float     iObjSpeed;
-uniform float     iLightSpeed;
+uniform float     iObjTime;
+uniform float     iLightTime;
 uniform int       iQuality;
 uniform int       iRenderSteps;
 uniform int       iNumObjects;
@@ -34,15 +34,11 @@ uniform vec3      iCoefficients;
 //#define light_color vec3(0.1,0.4,0.6)
 #define light_color iColor1.xyz
 #define light_direction normalize(vec3(.2,1.0,-0.2))
-//#define light_speed_modifier 1.0
-#define light_speed_modifier iLightSpeed
 
 //#define object_color vec3(0.9,0.1,0.1)
 #define object_color iColor2.xyz
 #define MAX_OBJECTS 24
 #define object_count iNumObjects
-//#define object_speed_modifier 1.0
-#define object_speed_modifier iObjSpeed
 
 #define render_steps iRenderSteps
 
@@ -129,7 +125,7 @@ vec3 light = light_direction; //global variable that holds light direction
 
 vec3 background(vec3 d)//render background
 {
-	float t=iGlobalTime*0.5*light_speed_modifier;
+	float t=iLightTime;
 	float qq = dot(d,light)*.5+.5;
 	float bgl = qq;
 	float q = (bgl+noise(bgl*6.0+t)*.85+noise(bgl*12.0+t)*.85);
@@ -192,7 +188,7 @@ void main(void)
     vec3 iMouse = vec3(0.0,0.0,0.0);
 	vec3 mouse = vec3(iMouse.xy/iResolution.xy - 0.5,iMouse.z-.5);
 	
-	float t = iGlobalTime*.5*object_speed_modifier + 2.0;
+	float t = iObjTime + 2.0;
 	
 	for (int i=0 ;i<object_count; i++) //position for each metaball
 	{

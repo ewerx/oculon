@@ -25,9 +25,9 @@ uniform float saturation;
 
 uniform float texturescale;
 
-uniform float rotspeed;
+uniform float rotation;
 
-uniform float colspeed;
+uniform float coloroffset;
 
 uniform float antialias;
 
@@ -58,11 +58,11 @@ void main(void)
 			p=abs(p-fold)+fold;
 			p=p*scale-translate;
 			if (length(p)>20.) break;
-			p=rotate(p,iGlobalTime*rotspeed);
+			p=rotate(p,rotation);
 			average+=p;
 		}
 		average/=float(iterations);
-		vec2 coord=average+vec2(iGlobalTime*colspeed);
+		vec2 coord=average+vec2(coloroffset);
 		vec3 color=texture2D(iChannel0,coord*texturescale).xyz;
 		color*=min(1.1,length(average)*brightness);
 		color=mix(vec3(length(color)),color,saturation);

@@ -81,6 +81,8 @@ OS_SHADERS_TUPLE
     mMetaHexParams.mNumObjects = 9;
     mMetaHexParams.mCoeffecients = Vec3f(0.967f,0.423f,0.76321f);
     mMetaHexParams.mAudioCoeffs = false;
+    mMetaHexParams.mObjTime = 0.0f;
+    mMetaHexParams.mLightTime = 0.0f;
     
     // tilings
     mTilingsParams.mIterations = 20;
@@ -169,19 +171,20 @@ OS_SHADERS_TUPLE
                          .oscReceiver(getName()));
     mInterface->addParam(CreateIntParam( "tilings/anglep", &mTilingsParams.mAngleP )
                          .minValue(1)
-                         .maxValue(100)
+                         .maxValue(40)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateIntParam( "tilings/angleq", &mTilingsParams.mAngleQ )
                          .minValue(1)
-                         .maxValue(100)
+                         .maxValue(12)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateIntParam( "tilings/angler", &mTilingsParams.mAngleR )
-                         .minValue(1)
-                         .maxValue(100)
+                         .minValue(2)
+                         .maxValue(12)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "tilings/thickness", &mTilingsParams.mThickness )
                          .minValue(0.0f)
                          .maxValue(2.0f));
+    mInterface->addParam(CreateBoolParam("tilings/audio", &mTilingsParams.mAudioOffset));
     
     // retina
     mInterface->gui()->addColumn();
@@ -226,15 +229,17 @@ void ObjectShaders::update(double dt)
 {
     Scene::update(dt);
     
-    mElapsedTime += dt;
+    mElapsedTime += dt * mTimeScale;
     
-    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
-    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq() * mGain;
-    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq() * mGain;
+    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq();
+    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq();
+    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq();
     
     switch (mShaderType)
     {
         case SHADER_METAHEX:
+            mMetaHexParams.mLightTime += dt * mMetaHexParams.mLightSpeed;
+            mMetaHexParams.mObjTime += dt * mMetaHexParams.mSpeed;
             if (mMetaHexParams.mAudioCoeffs)
             {
                 mMetaHexParams.mCoeffecients.z = 0.5f + lows;
@@ -242,7 +247,7 @@ void ObjectShaders::update(double dt)
                 mMetaHexParams.mCoeffecients.x = 0.5f + highs*2.0f;
             }
             break;
-            
+        
         case SHADER_RETINA:
             if (mRetinaParams.mAudioPattern)
             {
@@ -250,9 +255,15 @@ void ObjectShaders::update(double dt)
                 mRetinaParams.mPatternFreq = 5.0f + 10.0f*highs;
             }
             break;
-            
+        
+        case SHADER_TILINGS:
+            if (mTilingsParams.mAudioOffset)
+        {
+            mTilingsParams.mOffset = mids * 5.0f;
+        }
+        
         default:
-            break;
+        break;
     }
     
     if (mDrawOnSphere)
@@ -300,15 +311,14 @@ void ObjectShaders::shaderPreDraw()
     shader.uniform( "iColor2", mColor2);
     shader.uniform( "iColor3", mColor3);
     shader.uniform( "iBackgroundAlpha", mBackgroundAlpha);
-    
-    float timescale = mTimeScale;
+    shader.uniform( "iTimeScale", mTimeScale);
     
     const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
     
     switch (mShaderType) {
         case SHADER_METAHEX:
-            shader.uniform( "iObjSpeed", mMetaHexParams.mSpeed );
-            shader.uniform( "iLightSpeed", mMetaHexParams.mLightSpeed );
+            shader.uniform( "iObjTime", mMetaHexParams.mObjTime );
+            shader.uniform( "iLightTime", mMetaHexParams.mLightTime );
             shader.uniform( "iNumObjects", mMetaHexParams.mNumObjects );
             shader.uniform( "iRenderSteps", mMetaHexParams.mRenderSteps );
             shader.uniform( "iQuality", mMetaHexParams.mQuality );
@@ -321,6 +331,7 @@ void ObjectShaders::shaderPreDraw()
             shader.uniform( "iAngleQ", mTilingsParams.mAngleQ );
             shader.uniform( "iAngleR", mTilingsParams.mAngleR );
             shader.uniform( "iThickness", mTilingsParams.mThickness );
+            shader.uniform( "iOffset", mTilingsParams.mOffset);
             break;
             
         case SHADER_RETINA:
@@ -353,9 +364,6 @@ void ObjectShaders::shaderPreDraw()
         default:
             break;
     }
-    
-    
-    shader.uniform( "iTimeScale", timescale);
 }
 
 void ObjectShaders::drawShaderOutput()

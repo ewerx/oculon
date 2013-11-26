@@ -536,7 +536,7 @@ void Terrain::draw()
 	gl::enable( GL_POLYGON_SMOOTH );
 	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
 	gl::enable( GL_NORMALIZE );
-	gl::enableAlphaBlending();
+	gl::enableAdditiveBlending();
 	gl::enableDepthRead();
 	gl::enableDepthWrite();
     
@@ -924,8 +924,8 @@ bool Terrain::setupMesh()
         mTriMesh.clear();
         
         // create the vertices and texture coords
-        size_t width = 256;
-        size_t depth = 256;
+        size_t width = 64;
+        size_t depth = 64;
         
         for(size_t z=0;z<=depth;++z) {
             for(size_t x=0;x<=width;++x) {

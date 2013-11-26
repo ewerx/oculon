@@ -43,9 +43,9 @@ public:
     // AVG VOLUME
     float getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
-    float getAverageVolumeLowFreq() const { return mAvgVolume[BAND_LOW]; }
-    float getAverageVolumeMidFreq() const { return mAvgVolume[BAND_MID]; }
-    float getAverageVolumeHighFreq() const { return mAvgVolume[BAND_HIGH]; }
+    float getAverageVolumeLowFreq() const { return mAvgVolume[BAND_LOW].mValue; }
+    float getAverageVolumeMidFreq() const { return mAvgVolume[BAND_MID].mValue; }
+    float getAverageVolumeHighFreq() const { return mAvgVolume[BAND_HIGH].mValue; }
 
     // RAW FFT VALUES
     struct tFftValue
@@ -55,6 +55,7 @@ public:
         ci::Anim<float> mValue;
         
         tFftValue( int32_t index, float value ) : mBandIndex(index), mValue(value) { mFalling = false; }
+        tFftValue() : mBandIndex(0), mValue(0.0f), mFalling(false) {}
     };
     typedef std::vector<tFftValue> FftValues;
     FftValues::const_iterator   fftValuesBegin() const     { return mFftFalloff.begin(); }
@@ -121,7 +122,7 @@ enm,
         
         BAND_COUNT
     };
-    ci::Anim<float>   mAvgVolume[BAND_COUNT];
+    tFftValue   mAvgVolume[BAND_COUNT];
     
     // OSC Tracks
 #define AUDIO_SOURCE_TUPLE \
@@ -142,7 +143,7 @@ enm,
         AUDIO_SOURCE_COUNT
     };
     eInputSource mInputSource;
-    
+    bool mOSCFalloff;
     
 };
 

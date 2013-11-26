@@ -51,7 +51,7 @@ void FractalShaders::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
     mElapsedTime += dt;
 }

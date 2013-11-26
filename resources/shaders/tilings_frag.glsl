@@ -1,6 +1,5 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform float     iTimeScale;
 uniform int       iIterations;
 uniform int       iAngleP;// Pi/p: angle beween reflexion planes a and b .
 
@@ -11,6 +10,8 @@ uniform vec3      iCenter;// U,V,W are the 'barycentric' coordinate for the vert
 uniform float     iThickness;//Thickness of the lines
 uniform vec4      iColor1;
 uniform vec4      iColor2;
+
+uniform float     iOffset;
 
 // based on https://www.shadertoy.com/view/4sf3zX
 // triangular groups tessellations. Coxeter group p-q-r. Stereographic projection.
@@ -164,7 +165,7 @@ void main(void)
 	const float scaleFactor=2.1;
 	vec2 uv = scaleFactor*(gl_FragCoord.xy-0.5*iResolution.xy) / iResolution.y;
 	aaScale=0.5*scaleFactor/iResolution.y;
-	animUVW(0.5*PI*iGlobalTime*iTimeScale);
+	animUVW(0.5*PI*(iGlobalTime+iOffset));
 	init();
 	gl_FragColor = vec4(color(uv),1.0);
 }

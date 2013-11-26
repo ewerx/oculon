@@ -15,7 +15,7 @@ uniform vec3    magnitude;
 uniform float   accumPower;
 uniform float   fieldScale;
 uniform float   fieldSubtract;
-uniform vec3    panSpeed;
+uniform vec3    panPos;
 uniform vec3    uvOffset;
 uniform float   uvScale;
 
@@ -40,7 +40,7 @@ void main() {
 	vec2 uv = 2. * gl_FragCoord.xy / iResolution.xy - 1.;
 	vec2 uvs = uv * iResolution.xy / max(iResolution.x, iResolution.y);
 	vec3 p = vec3(uvs * uvScale, 0) + uvOffset;//vec3(1., -1.3, 0.);
-	p += .2 * vec3(sin(iGlobalTime * panSpeed.x), sin(iGlobalTime * panSpeed.y), sin(iGlobalTime * panSpeed.z));
+	p += .2 * vec3(sin(panPos.x), sin(panPos.y), sin(panPos.z));
 	float t = field(p);
 	float v = (1. - exp((abs(uv.x) - 1.) * 6.)) * (1. - exp((abs(uv.y) - 1.) * 6.));
 	//gl_FragColor = mix(.4, 1., v) * vec4(1.8 * t * t * t, 1.4 * t * t, t, 1.0);

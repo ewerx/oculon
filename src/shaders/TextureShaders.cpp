@@ -89,6 +89,9 @@ TS_SHADERS_TUPLE
     mKaliParams.rotspeed=0.005f;
     mKaliParams.colspeed=0.05f;
     mKaliParams.antialias=2.f;
+    mKaliParams.mRotationOffset = 0.0f;
+    mKaliParams.mRotation = 0.0f;
+    mKaliParams.mColorOffset = 0.0f;
     
     // simplicity
     mSimplicityParams.mRedPower = 2;
@@ -104,7 +107,8 @@ TS_SHADERS_TUPLE
     mSimplicityParams.mFieldScale = 5.0f;
     mSimplicityParams.mFieldSubtract = 0.7f;
     mSimplicityParams.mTimeScale = 1.0f;
-    mSimplicityParams.mPanSpeed = Vec3f(0.0625f, 0.0833f, 0.0078f);
+    mSimplicityParams.mPanSpeed = Vec3f(0.0f, 0.0f, 0.01f);
+    mSimplicityParams.mPanPos = Vec3f(0.0625f, 0.0833f, 0.0078f);
     mSimplicityParams.mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
     mSimplicityParams.mUVScale = 0.25f;
     
@@ -127,6 +131,8 @@ TS_SHADERS_TUPLE
 void TextureShaders::reset()
 {
     mElapsedTime = 0.0f;
+    mKaliParams.mColorOffset = 0.0f;
+    mKaliParams.mRotation = 0.0f;
 }
 
 void TextureShaders::setupInterface()
@@ -185,17 +191,20 @@ TS_SHADERS_TUPLE
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
-                         .maxValue(1.0f)
+                         .maxValue(0.2f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
-                         .maxValue(0.1f)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "kali/rotoffset", &mKaliParams.mRotationOffset )
+                         .maxValue(5.0f)
                          .oscReceiver(getName()));
     //.midiInput(0, 2, 20));
     mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
                          .maxValue(1.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
-                         .maxValue(2.0f)
+                         .maxValue(3.0f)
                          .oscReceiver(getName()));
     
 
@@ -239,9 +248,9 @@ TS_SHADERS_TUPLE
                          .maxValue(2.0f));
     mInterface->addParam(CreateVec3fParam("magnitude", &mSimplicityParams.mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
     mInterface->addParam(CreateVec3fParam("color_scale", &mSimplicityParams.mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateVec3fParam("PanSpeed", &mSimplicityParams.mPanSpeed, Vec3f::zero(), Vec3f(0.1f,0.1f,0.1f)));
+    mInterface->addParam(CreateVec3fParam("PanSpeed", &mSimplicityParams.mPanSpeed, Vec3f(-0.2f,-0.2f,-0.2f), Vec3f(0.2f,0.2f,0.2f)));
     mInterface->addParam(CreateVec3fParam("UVOffset", &mSimplicityParams.mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
-    mInterface->addParam(CreateFloatParam( "UVScale", &mSimplicityParams.mUVScale )
+    mInterface->addParam(CreateFloatParam( "UVScale", mSimplicityParams.mUVScale.ptr() )
                          .minValue(0.01f)
                          .maxValue(4.0f));
     
@@ -304,13 +313,20 @@ void TextureShaders::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
     mElapsedTime += dt;
     
     switch (mShaderType)
     {
-
+        case SHADER_KALI:
+            mKaliParams.mRotation += mKaliParams.rotspeed * dt;
+            mKaliParams.mColorOffset += mKaliParams.colspeed * dt;
+        break;
+        
+        case SHADER_SIMPLICITY:
+        mSimplicityParams.mPanPos = mSimplicityParams.mPanPos() + (dt * mSimplicityParams.mPanSpeed);
+        break;
             
         default:
             break;
@@ -370,8 +386,8 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "brightness", mKaliParams.brightness );
             shader.uniform( "saturation", mKaliParams.saturation );
             shader.uniform( "texturescale", mKaliParams.texturescale );
-            shader.uniform( "rotspeed", mKaliParams.rotspeed );
-            shader.uniform( "colspeed", mKaliParams.colspeed );
+            shader.uniform( "rotation", mKaliParams.mRotation + mKaliParams.mRotationOffset );
+            shader.uniform( "coloroffset", mKaliParams.mColorOffset );
             shader.uniform( "antialias", mKaliParams.antialias );
             break;
             
@@ -398,7 +414,7 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "fieldScale", mSimplicityParams.mFieldScale );
             shader.uniform( "fieldSubtract", mSimplicityParams.mFieldSubtract );
             shader.uniform( "timeScale", mSimplicityParams.mTimeScale );
-            shader.uniform( "panSpeed", mSimplicityParams.mPanSpeed );
+            shader.uniform( "panPos", mSimplicityParams.mPanPos() );
             shader.uniform( "uvOffset", mSimplicityParams.mUVOffset );
             shader.uniform( "uvScale", mSimplicityParams.mUVScale );
             break;

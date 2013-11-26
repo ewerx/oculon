@@ -132,8 +132,11 @@ enm,
         float texturescale;
         
         float rotspeed;
+        float mRotation;
+        float mRotationOffset;
         
         float colspeed;
+        float mColorOffset;
         
         float antialias;
     };
@@ -155,8 +158,9 @@ enm,
         float               mFieldSubtract;
         float               mTimeScale;
         ci::Vec3f           mPanSpeed;
+        ci::Anim<ci::Vec3f> mPanPos;
         ci::Vec3f           mUVOffset;
-        float               mUVScale;
+        ci::Anim<float>     mUVScale;
     };
     tSimplicityParams mSimplicityParams;
     

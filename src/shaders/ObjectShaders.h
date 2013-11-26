@@ -104,6 +104,8 @@ enm,
     {
         float mSpeed;
         float mLightSpeed;
+        float mObjTime;
+        float mLightTime;
         int mNumObjects;
         int mRenderSteps;
         int mQuality;
@@ -119,6 +121,8 @@ enm,
         int                 mAngleQ;
         int                 mAngleR;
         float               mThickness;
+        float               mOffset;
+        bool                mAudioOffset;
     };
     tTilingsParams mTilingsParams;
     
