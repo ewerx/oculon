@@ -104,7 +104,7 @@ void AudioSignal::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
     BOOST_FOREACH( SubScene* &ss, mSubScenes )
     {

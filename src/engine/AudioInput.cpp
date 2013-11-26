@@ -46,6 +46,13 @@ void AudioInput::setup()
     
     mFftInit = false;
     mGain = 1.0f;
+    
+    for (int i = 0; i < NUM_TRACKS; ++i)
+    {
+        mLiveTrackData[i].mHighLevel = 0.0f;
+        mLiveTrackData[i].mMidLevel = 0.0f;
+        mLiveTrackData[i].mLowLevel = 0.0f;
+    }
 }
 
 void AudioInput::setupInterface( Interface* interface )
@@ -227,7 +234,7 @@ void AudioInput::setupLiveGrabberInput(OscServer &oscServer)
 {
     oscServer.registerCallback( "/HiFollower", this, &AudioInput::handleHighOsc );
     oscServer.registerCallback( "/MidFollower", this, &AudioInput::handleMidOsc );
-    oscServer.registerCallback( "/LowFollower", this, &AudioInput::handleLowOsc );
+    oscServer.registerCallback( "/LoFollower", this, &AudioInput::handleLowOsc );
 }
 
 // TODO: send same message and use param for specifying low/mid/high
@@ -237,7 +244,7 @@ void AudioInput::handleHighOsc(const ci::osc::Message &message)
     {
         int track = message.getArgAsInt32(0);
         float val = message.getArgAsFloat(1);
-        mLiveTrackData[track].mHighLevel = val;
+        mLiveTrackData[track-1].mHighLevel = val;
     }
 }
 
@@ -247,7 +254,7 @@ void AudioInput::handleMidOsc(const ci::osc::Message &message)
     {
         int track = message.getArgAsInt32(0);
         float val = message.getArgAsFloat(1);
-        mLiveTrackData[track].mMidLevel = val;
+        mLiveTrackData[track-1].mMidLevel = val;
     }
 }
 
@@ -257,6 +264,6 @@ void AudioInput::handleLowOsc(const ci::osc::Message &message)
     {
         int track = message.getArgAsInt32(0);
         float val = message.getArgAsFloat(1);
-        mLiveTrackData[track].mLowLevel = val;
+        mLiveTrackData[track-1].mLowLevel = val;
     }
 }

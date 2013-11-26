@@ -44,9 +44,9 @@ void AudioInputHandler::setup(bool fboEnabled)
     // FILTER
     mLowPassFilter      = 0.25f;
     mHighPassFilter     = 0.75f;
-    mAvgVolume[BAND_LOW]       = 0.0f;
-    mAvgVolume[BAND_MID]       = 0.0f;
-    mAvgVolume[BAND_HIGH]      = 0.0f;
+    mAvgVolume[BAND_LOW].mValue       = 0.0f;
+    mAvgVolume[BAND_MID].mValue      = 0.0f;
+    mAvgVolume[BAND_HIGH].mValue      = 0.0f;
 
     // FBO
     mAudioFboDim        = KISS_DEFAULT_DATASIZE; // 256 bands
@@ -65,6 +65,8 @@ void AudioInputHandler::setup(bool fboEnabled)
         gl::clear();
         mAudioFbo.unbindFramebuffer();
     }
+    
+    mOSCFalloff = false;
 }
 
 void AudioInputHandler::setupInterface( Interface* interface, const std::string &name )
@@ -83,14 +85,15 @@ sourceNames.push_back(nam);
                        .maxValue(AUDIO_SOURCE_COUNT)
                        .oscReceiver(name, "audio/input_source")
                        .isVertical(), sourceNames);
+    interface->addParam(CreateBoolParam( "OSCFalloff", &mOSCFalloff ));
 
     interface->addParam(CreateFloatParam( "LPF", &mLowPassFilter ));
     interface->addParam(CreateFloatParam( "HPF", &mHighPassFilter ));
     interface->gui()->addSeparator();
     // these are just to show a little equalizer
-    interface->addParam(CreateFloatParam( "Avg Vol: Low", &mAvgVolume[BAND_LOW]() ));
-    interface->addParam(CreateFloatParam( "Avg Vol: Mid", &mAvgVolume[BAND_MID]() ));
-    interface->addParam(CreateFloatParam( "Avg Vol: High", &mAvgVolume[BAND_HIGH]() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Low", mAvgVolume[BAND_LOW].mValue.ptr() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: Mid", mAvgVolume[BAND_MID].mValue.ptr() ));
+    interface->addParam(CreateFloatParam( "Avg Vol: High", mAvgVolume[BAND_HIGH].mValue.ptr() ));
     
     interface->gui()->addLabel("distribution");
     if (mAudioFboEnabled)
@@ -139,20 +142,30 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
         values[BAND_LOW] = audioInput.getLowLevelForLiveTrack(mInputSource-1);
         values[BAND_MID] = audioInput.getMidLevelForLiveTrack(mInputSource-1);
         values[BAND_HIGH] = audioInput.getHighLevelForLiveTrack(mInputSource-1);
-        
-//        for (int i = 0; i < BANDS; ++i) {
-//        if (values[i] > mAvgVolume[i])
-//        {
-//            mFftFalloff[i].mFalling = false;
-//            // fade in (20ms)
-//            //timeline().apply( &mFftFalloff[i].mValue, values[i], 0.02f, EaseNone() );
-//            mFftFalloff[index].mValue = value;
-//        } else if (value < (mFftFalloff[index].mValue*0.5f)) {
-//            // fade out
-//            mFftFalloff[index].mFalling = true;
-//            timeline().apply( &mFftFalloff[index].mValue, 0.0f, falloff, getFalloffFunction() );
-//        }
-//        }
+        console() << values[BAND_LOW] << std::endl;
+        if(mOSCFalloff)
+        {
+            for (int i = 0; i < BAND_COUNT; ++i) {
+                const float value = values[i];
+                if (value > mAvgVolume[i].mValue)
+                {
+                    mAvgVolume[i].mFalling = false;
+                    // fade in (2ms)
+                    timeline().apply( &mAvgVolume[i].mValue, value, 0.002f, EaseNone() );
+                    //mAvgVolume[i].mValue = value;
+                } else if (!mAvgVolume[i].mFalling && value < (mAvgVolume[i].mValue*0.5f)) {
+                    // fade out
+                    mAvgVolume[i].mFalling = true;
+                    timeline().apply( &mAvgVolume[i].mValue, 0.0f, mFalloffTime, getFalloffFunction() );
+                }
+            }
+        }
+        else
+        {
+            mAvgVolume[BAND_LOW].mValue = values[BAND_LOW] * gain;
+            mAvgVolume[BAND_MID].mValue = values[BAND_MID] * gain;
+            mAvgVolume[BAND_HIGH].mValue = values[BAND_HIGH] * gain;
+        }
         
         return;
     }
@@ -191,7 +204,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
                 mFftFalloff[index].mFalling = false;
                 mFftFalloff[index].mBandIndex = bandIndex;
                 // fade in (20ms)
-                timeline().apply( &mFftFalloff[index].mValue, value, 0.02f, EaseNone() );
+                timeline().apply( &mFftFalloff[index].mValue, value, 0.002f, EaseNone() );
                 //mFftFalloff[index].mValue = value;
             } else if (!mFftFalloff[index].mFalling && value < (mFftFalloff[index].mValue*0.5f)) {
                 // fade out
@@ -247,10 +260,10 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
     }
     
     // calculate avg volumes for low/mid/high for quick access and visual display
-    mAvgVolume[BAND_LOW] = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
+    mAvgVolume[BAND_LOW].mValue = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
     //HACKHACK: need to figure out why mid/high are always so low compared to bass
-    mAvgVolume[BAND_MID] = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter) * 10.0f;
-    mAvgVolume[BAND_HIGH] = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f) * 5.0f;
+    mAvgVolume[BAND_MID].mValue = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter) * 10.0f;
+    mAvgVolume[BAND_HIGH].mValue = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f) * 5.0f;
 }
 
 void AudioInputHandler::drawDebug(const Vec2f& windowSize)
