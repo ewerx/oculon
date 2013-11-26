@@ -37,6 +37,15 @@ uniform float       iThickness3;
 uniform float       iPower3;
 uniform vec2        iCenter3;
 
+// ringset3
+uniform float       iTime4;
+uniform vec4        iColor4;
+uniform float       iScale4;
+uniform float       iFrequency4;
+uniform float       iThickness4;
+uniform float       iPower4;
+uniform vec2        iCenter4;
+
 
 #ifdef GL_ES
 precision highp float;
@@ -83,10 +92,12 @@ void main(void)
     vec2 pos1 = iCenter1 - uv; // pos in -0.5 to 0.5 range
     vec2 pos2 = iCenter2 - uv; // pos in -0.5 to 0.5 range
     vec2 pos3 = iCenter3 - uv; // pos in -0.5 to 0.5 range
+    vec2 pos4 = iCenter4 - uv; // pos in -0.5 to 0.5 range
     // compensate for aspect ratio
     pos1.y *= invAr;
     pos2.y *= invAr;
     pos3.y *= invAr;
+    pos4.y *= invAr;
     // pos.y = pos.x ==> vertical lines
     // pos.x = pos.y ==> horizontal lines
     
@@ -97,6 +108,7 @@ void main(void)
     vec4 ringset1 = iColor1 * calcRingSet( pos1, iTime1, iFrequency1, iScale1, iThickness1, iPower1 );
     vec4 ringset2 = iColor2 * calcRingSet( pos2, iTime2, iFrequency2, iScale2, iThickness2, iPower2 );
     vec4 ringset3 = iColor3 * calcRingSet( pos3, iTime3, iFrequency3, iScale3, iThickness3, iPower3 );
+    vec4 ringset4 = iColor4 * calcRingSet( pos4, iTime4, iFrequency4, iScale4, iThickness4, iPower4 );
 	
-	gl_FragColor = ringset1 * iColor1.w + ringset2 * iColor2.w + ringset3 * iColor3.w;
+	gl_FragColor = ringset1 * iColor1.w + ringset2 * iColor2.w + ringset3 * iColor3.w + ringset4 * iColor4.w;
 }

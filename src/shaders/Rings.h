@@ -90,6 +90,12 @@ private:
         float           mPrevPower;
         AudioInputHandler mAudioInputHandler;
         int             mResponseBand;
+        
+        bool mSeparateByAudio;
+        bool mSpin;
+        float mSpinRate;
+        float mSpinTheta;
+        float mSpinRadius;
     };
     enum { NUM_RING_SETS = 4 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];

@@ -34,15 +34,9 @@ void Rings::setup()
     
     mAnimTime = 0.3f;
     
-    mSeparateByAudio = false;
-    mSpin = false;
-    mSpinRate = 1.0f;
-    mSpinTheta = 0.0f;
-    mSpinSeparation = 5.0f;
-    
     mRingSetParams[0].mColor = ColorA(1.0f,1.0f,1.0f,1.0f);
     mRingSetParams[0].mTimeScale = -1.0f;
-    mRingSetParams[0].mFrequency = 5.0f;
+    mRingSetParams[0].mFrequency = 20.0f;
     mRingSetParams[0].mScale = 1.0f;
     mRingSetParams[0].mThickness = 0.15f;
     mRingSetParams[0].mPower = 0.5f;
@@ -51,7 +45,7 @@ void Rings::setup()
     
     mRingSetParams[1].mColor = ColorA(1.0f,1.0f,1.0f,0.0f);
     mRingSetParams[1].mTimeScale = 1.0f;
-    mRingSetParams[1].mFrequency = 5.0f;
+    mRingSetParams[1].mFrequency = 20.0f;
     mRingSetParams[1].mScale = 1.0f;
     mRingSetParams[1].mThickness = 0.15f;
     mRingSetParams[1].mPower = 0.5f;
@@ -60,7 +54,7 @@ void Rings::setup()
     
     mRingSetParams[2].mColor = ColorA(1.0f,1.0f,1.0f,0.0f);
     mRingSetParams[2].mTimeScale = 1.0f;
-    mRingSetParams[2].mFrequency = 5.0f;
+    mRingSetParams[2].mFrequency = 50.0f;
     mRingSetParams[2].mScale = 1.0f;
     mRingSetParams[2].mThickness = 0.15f;
     mRingSetParams[2].mPower = 0.5f;
@@ -69,7 +63,7 @@ void Rings::setup()
     
     mRingSetParams[3].mColor = ColorA(1.0f,1.0f,1.0f,0.0f);
     mRingSetParams[3].mTimeScale = 1.0f;
-    mRingSetParams[3].mFrequency = 5.0f;
+    mRingSetParams[3].mFrequency = 50.0f;
     mRingSetParams[3].mScale = 1.0f;
     mRingSetParams[3].mThickness = 0.15f;
     mRingSetParams[3].mPower = 0.5f;
@@ -88,6 +82,12 @@ void Rings::setup()
         mRingSetParams[i].mActualPower = mRingSetParams[i].mPower;
         mRingSetParams[i].mActualScale = mRingSetParams[i].mScale;
         mRingSetParams[i].mActualCenter = mRingSetParams[i].mCenter;
+        
+        mRingSetParams[i].mSeparateByAudio = false;
+        mRingSetParams[i].mSpin = false;
+        mRingSetParams[i].mSpinRate = 0.4f;
+        mRingSetParams[i].mSpinTheta = 0.0f;
+        mRingSetParams[i].mSpinRadius = 0.1f;
     }
     
     reset();
@@ -107,16 +107,6 @@ void Rings::setupInterface()
                          .minValue(0.01f)
                          .maxValue(10.0f));
     
-    
-    mInterface->addParam(CreateBoolParam("spin", &mSpin));
-    mInterface->addParam(CreateBoolParam("sepaudio", &mSeparateByAudio));
-    mInterface->addParam(CreateFloatParam("spinrate", &mSpinRate)
-                         .minValue(-2.0f)
-                         .maxValue(2.0f));
-    mInterface->addParam(CreateFloatParam("spinsep", &mSpinSeparation)
-                         .minValue(0.0f)
-                         .maxValue(1.0f));
-    
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
         std::string indexStr = std::to_string(i+1);
@@ -130,15 +120,19 @@ void Rings::setupInterface()
         // all param names must be unique for load/save to work!
         if (i == 0) {
             mInterface->addButton(CreateTriggerParam("sync all", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 0, 0) );
+            mInterface->addButton(CreateTriggerParam("sync <--", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 1, 0) );
         }
         if (i == 1) {
+            mInterface->addButton(CreateTriggerParam("--> sync", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 0, 1) );
             mInterface->addButton(CreateTriggerParam("sync <--", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 2, 1) );
         }
         else if (i == 2) {
             mInterface->addButton(CreateTriggerParam("--> sync", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 1, 2) );
+            mInterface->addButton(CreateTriggerParam("sync <--", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 3, 2) );
         }
         else if (i == 3) {
             mInterface->addButton(CreateTriggerParam("--> sync", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 2, 3) );
+            mInterface->addButton(CreateTriggerParam("sync all", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 3, 3) );
         }
         
         mInterface->addParam(CreateFloatParam("timescale" + indexStr, &mRingSetParams[i].mTimeScale)
@@ -180,6 +174,16 @@ void Rings::setupInterface()
                               .oscReceiver(name))->registerCallback( boost::bind( &Rings::zoomOut, this, i) );
         mInterface->addButton(CreateTriggerParam("zoom restore", NULL)
                               .oscReceiver(name))->registerCallback( boost::bind( &Rings::zoomRestore, this, i) );
+        
+        // spin
+        mInterface->addParam(CreateBoolParam("spin", &mRingSetParams[i].mSpin));
+        mInterface->addParam(CreateBoolParam("sepaudio", &mRingSetParams[i].mSeparateByAudio));
+        mInterface->addParam(CreateFloatParam("spinrate", &mRingSetParams[i].mSpinRate)
+                             .minValue(-2.0f)
+                             .maxValue(2.0f));
+        mInterface->addParam(CreateFloatParam("spinsep", &mRingSetParams[i].mSpinRadius)
+                             .minValue(0.0f)
+                             .maxValue(1.0f));
         
         // audio
         mInterface->addParam(CreateBoolParam("power-audio" + indexStr, &mRingSetParams[i].mPowerByAudio)
@@ -310,16 +314,24 @@ void Rings::update(double dt)
     {
         mRingSetParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
         mRingSetParams[i].mElapsedTime += mRingSetParams[i].mTimeScale*dt;
+        
+        if (mRingSetParams[i].mSpin) {
+            float r = mRingSetParams[i].mSpinRadius;
+            if (mRingSetParams[i].mSeparateByAudio)
+            {
+                float audioLevel = mRingSetParams[i].mAudioInputHandler.getAverageVolumeLowFreq();
+                r *= audioLevel;
+            }
+            if (i == 1 || i == 3) r *= -1.0f;
+            mRingSetParams[i].mSpinTheta += dt * mRingSetParams[i].mSpinRate;
+            mRingSetParams[i].mActualCenter().x = mRingSetParams[0].mCenter.x + r * sin( mRingSetParams[i].mSpinTheta);
+            mRingSetParams[i].mActualCenter().y = mRingSetParams[0].mCenter.y + r * cos( mRingSetParams[i].mSpinTheta);
+//            mRingSetParams[1].mActualCenter().x = mRingSetParams[1].mCenter.x - r * sin(mSpinTheta*0.25f);
+//            mRingSetParams[1].mActualCenter().y = mRingSetParams[1].mCenter.y - r * cos(mSpinTheta*0.25f);
+        }
     }
     
-    if (mSpin) {
-        float r = mSpinSeparation;
-        mSpinTheta += dt * mSpinRate;
-        mRingSetParams[0].mActualCenter().x = mRingSetParams[0].mCenter.x + r * sin(mSpinTheta);
-        mRingSetParams[0].mActualCenter().y = mRingSetParams[0].mCenter.y + r * cos(mSpinTheta);
-        mRingSetParams[1].mActualCenter().x = mRingSetParams[1].mCenter.x - r * sin(mSpinTheta*0.25f);
-        mRingSetParams[1].mActualCenter().y = mRingSetParams[1].mCenter.y - r * cos(mSpinTheta*0.25f);
-    }
+    
 }
 
 void Rings::draw()
