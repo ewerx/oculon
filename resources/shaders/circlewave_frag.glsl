@@ -40,7 +40,7 @@ void main(void)
 		float a = .9*float(i)*tau/float(n)-.6;
 		vec3 phase;
         if (iColorSep) {
-            phase = smoothstep(-1.0,.5,vec3(cos(a),cos(a-tau/3.0),cos(a-tau*2.0/3.0)));
+            phase = smoothstep(-1.0,.5,vec3(cos(a),cos(a-tau/3.0),cos(a-tau/3.0)));
         } else {
             float g = cos(a-tau*2.0/3.0);
             phase = smoothstep(-1.0,.5,vec3(g));
