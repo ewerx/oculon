@@ -250,6 +250,9 @@ enm,
     MotionBlurRenderer  mMotionBlurRenderer;
     
     AudioInputHandler   mAudioInputHandler;
+    
+    // MUTEK HACKS
+    bool mNoiseSim;
 
 private:
     void setupPingPongFbo();

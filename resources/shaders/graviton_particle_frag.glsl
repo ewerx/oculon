@@ -9,6 +9,7 @@ uniform vec3 attractorPos2;
 uniform vec3 attractorPos3;
 uniform float eps;
 uniform float dt;
+uniform bool noiseSim;
 varying vec4 texCoord;
 
 void main(void)

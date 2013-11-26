@@ -50,10 +50,10 @@ void Graviton::setup()
     mEnableLineSmoothing = false;
     mEnablePointSmoothing = false;
     mUseImageForPoints = true;
-    mPointSize = 1.0f;
+    mPointSize = 0.5f;
     //mParticleAlpha = 0.5f;
     mUseMotionBlur = false;
-    mColorScale = ColorAf( 0.1f, 0.2f, 0.3f, 0.5f );
+    mColorScale = ColorAf( 0.1f, 0.11f, 0.12f, 0.5f );//ColorAf( 0.1f, 0.2f, 0.3f, 0.5f );
     
     mDamping = 1.0f;
     mGravity = 100.0f;
