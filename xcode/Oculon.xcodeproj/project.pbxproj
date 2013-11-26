@@ -64,6 +64,7 @@
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
+		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
 		7C62765D1824A92E00724B87 /* PingPongFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C62765B1824A92E00724B87 /* PingPongFbo.cpp */; };
 		7C6276601824AA6D00724B87 /* graviton_displacement_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C62765F1824AA6D00724B87 /* graviton_displacement_vert.glsl */; };
 		7C6276621824AA7C00724B87 /* graviton_displacement_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6276611824AA7C00724B87 /* graviton_displacement_frag.glsl */; };
@@ -517,6 +518,8 @@
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
 		7C5B697918197A7F00AB2C8D /* Rings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rings.h; sourceTree = "<group>"; };
+		7C60384E18417A910068F4C1 /* Voronoi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Voronoi.cpp; sourceTree = "<group>"; };
+		7C60384F18417A910068F4C1 /* Voronoi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voronoi.h; sourceTree = "<group>"; };
 		7C6276581824780000724B87 /* FractalShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractalShaders.cpp; sourceTree = "<group>"; };
 		7C6276591824780000724B87 /* FractalShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractalShaders.h; sourceTree = "<group>"; };
 		7C62765B1824A92E00724B87 /* PingPongFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingPongFbo.cpp; sourceTree = "<group>"; };
@@ -1344,6 +1347,8 @@
 				7C4C6741181C9928003049AA /* TextureShaders.h */,
 				7C5B69751819745800AB2C8D /* Tilings.cpp */,
 				7C5B69761819745800AB2C8D /* Tilings.h */,
+				7C60384E18417A910068F4C1 /* Voronoi.cpp */,
+				7C60384F18417A910068F4C1 /* Voronoi.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -2754,6 +2759,7 @@
 				7C79C94217650F8F00E71F9D /* Velocity.frag in Sources */,
 				7C79C94617650F8F00E71F9D /* motionBlur.frag in Sources */,
 				7C79C94817650F8F00E71F9D /* passThru.vert in Sources */,
+				7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */,
 				7C79C94917650F8F00E71F9D /* passthru.vsh in Sources */,
 				7C79C94B17650F8F00E71F9D /* passThruNormals.vert in Sources */,
 				7C79C95417650F8F00E71F9D /* shader.fsh in Sources */,

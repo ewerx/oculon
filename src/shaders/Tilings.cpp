@@ -16,9 +16,8 @@
 using namespace ci;
 
 Tilings::Tilings()
-: Scene("Tilings")
+: Scene("tilings")
 {
-    //mAudioInputHandler.setup(this, true);
 }
 
 Tilings::~Tilings()
@@ -29,6 +28,8 @@ void Tilings::setup()
 {
     Scene::setup();
     
+    mAudioInputHandler.setup(false);
+    
     mShader = loadFragShader("tilings_frag.glsl");
     
     reset();
@@ -38,52 +39,84 @@ void Tilings::reset()
 {
     mElapsedTime = 0.0f;
     
-    
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
-    mTimeScale = 1.0f;
+    mTimeScale = 0.02f;
+    mOffset = 0.0f;
+    
+    mIterations = 20;
+    mAngleP = 3;
+    mAngleQ = 5;
+    mAngleR = 2;
+    mThickness = 0.03f;
+    
+    mAudioOffset = false;
+    mResponseBand = 1;
 }
 
 void Tilings::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
                          .minValue(0.0f)
-                         .maxValue(10.0f));
+                         .maxValue(2.0f));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "iterations", &mIterations )
                          .minValue(1)
-                         .maxValue(100)
+                         .maxValue(40)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateIntParam( "anglep", &mAngleP )
-                         .minValue(1)
-                         .maxValue(100)
+                         .minValue(2)
+                         .maxValue(40)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateIntParam( "angleq", &mAngleQ )
-                         .minValue(1)
-                         .maxValue(100)
+                         .minValue(2)
+                         .maxValue(12)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateIntParam( "angler", &mAngleR )
                          .minValue(1)
-                         .maxValue(100)
+                         .maxValue(12)
                          .oscReceiver(getName()));
     //mInterface->addParam(CreateVec3fParam("center", &mCenter, Vec3f::zero(), Vec3f::one()));
     mInterface->addParam(CreateFloatParam( "Thickness", &mThickness )
                          .minValue(0.0f)
-                         .maxValue(2.0f));
+                         .maxValue(1.0f));
     
-    //mAudioInputHandler.setupInterface(mInterface);
+    mInterface->addParam(CreateBoolParam("audio", &mAudioOffset));
+    mInterface->addParam(CreateIntParam( "audioband", &mResponseBand )
+                         .maxValue(2));
+    
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 void Tilings::update(double dt)
 {
     Scene::update(dt);
     
-    //mAudioInputHandler.update(dt, mApp->getAudioInput());
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
-    mElapsedTime += dt;
+    if (mAudioOffset) {
+        float audioLevel = 0.0f;
+        switch (mResponseBand) {
+            case 0:
+            audioLevel = mAudioInputHandler.getAverageVolumeLowFreq();
+            break;
+            case 1:
+            audioLevel = mAudioInputHandler.getAverageVolumeMidFreq();
+            break;
+            case 2:
+            audioLevel = mAudioInputHandler.getAverageVolumeHighFreq();
+            break;
+            default:
+            break;
+        }
+        mOffset = audioLevel * 5.0f;
+    }
+    
+    
+    mElapsedTime += dt * mTimeScale;
 }
 
 void Tilings::draw()
@@ -113,6 +146,7 @@ void Tilings::shaderPreDraw()
     mShader.uniform( "iAngleR", mAngleR );
     mShader.uniform( "iCenter", mCenter );
     mShader.uniform( "iThickness", mThickness );
+    mShader.uniform( "iOffset", mOffset);
 }
 
 void Tilings::drawShaderOutput()

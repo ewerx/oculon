@@ -1,5 +1,5 @@
 //
-//  Tilings.h
+//  Voronoi.h
 //  Oculon
 //
 //  Created by Ehsan on 13-10-24.
@@ -22,11 +22,11 @@
 //
 // Audio input tests
 //
-class Tilings : public Scene
+class Voronoi : public Scene
 {
 public:
-    Tilings();
-    virtual ~Tilings();
+    Voronoi();
+    virtual ~Voronoi();
     
     // inherited from Scene
     void setup();
@@ -61,12 +61,18 @@ private:
     float               mTimeScale;
     double              mElapsedTime;
     
-    int                 mIterations;
-    int                 mAngleP;
-    int                 mAngleQ;
-    int                 mAngleR;
-    ci::Vec3f           mCenter;
-    float               mThickness;
-    float               mOffset;
+    ci::Vec3f mBorderColor;
+    float mSpeed;
+    float mZoom;
+    float mBorderIn;
+    float mBorderOut;
+    ci::Vec3f mSeedColor;
+    float mSeedSize;
+    float mCellLayers;
+    ci::Vec3f mCellColor;
+    float mCellBorderStrength;
+    float mCellBrightness;
+    float mDistortion;
+    bool mAudioDistortion;
 };
 

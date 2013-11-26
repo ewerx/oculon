@@ -34,9 +34,11 @@
 // shader scenes
 #include "Cells.h"
 #include "CircleWave.h"
-#include "ObjectShaders.h"
 #include "Rings.h"
+#include "Tilings.h"
+#include "ObjectShaders.h"
 #include "TextureShaders.h"
+#include "Voronoi.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -373,6 +375,8 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("cells") )              addScene( new Cells() );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
     if( mConfig.getBool("rings") )              addScene( new Rings() );
+    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+    if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     
