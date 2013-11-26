@@ -333,6 +333,9 @@ formationNames.push_back(nam);
                          .maxValue(300.0f)
                          .oscReceiver(mName,"maxradius")
                          .isEncoder(1.0f));
+    mInterface->addParam(CreateFloatParam("Damping", &mDamping)
+                         .maxValue(0.1f)
+                         .oscReceiver(mName,"damping"));
                                               
     mInterface->addParam(CreateBoolParam("Wall Bounce", &mBounceOffWalls)
                          .oscReceiver(mName,"wallbounce"));
@@ -340,6 +343,7 @@ formationNames.push_back(nam);
                          .oscReceiver(mName,"walldamping"));
     mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
                          .minValue(-10.0f).maxValue(50.0f));
+    mInterface->addParam(CreateFloatParam("Wall Damping", &mWallDamping));
     
     // audio patterns
     mInterface->gui()->addColumn();
