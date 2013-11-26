@@ -9,6 +9,12 @@ uniform sampler2D information;
 uniform float screenWidth;
 uniform float spriteWidth;
 
+uniform bool audioReactive;
+uniform vec3 trackAudio1;
+uniform vec3 trackAudio2;
+uniform vec3 trackAudio3;
+uniform vec3 trackAudio4;
+
 varying float age;
 varying float maxAge;
 
@@ -27,6 +33,10 @@ void main()
 	
     // particles shrink with age
 	gl_PointSize = 6.0 * spriteWidth - (6.0 * spriteWidth * age);
+    
+    if (audioReactive) {
+        gl_PointSize = clamp(200.0 * gl_MultiTexCoord0.s * gl_MultiTexCoord0.t * trackAudio1.x - (6.0 * spriteWidth * age), spriteWidth, spriteWidth * 8.0);
+    }
 
 	gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
 	gl_TexCoord[0] = gl_MultiTexCoord0;

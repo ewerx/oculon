@@ -23,7 +23,6 @@ using namespace std;
 Dust::Dust()
 : Scene("dust")
 {
-    //mAudioInputHandler.setup(true);
 }
 
 Dust::~Dust()
@@ -44,16 +43,18 @@ void Dust::setup()
     setupFBO();
     setupVBO();
     
-    //mAudioInputHandler.setup(false);
+    mAudioInputHandler.setup(false);
     
     mReset = false;
+    mAudioTime = false;
     
     // params
     mTimeStep = 0.1f;
     mPointSize = 1.0f;
     mDecayRate = 0.5f;
     
-    mUseDynamicTex = false;
+    mAudioReactive = false;
+    mUseDynamicTex = true;
     setupDynamicTexture();
 }
 
@@ -214,12 +215,19 @@ void Dust::setupInterface()
                          .oscReceiver(mName));
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
                          .oscReceiver(mName));
+    
+    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
+    //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
+    
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 #pragma mark - Update
 
 void Dust::update(double dt)
 {
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    
     gl::disableAlphaBlending();
     
     gl::disableAlphaBlending();
@@ -250,6 +258,10 @@ void Dust::update(double dt)
         mNoiseTex.bind(5);
     }
     
+    float simdt = (float)(dt*mTimeStep);
+    float decayRate = mDecayRate;
+    if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
+    if (mAudioTime) decayRate = mDecayRate + mAudioInputHandler.getAverageVolumeMidFreq();
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );
@@ -257,9 +269,10 @@ void Dust::update(double dt)
 	mSimulationShader.uniform( "oVelocities", 3);
 	mSimulationShader.uniform( "oPositions", 4);
   	mSimulationShader.uniform( "noiseTex", 5);
-    mSimulationShader.uniform( "dt", (float)(dt*mTimeStep) );
-    mSimulationShader.uniform( "decayRate", mDecayRate );
+    mSimulationShader.uniform( "dt", simdt );
+    mSimulationShader.uniform( "decayRate", decayRate );
     mSimulationShader.uniform( "reset", mReset );
+    //mSimulationShader.uniform( "takeFormation", mTakeFormation );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
@@ -321,8 +334,26 @@ void Dust::draw()
     mRenderShader.uniform("information", 3);
     mRenderShader.uniform("screenWidth", (float)kBufSize);
     mRenderShader.uniform("spriteWidth", mPointSize);
-    mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
-    mRenderShader.uniform("P", getCamera().getProjectionMatrix());
+    
+    mRenderShader.uniform("audioReactive", mAudioReactive);
+    if (mAudioReactive)
+    {
+        const int NUM_TRACKS = 4;
+        Vec3f trackLevels[NUM_TRACKS];
+//        for( int i = 0; i < NUM_TRACKS; ++i )
+//        {
+//            trackLevels[i] = Vec3f(mApp->getAudioInput().getLowLevelForLiveTrack(i),
+//                                   mApp->getAudioInput().getMidLevelForLiveTrack(i),
+//                                   mApp->getAudioInput().getHighLevelForLiveTrack(i));
+//        }
+        trackLevels[0] = Vec3f(mAudioInputHandler.getAverageVolumeLowFreq(),
+                               mAudioInputHandler.getAverageVolumeMidFreq(),
+                               mAudioInputHandler.getAverageVolumeHighFreq());
+        mRenderShader.uniform("trackAudio1", trackLevels[0]);
+//        mRenderShader.uniform("trackAudio2", trackLevels[1]);
+//        mRenderShader.uniform("trackAudio3", trackLevels[2]);
+//        mRenderShader.uniform("trackAudio4", trackLevels[3]);
+    }
     
     glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
     

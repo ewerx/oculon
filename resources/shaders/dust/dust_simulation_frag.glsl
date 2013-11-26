@@ -10,6 +10,7 @@ uniform float dt;
 uniform float decayRate;
 uniform vec3 constraints;
 uniform bool reset;
+uniform bool takeFormation;
 
 varying vec4 texCoord;
 
@@ -26,15 +27,29 @@ void main()
     
 	float decay = texture2D( information, texCoord.st ).r;
 	float maxAge = texture2D( information, texCoord.st ).g;
-
-    vec2 noise = texture2D( noiseTex, pos.xy ).rg;
     
     age += dt * decay * decayRate;
     
-    //vec3 force = vec3(noise - pos.xy,0.0);
-    vec3 force = vec3(noise.x,noise.y,0.0);
-    float fMag = length(force);
-    vec3 a = invMass * force;// * pow(fMag,0.9);
+    vec3 a;
+    if (takeFormation) {
+        // where tex is white those points have strongest attraction to their position
+        // which is the tex coord
+        //vec2 noise = texture2D( noiseTex, pos.xy ).rg;
+        float targetPow = length(texture2D( noiseTex, texCoord.st ).rgb);
+        vec3 target = vec3(texCoord.st, 0.0);
+        vec3 dv = target - pos;
+        float mag = length(dv);
+        //a = target * invMass * mag * dv * targetPow;
+        //a = 0.0;
+        vel += dv * targetPow;
+    }
+    {
+        vec2 noise = texture2D( noiseTex, pos.xy ).rg;
+        //vec3 force = vec3(noise - pos.xy,0.0);
+        vec3 force = vec3(noise.x,noise.y,0.0);
+        float fMag = length(force);
+        a = invMass * force;// * pow(fMag,0.9);
+    }
 	vel += dt * a;
     
     pos.x += vel.x * dt;

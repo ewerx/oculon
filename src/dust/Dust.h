@@ -60,7 +60,7 @@ private:
     // particle system
     enum
     {
-        kBufSize = 1024,
+        kBufSize = 512,
         kNumParticles = (kBufSize * kBufSize)
     };
     
@@ -84,8 +84,11 @@ private:
     bool mUseDynamicTex;
     bool mReset;
     
-    //AudioInputHandler   mAudioInputHandler;
+    AudioInputHandler mAudioInputHandler;
     
+    // MUTEK HACKS
+    bool mAudioReactive;
+    bool mAudioTime;
 };
 
 
