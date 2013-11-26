@@ -60,28 +60,44 @@ private:
     bool zoomOut( const int ringIndex );
     bool zoomRestore( const int ringIndex );
     
+    bool updateFreq( const int ringIndex );
+    bool updateScale( const int ringIndex );
+    bool updatePower( const int ringIndex );
+    bool updateCenter( const int ringIndex );
+    
 private:
 
     ci::gl::GlslProg    mShader;
     
+    float mAnimTime;
     struct tRingSetParams
     {
         ci::Anim<ci::ColorAf>     mColor;
         float           mElapsedTime;
         float           mTimeScale;
         float           mThickness;
-        ci::Anim<float>             mFrequency;
-        ci::Anim<float>             mScale;
-        ci::Anim<float>             mPower;
+        float             mFrequency;
+        float             mScale;
+        float             mPower;
+        ci::Anim<float>             mActualFrequency;
+        ci::Anim<float>             mActualScale;
+        ci::Anim<float>             mActualPower;
         ci::Vec2f       mCenter;
+        ci::Anim<ci::Vec2f> mActualCenter;
         bool            mScaleByAudio;
         bool            mPowerByAudio;
         float           mPrevFrequency;
         float           mPrevPower;
+        AudioInputHandler mAudioInputHandler;
+        int             mResponseBand;
     };
-    enum { NUM_RING_SETS = 3 };
+    enum { NUM_RING_SETS = 4 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];
     
-    AudioInputHandler mAudioInputHandler;
-
+    // MUTEK HACKS
+    bool mSeparateByAudio;
+    bool mSpin;
+    float mSpinRate;
+    float mSpinTheta;
+    float mSpinSeparation;
 };
