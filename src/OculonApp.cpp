@@ -421,7 +421,7 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
         mInterface->gui()->addSeparator();
     }
     std::stringstream labelss;
-    if (sceneIndex < 10)
+    if (sceneIndex < 9)
     {
         labelss << scene->getName() << " (" << sceneIndex+1 << ")";
     }
