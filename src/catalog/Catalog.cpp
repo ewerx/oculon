@@ -160,11 +160,16 @@ void Catalog::setup()
 //
 void Catalog::setupInterface()
 {
-    
+    mInterface->gui()->addColumn();
+    vector<string> camTypeNames;
+#define CATALOG_CAMTYPE_ENTRY( nam, enm ) \
+camTypeNames.push_back(nam);
+    CATALOG_CAMTYPE_TUPLE
+#undef  CATALOG_CAMTYPE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camera")
-                        .isVertical());
+                        .oscReceiver(getName(), "camtype")
+                        .isVertical(), camTypeNames);
     mInterface->addParam(CreateBoolParam( "show names", &mRenderNames )
                         .oscReceiver(getName(), "shownames"));
     mInterface->addParam(CreateBoolParam( "show sol", &mShowSol )
@@ -285,37 +290,18 @@ void Catalog::update(double dt)
     mCameraDistance = getCamera().getEyePoint().length() * 3.261631f;
     //console() << "[catalog] cam distance = " << mCameraDistance << std::endl;
     
-    if( mCamType == CAM_ORBITER_SPRING )
-    {
-        Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
-        
-        Vec3f lookAt = mDestStar ? mDestStar->mPos : Vec3f::zero();
-        Vec3f eyePoint = mHomeStar ? mHomeStar->mPos + Vec3f( 500.0f, 0.0f, 80.0f ) : Vec3f::zero();
-        
-        if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
-        {
-            lookAt = orbiterScene->getCamera().getCenterOfInterestPoint();
-            eyePoint = orbiterScene->getCamera().getEyePoint();
-        }
-        
-        mSpringCam.setEye( eyePoint );
-        mSpringCam.setCenter( lookAt );
-    }
-    else
-    {
-        if( mHomeStar != NULL ){
-            mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
-            mStarCam.setCurrentCam(mSpringCam.getCam());
-        }
-        
-        if( mDestStar != NULL ){
-            mSpringCam.setCenter( mDestStar->mPos );
-            mStarCam.setTarget( mDestStar->mPos );
-            mStarCam.setCurrentCam(mSpringCam.getCam());
-        }
+    if( mHomeStar != NULL ){
+        mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
+        mStarCam.setCurrentCam(mSpringCam.getCam());
     }
     
-	if( mMousePressed ) 
+    if( mDestStar != NULL ){
+        mSpringCam.setCenter( mDestStar->mPos );
+        mStarCam.setTarget( mDestStar->mPos );
+        mStarCam.setCurrentCam(mSpringCam.getCam());
+    }
+    
+	if( mMousePressed )
 		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01 );
 	mSpringCam.update( 0.25f );
 	
@@ -1258,8 +1244,10 @@ const Camera& Catalog::getCamera()
 {
     switch( mCamType )
     {
+        case CAM_MANUAL:
+            return Scene::getCamera();
+            
         case CAM_SPRING:
-        case CAM_ORBITER_SPRING:
             return mSpringCam.getCam();
             
         case CAM_STAR:
