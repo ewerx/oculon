@@ -495,21 +495,6 @@ void Catalog::drawPoints()
 
 // ----------------------------------------------------------------
 //
-void Catalog::drawHud()
-{
-    gl::pushMatrices();
-    
-    //const float width = mApp->getViewportWidth();
-    //const float height = mApp->getViewportHeight();
-    
-    //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
-    //gl::setMatrices(textCam);
-    
-    gl::popMatrices();
-}
-
-// ----------------------------------------------------------------
-//
 void Catalog::drawDebug()
 {
     //gl::pushMatrices();
@@ -517,6 +502,8 @@ void Catalog::drawDebug()
 
     //gl::popMatrices();
 }
+
+#pragma mark - Input
 
 // ----------------------------------------------------------------
 //
@@ -586,6 +573,10 @@ void Catalog::handleMouseDrag( const MouseEvent& event )
 
 ////////------------------------------------------------------
 //
+
+
+
+#pragma mark - OLD SHIT
 
 // ----------------------------------------------------------------
 //
@@ -716,8 +707,6 @@ void Catalog::initFaintVbo()
 	mFaintVbo.unbindBuffers();
 }
 
-//MARK: data parsing
-
 void Catalog::parseStarData( const fs::path &path )
 {
     console() << "[catalog] loading HYG star database..." << std::endl;
@@ -743,7 +732,6 @@ void Catalog::parseStarData( const fs::path &path )
 
 void Catalog::createStar( const std::string &text, int lineNumber )
 {
-#if USE_NEW_DATA
 	tokenizer< escaped_list_separator<char> > tokens(text);
 	int index = 0;
 	double ra, dec, dist;
@@ -810,54 +798,6 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 		
 		index ++;
 	}
-#else // original data
-    char_separator<char> sep(",");
-	tokenizer< char_separator<char> > tokens(text, sep);
-	int index = 0;
-	double ra, dec, dist;
-	float appMag, absMag;
-	float colIndex;
-	std::string name;
-	std::string spectrum;
-	//0			 1    2  3   4    5      6      7        8
-	//lineNumber,name,ra,dec,dist,appMag,absMag,spectrum,colIndex;
-	BOOST_FOREACH(string t, tokens)
-	{
-		if( index == 1 ){
-			if( t.length() > 1 ){
-				name = t;
-			} else {
-				name = "";
-			}
-		} else if( index == 2 ){
-			ra = lexical_cast<double>(t);
-			
-		} else if( index == 3 ){
-			dec = lexical_cast<double>(t);
-			
-		} else if( index == 4 ){
-			dist = lexical_cast<double>(t);
-			
-		} else if( index == 5 ){
-			appMag = lexical_cast<float>(t);
-			
-		} else if( index == 6 ){
-			absMag = lexical_cast<float>(t);
-			
-		} else if( index == 7 ){
-			spectrum = t;
-			
-		} else if( index == 8 ){
-			if( t != " " ){
-				colIndex = lexical_cast<float>(t);
-			} else {
-				colIndex = 0.0f;
-			}
-		}
-		
-		index ++;
-	}
-#endif
 	
 	Vec3f pos = convertToCartesian( ra, dec, dist );
 	
@@ -895,9 +835,8 @@ void Catalog::createStar( const std::string &text, int lineNumber )
     }
 
     if( appMag < 6.0f || name.length() > 1 ){
-#if 1
-        if( name != "Sol" )
-#endif
+
+    if( name != "Sol" )
         mBrightStars.push_back( star );
     } else {
         mFaintStars.push_back( star );

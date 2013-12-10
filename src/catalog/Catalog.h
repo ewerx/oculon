@@ -61,8 +61,6 @@ protected:
     void setupInterface();
     void setupDebugInterface();
     
-    void drawHud();
-    
     ////////------------------------------------------------------
     //
     void        initBrightVbo();
