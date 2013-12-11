@@ -8,9 +8,11 @@
 
 #include "OculonApp.h"
 #include "Parsec.h"
+#include "Orbiter.h"
 
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 
 Parsec::Parsec()
 : Scene("parsec")
@@ -45,6 +47,10 @@ void Parsec::setup()
 	// for values smaller than 1.0, this will cause each view to overlap the other ones
 	//  (angle of overlap: (1 - mSectionOverlap) * mSectionFovDegrees)
 	mSectionOverlap = 1.0f;
+    
+    // cameras
+    mStarCam.setup(this);
+    mSplineCam.setup();
 }
 
 void Parsec::reset()
@@ -53,19 +59,29 @@ void Parsec::reset()
 
 void Parsec::setupInterface()
 {
-    
+    vector<string> camTypeNames;
+#define PARSEC_CAMTYPE_ENTRY( nam, enm ) \
+camTypeNames.push_back(nam);
+    PARSEC_CAMTYPE_TUPLE
+#undef  PARSEC_CAMTYPE_ENTRY
+    mInterface->addEnum(CreateEnumParam( "camera", (int*)(&mCamType) )
+                        .maxValue(CAM_COUNT)
+                        .oscReceiver(getName())
+                        .isVertical(), camTypeNames);
+
+    mSplineCam.setupInterface(mInterface, getName());
 }
 
 void Parsec::loadData()
 {
     // load the star database and create the VBO mesh
-	if( fs::exists( getAssetPath("") / "parsec-stars.cdb" ) )
+//	if( fs::exists( getAssetPath("") / "parsec-stars.cdb" ) )
+//    {
+//		mStars.read( loadFile( getAssetPath("") / "parsec-stars.cdb" ) );
+//    }
+//    else
     {
-		mStars.read( loadFile( getAssetPath("") / "parsec-stars.cdb" ) );
-    }
-    else
-    {
-        mStars.load( loadResource( "starData.csv" ) );
+        mStars.load( loadResource( "hygxyz.csv" ) );
     }
     
 //	if( fs::exists( getAssetPath("") / "labels.cdb" ) )
@@ -92,8 +108,48 @@ void Parsec::loadData()
 
 const ci::Camera& Parsec::getCamera()
 {
-    return mStarCam.getCamera();
-//    return Scene::getCamera();
+    switch( mCamType )
+    {
+        case CAM_MANUAL:
+            return Scene::getCamera();
+            
+        case CAM_SPLINE:
+            return mSplineCam.getCamera();
+            
+        case CAM_STAR:
+            return mStarCam.getCamera();
+            
+        case CAM_ORBITER:
+        {
+            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
+            
+            if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
+            {
+                return orbiterScene->getCamera();
+            }
+            else
+            {
+                return mStarCam.getCamera();
+            }
+        }
+            
+        case CAM_CATALOG:
+        {
+            Scene* scene = mApp->getScene("catalog");
+            
+            if( scene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mStarCam.getCamera();
+            }
+        }
+            
+        default:
+            return mStarCam.getCamera();
+    }
 }
 
 #pragma mark - Update
@@ -101,6 +157,21 @@ const ci::Camera& Parsec::getCamera()
 void Parsec::update(double dt)
 {
     Scene::update(dt);
+    
+    // update camera
+    //TODO: method
+    switch (mCamType) {
+        case CAM_SPLINE:
+            mSplineCam.update(dt);
+            break;
+            
+        case CAM_STAR:
+            mStarCam.update(dt);
+            break;
+            
+        default:
+            break;
+    }
     
     // adjust content based on camera distance
     float distance = getCamera().getEyePoint().length();

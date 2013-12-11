@@ -201,10 +201,10 @@ void ParsecStars::load(DataSourceRef source)
 		if(line.empty()) continue;
 
 		// split into tokens   
-		boost::algorithm::split( tokens, line, boost::is_any_of(","), boost::token_compress_off );
+		boost::algorithm::split( tokens, line, boost::is_any_of(";"), boost::token_compress_off );
 
 		// skip if data was incomplete
-		if(tokens.size() < 13)  continue;
+		if(tokens.size() < 23)  continue;
 
 		// 
 		try {

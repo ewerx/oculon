@@ -14,6 +14,7 @@
 #include "ParsecGrid.h"
 #include "ParsecStars.h"
 #include "StarCam.h"
+#include "SplineCam.h"
 
 class Parsec : public Scene
 {
@@ -57,4 +58,26 @@ protected:
     // cameras
 //    ci::CameraPersp     mStarCam;
     StarCam             mStarCam;
+    SplineCam           mSplineCam;
+    
+    // camera
+#define PARSEC_CAMTYPE_TUPLE \
+PARSEC_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
+PARSEC_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
+PARSEC_CAMTYPE_ENTRY( "Star", CAM_STAR ) \
+PARSEC_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
+PARSEC_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
+//end tuple
+    
+    enum eCamType
+    {
+#define PARSEC_CAMTYPE_ENTRY( nam, enm ) \
+enm,
+        PARSEC_CAMTYPE_TUPLE
+#undef  PARSEC_CAMTYPE_ENTRY
+        
+        CAM_COUNT
+    };
+    eCamType                    mCamType;
+
 };
