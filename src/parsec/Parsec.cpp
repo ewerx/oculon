@@ -38,6 +38,8 @@ void Parsec::setup()
     
 	mGrid.setup();
     mBackground.setup();
+    
+    //TODO: refactor
 	mStars.setup();
 	mStars.setAspectRatio(1.0f);// ( mIsStereoscopic ? 0.5f : 1.0f ); // TODO
     
@@ -81,7 +83,7 @@ void Parsec::loadData()
 //    }
 //    else
     {
-        mStars.load( loadResource( "hygxyz.csv" ) );
+        mStars.load( loadResource( "hygxyz.csv" ), mLabels );
     }
     
 //	if( fs::exists( getAssetPath("") / "labels.cdb" ) )
@@ -176,6 +178,8 @@ void Parsec::update(double dt)
     // adjust content based on camera distance
     float distance = getCamera().getEyePoint().length();
 	mBackground.setCameraDistance( distance );
+    
+    mLabels.update(getCamera(), mApp->getViewportWidth(), mApp->getViewportHeight());
 }
 
 #pragma mark - Draw
@@ -188,6 +192,10 @@ void Parsec::draw()
     gl::pushMatrices();
     gl::setMatrices( getCamera() );
     render();
+    gl::popMatrices();
+    
+    gl::pushMatrices();
+    mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight(), 1.0f);
     gl::popMatrices();
 }
 

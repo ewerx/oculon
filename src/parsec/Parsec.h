@@ -13,6 +13,7 @@
 #include "ParsecBackground.h"
 #include "ParsecGrid.h"
 #include "ParsecStars.h"
+#include "ParsecLabels.h"
 #include "StarCam.h"
 #include "SplineCam.h"
 
@@ -45,6 +46,7 @@ protected:
     
     // guts
     ParsecStars         mStars;
+    ParsecLabels        mLabels;
     ParsecBackground    mBackground;
     ParsecGrid          mGrid;
   

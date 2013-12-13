@@ -30,6 +30,8 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Vbo.h"
 
+#include "ParsecLabels.h"
+
 class ParsecStars
 {
 public:
@@ -89,7 +91,7 @@ public:
 	void	setAspectRatio( float aspect ) { mAspectRatio = aspect; }
 
 	//! load a comma separated file containing the HYG star database
-	void	load( ci::DataSourceRef source );
+	void	load( ci::DataSourceRef source, ParsecLabels &labels );
 
 	//! reads a binary star data file
 	void	read( ci::DataSourceRef source );

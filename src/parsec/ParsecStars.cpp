@@ -54,7 +54,7 @@ void ParsecStars::setup()
     }
 	else
     {
-		mScale = 1.0f;
+		mScale = 0.5f;//1.0f;
     }
 
 	// shaders
@@ -126,8 +126,12 @@ void ParsecStars::disablePointSprites()
 	glPopAttrib();
 }
 
-void ParsecStars::load(DataSourceRef source)
-{	
+void ParsecStars::load(DataSourceRef source, ParsecLabels& labels)
+{
+    //TODO: refactor?
+    Font font = Font( "Menlo", 12 );
+    
+    
 	console() << "[parsec] loading HYG star database..." << std::endl;
 
 	// create color look up table
@@ -210,6 +214,7 @@ void ParsecStars::load(DataSourceRef source)
 		try {
 			// absolute magnitude of the star
 			double abs_mag = Conversions::toDouble(tokens[14]);
+            double app_mag = Conversions::toDouble(tokens[13]);
 
 			// color (spectrum) of the star
 			double colorindex = (tokens.size() > 16) ? Conversions::toDouble(tokens[16]) : 0.0;
@@ -229,15 +234,27 @@ void ParsecStars::load(DataSourceRef source)
 			double alpha = toRadians( ra * 15.0 );
 			double delta = toRadians( dec );
 
+            Vec3f pos = distance * Vec3f((float) (sin(alpha) * cos(delta)), (float) sin(delta), (float) (cos(alpha) * cos(delta)));
 			// convert to world (universe) coordinates
-			mVertices.push_back( distance * Vec3f((float) (sin(alpha) * cos(delta)), (float) sin(delta), (float) (cos(alpha) * cos(delta))) );
+			mVertices.push_back( pos );
 			// put extra data (absolute magnitude and distance to Earth) in texture coordinates
 			mTexcoords.push_back( Vec2f( (float) abs_mag, (float) distance) );
 			// put color in color attribute
 			mColors.push_back( color );
+            
+            // name
+			std::string name = boost::trim_copy( tokens[6] );
+			if( name.empty() ) name = boost::trim_copy( tokens[4] );
+			//if( name.empty() ) name = boost::trim_copy( tokens[5] );
+			if( name.empty() || abs_mag > 6.0f ) continue;
+            
+            std::string spectrum = boost::trim_copy( tokens[15] );
+            
+            ParsecLabels::Label *label = new ParsecLabels::Label( pos, (float)abs_mag, name, spectrum, font );
+            labels.addLabel(label);
 		}
 		catch(...) {
-			// some of the data was invalid, ignore 
+			// some of the data was invalid, ignore
 			continue;
 		}
 	}
