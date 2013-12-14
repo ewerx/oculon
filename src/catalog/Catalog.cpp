@@ -319,30 +319,18 @@ void Catalog::update(double dt)
 //
 void Catalog::draw()
 {
-    glDisable(GL_TEXTURE_2D);
     
     gl::pushMatrices();
     
     ////////------------------------------------------------------
-    //
-    //gl::clear( Color( 0, 0, 0 ) );
 	gl::color( ColorA( 1, 1, 1, 1 ) );
     
-	//gl::setMatricesWindow( mApp->getViewportSize(), false );
 	gl::setViewport( mApp->getViewportBounds() );
     
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
 	gl::enableAlphaBlending();
-	gl::enable( GL_TEXTURE_2D );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	
-    /*
-	// DRAW ROOM
-	mRoomFbo.bindTexture();
-	gl::drawSolidRect( mApp->getViewportBounds() );
-	*/
-	//gl::setMatricesWindow( mApp->getViewportSize(), true );
 	
     const float starDrawMinAlpha = 0.001f;
 	float power = mStarfieldAlpha;
@@ -355,12 +343,9 @@ void Catalog::draw()
     
 	gl::setMatrices( getCamera() );
     
-	gl::enable( GL_TEXTURE_2D );
-	
-	gl::pushMatrices();
-    //	gl::multModelView( mArcball.getQuat() );
 	
 	// DRAW MILKYWAY
+	gl::enable( GL_TEXTURE_2D );
 	if( power > 0.01f ){
 		gl::pushMatrices();
 		gl::translate( getCamera().getEyePoint() );
@@ -370,7 +355,6 @@ void Catalog::draw()
 		gl::drawSphere( Vec3f::zero(), 195000.0f, 32 );
 		gl::popMatrices();
 	}
-	
 	gl::disable( GL_TEXTURE_2D );
 	
 	// FAINT STARS

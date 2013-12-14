@@ -99,6 +99,13 @@
 		7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
 		7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
 		7C2060F0183D678C00A1D230 /* graviton_formation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */; };
+		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
+		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
+		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
+		7C409E66185C08BA0028934D /* faintStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
+		7C409E67185C08BA0028934D /* water_ripple.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DC1853D4ED00D1C8A3 /* water_ripple.fsh */; };
+		7C409E6A185C0CAD0028934D /* Constellations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E68185C0CAD0028934D /* Constellations.cpp */; };
+		7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E6B185C0CB50028934D /* ConstellationArt.cpp */; };
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
@@ -566,6 +573,10 @@
 		7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
 		7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.vert; sourceTree = "<group>"; };
 		7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_formation_frag.glsl; sourceTree = "<group>"; };
+		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
+		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
+		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
+		7C409E6C185C0CB50028934D /* ConstellationArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstellationArt.h; sourceTree = "<group>"; };
 		7C4C672E181B6405003049AA /* noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise256.png; sourceTree = "<group>"; };
 		7C4C6740181C9928003049AA /* TextureShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureShaders.cpp; sourceTree = "<group>"; };
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
@@ -2255,6 +2266,10 @@
 		7CD666401853F55A004BD521 /* parsec */ = {
 			isa = PBXGroup;
 			children = (
+				7C409E6B185C0CB50028934D /* ConstellationArt.cpp */,
+				7C409E6C185C0CB50028934D /* ConstellationArt.h */,
+				7C409E68185C0CAD0028934D /* Constellations.cpp */,
+				7C409E69185C0CAD0028934D /* Constellations.h */,
 				7CD6663C1853F53F004BD521 /* Parsec.cpp */,
 				7CD6663D1853F53F004BD521 /* Parsec.h */,
 				7CD666431853F678004BD521 /* ParsecBackground.cpp */,
@@ -2587,6 +2602,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C409E64185C08BA0028934D /* brightStars.frag in Resources */,
+				7C409E65185C08BA0028934D /* faintStars.frag in Resources */,
+				7C409E66185C08BA0028934D /* faintStars.vert in Resources */,
+				7C409E67185C08BA0028934D /* water_ripple.fsh in Resources */,
+				7C409E63185C08AE0028934D /* brightStars.vert in Resources */,
 				7C79CB0D1765288500E71F9D /* corona.frag in Resources */,
 				7C79CB0E1765288500E71F9D /* dustCorona.frag in Resources */,
 				7C79CB0F1765288500E71F9D /* glowCorona.frag in Resources */,
@@ -2805,6 +2825,7 @@
 				A3E8C26688F3438799B73D6B /* b2WorldCallbacks.cpp in Sources */,
 				58C1E7660C8C4ADE8A6AC0F8 /* b2ChainAndCircleContact.cpp in Sources */,
 				415417A81EF3456D96BDDB7D /* b2ChainAndPolygonContact.cpp in Sources */,
+				7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */,
 				D67989397E0742E2B973CD13 /* b2CircleContact.cpp in Sources */,
 				1F9825AA0956484BA51D6DA0 /* b2Contact.cpp in Sources */,
 				AE02F3AB758D47D2B864F065 /* b2ContactSolver.cpp in Sources */,
@@ -2838,6 +2859,7 @@
 				4EF9E730685A49A8A1E22E21 /* NetworkingUtils.cpp in Sources */,
 				352FDF51EA7B4CC7A07F2BDD /* UdpSocket.cpp in Sources */,
 				7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */,
+				7C409E6A185C0CAD0028934D /* Constellations.cpp in Sources */,
 				7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */,
 				7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */,
 				7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */,

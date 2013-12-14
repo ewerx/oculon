@@ -10,6 +10,8 @@
 
 #include <vector>
 #include "Scene.h"
+#include "Constellations.h"
+#include "ConstellationArt.h"
 #include "ParsecBackground.h"
 #include "ParsecGrid.h"
 #include "ParsecStars.h"
@@ -43,12 +45,17 @@ protected:
     // params
     bool mShowGrid;
     bool mShowBackground;
+    bool mShowLabels;
+    bool mShowConstellations;
+    bool mShowConstellationArt;
     
     // guts
     ParsecStars         mStars;
     ParsecLabels        mLabels;
     ParsecBackground    mBackground;
     ParsecGrid          mGrid;
+    Constellations      mConstellations;
+    ConstellationArt    mConstellationArt;
   
     // frame buffer and shader used for cylindrical projection
     ci::gl::Fbo			mProjectionFbo;
@@ -58,7 +65,6 @@ protected:
 	float				mSectionOverlap;
     
     // cameras
-//    ci::CameraPersp     mStarCam;
     StarCam             mStarCam;
     SplineCam           mSplineCam;
     

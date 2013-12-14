@@ -32,7 +32,9 @@ void Parsec::setup()
     // params
     mShowBackground = false;
     mShowGrid = false;
-    
+    mShowLabels = false;
+    mShowConstellations = false;
+    mShowConstellationArt = false;
     
     loadData();
     
@@ -42,6 +44,14 @@ void Parsec::setup()
     //TODO: refactor
 	mStars.setup();
 	mStars.setAspectRatio(1.0f);// ( mIsStereoscopic ? 0.5f : 1.0f ); // TODO
+    
+    if( fs::exists( getAssetPath("") / "parsec-constellations.cdb" ) )
+    {
+		mConstellations.read( loadFile( getAssetPath("") / "parsec-constellations.cdb" ) );
+    }
+    mConstellations.setup();
+    mConstellations.setLineWidth(3.0f);
+    mConstellationArt.setup();
     
     // cylindrical projection settings
 	mSectionCount = 3;
@@ -61,6 +71,13 @@ void Parsec::reset()
 
 void Parsec::setupInterface()
 {
+    mInterface->addParam(CreateBoolParam("grid", &mShowGrid));
+    mInterface->addParam(CreateBoolParam("background", &mShowBackground));
+    mInterface->addParam(CreateBoolParam("labels", &mShowLabels));
+    mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
+    mInterface->addParam(CreateBoolParam("const art", &mShowConstellationArt));
+    
+    mInterface->gui()->addColumn();
     vector<string> camTypeNames;
 #define PARSEC_CAMTYPE_ENTRY( nam, enm ) \
 camTypeNames.push_back(nam);
@@ -178,8 +195,13 @@ void Parsec::update(double dt)
     // adjust content based on camera distance
     float distance = getCamera().getEyePoint().length();
 	mBackground.setCameraDistance( distance );
+    mConstellations.setCameraDistance( distance );
+	mConstellationArt.setCameraDistance( distance );
     
-    mLabels.update(getCamera(), mApp->getViewportWidth(), mApp->getViewportHeight());
+    if (mShowLabels)
+    {
+        mLabels.update(getCamera(), mApp->getViewportWidth(), mApp->getViewportHeight());
+    }
 }
 
 #pragma mark - Draw
@@ -194,15 +216,21 @@ void Parsec::draw()
     render();
     gl::popMatrices();
     
-    gl::pushMatrices();
-    mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight(), 1.0f);
-    gl::popMatrices();
+    if (mShowLabels)
+    {
+        gl::pushMatrices();
+        mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight(), 1.0f);
+        gl::popMatrices();
+    }
 }
 
 void Parsec::render()
 {
     // draw background
-	mBackground.draw();
+	if(mShowBackground)
+    {
+        mBackground.draw();
+    }
     
 	// draw grid
 	if(mShowGrid)
@@ -213,13 +241,17 @@ void Parsec::render()
 	// draw stars
 	mStars.draw();
     
-//	// draw constellations
-//	if(mIsConstellationsVisible)
-//		mConstellations.draw();
-//    
-//	if(mIsConstellationArtVisible)
-//		mConstellationArt.draw();
-//    
+	// draw constellations
+	if(mShowConstellations)
+    {
+		mConstellations.draw();
+    }
+    
+	if(mShowConstellationArt)
+    {
+		mConstellationArt.draw();
+    }
+//
 //	// draw labels
 //	if(mIsLabelsVisible) {
 //		mLabels.draw();
