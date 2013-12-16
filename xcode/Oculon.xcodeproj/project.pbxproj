@@ -50,7 +50,6 @@
 		6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE541461BB6E47318E673CFF /* b2BroadPhase.cpp */; };
 		754B4CB40F424443A99DB50E /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD9DACED57C4F30B659A33B /* OscOutboundPacketStream.cpp */; };
 		75C76C78400B4451B6B8FA0D /* b2Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A501110D8A2431AB1044F72 /* b2Settings.cpp */; };
-		7C06A8AA1853AF5300D1C8A3 /* Constellations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8A81853AF5300D1C8A3 /* Constellations.cpp */; };
 		7C06A8AD1853AFAC00D1C8A3 /* SkyGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8AB1853AFAC00D1C8A3 /* SkyGrid.cpp */; };
 		7C06A8B01853B00800D1C8A3 /* Conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */; };
 		7C06A8E21853D4ED00D1C8A3 /* acidcontours_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8B31853D4ED00D1C8A3 /* acidcontours_frag.glsl */; };
@@ -100,6 +99,13 @@
 		7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
 		7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
 		7C2060F0183D678C00A1D230 /* graviton_formation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */; };
+		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
+		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
+		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
+		7C409E66185C08BA0028934D /* faintStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
+		7C409E67185C08BA0028934D /* water_ripple.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DC1853D4ED00D1C8A3 /* water_ripple.fsh */; };
+		7C409E6A185C0CAD0028934D /* Constellations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E68185C0CAD0028934D /* Constellations.cpp */; };
+		7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E6B185C0CB50028934D /* ConstellationArt.cpp */; };
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
@@ -347,6 +353,18 @@
 		7C79CB301765298900E71F9D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79CB2F1765298800E71F9D /* AppKit.framework */; };
 		7C79CB321765299600E71F9D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79CB311765299500E71F9D /* Foundation.framework */; };
 		7C79CB3417652BAD00E71F9D /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C79BE401764384B00E71F9D /* Syphon.framework */; };
+		7C83B39D1856BE5900EB22F8 /* parsec_cylindrical_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3991856BE5900EB22F8 /* parsec_cylindrical_frag.glsl */; };
+		7C83B39E1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */; };
+		7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */; };
+		7C83B3A01856BE5900EB22F8 /* parsec_stars_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B39C1856BE5900EB22F8 /* parsec_stars_vert.glsl */; };
+		7C83B3A91856BF3800EB22F8 /* parsec-background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A21856BF3800EB22F8 /* parsec-background.jpg */; };
+		7C83B3AA1856BF3800EB22F8 /* parsec-corona.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A31856BF3800EB22F8 /* parsec-corona.png */; };
+		7C83B3AB1856BF3800EB22F8 /* parsec-nova.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A41856BF3800EB22F8 /* parsec-nova.png */; };
+		7C83B3AC1856BF3800EB22F8 /* parsec-particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A51856BF3800EB22F8 /* parsec-particle.png */; };
+		7C83B3AD1856BF3800EB22F8 /* particle_old.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A61856BF3800EB22F8 /* particle_old.png */; };
+		7C83B3AE1856BF3800EB22F8 /* parsec-sparkle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A71856BF3800EB22F8 /* parsec-sparkle.png */; };
+		7C83B3AF1856BF3800EB22F8 /* parsec-sun.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3A81856BF3800EB22F8 /* parsec-sun.png */; };
+		7C83B3B11856C4EB00EB22F8 /* parsec-stars.cdb in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3B01856C4EB00EB22F8 /* parsec-stars.cdb */; };
 		7CA78BF61825988100505794 /* ObjectShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA78BF41825988100505794 /* ObjectShaders.cpp */; };
 		7CC3C026183ED0330082C322 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C024183ED0330082C322 /* Dust.cpp */; };
 		7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */; };
@@ -356,6 +374,12 @@
 		7CC3C033183FECCE0082C322 /* TextureGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */; };
 		7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C034183FF64C0082C322 /* simplex_frag.glsl */; };
 		7CC562621836BB3100B128D4 /* Cells.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC562601836BB3100B128D4 /* Cells.cpp */; };
+		7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */; };
+		7CD53E88185826CE003DE35F /* hygxyz.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7CD53E87185826CE003DE35F /* hygxyz.csv */; };
+		7CD6663E1853F540004BD521 /* Parsec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD6663C1853F53F004BD521 /* Parsec.cpp */; };
+		7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666431853F678004BD521 /* ParsecBackground.cpp */; };
+		7CD666481853F678004BD521 /* ParsecStars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666451853F678004BD521 /* ParsecStars.cpp */; };
+		7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666491853F770004BD521 /* ParsecGrid.cpp */; };
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
 		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
@@ -498,8 +522,6 @@
 		760E928A7AC841B4A0BA71CF /* b2ChainShape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2ChainShape.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Collision/Shapes/b2ChainShape.cpp; sourceTree = "<group>"; };
 		762B46BCC05E485AB77602C4 /* b2DynamicTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2DynamicTree.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Collision/b2DynamicTree.cpp; sourceTree = "<group>"; };
 		7A501110D8A2431AB1044F72 /* b2Settings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2Settings.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Common/b2Settings.cpp; sourceTree = "<group>"; };
-		7C06A8A81853AF5300D1C8A3 /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
-		7C06A8A91853AF5300D1C8A3 /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C06A8AB1853AFAC00D1C8A3 /* SkyGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkyGrid.cpp; sourceTree = "<group>"; };
 		7C06A8AC1853AFAC00D1C8A3 /* SkyGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyGrid.h; sourceTree = "<group>"; };
 		7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Conversions.cpp; sourceTree = "<group>"; };
@@ -551,6 +573,10 @@
 		7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
 		7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.vert; sourceTree = "<group>"; };
 		7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_formation_frag.glsl; sourceTree = "<group>"; };
+		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
+		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
+		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
+		7C409E6C185C0CB50028934D /* ConstellationArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstellationArt.h; sourceTree = "<group>"; };
 		7C4C672E181B6405003049AA /* noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise256.png; sourceTree = "<group>"; };
 		7C4C6740181C9928003049AA /* TextureShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureShaders.cpp; sourceTree = "<group>"; };
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
@@ -892,6 +918,18 @@
 		7C79CB09176527F900E71F9D /* pf_tempesta_seven.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pf_tempesta_seven.ttf; sourceTree = "<group>"; };
 		7C79CB2F1765298800E71F9D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		7C79CB311765299500E71F9D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		7C83B3991856BE5900EB22F8 /* parsec_cylindrical_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_cylindrical_frag.glsl; sourceTree = "<group>"; };
+		7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_cylindrical_vert.glsl; sourceTree = "<group>"; };
+		7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_stars_frag.glsl; sourceTree = "<group>"; };
+		7C83B39C1856BE5900EB22F8 /* parsec_stars_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_stars_vert.glsl; sourceTree = "<group>"; };
+		7C83B3A21856BF3800EB22F8 /* parsec-background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "parsec-background.jpg"; sourceTree = "<group>"; };
+		7C83B3A31856BF3800EB22F8 /* parsec-corona.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "parsec-corona.png"; sourceTree = "<group>"; };
+		7C83B3A41856BF3800EB22F8 /* parsec-nova.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "parsec-nova.png"; sourceTree = "<group>"; };
+		7C83B3A51856BF3800EB22F8 /* parsec-particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "parsec-particle.png"; sourceTree = "<group>"; };
+		7C83B3A61856BF3800EB22F8 /* particle_old.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_old.png; sourceTree = "<group>"; };
+		7C83B3A71856BF3800EB22F8 /* parsec-sparkle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "parsec-sparkle.png"; sourceTree = "<group>"; };
+		7C83B3A81856BF3800EB22F8 /* parsec-sun.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "parsec-sun.png"; sourceTree = "<group>"; };
+		7C83B3B01856C4EB00EB22F8 /* parsec-stars.cdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "parsec-stars.cdb"; sourceTree = "<group>"; };
 		7CA78BF41825988100505794 /* ObjectShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectShaders.cpp; sourceTree = "<group>"; };
 		7CA78BF51825988100505794 /* ObjectShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectShaders.h; sourceTree = "<group>"; };
 		7CC3C024183ED0330082C322 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../src/dust/Dust.cpp; sourceTree = "<group>"; };
@@ -905,6 +943,17 @@
 		7CC3C034183FF64C0082C322 /* simplex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simplex_frag.glsl; sourceTree = "<group>"; };
 		7CC562601836BB3100B128D4 /* Cells.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cells.cpp; sourceTree = "<group>"; };
 		7CC562611836BB3100B128D4 /* Cells.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cells.h; sourceTree = "<group>"; };
+		7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecLabels.cpp; sourceTree = "<group>"; };
+		7CD1A840185AC930002925A0 /* ParsecLabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecLabels.h; sourceTree = "<group>"; };
+		7CD53E87185826CE003DE35F /* hygxyz.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hygxyz.csv; sourceTree = "<group>"; };
+		7CD6663C1853F53F004BD521 /* Parsec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parsec.cpp; sourceTree = "<group>"; };
+		7CD6663D1853F53F004BD521 /* Parsec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parsec.h; sourceTree = "<group>"; };
+		7CD666431853F678004BD521 /* ParsecBackground.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecBackground.cpp; sourceTree = "<group>"; };
+		7CD666441853F678004BD521 /* ParsecBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecBackground.h; sourceTree = "<group>"; };
+		7CD666451853F678004BD521 /* ParsecStars.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecStars.cpp; sourceTree = "<group>"; };
+		7CD666461853F678004BD521 /* ParsecStars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecStars.h; sourceTree = "<group>"; };
+		7CD666491853F770004BD521 /* ParsecGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecGrid.cpp; sourceTree = "<group>"; };
+		7CD6664A1853F770004BD521 /* ParsecGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecGrid.h; sourceTree = "<group>"; };
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
 		7CF735B2181F81D500B21DE9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
 		7CF735B3181F81D500B21DE9 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
@@ -1092,31 +1141,12 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				7C79C9AA17650FD700E71F9D /* OculonApp.h */,
 				3506920471494D369875838A /* OculonApp.cpp */,
+				7C79C9AA17650FD700E71F9D /* OculonApp.h */,
 				A249CC1A4C08496BB6479AC6 /* Resources.h */,
 				1D7A2B7846B5460FA0E7EE69 /* Oculon_Prefix.pch */,
-				7C79C96B17650FD700E71F9D /* audio */,
-				7C79C97A17650FD700E71F9D /* bps */,
-				7C79C9FF17650FD700E71F9D /* catalog */,
-				7C79C98017650FD700E71F9D /* contour */,
-				7C79CA1A17650FD700E71F9D /* corona */,
-				7CC3C027183ED0370082C322 /* dust */,
 				7C79C98517650FD700E71F9D /* engine */,
-				7C79C9C817650FD700E71F9D /* flock */,
-				7C79C9D517650FD700E71F9D /* graviton */,
-				7C79C9D917650FD700E71F9D /* grid */,
-				7C79CA2A17650FD800E71F9D /* magneto */,
-				7C79CA0D17650FD700E71F9D /* orbiter */,
-				7C79C9DC17650FD700E71F9D /* polyhedron */,
-				7C79CA1417650FD700E71F9D /* pulsar */,
-				7C5B69741819745800AB2C8D /* shaders */,
-				7C79CA0817650FD700E71F9D /* sol */,
-				7C79C9DF17650FD700E71F9D /* tectonic */,
-				7C79C9E617650FD700E71F9D /* terrain */,
-				7C79C9ED17650FD700E71F9D /* test */,
-				7C79C9FA17650FD700E71F9D /* textorbit */,
-				7C79CA1717650FD700E71F9D /* trails */,
+				7CD666421853F5F5004BD521 /* scenes */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1587,6 +1617,7 @@
 		7C79C85E17650F8F00E71F9D /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7C83B3A11856BF3800EB22F8 /* parsec */,
 				7C79C85F17650F8F00E71F9D /* bump.png */,
 				7C79C86017650F8F00E71F9D /* catalog */,
 				7C79C86617650F8F00E71F9D /* colortex1.jpg */,
@@ -1713,6 +1744,7 @@
 				7C79C8C317650F8F00E71F9D /* passThru.vert */,
 				7C79C8C617650F8F00E71F9D /* passThruNormals.vert */,
 				7C79C8C417650F8F00E71F9D /* passthru.vsh */,
+				7C83B3981856BE5900EB22F8 /* parsec */,
 				7C06A8DD1853D4ED00D1C8A3 /* catalog */,
 				7C79C89C17650F8F00E71F9D /* corona */,
 				7CC3C028183EE3B50082C322 /* dust */,
@@ -1804,6 +1836,8 @@
 		7C79C8E017650F8F00E71F9D /* data */ = {
 			isa = PBXGroup;
 			children = (
+				7CD53E87185826CE003DE35F /* hygxyz.csv */,
+				7C83B3B01856C4EB00EB22F8 /* parsec-stars.cdb */,
 				7C79C8E117650F8F00E71F9D /* ExoplanetArchive.csv */,
 				7C79C8E217650F8F00E71F9D /* nukes.csv */,
 				7C79C8E317650F8F00E71F9D /* starData.csv */,
@@ -1846,7 +1880,7 @@
 			path = ../src/audio;
 			sourceTree = "<group>";
 		};
-		7C79C97A17650FD700E71F9D /* bps */ = {
+		7C79C97A17650FD700E71F9D /* binned */ = {
 			isa = PBXGroup;
 			children = (
 				7C79C97B17650FD700E71F9D /* Binned.cpp */,
@@ -1855,7 +1889,7 @@
 				7C79C97E17650FD700E71F9D /* BinnedParticleSystem.cpp */,
 				7C79C97F17650FD700E71F9D /* BinnedParticleSystem.h */,
 			);
-			name = bps;
+			name = binned;
 			path = ../src/bps;
 			sourceTree = "<group>";
 		};
@@ -2186,6 +2220,31 @@
 			path = SimpleGUI/resources;
 			sourceTree = "<group>";
 		};
+		7C83B3981856BE5900EB22F8 /* parsec */ = {
+			isa = PBXGroup;
+			children = (
+				7C83B3991856BE5900EB22F8 /* parsec_cylindrical_frag.glsl */,
+				7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */,
+				7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */,
+				7C83B39C1856BE5900EB22F8 /* parsec_stars_vert.glsl */,
+			);
+			path = parsec;
+			sourceTree = "<group>";
+		};
+		7C83B3A11856BF3800EB22F8 /* parsec */ = {
+			isa = PBXGroup;
+			children = (
+				7C83B3A21856BF3800EB22F8 /* parsec-background.jpg */,
+				7C83B3A31856BF3800EB22F8 /* parsec-corona.png */,
+				7C83B3A41856BF3800EB22F8 /* parsec-nova.png */,
+				7C83B3A51856BF3800EB22F8 /* parsec-particle.png */,
+				7C83B3A61856BF3800EB22F8 /* particle_old.png */,
+				7C83B3A71856BF3800EB22F8 /* parsec-sparkle.png */,
+				7C83B3A81856BF3800EB22F8 /* parsec-sun.png */,
+			);
+			path = parsec;
+			sourceTree = "<group>";
+		};
 		7CC3C027183ED0370082C322 /* dust */ = {
 			isa = PBXGroup;
 			children = (
@@ -2204,6 +2263,56 @@
 				7CC3C02C183EE3B50082C322 /* dust_simulation_vert.glsl */,
 			);
 			path = dust;
+			sourceTree = "<group>";
+		};
+		7CD666401853F55A004BD521 /* parsec */ = {
+			isa = PBXGroup;
+			children = (
+				7C409E6B185C0CB50028934D /* ConstellationArt.cpp */,
+				7C409E6C185C0CB50028934D /* ConstellationArt.h */,
+				7C409E68185C0CAD0028934D /* Constellations.cpp */,
+				7C409E69185C0CAD0028934D /* Constellations.h */,
+				7CD6663C1853F53F004BD521 /* Parsec.cpp */,
+				7CD6663D1853F53F004BD521 /* Parsec.h */,
+				7CD666431853F678004BD521 /* ParsecBackground.cpp */,
+				7CD666441853F678004BD521 /* ParsecBackground.h */,
+				7CD666491853F770004BD521 /* ParsecGrid.cpp */,
+				7CD6664A1853F770004BD521 /* ParsecGrid.h */,
+				7CD666451853F678004BD521 /* ParsecStars.cpp */,
+				7CD666461853F678004BD521 /* ParsecStars.h */,
+				7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */,
+				7CD1A840185AC930002925A0 /* ParsecLabels.h */,
+			);
+			name = parsec;
+			path = ../src/parsec;
+			sourceTree = "<group>";
+		};
+		7CD666421853F5F5004BD521 /* scenes */ = {
+			isa = PBXGroup;
+			children = (
+				7C79C96B17650FD700E71F9D /* audio */,
+				7C79C97A17650FD700E71F9D /* binned */,
+				7C79C9FF17650FD700E71F9D /* catalog */,
+				7C79C98017650FD700E71F9D /* contour */,
+				7C79CA1A17650FD700E71F9D /* corona */,
+				7CC3C027183ED0370082C322 /* dust */,
+				7C79C9C817650FD700E71F9D /* flock */,
+				7C79C9D517650FD700E71F9D /* graviton */,
+				7C79C9D917650FD700E71F9D /* grid */,
+				7C79CA2A17650FD800E71F9D /* magneto */,
+				7C79CA0D17650FD700E71F9D /* orbiter */,
+				7CD666401853F55A004BD521 /* parsec */,
+				7C79C9DC17650FD700E71F9D /* polyhedron */,
+				7C79CA1417650FD700E71F9D /* pulsar */,
+				7C5B69741819745800AB2C8D /* shaders */,
+				7C79CA0817650FD700E71F9D /* sol */,
+				7C79C9DF17650FD700E71F9D /* tectonic */,
+				7C79C9E617650FD700E71F9D /* terrain */,
+				7C79C9ED17650FD700E71F9D /* test */,
+				7C79C9FA17650FD700E71F9D /* textorbit */,
+				7C79CA1717650FD700E71F9D /* trails */,
+			);
+			name = scenes;
 			sourceTree = "<group>";
 		};
 		7CF735AF181F81D500B21DE9 /* cinderpane */ = {
@@ -2495,6 +2604,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C409E64185C08BA0028934D /* brightStars.frag in Resources */,
+				7C409E65185C08BA0028934D /* faintStars.frag in Resources */,
+				7C409E66185C08BA0028934D /* faintStars.vert in Resources */,
+				7C409E67185C08BA0028934D /* water_ripple.fsh in Resources */,
+				7C409E63185C08AE0028934D /* brightStars.vert in Resources */,
 				7C79CB0D1765288500E71F9D /* corona.frag in Resources */,
 				7C79CB0E1765288500E71F9D /* dustCorona.frag in Resources */,
 				7C79CB0F1765288500E71F9D /* glowCorona.frag in Resources */,
@@ -2511,9 +2625,11 @@
 				7C79CB161765288500E71F9D /* star.frag in Resources */,
 				7C79CB171765288500E71F9D /* star.vert in Resources */,
 				7C79CB1A1765288500E71F9D /* glow.frag in Resources */,
+				7C83B3AA1856BF3800EB22F8 /* parsec-corona.png in Resources */,
 				7C79CB1B1765288500E71F9D /* lantern.frag in Resources */,
 				7C06A8F61853D4ED00D1C8A3 /* logistic_frag.glsl in Resources */,
 				7C06A8FC1853D4ED00D1C8A3 /* paint_frag.glsl in Resources */,
+				7C83B39E1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl in Resources */,
 				7C79CB1C1765288500E71F9D /* lantern.vert in Resources */,
 				7C79CB1D1765288500E71F9D /* nebula.frag in Resources */,
 				7C79CB1E1765288500E71F9D /* P_Position.frag in Resources */,
@@ -2523,12 +2639,15 @@
 				7C06A8FD1853D4ED00D1C8A3 /* polychora_frag.glsl in Resources */,
 				7C79CB211765288500E71F9D /* P_Velocity.frag in Resources */,
 				7C79CB221765288500E71F9D /* passThruFlock.vert in Resources */,
+				7C83B3A91856BF3800EB22F8 /* parsec-background.jpg in Resources */,
 				7C79CB231765288500E71F9D /* Position.frag in Resources */,
 				7C06A8F11853D4ED00D1C8A3 /* interstellar_frag.glsl in Resources */,
 				7C06A8E61853D4ED00D1C8A3 /* cloud_frag.glsl in Resources */,
 				7C79CB241765288500E71F9D /* room.frag in Resources */,
 				7C79CB251765288500E71F9D /* room.vert in Resources */,
 				7C79CB261765288500E71F9D /* VboPos.frag in Resources */,
+				7C83B3AE1856BF3800EB22F8 /* parsec-sparkle.png in Resources */,
+				7C83B3AD1856BF3800EB22F8 /* particle_old.png in Resources */,
 				7C06A9071853D4ED00D1C8A3 /* tripping_frag.glsl in Resources */,
 				7C79CB271765288500E71F9D /* VboPos.vert in Resources */,
 				7C06A9031853D4ED00D1C8A3 /* squarenoise_frag.glsl in Resources */,
@@ -2548,6 +2667,7 @@
 				7C79C92017650F8F00E71F9D /* blur2_vert.glsl in Resources */,
 				7C79C85817650F1700E71F9D /* Oculon.icns in Resources */,
 				7C79C8EB17650F8F00E71F9D /* contour_tex_frag.glsl in Resources */,
+				7C83B3AF1856BF3800EB22F8 /* parsec-sun.png in Resources */,
 				7C06A9091853D4ED00D1C8A3 /* volumetriclines_frag.glsl in Resources */,
 				7C79C8EC17650F8F00E71F9D /* contour_tex_vert.glsl in Resources */,
 				7C79C8ED17650F8F00E71F9D /* bump.png in Resources */,
@@ -2563,14 +2683,17 @@
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
 				7C79C8F517650F8F00E71F9D /* colortex3.jpg in Resources */,
 				7C06A8E51853D4ED00D1C8A3 /* circlewave_frag.glsl in Resources */,
+				7C83B3AB1856BF3800EB22F8 /* parsec-nova.png in Resources */,
 				7C79C8F617650F8F00E71F9D /* colortex4.jpg in Resources */,
 				7C79C8F717650F8F00E71F9D /* bigGlow0.png in Resources */,
+				7C83B3B11856C4EB00EB22F8 /* parsec-stars.cdb in Resources */,
 				7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */,
 				7C79C8F817650F8F00E71F9D /* bigGlow1.png in Resources */,
 				7C06A9041853D4ED00D1C8A3 /* stripes_frag.glsl in Resources */,
 				7C79C8F917650F8F00E71F9D /* corona.png in Resources */,
 				7C79C8FA17650F8F00E71F9D /* cubeNegX.jpg in Resources */,
 				7C79C8FB17650F8F00E71F9D /* cubeNegY.jpg in Resources */,
+				7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */,
 				7C06A90A1853D4ED00D1C8A3 /* voronoi_frag.glsl in Resources */,
 				7C79C8FC17650F8F00E71F9D /* cubeNegZ.jpg in Resources */,
 				7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */,
@@ -2605,6 +2728,7 @@
 				7C06A8E91853D4ED00D1C8A3 /* cymatics_frag.glsl in Resources */,
 				7C06A8FF1853D4ED00D1C8A3 /* retina_frag.glsl in Resources */,
 				7C79C90F17650F8F00E71F9D /* mercurymap.jpg in Resources */,
+				7C83B39D1856BE5900EB22F8 /* parsec_cylindrical_frag.glsl in Resources */,
 				7C79C91017650F8F00E71F9D /* neptunemap.jpg in Resources */,
 				7C06A8F41853D4ED00D1C8A3 /* lightglow_frag.glsl in Resources */,
 				7C79C91117650F8F00E71F9D /* saturnmap.jpg in Resources */,
@@ -2640,6 +2764,7 @@
 				7C79C95217650F8F00E71F9D /* quake_vert.glsl in Resources */,
 				7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */,
 				7C79C95317650F8F00E71F9D /* render_frag.glsl in Resources */,
+				7CD53E88185826CE003DE35F /* hygxyz.csv in Resources */,
 				7C79C95817650F8F00E71F9D /* terrain_shader_frag.glsl in Resources */,
 				7C06A8EF1853D4ED00D1C8A3 /* hypnorings_frag.glsl in Resources */,
 				7C79C95917650F8F00E71F9D /* terrain_shader_vert.glsl in Resources */,
@@ -2648,11 +2773,13 @@
 				7C79C95B17650F8F00E71F9D /* terrain_tex_vert.glsl in Resources */,
 				7C06A8E71853D4ED00D1C8A3 /* clouds_frag.glsl in Resources */,
 				7C06A8F51853D4ED00D1C8A3 /* livingkifs_frag.glsl in Resources */,
+				7C83B3A01856BE5900EB22F8 /* parsec_stars_vert.glsl in Resources */,
 				7C79C95C17650F8F00E71F9D /* terrain_texture.jpg in Resources */,
 				7C06A8E31853D4ED00D1C8A3 /* aftereffect_frag.glsl in Resources */,
 				7C79C95D17650F8F00E71F9D /* terrain_vtf_frag.glsl in Resources */,
 				7C79C95E17650F8F00E71F9D /* terrain_vtf_vert.glsl in Resources */,
 				7C79C96217650F8F00E71F9D /* ExoplanetArchive.csv in Resources */,
+				7C83B3AC1856BF3800EB22F8 /* parsec-particle.png in Resources */,
 				7C79C96317650F8F00E71F9D /* nukes.csv in Resources */,
 				7C79C96417650F8F00E71F9D /* starData.csv in Resources */,
 				7C79C96517650F8F00E71F9D /* starData.txt in Resources */,
@@ -2700,6 +2827,7 @@
 				A3E8C26688F3438799B73D6B /* b2WorldCallbacks.cpp in Sources */,
 				58C1E7660C8C4ADE8A6AC0F8 /* b2ChainAndCircleContact.cpp in Sources */,
 				415417A81EF3456D96BDDB7D /* b2ChainAndPolygonContact.cpp in Sources */,
+				7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */,
 				D67989397E0742E2B973CD13 /* b2CircleContact.cpp in Sources */,
 				1F9825AA0956484BA51D6DA0 /* b2Contact.cpp in Sources */,
 				AE02F3AB758D47D2B864F065 /* b2ContactSolver.cpp in Sources */,
@@ -2733,14 +2861,17 @@
 				4EF9E730685A49A8A1E22E21 /* NetworkingUtils.cpp in Sources */,
 				352FDF51EA7B4CC7A07F2BDD /* UdpSocket.cpp in Sources */,
 				7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */,
+				7C409E6A185C0CAD0028934D /* Constellations.cpp in Sources */,
 				7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */,
 				7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */,
+				7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */,
 				7C79C0341764384C00E71F9D /* syphonServer.mm in Sources */,
 				7C79C2471764396F00E71F9D /* kiss_fft.c in Sources */,
 				7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */,
 				7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */,
 				7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */,
 				7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */,
+				7CD666481853F678004BD521 /* ParsecStars.cpp in Sources */,
 				7C79C82717650D5F00E71F9D /* RtMidi.cpp in Sources */,
 				7C79C84D17650D5F00E71F9D /* MidiHub.cpp in Sources */,
 				7C79C84E17650D5F00E71F9D /* MidiIn.cpp in Sources */,
@@ -2846,6 +2977,7 @@
 				7C79CA6A17650FD800E71F9D /* ShaderTest.cpp in Sources */,
 				7C79CA6C17650FD800E71F9D /* Character.cpp in Sources */,
 				7C79CA6D17650FD800E71F9D /* TextOrbit.cpp in Sources */,
+				7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */,
 				7C79CA6E17650FD800E71F9D /* Catalog.cpp in Sources */,
 				7C79CA6F17650FD800E71F9D /* Planet.cpp in Sources */,
 				7C79CA7017650FD800E71F9D /* SpringCam.cpp in Sources */,
@@ -2854,6 +2986,7 @@
 				7C79CA7517650FD800E71F9D /* Orbiter.cpp in Sources */,
 				7C79CA7617650FD800E71F9D /* Sun.cpp in Sources */,
 				7C79CA7717650FD800E71F9D /* Pulsar.cpp in Sources */,
+				7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */,
 				7CC3C026183ED0330082C322 /* Dust.cpp in Sources */,
 				7C79CA7817650FD800E71F9D /* Trails.cpp in Sources */,
 				7C79CA7917650FD800E71F9D /* Corona.cpp in Sources */,
@@ -2862,6 +2995,7 @@
 				7C79CA7C17650FD800E71F9D /* CoronaNebula.cpp in Sources */,
 				7C79CA7D17650FD800E71F9D /* CoronaStar.cpp in Sources */,
 				7C79CA7E17650FD800E71F9D /* CubeMap.cpp in Sources */,
+				7CD6663E1853F540004BD521 /* Parsec.cpp in Sources */,
 				7C79CA7F17650FD800E71F9D /* Room.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

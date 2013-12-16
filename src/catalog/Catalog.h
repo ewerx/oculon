@@ -61,8 +61,6 @@ protected:
     void setupInterface();
     void setupDebugInterface();
     
-    void drawHud();
-    
     ////////------------------------------------------------------
     //
     void        initBrightVbo();
@@ -162,16 +160,24 @@ private:
     bool mMoreGlow;
     bool mShowSol;
     
+#define CATALOG_CAMTYPE_TUPLE \
+CATALOG_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
+CATALOG_CAMTYPE_ENTRY( "Spring", CAM_SPRING ) \
+CATALOG_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
+CATALOG_CAMTYPE_ENTRY( "Star", CAM_STAR ) \
+//end tuple
+    
     enum eCamType
     {
-        CAM_SPRING,
-        CAM_ORBITER,
-        CAM_STAR,
+#define CATALOG_CAMTYPE_ENTRY( nam, enm ) \
+enm,
+        CATALOG_CAMTYPE_TUPLE
+#undef  CATALOG_CAMTYPE_ENTRY
         
-        CAM_COUNT,
-        CAM_ORBITER_SPRING,
+        CAM_COUNT
     };
     eCamType mCamType;
+    
     float mCameraDistance;
     
     float mLabelBrightnessByAudio;
@@ -184,20 +190,6 @@ private:
     
     // display list
     //GLuint mDisplayListPoints;
-        
-    // hud
-    /*
-    enum eTextBoxLocations
-    {
-        TB_TOP_LEFT,
-        TB_TOP_RIGHT,
-        TB_BOT_LEFT,
-        TB_BOT_RIGHT,
-        
-        TB_COUNT
-    };
-    TextEntity*     mTextBox[TB_COUNT];
-    */
     
     static const int FBO_WIDTH;
     static const int FBO_HEIGHT;

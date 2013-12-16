@@ -49,8 +49,5 @@ public:
 
 		return min + (frac * range);
 	};
-
-	//! merges a "Cartes du Ciel" file (StarNames.txt) with the HYG database CSV
-	static void mergeNames( ci::DataSourceRef hyg, ci::DataSourceRef ciel );
 };
 

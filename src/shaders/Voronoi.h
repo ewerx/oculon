@@ -20,7 +20,7 @@
 #include "OscMessage.h"
 
 //
-// Audio input tests
+// Voronoi
 //
 class Voronoi : public Scene
 {

@@ -160,11 +160,16 @@ void Catalog::setup()
 //
 void Catalog::setupInterface()
 {
-    
+    mInterface->gui()->addColumn();
+    vector<string> camTypeNames;
+#define CATALOG_CAMTYPE_ENTRY( nam, enm ) \
+camTypeNames.push_back(nam);
+    CATALOG_CAMTYPE_TUPLE
+#undef  CATALOG_CAMTYPE_ENTRY
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camera")
-                        .isVertical());
+                        .oscReceiver(getName(), "camtype")
+                        .isVertical(), camTypeNames);
     mInterface->addParam(CreateBoolParam( "show names", &mRenderNames )
                         .oscReceiver(getName(), "shownames"));
     mInterface->addParam(CreateBoolParam( "show sol", &mShowSol )
@@ -285,37 +290,18 @@ void Catalog::update(double dt)
     mCameraDistance = getCamera().getEyePoint().length() * 3.261631f;
     //console() << "[catalog] cam distance = " << mCameraDistance << std::endl;
     
-    if( mCamType == CAM_ORBITER_SPRING )
-    {
-        Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
-        
-        Vec3f lookAt = mDestStar ? mDestStar->mPos : Vec3f::zero();
-        Vec3f eyePoint = mHomeStar ? mHomeStar->mPos + Vec3f( 500.0f, 0.0f, 80.0f ) : Vec3f::zero();
-        
-        if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
-        {
-            lookAt = orbiterScene->getCamera().getCenterOfInterestPoint();
-            eyePoint = orbiterScene->getCamera().getEyePoint();
-        }
-        
-        mSpringCam.setEye( eyePoint );
-        mSpringCam.setCenter( lookAt );
-    }
-    else
-    {
-        if( mHomeStar != NULL ){
-            mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
-            mStarCam.setCurrentCam(mSpringCam.getCam());
-        }
-        
-        if( mDestStar != NULL ){
-            mSpringCam.setCenter( mDestStar->mPos );
-            mStarCam.setTarget( mDestStar->mPos );
-            mStarCam.setCurrentCam(mSpringCam.getCam());
-        }
+    if( mHomeStar != NULL ){
+        mSpringCam.setEye( mHomeStar->mPos + Vec3f( 100.0f, 0.0f, 40.0f ) );
+        mStarCam.setCurrentCam(mSpringCam.getCam());
     }
     
-	if( mMousePressed ) 
+    if( mDestStar != NULL ){
+        mSpringCam.setCenter( mDestStar->mPos );
+        mStarCam.setTarget( mDestStar->mPos );
+        mStarCam.setCurrentCam(mSpringCam.getCam());
+    }
+    
+	if( mMousePressed )
 		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01 );
 	mSpringCam.update( 0.25f );
 	
@@ -333,30 +319,18 @@ void Catalog::update(double dt)
 //
 void Catalog::draw()
 {
-    glDisable(GL_TEXTURE_2D);
     
     gl::pushMatrices();
     
     ////////------------------------------------------------------
-    //
-    //gl::clear( Color( 0, 0, 0 ) );
 	gl::color( ColorA( 1, 1, 1, 1 ) );
     
-	//gl::setMatricesWindow( mApp->getViewportSize(), false );
 	gl::setViewport( mApp->getViewportBounds() );
     
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
 	gl::enableAlphaBlending();
-	gl::enable( GL_TEXTURE_2D );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	
-    /*
-	// DRAW ROOM
-	mRoomFbo.bindTexture();
-	gl::drawSolidRect( mApp->getViewportBounds() );
-	*/
-	//gl::setMatricesWindow( mApp->getViewportSize(), true );
 	
     const float starDrawMinAlpha = 0.001f;
 	float power = mStarfieldAlpha;
@@ -369,12 +343,9 @@ void Catalog::draw()
     
 	gl::setMatrices( getCamera() );
     
-	gl::enable( GL_TEXTURE_2D );
-	
-	gl::pushMatrices();
-    //	gl::multModelView( mArcball.getQuat() );
 	
 	// DRAW MILKYWAY
+	gl::enable( GL_TEXTURE_2D );
 	if( power > 0.01f ){
 		gl::pushMatrices();
 		gl::translate( getCamera().getEyePoint() );
@@ -384,7 +355,6 @@ void Catalog::draw()
 		gl::drawSphere( Vec3f::zero(), 195000.0f, 32 );
 		gl::popMatrices();
 	}
-	
 	gl::disable( GL_TEXTURE_2D );
 	
 	// FAINT STARS
@@ -509,21 +479,6 @@ void Catalog::drawPoints()
 
 // ----------------------------------------------------------------
 //
-void Catalog::drawHud()
-{
-    gl::pushMatrices();
-    
-    //const float width = mApp->getViewportWidth();
-    //const float height = mApp->getViewportHeight();
-    
-    //CameraOrtho textCam(0.0f, width, height, 0.0f, 0.0f, 10.f);
-    //gl::setMatrices(textCam);
-    
-    gl::popMatrices();
-}
-
-// ----------------------------------------------------------------
-//
 void Catalog::drawDebug()
 {
     //gl::pushMatrices();
@@ -531,6 +486,8 @@ void Catalog::drawDebug()
 
     //gl::popMatrices();
 }
+
+#pragma mark - Input
 
 // ----------------------------------------------------------------
 //
@@ -600,6 +557,10 @@ void Catalog::handleMouseDrag( const MouseEvent& event )
 
 ////////------------------------------------------------------
 //
+
+
+
+#pragma mark - OLD SHIT
 
 // ----------------------------------------------------------------
 //
@@ -730,8 +691,6 @@ void Catalog::initFaintVbo()
 	mFaintVbo.unbindBuffers();
 }
 
-//MARK: data parsing
-
 void Catalog::parseStarData( const fs::path &path )
 {
     console() << "[catalog] loading HYG star database..." << std::endl;
@@ -757,7 +716,6 @@ void Catalog::parseStarData( const fs::path &path )
 
 void Catalog::createStar( const std::string &text, int lineNumber )
 {
-#if USE_NEW_DATA
 	tokenizer< escaped_list_separator<char> > tokens(text);
 	int index = 0;
 	double ra, dec, dist;
@@ -824,54 +782,6 @@ void Catalog::createStar( const std::string &text, int lineNumber )
 		
 		index ++;
 	}
-#else // original data
-    char_separator<char> sep(",");
-	tokenizer< char_separator<char> > tokens(text, sep);
-	int index = 0;
-	double ra, dec, dist;
-	float appMag, absMag;
-	float colIndex;
-	std::string name;
-	std::string spectrum;
-	//0			 1    2  3   4    5      6      7        8
-	//lineNumber,name,ra,dec,dist,appMag,absMag,spectrum,colIndex;
-	BOOST_FOREACH(string t, tokens)
-	{
-		if( index == 1 ){
-			if( t.length() > 1 ){
-				name = t;
-			} else {
-				name = "";
-			}
-		} else if( index == 2 ){
-			ra = lexical_cast<double>(t);
-			
-		} else if( index == 3 ){
-			dec = lexical_cast<double>(t);
-			
-		} else if( index == 4 ){
-			dist = lexical_cast<double>(t);
-			
-		} else if( index == 5 ){
-			appMag = lexical_cast<float>(t);
-			
-		} else if( index == 6 ){
-			absMag = lexical_cast<float>(t);
-			
-		} else if( index == 7 ){
-			spectrum = t;
-			
-		} else if( index == 8 ){
-			if( t != " " ){
-				colIndex = lexical_cast<float>(t);
-			} else {
-				colIndex = 0.0f;
-			}
-		}
-		
-		index ++;
-	}
-#endif
 	
 	Vec3f pos = convertToCartesian( ra, dec, dist );
 	
@@ -909,9 +819,8 @@ void Catalog::createStar( const std::string &text, int lineNumber )
     }
 
     if( appMag < 6.0f || name.length() > 1 ){
-#if 1
-        if( name != "Sol" )
-#endif
+
+    if( name != "Sol" )
         mBrightStars.push_back( star );
     } else {
         mFaintStars.push_back( star );
@@ -1258,8 +1167,10 @@ const Camera& Catalog::getCamera()
 {
     switch( mCamType )
     {
+        case CAM_MANUAL:
+            return Scene::getCamera();
+            
         case CAM_SPRING:
-        case CAM_ORBITER_SPRING:
             return mSpringCam.getCam();
             
         case CAM_STAR:

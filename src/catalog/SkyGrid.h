@@ -24,11 +24,11 @@
 
 #include "cinder/gl/Vbo.h"
 
-class Grid
+class SkyGrid
 {
 public:
-	Grid(void);
-	~Grid(void);
+	SkyGrid(void);
+	~SkyGrid(void);
 
 	void setup();
 	void draw();

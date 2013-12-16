@@ -72,10 +72,10 @@
 #define RES_ORBITER_NEPTUNE         CINDER_RESOURCE( ../resources/images/orbiter/, neptunemap.jpg, 208, JPG )
 
 // catalog
-#define RES_BRIGHT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/, brightStars.vert, 100, GLSL )
-#define RES_BRIGHT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/, brightStars.frag, 100, GLSL )
-#define RES_FAINT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/, faintStars.vert, 100, GLSL )
-#define RES_FAINT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/, faintStars.frag, 100, GLSL )
+#define RES_BRIGHT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/catalog/, brightStars.vert, 100, GLSL )
+#define RES_BRIGHT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/catalog/, brightStars.frag, 100, GLSL )
+#define RES_FAINT_STARS_VERT		CINDER_RESOURCE( ../resources/shaders/catalog/, faintStars.vert, 100, GLSL )
+#define RES_FAINT_STARS_FRAG		CINDER_RESOURCE( ../resources/shaders/catalog/, faintStars.frag, 100, GLSL )
 
 #define RES_CATALOG_MILKYWAY        CINDER_RESOURCE( ../resources/images/catalog/, milkyWay.jpg, 200, JPG )
 #define RES_CATALOG_STAR            CINDER_RESOURCE( ../resources/images/catalog/, star.png, 200, PNG )

@@ -28,6 +28,7 @@
 #include "Trails.h"
 #include "Contour.h"
 #include "Grid.h"
+#include "Parsec.h"
 #include "TextOrbit.h"
 #include "Polyhedron.h"
 #include "Terrain.h"
@@ -353,6 +354,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
     if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
+    if( mConfig.getBool("catalog") )    addScene( new Parsec() );
     if( mConfig.getBool("binned") )     addScene( new Binned() );
     if( mConfig.getBool("graviton") )   addScene( new Graviton() );
     if( mConfig.getBool("dust") )       addScene( new Dust() );

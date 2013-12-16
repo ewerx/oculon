@@ -20,21 +20,21 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "Grid.h"
+#include "SkyGrid.h"
 
 using namespace ci;
 using namespace std;
 
-Grid::Grid(void)
+SkyGrid::SkyGrid(void)
 	: mLineWidth(1.5f)
 {
 }
 
-Grid::~Grid(void)
+SkyGrid::~SkyGrid(void)
 {
 }
 
-void Grid::setup()
+void SkyGrid::setup()
 {
 	const int segments = 36;
 	const int rings = 9;
@@ -102,7 +102,7 @@ void Grid::setup()
 	mVboMesh.bufferPositions( &(vertices.front()), vertices.size() );	
 }
 
-void Grid::draw()
+void SkyGrid::draw()
 {
 	if(!mVboMesh) return;
 
