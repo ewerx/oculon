@@ -18,6 +18,7 @@
 #include "ParsecLabels.h"
 #include "StarCam.h"
 #include "SplineCam.h"
+#include "AudioInputHandler.h"
 
 class Parsec : public Scene
 {
@@ -48,6 +49,8 @@ protected:
     bool mShowLabels;
     bool mShowConstellations;
     bool mShowConstellationArt;
+    float mConstellationAlpha;
+    bool mConstellationAudio;
     
     // guts
     ParsecStars         mStars;
@@ -68,6 +71,9 @@ protected:
     StarCam             mStarCam;
     SplineCam           mSplineCam;
     
+    float               mStarCamRotateSpeed;
+    float               mStarCamTimeScale;
+    
     // camera
 #define PARSEC_CAMTYPE_TUPLE \
 PARSEC_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
@@ -87,5 +93,8 @@ enm,
         CAM_COUNT
     };
     eCamType                    mCamType;
+    
+    // audio
+    AudioInputHandler   mAudioInputHandler;
 
 };

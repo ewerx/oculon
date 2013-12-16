@@ -136,8 +136,8 @@ void Rings::setupInterface()
         }
         
         mInterface->addParam(CreateFloatParam("timescale" + indexStr, &mRingSetParams[i].mTimeScale)
-                             .minValue(-20.0f)
-                             .maxValue(20.0f)
+                             .minValue(-30.0f)
+                             .maxValue(30.0f)
                              .oscReceiver(name));
         mInterface->addParam(CreateFloatParam("power" + indexStr, &mRingSetParams[i].mPower)
                              .minValue(0.1f)

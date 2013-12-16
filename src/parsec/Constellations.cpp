@@ -41,14 +41,14 @@ Constellations::~Constellations(void)
 {
 }
 
-void Constellations::draw()
+void Constellations::draw(float alpha)
 {
 	if(!mMesh) return;
 
 	glPushAttrib( GL_CURRENT_BIT | GL_LINE_BIT | GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT );
 
 	glLineWidth( mLineWidth );
-	gl::color( Color(0.5f, 0.6f, 0.8f) * mAttenuation );
+	gl::color( ColorA(0.5f, 0.6f, 0.8f, alpha) * mAttenuation );
 	gl::enableAdditiveBlending();
 
 	gl::draw( mMesh );

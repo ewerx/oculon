@@ -36,7 +36,7 @@ public:
 
 	void setup() {};
 	void update() {};
-	void draw();
+	void draw(float alpha);
 
 	void	clear();
 

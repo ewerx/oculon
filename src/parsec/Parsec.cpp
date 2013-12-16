@@ -35,6 +35,8 @@ void Parsec::setup()
     mShowLabels = false;
     mShowConstellations = false;
     mShowConstellationArt = false;
+    mConstellationAudio = false;
+    mConstellationAlpha = 1.0f;
     
     loadData();
     
@@ -63,6 +65,12 @@ void Parsec::setup()
     // cameras
     mStarCam.setup(this);
     mSplineCam.setup();
+    
+    //HACK!
+    mStarCamTimeScale = 0.005f;
+    mStarCam.mTimeScale = &mStarCamTimeScale;
+    
+    mAudioInputHandler.setup(false);
 }
 
 void Parsec::reset()
@@ -77,6 +85,11 @@ void Parsec::setupInterface()
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
     mInterface->addParam(CreateBoolParam("const art", &mShowConstellationArt));
     
+    
+    mInterface->addParam(CreateBoolParam("const audio", &mConstellationAudio));
+    mInterface->addParam(CreateFloatParam("const alpha", &mConstellationAlpha));
+    
+    
     mInterface->gui()->addColumn();
     vector<string> camTypeNames;
 #define PARSEC_CAMTYPE_ENTRY( nam, enm ) \
@@ -88,7 +101,10 @@ camTypeNames.push_back(nam);
                         .oscReceiver(getName())
                         .isVertical(), camTypeNames);
 
+    mInterface->addParam(CreateFloatParam("star cam speed", &mStarCamTimeScale));
     mSplineCam.setupInterface(mInterface, getName());
+    
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Parsec::loadData()
@@ -177,6 +193,13 @@ void Parsec::update(double dt)
 {
     Scene::update(dt);
     
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    
+    if (mConstellationAudio)
+    {
+        mConstellationAlpha = 3.0f * mAudioInputHandler.getAverageVolumeHighFreq();
+    }
+    
     // update camera
     //TODO: method
     switch (mCamType) {
@@ -244,7 +267,7 @@ void Parsec::render()
 	// draw constellations
 	if(mShowConstellations)
     {
-		mConstellations.draw();
+		mConstellations.draw(mConstellationAlpha);
     }
     
 	if(mShowConstellationArt)
