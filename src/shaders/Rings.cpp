@@ -181,9 +181,12 @@ void Rings::setupInterface()
         mInterface->addParam(CreateFloatParam("spinrate", &mRingSetParams[i].mSpinRate)
                              .minValue(-2.0f)
                              .maxValue(2.0f));
-        mInterface->addParam(CreateFloatParam("spinsep", &mRingSetParams[i].mSpinRadius)
-                             .minValue(0.0f)
-                             .maxValue(1.0f));
+        if (i%2==0)
+        {
+            mInterface->addParam(CreateFloatParam("spinsep", &mRingSetParams[i].mSpinRadius)
+                                 .minValue(0.0f)
+                                 .maxValue(1.0f));
+        }
         
         // audio
         mInterface->addParam(CreateBoolParam("power-audio" + indexStr, &mRingSetParams[i].mPowerByAudio)
@@ -317,17 +320,18 @@ void Rings::update(double dt)
         
         if (mRingSetParams[i].mSpin) {
             float r = mRingSetParams[i].mSpinRadius;
+            if (i == 1 || i == 3) {
+                r = mRingSetParams[i-1].mSpinRadius * -1.0f;
+            }
+            
             if (mRingSetParams[i].mSeparateByAudio)
             {
                 float audioLevel = mRingSetParams[i].mAudioInputHandler.getAverageVolumeLowFreq();
                 r *= audioLevel;
             }
-            if (i == 1 || i == 3) r *= -1.0f;
             mRingSetParams[i].mSpinTheta += dt * mRingSetParams[i].mSpinRate;
             mRingSetParams[i].mActualCenter().x = mRingSetParams[0].mCenter.x + r * sin( mRingSetParams[i].mSpinTheta);
             mRingSetParams[i].mActualCenter().y = mRingSetParams[0].mCenter.y + r * cos( mRingSetParams[i].mSpinTheta);
-//            mRingSetParams[1].mActualCenter().x = mRingSetParams[1].mCenter.x - r * sin(mSpinTheta*0.25f);
-//            mRingSetParams[1].mActualCenter().y = mRingSetParams[1].mCenter.y - r * cos(mSpinTheta*0.25f);
         }
     }
     
