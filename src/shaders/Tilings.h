@@ -46,14 +46,18 @@ private:
     void drawShaderOutput();
     void shaderPostDraw();
     
+    float getAudioLevelForBand(int bandIndex);
+    
 private:
 
     ci::gl::GlslProg    mShader;
     
     // audio
     AudioInputHandler   mAudioInputHandler;
-    int                 mResponseBand;
-    bool                mAudioOffset;
+    int                 mOffsetResponse;
+    int                 mAnglePResponse;
+    int                 mAngleQResponse;
+    int                 mAngleRResponse;
     
     // params
     ci::ColorAf         mColor1;

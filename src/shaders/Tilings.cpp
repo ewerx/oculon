@@ -50,8 +50,10 @@ void Tilings::reset()
     mAngleR = 2;
     mThickness = 0.03f;
     
-    mAudioOffset = false;
-    mResponseBand = 1;
+    mOffsetResponse = 0;
+    mAnglePResponse = 0;
+    mAngleQResponse = 0;
+    mAngleRResponse = 0;
 }
 
 void Tilings::setupInterface()
@@ -84,9 +86,15 @@ void Tilings::setupInterface()
                          .minValue(0.0f)
                          .maxValue(1.0f));
     
-    mInterface->addParam(CreateBoolParam("audio", &mAudioOffset));
-    mInterface->addParam(CreateIntParam( "audioband", &mResponseBand )
-                         .maxValue(2));
+    const float MAX_BANDS = 3;
+    mInterface->addParam(CreateIntParam( "audio-offset", &mOffsetResponse )
+                         .maxValue(MAX_BANDS));
+    mInterface->addParam(CreateIntParam( "audio-p", &mAnglePResponse )
+                         .maxValue(MAX_BANDS));
+    mInterface->addParam(CreateIntParam( "audio-q", &mAngleQResponse )
+                         .maxValue(MAX_BANDS));
+    mInterface->addParam(CreateIntParam( "audio-r", &mAngleRResponse )
+                         .maxValue(MAX_BANDS));
     
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
@@ -97,26 +105,33 @@ void Tilings::update(double dt)
     
     mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
-    if (mAudioOffset) {
-        float audioLevel = 0.0f;
-        switch (mResponseBand) {
-            case 0:
-            audioLevel = mAudioInputHandler.getAverageVolumeLowFreq();
-            break;
-            case 1:
-            audioLevel = mAudioInputHandler.getAverageVolumeMidFreq();
-            break;
-            case 2:
-            audioLevel = mAudioInputHandler.getAverageVolumeHighFreq();
-            break;
-            default:
-            break;
-        }
+    if (mOffsetResponse > 0) {
+        float audioLevel = getAudioLevelForBand(mOffsetResponse);
         mOffset = audioLevel * 5.0f;
     }
     
-    
     mElapsedTime += dt * mTimeScale;
+}
+
+float Tilings::getAudioLevelForBand(int bandIndex)
+{
+    float audioLevel = 0.0f;
+    switch (bandIndex) {
+        case 1:
+        audioLevel = mAudioInputHandler.getAverageVolumeLowFreq() * mGain;
+        break;
+        case 2:
+        audioLevel = mAudioInputHandler.getAverageVolumeMidFreq() * mGain;
+        break;
+        case 3:
+        audioLevel = mAudioInputHandler.getAverageVolumeHighFreq() * mGain;
+        break;
+        case 0:
+        default:
+        audioLevel = 0.0f;
+        break;
+    }
+    return audioLevel;
 }
 
 void Tilings::draw()
@@ -134,6 +149,24 @@ void Tilings::shaderPreDraw()
     
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
+    int angleP = mAngleP;
+    if (mAnglePResponse > 0) {
+        float audioLevel = getAudioLevelForBand(mAnglePResponse);
+        angleP *= audioLevel * 5.0f;
+    }
+    
+    int angleQ = mAngleQ;
+    if (mAngleQResponse > 0) {
+        float audioLevel = getAudioLevelForBand(mAngleQResponse);
+        angleQ *= audioLevel * 5.0f;
+    }
+    
+    int angleR = mAngleR;
+    if (mAngleRResponse > 0) {
+        float audioLevel = getAudioLevelForBand(mAngleRResponse);
+        angleR *= audioLevel * 5.0f;
+    }
+    
     mShader.uniform( "iResolution", resolution );
     mShader.uniform( "iGlobalTime", (float)mElapsedTime );
     
@@ -141,9 +174,9 @@ void Tilings::shaderPreDraw()
     mShader.uniform( "iColor1", mColor1 );
     mShader.uniform( "iColor2", mColor2 );
     mShader.uniform( "iIterations", mIterations );
-    mShader.uniform( "iAngleP", mAngleP );
-    mShader.uniform( "iAngleQ", mAngleQ );
-    mShader.uniform( "iAngleR", mAngleR );
+    mShader.uniform( "iAngleP", angleP );
+    mShader.uniform( "iAngleQ", angleQ );
+    mShader.uniform( "iAngleR", angleR );
     mShader.uniform( "iCenter", mCenter );
     mShader.uniform( "iThickness", mThickness );
     mShader.uniform( "iOffset", mOffset);
