@@ -98,7 +98,6 @@
 		7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
 		7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
-		7C2060F0183D678C00A1D230 /* graviton_formation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */; };
 		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
 		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
@@ -113,9 +112,6 @@
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
 		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
 		7C62765D1824A92E00724B87 /* PingPongFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C62765B1824A92E00724B87 /* PingPongFbo.cpp */; };
-		7C6276601824AA6D00724B87 /* graviton_displacement_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C62765F1824AA6D00724B87 /* graviton_displacement_vert.glsl */; };
-		7C6276621824AA7C00724B87 /* graviton_displacement_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6276611824AA7C00724B87 /* graviton_displacement_frag.glsl */; };
-		7C6276641824AAAC00724B87 /* graviton_particle_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6276631824AAAC00724B87 /* graviton_particle_frag.glsl */; };
 		7C6276651824B29500724B87 /* Graviton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9D617650FD700E71F9D /* Graviton.cpp */; };
 		7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */; };
 		7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE421764384B00E71F9D /* SyphonNameboundClient.m */; };
@@ -380,6 +376,10 @@
 		7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666431853F678004BD521 /* ParsecBackground.cpp */; };
 		7CD666481853F678004BD521 /* ParsecStars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666451853F678004BD521 /* ParsecStars.cpp */; };
 		7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666491853F770004BD521 /* ParsecGrid.cpp */; };
+		7CE8AFB6186FAD150087AC7A /* graviton_displacement_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB2186FAD150087AC7A /* graviton_displacement_frag.glsl */; };
+		7CE8AFB7186FAD150087AC7A /* graviton_displacement_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB3186FAD150087AC7A /* graviton_displacement_vert.glsl */; };
+		7CE8AFB8186FAD150087AC7A /* graviton_formation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB4186FAD150087AC7A /* graviton_formation_frag.glsl */; };
+		7CE8AFB9186FAD150087AC7A /* graviton_particle_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB5186FAD150087AC7A /* graviton_particle_frag.glsl */; };
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
 		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
@@ -572,7 +572,6 @@
 		7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
 		7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.vert; sourceTree = "<group>"; };
-		7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_formation_frag.glsl; sourceTree = "<group>"; };
 		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
 		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
@@ -592,9 +591,6 @@
 		7C6276591824780000724B87 /* FractalShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractalShaders.h; sourceTree = "<group>"; };
 		7C62765B1824A92E00724B87 /* PingPongFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingPongFbo.cpp; sourceTree = "<group>"; };
 		7C62765C1824A92E00724B87 /* PingPongFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingPongFbo.h; sourceTree = "<group>"; };
-		7C62765F1824AA6D00724B87 /* graviton_displacement_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_displacement_vert.glsl; sourceTree = "<group>"; };
-		7C6276611824AA7C00724B87 /* graviton_displacement_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_displacement_frag.glsl; sourceTree = "<group>"; };
-		7C6276631824AAAC00724B87 /* graviton_particle_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_particle_frag.glsl; sourceTree = "<group>"; };
 		7C79BDE71764384A00E71F9D /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
 		7C79BE401764384B00E71F9D /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
@@ -954,6 +950,10 @@
 		7CD666461853F678004BD521 /* ParsecStars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecStars.h; sourceTree = "<group>"; };
 		7CD666491853F770004BD521 /* ParsecGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecGrid.cpp; sourceTree = "<group>"; };
 		7CD6664A1853F770004BD521 /* ParsecGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecGrid.h; sourceTree = "<group>"; };
+		7CE8AFB2186FAD150087AC7A /* graviton_displacement_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_displacement_frag.glsl; sourceTree = "<group>"; };
+		7CE8AFB3186FAD150087AC7A /* graviton_displacement_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_displacement_vert.glsl; sourceTree = "<group>"; };
+		7CE8AFB4186FAD150087AC7A /* graviton_formation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_formation_frag.glsl; sourceTree = "<group>"; };
+		7CE8AFB5186FAD150087AC7A /* graviton_particle_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_particle_frag.glsl; sourceTree = "<group>"; };
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
 		7CF735B2181F81D500B21DE9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
 		7CF735B3181F81D500B21DE9 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
@@ -1448,17 +1448,6 @@
 			path = ../src/shaders;
 			sourceTree = "<group>";
 		};
-		7C62765E1824AA3900724B87 /* graviton */ = {
-			isa = PBXGroup;
-			children = (
-				7C62765F1824AA6D00724B87 /* graviton_displacement_vert.glsl */,
-				7C6276611824AA7C00724B87 /* graviton_displacement_frag.glsl */,
-				7C6276631824AAAC00724B87 /* graviton_particle_frag.glsl */,
-				7C2060EF183D678C00A1D230 /* graviton_formation_frag.glsl */,
-			);
-			name = graviton;
-			sourceTree = "<group>";
-		};
 		7C79BDE31764384A00E71F9D /* SimpleGUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1750,7 +1739,7 @@
 				7CC3C028183EE3B50082C322 /* dust */,
 				7C79C8AE17650F8F00E71F9D /* flock */,
 				7C06A8B21853D4ED00D1C8A3 /* fullscreen */,
-				7C62765E1824AA3900724B87 /* graviton */,
+				7CE8AFB1186FAD150087AC7A /* graviton */,
 				7C79C8C917650F8F00E71F9D /* polyhedron */,
 			);
 			name = shaders;
@@ -2117,8 +2106,6 @@
 			children = (
 				7C79CA0017650FD700E71F9D /* Catalog.cpp */,
 				7C79CA0117650FD700E71F9D /* Catalog.h */,
-				7C06A8A81853AF5300D1C8A3 /* Constellations.cpp */,
-				7C06A8A91853AF5300D1C8A3 /* Constellations.h */,
 				7C79CA0217650FD700E71F9D /* Planet.cpp */,
 				7C79CA0317650FD700E71F9D /* Planet.h */,
 				7C06A8AB1853AFAC00D1C8A3 /* SkyGrid.cpp */,
@@ -2313,6 +2300,17 @@
 				7C79CA1717650FD700E71F9D /* trails */,
 			);
 			name = scenes;
+			sourceTree = "<group>";
+		};
+		7CE8AFB1186FAD150087AC7A /* graviton */ = {
+			isa = PBXGroup;
+			children = (
+				7CE8AFB2186FAD150087AC7A /* graviton_displacement_frag.glsl */,
+				7CE8AFB3186FAD150087AC7A /* graviton_displacement_vert.glsl */,
+				7CE8AFB4186FAD150087AC7A /* graviton_formation_frag.glsl */,
+				7CE8AFB5186FAD150087AC7A /* graviton_particle_frag.glsl */,
+			);
+			path = graviton;
 			sourceTree = "<group>";
 		};
 		7CF735AF181F81D500B21DE9 /* cinderpane */ = {
@@ -2612,6 +2610,7 @@
 				7C79CB0D1765288500E71F9D /* corona.frag in Resources */,
 				7C79CB0E1765288500E71F9D /* dustCorona.frag in Resources */,
 				7C79CB0F1765288500E71F9D /* glowCorona.frag in Resources */,
+				7CE8AFB6186FAD150087AC7A /* graviton_displacement_frag.glsl in Resources */,
 				7C79CB101765288500E71F9D /* gradient.frag in Resources */,
 				7C06A8FA1853D4ED00D1C8A3 /* metahexballs_frag.glsl in Resources */,
 				7C06A8E41853D4ED00D1C8A3 /* cells_frag.glsl in Resources */,
@@ -2619,6 +2618,7 @@
 				7C79CB121765288500E71F9D /* passThruColorCorona.vert in Resources */,
 				7C06A8EA1853D4ED00D1C8A3 /* energyflicker_frag.glsl in Resources */,
 				7C79CB131765288500E71F9D /* passThruCorona.vert in Resources */,
+				7CE8AFB7186FAD150087AC7A /* graviton_displacement_vert.glsl in Resources */,
 				7C79CB141765288500E71F9D /* passThruNormalsCorona.vert in Resources */,
 				7C06A8F31853D4ED00D1C8A3 /* kifs_frag.glsl in Resources */,
 				7C79CB151765288500E71F9D /* planet.frag in Resources */,
@@ -2635,7 +2635,6 @@
 				7C79CB1E1765288500E71F9D /* P_Position.frag in Resources */,
 				7C79CB1F1765288500E71F9D /* P_VboPos.frag in Resources */,
 				7C79CB201765288500E71F9D /* P_VboPos.vert in Resources */,
-				7C2060F0183D678C00A1D230 /* graviton_formation_frag.glsl in Resources */,
 				7C06A8FD1853D4ED00D1C8A3 /* polychora_frag.glsl in Resources */,
 				7C79CB211765288500E71F9D /* P_Velocity.frag in Resources */,
 				7C79CB221765288500E71F9D /* passThruFlock.vert in Resources */,
@@ -2678,7 +2677,6 @@
 				7C79C8F217650F8F00E71F9D /* starGlow.png in Resources */,
 				7C79C8F317650F8F00E71F9D /* colortex1.jpg in Resources */,
 				7C06A8F21853D4ED00D1C8A3 /* inversion_frag.glsl in Resources */,
-				7C6276641824AAAC00724B87 /* graviton_particle_frag.glsl in Resources */,
 				7C06A9021853D4ED00D1C8A3 /* simplicity_frag.glsl in Resources */,
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
 				7C79C8F517650F8F00E71F9D /* colortex3.jpg in Resources */,
@@ -2695,6 +2693,7 @@
 				7C79C8FB17650F8F00E71F9D /* cubeNegY.jpg in Resources */,
 				7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */,
 				7C06A90A1853D4ED00D1C8A3 /* voronoi_frag.glsl in Resources */,
+				7CE8AFB8186FAD150087AC7A /* graviton_formation_frag.glsl in Resources */,
 				7C79C8FC17650F8F00E71F9D /* cubeNegZ.jpg in Resources */,
 				7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */,
 				7C06A8EE1853D4ED00D1C8A3 /* glasswalls_frag.glsl in Resources */,
@@ -2714,7 +2713,6 @@
 				7C79C90517650F8F00E71F9D /* eclipse_mapping_pattern.jpg in Resources */,
 				7C79C90617650F8F00E71F9D /* emitter.png in Resources */,
 				7C79C90717650F8F00E71F9D /* glow.png in Resources */,
-				7C6276601824AA6D00724B87 /* graviton_displacement_vert.glsl in Resources */,
 				7C06A9001853D4ED00D1C8A3 /* rings_frag.glsl in Resources */,
 				7C79C90817650F8F00E71F9D /* lanternGlow.png in Resources */,
 				7C79C90917650F8F00E71F9D /* nebula.png in Resources */,
@@ -2722,7 +2720,6 @@
 				7C79C90B17650F8F00E71F9D /* normal.png in Resources */,
 				7C06A8FB1853D4ED00D1C8A3 /* moire_frag.glsl in Resources */,
 				7C79C90C17650F8F00E71F9D /* earthmap1k.jpg in Resources */,
-				7C6276621824AA7C00724B87 /* graviton_displacement_frag.glsl in Resources */,
 				7C79C90D17650F8F00E71F9D /* jupitermap.jpg in Resources */,
 				7C79C90E17650F8F00E71F9D /* marsmap1k.jpg in Resources */,
 				7C06A8E91853D4ED00D1C8A3 /* cymatics_frag.glsl in Resources */,
@@ -2750,6 +2747,7 @@
 				7C06A8F01853D4ED00D1C8A3 /* infinitefall_frag.glsl in Resources */,
 				7C79C91E17650F8F00E71F9D /* Oculon.icns in Resources */,
 				7C79C92E17650F8F00E71F9D /* earth_frag.glsl in Resources */,
+				7CE8AFB9186FAD150087AC7A /* graviton_particle_frag.glsl in Resources */,
 				7C79C92F17650F8F00E71F9D /* emitter_frag.glsl in Resources */,
 				7C79C93017650F8F00E71F9D /* emitter_vert.glsl in Resources */,
 				7C06A8E21853D4ED00D1C8A3 /* acidcontours_frag.glsl in Resources */,
@@ -2933,7 +2931,6 @@
 				7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */,
 				7C79CA3D17650FD800E71F9D /* TunnelCam.cpp in Sources */,
 				7C79CA3E17650FD800E71F9D /* Config.cpp in Sources */,
-				7C06A8AA1853AF5300D1C8A3 /* Constellations.cpp in Sources */,
 				7C79CA3F17650FD800E71F9D /* DomeRenderer.cpp in Sources */,
 				7C79CA4017650FD800E71F9D /* FisheyeRender.cpp in Sources */,
 				7C06A90B1853D4ED00D1C8A3 /* water_ripple.fsh in Sources */,
