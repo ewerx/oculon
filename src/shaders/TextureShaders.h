@@ -71,8 +71,7 @@ private:
 #define TS_SHADERS_TUPLE \
 TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
 TS_SHADERS_ENTRY( "Simplicity", "simplicity_frag.glsl", SHADER_SIMPLICITY ) \
-TS_SHADERS_ENTRY( "Voronoi", "voronoi_frag.glsl", SHADER_VORONOI ) \
-//TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
+TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
 //end tuple
     
     enum eShaderType
@@ -139,6 +138,10 @@ enm,
         float mColorOffset;
         
         float antialias;
+        
+        bool mAudioFold;
+        bool mAudioTranslate;
+        bool mAudioRot;
     };
     tKaliParams mKaliParams;
     
@@ -161,25 +164,10 @@ enm,
         ci::Anim<ci::Vec3f> mPanPos;
         ci::Vec3f           mUVOffset;
         ci::Anim<float>     mUVScale;
+        
+        bool                mAudioHighlight;
+        bool                mAudioShift;
     };
     tSimplicityParams mSimplicityParams;
-    
-    struct tVoronoiParams
-    {
-        ci::Vec3f mBorderColor;
-        float mSpeed;
-        float mZoom;
-        float mBorderIn;
-        float mBorderOut;
-        ci::Vec3f mSeedColor;
-        float mSeedSize;
-        float mCellLayers;
-        ci::Vec3f mCellColor;
-        float mCellBorderStrength;
-        float mCellBrightness;
-        float mDistortion;
-        bool mAudioDistortion;
-    };
-    tVoronoiParams mVoronoiParams;
 };
 

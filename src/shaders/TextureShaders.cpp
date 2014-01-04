@@ -92,6 +92,9 @@ TS_SHADERS_TUPLE
     mKaliParams.mRotationOffset = 0.0f;
     mKaliParams.mRotation = 0.0f;
     mKaliParams.mColorOffset = 0.0f;
+    mKaliParams.mAudioFold = false;
+    mKaliParams.mAudioTranslate = false;
+    mKaliParams.mAudioRot = false;
     
     // simplicity
     mSimplicityParams.mRedPower = 2;
@@ -111,21 +114,8 @@ TS_SHADERS_TUPLE
     mSimplicityParams.mPanPos = Vec3f(0.0625f, 0.0833f, 0.0078f);
     mSimplicityParams.mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
     mSimplicityParams.mUVScale = 0.25f;
-    
-    // voronoi
-    mVoronoiParams.mBorderColor = Vec3f( 1.0f, 1.0f, 1.0f );
-    mVoronoiParams.mZoom = 60.0f;
-    mVoronoiParams.mBorderIn = 0.0f;
-    mVoronoiParams.mBorderOut = 0.075f;
-    mVoronoiParams.mSeedColor = Vec3f( 1.0f, 1.0f, 1.0f );
-    mVoronoiParams.mSeedSize = 0.0f;
-    mVoronoiParams.mCellLayers = 8.0f;
-    mVoronoiParams.mCellBrightness = 0.5f;
-    mVoronoiParams.mCellBorderStrength = 0.5f;
-    mVoronoiParams.mCellColor = Vec3f( 0.0f, 0.0f, 0.0f );
-    mVoronoiParams.mSpeed = 1.00f;
-    mVoronoiParams.mDistortion = 0.0f;
-    mVoronoiParams.mAudioDistortion = true;
+    mSimplicityParams.mAudioHighlight = false;
+    mSimplicityParams.mAudioShift = false;
 }
 
 void TextureShaders::reset()
@@ -207,6 +197,13 @@ TS_SHADERS_TUPLE
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
     
+    mInterface->addParam(CreateBoolParam("kali/audiofold", &mKaliParams.mAudioFold)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam("kali/audiotrans", &mKaliParams.mAudioTranslate)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam("kali/audiorot", &mKaliParams.mAudioRot)
+                         .oscReceiver(getName()));
+    
 
     // SHADER_SIMPLICITY
     mInterface->gui()->addColumn();
@@ -253,37 +250,6 @@ TS_SHADERS_TUPLE
     mInterface->addParam(CreateFloatParam( "UVScale", mSimplicityParams.mUVScale.ptr() )
                          .minValue(0.01f)
                          .maxValue(4.0f));
-    
-    // SHADER_VORONOI
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Voronoi");
-    mInterface->addParam(CreateFloatParam("voronoi/speed", &mVoronoiParams.mSpeed)
-                         .maxValue(10.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/zoom", &mVoronoiParams.mZoom)
-                         .maxValue(256.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/distortion", &mVoronoiParams.mDistortion)
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam("voronoi/audio_distortion", &mVoronoiParams.mAudioDistortion)
-                         .oscReceiver(getName()));
-    mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateVec3fParam("voronoi/line_color", &mVoronoiParams.mBorderColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateFloatParam("voronoi/borderin", &mVoronoiParams.mBorderIn)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/borderout", &mVoronoiParams.mBorderOut)
-                         .oscReceiver(getName()));
-    mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateVec3fParam("voronoi/seed_color", &mVoronoiParams.mSeedColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateFloatParam("voronoi/seedsize", &mVoronoiParams.mSeedSize)
-                         .oscReceiver(getName()));
-    mInterface->gui()->addSeparator();
-    mInterface->addParam(CreateVec3fParam("voronoi/cell_color", &mVoronoiParams.mCellColor, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateFloatParam("voronoi/cell_brightness", &mVoronoiParams.mCellBrightness)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("voronoi/cell_strength", &mVoronoiParams.mCellBorderStrength)
-                         .oscReceiver(getName()));
     
     // SHADER_NOISE
     mInterface->gui()->addColumn();
@@ -377,28 +343,50 @@ void TextureShaders::shaderPreDraw()
     
     switch (mShaderType) {
         case SHADER_KALI:
+        {
+            Vec2f fold = mKaliParams.fold;
+            if (mKaliParams.mAudioFold)
+            {
+                fold.x *= mAudioInputHandler.getAverageVolumeMidFreq() * mGain * 5.0f;
+                fold.y *= mAudioInputHandler.getAverageVolumeLowFreq() * mGain * 5.0f;
+            }
+            
+            Vec2f translate = mKaliParams.translate;
+            if (mKaliParams.mAudioFold)
+            {
+                translate.x *= mAudioInputHandler.getAverageVolumeMidFreq() * mGain * 5.0f;
+                translate.y *= mAudioInputHandler.getAverageVolumeLowFreq() * mGain * 5.0f;
+            }
+            
+            float rotationOffset = mKaliParams.mRotationOffset;
+            if (mKaliParams.mAudioRot)
+            {
+                rotationOffset *= mAudioInputHandler.getAverageVolumeHighFreq() * mGain * 5.0f;
+            }
+            
             shader.uniform( "iChannel0", 0 );
             shader.uniform( "iterations", mKaliParams.iterations );
             shader.uniform( "scale", mKaliParams.scale );
-            shader.uniform( "fold", mKaliParams.fold );
-            shader.uniform( "translate", mKaliParams.translate );
+            shader.uniform( "fold", fold );
+            shader.uniform( "translate", translate );
             shader.uniform( "zoom", mKaliParams.zoom );
             shader.uniform( "brightness", mKaliParams.brightness );
             shader.uniform( "saturation", mKaliParams.saturation );
             shader.uniform( "texturescale", mKaliParams.texturescale );
-            shader.uniform( "rotation", mKaliParams.mRotation + mKaliParams.mRotationOffset );
+            shader.uniform( "rotation", mKaliParams.mRotation + rotationOffset );
             shader.uniform( "coloroffset", mKaliParams.mColorOffset );
             shader.uniform( "antialias", mKaliParams.antialias );
+        }
             break;
             
-//        case SHADER_NOISE:
-//            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
-//            shader.uniform( "scale", mNoiseParams.mNoiseScale );
-//            shader.uniform( "colorScale", mColor1 );
-//            shader.uniform( "alpha", mNoiseParams.mBrightness );
-//            shader.uniform( "levels", mNoiseParams.mLevels );
-//            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
-//            break;
+        case SHADER_NOISE:
+            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
+            shader.uniform( "scale", mNoiseParams.mNoiseScale );
+            shader.uniform( "colorScale", mColor1 );
+            shader.uniform( "alpha", mNoiseParams.mBrightness );
+            shader.uniform( "levels", mNoiseParams.mLevels );
+            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
+            break;
             
         case SHADER_SIMPLICITY:
             shader.uniform( "colorScale", mSimplicityParams.mColorScale );
@@ -417,32 +405,6 @@ void TextureShaders::shaderPreDraw()
             shader.uniform( "panPos", mSimplicityParams.mPanPos() );
             shader.uniform( "uvOffset", mSimplicityParams.mUVOffset );
             shader.uniform( "uvScale", mSimplicityParams.mUVScale );
-            break;
-            
-        case SHADER_VORONOI:
-        {
-            shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
-            shader.uniform( "borderColor", mVoronoiParams.mBorderColor );
-            shader.uniform( "zoom", mVoronoiParams.mZoom );
-            shader.uniform( "speed", mVoronoiParams.mSpeed );
-            shader.uniform( "borderIn", mVoronoiParams.mBorderIn );
-            shader.uniform( "borderOut", mVoronoiParams.mBorderOut );
-            shader.uniform( "seedSize", mVoronoiParams.mSeedSize );
-            shader.uniform( "seedColor", mVoronoiParams.mSeedColor );
-            shader.uniform( "cellLayers", mVoronoiParams.mCellLayers );
-            shader.uniform( "cellColor", mVoronoiParams.mCellColor );
-            shader.uniform( "cellBorderStrength", mVoronoiParams.mCellBorderStrength );
-            shader.uniform( "cellBrightness", mVoronoiParams.mCellBrightness );
-            
-            float distortion = mVoronoiParams.mDistortion;
-            if (mVoronoiParams.mAudioDistortion)
-            {
-                distortion += 10.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax) * mGain;
-                distortion = math<float>::min(distortion, 1.0f);
-            }
-            shader.uniform( "distortion", distortion );
-        }
             break;
             
         default:
