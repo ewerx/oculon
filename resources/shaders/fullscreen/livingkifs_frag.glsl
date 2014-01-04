@@ -75,7 +75,8 @@ float raymarch(in vec3 from, in vec3 dir)
             totdist+=d;
         }
 	}
-	float backg=.5;
+    // background color
+	float backg=0.0;
 	if (d<detail) {
 		col=light(p-detail*dir, dir);
 	} else {
@@ -129,5 +130,5 @@ void main(void)
 	from.yz=from.yz*rot;
     
 	float col=raymarch(from,dir);
-	gl_FragColor = vec4(col);
+	gl_FragColor = vec4(col,col,col,1.0);
 }
