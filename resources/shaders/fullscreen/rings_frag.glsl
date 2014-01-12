@@ -18,6 +18,7 @@ uniform float       iFrequency1;
 uniform float       iThickness1;
 uniform float       iPower1;
 uniform vec2        iCenter1;
+uniform int         iFormat1;
 
 // ringset2
 uniform float       iTime2;
@@ -27,6 +28,7 @@ uniform float       iFrequency2;
 uniform float       iThickness2;
 uniform float       iPower2;
 uniform vec2        iCenter2;
+uniform int         iFormat2;
 
 // ringset3
 uniform float       iTime3;
@@ -36,6 +38,7 @@ uniform float       iFrequency3;
 uniform float       iThickness3;
 uniform float       iPower3;
 uniform vec2        iCenter3;
+uniform int         iFormat3;
 
 // ringset3
 uniform float       iTime4;
@@ -45,14 +48,21 @@ uniform float       iFrequency4;
 uniform float       iThickness4;
 uniform float       iPower4;
 uniform vec2        iCenter4;
+uniform int         iFormat4;
 
 
 #ifdef GL_ES
 precision highp float;
 #endif
 
-vec4 calcRingSet(vec2 pos, float time, float frequency, float scale, float thickness, float power)
+vec4 calcRingSet(vec2 pos, float time, float frequency, float scale, float thickness, float power, int format)
 {
+    if (format == 1) {
+        pos.y = pos.x;
+    } else if (format == 2) {
+        pos.x = pos.y;
+    }
+    
     // TODO: figure out relationship between scale and frequency...
 	float dist = length(pos);
     float dist2 = (dist*dist)/scale;
@@ -68,7 +78,7 @@ vec4 calcRingSet(vec2 pos, float time, float frequency, float scale, float thick
 	float r = frequency * pow(dist2,power);
 	
 	// experiments:
-	//float r = frequency * sin(dist/scale*3.); // neat in and out simulatanous
+	//float r = frequency * sin(dist/scale*50.0); // neat in and out simulatanous
 	//float r = abs( tan(dist/scale*15.) * thickness);// WTF is this???
 	//thickness *= sin(0.1*r); // relative thickness
     
@@ -83,7 +93,6 @@ vec4 calcRingSet(vec2 pos, float time, float frequency, float scale, float thick
     return texcol;
 }
 
-vec2 center = vec2(0.5,0.5);
 float invAr = iResolution.y / iResolution.x;
 
 void main(void)
@@ -98,17 +107,15 @@ void main(void)
     pos2.y *= invAr;
     pos3.y *= invAr;
     pos4.y *= invAr;
-    // pos.y = pos.x ==> vertical lines
-    // pos.x = pos.y ==> horizontal lines
     
     // color fade
     // fades intensity down towards edges of screen
     //float fade = 0.25*sin(PI*uv.y) + -0.5*sin(PI*uv.x);
     
-    vec4 ringset1 = iColor1 * calcRingSet( pos1, iTime1, iFrequency1, iScale1, iThickness1, iPower1 );
-    vec4 ringset2 = iColor2 * calcRingSet( pos2, iTime2, iFrequency2, iScale2, iThickness2, iPower2 );
-    vec4 ringset3 = iColor3 * calcRingSet( pos3, iTime3, iFrequency3, iScale3, iThickness3, iPower3 );
-    vec4 ringset4 = iColor4 * calcRingSet( pos4, iTime4, iFrequency4, iScale4, iThickness4, iPower4 );
+    vec4 ringset1 = iColor1 * calcRingSet( pos1, iTime1, iFrequency1, iScale1, iThickness1, iPower1, iFormat1 );
+    vec4 ringset2 = iColor2 * calcRingSet( pos2, iTime2, iFrequency2, iScale2, iThickness2, iPower2, iFormat2 );
+    vec4 ringset3 = iColor3 * calcRingSet( pos3, iTime3, iFrequency3, iScale3, iThickness3, iPower3, iFormat3 );
+    vec4 ringset4 = iColor4 * calcRingSet( pos4, iTime4, iFrequency4, iScale4, iThickness4, iPower4, iFormat4 );
 	
 	gl_FragColor = ringset1 * iColor1.w + ringset2 * iColor2.w + ringset3 * iColor3.w + ringset4 * iColor4.w;
 }

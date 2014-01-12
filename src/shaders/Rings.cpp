@@ -16,6 +16,7 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 
 Rings::Rings()
 : Scene("rings")
@@ -88,6 +89,8 @@ void Rings::setup()
         mRingSetParams[i].mSpinRate = 0.4f;
         mRingSetParams[i].mSpinTheta = 0.0f;
         mRingSetParams[i].mSpinRadius = 0.1f;
+        
+        mRingSetParams[i].mFormat = FORMAT_RING;
     }
     
     reset();
@@ -106,6 +109,12 @@ void Rings::setupInterface()
     mInterface->addParam(CreateFloatParam("animtime", &mAnimTime)
                          .minValue(0.01f)
                          .maxValue(10.0f));
+    
+    vector<string> formatNames;
+#define RINGS_FORMAT_ENTRY( nam, enm ) \
+formatNames.push_back(nam);
+    RINGS_FORMAT_TUPLE
+#undef  RINGS_FORMAT_ENTRY
     
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
@@ -134,6 +143,11 @@ void Rings::setupInterface()
             mInterface->addButton(CreateTriggerParam("--> sync", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 2, 3) );
             mInterface->addButton(CreateTriggerParam("sync all", NULL))->registerCallback( boost::bind( &Rings::syncParams, this, 3, 3) );
         }
+        
+        mInterface->addEnum(CreateEnumParam( "Format", (int*)(&mRingSetParams[i].mFormat) )
+                            .maxValue(FORMAT_COUNT)
+                            .oscReceiver(getName(), "format")
+                            .isVertical(), formatNames);
         
         mInterface->addParam(CreateFloatParam("timescale" + indexStr, &mRingSetParams[i].mTimeScale)
                              .minValue(-30.0f)
@@ -406,6 +420,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iThickness1", mRingSetParams[0].mThickness);
     mShader.uniform( "iPower1", power[0]);
     mShader.uniform( "iCenter1", mRingSetParams[0].mActualCenter);
+    mShader.uniform( "iFormat1", mRingSetParams[0].mFormat);
     
     mShader.uniform( "iTime2", mRingSetParams[1].mElapsedTime);
     mShader.uniform( "iColor2", mRingSetParams[1].mColor);
@@ -414,6 +429,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iThickness2", mRingSetParams[1].mThickness);
     mShader.uniform( "iPower2", power[1]);
     mShader.uniform( "iCenter2", mRingSetParams[1].mActualCenter);
+    mShader.uniform( "iFormat2", mRingSetParams[1].mFormat);
     
     mShader.uniform( "iTime3", mRingSetParams[2].mElapsedTime);
     mShader.uniform( "iColor3", mRingSetParams[2].mColor);
@@ -422,6 +438,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iThickness3", mRingSetParams[2].mThickness);
     mShader.uniform( "iPower3", power[2]);
     mShader.uniform( "iCenter3", mRingSetParams[2].mActualCenter);
+    mShader.uniform( "iFormat3", mRingSetParams[2].mFormat);
     
     mShader.uniform( "iTime4", mRingSetParams[3].mElapsedTime);
     mShader.uniform( "iColor4", mRingSetParams[3].mColor);
@@ -430,6 +447,7 @@ void Rings::shaderPreDraw()
     mShader.uniform( "iThickness4", mRingSetParams[3].mThickness);
     mShader.uniform( "iPower4", power[3]);
     mShader.uniform( "iCenter4", mRingSetParams[3].mActualCenter);
+    mShader.uniform( "iFormat4", mRingSetParams[3].mFormat);
 }
 
 void Rings::drawShaderOutput()

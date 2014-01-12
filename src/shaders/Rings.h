@@ -69,6 +69,23 @@ private:
 
     ci::gl::GlslProg    mShader;
     
+    // format
+#define RINGS_FORMAT_TUPLE \
+RINGS_FORMAT_ENTRY( "Ring", FORMAT_RING ) \
+RINGS_FORMAT_ENTRY( "Vertical", FORMAT_VERTICAL ) \
+RINGS_FORMAT_ENTRY( "Horizontal", FORMAT_HORIZONTAL ) \
+//end tuple
+    
+    enum eFormat
+    {
+#define RINGS_FORMAT_ENTRY( nam, enm ) \
+enm,
+        RINGS_FORMAT_TUPLE
+#undef  RINGS_FORMAT_ENTRY
+        
+        FORMAT_COUNT
+    };
+    
     float mAnimTime;
     struct tRingSetParams
     {
@@ -96,6 +113,7 @@ private:
         float mSpinRate;
         float mSpinTheta;
         float mSpinRadius;
+        eFormat mFormat;
     };
     enum { NUM_RING_SETS = 4 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];
