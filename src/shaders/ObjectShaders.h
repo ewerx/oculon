@@ -76,9 +76,9 @@ private:
 #define OS_SHADERS_TUPLE \
 OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
 OS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
+OS_SHADERS_ENTRY( "BioFractal", "livingkifs_frag.glsl", SHADER_BIOFRACTAL ) \
 OS_SHADERS_ENTRY( "TEST-Clouds", "clouds_frag.glsl", SHADER_CLOUDS ) \
 OS_SHADERS_ENTRY( "TEST-Fireball", "fireball_frag.glsl", SHADER_FIREBALL ) \
-OS_SHADERS_ENTRY( "TEST-BioFractal", "livingkifs_frag.glsl", SHADER_BIOFRACTAL ) \
 OS_SHADERS_ENTRY( "OLD-Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
 //end tuple
     
@@ -114,18 +114,6 @@ enm,
     };
     tMetaHexParams mMetaHexParams;
     
-    struct tTilingsParams
-    {
-        int                 mIterations;
-        int                 mAngleP;
-        int                 mAngleQ;
-        int                 mAngleR;
-        float               mThickness;
-        float               mOffset;
-        bool                mAudioOffset;
-    };
-    tTilingsParams mTilingsParams;
-    
     struct tRetinaParams
     {
         bool                mAudioDialation;
@@ -146,5 +134,18 @@ enm,
         bool                mAudioRotation;
     };
     tFireballParams mFireballParams;
+    
+    struct tBioFractalParams
+    {
+        int         mIterations;
+        ci::Vec3f   mJulia;
+        ci::Vec3f   mRotation;
+        ci::Vec3f   mLightDir;
+        float       mScale;
+        float       mRotAngle;
+        float       mAmplitude;
+        float       mDetail;
+    };
+    tBioFractalParams mBioFractalParams;
 };
 

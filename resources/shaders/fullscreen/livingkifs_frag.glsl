@@ -9,27 +9,27 @@
 uniform vec3        iResolution;     // viewport resolution (in pixels)
 uniform float       iGlobalTime;     // shader playback time (in seconds)
 uniform float       iBackgroundAlpha;
-uniform float       iMorphSpeed;
+uniform sampler2D   iColorMap;
+uniform vec4        iColor1;
 
+uniform int         iIterations;
+uniform vec3        iJulia;
+uniform vec3        iRotation;
+uniform vec3        iLightDir;
+uniform float       iScale;
+uniform float       iRotAngle;
+uniform float       iAmplitude;
+uniform float       iDetail;
 
 // http://www.fractalforums.com/movies-showcase-%28rate-my-movie%29/very-rare-deep-sea-fractal-creature/
 
-const int Iterations=25;
-const float Scale=1.27;
-const vec3 Julia=vec3(-2.,-1.5,-.5);
-const vec3 RotVector=vec3(0.5,-0.05,-0.5);
-const float RotAngle=40.;
-const float Speed=1.3;
-const float Amplitude=0.45;
-const float detail=.025;
-const vec3 lightdir=-vec3(0.5,1.,0.5);
 
 mat2 rot;
 
 float de(vec3 p);
 
 vec3 normal(vec3 p) {
-	vec3 e = vec3(0.0,detail,0.0);
+	vec3 e = vec3(0.0,iDetail,0.0);
 	
 	return normalize(vec3(
                           de(p+e.yxx)-de(p-e.yxx),
@@ -53,22 +53,27 @@ float softshadow( in vec3 ro, in vec3 rd, float mint, float k )
     return clamp(res,0.0,1.0);
 }
 
-float light(in vec3 p, in vec3 dir) {
-	vec3 ldir=normalize(lightdir);
+vec4 light(in vec3 p, in vec3 dir, float d) {
+	vec3 ldir=normalize(iLightDir);
 	vec3 n=normal(p);
 	float sh=softshadow(p,-ldir,1.,20.);
 	float diff=max(0.,dot(ldir,-n));
 	vec3 r = reflect(ldir,n);
 	float spec=max(0.,dot(dir,-r));
-	return diff*sh+pow(spec,30.)*.5*sh+.15*max(0.,dot(normalize(dir),-n));
+    // uncomment for color map
+    //vec3 ray = .8*d*((0.4*p-3.*r)+d*vec3(1.0,1.0,1.0));
+	//vec4 lightCol = texture2D(iColorMap,ray.xz+ray.xy);
+    //return 3.0*lightCol*diff*sh+pow(spec,30.)*.5*sh+.15*max(0.,dot(normalize(dir),-n));
+	return iColor1*diff*sh+pow(spec,30.)*.5*sh+.15*max(0.,dot(normalize(dir),-n));
 }
 
-float raymarch(in vec3 from, in vec3 dir)
+vec4 raymarch(in vec3 from, in vec3 dir)
 {
-	float st,d=1.0,col,totdist=st=0.;
+	float st,d=1.0,totdist=st=0.;
 	vec3 p;
+    vec4 col;
 	for (int i=0; i<70; i++) {
-        if (d>detail && totdist<50.)
+        if (d>iDetail && totdist<50.)
         {
             p=from+totdist*dir;
             d=de(p);
@@ -76,13 +81,14 @@ float raymarch(in vec3 from, in vec3 dir)
         }
 	}
     // background color
-	float backg=0.0;
-	if (d<detail) {
-		col=light(p-detail*dir, dir);
+	vec4 backg=vec4(0.0,0.0,0.0,iBackgroundAlpha);
+	if (d<iDetail) {
+		//col=light(p-iDetail*dir, dir, d);
+        col=light(p, dir,d);
 	} else {
 		col=backg;
 	}
-	col = mix(col, backg, 1.0-exp(-.000025*pow(totdist,3.5)));
+	//col = mix(col, backg, 1.0-exp(-.000025*pow(totdist,3.5)));
 	return col;
 }
 
@@ -102,20 +108,20 @@ float de(vec3 p) {
 	float a=1.5+sin(iGlobalTime*.5)*.5;
 	p.xy=p.xy*mat2(cos(a),sin(a),-sin(a),cos(a));
 	p.x*=.75;
-	float time=iGlobalTime*Speed;
+	float time=iGlobalTime;
 	vec3 ani;
-	ani=vec3(sin(time),sin(time),cos(time))*Amplitude;
+	ani=vec3(sin(time),sin(time),cos(time))*iAmplitude;
 	p+=sin(p*3.+time*6.)*.04;
-	mat3 rot = rotationMatrix3(normalize(RotVector+ani), RotAngle+sin(time)*10.);
+	mat3 rot = rotationMatrix3(normalize(iRotation+ani), iRotAngle+sin(time)*10.);
 	vec3 pp=p;
 	float l;
-	for (int i=0; i<Iterations; i++) {
+	for (int i=0; i<iIterations; i++) {
 		p.xy=abs(p.xy);
-		p=p*Scale+Julia;
+		p=p*iScale+iJulia;
 		p*=rot;
 		l=length(p);
 	}
-	return l*pow(Scale, -float(Iterations))*.9;
+	return l*pow(iScale, -float(iIterations))*.9;
 }
 
 void main(void)
@@ -129,6 +135,6 @@ void main(void)
 	dir.yz=dir.yz*rot;
 	from.yz=from.yz*rot;
     
-	float col=raymarch(from,dir);
-	gl_FragColor = vec4(col,col,col,1.0);
+	vec4 col=raymarch(from,dir);
+	gl_FragColor = vec4(col.r,col.g,col.b,1.0);
 }

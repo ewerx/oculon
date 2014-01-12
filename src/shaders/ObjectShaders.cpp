@@ -84,13 +84,6 @@ OS_SHADERS_TUPLE
     mMetaHexParams.mObjTime = 0.0f;
     mMetaHexParams.mLightTime = 0.0f;
     
-    // tilings
-    mTilingsParams.mIterations = 20;
-    mTilingsParams.mAngleP = 3;
-    mTilingsParams.mAngleQ = 5;
-    mTilingsParams.mAngleR = 2;
-    mTilingsParams.mThickness = 0.03f;
-    
     // retina
     mRetinaParams.mDialation = 0.2f;
     mRetinaParams.mDialationScale = 1.0f;
@@ -98,6 +91,17 @@ OS_SHADERS_TUPLE
     mRetinaParams.mPatternFreq = 20.0f;
     mRetinaParams.mAudioPattern = false;
     mRetinaParams.mScale = 1.0f;
+    
+    // biofractal
+    mBioFractalParams.mIterations = 25;
+    mBioFractalParams.mJulia = Vec3f(-2.f,-1.5f,-.5f);
+    mBioFractalParams.mRotation = Vec3f(0.5f,-0.05f,-0.5f);
+    mBioFractalParams.mLightDir = Vec3f(0.5f,1.f,0.5f);
+    mBioFractalParams.mScale = 1.27f;
+    mBioFractalParams.mRotAngle = 40.0f;
+    mBioFractalParams.mAmplitude = 0.45f;
+    mBioFractalParams.mDetail = 0.025f;
+    
     
     // fireball
     mFireballParams.mRotationSpeed = 1.0f;
@@ -162,30 +166,6 @@ OS_SHADERS_TUPLE
     mInterface->addParam(CreateBoolParam("metahex/audiocoeffs", &mMetaHexParams.mAudioCoeffs )
                          .oscReceiver(mName));
     
-    // SHADER_TILINGS
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("tilings");
-    mInterface->addParam(CreateIntParam( "tilings/iterations", &mTilingsParams.mIterations )
-                         .minValue(1)
-                         .maxValue(100)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "tilings/anglep", &mTilingsParams.mAngleP )
-                         .minValue(1)
-                         .maxValue(40)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "tilings/angleq", &mTilingsParams.mAngleQ )
-                         .minValue(1)
-                         .maxValue(12)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "tilings/angler", &mTilingsParams.mAngleR )
-                         .minValue(2)
-                         .maxValue(12)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "tilings/thickness", &mTilingsParams.mThickness )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
-    mInterface->addParam(CreateBoolParam("tilings/audio", &mTilingsParams.mAudioOffset));
-    
     // retina
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("retina");
@@ -213,7 +193,38 @@ OS_SHADERS_TUPLE
     mInterface->addParam(CreateBoolParam("retina/audiopattern", &mRetinaParams.mAudioPattern )
                          .oscReceiver(mName));
     
+    // SHADER_BIOFRACTAL
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("biofractal");
+    mInterface->addParam(CreateIntParam( "biofractal/iterations", &mBioFractalParams.mIterations )
+                         .minValue(1)
+                         .maxValue(100)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateVec3fParam("biofractal/rotation", &mBioFractalParams.mRotation, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateVec3fParam("biofractal/julia", &mBioFractalParams.mJulia, Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateVec3fParam("biofractal/lightdir", &mBioFractalParams.mLightDir, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam( "biofractal/scale", &mBioFractalParams.mScale )
+                         .minValue(0.0f)
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "biofractal/angle", &mBioFractalParams.mRotAngle )
+                         .minValue(0.0f)
+                         .maxValue(90.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "biofractal/amplitude", &mBioFractalParams.mAmplitude )
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "biofractal/detail", &mBioFractalParams.mDetail )
+                         .minValue(0.0f)
+                         .maxValue(0.1f));
+    
     // fireball
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("fireball");
     mInterface->addParam(CreateBoolParam("fireball/audiodensity", &mFireballParams.mAudioRotation )
                          .oscReceiver(mName));
     mInterface->addParam(CreateFloatParam("fireball/density", &mFireballParams.mDensity)
@@ -256,11 +267,8 @@ void ObjectShaders::update(double dt)
             }
             break;
         
-        case SHADER_TILINGS:
-            if (mTilingsParams.mAudioOffset)
-        {
-            mTilingsParams.mOffset = mids * 5.0f;
-        }
+        case SHADER_BIOFRACTAL:
+            break;
         
         default:
         break;
@@ -293,12 +301,12 @@ void ObjectShaders::draw()
 
 void ObjectShaders::shaderPreDraw()
 {
-    //mColorMapTexture[mColorMapIndex].bind(0);
+    mColorMapTexture[mColorMapIndex].bind(0);
     if( mApp->getAudioInputHandler().hasTexture() )
     {
         mApp->getAudioInputHandler().getFbo().bindTexture(1);
     }
-    mNoiseTexture.bind(0);
+    mNoiseTexture.bind(2);
     
     gl::GlslProg shader = mShaders[mShaderType];
     shader.bind();
@@ -325,13 +333,15 @@ void ObjectShaders::shaderPreDraw()
             shader.uniform( "iCoefficients", mMetaHexParams.mCoeffecients );
             break;
             
-        case SHADER_TILINGS:
-            shader.uniform( "iIterations", mTilingsParams.mIterations );
-            shader.uniform( "iAngleP", mTilingsParams.mAngleP );
-            shader.uniform( "iAngleQ", mTilingsParams.mAngleQ );
-            shader.uniform( "iAngleR", mTilingsParams.mAngleR );
-            shader.uniform( "iThickness", mTilingsParams.mThickness );
-            shader.uniform( "iOffset", mTilingsParams.mOffset);
+        case SHADER_BIOFRACTAL:
+            shader.uniform( "iIterations", mBioFractalParams.mIterations );
+            shader.uniform( "iJulia", mBioFractalParams.mJulia );
+            shader.uniform( "iRotation", mBioFractalParams.mRotation );
+            shader.uniform( "iScale", mBioFractalParams.mScale );
+            shader.uniform( "iRotAngle", mBioFractalParams.mRotAngle );
+            shader.uniform( "iAmplitude", mBioFractalParams.mAmplitude );
+            shader.uniform( "iLightDir", mBioFractalParams.mLightDir );
+            shader.uniform( "iDetail", mBioFractalParams.mDetail );
             break;
             
         case SHADER_RETINA:
@@ -354,11 +364,11 @@ void ObjectShaders::shaderPreDraw()
         case SHADER_FIREBALL:
             shader.uniform( "iRotationSpeed", mFireballParams.mRotationSpeed );
             shader.uniform( "iDensity", mFireballParams.mDensity );
-            shader.uniform( "iChannel0", 0 );
+            shader.uniform( "iChannel0", 2 );
             break;
             
         case SHADER_CLOUDS:
-            shader.uniform( "iChannel0", 0 );
+            shader.uniform( "iChannel0", 2 );
             break;
             
         default:
