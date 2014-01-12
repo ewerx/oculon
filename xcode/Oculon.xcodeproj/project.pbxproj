@@ -349,6 +349,9 @@
 		7C79CB301765298900E71F9D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79CB2F1765298800E71F9D /* AppKit.framework */; };
 		7C79CB321765299600E71F9D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79CB311765299500E71F9D /* Foundation.framework */; };
 		7C79CB3417652BAD00E71F9D /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7C79BE401764384B00E71F9D /* Syphon.framework */; };
+		7C7CDB131881F2460064999F /* Deformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7CDB111881F2460064999F /* Deformer.cpp */; };
+		7C7CDB151881F2AD0064999F /* wireframe_geom.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C7CDB141881F2AD0064999F /* wireframe_geom.glsl */; };
+		7C7CDB171881F3730064999F /* black_grid_2level.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C7CDB161881F3730064999F /* black_grid_2level.jpg */; };
 		7C83B39D1856BE5900EB22F8 /* parsec_cylindrical_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B3991856BE5900EB22F8 /* parsec_cylindrical_frag.glsl */; };
 		7C83B39E1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */; };
 		7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */; };
@@ -914,6 +917,10 @@
 		7C79CB09176527F900E71F9D /* pf_tempesta_seven.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pf_tempesta_seven.ttf; sourceTree = "<group>"; };
 		7C79CB2F1765298800E71F9D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		7C79CB311765299500E71F9D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		7C7CDB111881F2460064999F /* Deformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Deformer.cpp; sourceTree = "<group>"; };
+		7C7CDB121881F2460064999F /* Deformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Deformer.h; sourceTree = "<group>"; };
+		7C7CDB141881F2AD0064999F /* wireframe_geom.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wireframe_geom.glsl; sourceTree = "<group>"; };
+		7C7CDB161881F3730064999F /* black_grid_2level.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = black_grid_2level.jpg; sourceTree = "<group>"; };
 		7C83B3991856BE5900EB22F8 /* parsec_cylindrical_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_cylindrical_frag.glsl; sourceTree = "<group>"; };
 		7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_cylindrical_vert.glsl; sourceTree = "<group>"; };
 		7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_stars_frag.glsl; sourceTree = "<group>"; };
@@ -1606,6 +1613,7 @@
 		7C79C85E17650F8F00E71F9D /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7C7CDB161881F3730064999F /* black_grid_2level.jpg */,
 				7C83B3A11856BF3800EB22F8 /* parsec */,
 				7C79C85F17650F8F00E71F9D /* bump.png */,
 				7C79C86017650F8F00E71F9D /* catalog */,
@@ -1805,6 +1813,7 @@
 				7C79C8D917650F8F00E71F9D /* terrain_texture.jpg */,
 				7C79C8DA17650F8F00E71F9D /* terrain_vtf_frag.glsl */,
 				7C79C8DB17650F8F00E71F9D /* terrain_vtf_vert.glsl */,
+				7C7CDB141881F2AD0064999F /* wireframe_geom.glsl */,
 			);
 			name = terrain;
 			path = ../resources/terrain;
@@ -2207,6 +2216,16 @@
 			path = SimpleGUI/resources;
 			sourceTree = "<group>";
 		};
+		7C7CDB101881F2460064999F /* deformer */ = {
+			isa = PBXGroup;
+			children = (
+				7C7CDB111881F2460064999F /* Deformer.cpp */,
+				7C7CDB121881F2460064999F /* Deformer.h */,
+			);
+			name = deformer;
+			path = ../src/deformer;
+			sourceTree = "<group>";
+		};
 		7C83B3981856BE5900EB22F8 /* parsec */ = {
 			isa = PBXGroup;
 			children = (
@@ -2282,6 +2301,7 @@
 				7C79C9FF17650FD700E71F9D /* catalog */,
 				7C79C98017650FD700E71F9D /* contour */,
 				7C79CA1A17650FD700E71F9D /* corona */,
+				7C7CDB101881F2460064999F /* deformer */,
 				7CC3C027183ED0370082C322 /* dust */,
 				7C79C9C817650FD700E71F9D /* flock */,
 				7C79C9D517650FD700E71F9D /* graviton */,
@@ -2632,6 +2652,7 @@
 				7C83B39E1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl in Resources */,
 				7C79CB1C1765288500E71F9D /* lantern.vert in Resources */,
 				7C79CB1D1765288500E71F9D /* nebula.frag in Resources */,
+				7C7CDB151881F2AD0064999F /* wireframe_geom.glsl in Resources */,
 				7C79CB1E1765288500E71F9D /* P_Position.frag in Resources */,
 				7C79CB1F1765288500E71F9D /* P_VboPos.frag in Resources */,
 				7C79CB201765288500E71F9D /* P_VboPos.vert in Resources */,
@@ -2673,6 +2694,7 @@
 				7C79C8EE17650F8F00E71F9D /* darkStar.png in Resources */,
 				7C79C8EF17650F8F00E71F9D /* milkyWay.jpg in Resources */,
 				7C79C8F017650F8F00E71F9D /* spectrum.png in Resources */,
+				7C7CDB171881F3730064999F /* black_grid_2level.jpg in Resources */,
 				7C79C8F117650F8F00E71F9D /* star.png in Resources */,
 				7C79C8F217650F8F00E71F9D /* starGlow.png in Resources */,
 				7C79C8F317650F8F00E71F9D /* colortex1.jpg in Resources */,
@@ -2840,6 +2862,7 @@
 				DC00126B0C514BC1A2CC6ACA /* b2Joint.cpp in Sources */,
 				D63D9BC058C1497595C83491 /* b2MouseJoint.cpp in Sources */,
 				6383755376B4454FB16B5F11 /* b2PrismaticJoint.cpp in Sources */,
+				7C7CDB131881F2460064999F /* Deformer.cpp in Sources */,
 				1FAD1A8E190245DE938AC3C2 /* b2PulleyJoint.cpp in Sources */,
 				C510F7428F5F418F93B705B8 /* b2RevoluteJoint.cpp in Sources */,
 				8E543F7434E6486FACA371E2 /* b2RopeJoint.cpp in Sources */,

@@ -44,6 +44,7 @@ protected:
     // inherited from Scene
     void setupInterface();
     void setupDebugInterface();
+    
     void updateAudioResponse();
     
     // HOUX

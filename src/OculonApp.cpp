@@ -32,6 +32,7 @@
 #include "TextOrbit.h"
 #include "Polyhedron.h"
 #include "Terrain.h"
+#include "Deformer.h"
 // shader scenes
 #include "Cells.h"
 #include "CircleWave.h"
@@ -363,7 +364,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("flock") )      addScene( new Flock() );
     if( mConfig.getBool("trails") )     addScene( new Trails() );
     if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
-    if( mConfig.getBool("terrain") )    addScene( new Terrain() );
+    if( mConfig.getBool("terrain") )    addScene( new Deformer() );
     if( mConfig.getBool("contour") )    addScene( new Contour() );
     if( mConfig.getBool("grid") )       addScene( new Grid() );
     if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );

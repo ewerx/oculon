@@ -46,6 +46,7 @@ Terrain::~Terrain()
 //
 void Terrain::setup()
 {
+    Scene::setup();
     
     // Params
     mCamType = CAM_STATIC;
@@ -521,7 +522,7 @@ Terrain::tEaseFn Terrain::getReverseFalloffFunction()
 //
 void Terrain::draw()
 {
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
+    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT | GL_VIEWPORT_BIT );
     
     gl::pushMatrices();
 	gl::setMatrices( getCamera() );
@@ -913,102 +914,107 @@ void Terrain::renderShadowMap()
 
 bool Terrain::setupMesh()
 {
-    // setup for tube
+//    // setup for tube
+//    
+//    if (mMeshType == MESHTYPE_FLAT) {
+//        
+//        // perlin noise generator (see below)
+//        //Perlin	perlin( 3, clock() & 65535 );
+//        
+//        // clear the mesh
+//        mTriMesh.clear();
+//        
+//        // create the vertices and texture coords
+//        size_t width = 64;
+//        size_t depth = 64;
+//        
+//        for(size_t z=0;z<=depth;++z) {
+//            for(size_t x=0;x<=width;++x) {
+//                float y = 0.0f;
+//                
+//                switch( mMeshType ) {
+//                    case MESHTYPE_FLAT:
+//                        y = 0.0f;
+//                        break;
+////                    case MESHTYPE_RANDOM:
+////                        //	1. random bumps
+////                        y = 5.0f * Rand::randFloat();
+////                        break;
+////                    case MESHTYPE_SMOOTH:
+////                        //	2. smooth bumps (egg container)
+////                        y = 5.0f * sinf( (float) M_PI * 0.05f * x ) * cosf( (float) M_PI * 0.05f * z );
+////                        break;
+////                    case MESHTYPE_PERLIN:
+////                        //	3. perlin noise
+////                        y = 20.0f * perlin.fBm( Vec3f( static_cast<float>(x), static_cast<float>(z), 0.0f ) * 0.02f );
+////                        break;
+//                        
+//                    default:
+//                        break;
+//                }
+//                
+//                mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
+//                mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
+//            }
+//        }
+//        
+//        // next, create the index buffer
+//        std::vector<uint32_t>	indices;
+//        
+//        for(size_t z=0;z<depth;++z) {
+//            size_t base = z * (width + 1);
+//            
+//            for(size_t x=0;x<width;++x) {
+//                indices.push_back( base + x );
+//                indices.push_back( base + x + width + 1 );
+//                indices.push_back( base + x + 1 );
+//                
+//                indices.push_back( base + x + 1 );
+//                indices.push_back( base + x + width + 1 );
+//                indices.push_back( base + x + width + 2 );
+//            }
+//        }
+//        
+//        mTriMesh.appendIndices( &indices.front(), indices.size() );
+//        
+//        // use this custom function to create the normal buffer
+//        mTriMesh.recalculateNormals();
+//    }
+//    else if (mMeshType == MESHTYPE_TUBE)
+//    {
+//        // Make the b-spline
+////        int degree = 3;
+////        bool loop = true;
+////        bool open = false;
+////        mBSpline = BSpline3f( mCurPoints, degree, loop, open );
+//        
+//        // Tube
+//        std::vector<Vec3f> prof;
+//        makeCircleProfile( prof, 10.0f, 16 );
+//        mTube.setProfile( prof );
+//        mTube.setBSpline( mSplineCam.getSpline() );
+//        mTube.setNumSegments( 256 );
+//        mTube.sampleCurve();
+//        if( 1 ) {//mParallelTransport ) {
+//            mTube.buildPTF();
+//        }
+//        else {
+//            mTube.buildFrenet();
+//        }
+//        mTube.buildMesh( &mTriMesh );
+//    }
+//    else if (mMeshType == MESHTYPE_TORUS)
+//    {
+//        mTriMesh = MeshHelper::createTorus( Vec2i(256,256), 0.10f );
+//    }
+//    else {
+//        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false );
+//    }
+//    
+//    mCurMesh = 0;
+//    mNextMesh = 1;
     
-    if (mMeshType == MESHTYPE_FLAT) {
-        
-        // perlin noise generator (see below)
-        Perlin	perlin( 3, clock() & 65535 );
-        
-        // clear the mesh
-        mTriMesh.clear();
-        
-        // create the vertices and texture coords
-        size_t width = 64;
-        size_t depth = 64;
-        
-        for(size_t z=0;z<=depth;++z) {
-            for(size_t x=0;x<=width;++x) {
-                float y = 0.0f;
-                
-                switch( mMeshType ) {
-                    case MESHTYPE_FLAT:
-                        y = 0.0f;
-                        break;
-//                    case MESHTYPE_RANDOM:
-//                        //	1. random bumps
-//                        y = 5.0f * Rand::randFloat();
-//                        break;
-//                    case MESHTYPE_SMOOTH:
-//                        //	2. smooth bumps (egg container)
-//                        y = 5.0f * sinf( (float) M_PI * 0.05f * x ) * cosf( (float) M_PI * 0.05f * z );
-//                        break;
-//                    case MESHTYPE_PERLIN:
-//                        //	3. perlin noise
-//                        y = 20.0f * perlin.fBm( Vec3f( static_cast<float>(x), static_cast<float>(z), 0.0f ) * 0.02f );
-//                        break;
-                }
-                
-                mTriMesh.appendVertex( Vec3f( static_cast<float>(x), y, static_cast<float>(z) ) );
-                mTriMesh.appendTexCoord( Vec2f( static_cast<float>(x) / width, static_cast<float>(z) / depth ) );
-            }
-        }
-        
-        // next, create the index buffer
-        std::vector<uint32_t>	indices;
-        
-        for(size_t z=0;z<depth;++z) {
-            size_t base = z * (width + 1);
-            
-            for(size_t x=0;x<width;++x) {
-                indices.push_back( base + x );
-                indices.push_back( base + x + width + 1 );
-                indices.push_back( base + x + 1 );
-                
-                indices.push_back( base + x + 1 );
-                indices.push_back( base + x + width + 1 );
-                indices.push_back( base + x + width + 2 );
-            }
-        }
-        
-        mTriMesh.appendIndices( &indices.front(), indices.size() );
-        
-        // use this custom function to create the normal buffer
-        mTriMesh.recalculateNormals();
-    }
-    else if (mMeshType == MESHTYPE_TUBE)
-    {
-        // Make the b-spline
-//        int degree = 3;
-//        bool loop = true;
-//        bool open = false;
-//        mBSpline = BSpline3f( mCurPoints, degree, loop, open );
-        
-        // Tube
-        std::vector<Vec3f> prof;
-        makeCircleProfile( prof, 10.0f, 16 );
-        mTube.setProfile( prof );
-        mTube.setBSpline( mSplineCam.getSpline() );
-        mTube.setNumSegments( 256 );
-        mTube.sampleCurve();
-        if( 1 ) {//mParallelTransport ) {
-            mTube.buildPTF();
-        }
-        else {
-            mTube.buildFrenet();
-        }
-        mTube.buildMesh( &mTriMesh );
-    }
-    else if (mMeshType == MESHTYPE_TORUS)
-    {
-        mTriMesh = MeshHelper::createTorus( Vec2i(256,256), 0.10f );
-    }
-    else {
-        mTriMesh = MeshHelper::createCylinder( Vec2i(32,256), 1.0f, 1.0f, false, false );
-    }
-    
-    mCurMesh = 0;
-    mNextMesh = 1;
+    mTriMesh = MeshHelper::createSquare( Vec2i(256,256) );
     
     mVboMesh[mCurMesh] = gl::VboMesh( mTriMesh );
     mVboMesh[mNextMesh] = gl::VboMesh( mTriMesh );
