@@ -906,7 +906,7 @@
 		7C79CA2417650FD800E71F9D /* CoronaStar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CoronaStar.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7C79CA2517650FD800E71F9D /* CubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CubeMap.cpp; sourceTree = "<group>"; };
 		7C79CA2617650FD800E71F9D /* CubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CubeMap.h; sourceTree = "<group>"; };
-		7C79CA2717650FD800E71F9D /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Resources.h; sourceTree = "<group>"; };
+		7C79CA2717650FD800E71F9D /* CoronaResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaResources.h; sourceTree = "<group>"; };
 		7C79CA2817650FD800E71F9D /* Room.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Room.cpp; sourceTree = "<group>"; };
 		7C79CA2917650FD800E71F9D /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
 		7C79CA2B17650FD800E71F9D /* Magnetosphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Magnetosphere.cpp; sourceTree = "<group>"; };
@@ -2189,7 +2189,7 @@
 				7C79CA2417650FD800E71F9D /* CoronaStar.h */,
 				7C79CA2517650FD800E71F9D /* CubeMap.cpp */,
 				7C79CA2617650FD800E71F9D /* CubeMap.h */,
-				7C79CA2717650FD800E71F9D /* Resources.h */,
+				7C79CA2717650FD800E71F9D /* CoronaResources.h */,
 				7C79CA2817650FD800E71F9D /* Room.cpp */,
 				7C79CA2917650FD800E71F9D /* Room.h */,
 			);
