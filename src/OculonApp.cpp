@@ -33,6 +33,7 @@
 #include "Polyhedron.h"
 #include "Terrain.h"
 #include "Deformer.h"
+#include "Fluid.h"
 // shader scenes
 #include "Cells.h"
 #include "CircleWave.h"
@@ -373,6 +374,7 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
 //    if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
+    if( mConfig.getBool("fluid") )      addScene( new Fluid() );
     
     // Shader Scenes
     if( mConfig.getBool("cells") )              addScene( new Cells() );
