@@ -312,6 +312,10 @@ formationNames.push_back(nam);
                          .minValue(0.0001f)
                          .oscReceiver(mName,"timestep"));
     
+    mInterface->addParam(CreateFloatParam("Neighborhood", &mParticleNeighborhood)
+                         .maxValue(64.0f)
+                         .oscReceiver(mName,"neighborhood"));
+    
     mInterface->addParam(CreateFloatParam("Center Attraction", &mCenterAttraction)
                          .maxValue(10.0f)
                          .oscReceiver(mName,"centerattract"));
