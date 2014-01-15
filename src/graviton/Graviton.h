@@ -6,8 +6,7 @@
 // Copyright 2011 ewerx. All rights reserved.
 //
 
-#ifndef __GRAVITON_H__
-#define __GRAVITON_H__
+#pragma once
 
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
@@ -47,6 +46,7 @@ protected:// from Scene
     void setupInterface();
     void setupDebugInterface();
     
+protected:
     ci::Surface32f generatePositionSurface();
     ci::Surface32f generateVelocitySurface();
 
@@ -54,8 +54,7 @@ private:
     enum
     {
         kStep =                 512,
-        kNumParticles =         (kStep * kStep),
-        kFftBands =             256,
+        kNumParticles =         (kStep * kStep)
     };
     
     // INITIAL FORMATION
@@ -107,27 +106,6 @@ enm,
         float   mMass;
     };
     
-    // duplicates definition in CL kernel
-    enum eParticleFlags
-    {
-        PARTICLE_FLAGS_NONE =       0x00,
-        PARTICLE_FLAGS_INVSQR =     (1 << 0),
-        PARTICLE_FLAGS_SHOW_DARK =  (1 << 1),
-        PARTICLE_FLAGS_SHOW_SPEED = (1 << 2),
-        PARTICLE_FLAGS_SHOW_MASS =  (1 << 3),
-        PARTICLE_FLAGS_CONSTRAIN =  (1 << 4)
-    };
-    
-    enum eColorMode
-    {
-        COLOR_MONO,
-        COLOR_SPEED,
-        COLOR_MASS,
-        
-        COLOR_COUNT,
-    };
-    eColorMode              mColorMode;
-    
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
@@ -136,40 +114,6 @@ enm,
     
     bool                    mIsMousePressed;
     ci::Vec2f               mMousePos;
-    
-//    // opencl
-//    MSA::OpenCL             mOpenCl;
-//    MSA::OpenCLProgram      *mClProgram;
-//    MSA::OpenCLKernel       *mKernel;
-//    
-//    MSA::OpenCLBuffer       mClBufPos0;
-//    MSA::OpenCLBuffer       mClBufPos1;
-//    MSA::OpenCLBuffer       mClBufVel0;
-//    MSA::OpenCLBuffer       mClBufVel1;
-//    MSA::OpenCLBuffer       mClBufColor;
-//    MSA::OpenCLBuffer       mClBufFft;
-//    bool                    mSwap;
-//    
-//    MSA::OpenCLBuffer       mClBufPos;
-//    
-//    // opencl data
-//    float4                  mPosAndMass[kNumParticles];
-//    float4                  mVel[kNumParticles];
-//    float4                  mColor[kNumParticles];
-//    cl_float                mAudioFft[kFftBands];
-//    
-//    // opencl params
-//    cl_uint                 mStep;
-//    cl_uint                 mNumParticles;
-//    
-//    cl_float                mTimeStep;
-//    cl_float                mDamping;
-//    cl_float                mGravity;
-//    cl_float                mEps;
-//    cl_uint                 mFlags;
-//    float4                  mClColorScale;
-//    
-//    cl_int                  mNumNodes;
     
     // simulation params
     float mTimeStep;
@@ -196,20 +140,10 @@ enm,
     ci::gl::Texture     mParticleTexture1;
     ci::gl::Texture     mParticleTexture2;
     float				mPointSize;
-    float				mLineWidth;
-    //float               mParticleAlpha;
     bool				mEnableBlending;
     bool				mAdditiveBlending;
-    bool				mEnableLineSmoothing;
-    bool				mEnablePointSmoothing;
     bool                mUseImageForPoints;
-    bool                mScalePointsByDistance;
-    bool                mUseMotionBlur;
     
-    bool                mResetCameraByBlink;
-    bool                mColorByMindWave;
-    
-    bool                mUseInvSquareCalc;
     bool                mEnableGravityNodes;
     bool                mConstrainParticles;
     
@@ -219,8 +153,8 @@ enm,
 #define GRAVITON_CAMTYPE_TUPLE \
 GRAVITON_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
 GRAVITON_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
-GRAVITON_CAMTYPE_ENTRY( "Graviton", CAM_SPIRAL ) \
-GRAVITON_CAMTYPE_ENTRY( "Catalog", CAM_SPLINE ) \
+GRAVITON_CAMTYPE_ENTRY( "Spiral", CAM_SPIRAL ) \
+GRAVITON_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
 //end tuple
     
     enum eCamType
@@ -250,9 +184,6 @@ enm,
     MotionBlurRenderer  mMotionBlurRenderer;
     
     AudioInputHandler   mAudioInputHandler;
-    
-    // MUTEK HACKS
-    bool mNoiseSim;
 
 private:
     void setupPingPongFbo();
@@ -264,7 +195,6 @@ private:
     void updateGravityNodes(const double dt);
     
     void updateAudioResponse();
-    void updateNeuralResponse();
     void updateCamera(const double dt);
         
     void preRender();
@@ -279,4 +209,3 @@ private:
     
 };
 
-#endif // __Graviton_H__
