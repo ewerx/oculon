@@ -8,20 +8,14 @@
 
 #pragma once
 
-#include <vector>
-#include "cinder/Cinder.h"
-#include "cinder/gl/Fbo.h"
-#include "cinder/gl/GlslProg.h"
-#include "cinder/gl/Vbo.h"
-#include "Scene.h"
-#include "MotionBlurRenderer.h"
-#include "GridRenderer.h"
 #include "AudioInputHandler.h"
-
-#include "OscMessage.h"
+#include "Scene.h"
+#include "cinder/Cinder.h"
+#include "cinder/gl/GlslProg.h"
+#include <vector>
 
 //
-// Audio input tests
+// Rings
 //
 class Rings : public Scene
 {
@@ -89,7 +83,7 @@ enm,
     float mAnimTime;
     struct tRingSetParams
     {
-        ci::Anim<ci::ColorAf>     mColor;
+        ci::Anim<ci::ColorAf> mColor;
         float           mElapsedTime;
         float           mTimeScale;
         float           mThickness;

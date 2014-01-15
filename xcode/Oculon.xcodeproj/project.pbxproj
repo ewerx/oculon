@@ -383,6 +383,8 @@
 		7CE8AFB7186FAD150087AC7A /* graviton_displacement_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB3186FAD150087AC7A /* graviton_displacement_vert.glsl */; };
 		7CE8AFB8186FAD150087AC7A /* graviton_formation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB4186FAD150087AC7A /* graviton_formation_frag.glsl */; };
 		7CE8AFB9186FAD150087AC7A /* graviton_particle_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB5186FAD150087AC7A /* graviton_particle_frag.glsl */; };
+		7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF04609188639FE00150FD3 /* Oscillator.cpp */; };
+		7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF0460C188645D300150FD3 /* oscillator_frag.glsl */; };
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
 		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
@@ -961,6 +963,9 @@
 		7CE8AFB3186FAD150087AC7A /* graviton_displacement_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_displacement_vert.glsl; sourceTree = "<group>"; };
 		7CE8AFB4186FAD150087AC7A /* graviton_formation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_formation_frag.glsl; sourceTree = "<group>"; };
 		7CE8AFB5186FAD150087AC7A /* graviton_particle_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_particle_frag.glsl; sourceTree = "<group>"; };
+		7CF04609188639FE00150FD3 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
+		7CF0460A188639FE00150FD3 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
+		7CF0460C188645D300150FD3 /* oscillator_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oscillator_frag.glsl; sourceTree = "<group>"; };
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
 		7CF735B2181F81D500B21DE9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
 		7CF735B3181F81D500B21DE9 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
@@ -1416,6 +1421,7 @@
 				7C06A8DA1853D4ED00D1C8A3 /* volumetriclines_frag.glsl */,
 				7C06A8DB1853D4ED00D1C8A3 /* voronoi_frag.glsl */,
 				7C06A8DC1853D4ED00D1C8A3 /* water_ripple.fsh */,
+				7CF0460C188645D300150FD3 /* oscillator_frag.glsl */,
 			);
 			path = fullscreen;
 			sourceTree = "<group>";
@@ -1442,6 +1448,8 @@
 				7C6276591824780000724B87 /* FractalShaders.h */,
 				7CA78BF41825988100505794 /* ObjectShaders.cpp */,
 				7CA78BF51825988100505794 /* ObjectShaders.h */,
+				7CF04609188639FE00150FD3 /* Oscillator.cpp */,
+				7CF0460A188639FE00150FD3 /* Oscillator.h */,
 				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
 				7C5B697918197A7F00AB2C8D /* Rings.h */,
 				7C4C6740181C9928003049AA /* TextureShaders.cpp */,
@@ -2701,6 +2709,7 @@
 				7C06A8F21853D4ED00D1C8A3 /* inversion_frag.glsl in Resources */,
 				7C06A9021853D4ED00D1C8A3 /* simplicity_frag.glsl in Resources */,
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
+				7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */,
 				7C79C8F517650F8F00E71F9D /* colortex3.jpg in Resources */,
 				7C06A8E51853D4ED00D1C8A3 /* circlewave_frag.glsl in Resources */,
 				7C83B3AB1856BF3800EB22F8 /* parsec-nova.png in Resources */,
@@ -2930,6 +2939,7 @@
 				7C79C94117650F8F00E71F9D /* VboPos.vert in Sources */,
 				7C79C94217650F8F00E71F9D /* Velocity.frag in Sources */,
 				7C79C94617650F8F00E71F9D /* motionBlur.frag in Sources */,
+				7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */,
 				7C79C94817650F8F00E71F9D /* passThru.vert in Sources */,
 				7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */,
 				7C79C94917650F8F00E71F9D /* passthru.vsh in Sources */,

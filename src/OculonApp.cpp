@@ -41,6 +41,7 @@
 #include "ObjectShaders.h"
 #include "TextureShaders.h"
 #include "Voronoi.h"
+#include "Oscillator.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -380,6 +381,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
+    if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     
