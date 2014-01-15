@@ -23,3 +23,6 @@
 [submodule "blocks/cinderpane"]
 	path = blocks/cinderpane
 	url = https://github.com/aalpern/cinderpane.git
+[submodule "blocks/CinderFx"]
+	path = blocks/CinderFx
+	url = https://github.com/chaoticbob/CinderFx.git
