@@ -80,6 +80,7 @@ enm,
 #define GRAVITON_NODE_FORMATION_TUPLE \
 GRAVITON_NODE_FORMATION_ENTRY( "Static", NODE_FORMATION_STATIC ) \
 GRAVITON_NODE_FORMATION_ENTRY( "Random", NODE_FORMATION_RANDOM ) \
+GRAVITON_NODE_FORMATION_ENTRY( "Mirror", NODE_FORMATION_MIRROR ) \
 GRAVITON_NODE_FORMATION_ENTRY( "Spin", NODE_FORMATION_SPIN ) \
 // end tuple
     
@@ -119,6 +120,9 @@ enm,
     float mTimeStep;
     float mDamping;
     float mGravity;
+    bool mAudioGravity;
+    bool mAudioContainer;
+    bool mAudioMirror;
     float mEps;
     float mConstraintSphereRadius;
     float mNodeSpeed;

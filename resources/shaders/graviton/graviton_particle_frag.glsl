@@ -9,11 +9,12 @@ uniform vec3 attractorPos2;
 uniform vec3 attractorPos3;
 uniform float eps;
 uniform float dt;
-uniform bool noiseSim;
-varying vec4 texCoord;
 uniform float damping;
 uniform float gravity;
 uniform float containerradius;
+
+varying vec4 texCoord;
+
 
 void main(void)
 {
@@ -34,14 +35,13 @@ void main(void)
     vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
     vec3 a3 = gravity * invmass * f3/(f3Mag*f3Mag + eps);
     
-    vec3 v1 = v0 + dt * a1; //velocity update
-    v1 += dt * a2;
-    v1 += dt * a3;
+    vec3 v1 = v0 + dt * (a1 + a2 + a3); //velocity update
     v1 = v1 - damping * v1; //friction/damping
     vec3 p1	= p0 + dt * v1; //(symplectic euler) position update
     
+    // contain within sphere
     float dist = length(p1);
-    if (containerradius > 0.0 && dist > containerradius) {
+    if (containerradius > 0.0 && dist > containerradius || dist > 1000.0) {
         vec3 norm = normalize(p1);
         p1 = norm * containerradius;
         v1 *= 0.9;

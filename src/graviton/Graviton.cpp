@@ -50,8 +50,8 @@ void Graviton::setup()
     
     mDamping = 0.0f;
     mGravity = 0.05f;
-    mEps = 0.0f;//0.001f;//mFormationRadius * 0.5f;
-    mConstraintSphereRadius = 0.0f;
+    mEps = 0.0f;
+    mConstraintSphereRadius = 100.0f;
     mNodeSpeed = 1.0f;
     
     mNumNodes = 0;
@@ -94,6 +94,8 @@ void Graviton::setup()
     mCam.setFov(60.0f);
     mCam.setAspectRatio(mApp->getViewportAspectRatio());
     
+    mAudioInputHandler.setup(false);
+    
     reset();
 }
 
@@ -103,9 +105,9 @@ void Graviton::setupPingPongFbo()
 	std::vector<Surface32f> surfaces;
     // Position 2D texture array
     surfaces.push_back( generatePositionSurface() );
-    
     //Velocity 2D texture array
     surfaces.push_back( generateVelocitySurface() );
+    
     mParticlesFbo = PingPongFbo( surfaces );
 }
 
@@ -250,6 +252,7 @@ nodeFormationNames.push_back(nam);
                          .maxValue(100.001f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "damping", &mDamping )
+                         .maxValue(0.5f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "eps", &mEps )
                          .minValue(0.0)
@@ -266,6 +269,12 @@ nodeFormationNames.push_back(nam);
     mInterface->addParam(CreateFloatParam( "nodespeed", &mNodeSpeed )
                          .minValue(0.0f)
                          .maxValue(1000.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "audio-node", &mAudioMirror )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "audio-gravity", &mAudioGravity )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "audio-container", &mAudioContainer )
                          .oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
@@ -306,6 +315,8 @@ camTypeNames.push_back(nam);
                          .oscReceiver(getName(), "camspeed"));
     mInterface->addButton(CreateTriggerParam("reset spline", NULL)
                           .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );
+    
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 void Graviton::initParticles()
@@ -486,7 +497,21 @@ void Graviton::initParticles()
 //        }
 //    }
 }
-                              
+
+void Graviton::reset()
+{
+    resetGravityNodes();
+    initParticles();
+}
+
+void Graviton::resize()
+{
+    Scene::resize();
+    mMotionBlurRenderer.resize(mApp->getViewportSize());
+}
+
+#pragma mark - Gravity Nodes
+
 bool Graviton::resetGravityNodes()
 {
     mGravityNodes.clear();
@@ -497,7 +522,7 @@ bool Graviton::resetGravityNodes()
     {
         case NODE_FORMATION_SPIN:
         {
-            mNumNodes = 1;
+            mNumNodes = 3;
             
             for(int i = 0; i < mNumNodes; ++i )
             {
@@ -512,7 +537,6 @@ bool Graviton::resetGravityNodes()
                     pos.x = r;
                     pos.y = 0.0f;
                     pos.z = 0.0f;
-                    
                     break;
                     
                     case 1:
@@ -520,6 +544,7 @@ bool Graviton::resetGravityNodes()
                     pos.y = r;
                     pos.z = 0.0f;
                     break;
+                    
                     case 2:
                     pos.x = 0.0f;
                     pos.y = 0.0f;
@@ -530,11 +555,11 @@ bool Graviton::resetGravityNodes()
                 const float mass = 10000.f;
                 mGravityNodes.push_back( tGravityNode( pos, vel, mass ) );
             }
-
+            
         }
         break;
         
-        case NODE_FORMATION_RANDOM:
+        case NODE_FORMATION_MIRROR:
         {
             mNumNodes = 3;
             
@@ -546,37 +571,87 @@ bool Graviton::resetGravityNodes()
                 switch(i)
                 {
                     case 0:
-                        pos.x = 0.0f;
-                        pos.y = 0.0f;
-                        pos.z = 0.0f;
-                        vel = Rand::randVec3f();
-                        break;
+                    pos.x = 0.0f;
+                    pos.y = 0.0f;
+                    pos.z = 0.0f;
+                    vel = Rand::randVec3f();
+                    break;
+                    
+                    case 1:
+                    pos.x = 0.0f;
+                    pos.y = 0.0f;
+                    pos.z = 0.0f;
+                    vel = -1.0f * mGravityNodes[0].mVel;
+                    break;
                     
                     default:
                     pos = Vec3f::one() * 1000000.f;
                     vel = Vec3f::zero();
                     break;
-                        
-//                    case 1:
-//                        pos.x = r*0.5f*randFloat();
-//                        pos.y = -r*0.5f*randFloat();
-//                        pos.z = r / 4.0f*randFloat();
-//                        vel = Rand::randVec3f();
-//                        break;
-//                    case 2:
-//                        pos.x = -r*0.5f*randFloat();
-//                        pos.y = r*0.5f*randFloat();
-//                        pos.z = -r / 4.0f*randFloat();
-//                        vel = Rand::randVec3f();
-//                        break;
+                    
+                    //                    case 1:
+                    //                        pos.x = r*0.5f*randFloat();
+                    //                        pos.y = -r*0.5f*randFloat();
+                    //                        pos.z = r / 4.0f*randFloat();
+                    //                        vel = Rand::randVec3f();
+                    //                        break;
+                    //                    case 2:
+                    //                        pos.x = -r*0.5f*randFloat();
+                    //                        pos.y = r*0.5f*randFloat();
+                    //                        pos.z = -r / 4.0f*randFloat();
+                    //                        vel = Rand::randVec3f();
+                    //                        break;
+                }
+                
+                const float mass = Rand::randFloat(100000.f);
+                mGravityNodes.push_back( tGravityNode( pos, vel, mass ) );
+            }
+        }
+        break;
+        
+        case NODE_FORMATION_RANDOM:
+        {
+            mNumNodes = 1;
+            
+            for(int i = 0; i < mNumNodes; ++i )
+            {
+                Vec3f pos;
+                Vec3f vel;
+                
+                switch(i)
+                {
+                    case 0:
+                    pos.x = 0.0f;
+                    pos.y = 0.0f;
+                    pos.z = 0.0f;
+                    vel = Rand::randVec3f();
+                    break;
+                    
+                    default:
+                    pos = Vec3f::one() * 1000000.f;
+                    vel = Vec3f::zero();
+                    break;
+                    
+                    //                    case 1:
+                    //                        pos.x = r*0.5f*randFloat();
+                    //                        pos.y = -r*0.5f*randFloat();
+                    //                        pos.z = r / 4.0f*randFloat();
+                    //                        vel = Rand::randVec3f();
+                    //                        break;
+                    //                    case 2:
+                    //                        pos.x = -r*0.5f*randFloat();
+                    //                        pos.y = r*0.5f*randFloat();
+                    //                        pos.z = -r / 4.0f*randFloat();
+                    //                        vel = Rand::randVec3f();
+                    //                        break;
                 }
                 
                 const float mass = Rand::randFloat(100000.f);
                 mGravityNodes.push_back( tGravityNode( pos, vel, mass ) );
             }
         } break;
-            
-            
+        
+        
         case NODE_FORMATION_STATIC:
         {
             mNumNodes = 1;
@@ -588,31 +663,93 @@ bool Graviton::resetGravityNodes()
                 mGravityNodes.push_back( tGravityNode( pos, Vec3f::zero(), mass ) );
             }
         } break;
-            
+        
         default:
-            break;
+        break;
     }
     
     return true;
 }
 
-void Graviton::reset()
+void Graviton::updateGravityNodes(const double dt)
 {
-    resetGravityNodes();
-    initParticles();
-}
-
-void Graviton::resize()
-{
-    Scene::resize();
-    mMotionBlurRenderer.resize(mApp->getViewportSize());
+    float containRadius = mConstraintSphereRadius;
+    if (mAudioContainer) {
+        containRadius *= mAudioInputHandler.getAverageVolumeMidFreq() * 3.0f;
+    }
+    
+    for (int i = 0; i < mGravityNodes.size(); ++i)
+    {
+        switch (mGravityNodeFormation) {
+            case NODE_FORMATION_RANDOM:
+            {
+                mGravityNodes[i].mPos += mGravityNodes[i].mVel * dt * 1000.f * mNodeSpeed;
+                float distance = mGravityNodes[i].mPos.length();
+                
+                if (i == 0 && ((containRadius > 0.0f && distance > containRadius) || distance > 1000.f))
+                {
+                    mGravityNodes[i].mPos = mGravityNodes[i].mPos.normalized() * containRadius;
+                    mGravityNodes[i].mVel.x *= Rand::randFloat(-1.25f, -0.75f);
+                    mGravityNodes[i].mVel.y *= Rand::randFloat(-1.25f, -0.75f);
+                    mGravityNodes[i].mVel.z *= Rand::randFloat(-1.25f, -0.75f);
+                }
+                
+                if (i==0) {
+                    timeline().apply( &mCamTarget, mGravityNodes[i].mPos, 0.2f, EaseInQuad() );
+                }
+            }
+            break;
+            
+            case NODE_FORMATION_MIRROR:
+            {
+                if (mAudioMirror)
+                {
+                    float distance = mAudioInputHandler.getAverageVolumeLowFreq() * containRadius * 2.0f * (i == 0 ? 1.0f : -1.0f);
+                    mGravityNodes[i].mPos = Vec3f::one() * distance;
+                }
+                else
+                {
+                    mGravityNodes[i].mPos += mGravityNodes[i].mVel * dt * 1000.f * mNodeSpeed;
+                    float distance = mGravityNodes[i].mPos.length();
+                    
+                    if (i != 2 && ((containRadius > 0.0f && distance > containRadius) || distance > 1000.f))
+                    {
+                        mGravityNodes[i].mPos = mGravityNodes[i].mPos.normalized() * containRadius;
+                        mGravityNodes[i].mVel *= -1.0f;
+                    }
+                }
+            }
+            break;
+            
+            case NODE_FORMATION_SPIN:
+            {
+                if (containRadius > 0.0f) {
+                    mGravityNodes[i].mVel.x += mGravityNodes[i].mVel.z * dt;
+                    mGravityNodes[i].mVel.y += mGravityNodes[i].mVel.z * dt;
+                    float theta = mGravityNodes[i].mVel.x;
+                    float rho = mGravityNodes[i].mVel.y;
+                    mGravityNodes[i].mPos = Vec3f(containRadius*cos(rho)*cos(theta), containRadius*sin(theta), containRadius*sin(rho)*cos(theta));
+                }
+            }
+            break;
+            
+            default:
+            break;
+        }
+    }
 }
 
 #pragma mark - Update
 
 void Graviton::update(double dt)
 {
-    updateAudioResponse();
+    Scene::update(dt);
+    
+    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    
+    if (mAudioGravity) {
+        mGravity = mAudioInputHandler.getAverageVolumeHighFreq() * 3.0f;
+    }
 
     // update particle system
     //computeAttractorPosition();
@@ -627,7 +764,7 @@ void Graviton::update(double dt)
     mParticlesShader.bind();
     mParticlesShader.uniform( "positions", 0 );
     mParticlesShader.uniform( "velocities", 1 );
-    mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 100.f) );
+    mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 100.0f) );
     mParticlesShader.uniform( "eps", mEps );
     mParticlesShader.uniform( "damping", mDamping );
     mParticlesShader.uniform( "gravity", mGravity );
@@ -643,50 +780,6 @@ void Graviton::update(double dt)
     gl::popMatrices();
     
     updateCamera(dt);
-    
-    Scene::update(dt);
-}
-
-void Graviton::updateGravityNodes(const double dt)
-{
-    for (int i = 0; i < mGravityNodes.size(); ++i)
-    {
-        switch (mGravityNodeFormation) {
-            case NODE_FORMATION_RANDOM:
-            {
-                mGravityNodes[i].mPos += mGravityNodes[i].mVel * dt * 1000.f * mNodeSpeed;
-                float distance = mGravityNodes[i].mPos.length();
-                
-                if (i == 0 && ((mConstraintSphereRadius > 0.0f && distance > mConstraintSphereRadius) || distance > 1000.f))
-                {
-                    mGravityNodes[i].mPos = mGravityNodes[i].mPos.normalized() * mConstraintSphereRadius;
-                    mGravityNodes[i].mVel.x *= Rand::randFloat(-1.25f, -0.75f);
-                    mGravityNodes[i].mVel.y *= Rand::randFloat(-1.25f, -0.75f);
-                    mGravityNodes[i].mVel.z *= Rand::randFloat(-1.25f, -0.75f);
-                }
-            }
-            break;
-            
-            case NODE_FORMATION_SPIN:
-            {
-                if (mConstraintSphereRadius > 0.0f) {
-                    mGravityNodes[i].mVel.x += mGravityNodes[i].mVel.z * dt;
-                    mGravityNodes[i].mVel.y += mGravityNodes[i].mVel.z * dt;
-                    float theta = mGravityNodes[i].mVel.x;
-                    float rho = mGravityNodes[i].mVel.y;
-                    mGravityNodes[i].mPos = Vec3f(mConstraintSphereRadius*cos(rho)*cos(theta), mConstraintSphereRadius*sin(theta), mConstraintSphereRadius*sin(rho)*cos(theta));
-                }
-            }
-            break;
-            
-            default:
-            break;
-        }
-        
-        if (i==0) {
-            timeline().apply( &mCamTarget, mGravityNodes[i].mPos, 0.2f, EaseInQuad() );
-        }
-    }
 }
 
 #pragma mark - Input
@@ -724,13 +817,6 @@ void Graviton::handleMouseDrag( const MouseEvent& event )
 {
 	mMousePos.x = event.getPos().x;
     mMousePos.y = event.getPos().y;
-}
-
-//
-//
-//
-void Graviton::updateAudioResponse()
-{
 }
 
 //void Graviton::updateNeuralResponse()
