@@ -99,7 +99,7 @@ enm,
         : mPos(pos), mVel(vel), mMass(mass)
         {}
         
-        void applyGravityFrom(tGravityNode &other);
+        void applyGravityFrom(tGravityNode &other, double dt);
         
         ci::Vec3f   mPos;
         ci::Vec3f   mVel;
@@ -120,6 +120,7 @@ enm,
     float mDamping;
     float mGravity;
     float mEps;
+    float mConstraintSphereRadius;
     int32_t mNumNodes;
     uint32_t mFlags;
     uint32_t mNumParticles;

@@ -10,6 +10,7 @@ uniform mat4 MV;                //modelview matrix
 uniform mat4 P;                 //projection matrix
 uniform float spriteWidth;      //object space width of sprite (maybe an per-vertex in)
 uniform float screenWidth;      //screen width in pixels
+uniform float gain;
 
 varying vec4 color;
 
@@ -19,7 +20,8 @@ void main()
 	vec4 pos = texture2D( displacementMap, gl_MultiTexCoord0.xy );
     //color = texture2D( velocityMap, gl_MultiTexCoord0.xy );
     color = vec4(1.0,1.0,1.0,0.0);
-    color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x;
+    // alpha from audio texture
+    color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
     
     // uncomment to disable dynamic point size
 //	gl_Position = gl_ModelViewProjectionMatrix * vec4( pos.xyz, 1.0) ;

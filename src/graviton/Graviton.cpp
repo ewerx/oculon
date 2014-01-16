@@ -46,12 +46,13 @@ void Graviton::setup()
     
     mAdditiveBlending = true;
     mUseImageForPoints = true;
-    mPointSize = 0.5f;
-    mColorScale = ColorAf( 0.1f, 0.11f, 0.12f, 0.5f );//ColorAf( 0.1f, 0.2f, 0.3f, 0.5f );
+    mPointSize = 0.6f;
+    mColorScale = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
     
-    mDamping = 1.0f;
+    mDamping = 0.0f;
     mGravity = 100.0f;
     mEps = 0.001f;//mFormationRadius * 0.5f;
+    mConstraintSphereRadius = 0.0f;
     
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_SYMMETRY;
@@ -208,51 +209,6 @@ void Graviton::setupVBO()
     mVboMesh.unbindBuffers();
 }
 
-void Graviton::computeAttractorPosition()
-{
-    // The attractor is positioned at the intersection of a ray
-    // from the mouse to a plane perpendicular to the camera.
-    float t = 0;
-    Vec3f right, up;
-    const Camera& cam = getCamera();
-    cam.getBillboardVectors(&right, &up);
-    float u = mMousePos.x / (float) mApp->getViewportWidth();
-    float v = mMousePos.y / (float) mApp->getViewportHeight();
-    Ray ray = cam.generateRay(u , 1.0f - v, cam.getAspectRatio() );
-    if (ray.calcPlaneIntersection(Vec3f(0.0f,0.0f,0.0f), right.cross(up), &t)) {
-        mAttractor1.set(ray.calcPosition(t));
-    }
-}
-
-void Graviton::updateGravityNodes(const double dt)
-{
-    // slow naive algorithm
-    // TODO: make go faster! move to GPU?
-    for (int i = 0; i < mGravityNodes.size(); ++i)
-    {
-        for (int j = 0; j < mGravityNodes.size(); ++j)
-        {
-            if (i != j)
-            {
-                mGravityNodes[i].applyGravityFrom(mGravityNodes[j]);
-            }
-        }
-    }
-    
-    for (int i = 0; i < mGravityNodes.size(); ++i)
-    {
-        mGravityNodes[i].mPos += mGravityNodes[i].mVel * dt;
-    }
-}
-
-void Graviton::tGravityNode::applyGravityFrom(Graviton::tGravityNode &other)
-{
-    Vec3f dir = other.mPos - mPos;
-    double r2 = dir.dot(dir);
-    double ir3 = 1 / (r2 * sqrt(r2));
-    mVel += (other.mMass * ir3) * dir;
-}
-
 void Graviton::setupDebugInterface()
 {
     Scene::setupDebugInterface(); // add all interface params
@@ -298,6 +254,10 @@ nodeFormationNames.push_back(nam);
     mInterface->addParam(CreateFloatParam( "eps", &mEps )
                          .minValue(0.0001)
                          .maxValue(1500)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "container-radius", &mConstraintSphereRadius )
+                         .minValue(0.0f)
+                         .maxValue(150.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "gravity", &mGravity )
                          .minValue(0.0f)
@@ -537,6 +497,7 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
             for(int i = 0; i < mNumNodes; ++i )
             {
                 Vec3f pos;
+                Vec3f vel;
                 
                 switch(i)
                 {
@@ -544,17 +505,20 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
                         pos.x = 0.0f;
                         pos.y = 0.0f;
                         pos.z = 0.0f;
+                        vel = Rand::randVec3f();
                         break;
                         
                     case 1:
                         pos.x = r*0.5f*randFloat();
                         pos.y = -r*0.5f*randFloat();
                         pos.z = r / 4.0f*randFloat();
+                        vel = Rand::randVec3f();
                         break;
                     case 2:
                         pos.x = -r*0.5f*randFloat();
                         pos.y = r*0.5f*randFloat();
                         pos.z = -r / 4.0f*randFloat();
+                        vel = Rand::randVec3f();
                         break;
                 }
                 
@@ -566,12 +530,9 @@ void Graviton::resetGravityNodes(const eNodeFormation formation)
             
         case NODE_FORMATION_BLACKHOLE_STAR:
         {
-            mNumNodes = 3;
+            mNumNodes = 1;
             
             const float mass = 10000.f;
-            const float d = mFormationRadius * 3.0f;
-            
-            //Vec3f pos( d, d, d );
             Vec3f pos(0,0,0);
             for(int i = 0; i < mNumNodes; ++i )
             {
@@ -617,6 +578,8 @@ void Graviton::update(double dt)
     mParticlesShader.uniform( "velocities", 1 );
     mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 100.f) );
     mParticlesShader.uniform( "eps", mEps );
+    mParticlesShader.uniform( "damping", mDamping );
+    mParticlesShader.uniform( "containerradius", mConstraintSphereRadius );
     mParticlesShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
     mParticlesShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
     mParticlesShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
@@ -630,6 +593,57 @@ void Graviton::update(double dt)
     updateCamera(dt);
     
     Scene::update(dt);
+}
+
+void Graviton::computeAttractorPosition()
+{
+    // The attractor is positioned at the intersection of a ray
+    // from the mouse to a plane perpendicular to the camera.
+    float t = 0;
+    Vec3f right, up;
+    const Camera& cam = getCamera();
+    cam.getBillboardVectors(&right, &up);
+    float u = mMousePos.x / (float) mApp->getViewportWidth();
+    float v = mMousePos.y / (float) mApp->getViewportHeight();
+    Ray ray = cam.generateRay(u , 1.0f - v, cam.getAspectRatio() );
+    if (ray.calcPlaneIntersection(Vec3f(0.0f,0.0f,0.0f), right.cross(up), &t)) {
+        mAttractor1.set(ray.calcPosition(t));
+    }
+}
+
+void Graviton::updateGravityNodes(const double dt)
+{
+    // slow naive algorithm
+    // TODO: make go faster! move to GPU?
+    for (int i = 0; i < mGravityNodes.size(); ++i)
+    {
+        for (int j = 0; j < mGravityNodes.size(); ++j)
+        {
+            if (i != j)
+            {
+                mGravityNodes[i].applyGravityFrom(mGravityNodes[j], dt);
+            }
+        }
+    }
+    
+    for (int i = 0; i < mGravityNodes.size(); ++i)
+    {
+        mGravityNodes[i].mPos += mGravityNodes[i].mVel * dt;
+        float distance = mGravityNodes[i].mPos.length();
+        if ((mConstraintSphereRadius > 0.0f && distance > mConstraintSphereRadius) || distance > 1000.f)
+        {
+            mGravityNodes[i].mPos = mGravityNodes[i].mPos.normalized() * mConstraintSphereRadius;
+            mGravityNodes[i].mVel *= -0.9f;
+        }
+    }
+}
+
+void Graviton::tGravityNode::applyGravityFrom(Graviton::tGravityNode &other, double dt)
+{
+    Vec3f dir = other.mPos - mPos;
+    double r2 = dir.dot(dir);
+    double ir3 = 1 / (r2 * sqrt(r2));
+    mVel += (other.mMass * ir3) * dir * dt;
 }
 
 #pragma mark - Input
@@ -881,6 +895,7 @@ void Graviton::drawParticles()
     mDisplacementShader.uniform("MV", getCamera().getModelViewMatrix());
     mDisplacementShader.uniform("P", getCamera().getProjectionMatrix());
     mDisplacementShader.uniform("colorScale", mColorScale);
+    mDisplacementShader.uniform("gain", mGain);
     
     gl::draw( mVboMesh );
     mDisplacementShader.unbind();
@@ -906,10 +921,25 @@ void Graviton::drawDebug()
     Scene::drawDebug();
     
     gl::pushMatrices();
+    gl::setMatrices( getCamera() );
+    
+    for (int i = 0; i < mGravityNodes.size(); ++i)
+    {
+        gl::color(1.0f, 0.0f, 0.0f);
+        gl::drawSphere(mGravityNodes[i].mPos, 2.0f);
+        gl::enableWireframe();
+        gl::drawSphere(Vec3f::zero(), mConstraintSphereRadius);
+        gl::disableWireframe();
+    }
+    
+    gl::popMatrices();
+    
+    gl::pushMatrices();
     glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT);
     gl::enable( GL_TEXTURE_2D );
     const Vec2f& windowSize( getWindowSize() );
     gl::setMatricesWindow( windowSize );
+    gl::color(ColorA::white());
     
     const float size = 80.0f;
     const float paddingX = 20.0f;

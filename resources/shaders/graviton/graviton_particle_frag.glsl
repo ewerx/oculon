@@ -11,6 +11,8 @@ uniform float eps;
 uniform float dt;
 uniform bool noiseSim;
 varying vec4 texCoord;
+uniform float damping;
+uniform float containerradius;
 
 void main(void)
 {
@@ -34,8 +36,15 @@ void main(void)
     vec3 v1 = v0 + dt * a1; //velocity update
     v1 += dt * a2;
     v1 += dt * a3;
-    v1 = v1 - 0.02 * v1; //friction
+    v1 = v1 - damping * v1; //friction/damping
     vec3 p1	= p0 + dt * v1; //(symplectic euler) position update
+    
+    float dist = length(p1);
+    if (containerradius > 0.0 && dist > containerradius) {
+        vec3 norm = normalize(p1);
+        p1 = norm * containerradius;
+        v1 *= 0.9;
+    }
     
     //Render to positions texture
     gl_FragData[0] = vec4(p1, invmass);
