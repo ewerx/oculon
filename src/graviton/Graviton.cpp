@@ -272,6 +272,8 @@ nodeFormationNames.push_back(nam);
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "audio-node", &mAudioMirror )
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "random-mirror", &mRandomMirror )
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "audio-gravity", &mAudioGravity )
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "audio-container", &mAudioContainer )
@@ -574,7 +576,7 @@ bool Graviton::resetGravityNodes()
                     pos.x = 0.0f;
                     pos.y = 0.0f;
                     pos.z = 0.0f;
-                    vel = Rand::randVec3f();
+                    vel = Rand::randVec3f().normalized();
                     break;
                     
                     case 1:
@@ -675,7 +677,7 @@ void Graviton::updateGravityNodes(const double dt)
 {
     float containRadius = mConstraintSphereRadius;
     if (mAudioContainer) {
-        containRadius *= mAudioInputHandler.getAverageVolumeMidFreq() * 3.0f;
+        //containRadius *= mAudioInputHandler.getAverageVolumeMidFreq() * 10.0f;
     }
     
     for (int i = 0; i < mGravityNodes.size(); ++i)
@@ -695,7 +697,7 @@ void Graviton::updateGravityNodes(const double dt)
                 }
                 
                 if (i==0) {
-                    timeline().apply( &mCamTarget, mGravityNodes[i].mPos, 0.2f, EaseInQuad() );
+                    //timeline().apply( &mCamTarget, mGravityNodes[i].mPos, 0.2f, EaseInQuad() );
                 }
             }
             break;
@@ -704,8 +706,15 @@ void Graviton::updateGravityNodes(const double dt)
             {
                 if (mAudioMirror)
                 {
-                    float distance = mAudioInputHandler.getAverageVolumeLowFreq() * containRadius * 2.0f * (i == 0 ? 1.0f : -1.0f);
-                    mGravityNodes[i].mPos = Vec3f::one() * distance;
+                    float distance = mAudioInputHandler.getAverageVolumeLowFreq() * containRadius * 2.0f;
+                    mGravityNodes[i].mPos = mGravityNodes[i].mVel * distance;
+                    
+                    // such hacks
+                    if (i == 0 && mRandomMirror && distance < 1.0f)
+                    {
+                        mGravityNodes[0].mVel = Rand::randVec3f().normalized();
+                        mGravityNodes[1].mVel = mGravityNodes[0].mVel * -1.0f;
+                    }
                 }
                 else
                 {
@@ -748,7 +757,7 @@ void Graviton::update(double dt)
     mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
     if (mAudioGravity) {
-        mGravity = mAudioInputHandler.getAverageVolumeHighFreq() * 3.0f;
+        mGravity = MIN(mAudioInputHandler.getAverageVolumeHighFreq() * 3.0f, 1.0f);
     }
 
     // update particle system
@@ -768,7 +777,11 @@ void Graviton::update(double dt)
     mParticlesShader.uniform( "eps", mEps );
     mParticlesShader.uniform( "damping", mDamping );
     mParticlesShader.uniform( "gravity", mGravity );
-    mParticlesShader.uniform( "containerradius", mConstraintSphereRadius );
+    float containRadius = mConstraintSphereRadius;
+    if (mAudioContainer) {
+        containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeMidFreq() * 3.0f;
+    }
+    mParticlesShader.uniform( "containerradius", containRadius );
     mParticlesShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
     mParticlesShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
     mParticlesShader.uniform( "attractorPos3", mGravityNodes[2].mPos);

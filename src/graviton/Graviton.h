@@ -123,6 +123,7 @@ enm,
     bool mAudioGravity;
     bool mAudioContainer;
     bool mAudioMirror;
+    bool mRandomMirror;
     float mEps;
     float mConstraintSphereRadius;
     float mNodeSpeed;

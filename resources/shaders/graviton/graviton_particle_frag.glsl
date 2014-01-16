@@ -28,12 +28,12 @@ void main(void)
     float f1Mag = length(f1); //force magnitude
     vec3 f2 = attractorPos2-p0; //force
     float f2Mag = length(f2); //force magnitude
-    vec3 f3 = attractorPos3-p0; //force
-    float f3Mag = length(f3); //force magnitude
+    //vec3 f3 = attractorPos3-p0; //force
+    //float f3Mag = length(f3); //force magnitude
     
     vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
     vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
-    vec3 a3 = gravity * invmass * f3/(f3Mag*f3Mag + eps);
+    vec3 a3 = vec3(0.0,0.0,0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps);
     
     vec3 v1 = v0 + dt * (a1 + a2 + a3); //velocity update
     v1 = v1 - damping * v1; //friction/damping
@@ -41,7 +41,7 @@ void main(void)
     
     // contain within sphere
     float dist = length(p1);
-    if (containerradius > 0.0 && dist > containerradius || dist > 1000.0) {
+    if (containerradius > 5.0 && dist > containerradius || dist > 1000.0) {
         vec3 norm = normalize(p1);
         p1 = norm * containerradius;
         v1 *= 0.9;
