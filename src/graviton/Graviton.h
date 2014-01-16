@@ -78,9 +78,9 @@ enm,
     
     // NODE FORMATION
 #define GRAVITON_NODE_FORMATION_TUPLE \
-GRAVITON_NODE_FORMATION_ENTRY( "None", NODE_FORMATION_NONE ) \
-GRAVITON_NODE_FORMATION_ENTRY( "Symmetry", NODE_FORMATION_SYMMETRY ) \
-GRAVITON_NODE_FORMATION_ENTRY( "Blackhole", NODE_FORMATION_BLACKHOLE_STAR ) \
+GRAVITON_NODE_FORMATION_ENTRY( "Static", NODE_FORMATION_STATIC ) \
+GRAVITON_NODE_FORMATION_ENTRY( "Random", NODE_FORMATION_RANDOM ) \
+GRAVITON_NODE_FORMATION_ENTRY( "Spin", NODE_FORMATION_SPIN ) \
 // end tuple
     
     enum eNodeFormation
@@ -121,6 +121,7 @@ enm,
     float mGravity;
     float mEps;
     float mConstraintSphereRadius;
+    float mNodeSpeed;
     int32_t mNumNodes;
     uint32_t mFlags;
     uint32_t mNumParticles;
@@ -132,9 +133,6 @@ enm,
     ci::gl::GlslProg mParticlesShader;
     ci::gl::GlslProg mDisplacementShader;
     ci::gl::GlslProg mFormationShader;
-    ci::Vec3f mAttractor1;
-    ci::Vec3f mAttractor2;
-    ci::Vec3f mAttractor3;
 
     // rendering
     GLuint              mVbo[2]; // pos and color VBOs
@@ -175,7 +173,7 @@ enm,
     float               mCamTurnRate;
     float               mCamTranslateRate;
     float               mCamMaxDistance;
-    ci::Vec3f           mCamTarget;
+    ci::Anim<ci::Vec3f> mCamTarget;
     ci::Quatf           mCamRotation;
     ci::BSpline3f       mCamSpline;
     float               mCamSplineValue;
@@ -191,7 +189,7 @@ private:
     void setupVBO();
     void initParticles();
     
-    void resetGravityNodes(const eNodeFormation formation);
+    bool resetGravityNodes();
     void computeAttractorPosition();
     void updateGravityNodes(const double dt);
     

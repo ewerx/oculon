@@ -12,13 +12,14 @@ uniform float dt;
 uniform bool noiseSim;
 varying vec4 texCoord;
 uniform float damping;
+uniform float gravity;
 uniform float containerradius;
 
 void main(void)
 {
     vec3 p0 = texture2D( positions, texCoord.st).rgb;
     vec3 v0 = texture2D( velocities, texCoord.st).rgb;
-    float invmass = texture2D( positions, texCoord.st).a;
+    float invmass = texture2D( positions, texCoord.st ).a;
  
     // the simulation
     
@@ -29,9 +30,9 @@ void main(void)
     vec3 f3 = attractorPos3-p0; //force
     float f3Mag = length(f3); //force magnitude
     
-    vec3 a1 = 0.05 * invmass * f1/(f1Mag*f1Mag + eps);
-    vec3 a2 = 0.05 * invmass * f2/(f2Mag*f2Mag + eps);
-    vec3 a3 = 0.05 * invmass * f3/(f3Mag*f3Mag + eps);
+    vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
+    vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
+    vec3 a3 = gravity * invmass * f3/(f3Mag*f3Mag + eps);
     
     vec3 v1 = v0 + dt * a1; //velocity update
     v1 += dt * a2;
