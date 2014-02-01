@@ -43,6 +43,8 @@ void Tilings::reset()
     mColor2 = ColorA::black();
     mTimeScale = 0.02f;
     mOffset = 0.0f;
+    mHOffset = 0.0f;
+    mScale = 0.47619f;
     
     mIterations = 20;
     mAngleP = 3;
@@ -58,11 +60,18 @@ void Tilings::reset()
 
 void Tilings::setupInterface()
 {
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
+    mInterface->addParam(CreateFloatParam( "timescale", &mTimeScale )
                          .minValue(0.0f)
                          .maxValue(2.0f));
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    
+    mInterface->addParam(CreateFloatParam( "h-offset", &mHOffset )
+                         .minValue(-0.5f)
+                         .maxValue(0.5f));
+    mInterface->addParam(CreateFloatParam( "scale", &mScale )
+                         .minValue(0.0f)
+                         .maxValue(1.0f));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "iterations", &mIterations )
@@ -180,6 +189,8 @@ void Tilings::shaderPreDraw()
     mShader.uniform( "iCenter", mCenter );
     mShader.uniform( "iThickness", mThickness );
     mShader.uniform( "iOffset", mOffset);
+    mShader.uniform( "iHOffset", mHOffset);
+    mShader.uniform( "iScale", mScale);
 }
 
 void Tilings::drawShaderOutput()

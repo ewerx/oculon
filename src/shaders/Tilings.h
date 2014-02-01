@@ -72,5 +72,7 @@ private:
     ci::Vec3f           mCenter;
     float               mThickness;
     float               mOffset;
+    float               mHOffset;
+    float               mScale;
 };
 

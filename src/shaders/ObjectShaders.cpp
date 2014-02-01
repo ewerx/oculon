@@ -200,9 +200,9 @@ OS_SHADERS_TUPLE
                          .minValue(1)
                          .maxValue(100)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateVec3fParam("biofractal/rotation", &mBioFractalParams.mRotation, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
+    mInterface->addParam(CreateVec3fParam("biofractal/rotation", mBioFractalParams.mRotation.ptr(), Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
                          .oscReceiver(mName));
-    mInterface->addParam(CreateVec3fParam("biofractal/julia", &mBioFractalParams.mJulia, Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
+    mInterface->addParam(CreateVec3fParam("biofractal/julia", mBioFractalParams.mJulia.ptr(), Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
                          .oscReceiver(mName));
     mInterface->addParam(CreateVec3fParam("biofractal/lightdir", &mBioFractalParams.mLightDir, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
                          .oscReceiver(mName));

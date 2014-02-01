@@ -11,7 +11,9 @@ uniform float     iThickness;//Thickness of the lines
 uniform vec4      iColor1;
 uniform vec4      iColor2;
 
-uniform float     iOffset;
+uniform float     iOffset; // animation offset
+uniform float     iHOffset; // horizontal offset
+uniform float     iScale;
 
 // based on https://www.shadertoy.com/view/4sf3zX
 // triangular groups tessellations. Coxeter group p-q-r. Stereographic projection.
@@ -127,9 +129,9 @@ float dist2Segments(vec3 z, float r){
 
 float aaScale = 0.005;//anti-aliasing scale == half of pixel size.
 
-vec3 color(vec2 pos){
-    vec3 segColor=vec3(iColor1.x,iColor1.y,iColor1.z);
-    vec3 backGroundColor=vec3(iColor2.x,iColor2.y,iColor2.z);
+vec4 color(vec2 pos){
+    vec4 segColor=iColor1;
+    vec4 backGroundColor=iColor2;
     
 	//todo: add here a möbius transform.
 	float r=length(pos);
@@ -138,7 +140,7 @@ vec3 color(vec2 pos){
 	
 	z3=fold(z3);
 	
-	vec3 color=backGroundColor;
+	vec4 color=backGroundColor;
 	
 	//antialiasing using distance de segments and vertices (ds and dv) (see:http://www.iquilezles.org/www/articles/distance/distance.htm)
 	{
@@ -162,10 +164,12 @@ void main(void)
 //    U = iCenter.x;
 //    V = iCenter.y;
 //    W = iCenter.z;
-	const float scaleFactor=2.1;
+	float scaleFactor=1.0/iScale;//2.1;
+    
 	vec2 uv = scaleFactor*(gl_FragCoord.xy-0.5*iResolution.xy) / iResolution.y;
+    uv.x = uv.x - iHOffset*scaleFactor*(iResolution.x/iResolution.y);
 	aaScale=0.5*scaleFactor/iResolution.y;
 	animUVW(0.5*PI*(iGlobalTime+iOffset));
 	init();
-	gl_FragColor = vec4(color(uv),1.0);
+	gl_FragColor = color(uv);
 }

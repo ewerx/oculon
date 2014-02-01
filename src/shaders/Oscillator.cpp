@@ -39,6 +39,12 @@ void Oscillator::setup()
         mWaveParams[i].mTimeScale = 1.0f;
         mWaveParams[i].mOffset = 0.5f;
     }
+    
+    mTimeScale = 1.0f;
+    mAmplitude = 0.0f;
+    mFrequency = 0.0f;
+    mAudioAmp = false;
+    mAudioPhase = false;
 }
 
 void Oscillator::reset()
@@ -51,7 +57,18 @@ void Oscillator::reset()
 
 void Oscillator::setupInterface()
 {
-    
+    mInterface->addParam(CreateFloatParam( "amplitude", &mAmplitude )
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam( "phase", &mFrequency )
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "audio-amp", &mAudioAmp )
+                         .oscReceiver(getName()));
+    mInterface->addParam(CreateBoolParam( "audio-phase", &mAudioPhase )
+                         .oscReceiver(getName()));
 }
 
 #pragma mark - Update
@@ -63,7 +80,8 @@ void Oscillator::update(double dt)
     for (int i = 0; i < MAX_WAVES; ++i)
     {
 //        mWaveParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
-        mWaveParams[i].mElapsedTime += mWaveParams[i].mTimeScale*dt;
+        mWaveParams[i].mElapsedTime += mTimeScale*dt;
+        mFrequency += mTimeScale *dt;
     }
 }
 
@@ -93,10 +111,10 @@ void Oscillator::draw()
 void Oscillator::shaderPreDraw()
 {
     // audio texture
-    //    if( mAudioInputHandler.hasTexture() )
-    //    {
-    //        mAudioInputHandler.getFbo().bindTexture(1);
-    //    }
+//        if( mAudioInputHandler.hasTexture() )
+//        {
+//            mAudioInputHandler.getFbo().bindTexture(1);
+//        }
 
     
     mShader.bind();
@@ -107,8 +125,8 @@ void Oscillator::shaderPreDraw()
     
     mShader.uniform( "iGlobalTime", mWaveParams[0].mElapsedTime);
     mShader.uniform( "iOffset", mWaveParams[0].mOffset * mApp->getViewportHeight());
-    mShader.uniform( "iPhase", 0.5f);
-    mShader.uniform( "iAmplitude", 0.5f);
+    mShader.uniform( "iPhase", mFrequency* mApp->getViewportHeight());
+    mShader.uniform( "iAmplitude", mAmplitude* mApp->getViewportHeight());
 //    mShader.uniform( "iColor1", mWaveParams[0].mColor);
 //    mShader.uniform( "iScale1", scale[0]);
 //    mShader.uniform( "iFrequency1", mWaveParams[0].mActualFrequency);

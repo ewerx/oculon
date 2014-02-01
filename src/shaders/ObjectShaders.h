@@ -138,13 +138,17 @@ enm,
     struct tBioFractalParams
     {
         int         mIterations;
-        ci::Vec3f   mJulia;
-        ci::Vec3f   mRotation;
+        ci::Anim<ci::Vec3f>  mJulia;
+        ci::Anim<ci::Vec3f>  mRotation;
         ci::Vec3f   mLightDir;
         float       mScale;
         float       mRotAngle;
         float       mAmplitude;
         float       mDetail;
+        float       mAnimTime;
+        bool        mCycleJulia;
+        bool        mCycleRotation;
+        
     };
     tBioFractalParams mBioFractalParams;
 };

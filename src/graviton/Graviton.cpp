@@ -504,6 +504,10 @@ void Graviton::reset()
 {
     resetGravityNodes();
     initParticles();
+    
+    mArcball.setWindowSize( mApp->getViewportSize() );
+	mArcball.setCenter( mApp->getViewportSize()*0.5f );
+	mArcball.setRadius( mFormationRadius * 2.0f );
 }
 
 void Graviton::resize()
@@ -706,11 +710,11 @@ void Graviton::updateGravityNodes(const double dt)
             {
                 if (mAudioMirror)
                 {
-                    float distance = mAudioInputHandler.getAverageVolumeLowFreq() * containRadius * 2.0f;
+                    float distance = mAudioInputHandler.getAverageVolumeLowFreq() * mConstraintSphereRadius * 3.0f;
                     mGravityNodes[i].mPos = mGravityNodes[i].mVel * distance;
                     
                     // such hacks
-                    if (i == 0 && mRandomMirror && distance < 1.0f)
+                    if (i == 0 && mRandomMirror && distance > (containRadius*0.45f))
                     {
                         mGravityNodes[0].mVel = Rand::randVec3f().normalized();
                         mGravityNodes[1].mVel = mGravityNodes[0].mVel * -1.0f;
@@ -757,7 +761,7 @@ void Graviton::update(double dt)
     mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
     if (mAudioGravity) {
-        mGravity = MIN(mAudioInputHandler.getAverageVolumeHighFreq() * 3.0f, 1.0f);
+        mGravity = MIN(mAudioInputHandler.getAverageVolumeHighFreq(), 1.0f);
     }
 
     // update particle system
@@ -779,7 +783,7 @@ void Graviton::update(double dt)
     mParticlesShader.uniform( "gravity", mGravity );
     float containRadius = mConstraintSphereRadius;
     if (mAudioContainer) {
-        containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeMidFreq() * 3.0f;
+        containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;
     }
     mParticlesShader.uniform( "containerradius", containRadius );
     mParticlesShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
@@ -887,8 +891,8 @@ void Graviton::updateCamera(const double dt)
                 mCamTranslateRate = -mCamTranslateRate;
             }
             
-            Vec3f pos(mCamRadius * cos(mCamAngle),
-                      mCamRadius * sin(mCamAngle),
+            Vec3f pos(mCamRadius * 0.1f * cos(mCamAngle),
+                      mCamRadius * 0.1f * sin(mCamAngle),
                       mCamLateralPosition );
             
             Vec3f up( pos.x, pos.y, 0.0f );

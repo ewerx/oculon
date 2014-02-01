@@ -50,7 +50,15 @@ private:
         float                   mOffset;
         ci::Anim<float>         mAmplitude;
         ci::Anim<float>         mFrequency;
+        bool                    mAudioPhase;
+        bool                    mAudioAmp;
     };
-    enum { MAX_WAVES = 16 };
+    enum { MAX_WAVES = 1 };
     tWaveParams mWaveParams[MAX_WAVES];
+    
+    float         mTimeScale;
+    float         mAmplitude;
+    float         mFrequency;
+    bool                    mAudioPhase;
+    bool                    mAudioAmp;
 };

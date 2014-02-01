@@ -53,7 +53,7 @@ float softshadow( in vec3 ro, in vec3 rd, float mint, float k )
     return clamp(res,0.0,1.0);
 }
 
-vec4 light(in vec3 p, in vec3 dir, float d) {
+vec3 light(in vec3 p, in vec3 dir, float d) {
 	vec3 ldir=normalize(iLightDir);
 	vec3 n=normal(p);
 	float sh=softshadow(p,-ldir,1.,20.);
@@ -64,7 +64,7 @@ vec4 light(in vec3 p, in vec3 dir, float d) {
     //vec3 ray = .8*d*((0.4*p-3.*r)+d*vec3(1.0,1.0,1.0));
 	//vec4 lightCol = texture2D(iColorMap,ray.xz+ray.xy);
     //return 3.0*lightCol*diff*sh+pow(spec,30.)*.5*sh+.15*max(0.,dot(normalize(dir),-n));
-	return iColor1*diff*sh+pow(spec,30.)*.5*sh+.15*max(0.,dot(normalize(dir),-n));
+	return iColor1.xyz*diff*sh+pow(spec,30.)*.5*sh+.15*max(0.,dot(normalize(dir),-n));
 }
 
 vec4 raymarch(in vec3 from, in vec3 dir)
@@ -84,7 +84,7 @@ vec4 raymarch(in vec3 from, in vec3 dir)
 	vec4 backg=vec4(0.0,0.0,0.0,iBackgroundAlpha);
 	if (d<iDetail) {
 		//col=light(p-iDetail*dir, dir, d);
-        col=light(p, dir,d);
+        col=vec4(light(p, dir, d),1.0);
 	} else {
 		col=backg;
 	}
@@ -136,5 +136,5 @@ void main(void)
 	from.yz=from.yz*rot;
     
 	vec4 col=raymarch(from,dir);
-	gl_FragColor = vec4(col.r,col.g,col.b,1.0);
+	gl_FragColor = col;//vec4(col.r,col.g,col.b,iBackgroundAlpha);
 }

@@ -15,6 +15,7 @@
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/Bspline.h"
+#include "cinder/Arcball.h"
 #include <vector>
 
 #include "Scene.h"
@@ -184,6 +185,7 @@ enm,
     float               mCamSplineValue;
     ci::Vec3f           mCamLastPos;
     ci::ColorAf         mColorScale;
+    ci::Arcball         mArcball;
     
     MotionBlurRenderer  mMotionBlurRenderer;
     

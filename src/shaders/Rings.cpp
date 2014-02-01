@@ -344,8 +344,8 @@ void Rings::update(double dt)
                 r *= audioLevel;
             }
             mRingSetParams[i].mSpinTheta += dt * mRingSetParams[i].mSpinRate;
-            mRingSetParams[i].mActualCenter().x = mRingSetParams[0].mCenter.x + r * sin( mRingSetParams[i].mSpinTheta);
-            mRingSetParams[i].mActualCenter().y = mRingSetParams[0].mCenter.y + r * cos( mRingSetParams[i].mSpinTheta);
+            mRingSetParams[i].mActualCenter().x = mRingSetParams[i].mCenter.x + r * sin( mRingSetParams[i].mSpinTheta);
+            mRingSetParams[i].mActualCenter().y = mRingSetParams[i].mCenter.y + r * cos( mRingSetParams[i].mSpinTheta);
         }
     }
     
