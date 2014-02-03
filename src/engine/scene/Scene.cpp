@@ -535,10 +535,12 @@ gl::GlslProg Scene::loadVertAndFragShaders(const std::string &vertShader, const 
     {
 		console() << "Shader (" << vertShader << " / " << fragShader << ") compile error: " << std::endl;
 		console() << exc.what();
+        assert(false);
 	}
 	catch( ... )
     {
 		console() << "Unable to load shaders (" << vertShader << " / " << fragShader << ")"  << std::endl;
+        assert(false);
 	}
     
     return shader;
