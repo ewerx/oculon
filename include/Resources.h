@@ -137,3 +137,14 @@
 #define RES_POLYHEDRON_TEX1		CINDER_RESOURCE( ../resources/images/, redgreenyellow.png,		138, IMAGE )
 #define RES_POLYHEDRON_SHADER_FRAG		CINDER_RESOURCE( ../resources/shaders/polyhedron/, polyhedron_frag.glsl, 128, GLSL )
 #define RES_POLYHEDRON_SHADER_VERT		CINDER_RESOURCE( ../resources/shaders/polyhedron/, polyhedron_vert.glsl, 129, GLSL )
+
+// fluid
+#define RES_GLSL_FRAG_SETBND        CINDER_RESOURCE(../resources/shaders/fluid/, frag_setbnd.glsl, 129, GLSL)
+#define RES_GLSL_FRAG_ADDSOURCE     CINDER_RESOURCE(../resources/shaders/fluid/, frag_addsource.glsl, 130, GLSL)
+#define RES_GLSL_FRAG_DRAW          CINDER_RESOURCE(../resources/shaders/fluid/, frag_draw.glsl, 131, GLSL)
+#define RES_GLSL_FRAG_LINSOLVE      CINDER_RESOURCE(../resources/shaders/fluid/, frag_linsolve.glsl, 132, GLSL)
+#define RES_GLSL_FRAG_ADDVECT       CINDER_RESOURCE(../resources/shaders/fluid/, frag_addvect.glsl, 133, GLSL)
+#define RES_GLSL_FRAG_PROJECT1      CINDER_RESOURCE(../resources/shaders/fluid/, frag_project1.glsl, 134, GLSL)
+#define RES_GLSL_FRAG_PROJECT2      CINDER_RESOURCE(../resources/shaders/fluid/, frag_project2.glsl, 135, GLSL)
+#define RES_GLSL_FRAG_PROJECT3      CINDER_RESOURCE(../resources/shaders/fluid/, frag_project3.glsl, 136, GLSL)
+#define RES_GLSL_FRAG_ADDFORCE_CIRC CINDER_RESOURCE(../resources/shaders/fluid/, frag_addforcearea_circular.glsl, 137, GLSL)
