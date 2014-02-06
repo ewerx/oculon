@@ -35,6 +35,8 @@ void Lines::setup()
 {
     Scene::setup();
     
+    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE|CameraController::CAM_GRAVITON, CameraController::CAM_MANUAL);
+    
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     mRenderShader = loadVertAndFragShaders("lines_render_vert.glsl", "lines_render_frag.glsl");
     
@@ -223,6 +225,7 @@ void Lines::setupInterface()
     mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
                          .oscReceiver(mName));
     
+    mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
@@ -231,6 +234,8 @@ void Lines::setupInterface()
 void Lines::update(double dt)
 {
     mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    
+    mCameraController.update(dt);
     
     gl::disableAlphaBlending();
     
@@ -302,6 +307,11 @@ void Lines::update(double dt)
 }
 
 #pragma mark - Draw
+
+const Camera& Lines::getCamera()
+{
+    return mCameraController.getCamera();
+}
 
 void Lines::draw()
 {

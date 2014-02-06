@@ -6,9 +6,9 @@
 //
 //
 
-#ifndef __Oculon__CameraController__
-#define __Oculon__CameraController__
+#pragma once
 
+#include "Interface.h"
 #include "SplineCam.h"
 #include "SpringCam.h"
 #include "StarCam.h"
@@ -34,16 +34,29 @@ CAMCTRLR_CAMTYPE_ENTRY( "Catalog",  CAM_CATALOG,    (1u << 6) ) \
     enum eCamType
     {
 #define CAMCTRLR_CAMTYPE_ENTRY( nam, enm, val ) \
-enm = val,
+enm,
         CAMCTRLR_CAMTYPE_TUPLE
 #undef  CAMCTRLR_CAMTYPE_ENTRY
         
         CAM_COUNT
     };
     
+    enum eCamBitMask
+    {
+#define CAMCTRLR_CAMTYPE_ENTRY( nam, enm, val ) \
+enm##_MASK = val,
+        CAMCTRLR_CAMTYPE_TUPLE
+#undef  CAMCTRLR_CAMTYPE_ENTRY
+        
+        CAM_MASK_COUNT
+    };
+    
 public:
-    CameraController(OculonApp *app, const unsigned int camTypes);
+    CameraController();
     virtual ~CameraController() {}
+    
+    void setup(OculonApp *app, const unsigned int camTypes, eCamType defaultCam);
+    void setupInterface(Interface *interface, const std::string& sceneName);
     
     void update(double dt);
     
@@ -61,4 +74,3 @@ protected:
     StarCam                     mStarCam;
 };
 
-#endif /* defined(__Oculon__CameraController__) */

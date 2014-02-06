@@ -17,6 +17,7 @@
 #include "Scene.h"
 #include "PingPongFbo.h"
 #include "AudioInputHandler.h"
+#include "CameraController.h"
 
 //
 // Lines
@@ -33,6 +34,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
+    const ci::Camera& getCamera();
     
 protected:// from Scene
     void setupInterface();
@@ -74,6 +76,9 @@ private:
     
     ci::gl::Texture mColorMapTex;
     ci::ColorAf mColor;
+    
+    // camera
+    CameraController mCameraController;
     
     // params
     float mTimeStep;

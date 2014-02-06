@@ -79,7 +79,7 @@ void Catalog::setup()
     //
     // CAMERA	
 	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio(), 200000.0f );
-    mStarCam.setup(this);
+    mStarCam.setup(mApp);
     //TODO: hack!
     mStarCam.mTimeScale = &mStarCamTimeScale;
     

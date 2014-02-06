@@ -11,12 +11,37 @@
 #include "Scene.h"
 
 using namespace ci;
+using namespace std;
 
-CameraController::CameraController(OculonApp *app, const unsigned int camTypes)
-: mApp(app)
-, mAvailableCamTypes(camTypes)
-, mCamType(CAM_MANUAL)
+CameraController::CameraController()
+: mCamType(CAM_MANUAL)
 {
+}
+
+void CameraController::setup(OculonApp *app, const unsigned int camTypes, eCamType defaultCam)
+{
+    mApp = app;
+    mAvailableCamTypes = camTypes;
+    mCamType = defaultCam;
+    mSplineCam.setup();
+    mStarCam.setup(mApp);
+    mSpringCam = SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
+}
+
+void CameraController::setupInterface(Interface *interface, const std::string& sceneName)
+{
+    interface->gui()->addColumn();
+    vector<string> camTypeNames;
+    int camCount = 0;
+#define CAMCTRLR_CAMTYPE_ENTRY( nam, enm, val ) \
+        camTypeNames.push_back(nam);
+    CAMCTRLR_CAMTYPE_TUPLE
+#undef  CAMCTRLR_CAMTYPE_ENTRY
+    interface->addEnum(CreateEnumParam( "camera", (int*)(&mCamType), sceneName )
+                        .maxValue(camCount)
+                        .isVertical(), camTypeNames);
+    
+    mSplineCam.setupInterface(interface, sceneName);
 }
 
 void CameraController::update(double dt)
@@ -31,6 +56,9 @@ void CameraController::update(double dt)
             
         case CAM_SPLINE:
             mSplineCam.update(dt);
+            break;
+            
+        default:
             break;
     }
 }

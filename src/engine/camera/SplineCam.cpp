@@ -27,6 +27,7 @@ void SplineCam::setup(const float maxDistance, const float radius)
 {
     mTarget = Vec3f::zero();
     mSpeed = 0.25f;
+    mSpeedMulti = 0.01f;
     mRadius = radius;
     mLookForward = false;
     mMaxDistance = maxDistance;
@@ -78,7 +79,7 @@ void SplineCam::setupInterface( Interface* interface, const std::string& name)
 
 void SplineCam::update(double dt)
 {
-    mSplineValue += dt * (mSpeed*0.01f);
+    mSplineValue += dt * (mSpeed*mSpeedMulti);
     Vec3f pos = mSpline.getPosition( mSplineValue );
     Vec3f delta = pos - mLastPos;
     Vec3f up = delta.cross(pos);

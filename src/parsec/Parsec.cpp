@@ -63,7 +63,7 @@ void Parsec::setup()
 	mSectionOverlap = 1.0f;
     
     // cameras
-    mStarCam.setup(this);
+    mStarCam.setup(mApp);
     mSplineCam.setup();
     
     //HACK!

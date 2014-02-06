@@ -40,7 +40,7 @@ const double StarCam::DISTANCE_MIN = 0.015;
 const double StarCam::DISTANCE_MAX = 1000.0;
 
 StarCam::StarCam()
-: mScene(NULL)
+: mApp(NULL)
 {
 	mInitialCam = mCurrentCam = CameraPersp(); 
 	mCurrentCam.setNearClip( 5.0f );//0.01f );
@@ -60,13 +60,13 @@ StarCam::StarCam()
     mLookAt = Vec3f::zero();
 }
 
-void StarCam::setup(Scene* scene)
+void StarCam::setup(OculonApp* app)
 {
-    mScene = scene;
+    mApp = app;
 	mTimeOut = 300.0;
 	mTimeMouse = getElapsedSeconds() - mTimeOut;
     mElapsedTime = 0.0f;
-    mCurrentCam.setPerspective( 65.0f, mScene->getApp()->getViewportAspectRatio(), 5.0f, 200000.0f );
+    mCurrentCam.setPerspective( 65.0f, mApp->getViewportAspectRatio(), 5.0f, 200000.0f );
 }
 
 void StarCam::update(double elapsed)
