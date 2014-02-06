@@ -44,6 +44,7 @@ void Lines::setup()
     
     setupFBO();
     setupVBO();
+    generateFormationTextures();
     
     mAudioInputHandler.setup(false);
     
@@ -53,8 +54,12 @@ void Lines::setup()
     // params
     mTimeStep = 0.1f;
     mLineWidth = 1.0f;
-    mDecayRate = 0.5f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.05f);
+    mTakeFormation = false;
+    mFormationStep = 0.0f;
+    mFormationTime = 2.0f;
+    mFormation = FORMATION_RANDOM;
+    mMotion = MOTION_NOISE;
     
     mAudioReactive = false;
     mUseDynamicTex = true;
@@ -148,10 +153,10 @@ void Lines::setupFBO()
 	mNoiseTex.setMinFilter( GL_NEAREST );
 	mNoiseTex.setMagFilter( GL_NEAREST );
 	
-	mInitialPosTex = gl::Texture(posSurface, format);
-	mInitialPosTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mInitialPosTex.setMinFilter( GL_NEAREST );
-	mInitialPosTex.setMagFilter( GL_NEAREST );
+	mFormationPosTex[FORMATION_RANDOM] = gl::Texture(posSurface, format);
+	mFormationPosTex[FORMATION_RANDOM].setWrap( GL_REPEAT, GL_REPEAT );
+	mFormationPosTex[FORMATION_RANDOM].setMinFilter( GL_NEAREST );
+	mFormationPosTex[FORMATION_RANDOM].setMagFilter( GL_NEAREST );
 	
 	mInitialVelTex = gl::Texture(velSurface, format);
 	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
@@ -162,6 +167,84 @@ void Lines::setupFBO()
 	mParticleDataTex.setWrap( GL_REPEAT, GL_REPEAT );
 	mParticleDataTex.setMinFilter( GL_NEAREST );
 	mParticleDataTex.setMagFilter( GL_NEAREST );
+}
+
+void Lines::generateFormationTextures()
+{
+    //initialize buffer
+	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
+	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
+    
+	Surface32f::Iter iterator = posSurface.getIter();
+	
+    Perlin perlin(32, clock() * .1f);
+    
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+    
+    bool pair = false;
+    
+    
+	while(iterator.line())
+	{
+		while(iterator.pixel())
+		{
+            if (pair)
+            {
+                int axis = Rand::randInt(3); // x=0,y=1,z=2
+                switch(axis)
+                {
+                    case 0:
+                        x = -x;
+                        break;
+                    case 1:
+                        y = -y;
+                        break;
+                    case 2:
+                        z = -z;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                x = Rand::randFloat(-1.0f,1.0f);
+                y = Rand::randFloat(-1.0f,1.0f);
+                z = Rand::randFloat(-50.0f,50.0f);
+            }
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
+            
+//            // velocity
+//            float vx = Rand::randFloat(-.005f,.005f);
+//            float vy = Rand::randFloat(-.005f,.005f);
+//            float vz = Rand::randFloat(-.005f,.005f);
+//            float age = Rand::randFloat(.007f,0.9f);
+//            
+//			// velocity + age
+//			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
+            
+            pair = !pair;
+		}
+	}
+    
+    gl::Texture::Format format;
+    format.setInternalFormat( GL_RGBA32F_ARB );
+	
+	mFormationPosTex[FORMATION_STRAIGHT] = gl::Texture(posSurface, format);
+	mFormationPosTex[FORMATION_STRAIGHT].setWrap( GL_REPEAT, GL_REPEAT );
+	mFormationPosTex[FORMATION_STRAIGHT].setMinFilter( GL_NEAREST );
+	mFormationPosTex[FORMATION_STRAIGHT].setMagFilter( GL_NEAREST );
+	
+//	mInitialVelTex = gl::Texture(velSurface, format);
+//	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
+//	mInitialVelTex.setMinFilter( GL_NEAREST );
+//	mInitialVelTex.setMagFilter( GL_NEAREST );
 }
 
 void Lines::setupVBO()
@@ -176,9 +259,9 @@ void Lines::setupVBO()
     layout.setStaticNormals();
     
     mVboMesh = gl::VboMesh( kNumParticles, kNumParticles, layout, GL_LINES);
-    for( int x = 0; x < kBufSize; ++x ) {
-        for( int y = 0; y < kBufSize; ++y ) {
-            indices.push_back( x * kBufSize + y );
+    for( int y = 0; y < kBufSize; ++y ) {
+        for( int x = 0; x < kBufSize; ++x ) {
+            indices.push_back( y * kBufSize + x );
             texCoords.push_back( Vec2f( x/(float)kBufSize, y/(float)kBufSize ) );
         }
     }
@@ -208,9 +291,31 @@ void Lines::setupInterface()
                          .minValue(0.01f)
                          .maxValue(6.0f));
     
-    mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
+    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+                         .oscReceiver(mName));
+    
+    mInterface->gui()->addColumn();
+    vector<string> motionNames;
+#define MOTION_ENTRY( nam, enm ) \
+    motionNames.push_back(nam);
+    MOTION_TUPLE
+#undef  MOTION_ENTRY
+    mInterface->addEnum(CreateEnumParam( "motion", (int*)(&mMotion) )
+                        .maxValue(MOTION_COUNT)
+                        .isVertical(), motionNames);
+    
+    vector<string> formationNames;
+#define FORMATION_ENTRY( nam, enm ) \
+    formationNames.push_back(nam);
+    FORMATION_TUPLE
+#undef  FORMATION_ENTRY
+    mInterface->addEnum(CreateEnumParam( "formation", (int*)(&mFormation) )
+                        .maxValue(FORMATION_COUNT)
+                        .isVertical(), formationNames);
+    mInterface->addParam(CreateBoolParam("take-formation", &mTakeFormation))->registerCallback(this, &Lines::takeFormation);
+    mInterface->addParam(CreateFloatParam( "formation_time", &mFormationTime )
                          .minValue(0.0f)
-                         .maxValue(1.0f));
+                         .maxValue(100.0f));
     
     mInterface->addParam(CreateBoolParam("dynamic noise", &mUseDynamicTex));
     mInterface->addParam(CreateFloatParam("noise_speed", &mNoiseSpeed )
@@ -222,11 +327,21 @@ void Lines::setupInterface()
     mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
     //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
     
-    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName));
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
+}
+
+#pragma mark - Callbacks
+
+bool Lines::takeFormation()
+{
+    if (mTakeFormation)
+    {
+        mFormationStep = 0.0f;
+        timeline().apply( &mFormationStep, 1.0f, mFormationTime, EaseOutQuad() );
+    }
+    return true;
 }
 
 #pragma mark - Update
@@ -255,7 +370,7 @@ void Lines::update(double dt)
     
     mParticleDataTex.bind(2);
     mInitialVelTex.bind(3);
-    mInitialPosTex.bind(4);
+    mFormationPosTex[mFormation].bind(4);
     //mNoiseTex.bind(5);
     
     if (mUseDynamicTex)
@@ -268,9 +383,7 @@ void Lines::update(double dt)
     }
     
     float simdt = (float)(dt*mTimeStep);
-    float decayRate = mDecayRate;
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
-    if (mAudioTime) decayRate = mDecayRate + mAudioInputHandler.getAverageVolumeMidFreq();
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );
@@ -279,9 +392,10 @@ void Lines::update(double dt)
 	mSimulationShader.uniform( "oPositions", 4);
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", simdt );
-    mSimulationShader.uniform( "decayRate", decayRate );
     mSimulationShader.uniform( "reset", mReset );
-    //mSimulationShader.uniform( "takeFormation", mTakeFormation );
+    mSimulationShader.uniform( "takeFormation", mTakeFormation );
+    mSimulationShader.uniform( "formationStep", mFormationStep );
+    mSimulationShader.uniform( "motion", mMotion );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
@@ -294,7 +408,7 @@ void Lines::update(double dt)
     {
         mNoiseTex.unbind();
     }
-    mInitialPosTex.unbind();
+    mFormationPosTex[mFormation].unbind();
     mInitialVelTex.unbind();
     mParticleDataTex.unbind();
     

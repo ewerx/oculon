@@ -7,10 +7,11 @@ uniform sampler2D oVelocities;
 uniform sampler2D oPositions;
 uniform sampler2D noiseTex;
 uniform float dt;
-uniform float decayRate;
 uniform vec3 constraints;
 uniform bool reset;
 uniform bool takeFormation;
+uniform float formationStep;
+uniform int motion;
 
 varying vec4 texCoord;
 
@@ -28,72 +29,37 @@ void main()
 	float decay = texture2D( information, texCoord.st ).r;
 	float maxAge = texture2D( information, texCoord.st ).g;
     
-    age += dt * decay * decayRate;
     
-    vec3 a;
     if (takeFormation) {
-        // where tex is white those points have strongest attraction to their position
-        // which is the tex coord
-        //vec2 noise = texture2D( noiseTex, pos.xy ).rg;
-        float targetPow = length(texture2D( noiseTex, texCoord.st ).rgb);
-        vec3 target = vec3(texCoord.st, 0.0);
-        vec3 dv = target - pos;
-        float mag = length(dv);
-        //a = target * invMass * mag * dv * targetPow;
-        //a = 0.0;
-        vel += dv * targetPow;
+        vel = vec3(0.0,0.0,0.0);
+        vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
+        
+        pos = mix(pos,targetPos,formationStep);
     }
+    else
     {
         vec3 noise = texture2D( noiseTex, pos.xy ).rgb;
         //vec3 force = vec3(noise - pos.xy,0.0);
         vec3 force = vec3(noise.x,noise.y,noise.z);
         float fMag = length(force);
-        a = invMass * force;// * pow(fMag,0.9);
+        vec3 a = invMass * force;// * pow(fMag,0.9);
+        vel += dt * a;
+        
+        pos.x += vel.x * dt;
+        pos.y += vel.y * dt;
+        pos.z += vel.z * dt;
     }
-	vel += dt * a;
+	
     
-    pos.x += vel.x * dt;
-    pos.y += vel.y * dt;
-    pos.z += vel.z * dt;
 	
     // reincarnation
-	if( age >= maxAge || reset )
+	if( reset )
     {
         vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
         vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
-        
-        age = 0.0;
-        
-        if (reset) {
-            age = 0.5 * decay * 100.0;
-        }
-        
-        if(pos.x > 1.0 || pos.x < 0.0 || pos.y > 1.0 || pos.y < 0.0 || reset) {
-            pos = origPos;
-        }
-//        else {
-//            pos = origPos + vel;
-//        }
-        
+        pos = origPos;
         vel = origVel;
     }
-    
-    // bounce off walls
-    if (pos.x > 1.0 || pos.x < 0.0)
-    {
-        vel = vec3(vel.x*(-0.85), vel.y*0.9, 0.0);
-        age *= 1.1;
-    }
-    if (pos.y > 1.0 || pos.y < 0.0)
-    {
-        vel = vec3(vel.x*0.9, -vel.y*(-0.85), 0.0);
-        age *= 1.1;
-    }
-    
-    // no stragglers
-//    if (age > 0.9 && vel.x < 0.0001 && vel.y < 0.0001) {
-//        vel *= 2.0;
-//    }
 	
     //position + mass
 	gl_FragData[0] = vec4(pos, invMass);
@@ -102,3 +68,5 @@ void main()
     //age information
 	//gl_FragData[2] = vec4(age, maxAge, 0.0, 1.0);
 }
+
+
