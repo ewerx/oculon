@@ -53,7 +53,7 @@ void Lines::setup()
     
     // params
     mTimeStep = 0.1f;
-    mLineWidth = 1.0f;
+    mLineWidth = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
     mTakeFormation = false;
     mFormationStep = 0.0f;
@@ -64,6 +64,8 @@ void Lines::setup()
     mAudioReactive = false;
     mUseDynamicTex = true;
     setupDynamicTexture();
+    
+    mApp->setCamera(Vec3f(480.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
 }
 
 void Lines::setupDynamicTexture()
@@ -105,7 +107,7 @@ void Lines::setupFBO()
 		{
             float x = Rand::randFloat(-1.0f,1.0f);
             float y = Rand::randFloat(-1.0f,1.0f);
-            float z = Rand::randFloat(-50.0f,50.0f);
+            float z = Rand::randFloat(-1.0f,1.0f);
             float mass = Rand::randFloat(0.01f,1.0f);
             
             // position + mass
@@ -136,7 +138,7 @@ void Lines::setupFBO()
             float angle = noise * 15.0f;
             
             noiseSurface.setPixel(iterator.getPos(),
-                                  ColorA( cos( angle ) * Rand::randFloat(.1f,.4f), sin( angle ) * Rand::randFloat(.1f,.4f), 0.25f, 1.0f ));
+                                  ColorA( cos( angle ) * Rand::randFloat(.1f,.4f), sin( angle ) * Rand::randFloat(.1f,.4f), cos( angle ), 1.0f ));
 		}
 	}
     
@@ -171,6 +173,8 @@ void Lines::setupFBO()
 
 void Lines::generateFormationTextures()
 {
+    //TODO: make setupFBO use this formation function
+    
     //initialize buffer
 	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
 	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
@@ -212,7 +216,7 @@ void Lines::generateFormationTextures()
             {
                 x = Rand::randFloat(-1.0f,1.0f);
                 y = Rand::randFloat(-1.0f,1.0f);
-                z = Rand::randFloat(-50.0f,50.0f);
+                z = Rand::randFloat(-1.0f,1.0f);
             }
             
             float mass = Rand::randFloat(0.01f,1.0f);
@@ -277,6 +281,8 @@ void Lines::setupVBO()
 void Lines::reset()
 {
     mReset = true;
+    
+    mApp->setCamera(Vec3f(580.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
 }
 
 #pragma mark - Interface
@@ -473,7 +479,8 @@ void Lines::draw()
     mRenderShader.uniform("colorBase", mColor);
     mRenderShader.uniform("audioReactive", mAudioReactive);
     
-    glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
+    const float scale = mApp->getViewportWidth() / (float)kBufSize;
+    glScalef(scale, scale, scale);
     
     gl::draw( mVboMesh );
     

@@ -142,5 +142,5 @@ void main( void )
     
     float angle = 15.0 * n;
     
-    gl_FragColor = vec4( cos(angle), sin(angle), 0.0, 1.0 );
+    gl_FragColor = vec4( cos(angle), sin(angle), n * cos(angle), 1.0 );
 }
