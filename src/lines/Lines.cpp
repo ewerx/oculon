@@ -55,9 +55,8 @@ void Lines::setup()
     mTimeStep = 0.1f;
     mLineWidth = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
-    mTakeFormation = false;
     mFormationStep = 0.0f;
-    mFormationTime = 2.0f;
+    mFormationAnimSelector.mDuration = 2.0f;
     mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;
     
@@ -105,28 +104,24 @@ void Lines::setupFBO()
 	{
 		while(iterator.pixel())
 		{
+            // position + mass
             float x = Rand::randFloat(-1.0f,1.0f);
             float y = Rand::randFloat(-1.0f,1.0f);
             float z = Rand::randFloat(-1.0f,1.0f);
             float mass = Rand::randFloat(0.01f,1.0f);
-            
-            // position + mass
 			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
             
-            // velocity
+            // velocity + age
             float vx = Rand::randFloat(-.005f,.005f);
             float vy = Rand::randFloat(-.005f,.005f);
             float vz = Rand::randFloat(-.005f,.005f);
             float age = Rand::randFloat(.007f,0.9f);
-            
-			// velocity + age
 			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
             
-			// decay + max age
+			// extra info
             float decay = Rand::randFloat(.01f,10.00f);
-            float maxAge = Rand::randFloat(1.0f,10.0f);
 			infoSurface.setPixel(iterator.getPos(),
-                                 ColorA(decay, maxAge, 0.0f, 0.0f));
+                                 ColorA(x,y,z,decay));
             
             // noise
             float nX = iterator.x() * 0.005f;
@@ -145,6 +140,7 @@ void Lines::setupFBO()
     std::vector<Surface32f> surfaces;
     surfaces.push_back( posSurface );
     surfaces.push_back( velSurface );
+    surfaces.push_back( infoSurface );
     mParticlesFbo = PingPongFbo( surfaces );
     
     gl::Texture::Format format;
@@ -165,10 +161,10 @@ void Lines::setupFBO()
 	mInitialVelTex.setMinFilter( GL_NEAREST );
 	mInitialVelTex.setMagFilter( GL_NEAREST );
     
-	mParticleDataTex = gl::Texture(infoSurface, format);
-	mParticleDataTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mParticleDataTex.setMinFilter( GL_NEAREST );
-	mParticleDataTex.setMagFilter( GL_NEAREST );
+//	mParticleDataTex = gl::Texture(infoSurface, format);
+//	mParticleDataTex.setWrap( GL_REPEAT, GL_REPEAT );
+//	mParticleDataTex.setMinFilter( GL_NEAREST );
+//	mParticleDataTex.setMagFilter( GL_NEAREST );
 }
 
 void Lines::generateFormationTextures()
@@ -317,12 +313,12 @@ void Lines::setupInterface()
 #undef  FORMATION_ENTRY
     mInterface->addEnum(CreateEnumParam( "formation", (int*)(&mFormation) )
                         .maxValue(FORMATION_COUNT)
-                        .isVertical(), formationNames);
-    mInterface->addParam(CreateBoolParam("take-formation", &mTakeFormation))->registerCallback(this, &Lines::takeFormation);
-    mInterface->addParam(CreateFloatParam( "formation_time", &mFormationTime )
-                         .minValue(0.0f)
-                         .maxValue(100.0f));
+                        .isVertical(), formationNames)->registerCallback(this, &Lines::takeFormation);;
     
+    mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
+    mFormationAnimSelector.setupInterface(mInterface, mName);
+    
+    mInterface->gui()->addColumn();
     mInterface->addParam(CreateBoolParam("dynamic noise", &mUseDynamicTex));
     mInterface->addParam(CreateFloatParam("noise_speed", &mNoiseSpeed )
                          .maxValue(1.0f)
@@ -342,11 +338,9 @@ void Lines::setupInterface()
 
 bool Lines::takeFormation()
 {
-    if (mTakeFormation)
-    {
-        mFormationStep = 0.0f;
-        timeline().apply( &mFormationStep, 1.0f, mFormationTime, EaseOutQuad() );
-    }
+    mFormationStep = 0.0f;
+    timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
+    mFormationStep = 0.0f;
     return true;
 }
 
@@ -374,7 +368,7 @@ void Lines::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
-    mParticleDataTex.bind(2);
+    //mParticleDataTex.bind(2);
     mInitialVelTex.bind(3);
     mFormationPosTex[mFormation].bind(4);
     //mNoiseTex.bind(5);
@@ -399,9 +393,9 @@ void Lines::update(double dt)
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", simdt );
     mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "takeFormation", mTakeFormation );
     mSimulationShader.uniform( "formationStep", mFormationStep );
     mSimulationShader.uniform( "motion", mMotion );
+    mSimulationShader.uniform( "containmentSize", 3.0f );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
@@ -416,7 +410,7 @@ void Lines::update(double dt)
     }
     mFormationPosTex[mFormation].unbind();
     mInitialVelTex.unbind();
-    mParticleDataTex.unbind();
+//    mParticleDataTex.unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -458,10 +452,12 @@ void Lines::draw()
     
     gl::lineWidth(mLineWidth);
     
-    mParticlesFbo.bindTexture(0);
-    mParticlesFbo.bindTexture(1);
-    mColorMapTex.bind(2);
-    mParticleDataTex.bind(3);
+    mParticlesFbo.bindTexture(0);//pos
+    mParticlesFbo.bindTexture(1);//vel
+    mParticlesFbo.bindTexture(2);//info
+//    mParticleDataTex.bind(2);
+    
+    mColorMapTex.bind(3);
     
     if (mAudioReactive && mApp->getAudioInputHandler().hasTexture())
     {
@@ -471,8 +467,8 @@ void Lines::draw()
     mRenderShader.bind();
     mRenderShader.uniform("posMap", 0);
     mRenderShader.uniform("velMap", 1);
-    mRenderShader.uniform("colorMap", 2);
-    mRenderShader.uniform("information", 3);
+    mRenderShader.uniform("information", 2);
+    mRenderShader.uniform("colorMap", 3);
     mRenderShader.uniform("intensityMap", 4);
     mRenderShader.uniform("gain", mGain);
     mRenderShader.uniform("screenWidth", (float)kBufSize);
@@ -485,7 +481,7 @@ void Lines::draw()
     gl::draw( mVboMesh );
     
     mRenderShader.unbind();
-    mParticleDataTex.unbind();
+//    mParticleDataTex.unbind();
     mColorMapTex.unbind();
     mParticlesFbo.unbindTexture();
     

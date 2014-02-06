@@ -18,6 +18,7 @@
 #include "PingPongFbo.h"
 #include "AudioInputHandler.h"
 #include "CameraController.h"
+#include "EaseCurveSelector.h"
 
 //
 // Lines
@@ -127,15 +128,14 @@ enm,
     
     bool mUseDynamicTex;
     bool mReset;
-    bool mTakeFormation;
     ci::Anim<float> mFormationStep;
-    float mFormationTime;
+    EaseCurveSelector mFormationAnimSelector;
     
     AudioInputHandler mAudioInputHandler;
     
-    // MUTEK HACKS
     bool mAudioReactive;
     bool mAudioTime;
+
 };
 
 

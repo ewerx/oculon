@@ -21,9 +21,6 @@ void main()
 
 	dv = texture2D( posMap, gl_MultiTexCoord0.st );
 	
-    age = texture2D( velMap, gl_MultiTexCoord0.st ).a;
-    maxAge = texture2D( information, gl_MultiTexCoord0.st ).g;
-	
     // scale vertex position to screen size
 	newVertexPos = vec4(screenWidth * dv.x, screenWidth * dv.y, screenWidth * dv.z, 1.0);
 	

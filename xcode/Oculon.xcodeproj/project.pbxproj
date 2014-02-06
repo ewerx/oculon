@@ -382,6 +382,7 @@
 		7CAD1B8118839A9800512843 /* frag_project2.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7818839A9800512843 /* frag_project2.glsl */; };
 		7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7918839A9800512843 /* frag_project3.glsl */; };
 		7CAD1B8318839A9800512843 /* frag_setbnd.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */; };
+		7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */; };
 		7CC3C026183ED0330082C322 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C024183ED0330082C322 /* Dust.cpp */; };
 		7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */; };
 		7CC3C02E183EE3B50082C322 /* dust_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C02A183EE3B50082C322 /* dust_render_vert.glsl */; };
@@ -977,6 +978,8 @@
 		7CAD1B7818839A9800512843 /* frag_project2.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_project2.glsl; sourceTree = "<group>"; };
 		7CAD1B7918839A9800512843 /* frag_project3.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_project3.glsl; sourceTree = "<group>"; };
 		7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_setbnd.glsl; sourceTree = "<group>"; };
+		7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EaseCurveSelector.cpp; sourceTree = "<group>"; };
+		7CC3AF1018A37C0500E6CA78 /* EaseCurveSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EaseCurveSelector.h; sourceTree = "<group>"; };
 		7CC3C024183ED0330082C322 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../src/dust/Dust.cpp; sourceTree = "<group>"; };
 		7CC3C025183ED0330082C322 /* Dust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dust.h; path = ../src/dust/Dust.h; sourceTree = "<group>"; };
 		7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dust_render_frag.glsl; sourceTree = "<group>"; };
@@ -2017,6 +2020,8 @@
 				7C79C99D17650FD700E71F9D /* Interface.h */,
 				7C79C99E17650FD700E71F9D /* OscParam.cpp */,
 				7C79C99F17650FD700E71F9D /* OscParam.h */,
+				7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */,
+				7CC3AF1018A37C0500E6CA78 /* EaseCurveSelector.h */,
 			);
 			path = interface;
 			sourceTree = "<group>";
@@ -3008,6 +3013,7 @@
 				7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */,
 				7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */,
 				7C79C0341764384C00E71F9D /* syphonServer.mm in Sources */,
+				7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */,
 				7C79C2471764396F00E71F9D /* kiss_fft.c in Sources */,
 				7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */,
 				7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */,
