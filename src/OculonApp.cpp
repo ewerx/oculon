@@ -88,10 +88,11 @@ void OculonApp::prepareSettings( Settings *settings )
     
     mUseMayaCam         = true;
     
-    mEnableSyphonServer = mConfig.getBool("syphon");;
+    mEnableSyphonServer = mConfig.getBool("syphon");
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
     mDebugRender        = false;
+    mEnableManualCamControls = false;
     mBackgroundAlpha    = 1.0f;
     
     mOutputMode         = OUTPUT_FBO;
@@ -104,7 +105,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mEnableMidi         = mConfig.getBool("midi_enabled");
     mEnableOscServer    = mConfig.getBool("osc_enabled");
     mEnableKinect       = mConfig.getBool("kinect_enabled");
-    mEnableMindWave     = mConfig.getBool("mindwave_enabled");;
+    mEnableMindWave     = mConfig.getBool("mindwave_enabled");
 }
 
 void OculonApp::setup()
@@ -258,6 +259,7 @@ void OculonApp::setupInterface()
                           .oscReceiver("master", "sync"))->registerCallback( this, &OculonApp::syncInterface );
     
     
+    mInterface->addParam(CreateBoolParam("mouse", &mEnableManualCamControls));
     // output mode
     mInterface->gui()->addLabel("--render--");
     vector<string> outputModeNames;
@@ -504,8 +506,11 @@ void OculonApp::mouseMove( MouseEvent event )
 
 void OculonApp::mouseDown( MouseEvent event )
 {
-    // let the camera handle the interaction
-    mMayaCam.mouseDown( event.getPos() );
+    if (mEnableManualCamControls)
+    {
+        // let the camera handle the interaction
+        mMayaCam.mouseDown( event.getPos() );
+    }
     
     for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
@@ -523,8 +528,11 @@ void OculonApp::mouseDown( MouseEvent event )
 
 void OculonApp::mouseDrag( MouseEvent event )
 {
-    // let the camera handle the interaction
-    mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+    if (mEnableManualCamControls)
+    {
+        // let the camera handle the interaction
+        mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+    }
     
     
     for (tSceneList::iterator sceneIt = mScenes.begin();

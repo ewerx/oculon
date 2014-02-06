@@ -237,6 +237,9 @@ private: // members
     // fps
     bool                    mIsSendingFps;
     float                   mFpsSendTimer;
+    
+    
+    bool                    mEnableManualCamControls;
 };
 
 #endif
