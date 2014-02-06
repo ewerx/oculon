@@ -3,18 +3,16 @@
 uniform sampler2D posMap;
 uniform sampler2D velMap;
 uniform sampler2D information;
+uniform sampler2D intensityMap;
 
 uniform float screenWidth;
-uniform float spriteWidth;
 
 uniform bool audioReactive;
-uniform vec3 trackAudio1;
-uniform vec3 trackAudio2;
-uniform vec3 trackAudio3;
-uniform vec3 trackAudio4;
+uniform float gain;
 
 varying float age;
 varying float maxAge;
+varying vec4 color;
 
 void main()
 {
@@ -29,12 +27,13 @@ void main()
     // scale vertex position to screen size
 	newVertexPos = vec4(screenWidth * dv.x, screenWidth * dv.y, screenWidth * dv.z, 1.0);
 	
-//    // particles shrink with age
-//	gl_PointSize = 6.0 * spriteWidth - (6.0 * spriteWidth * age);
-//
-//    if (audioReactive) {
-//        gl_PointSize = clamp(200.0 * gl_MultiTexCoord0.s * gl_MultiTexCoord0.t * trackAudio1.x - (6.0 * spriteWidth * age), spriteWidth, spriteWidth * 8.0);
-//    }
+    color = vec4(1.0,1.0,1.0,0.0);
+    if (audioReactive) {
+        // alpha from audio texture
+        color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
+    } else {
+        color.a = 1.0;
+    }
 
 	gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
 	gl_TexCoord[0] = gl_MultiTexCoord0;

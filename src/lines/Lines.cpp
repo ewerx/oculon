@@ -54,7 +54,7 @@ void Lines::setup()
     // params
     mTimeStep = 0.1f;
     mLineWidth = 1.0f;
-    mColor = ColorAf(1.0f,1.0f,1.0f,0.05f);
+    mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
     mTakeFormation = false;
     mFormationStep = 0.0f;
     mFormationTime = 2.0f;
@@ -457,33 +457,21 @@ void Lines::draw()
     mColorMapTex.bind(2);
     mParticleDataTex.bind(3);
     
+    if (mAudioReactive && mApp->getAudioInputHandler().hasTexture())
+    {
+        mApp->getAudioInputHandler().getFbo().bindTexture(4);
+    }
+    
     mRenderShader.bind();
     mRenderShader.uniform("posMap", 0);
     mRenderShader.uniform("velMap", 1);
     mRenderShader.uniform("colorMap", 2);
     mRenderShader.uniform("information", 3);
+    mRenderShader.uniform("intensityMap", 4);
+    mRenderShader.uniform("gain", mGain);
     mRenderShader.uniform("screenWidth", (float)kBufSize);
-    mRenderShader.uniform("spriteWidth", mLineWidth);
-    mRenderShader.uniform("color", mColor);
+    mRenderShader.uniform("colorBase", mColor);
     mRenderShader.uniform("audioReactive", mAudioReactive);
-    if (mAudioReactive)
-    {
-        const int NUM_TRACKS = 4;
-        Vec3f trackLevels[NUM_TRACKS];
-//        for( int i = 0; i < NUM_TRACKS; ++i )
-//        {
-//            trackLevels[i] = Vec3f(mApp->getAudioInput().getLowLevelForLiveTrack(i),
-//                                   mApp->getAudioInput().getMidLevelForLiveTrack(i),
-//                                   mApp->getAudioInput().getHighLevelForLiveTrack(i));
-//        }
-        trackLevels[0] = Vec3f(mAudioInputHandler.getAverageVolumeLowFreq(),
-                               mAudioInputHandler.getAverageVolumeMidFreq(),
-                               mAudioInputHandler.getAverageVolumeHighFreq());
-        mRenderShader.uniform("trackAudio1", trackLevels[0]);
-//        mRenderShader.uniform("trackAudio2", trackLevels[1]);
-//        mRenderShader.uniform("trackAudio3", trackLevels[2]);
-//        mRenderShader.uniform("trackAudio4", trackLevels[3]);
-    }
     
     glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
     

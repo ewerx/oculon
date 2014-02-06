@@ -2,30 +2,21 @@
 
 uniform sampler2D posMap;
 uniform sampler2D velMap;
-
 uniform sampler2D colorMap;
-uniform vec4 color;
-
+uniform vec4 colorBase;
+uniform bool audioReactive;
 
 varying float age;
 varying float maxAge;
+varying vec4 color;
+
 
 void main()
 {
-	vec4 colFac = color;
-    //vec4 colFac = texture2D(spriteTex, gl_PointCoord);
-    //colFac.rgb *= texture2D( velMap, gl_TexCoord[0].st ).rgb;
+	vec4 finalColor = colorBase;
+    if (audioReactive) {
+        finalColor.a *= (finalColor.a + 10.0*color.a);
+    }
     
-    // darker with age
-//	colFac.r *= (1.0-age);
-//    colFac.g *= (1.0-age);
-//    colFac.b *= (1.0-age);
-    
-    // alpha/color peaks at half-life
-//    float alpha;
-//    float aF = age - (maxAge * 0.4);
-//    alpha = 1.0 - abs(aF * 2.0);
-//    colFac *= alpha;
-    
-	gl_FragColor = colFac;
+	gl_FragColor = finalColor;
 }
