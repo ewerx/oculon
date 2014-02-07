@@ -67,7 +67,7 @@ private:
     // particle system
     enum
     {
-        kBufSize = 256,
+        kBufSize = 128,
         kNumParticles = (kBufSize * kBufSize)
     };
     
@@ -131,6 +131,7 @@ enm,
     ci::Anim<float> mFormationStep;
     EaseCurveSelector mFormationAnimSelector;
     
+    // audio
     AudioInputHandler mAudioInputHandler;
     
     bool mAudioReactive;

@@ -46,7 +46,7 @@ void Lines::setup()
     setupVBO();
     generateFormationTextures();
     
-    mAudioInputHandler.setup(false);
+    mAudioInputHandler.setup(true);
     
     mReset = false;
     mAudioTime = false;
@@ -56,7 +56,7 @@ void Lines::setup()
     mLineWidth = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
     mFormationStep = 0.0f;
-    mFormationAnimSelector.mDuration = 2.0f;
+    mFormationAnimSelector.mDuration = 0.75f;
     mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;
     
@@ -293,7 +293,7 @@ void Lines::setupInterface()
                          .minValue(0.01f)
                          .maxValue(6.0f));
     
-    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                          .oscReceiver(mName));
     
     mInterface->gui()->addColumn();
@@ -459,9 +459,9 @@ void Lines::draw()
     
     mColorMapTex.bind(3);
     
-    if (mAudioReactive && mApp->getAudioInputHandler().hasTexture())
+    if (mAudioReactive && mAudioInputHandler.hasTexture())
     {
-        mApp->getAudioInputHandler().getFbo().bindTexture(4);
+        mAudioInputHandler.getFbo().bindTexture(4);
     }
     
     mRenderShader.bind();
