@@ -7,19 +7,22 @@
 //
 
 
-#include "Graviton.h"
-#include "Resources.h"
-#include "OculonApp.h"
+#include <boost/foreach.hpp>
+
 #include "cinder/Rand.h"
 #include "cinder/Easing.h"
+
+#include "Graviton.h"
+#include "OculonApp.h"
 #include "Utils.h"
 #include "Interface.h"
-#include <boost/foreach.hpp>
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+
+#pragma mark - Construction
 
 Graviton::Graviton()
 : Scene("graviton")
@@ -37,9 +40,7 @@ void Graviton::setup()
     Scene::setup();
     
     mTimeStep = 0.00075f;
-    
-    mConstrainParticles = false;
-    
+        
     mInitialFormation = FORMATION_SPHERE;
     mFormationRadius = 80.0f;
     
@@ -57,16 +58,6 @@ void Graviton::setup()
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_STATIC;
     
-    // camera
-    mCamRadius = mFormationRadius * 3.0f;
-    mCamAngle = 0.0f;
-    mCamMaxDistance = mFormationRadius * 3.0f;
-    mCamLateralPosition = -mCamMaxDistance;
-    mCamTarget = Vec3f::zero();
-    mCamTurnRate = 0.25f;
-    mCamTranslateRate = 1.0f;
-    mCamType = CAM_SPLINE;
-    
     // shaders
     mParticlesShader = loadFragShader("graviton_particle_frag.glsl" );
     mDisplacementShader = loadVertAndFragShaders("graviton_displacement_vert.glsl",  "graviton_displacement_frag.glsl");
@@ -82,18 +73,7 @@ void Graviton::setup()
     mParticleTexture1.setWrap( GL_REPEAT, GL_REPEAT );
     mParticleTexture2.setWrap( GL_REPEAT, GL_REPEAT );
     
-    // renderers
-    mMotionBlurRenderer.setup( mApp->getViewportSize(), boost::bind( &Graviton::drawParticles, this ) );
-    
-    // random spline
-    setupCameraSpline();
-    // camera
-    mCamAngle = 0.0f;
-    mCamLateralPosition = -mCamMaxDistance;
-    mCamTarget = Vec3f::zero();
-    mCam.setFov(60.0f);
-    mCam.setAspectRatio(mApp->getViewportAspectRatio());
-    
+    mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
     mAudioInputHandler.setup(false);
     
     reset();
@@ -101,7 +81,6 @@ void Graviton::setup()
 
 void Graviton::setupPingPongFbo()
 {
-    // TODO: Test with more than 2 texture attachments -- what for?
 	std::vector<Surface32f> surfaces;
     // Position 2D texture array
     surfaces.push_back( generatePositionSurface() );
@@ -289,35 +268,7 @@ nodeFormationNames.push_back(nam);
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "texturedpoints", &mUseImageForPoints ));
     
-    mInterface->gui()->addColumn();
-    vector<string> camTypeNames;
-#define GRAVITON_CAMTYPE_ENTRY( nam, enm ) \
-camTypeNames.push_back(nam);
-    GRAVITON_CAMTYPE_TUPLE
-#undef  GRAVITON_CAMTYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "camera", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName())
-                        .isVertical(), camTypeNames);
-    mInterface->gui()->addLabel("spline cam");
-    mInterface->addParam(CreateFloatParam( "radius", &mCamRadius )
-                         .minValue(1.0f)
-                         .maxValue(500.f)
-                         .oscReceiver(getName(), "camradius"));
-    mInterface->addParam(CreateFloatParam( "distance", &mCamMaxDistance )
-                         .minValue(0.0f)
-                         .maxValue(500.f));
-    mInterface->addParam(CreateFloatParam( "turn speed", &mCamTurnRate )
-                         .minValue(0.0f)
-                         .maxValue(5.0f)
-                         .oscReceiver(getName(), "camturn"));
-    mInterface->addParam(CreateFloatParam( "slide speed", &mCamTranslateRate )
-                         .minValue(0.0f)
-                         .maxValue(5.0f)
-                         .oscReceiver(getName(), "camspeed"));
-    mInterface->addButton(CreateTriggerParam("reset spline", NULL)
-                          .oscReceiver(mName,"resetspline"))->registerCallback( this, &Graviton::setupCameraSpline );
-    
+    mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
@@ -361,159 +312,12 @@ void Graviton::initParticles()
     posTexture.unbind();
     velTexture.unbind();
     mFormationShader.unbind();
-    
-//    setupPingPongFbo();
-//    setupVBO();
-    
-    
-//    mNumParticles = kNumParticles;
-//    
-//    const double r = mFormationRadius;
-//    
-//    for( size_t i = 0; i < kNumParticles; ++i )
-//    {
-//        if( (NODE_FORMATION_NONE != mGravityNodeFormation) && i < mNumNodes)
-//        {
-//            mPosAndMass[i].x = mGravityNodes[i].mPos.x;
-//            mPosAndMass[i].y = mGravityNodes[i].mPos.y;
-//            mPosAndMass[i].z = mGravityNodes[i].mPos.z;
-//            mPosAndMass[i].w = 1.0f;
-//            
-//            mVel[i].x = mGravityNodes[i].mVel.x;
-//            mVel[i].x = mGravityNodes[i].mVel.y;
-//            mVel[i].x = mGravityNodes[i].mVel.z;
-//            mVel[i].w = mGravityNodes[i].mMass;
-//            
-//            mColor[i].x = 1.0f;
-//            mColor[i].y = 1.0f;
-//            mColor[i].z = 1.0f;
-//            mColor[i].w = 1.0f;
-//        }
-//        else
-//        {
-//            double x = 0.0f;
-//            double y = 0.0f;
-//            double z = 0.0f;
-//            
-//            double vx = 0.0f;
-//            double vy = 0.0f;
-//            double vz = 0.0f;
-//            
-//            double rho = 0.0f;
-//            double theta = 0.0f;
-//            
-//            const float maxMass = 50.0f;
-//            float mass = Rand::randFloat(1.0f,maxMass);
-//            
-//            switch( mInitialFormation )
-//            {
-//                case FORMATION_SPHERE:
-//                {
-//                    rho = Utils::randDouble() * (M_PI * 2.0);
-//                    theta = Utils::randDouble() * (M_PI * 2.0);
-//                    
-//                    const float d = Rand::randFloat(10.0f, r);
-//                    x = d * cos(rho) * sin(theta);
-//                    y = d * sin(rho) * sin(theta);
-//                    z = d * cos(theta);
-//                }
-//                    break;
-//                    
-//                case FORMATION_SPHERE_SHELL:
-//                {
-//                    rho = Utils::randDouble() * (M_PI * 2.0);
-//                    theta = Utils::randDouble() * (M_PI * 2.0);
-//                    
-//                    x = r * cos(rho) * sin(theta);
-//                    y = r * sin(rho) * sin(theta);
-//                    z = r * cos(theta);
-//                }
-//                    break;
-//                    
-//                case FORMATION_DISC:
-//                {
-//                    rho = r * Utils::randDouble();//pow(Utils::randDouble(), 0.75);
-//                    theta = Utils::randDouble() * (M_PI * 2.0);
-//                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-//                    
-//                    const float thickness = 1.0f;
-//                    
-//                    x = rho * cos(theta);
-//                    y = rho * sin(theta);
-//                    z = thickness * 2.0 * Utils::randDouble() - 1.0;
-//                    
-//                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-//                    vx = -a * sin(theta);
-//                    vy = a * cos(theta);
-//                    vz = 0.0f;
-//                }
-//                    break;
-//                    
-//                case FORMATION_GALAXY:
-//                {
-//                    rho = r * pow(Utils::randDouble(), 0.75);
-//                    theta = Utils::randDouble() * (M_PI * 2.0);
-//                    theta = (0.5 * cos(2.0 * theta) + theta - 1e-2 * rho);
-//                    
-//                    x = rho * cos(theta);
-//                    y = rho * sin(theta);
-//                    
-//                    const float dist = sqrt(x*x + y*y);
-//                    const float maxThickness = r / 8.0f;
-//                    const float coreDistanceRatio = EaseInOutQuad()(1.0f - dist / r);
-//                    const float thickness =  maxThickness * coreDistanceRatio;
-//                    
-//                    z = thickness * (2.0 * Utils::randDouble() - 1.0);
-//                    
-//                    const double a = 1.0e0 * (rho <= 1e-1 ? 0.0 : rho);
-//                    vx = -a * sin(theta);
-//                    vy = a * cos(theta);
-//                    vz = 0.0f;
-//                    
-//                    mass = maxMass * coreDistanceRatio;
-//                }
-//                    break;
-//                    
-//                default:
-//                    break;
-//            }
-//            
-//            // pos
-//            mPosAndMass[i].x = x;
-//            mPosAndMass[i].y = y;
-//            mPosAndMass[i].z = z;
-//            mPosAndMass[i].w = 1.0f; //scale??
-//            
-//            // vel
-//            
-//            mVel[i].x = vx;
-//            mVel[i].y = vy;
-//            mVel[i].z = vz;
-//            mVel[i].w = mass;
-//            
-//            // color
-//            mColor[i].x = 1.0f;
-//            mColor[i].y = 1.0f;
-//            mColor[i].z = 1.0f;
-//            mColor[i].w = 1.0f;
-//        }
-//    }
 }
 
 void Graviton::reset()
 {
     resetGravityNodes();
     initParticles();
-    
-    mArcball.setWindowSize( mApp->getViewportSize() );
-	mArcball.setCenter( mApp->getViewportSize()*0.5f );
-	mArcball.setRadius( mFormationRadius * 2.0f );
-}
-
-void Graviton::resize()
-{
-    Scene::resize();
-    mMotionBlurRenderer.resize(mApp->getViewportSize());
 }
 
 #pragma mark - Gravity Nodes
@@ -796,45 +600,10 @@ void Graviton::update(double dt)
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
     
-    updateCamera(dt);
+    mCameraController.update(dt);
 }
 
 #pragma mark - Input
-
-bool Graviton::handleKeyDown(const KeyEvent& keyEvent)
-{
-    bool handled = true;
-    
-    switch (keyEvent.getChar()) 
-    {
-        case ' ':
-            reset();
-            break;
-        default:
-            handled = false;
-            break;
-    }
-    
-    return handled;
-}
-
-void Graviton::handleMouseDown( const MouseEvent& event )
-{
-	mIsMousePressed = true;
-	mMousePos.x = event.getPos().x;
-    mMousePos.y = event.getPos().y;
-}
-
-void Graviton::handleMouseUp( const MouseEvent& event )
-{
-	mIsMousePressed = false;
-}
-
-void Graviton::handleMouseDrag( const MouseEvent& event )
-{
-	mMousePos.x = event.getPos().x;
-    mMousePos.y = event.getPos().y;
-}
 
 //void Graviton::updateNeuralResponse()
 //{
@@ -861,112 +630,9 @@ void Graviton::handleMouseDrag( const MouseEvent& event )
 
 #pragma mark - Camera
 
-void Graviton::updateCamera(const double dt)
-{
-    switch( mCamType )
-    {
-        case CAM_SPLINE:
-        {
-            mCamSplineValue += dt * (mCamTranslateRate*0.01f);
-            Vec3f pos = mCamSpline.getPosition( mCamSplineValue );
-            Vec3f delta = pos - mCamLastPos;
-            Vec3f up = delta.cross(pos);
-            //up.normalize();
-            mCam.lookAt( pos, mCamTarget, up );
-            mCamLastPos = pos;
-        }
-            break;
-            
-        case CAM_SPIRAL:
-        {
-            //TODO: use quaternion
-            //Quatf incQuat( normal, rotation );
-            //mQuat *= incQuat;
-            //mQuat.normalize();
-            mCamAngle += dt * mCamTurnRate;
-            mCamLateralPosition += dt * mCamTranslateRate;
-            if( ( (mCamLateralPosition > mCamMaxDistance) && mCamTranslateRate > 0.0f ) ||
-               ( (mCamLateralPosition < -mCamMaxDistance) && mCamTranslateRate < 0.0f ) )
-            {
-                mCamTranslateRate = -mCamTranslateRate;
-            }
-            
-            Vec3f pos(mCamRadius * 0.1f * cos(mCamAngle),
-                      mCamRadius * 0.1f * sin(mCamAngle),
-                      mCamLateralPosition );
-            
-            Vec3f up( pos.x, pos.y, 0.0f );
-            up.normalize();
-            mCam.lookAt( pos, mCamTarget, up );
-        }
-            break;
-            
-        default:
-            break;
-    }
-    
-}
-
 const Camera& Graviton::getCamera()
 {
-    switch( mCamType )
-    {
-        case CAM_SPLINE:
-        case CAM_SPIRAL:
-            return( mCam );
-            
-        case CAM_ORBITER:
-        {
-            Scene* orbiterScene = mApp->getScene("orbiter");
-            
-            if( orbiterScene && orbiterScene->isRunning() )
-            {
-                return( orbiterScene->getCamera() );
-            }
-            else
-            {
-                return( mApp->getMayaCam() );
-            }
-        }
-            break;
-            
-        default:
-            return mApp->getMayaCam();
-    }
-}
-
-bool Graviton::setupCameraSpline()
-{
-    vector<Vec3f> points;
-	int numPoints = 4 + ( Rand::randInt(4) );
-	for( int p = 0; p < numPoints; ++p )
-    {
-		points.push_back( Vec3f( Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f), Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f), Rand::randFloat(-mCamRadius/2.0f, mCamRadius/2.0f) ) );
-    }
-	mCamSpline = BSpline3f( points, 3, true, false );
-    
-	mCamSplineValue = 0.0f;
-	mCamRotation = Quatf::identity();
-	mCamLastPos = mCamSpline.getPosition( 0 );
-    
-    return false;
-}
-
-void Graviton::drawCamSpline()
-{
-    gl::pushMatrices();
-    gl::setMatrices( ( mCamType == CAM_MANUAL ) ? mApp->getMayaCam() : mCam );
-	const int numSegments = 100;
-	gl::color( ColorA( 0.2f, 0.85f, 0.8f, 0.85f ) );
-	glLineWidth( 2.0f );
-	gl::begin( GL_LINE_STRIP );
-	for( int s = 0; s <= numSegments; ++s ) 
-    {
-		float t = s / (float)numSegments;
-		gl::vertex( mCamSpline.getPosition( t ) );
-	}
-	gl::end();
-    gl::popMatrices();
+    return mCameraController.getCamera();
 }
 
 #pragma mark - Render

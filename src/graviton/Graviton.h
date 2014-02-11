@@ -8,22 +8,22 @@
 
 #pragma once
 
+#include <vector>
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/GlslProg.h"
-#include "cinder/Bspline.h"
-#include "cinder/Arcball.h"
-#include <vector>
-
 #include "Scene.h"
 #include "PingPongFbo.h"
-#include "MotionBlurRenderer.h"
 #include "AudioInputHandler.h"
+#include "CameraController.h"
+#include "EaseCurveSelector.h"
 
 
+/// Graviton
+///
 class Graviton : public Scene
 {
 public:
@@ -33,14 +33,9 @@ public:
     // inherited from Scene
     void setup();
     void reset();
-    void resize();
     void update(double dt);
     void draw();
     void drawDebug();
-    bool handleKeyDown(const ci::app::KeyEvent& keyEvent);
-    void handleMouseDown( const ci::app::MouseEvent& mouseEvent );
-	void handleMouseUp( const ci::app::MouseEvent& event);
-	void handleMouseDrag( const ci::app::MouseEvent& event );
     const ci::Camera& getCamera();
     
 protected:// from Scene
@@ -50,6 +45,21 @@ protected:// from Scene
 protected:
     ci::Surface32f generatePositionSurface();
     ci::Surface32f generateVelocitySurface();
+
+private:
+    void setupPingPongFbo();
+    void setupVBO();
+    void initParticles();
+    
+    bool resetGravityNodes();
+    void computeAttractorPosition();
+    void updateGravityNodes(const double dt);
+    
+    void updateAudioResponse();
+    void updateCamera(const double dt);
+    
+    void preRender();
+    void drawParticles();
 
 private:
     enum
@@ -105,17 +115,15 @@ enm,
         
         ci::Vec3f   mPos;
         ci::Vec3f   mVel;
-        float   mMass;
+        float       mMass;
     };
     
     eFormation              mInitialFormation;
     float                   mFormationRadius;
     
-    eNodeFormation              mGravityNodeFormation;
-    std::vector<tGravityNode>    mGravityNodes;
+    eNodeFormation                  mGravityNodeFormation;
+    std::vector<tGravityNode>       mGravityNodes;
     
-    bool                    mIsMousePressed;
-    ci::Vec2f               mMousePos;
     
     // simulation params
     float mTimeStep;
@@ -129,9 +137,6 @@ enm,
     float mConstraintSphereRadius;
     float mNodeSpeed;
     int32_t mNumNodes;
-    uint32_t mFlags;
-    uint32_t mNumParticles;
-    
     
     // particle system
     PingPongFbo mParticlesFbo;
@@ -141,77 +146,18 @@ enm,
     ci::gl::GlslProg mFormationShader;
 
     // rendering
-    GLuint              mVbo[2]; // pos and color VBOs
     ci::gl::Texture     mParticleTexture1;
     ci::gl::Texture     mParticleTexture2;
     float				mPointSize;
-    bool				mEnableBlending;
     bool				mAdditiveBlending;
     bool                mUseImageForPoints;
-    
-    bool                mEnableGravityNodes;
-    bool                mConstrainParticles;
-    
-    ci::CameraPersp     mCam;
-    
-    // camera
-#define GRAVITON_CAMTYPE_TUPLE \
-GRAVITON_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
-GRAVITON_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
-GRAVITON_CAMTYPE_ENTRY( "Spiral", CAM_SPIRAL ) \
-GRAVITON_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
-//end tuple
-    
-    enum eCamType
-    {
-#define GRAVITON_CAMTYPE_ENTRY( nam, enm ) \
-enm,
-        GRAVITON_CAMTYPE_TUPLE
-#undef  GRAVITON_CAMTYPE_ENTRY
-        
-        CAM_COUNT
-    };
-    eCamType                    mCamType;
-
-    float               mCamRadius;
-    double              mCamAngle;
-    double              mCamLateralPosition;
-    float               mCamTurnRate;
-    float               mCamTranslateRate;
-    float               mCamMaxDistance;
-    ci::Anim<ci::Vec3f> mCamTarget;
-    ci::Quatf           mCamRotation;
-    ci::BSpline3f       mCamSpline;
-    float               mCamSplineValue;
-    ci::Vec3f           mCamLastPos;
     ci::ColorAf         mColorScale;
-    ci::Arcball         mArcball;
     
-    MotionBlurRenderer  mMotionBlurRenderer;
-    
+    // audio
     AudioInputHandler   mAudioInputHandler;
 
-private:
-    void setupPingPongFbo();
-    void setupVBO();
-    void initParticles();
-    
-    bool resetGravityNodes();
-    void computeAttractorPosition();
-    void updateGravityNodes(const double dt);
-    
-    void updateAudioResponse();
-    void updateCamera(const double dt);
-        
-    void preRender();
-    void drawParticles();
-    
-    bool setupCameraSpline();
-    void drawCamSpline();
-    
-     
-private:
-    
+    // camera
+    CameraController    mCameraController;
     
 };
 

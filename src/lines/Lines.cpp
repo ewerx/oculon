@@ -6,17 +6,18 @@
 //
 //
 
-#include "Lines.h"
-#include "OculonApp.h"
-#include "Interface.h"
+
 #include "cinder/Perlin.h"
 #include "cinder/Rand.h"
 
-#include "Resources.h"
+#include "Lines.h"
+#include "OculonApp.h"
+#include "Interface.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
 
 #pragma mark - Construction
 
@@ -443,8 +444,6 @@ void Lines::draw()
     
     //gl::enableAlphaBlending();
     gl::enableAdditiveBlending();
-//    gl::disableDepthWrite();
-//    gl::disableDepthRead();
     gl::enableDepthRead();
     gl::enableDepthWrite();
     
@@ -455,7 +454,6 @@ void Lines::draw()
     mParticlesFbo.bindTexture(0);//pos
     mParticlesFbo.bindTexture(1);//vel
     mParticlesFbo.bindTexture(2);//info
-//    mParticleDataTex.bind(2);
     
     mColorMapTex.bind(3);
     
