@@ -24,11 +24,12 @@ public:
 #define CAMCTRLR_CAMTYPE_TUPLE \
 CAMCTRLR_CAMTYPE_ENTRY( "Manual",   CAM_MANUAL,     (1u << 0) ) \
 CAMCTRLR_CAMTYPE_ENTRY( "Spline",   CAM_SPLINE,     (1u << 1) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Spring",   CAM_SPRING,     (1u << 2) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Star",     CAM_STAR,       (1u << 3) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Orbiter",  CAM_ORBITER,    (1u << 4) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON,   (1u << 5) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Catalog",  CAM_CATALOG,    (1u << 6) ) \
+CAMCTRLR_CAMTYPE_ENTRY( "Spin",     CAM_SPIN,       (1u << 2) ) \
+CAMCTRLR_CAMTYPE_ENTRY( "Spring",   CAM_SPRING,     (1u << 3) ) \
+CAMCTRLR_CAMTYPE_ENTRY( "Star",     CAM_STAR,       (1u << 4) ) \
+CAMCTRLR_CAMTYPE_ENTRY( "Orbiter",  CAM_ORBITER,    (1u << 5) ) \
+CAMCTRLR_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON,   (1u << 6) ) \
+CAMCTRLR_CAMTYPE_ENTRY( "Catalog",  CAM_CATALOG,    (1u << 7) ) \
 //end tuple
     
     enum eCamType
@@ -72,5 +73,9 @@ protected:
     SplineCam                   mSplineCam;
     SpringCam                   mSpringCam;
     StarCam                     mStarCam;
+    
+    ci::CameraPersp             mSpinCam;//TODO: refactor
+    ci::Quatf                   mSpinQuat;
+    float                       mSpinRate;
 };
 

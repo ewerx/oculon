@@ -87,7 +87,9 @@ void SplineCam::update(double dt)
     if( mLookForward )
     {
         mCam.setEyePoint( pos );
-        mCam.setViewDirection(delta);
+        mCam.setCenterOfInterestPoint(Vec3f::zero());
+        Quatf orientation(mLastPos, pos);
+        mCam.setOrientation(mRotationQuat*orientation);
     }
     else
     {

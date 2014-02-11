@@ -9,6 +9,7 @@
 #include "CameraController.h"
 #include "OculonApp.h"
 #include "Scene.h"
+#include "cinder/Quaternion.h"
 
 using namespace ci;
 using namespace std;
@@ -23,9 +24,12 @@ void CameraController::setup(OculonApp *app, const unsigned int camTypes, eCamTy
     mApp = app;
     mAvailableCamTypes = camTypes;
     mCamType = defaultCam;
-    mSplineCam.setup();
+    mSplineCam.setup(5000.0f,500.0f);
     mStarCam.setup(mApp);
     mSpringCam = SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
+    
+    mSpinCam.lookAt(Vec3f(0.0f,0.0f,-420.0f), Vec3f(0.0f,0.0f,0.0f), Vec3f(0.0f,1.0f,0.0f));
+    mSpinRate = 0.1f;
 }
 
 void CameraController::setupInterface(Interface *interface, const std::string& sceneName)
@@ -42,6 +46,9 @@ void CameraController::setupInterface(Interface *interface, const std::string& s
                         .isVertical(), camTypeNames);
     
     mSplineCam.setupInterface(interface, sceneName);
+    
+    interface->gui()->addLabel("spin cam");
+    interface->addParam(CreateFloatParam("spin_rate", &mSpinRate));
 }
 
 void CameraController::update(double dt)
@@ -56,6 +63,11 @@ void CameraController::update(double dt)
             
         case CAM_SPLINE:
             mSplineCam.update(dt);
+            break;
+            
+        case CAM_SPIN:
+            mSpinQuat *= Quatf(Vec3f(0.0f,1.0f,0.0f), dt*mSpinRate);
+            //mSpinCam.setOrientation(mSpinQuat);
             break;
             
         default:
@@ -105,6 +117,9 @@ const Camera& CameraController::getCamera()
             }
         }
             break;
+            
+        case CAM_SPIN:
+            return mSpinCam;
             
         case CAM_MANUAL:
         default:

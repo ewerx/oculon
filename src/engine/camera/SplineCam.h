@@ -48,6 +48,7 @@ private:
     float               mSpeed;
     float               mSpeedMulti;
     bool                mLookForward;
+    ci::Quatf           mRotationQuat;
 };
 
 #endif /* defined(__Oculon__SplineCam__) */
