@@ -15,12 +15,9 @@
 
 // scenes
 #include "Orbiter.h"
-#include "Magnetosphere.h"
-#include "Pulsar.h"
 #include "Binned.h"
 #include "Graviton.h"
 #include "Tectonic.h"
-//#include "Sol.h"
 #include "Catalog.h"
 #include "Dust.h"
 #include "Flock.h"
@@ -375,9 +372,6 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("grid") )       addScene( new Grid() );
     if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
     
-    if( mConfig.getBool("pulsar") )     addScene( new Pulsar() );
-//    if( mConfig.getBool("magneto") )    addScene( new Magnetosphere() );
-//    if( mConfig.getBool("sol") )        addScene( new Sol() );
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     if( mConfig.getBool("fluid") )      addScene( new Fluid() );
     

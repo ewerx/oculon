@@ -244,7 +244,6 @@
 		7C79CA2D17650FD800E71F9D /* AudioSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C96C17650FD700E71F9D /* AudioSignal.cpp */; };
 		7C79CA2E17650FD800E71F9D /* Barcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C96E17650FD700E71F9D /* Barcode.cpp */; };
 		7C79CA2F17650FD800E71F9D /* Circles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97017650FD700E71F9D /* Circles.cpp */; };
-		7C79CA3117650FD800E71F9D /* Metropolis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97417650FD700E71F9D /* Metropolis.cpp */; };
 		7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97617650FD700E71F9D /* SignalScope.cpp */; };
 		7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97817650FD700E71F9D /* Triangle.cpp */; };
 		7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97B17650FD700E71F9D /* Binned.cpp */; };
@@ -257,8 +256,6 @@
 		7C79CA3C17650FD800E71F9D /* StarCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C98F17650FD700E71F9D /* StarCam.cpp */; };
 		7C79CA3D17650FD800E71F9D /* TunnelCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C99117650FD700E71F9D /* TunnelCam.cpp */; };
 		7C79CA3E17650FD800E71F9D /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C99317650FD700E71F9D /* Config.cpp */; };
-		7C79CA3F17650FD800E71F9D /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C99617650FD700E71F9D /* DomeRenderer.cpp */; };
-		7C79CA4017650FD800E71F9D /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C99817650FD700E71F9D /* FisheyeRender.cpp */; };
 		7C79CA4117650FD800E71F9D /* InfoPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C99A17650FD700E71F9D /* InfoPanel.cpp */; };
 		7C79CA4217650FD800E71F9D /* OscParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C99E17650FD700E71F9D /* OscParam.cpp */; };
 		7C79CA4317650FD800E71F9D /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9A017650FD700E71F9D /* Interface.cpp */; };
@@ -270,9 +267,6 @@
 		7C79CA4C17650FD800E71F9D /* Behavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9B217650FD700E71F9D /* Behavior.cpp */; };
 		7C79CA4D17650FD800E71F9D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9B417650FD700E71F9D /* Entity.cpp */; };
 		7C79CA4E17650FD800E71F9D /* GridRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9B617650FD700E71F9D /* GridRenderer.cpp */; };
-		7C79CA4F17650FD800E71F9D /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9B817650FD700E71F9D /* MotionBlurRenderer.cpp */; };
-		7C79CA5117650FD800E71F9D /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9BC17650FD700E71F9D /* Particle.cpp */; };
-		7C79CA5217650FD800E71F9D /* ParticleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9BE17650FD700E71F9D /* ParticleController.cpp */; };
 		7C79CA5317650FD800E71F9D /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9C017650FD700E71F9D /* Scene.cpp */; };
 		7C79CA5417650FD800E71F9D /* SubScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9C217650FD700E71F9D /* SubScene.cpp */; };
 		7C79CA5517650FD800E71F9D /* TextEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9C417650FD700E71F9D /* TextEntity.cpp */; };
@@ -303,7 +297,6 @@
 		7C79CA7417650FD800E71F9D /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA0E17650FD700E71F9D /* Body.cpp */; };
 		7C79CA7517650FD800E71F9D /* Orbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1017650FD700E71F9D /* Orbiter.cpp */; };
 		7C79CA7617650FD800E71F9D /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1217650FD700E71F9D /* Sun.cpp */; };
-		7C79CA7717650FD800E71F9D /* Pulsar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1517650FD700E71F9D /* Pulsar.cpp */; };
 		7C79CA7817650FD800E71F9D /* Trails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1817650FD700E71F9D /* Trails.cpp */; };
 		7C79CA7917650FD800E71F9D /* Corona.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1B17650FD800E71F9D /* Corona.cpp */; };
 		7C79CA7A17650FD800E71F9D /* CoronaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1D17650FD800E71F9D /* CoronaController.cpp */; };
@@ -404,6 +397,9 @@
 		7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF04609188639FE00150FD3 /* Oscillator.cpp */; };
 		7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF0460C188645D300150FD3 /* oscillator_frag.glsl */; };
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
+		7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */; };
+		7CF6AD5118A9E3E100FA795A /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */; };
+		7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */; };
 		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
 		845DE7D4DFB04764AACEA34C /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 512F72EDE8E9459AABC24F2C /* libfmodex.dylib */; };
@@ -771,8 +767,6 @@
 		7C79C97117650FD700E71F9D /* Circles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circles.h; sourceTree = "<group>"; };
 		7C79C97217650FD700E71F9D /* Eclipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Eclipse.cpp; sourceTree = "<group>"; };
 		7C79C97317650FD700E71F9D /* Eclipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Eclipse.h; sourceTree = "<group>"; };
-		7C79C97417650FD700E71F9D /* Metropolis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Metropolis.cpp; sourceTree = "<group>"; };
-		7C79C97517650FD700E71F9D /* Metropolis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Metropolis.h; sourceTree = "<group>"; };
 		7C79C97617650FD700E71F9D /* SignalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SignalScope.cpp; sourceTree = "<group>"; };
 		7C79C97717650FD700E71F9D /* SignalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalScope.h; sourceTree = "<group>"; };
 		7C79C97817650FD700E71F9D /* Triangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Triangle.cpp; sourceTree = "<group>"; };
@@ -801,10 +795,6 @@
 		7C79C99317650FD700E71F9D /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config.cpp; sourceTree = "<group>"; };
 		7C79C99417650FD700E71F9D /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		7C79C99517650FD700E71F9D /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
-		7C79C99617650FD700E71F9D /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
-		7C79C99717650FD700E71F9D /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
-		7C79C99817650FD700E71F9D /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
-		7C79C99917650FD700E71F9D /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
 		7C79C99A17650FD700E71F9D /* InfoPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InfoPanel.cpp; sourceTree = "<group>"; };
 		7C79C99B17650FD700E71F9D /* InfoPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanel.h; sourceTree = "<group>"; };
 		7C79C99D17650FD700E71F9D /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interface.h; sourceTree = "<group>"; };
@@ -830,14 +820,8 @@
 		7C79C9B517650FD700E71F9D /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		7C79C9B617650FD700E71F9D /* GridRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridRenderer.cpp; sourceTree = "<group>"; };
 		7C79C9B717650FD700E71F9D /* GridRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridRenderer.h; sourceTree = "<group>"; };
-		7C79C9B817650FD700E71F9D /* MotionBlurRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionBlurRenderer.cpp; sourceTree = "<group>"; };
-		7C79C9B917650FD700E71F9D /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
 		7C79C9BA17650FD700E71F9D /* MoviePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoviePlayer.cpp; sourceTree = "<group>"; };
 		7C79C9BB17650FD700E71F9D /* MoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePlayer.h; sourceTree = "<group>"; };
-		7C79C9BC17650FD700E71F9D /* Particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
-		7C79C9BD17650FD700E71F9D /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Particle.h; sourceTree = "<group>"; };
-		7C79C9BE17650FD700E71F9D /* ParticleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleController.cpp; sourceTree = "<group>"; };
-		7C79C9BF17650FD700E71F9D /* ParticleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleController.h; sourceTree = "<group>"; };
 		7C79C9C017650FD700E71F9D /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		7C79C9C117650FD700E71F9D /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		7C79C9C217650FD700E71F9D /* SubScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubScene.cpp; sourceTree = "<group>"; };
@@ -910,8 +894,6 @@
 		7C79CA1117650FD700E71F9D /* Orbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Orbiter.h; sourceTree = "<group>"; };
 		7C79CA1217650FD700E71F9D /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sun.cpp; sourceTree = "<group>"; };
 		7C79CA1317650FD700E71F9D /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sun.h; sourceTree = "<group>"; };
-		7C79CA1517650FD700E71F9D /* Pulsar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pulsar.cpp; sourceTree = "<group>"; };
-		7C79CA1617650FD700E71F9D /* Pulsar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pulsar.h; sourceTree = "<group>"; };
 		7C79CA1817650FD700E71F9D /* Trails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trails.cpp; sourceTree = "<group>"; };
 		7C79CA1917650FD700E71F9D /* Trails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trails.h; sourceTree = "<group>"; };
 		7C79CA1B17650FD800E71F9D /* Corona.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Corona.cpp; sourceTree = "<group>"; };
@@ -929,8 +911,6 @@
 		7C79CA2717650FD800E71F9D /* CoronaResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoronaResources.h; sourceTree = "<group>"; };
 		7C79CA2817650FD800E71F9D /* Room.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Room.cpp; sourceTree = "<group>"; };
 		7C79CA2917650FD800E71F9D /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
-		7C79CA2B17650FD800E71F9D /* Magnetosphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Magnetosphere.cpp; sourceTree = "<group>"; };
-		7C79CA2C17650FD800E71F9D /* Magnetosphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Magnetosphere.h; sourceTree = "<group>"; };
 		7C79CB0017651E6700E71F9D /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		7C79CB0217651E8500E71F9D /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		7C79CB0417651E9100E71F9D /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -1010,6 +990,12 @@
 		7CF0460A188639FE00150FD3 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
 		7CF0460C188645D300150FD3 /* oscillator_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oscillator_frag.glsl; sourceTree = "<group>"; };
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
+		7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
+		7CF6AD4B18A9E3E100FA795A /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
+		7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
+		7CF6AD4D18A9E3E100FA795A /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
+		7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionBlurRenderer.cpp; sourceTree = "<group>"; };
+		7CF6AD4F18A9E3E100FA795A /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
 		7CF735B2181F81D500B21DE9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
 		7CF735B3181F81D500B21DE9 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
 		7CF735B4181F81D500B21DE9 /* fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fwd.h; sourceTree = "<group>"; };
@@ -1920,8 +1906,6 @@
 				7C79C97117650FD700E71F9D /* Circles.h */,
 				7C79C97217650FD700E71F9D /* Eclipse.cpp */,
 				7C79C97317650FD700E71F9D /* Eclipse.h */,
-				7C79C97417650FD700E71F9D /* Metropolis.cpp */,
-				7C79C97517650FD700E71F9D /* Metropolis.h */,
 				7C79C97617650FD700E71F9D /* SignalScope.cpp */,
 				7C79C97717650FD700E71F9D /* SignalScope.h */,
 				7C79C97817650FD700E71F9D /* Triangle.cpp */,
@@ -1967,10 +1951,8 @@
 				7C79C99317650FD700E71F9D /* Config.cpp */,
 				7C79C99417650FD700E71F9D /* Config.h */,
 				7C79C99517650FD700E71F9D /* Constants.h */,
-				7C79C99617650FD700E71F9D /* DomeRenderer.cpp */,
-				7C79C99717650FD700E71F9D /* DomeRenderer.h */,
-				7C79C99817650FD700E71F9D /* FisheyeRender.cpp */,
-				7C79C99917650FD700E71F9D /* FisheyeRender.h */,
+				7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */,
+				7C06A8AF1853B00800D1C8A3 /* Conversions.h */,
 				7C79C99A17650FD700E71F9D /* InfoPanel.cpp */,
 				7C79C99B17650FD700E71F9D /* InfoPanel.h */,
 				7C79C99C17650FD700E71F9D /* interface */,
@@ -1987,13 +1969,12 @@
 				7C79C9AD17650FD700E71F9D /* OscServer.h */,
 				7C62765B1824A92E00724B87 /* PingPongFbo.cpp */,
 				7C62765C1824A92E00724B87 /* PingPongFbo.h */,
+				7CF6AD4918A9E3E100FA795A /* render */,
 				7C79C9AF17650FD700E71F9D /* scene */,
-				7C79C9C617650FD700E71F9D /* Utils.cpp */,
-				7C79C9C717650FD700E71F9D /* Utils.h */,
-				7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */,
-				7C06A8AF1853B00800D1C8A3 /* Conversions.h */,
 				7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */,
 				7CC3C032183FECCE0082C322 /* TextureGenerator.h */,
+				7C79C9C617650FD700E71F9D /* Utils.cpp */,
+				7C79C9C717650FD700E71F9D /* Utils.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -2037,14 +2018,8 @@
 				7C79C9B517650FD700E71F9D /* Entity.h */,
 				7C79C9B617650FD700E71F9D /* GridRenderer.cpp */,
 				7C79C9B717650FD700E71F9D /* GridRenderer.h */,
-				7C79C9B817650FD700E71F9D /* MotionBlurRenderer.cpp */,
-				7C79C9B917650FD700E71F9D /* MotionBlurRenderer.h */,
 				7C79C9BA17650FD700E71F9D /* MoviePlayer.cpp */,
 				7C79C9BB17650FD700E71F9D /* MoviePlayer.h */,
-				7C79C9BC17650FD700E71F9D /* Particle.cpp */,
-				7C79C9BD17650FD700E71F9D /* Particle.h */,
-				7C79C9BE17650FD700E71F9D /* ParticleController.cpp */,
-				7C79C9BF17650FD700E71F9D /* ParticleController.h */,
 				7C79C9C017650FD700E71F9D /* Scene.cpp */,
 				7C79C9C117650FD700E71F9D /* Scene.h */,
 				7C79C9C217650FD700E71F9D /* SubScene.cpp */,
@@ -2209,16 +2184,6 @@
 			path = ../src/orbiter;
 			sourceTree = "<group>";
 		};
-		7C79CA1417650FD700E71F9D /* pulsar */ = {
-			isa = PBXGroup;
-			children = (
-				7C79CA1517650FD700E71F9D /* Pulsar.cpp */,
-				7C79CA1617650FD700E71F9D /* Pulsar.h */,
-			);
-			name = pulsar;
-			path = ../src/pulsar;
-			sourceTree = "<group>";
-		};
 		7C79CA1717650FD700E71F9D /* trails */ = {
 			isa = PBXGroup;
 			children = (
@@ -2250,16 +2215,6 @@
 			);
 			name = corona;
 			path = ../src/corona;
-			sourceTree = "<group>";
-		};
-		7C79CA2A17650FD800E71F9D /* magneto */ = {
-			isa = PBXGroup;
-			children = (
-				7C79CA2B17650FD800E71F9D /* Magnetosphere.cpp */,
-				7C79CA2C17650FD800E71F9D /* Magnetosphere.h */,
-			);
-			name = magneto;
-			path = ../src/magneto;
 			sourceTree = "<group>";
 		};
 		7C79CB08176527F900E71F9D /* resources */ = {
@@ -2416,11 +2371,9 @@
 				7C79C9D517650FD700E71F9D /* graviton */,
 				7C79C9D917650FD700E71F9D /* grid */,
 				7C892490189C7C7A00AF4698 /* lines */,
-				7C79CA2A17650FD800E71F9D /* magneto */,
 				7C79CA0D17650FD700E71F9D /* orbiter */,
 				7CD666401853F55A004BD521 /* parsec */,
 				7C79C9DC17650FD700E71F9D /* polyhedron */,
-				7C79CA1417650FD700E71F9D /* pulsar */,
 				7C5B69741819745800AB2C8D /* shaders */,
 				7C79CA0817650FD700E71F9D /* sol */,
 				7C79C9DF17650FD700E71F9D /* tectonic */,
@@ -2441,6 +2394,19 @@
 				7CE8AFB5186FAD150087AC7A /* graviton_particle_frag.glsl */,
 			);
 			path = graviton;
+			sourceTree = "<group>";
+		};
+		7CF6AD4918A9E3E100FA795A /* render */ = {
+			isa = PBXGroup;
+			children = (
+				7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */,
+				7CF6AD4B18A9E3E100FA795A /* DomeRenderer.h */,
+				7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */,
+				7CF6AD4D18A9E3E100FA795A /* FisheyeRender.h */,
+				7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */,
+				7CF6AD4F18A9E3E100FA795A /* MotionBlurRenderer.h */,
+			);
+			path = render;
 			sourceTree = "<group>";
 		};
 		7CF735AF181F81D500B21DE9 /* cinderpane */ = {
@@ -3039,6 +3005,7 @@
 				7C79C92B17650F8F00E71F9D /* planet.frag in Sources */,
 				7C79C92C17650F8F00E71F9D /* star.frag in Sources */,
 				7C79C92D17650F8F00E71F9D /* star.vert in Sources */,
+				7CF6AD5118A9E3E100FA795A /* FisheyeRender.cpp in Sources */,
 				7C79C93417650F8F00E71F9D /* glow.frag in Sources */,
 				7C79C93517650F8F00E71F9D /* lantern.frag in Sources */,
 				7C79C93617650F8F00E71F9D /* lantern.vert in Sources */,
@@ -3067,11 +3034,11 @@
 				7C79CA2D17650FD800E71F9D /* AudioSignal.cpp in Sources */,
 				7C79CA2E17650FD800E71F9D /* Barcode.cpp in Sources */,
 				7C79CA2F17650FD800E71F9D /* Circles.cpp in Sources */,
-				7C79CA3117650FD800E71F9D /* Metropolis.cpp in Sources */,
 				7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */,
 				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
 				7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */,
 				7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */,
+				7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */,
 				7CC3C033183FECCE0082C322 /* TextureGenerator.cpp in Sources */,
 				7C79CA3517650FD800E71F9D /* BinnedParticleSystem.cpp in Sources */,
 				7C79CA3617650FD800E71F9D /* Contour.cpp in Sources */,
@@ -3083,8 +3050,6 @@
 				7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */,
 				7C79CA3D17650FD800E71F9D /* TunnelCam.cpp in Sources */,
 				7C79CA3E17650FD800E71F9D /* Config.cpp in Sources */,
-				7C79CA3F17650FD800E71F9D /* DomeRenderer.cpp in Sources */,
-				7C79CA4017650FD800E71F9D /* FisheyeRender.cpp in Sources */,
 				7C06A90B1853D4ED00D1C8A3 /* water_ripple.fsh in Sources */,
 				7C79CA4117650FD800E71F9D /* InfoPanel.cpp in Sources */,
 				7C79CA4217650FD800E71F9D /* OscParam.cpp in Sources */,
@@ -3098,9 +3063,6 @@
 				7C79CA4C17650FD800E71F9D /* Behavior.cpp in Sources */,
 				7C79CA4D17650FD800E71F9D /* Entity.cpp in Sources */,
 				7C79CA4E17650FD800E71F9D /* GridRenderer.cpp in Sources */,
-				7C79CA4F17650FD800E71F9D /* MotionBlurRenderer.cpp in Sources */,
-				7C79CA5117650FD800E71F9D /* Particle.cpp in Sources */,
-				7C79CA5217650FD800E71F9D /* ParticleController.cpp in Sources */,
 				7C79CA5317650FD800E71F9D /* Scene.cpp in Sources */,
 				7C79CA5417650FD800E71F9D /* SubScene.cpp in Sources */,
 				7C79CA5517650FD800E71F9D /* TextEntity.cpp in Sources */,
@@ -3128,6 +3090,7 @@
 				7C79CA6C17650FD800E71F9D /* Character.cpp in Sources */,
 				7C79CA6D17650FD800E71F9D /* TextOrbit.cpp in Sources */,
 				7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */,
+				7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */,
 				7C79CA6E17650FD800E71F9D /* Catalog.cpp in Sources */,
 				7C79CA6F17650FD800E71F9D /* Planet.cpp in Sources */,
 				7C79CA7017650FD800E71F9D /* SpringCam.cpp in Sources */,
@@ -3135,7 +3098,6 @@
 				7C79CA7417650FD800E71F9D /* Body.cpp in Sources */,
 				7C79CA7517650FD800E71F9D /* Orbiter.cpp in Sources */,
 				7C79CA7617650FD800E71F9D /* Sun.cpp in Sources */,
-				7C79CA7717650FD800E71F9D /* Pulsar.cpp in Sources */,
 				7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */,
 				7CC3C026183ED0330082C322 /* Dust.cpp in Sources */,
 				7C79CA7817650FD800E71F9D /* Trails.cpp in Sources */,
