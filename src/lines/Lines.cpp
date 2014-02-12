@@ -56,7 +56,7 @@ void Lines::setup()
     mTimeStep = 0.1f;
     mLineWidth = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
-    mFormationStep = 0.0f;
+    mFormationStep = 1.0f;
     mFormationAnimSelector.mDuration = 0.75f;
     mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;

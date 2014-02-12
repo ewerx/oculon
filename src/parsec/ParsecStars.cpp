@@ -54,7 +54,7 @@ void ParsecStars::setup()
     }
 	else
     {
-		mScale = 0.5f;//1.0f;
+		mScale = 1.0f;
     }
 
 	// shaders
@@ -70,7 +70,7 @@ void ParsecStars::draw()
 	if(!(mShader && mTextureStar && mTextureCorona && mVboMesh)) return;
 
 	gl::enableAdditiveBlending();		
-	enablePointSprites();	
+	preRender();
 
 	// bind textures
 	mTextureStar.bind(0);
@@ -83,7 +83,7 @@ void ParsecStars::draw()
 	mTextureCorona.unbind();
 	mTextureStar.unbind();
 
-	disablePointSprites();
+	postRender();
 	gl::disableAlphaBlending();
 }
 
@@ -94,7 +94,7 @@ void ParsecStars::clear()
 	mColors.clear();
 }
 
-void ParsecStars::enablePointSprites()
+void ParsecStars::preRender()
 {
 	// store current OpenGL state
 	glPushAttrib( GL_POINT_BIT | GL_ENABLE_BIT );
@@ -117,7 +117,7 @@ void ParsecStars::enablePointSprites()
 	mShader.uniform("scale", mScale);
 }
 
-void ParsecStars::disablePointSprites()
+void ParsecStars::postRender()
 {
 	// unbind shader 
 	mShader.unbind();
@@ -214,7 +214,7 @@ void ParsecStars::load(DataSourceRef source, ParsecLabels& labels)
 		try {
 			// absolute magnitude of the star
 			double abs_mag = Conversions::toDouble(tokens[14]);
-            double app_mag = Conversions::toDouble(tokens[13]);
+            //double app_mag = Conversions::toDouble(tokens[13]);
 
 			// color (spectrum) of the star
 			double colorindex = (tokens.size() > 16) ? Conversions::toDouble(tokens[16]) : 0.0;
@@ -334,4 +334,5 @@ void ParsecStars::createMesh()
 	mVboMesh.bufferPositions( &(mVertices.front()), mVertices.size() );
 	mVboMesh.bufferTexCoords2d( 0, mTexcoords );
 	mVboMesh.bufferColorsRGB( mColors );
+    mVboMesh.unbindBuffers();
 }

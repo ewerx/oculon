@@ -59,8 +59,8 @@ void Graviton::setup()
     mGravityNodeFormation = NODE_FORMATION_STATIC;
     
     // shaders
-    mParticlesShader = loadFragShader("graviton_particle_frag.glsl" );
-    mDisplacementShader = loadVertAndFragShaders("graviton_displacement_vert.glsl",  "graviton_displacement_frag.glsl");
+    mSimulationShader = loadFragShader("graviton_simulation_frag.glsl" );
+    mRenderShader = loadVertAndFragShaders("graviton_render_vert.glsl",  "graviton_render_frag.glsl");
     mFormationShader = loadFragShader("graviton_formation_frag.glsl");
     
     setupPingPongFbo();
@@ -578,24 +578,24 @@ void Graviton::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
-    mParticlesShader.bind();
-    mParticlesShader.uniform( "positions", 0 );
-    mParticlesShader.uniform( "velocities", 1 );
-    mParticlesShader.uniform( "dt", (float)(dt * mTimeStep * 100.0f) );
-    mParticlesShader.uniform( "eps", mEps );
-    mParticlesShader.uniform( "damping", mDamping );
-    mParticlesShader.uniform( "gravity", mGravity );
+    mSimulationShader.bind();
+    mSimulationShader.uniform( "positions", 0 );
+    mSimulationShader.uniform( "velocities", 1 );
+    mSimulationShader.uniform( "dt", (float)(dt * mTimeStep * 100.0f) );
+    mSimulationShader.uniform( "eps", mEps );
+    mSimulationShader.uniform( "damping", mDamping );
+    mSimulationShader.uniform( "gravity", mGravity );
     float containRadius = mConstraintSphereRadius;
     if (mAudioContainer) {
         containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;
     }
-    mParticlesShader.uniform( "containerradius", containRadius );
-    mParticlesShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
-    mParticlesShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
-    mParticlesShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
+    mSimulationShader.uniform( "containerradius", containRadius );
+    mSimulationShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
+    mSimulationShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
+    mSimulationShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
-    mParticlesShader.unbind();
+    mSimulationShader.unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -697,20 +697,20 @@ void Graviton::drawParticles()
     
     mParticlesFbo.bindTexture(0);
     mParticlesFbo.bindTexture(1);
-    mDisplacementShader.bind();
-    mDisplacementShader.uniform("displacementMap", 0 );
-    mDisplacementShader.uniform("velocityMap", 1);
-    mDisplacementShader.uniform("pointSpriteTex", 2);
-    mDisplacementShader.uniform("intensityMap", 3);
-    mDisplacementShader.uniform("screenWidth", (float)mApp->getViewportWidth());
-    mDisplacementShader.uniform("spriteWidth", mPointSize);
-    mDisplacementShader.uniform("MV", getCamera().getModelViewMatrix());
-    mDisplacementShader.uniform("P", getCamera().getProjectionMatrix());
-    mDisplacementShader.uniform("colorScale", mColorScale);
-    mDisplacementShader.uniform("gain", mGain);
+    mRenderShader.bind();
+    mRenderShader.uniform("displacementMap", 0 );
+    mRenderShader.uniform("velocityMap", 1);
+    mRenderShader.uniform("pointSpriteTex", 2);
+    mRenderShader.uniform("intensityMap", 3);
+    mRenderShader.uniform("screenWidth", (float)mApp->getViewportWidth());
+    mRenderShader.uniform("spriteWidth", mPointSize);
+    mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
+    mRenderShader.uniform("P", getCamera().getProjectionMatrix());
+    mRenderShader.uniform("colorScale", mColorScale);
+    mRenderShader.uniform("gain", mGain);
     
     gl::draw( mVboMesh );
-    mDisplacementShader.unbind();
+    mRenderShader.unbind();
     mParticlesFbo.unbindTexture();
     
     if(mUseImageForPoints)

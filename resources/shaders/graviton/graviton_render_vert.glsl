@@ -17,7 +17,7 @@ varying vec4 color;
 void main()
 {
     //using the displacement map to move vertices
-	vec4 pos = texture2D( displacementMap, gl_MultiTexCoord0.xy );
+	vec3 pos = texture2D( displacementMap, gl_MultiTexCoord0.xy ).xyz;
     //color = texture2D( velocityMap, gl_MultiTexCoord0.xy );
     color = vec4(1.0,1.0,1.0,0.0);
     // alpha from audio texture

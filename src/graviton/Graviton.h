@@ -141,8 +141,8 @@ enm,
     // particle system
     PingPongFbo mParticlesFbo;
     ci::gl::VboMesh mVboMesh;
-    ci::gl::GlslProg mParticlesShader;
-    ci::gl::GlslProg mDisplacementShader;
+    ci::gl::GlslProg mSimulationShader;
+    ci::gl::GlslProg mRenderShader;
     ci::gl::GlslProg mFormationShader;
 
     // rendering

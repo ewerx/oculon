@@ -408,7 +408,6 @@ void Catalog::draw()
         gl::color( mStarfieldAlpha, mStarfieldAlpha, mStarfieldAlpha, 1.0f );
 		if( power > starDrawMinAlpha ){
 			mBrightStarsShader.uniform( "texScale", 0.5f );
-			gl::draw( mBrightVbo );
 			
 			// IF YOU WANT MORE GLOW AROUND MAJOR STARS, USE THESE TWO LINES
             if( mMoreGlow )

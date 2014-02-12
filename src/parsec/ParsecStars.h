@@ -83,8 +83,8 @@ public:
 
 	void	clear();
 
-	void	enablePointSprites();
-	void	disablePointSprites();
+	void	preRender();
+	void	postRender();
 
 	//
 	float	getAspectRatio() const { return mAspectRatio; }
