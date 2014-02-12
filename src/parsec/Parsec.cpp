@@ -30,6 +30,7 @@ void Parsec::setup()
     Scene::setup();
     
     // params
+    mCamType = CAM_MANUAL;
     mShowBackground = false;
     mShowGrid = false;
     mShowLabels = false;

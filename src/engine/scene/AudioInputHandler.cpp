@@ -76,16 +76,16 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     labelss << name << "/" << "audio";
     interface->gui()->addLabel(labelss.str());
     
-    vector<string> sourceNames;
-#define AUDIO_SOURCE_ENTRY( nam, enm ) \
-sourceNames.push_back(nam);
-    AUDIO_SOURCE_TUPLE
-#undef  AUDIO_SOURCE_ENTRY
-    interface->addEnum(CreateEnumParam( "input_source", (int*)(&mInputSource) )
-                       .maxValue(AUDIO_SOURCE_COUNT)
-                       .oscReceiver(name, "audio/input_source")
-                       .isVertical(), sourceNames);
-    interface->addParam(CreateBoolParam( "OSCFalloff", &mOSCFalloff ));
+//    vector<string> sourceNames;
+//#define AUDIO_SOURCE_ENTRY( nam, enm ) \
+//sourceNames.push_back(nam);
+//    AUDIO_SOURCE_TUPLE
+//#undef  AUDIO_SOURCE_ENTRY
+//    interface->addEnum(CreateEnumParam( "input_source", (int*)(&mInputSource) )
+//                       .maxValue(AUDIO_SOURCE_COUNT)
+//                       .oscReceiver(name, "audio/input_source")
+//                       .isVertical(), sourceNames);
+//    interface->addParam(CreateBoolParam( "OSCFalloff", &mOSCFalloff ));
 
     interface->addParam(CreateFloatParam( "LPF", &mLowPassFilter ));
     interface->addParam(CreateFloatParam( "HPF", &mHighPassFilter ));
@@ -301,8 +301,8 @@ AudioInputHandler::tEaseFn AudioInputHandler::getFalloffFunction()
         case FALLOFF_OUTEXPO: return EaseOutExpo();
         case FALLOFF_OUTBACK: return EaseOutBack();
         case FALLOFF_OUTBOUNCE: return EaseOutBounce();
-        case FALLOFF_OUTINEXPO: return EaseOutInExpo();
-        case FALLOFF_OUTINBACK: return EaseOutInBack();
+//        case FALLOFF_OUTINEXPO: return EaseOutInExpo();
+//        case FALLOFF_OUTINBACK: return EaseOutInBack();
             
         default: return EaseNone();
     }
@@ -317,8 +317,8 @@ AudioInputHandler::tEaseFn AudioInputHandler::getReverseFalloffFunction()
         case FALLOFF_OUTEXPO: return EaseInExpo();
         case FALLOFF_OUTBACK: return EaseInBack();
         case FALLOFF_OUTBOUNCE: return EaseInBounce();
-        case FALLOFF_OUTINEXPO: return EaseInOutExpo();
-        case FALLOFF_OUTINBACK: return EaseInOutBack();
+//        case FALLOFF_OUTINEXPO: return EaseInOutExpo();
+//        case FALLOFF_OUTINBACK: return EaseInOutBack();
             
         default: return EaseNone();
     }

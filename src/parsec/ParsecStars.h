@@ -100,7 +100,7 @@ public:
 private:
 	void	createMesh();
 private:
-	ci::gl::GlslProg	mShader;
+	ci::gl::GlslProg	mRenderShader;
 	ci::gl::Texture		mTextureStar;
 	ci::gl::Texture		mTextureCorona;
 	ci::gl::VboMesh		mVboMesh;

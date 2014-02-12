@@ -58,7 +58,7 @@ void ParsecStars::setup()
     }
 
 	// shaders
-    mShader = gl::GlslProg( loadResource( "parsec_stars_vert.glsl" ), loadResource( "parsec_stars_frag.glsl" ) );
+    mRenderShader = gl::GlslProg( loadResource( "parsec_stars_vert.glsl" ), loadResource( "parsec_stars_frag.glsl" ) );
 
     // textures
     mTextureStar = gl::Texture( loadImage(loadResource("parsec-particle.png")) );
@@ -67,7 +67,8 @@ void ParsecStars::setup()
 
 void ParsecStars::draw()
 {
-	if(!(mShader && mTextureStar && mTextureCorona && mVboMesh)) return;
+	if(!(mRenderShader && mTextureStar && mTextureCorona && mVboMesh)) return;
+    
 
 	gl::enableAdditiveBlending();		
 	preRender();
@@ -120,7 +121,11 @@ void ParsecStars::preRender()
 void ParsecStars::postRender()
 {
 	// unbind shader 
-	mShader.unbind();
+	mRenderShader.unbind();
+    
+    // unbind textures
+    mTextureCorona.unbind();
+    mTextureStar.unbind();
 	
 	// restore OpenGL state
 	glPopAttrib();

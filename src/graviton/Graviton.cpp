@@ -175,9 +175,8 @@ void Graviton::setupVBO()
     layout.setStaticIndices();
     layout.setStaticPositions();
     layout.setStaticTexCoords2d();
-    layout.setStaticNormals();
+    //layout.setStaticNormals();
     //layout.setDynamicColorsRGBA();
-    glPointSize(1.0f);
     mVboMesh = gl::VboMesh( totalVertices, totalVertices, layout, GL_POINTS);
     for( int x = 0; x < kStep; ++x ) {
         for( int y = 0; y < kStep; ++y ) {
