@@ -25,15 +25,12 @@ float log10( float n ) {
 void main() { 
 	// calculate distance of star (in parsecs) to camera
 	// see: http://www.opengl.org/discussion_boards/showthread.php/166796-GLSL-PointSprites-different-sizes?p=1178125&viewfull=1#post1178125
-	vec3 vertex = vec3(gl_ModelViewMatrix * gl_Vertex);
     vec4 pos = texture2D( posMap, gl_MultiTexCoord0.st );
-    //vec3 vertex = vec3(gl_ModelViewMatrix * vec4(pos.xyz,1.0));
-    //float magnitude = pos.a;
+    vec3 vertex = vec3(gl_ModelViewMatrix * vec4(pos.xyz,1.0));
+	float distance = length(vertex);
     
-	float	distance = length(vertex);
-
-	// retrieve absolute magnitude from texture coordinates
-	float magnitude = gl_MultiTexCoord0.x;
+    // retrieve absolute magnitude
+    float magnitude = pos.a;
 
 	// calculate apparent magnitude based on distance	
 	float apparent = magnitude - 5.0 * (1.0 - log10(distance));

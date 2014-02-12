@@ -359,7 +359,7 @@ void ParsecStars::write(DataTargetRef target)
 
 void ParsecStars::setupFBO()
 {
-    mFboSize = ceilf(sqrt(mVertices.size()));
+    mFboSize = 512;//ceilf(sqrt(mVertices.size())) + 1; // not sure why that doesn't work...
     
     Surface32f posSurface = Surface32f(mFboSize,mFboSize,true);
 	Surface32f velSurface = Surface32f(mFboSize,mFboSize,true);
@@ -372,6 +372,7 @@ void ParsecStars::setupFBO()
     
 	while(iterator.line())
 	{
+        x = 0;
 		while(iterator.pixel())
 		{
             uint32_t index = y * mFboSize + x;
@@ -384,7 +385,7 @@ void ParsecStars::setupFBO()
             }
             else
             {
-                posSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
+                posSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,1000.0f));
                 velSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
                 infoSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
             }
