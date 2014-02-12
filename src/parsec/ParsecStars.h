@@ -32,6 +32,8 @@
 
 #include "ParsecLabels.h"
 
+#include "PingPongFbo.h"
+
 class ParsecStars
 {
 public:
@@ -79,6 +81,8 @@ public:
 	~ParsecStars(void);
 
 	void	setup();
+    void    setupFBO();
+    void    update();
 	void	draw();
 
 	void	clear();
@@ -100,7 +104,12 @@ public:
 private:
 	void	createMesh();
 private:
+    PingPongFbo         mParticlesFbo;
+    int                 mFboSize;
+    int                 mNumParticles;
+    
 	ci::gl::GlslProg	mRenderShader;
+    ci::gl::GlslProg	mSimulationShader;
 	ci::gl::Texture		mTextureStar;
 	ci::gl::Texture		mTextureCorona;
 	ci::gl::VboMesh		mVboMesh;

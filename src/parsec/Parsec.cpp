@@ -226,6 +226,8 @@ void Parsec::update(double dt)
     {
         mLabels.update(getCamera(), mApp->getViewportWidth(), mApp->getViewportHeight());
     }
+    
+    mStars.update();
 }
 
 #pragma mark - Draw

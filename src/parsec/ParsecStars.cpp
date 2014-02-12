@@ -59,10 +59,30 @@ void ParsecStars::setup()
 
 	// shaders
     mRenderShader = gl::GlslProg( loadResource( "parsec_stars_vert.glsl" ), loadResource( "parsec_stars_frag.glsl" ) );
+    mSimulationShader = gl::GlslProg( loadResource( "parsec_simulation_vert.glsl" ), loadResource( "parsec_simulation_frag.glsl" ));
 
     // textures
     mTextureStar = gl::Texture( loadImage(loadResource("parsec-particle.png")) );
     mTextureCorona = gl::Texture( loadImage( loadResource("parsec-nova.png") ) );
+}
+
+void ParsecStars::update()
+{
+    // simulation - update position/vel textures
+    gl::pushMatrices();
+    gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
+    gl::setViewport( mParticlesFbo.getBounds() );
+    mParticlesFbo.bindUpdate();
+    
+    mSimulationShader.bind();
+    mSimulationShader.uniform( "positions", 0 );
+    mSimulationShader.uniform( "velocities", 1 );
+    mSimulationShader.uniform( "information", 2);
+    gl::drawSolidRect(mParticlesFbo.getBounds());
+    mSimulationShader.unbind();
+    
+    mParticlesFbo.unbindUpdate();
+    gl::popMatrices();
 }
 
 void ParsecStars::draw()
@@ -72,10 +92,6 @@ void ParsecStars::draw()
 
 	gl::enableAdditiveBlending();		
 	preRender();
-
-	// bind textures
-	mTextureStar.bind(0);
-	mTextureCorona.bind(1);
 
 	gl::color( Color::white() );
 	gl::draw( mVboMesh );
@@ -108,14 +124,24 @@ void ParsecStars::preRender()
 
 	// allow vertex shader to change point size
 	gl::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
+    
+    // bind textures
+    mParticlesFbo.bindTexture(0);//pos
+    mParticlesFbo.bindTexture(1);//vel
+    mParticlesFbo.bindTexture(2);//info
+	mTextureStar.bind(3);
+	mTextureCorona.bind(4);
 
 	// bind shader
-	mShader.bind();
-	mShader.uniform("tex0", 0);
-	mShader.uniform("tex1", 1);
-	mShader.uniform("time", (float) getElapsedSeconds() );
-	mShader.uniform("aspect", mAspectRatio);
-	mShader.uniform("scale", mScale);
+	mRenderShader.bind();
+    mRenderShader.uniform("posMap", 0);
+    mRenderShader.uniform("velMap", 1);
+    mRenderShader.uniform("information", 2);
+	mRenderShader.uniform("tex0", 3);
+	mRenderShader.uniform("tex1", 4);
+	mRenderShader.uniform("time", (float) getElapsedSeconds() );
+	mRenderShader.uniform("aspect", mAspectRatio);
+	mRenderShader.uniform("scale", mScale);
 }
 
 void ParsecStars::postRender()
@@ -126,6 +152,7 @@ void ParsecStars::postRender()
     // unbind textures
     mTextureCorona.unbind();
     mTextureStar.unbind();
+    mParticlesFbo.unbindTexture();
 	
 	// restore OpenGL state
 	glPopAttrib();
@@ -328,16 +355,76 @@ void ParsecStars::write(DataTargetRef target)
 	}
 }
 
+
+
+void ParsecStars::setupFBO()
+{
+    mFboSize = ceilf(sqrt(mVertices.size()));
+    
+    Surface32f posSurface = Surface32f(mFboSize,mFboSize,true);
+	Surface32f velSurface = Surface32f(mFboSize,mFboSize,true);
+	Surface32f infoSurface = Surface32f(mFboSize,mFboSize,true);
+
+    Surface32f::Iter iterator = posSurface.getIter();
+    
+    int y = 0;
+    int x = 0;
+    
+	while(iterator.line())
+	{
+		while(iterator.pixel())
+		{
+            uint32_t index = y * mFboSize + x;
+            if (index < mVertices.size()) {
+                Vec3f pos = mVertices[index];
+                Vec2f info = mTexcoords[index]; // abs_mag, distance
+                posSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,info.x));
+                velSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,info.y));
+                infoSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,info.x));
+            }
+            else
+            {
+                posSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
+                velSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
+                infoSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
+            }
+            ++x;
+        }
+        ++y;
+    }
+    
+    std::vector<Surface32f> surfaces;
+    surfaces.push_back( posSurface );
+    surfaces.push_back( velSurface );
+    surfaces.push_back( infoSurface );
+    mParticlesFbo = PingPongFbo( surfaces );
+}
+
 void ParsecStars::createMesh()
 {
+    setupFBO();
+    
+    int totalVertices = mFboSize * mFboSize;
+    
+    vector<Vec2f> texCoords;
+    vector<uint32_t> indices;
+    for( int y = 0; y < mFboSize; ++y ) {
+        for( int x = 0; x < mFboSize; ++x ) {
+            indices.push_back( y * mFboSize + x );
+            texCoords.push_back( Vec2f( x/(float)mFboSize, y/(float)mFboSize ) );
+        }
+    }
+    
 	gl::VboMesh::Layout layout;
+    layout.setStaticIndices();
 	layout.setStaticPositions();
 	layout.setStaticTexCoords2d();
 	layout.setStaticColorsRGB();
 
-	mVboMesh = gl::VboMesh(mVertices.size(), 0, layout, GL_POINTS);
+	mVboMesh = gl::VboMesh(totalVertices, totalVertices, layout, GL_POINTS);
 	mVboMesh.bufferPositions( &(mVertices.front()), mVertices.size() );
-	mVboMesh.bufferTexCoords2d( 0, mTexcoords );
+    mVboMesh.bufferIndices( indices );
+    mVboMesh.bufferTexCoords2d( 0, texCoords );
 	mVboMesh.bufferColorsRGB( mColors );
     mVboMesh.unbindBuffers();
 }

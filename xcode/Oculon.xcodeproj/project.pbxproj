@@ -399,6 +399,9 @@
 		7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */; };
 		7CF6AD5118A9E3E100FA795A /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */; };
 		7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */; };
+		7CF6AD5518A9E68600FA795A /* ParticleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD5318A9E68600FA795A /* ParticleController.cpp */; };
+		7CF6AD5818AB55A000FA795A /* parsec_simulation_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF6AD5618AB55A000FA795A /* parsec_simulation_vert.glsl */; };
+		7CF6AD5918AB55A000FA795A /* parsec_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF6AD5718AB55A000FA795A /* parsec_simulation_frag.glsl */; };
 		7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97217650FD700E71F9D /* Eclipse.cpp */; };
 		819FBD7E48E94CADB98A3382 /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D53906E7F2694CBBA05889C8 /* b2Island.cpp */; };
 		845DE7D4DFB04764AACEA34C /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 512F72EDE8E9459AABC24F2C /* libfmodex.dylib */; };
@@ -994,6 +997,10 @@
 		7CF6AD4D18A9E3E100FA795A /* FisheyeRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FisheyeRender.h; sourceTree = "<group>"; };
 		7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionBlurRenderer.cpp; sourceTree = "<group>"; };
 		7CF6AD4F18A9E3E100FA795A /* MotionBlurRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionBlurRenderer.h; sourceTree = "<group>"; };
+		7CF6AD5318A9E68600FA795A /* ParticleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleController.cpp; sourceTree = "<group>"; };
+		7CF6AD5418A9E68600FA795A /* ParticleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleController.h; sourceTree = "<group>"; };
+		7CF6AD5618AB55A000FA795A /* parsec_simulation_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_simulation_vert.glsl; sourceTree = "<group>"; };
+		7CF6AD5718AB55A000FA795A /* parsec_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_simulation_frag.glsl; sourceTree = "<group>"; };
 		7CF735B2181F81D500B21DE9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
 		7CF735B3181F81D500B21DE9 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
 		7CF735B4181F81D500B21DE9 /* fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fwd.h; sourceTree = "<group>"; };
@@ -1965,6 +1972,8 @@
 				7C79C9A817650FD700E71F9D /* MindWave.h */,
 				7C79C9AC17650FD700E71F9D /* OscServer.cpp */,
 				7C79C9AD17650FD700E71F9D /* OscServer.h */,
+				7CF6AD5318A9E68600FA795A /* ParticleController.cpp */,
+				7CF6AD5418A9E68600FA795A /* ParticleController.h */,
 				7C62765B1824A92E00724B87 /* PingPongFbo.cpp */,
 				7C62765C1824A92E00724B87 /* PingPongFbo.h */,
 				7CF6AD4918A9E3E100FA795A /* render */,
@@ -2237,6 +2246,8 @@
 		7C83B3981856BE5900EB22F8 /* parsec */ = {
 			isa = PBXGroup;
 			children = (
+				7CF6AD5618AB55A000FA795A /* parsec_simulation_vert.glsl */,
+				7CF6AD5718AB55A000FA795A /* parsec_simulation_frag.glsl */,
 				7C83B3991856BE5900EB22F8 /* parsec_cylindrical_frag.glsl */,
 				7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */,
 				7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */,
@@ -2771,6 +2782,7 @@
 				7C79C8F017650F8F00E71F9D /* spectrum.png in Resources */,
 				7C7CDB171881F3730064999F /* black_grid_2level.jpg in Resources */,
 				7C79C8F117650F8F00E71F9D /* star.png in Resources */,
+				7CF6AD5918AB55A000FA795A /* parsec_simulation_frag.glsl in Resources */,
 				7C79C8F217650F8F00E71F9D /* starGlow.png in Resources */,
 				7C79C8F317650F8F00E71F9D /* colortex1.jpg in Resources */,
 				7C06A8F21853D4ED00D1C8A3 /* inversion_frag.glsl in Resources */,
@@ -2870,6 +2882,7 @@
 				7C892499189C81A900AF4698 /* lines_render_frag.glsl in Resources */,
 				7C79C95317650F8F00E71F9D /* render_frag.glsl in Resources */,
 				7CD53E88185826CE003DE35F /* hygxyz.csv in Resources */,
+				7CF6AD5818AB55A000FA795A /* parsec_simulation_vert.glsl in Resources */,
 				7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */,
 				7C79C95817650F8F00E71F9D /* terrain_shader_frag.glsl in Resources */,
 				7C06A8EF1853D4ED00D1C8A3 /* hypnorings_frag.glsl in Resources */,
@@ -3043,6 +3056,7 @@
 				7C79CA3A17650FD800E71F9D /* CameraController.cpp in Sources */,
 				7C79CA3B17650FD800E71F9D /* SplineCam.cpp in Sources */,
 				7C79CA3C17650FD800E71F9D /* StarCam.cpp in Sources */,
+				7CF6AD5518A9E68600FA795A /* ParticleController.cpp in Sources */,
 				7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */,
 				7C79CA3D17650FD800E71F9D /* TunnelCam.cpp in Sources */,
 				7C79CA3E17650FD800E71F9D /* Config.cpp in Sources */,

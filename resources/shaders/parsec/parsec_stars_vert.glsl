@@ -4,6 +4,10 @@
 // ATI's are twice as large and have to be scaled down
 uniform float	scale;
 
+uniform sampler2D posMap;
+uniform sampler2D velMap;
+uniform sampler2D information;
+
 // define a few constants here, for faster rendering
 const float LOG_BASE10 = 1.0 / log2(10.0);
 
@@ -21,7 +25,11 @@ float log10( float n ) {
 void main() { 
 	// calculate distance of star (in parsecs) to camera
 	// see: http://www.opengl.org/discussion_boards/showthread.php/166796-GLSL-PointSprites-different-sizes?p=1178125&viewfull=1#post1178125
-	vec3	vertex = vec3(gl_ModelViewMatrix * gl_Vertex);
+	vec3 vertex = vec3(gl_ModelViewMatrix * gl_Vertex);
+    vec4 pos = texture2D( posMap, gl_MultiTexCoord0.st );
+    //vec3 vertex = vec3(gl_ModelViewMatrix * vec4(pos.xyz,1.0));
+    //float magnitude = pos.a;
+    
 	float	distance = length(vertex);
 
 	// retrieve absolute magnitude from texture coordinates
