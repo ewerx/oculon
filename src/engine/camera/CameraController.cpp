@@ -17,6 +17,10 @@ using namespace std;
 CameraController::CameraController()
 : mCamType(CAM_MANUAL)
 {
+    for (int i = 0; i < CAM_COUNT; ++i)
+    {
+        mInterfacePanels[i] = NULL;
+    }
 }
 
 void CameraController::setup(OculonApp *app, const unsigned int camTypes, eCamType defaultCam)
@@ -43,12 +47,36 @@ void CameraController::setupInterface(Interface *interface, const std::string& s
 #undef  CAMCTRLR_CAMTYPE_ENTRY
     interface->addEnum(CreateEnumParam( "camera", (int*)(&mCamType), sceneName )
                         .maxValue(camCount)
-                        .isVertical(), camTypeNames);
+                        .isVertical(), camTypeNames)->registerCallback( this, &CameraController::onCameraChanged );
     
+    mInterfacePanels[CAM_SPLINE] = interface->gui()->addPanel();
     mSplineCam.setupInterface(interface, sceneName);
     
+    mInterfacePanels[CAM_STAR] = interface->gui()->addPanel();
+    mStarCam.setupInterface(interface, sceneName);
+    
+    mInterfacePanels[CAM_SPIN] = interface->gui()->addPanel();
     interface->gui()->addLabel("spin cam");
     interface->addParam(CreateFloatParam("spin_rate", &mSpinRate));
+    
+    onCameraChanged();
+}
+
+bool CameraController::onCameraChanged()
+{
+    for (int i = 0; i < CAM_COUNT; ++i)
+    {
+        if (mInterfacePanels[i] && i != mCamType)
+        {
+            mInterfacePanels[i]->enabled = false;
+        }
+    }
+    
+    if (mInterfacePanels[mCamType]) {
+        mInterfacePanels[mCamType]->enabled = true;
+    }
+    
+    return true;
 }
 
 void CameraController::update(double dt)
@@ -64,6 +92,9 @@ void CameraController::update(double dt)
         case CAM_SPLINE:
             mSplineCam.update(dt);
             break;
+            
+        case CAM_STAR:
+            mStarCam.update(dt);
             
         case CAM_SPIN:
             mSpinQuat *= Quatf(Vec3f(0.0f,1.0f,0.0f), dt*mSpinRate);

@@ -66,6 +66,9 @@ public:
     const ci::Camera& getCamera();
     
 protected:
+    bool onCameraChanged();
+    
+protected:
     OculonApp*                  mApp;
     eCamType                    mCamType;
     unsigned int                mAvailableCamTypes;
@@ -73,6 +76,8 @@ protected:
     SplineCam                   mSplineCam;
     SpringCam                   mSpringCam;
     StarCam                     mStarCam;
+    
+    mowa::sgui::PanelControl*   mInterfacePanels[CAM_COUNT];
     
     ci::CameraPersp             mSpinCam;//TODO: refactor
     ci::Quatf                   mSpinQuat;
