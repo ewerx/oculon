@@ -5,6 +5,8 @@
 #include "cinder/Timeline.h"
 #include "cinder/app/AppBasic.h"
 
+#include "Interface.h"
+
 #include <deque>
 
 class OculonApp;
@@ -15,6 +17,8 @@ public:
 	StarCam( const ci::CameraPersp &aInitialCam ) { mInitialCam = mCurrentCam = aInitialCam; }
 
 	void		setup(OculonApp* scene);
+    bool        reset();
+    void        setupInterface(Interface* interface, const std::string& name);
 	void		update(double elapsed);
 
 	void		mouseDown( const ci::Vec2i &mousePos );
@@ -27,9 +31,6 @@ public:
 	void		setCurrentCam( const ci::CameraPersp &aCurrentCam );
     void        setTarget( const ci::Vec3f& lookAt );
     
-    // HACK!
-    float*                  mTimeScale;
-    float*                  mRotateSpeed;
 private:
 	//! returns the position of the camera in world space
 	ci::Vec3f	getPosition();
@@ -80,6 +81,9 @@ private:
 	ci::Anim<double>		mLongitude;
 	ci::Anim<double>		mDistance;
 	ci::Anim<double>		mFov;
+    
+    // params
+    float                   mTimeScale;
     
     OculonApp*              mApp;
 };

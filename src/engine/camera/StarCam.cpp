@@ -55,8 +55,7 @@ StarCam::StarCam()
 	mDistance = 0.015 * 33333;
 	mFov = 65.0;
     
-    mTimeScale = NULL;
-    mRotateSpeed = NULL;
+    mTimeScale = 0.005f;
     mLookAt = Vec3f::zero();
 }
 
@@ -69,19 +68,35 @@ void StarCam::setup(OculonApp* app)
     mCurrentCam.setPerspective( 65.0f, mApp->getViewportAspectRatio(), 5.0f, 200000.0f );
 }
 
+bool StarCam::reset()
+{
+    mElapsedTime = 0.0f;
+    return true;
+}
+
+void StarCam::setupInterface( Interface* interface, const std::string& name)
+{
+    //interface->gui()->addColumn();
+    interface->gui()->addLabel("Star Cam");
+    interface->addParam(CreateFloatParam( "speed", &mTimeScale )
+                        .oscReceiver(name, "splinecamradius"));
+    interface->addButton(CreateTriggerParam("reset", NULL)
+                         .oscReceiver(name,"starcamreset"))->registerCallback( this, &StarCam::reset );
+}
+
 void StarCam::update(double elapsed)
 {
 	static const double sqrt2pi = math<double>::sqrt(2.0 * M_PI);
 
 	if((getElapsedSeconds() - mTimeMouse) > mTimeOut)	// screensaver mode
 	{
-        mElapsedTime += elapsed * ( mTimeScale ? (*mTimeScale) : 0.005f );
+        mElapsedTime += elapsed * mTimeScale;
         
 		// calculate time 
 		double t = getElapsedSeconds();
 
 		// determine distance to the sun (in parsecs)
-		double time = mElapsedTime;//t * ( mTimeScale ? (*mTimeScale) : 0.005f );
+		double time = mElapsedTime;//t * mTimeScale;
 		double t_frac = (time) - math<double>::floor(time);
 		double n = sqrt2pi * t_frac;
 		double f = cos( n * n );

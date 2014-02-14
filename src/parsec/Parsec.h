@@ -19,6 +19,7 @@
 #include "StarCam.h"
 #include "SplineCam.h"
 #include "AudioInputHandler.h"
+#include "CameraController.h"
 
 class Parsec : public Scene
 {
@@ -68,31 +69,7 @@ protected:
 	float				mSectionOverlap;
     
     // cameras
-    StarCam             mStarCam;
-    SplineCam           mSplineCam;
-    
-    float               mStarCamRotateSpeed;
-    float               mStarCamTimeScale;
-    
-    // camera
-#define PARSEC_CAMTYPE_TUPLE \
-PARSEC_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
-PARSEC_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
-PARSEC_CAMTYPE_ENTRY( "Star", CAM_STAR ) \
-PARSEC_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
-PARSEC_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
-//end tuple
-    
-    enum eCamType
-    {
-#define PARSEC_CAMTYPE_ENTRY( nam, enm ) \
-enm,
-        PARSEC_CAMTYPE_TUPLE
-#undef  PARSEC_CAMTYPE_ENTRY
-        
-        CAM_COUNT
-    };
-    eCamType                    mCamType;
+    CameraController    mCameraController;
     
     // audio
     AudioInputHandler   mAudioInputHandler;
