@@ -89,26 +89,18 @@ void ParsecStars::draw()
 {
 	if(!(mRenderShader && mTextureStar && mTextureCorona && mVboMesh)) return;
     
-
-	gl::enableAdditiveBlending();		
 	preRender();
 
 	gl::color( Color::white() );
 	gl::draw( mVboMesh );
 
-	// unbind textures
-	mTextureCorona.unbind();
-	mTextureStar.unbind();
-
 	postRender();
-	gl::disableAlphaBlending();
 }
 
 void ParsecStars::clear()
 {
-	mVertices.clear();
-	mTexcoords.clear();
 	mColors.clear();
+    mStars.clear();
 }
 
 void ParsecStars::preRender()
@@ -116,6 +108,7 @@ void ParsecStars::preRender()
 	// store current OpenGL state
 	glPushAttrib( GL_POINT_BIT | GL_ENABLE_BIT );
 
+    gl::enableAdditiveBlending();
 	// enable point sprites and initialize it
 	gl::enable( GL_POINT_SPRITE_ARB );
 	glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 1.0f );
@@ -262,16 +255,11 @@ void ParsecStars::load(DataSourceRef source, ParsecLabels& labels)
 			double ra = Conversions::toDouble(tokens[7]);
 			double dec = Conversions::toDouble(tokens[8]);
 			double distance = Conversions::toDouble(tokens[9]);
+            
+            Star star(ra, dec, distance, abs_mag, color);
+            mStars.push_back(star);
 
-			double alpha = toRadians( ra * 15.0 );
-			double delta = toRadians( dec );
-
-            Vec3f pos = distance * Vec3f((float) (sin(alpha) * cos(delta)), (float) sin(delta), (float) (cos(alpha) * cos(delta)));
-			// convert to world (universe) coordinates
-			mVertices.push_back( pos );
-			// put extra data (absolute magnitude and distance to Earth) in texture coordinates
-			mTexcoords.push_back( Vec2f( (float) abs_mag, (float) distance) );
-			// put color in color attribute
+            // TODO: use dynamic color or another way to set static colors to eliminate this
 			mColors.push_back( color );
             
             // name
@@ -305,20 +293,20 @@ void ParsecStars::read(DataSourceRef source)
 	in->read( &versionNumber );
 	
 	uint32_t numVertices, numTexcoords, numColors;
-	in->readLittle( &numVertices );
-	in->readLittle( &numTexcoords );
+	//in->readLittle( &numVertices );
+	//in->readLittle( &numTexcoords );
 	in->readLittle( &numColors );
 	
 	for( size_t idx = 0; idx < numVertices; ++idx ) {
 		Vec3f v;
 		in->readLittle( &v.x ); in->readLittle( &v.y ); in->readLittle( &v.z );
-		mVertices.push_back( v );
+		//mVertices.push_back( v );
 	}
 
 	for( size_t idx = 0; idx < numTexcoords; ++idx ) {
 		Vec2f v;
 		in->readLittle( &v.x ); in->readLittle( &v.y );
-		mTexcoords.push_back( v );
+		//mTexcoords.push_back( v );
 	}
 
 	for( size_t idx = 0; idx < numColors; ++idx ) {
@@ -338,17 +326,17 @@ void ParsecStars::write(DataTargetRef target)
 	const uint8_t versionNumber = 1;
 	out->write( versionNumber );
 	
-	out->writeLittle( static_cast<uint32_t>( mVertices.size() ) );
-	out->writeLittle( static_cast<uint32_t>( mTexcoords.size() ) );
+	//out->writeLittle( static_cast<uint32_t>( mVertices.size() ) );
+	//out->writeLittle( static_cast<uint32_t>( mTexcoords.size() ) );
 	out->writeLittle( static_cast<uint32_t>( mColors.size() ) );
 	
-	for( vector<Vec3f>::const_iterator it = mVertices.begin(); it != mVertices.end(); ++it ) {
-		out->writeLittle( it->x ); out->writeLittle( it->y ); out->writeLittle( it->z );
-	}
-
-	for( vector<Vec2f>::const_iterator it = mTexcoords.begin(); it != mTexcoords.end(); ++it ) {
-		out->writeLittle( it->x ); out->writeLittle( it->y );
-	}
+//	for( vector<Vec3f>::const_iterator it = mVertices.begin(); it != mVertices.end(); ++it ) {
+//		out->writeLittle( it->x ); out->writeLittle( it->y ); out->writeLittle( it->z );
+//	}
+//
+//	for( vector<Vec2f>::const_iterator it = mTexcoords.begin(); it != mTexcoords.end(); ++it ) {
+//		out->writeLittle( it->x ); out->writeLittle( it->y );
+//	}
 
 	for( vector<Color>::const_iterator it = mColors.begin(); it != mColors.end(); ++it ) {
 		out->writeLittle( it->r ); out->writeLittle( it->g ); out->writeLittle( it->b );
@@ -359,7 +347,7 @@ void ParsecStars::write(DataTargetRef target)
 
 void ParsecStars::setupFBO()
 {
-    mFboSize = 512;//ceilf(sqrt(mVertices.size())) + 1; // not sure why that doesn't work...
+    mFboSize = 512;
     
     Surface32f posSurface = Surface32f(mFboSize,mFboSize,true);
 	Surface32f velSurface = Surface32f(mFboSize,mFboSize,true);
@@ -376,12 +364,14 @@ void ParsecStars::setupFBO()
 		while(iterator.pixel())
 		{
             uint32_t index = y * mFboSize + x;
-            if (index < mVertices.size()) {
-                Vec3f pos = mVertices[index];
-                Vec2f info = mTexcoords[index]; // abs_mag, distance
-                posSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,info.x));
-                velSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,info.y));
-                infoSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,info.x));
+            if (index < mStars.size()) {
+                Star &star = mStars[index];
+                Vec3f pos = star.getPosition();
+                float magnitude = star.getMagnitude();
+                float distance = star.getDistance();
+                posSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,magnitude));
+                velSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,distance));
+                infoSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,magnitude));
             }
             else
             {
@@ -423,7 +413,6 @@ void ParsecStars::createMesh()
 	layout.setStaticColorsRGB();
 
 	mVboMesh = gl::VboMesh(totalVertices, totalVertices, layout, GL_POINTS);
-	mVboMesh.bufferPositions( &(mVertices.front()), mVertices.size() );
     mVboMesh.bufferIndices( indices );
     mVboMesh.bufferTexCoords2d( 0, texCoords );
 	mVboMesh.bufferColorsRGB( mColors );

@@ -43,5 +43,5 @@ void main() {
 	gl_FrontColor = gl_Color * pow(brightness, 1.5);
 	
 	// set position
-    gl_Position = ftransform(); 
+    gl_Position = gl_ModelViewProjectionMatrix * vec4(pos.xyz,1.0);
 }

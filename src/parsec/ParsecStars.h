@@ -114,9 +114,8 @@ private:
 	ci::gl::Texture		mTextureCorona;
 	ci::gl::VboMesh		mVboMesh;
 
-	std::vector< ci::Vec3f > mVertices;
-	std::vector< ci::Vec2f > mTexcoords;
-	std::vector< ci::Color > mColors;
+	std::vector< ci::Color > mColors;    
+    std::vector< Star > mStars;
 
 	float				mAspectRatio;
 	float				mScale;
