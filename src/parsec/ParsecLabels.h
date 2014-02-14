@@ -56,7 +56,7 @@ public:
     virtual ~ParsecLabels();
     
     void setup();
-    void update(const ci::Camera &cam, float screenWidth, float screenHeight);
+    void update(const ci::Camera &cam, float distance, float screenWidth, float screenHeight);
     //void updateAudioResponse(
     void draw(float screenWidth, float screenHeight, float alpha);
 

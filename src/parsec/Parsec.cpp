@@ -224,7 +224,7 @@ void Parsec::update(double dt)
     
     if (mShowLabels)
     {
-        mLabels.update(getCamera(), mApp->getViewportWidth(), mApp->getViewportHeight());
+        mLabels.update(getCamera(), distance, mApp->getViewportWidth(), mApp->getViewportHeight());
     }
     
     mStars.update();

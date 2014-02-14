@@ -37,7 +37,7 @@ void ParsecLabels::update(const ci::Camera &cam, float screenWidth, float screen
 {
     BOOST_FOREACH( ParsecLabels::Label* &label, mLabels )
     {
-		label->update( cam, 0.2f, screenWidth, screenHeight );
+		label->update( cam, 1.0f, screenWidth, screenHeight );
 	}
 }
 
@@ -82,7 +82,7 @@ ParsecLabels::Label::Label( Vec3f pos, float absMag, std::string name, std::stri
 		layout.addLine( name );
 		layout.setFont( font );
 		layout.setLeadingOffset( 3 );
-		layout.addLine( spectrum );
+		//layout.addLine( spectrum );
 		mNameTex = gl::Texture( layout.render( true, false ) );
 		mSphere.setCenter( mPos );
 		mSphere.setRadius( radius );
@@ -119,7 +119,8 @@ void ParsecLabels::Label::draw( float alpha )
 		if( mIsSelected )
 			per = 1.0f;
 		
-		if( per > 0.05f ){
+		if( per > 0.05f )
+        {
 			gl::color( ColorA( 1.0f, 1.0f, 1.0f, per * alpha ) );
 			mNameTex.enableAndBind();
 			gl::draw( mNameTex, mScreenPos + Vec2f( mScreenRadius + 35.0f, -28.0f ) );

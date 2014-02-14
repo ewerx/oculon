@@ -29,6 +29,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
 
+#include <regex>
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -268,9 +270,12 @@ void ParsecStars::load(DataSourceRef source, ParsecLabels& labels)
 			//if( name.empty() ) name = boost::trim_copy( tokens[5] );
 			if( name.empty() || abs_mag > 6.0f ) continue;
             
+            name = std::regex_replace(name,std::regex("\\s\\s+"), " ");
+            boost::to_upper(name);
+
             std::string spectrum = boost::trim_copy( tokens[15] );
             
-            ParsecLabels::Label *label = new ParsecLabels::Label( pos, (float)abs_mag, name, spectrum, font );
+            ParsecLabels::Label *label = new ParsecLabels::Label( star.getPosition(), (float)abs_mag, name, spectrum, font );
             labels.addLabel(label);
 		}
 		catch(...) {
