@@ -65,5 +65,6 @@ public:
     
 private:
     std::vector<Label*> mLabels;
+    float mAttenuation;
     
 };
