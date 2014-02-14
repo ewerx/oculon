@@ -83,9 +83,9 @@ void Parsec::setupInterface()
     mInterface->addParam(CreateBoolParam("grid", &mShowGrid));
     mInterface->addParam(CreateBoolParam("background", &mShowBackground));
     mInterface->addParam(CreateBoolParam("labels", &mShowLabels));
+    mInterface->addParam(CreateBoolParam("labels-fadebydist", &mLabels.mFadeByDistance));
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
-    mInterface->addParam(CreateBoolParam("const art", &mShowConstellationArt));
-    
+//    mInterface->addParam(CreateBoolParam("const art", &mShowConstellationArt));
     
     mInterface->addParam(CreateBoolParam("const audio", &mConstellationAudio));
     mInterface->addParam(CreateFloatParam("const alpha", &mConstellationAlpha));

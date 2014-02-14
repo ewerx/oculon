@@ -63,6 +63,9 @@ public:
     //TODO: refactor
     void addLabel( Label* label );
     
+public:
+    bool mFadeByDistance;
+    
 private:
     std::vector<Label*> mLabels;
     float mAttenuation;

@@ -17,6 +17,7 @@ using namespace ci;
 #pragma mark - ParsecLabels
 
 ParsecLabels::ParsecLabels()
+: mFadeByDistance(true)
 {
 }
 
@@ -67,9 +68,11 @@ void ParsecLabels::draw(float screenWidth, float screenHeight, float alpha)
 
     gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
     
+    float finalAlpha = mFadeByDistance ? alpha * mAttenuation : alpha;
+    
     BOOST_FOREACH( ParsecLabels::Label* &label, mLabels )
     {
-        label->draw( alpha * mAttenuation );
+        label->draw( finalAlpha );
     }
 }
 
