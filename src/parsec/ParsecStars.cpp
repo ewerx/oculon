@@ -28,6 +28,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/format.hpp>
 
 #include <regex>
 
@@ -273,9 +274,11 @@ void ParsecStars::load(DataSourceRef source, ParsecLabels& labels)
             name = std::regex_replace(name,std::regex("\\s\\s+"), " ");
             boost::to_upper(name);
 
-            std::string spectrum = boost::trim_copy( tokens[15] );
+            // secondary data line
+            //std::string dataString = boost::trim_copy( tokens[15] ); // spectrum color code
+            std::string dataString = str( boost::format("%.2f") % distance );
             
-            ParsecLabels::Label *label = new ParsecLabels::Label( star.getPosition(), (float)abs_mag, name, spectrum, font );
+            ParsecLabels::Label *label = new ParsecLabels::Label( star.getPosition(), (float)abs_mag, name, dataString, font );
             labels.addLabel(label);
 		}
 		catch(...) {

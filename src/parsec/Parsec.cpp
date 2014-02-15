@@ -32,7 +32,7 @@ void Parsec::setup()
     // params
     mShowBackground = false;
     mShowGrid = false;
-    mShowLabels = false;
+    mLabelsAlpha = 1.0f;
     mShowConstellations = false;
     mShowConstellationArt = false;
     mConstellationAudio = false;
@@ -66,6 +66,8 @@ void Parsec::setup()
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE|CameraController::CAM_GRAVITON, CameraController::CAM_STAR);
     
     mAudioInputHandler.setup(false);
+    mAudioInputHandler.mRandomEveryFrame = true;
+    mAudioInputHandler.mRandomSignal = true;
 }
 
 void Parsec::reset()
@@ -76,8 +78,9 @@ void Parsec::setupInterface()
 {
     mInterface->addParam(CreateBoolParam("grid", &mShowGrid));
     mInterface->addParam(CreateBoolParam("background", &mShowBackground));
-    mInterface->addParam(CreateBoolParam("labels", &mShowLabels));
+    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabelsAlpha));
     mInterface->addParam(CreateBoolParam("labels-fadebydist", &mLabels.mFadeByDistance));
+    mInterface->addParam(CreateBoolParam("labels-audioresponsive", &mLabels.mAudioResponsive));
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
 //    mInterface->addParam(CreateBoolParam("const art", &mShowConstellationArt));
     
@@ -151,8 +154,9 @@ void Parsec::update(double dt)
     mConstellations.setCameraDistance( distance );
 	mConstellationArt.setCameraDistance( distance );
     
-    if (mShowLabels)
+    if (mLabelsAlpha > 0.0f)
     {
+        mLabels.updateAudio(mAudioInputHandler, mGain);
         mLabels.update(getCamera(), distance, mApp->getViewportWidth(), mApp->getViewportHeight());
     }
     
@@ -171,10 +175,10 @@ void Parsec::draw()
     render();
     gl::popMatrices();
     
-    if (mShowLabels)
+    if (mLabelsAlpha > 0.0f)
     {
         gl::pushMatrices();
-        mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight(), 1.0f);
+        mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight(), mLabelsAlpha);
         gl::popMatrices();
     }
 }

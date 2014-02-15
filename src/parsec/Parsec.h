@@ -47,7 +47,7 @@ protected:
     // params
     bool mShowGrid;
     bool mShowBackground;
-    bool mShowLabels;
+    float mLabelsAlpha;
     bool mShowConstellations;
     bool mShowConstellationArt;
     float mConstellationAlpha;

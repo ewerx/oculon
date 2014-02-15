@@ -162,6 +162,7 @@ void Barcode::drawBar(const int index)
     AudioInputHandler::FftValues& fftValues = mParentScene->getAudioInputHandler().getFftValues();
     int32_t dataSize = fftValues.size();
     
+    //TODO: isn't the falloff done inside the AudioInputHandler???
     AudioInputHandler::tEaseFn easeFn = mParentScene->getAudioInputHandler().getFalloffFunction();
     float falloff = mParentScene->getAudioInputHandler().mFalloffTime;
     

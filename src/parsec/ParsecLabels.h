@@ -29,10 +29,10 @@ public:
         Label( ci::Vec3f pos,
               float absMag,
               std::string name,
-              std::string spectrum,
+              std::string dataLine,
               const ci::Font &font );
         void update( const ci::Camera &cam, float scale, float screenWidth, float screenHeight );
-        void draw( float alpha );
+        void draw( float alpha, bool audioResponsive );
         
         ci::Vec3f	mInitPos;
         ci::Vec3f	mPos;
@@ -56,7 +56,9 @@ public:
     virtual ~ParsecLabels();
     
     void setup();
+    void updateAudio(AudioInputHandler &audioInputHandler, float gain);
     void update(const ci::Camera &cam, float distance, float screenWidth, float screenHeight);
+
     //void updateAudioResponse(
     void draw(float screenWidth, float screenHeight, float alpha);
 
@@ -65,6 +67,7 @@ public:
     
 public:
     bool mFadeByDistance;
+    bool mAudioResponsive;
     
 private:
     std::vector<Label*> mLabels;

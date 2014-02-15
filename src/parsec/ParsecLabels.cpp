@@ -17,7 +17,8 @@ using namespace ci;
 #pragma mark - ParsecLabels
 
 ParsecLabels::ParsecLabels()
-: mFadeByDistance(true)
+: mFadeByDistance(false)
+, mAudioResponsive(true)
 {
 }
 
@@ -54,14 +55,30 @@ void ParsecLabels::update(const ci::Camera &cam, float distance, float screenWid
 	}
 }
 
+void ParsecLabels::updateAudio(AudioInputHandler &audioInputHandler, float gain)
+{
+    AudioInputHandler::FftValues& fftValues = audioInputHandler.getFftValues();
+    int32_t dataSize = fftValues.size();
+    
+    // Iterate through data
+    for (int32_t i = 0; i < mLabels.size(); i++)
+    {
+        int index = i % dataSize;
+        float x = fftValues[index].mBandIndex;
+        float y = fftValues[index].mValue;
+        
+        mLabels[i]->mAudioPer = x * y * gain;
+    }
+}
+
 void ParsecLabels::draw(float screenWidth, float screenHeight, float alpha)
 {
     gl::setMatricesWindow(Vec2i(screenWidth,screenHeight), true );
     
-    gl::enableAlphaBlending();
+    //gl::enableAlphaBlending();
     // black box to darken the stars...
-    gl::color(0.0f,0.0f,0.0f, 1.0f-alpha);
-    gl::drawSolidRect( Area(0,0,screenWidth,screenHeight) );
+    //gl::color(0.0f,0.0f,0.0f, 1.0f-alpha);
+    //gl::drawSolidRect( Area(0,0,screenWidth,screenHeight) );
     
     // TODO: try alpha..
     gl::enableAlphaBlending();
@@ -72,13 +89,13 @@ void ParsecLabels::draw(float screenWidth, float screenHeight, float alpha)
     
     BOOST_FOREACH( ParsecLabels::Label* &label, mLabels )
     {
-        label->draw( finalAlpha );
+        label->draw( finalAlpha, mAudioResponsive );
     }
 }
 
 #pragma mark - ParsecLabels::Label
 
-ParsecLabels::Label::Label( Vec3f pos, float absMag, std::string name, std::string spectrum, const Font &font )
+ParsecLabels::Label::Label( Vec3f pos, float absMag, std::string name, std::string dataLine, const Font &font )
 : mPos( pos ), mName( name )
 {
 	mInitPos		= mPos;
@@ -97,7 +114,7 @@ ParsecLabels::Label::Label( Vec3f pos, float absMag, std::string name, std::stri
 		layout.addLine( name );
 		layout.setFont( font );
 		layout.setLeadingOffset( 3 );
-		//layout.addLine( spectrum );
+		//layout.addLine( dataLine );
 		mNameTex = gl::Texture( layout.render( true, false ) );
 		mSphere.setCenter( mPos );
 		mSphere.setRadius( radius );
@@ -115,15 +132,15 @@ void ParsecLabels::Label::update( const Camera &cam, float scale, float screenWi
 //	mScreenRadius	= cam.getScreenRadius( mSphere, screenWidth, screenHeight );
 }
 
-void ParsecLabels::Label::draw( float alpha )
+void ParsecLabels::Label::draw( float alpha, bool audioResponsive )
 {
 	if( mDistToCam > 0.0f && mNameTex )
     {
 		float alphaScale = 0.0f;
 		
-        if( mAudioPer > 0.0f )
+        if( audioResponsive )
         {
-            alphaScale = mAudioPer * constrain( 1.95f - mDistToCam * 0.0000375f, 0.25f, 1.0f );
+            alphaScale = mAudioPer * constrain( 1.0f - mDistToCam * 0.0000375f, 0.0f, 1.0f );
         }
         else
         {
@@ -132,14 +149,14 @@ void ParsecLabels::Label::draw( float alpha )
         }
 		
 		if( mIsSelected )
+        {
 			alphaScale = 1.0f;
+        }
 		
 		if( alphaScale > 0.05f )
         {
 			gl::color( ColorA( 1.0f, 1.0f, 1.0f, alphaScale * alpha ) );
-			//mNameTex.enableAndBind();
 			gl::draw( mNameTex, mScreenPos + Vec2f( mScreenRadius + 35.0f, -28.0f ) );
-			//mNameTex.disable();
             
             // indicator line
             const float hOffset = 35.0f;
