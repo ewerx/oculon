@@ -36,6 +36,7 @@ const Vec2d	ParsecBackground::GALACTIC_NORTHPOLE_EQUATORIAL = Vec2d(toRadians(19
 
 ParsecBackground::ParsecBackground(void)
 	: mAttenuation(1.0f)
+    , mAlpha(1.0f)
 {
 	// Transform the map from galactic coordinates to equatorial coordinates. 
 	// OpenGL matrix derived from http://arxiv.org/pdf/1010.3773.pdf
@@ -66,7 +67,7 @@ void ParsecBackground::draw()
 
 	gl::pushModelView();
 	gl::multModelView( mTransform );
-	gl::color( mAttenuation * Color::white() );
+	gl::color( mAttenuation * mAlpha * Color::white() );
 	gl::draw( mVboMesh );
 	gl::popModelView();
 

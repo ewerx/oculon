@@ -60,12 +60,13 @@ public:
     void update(const ci::Camera &cam, float distance, float screenWidth, float screenHeight);
 
     //void updateAudioResponse(
-    void draw(float screenWidth, float screenHeight, float alpha);
+    void draw(float screenWidth, float screenHeight);
 
     //TODO: refactor
     void addLabel( Label* label );
     
 public:
+    float mAlpha;
     bool mFadeByDistance;
     bool mAudioResponsive;
     

@@ -103,6 +103,11 @@ public:
 	void	write( ci::DataTargetRef target );
 private:
 	void	createMesh();
+    
+public:
+    // params
+	float				mScale;
+    
 private:
     PingPongFbo         mParticlesFbo;
     int                 mFboSize;
@@ -118,5 +123,5 @@ private:
     std::vector< Star > mStars;
 
 	float				mAspectRatio;
-	float				mScale;
+
 };

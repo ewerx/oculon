@@ -19,6 +19,8 @@ using namespace ci;
 ParsecLabels::ParsecLabels()
 : mFadeByDistance(false)
 , mAudioResponsive(true)
+, mAlpha(1.0f)
+, mAttenuation(0.0f)
 {
 }
 
@@ -71,7 +73,7 @@ void ParsecLabels::updateAudio(AudioInputHandler &audioInputHandler, float gain)
     }
 }
 
-void ParsecLabels::draw(float screenWidth, float screenHeight, float alpha)
+void ParsecLabels::draw(float screenWidth, float screenHeight)
 {
     gl::setMatricesWindow(Vec2i(screenWidth,screenHeight), true );
     
@@ -85,7 +87,7 @@ void ParsecLabels::draw(float screenWidth, float screenHeight, float alpha)
 
     gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
     
-    float finalAlpha = mFadeByDistance ? alpha * mAttenuation : alpha;
+    float finalAlpha = mFadeByDistance ? mAlpha * mAttenuation : mAlpha;
     
     BOOST_FOREACH( ParsecLabels::Label* &label, mLabels )
     {

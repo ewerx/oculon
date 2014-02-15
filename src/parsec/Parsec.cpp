@@ -29,21 +29,10 @@ void Parsec::setup()
 {
     Scene::setup();
     
-    // params
-    mShowBackground = false;
-    mShowGrid = false;
-    mLabelsAlpha = 1.0f;
-    mShowConstellations = false;
-    mShowConstellationArt = false;
-    mConstellationAudio = false;
-    mConstellationAlpha = 1.0f;
-    
     loadData();
     
 	mGrid.setup();
     mBackground.setup();
-    
-    //TODO: refactor
 	mStars.setup();
 	mStars.setAspectRatio(1.0f);// ( mIsStereoscopic ? 0.5f : 1.0f ); // TODO
     
@@ -68,6 +57,16 @@ void Parsec::setup()
     mAudioInputHandler.setup(false);
     mAudioInputHandler.mRandomEveryFrame = true;
     mAudioInputHandler.mRandomSignal = true;
+    
+    // params
+    mShowGrid = false;
+    mShowConstellations = false;
+    mShowConstellationArt = false;
+    mConstellationAudio = false;
+    mConstellationAlpha = 1.0f;
+    
+    mLabels.mAlpha = 1.0f;
+    mBackground.mAlpha = 1.0f;
 }
 
 void Parsec::reset()
@@ -77,8 +76,12 @@ void Parsec::reset()
 void Parsec::setupInterface()
 {
     mInterface->addParam(CreateBoolParam("grid", &mShowGrid));
-    mInterface->addParam(CreateBoolParam("background", &mShowBackground));
-    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabelsAlpha));
+    
+    mInterface->addParam(CreateFloatParam("star-scale", &mStars.mScale)
+                         .minValue(0.5f)
+                         .maxValue(3.0f));
+    mInterface->addParam(CreateFloatParam("background", &mBackground.mAlpha));
+    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha));
     mInterface->addParam(CreateBoolParam("labels-fadebydist", &mLabels.mFadeByDistance));
     mInterface->addParam(CreateBoolParam("labels-audioresponsive", &mLabels.mAudioResponsive));
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
@@ -154,7 +157,7 @@ void Parsec::update(double dt)
     mConstellations.setCameraDistance( distance );
 	mConstellationArt.setCameraDistance( distance );
     
-    if (mLabelsAlpha > 0.0f)
+    if (mLabels.mAlpha > 0.0f)
     {
         mLabels.updateAudio(mAudioInputHandler, mGain);
         mLabels.update(getCamera(), distance, mApp->getViewportWidth(), mApp->getViewportHeight());
@@ -175,10 +178,10 @@ void Parsec::draw()
     render();
     gl::popMatrices();
     
-    if (mLabelsAlpha > 0.0f)
+    if (mLabels.mAlpha > 0.0f)
     {
         gl::pushMatrices();
-        mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight(), mLabelsAlpha);
+        mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight());
         gl::popMatrices();
     }
 }
@@ -186,10 +189,7 @@ void Parsec::draw()
 void Parsec::render()
 {
     // draw background
-	if(mShowBackground)
-    {
-        mBackground.draw();
-    }
+	mBackground.draw();
     
 	// draw grid
 	if(mShowGrid)

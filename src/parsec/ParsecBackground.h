@@ -49,6 +49,10 @@ public:
 	static const ci::Vec3d	GALACTIC_CENTER_EQUATORIAL;
 	static const ci::Vec2d	GALACTIC_NORTHPOLE_EQUATORIAL;
 
+    
+public:
+    // params
+    float               mAlpha;
 private:
 	//
 	float				mAttenuation;
