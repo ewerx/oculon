@@ -148,14 +148,11 @@ TS_SHADERS_TUPLE
                          .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam("color1alpha", &(mColor1.a))
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 22));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 20));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 21));
+                         .oscReceiver(getName()));
     
     // SHADER_KALI
     mInterface->gui()->addColumn();

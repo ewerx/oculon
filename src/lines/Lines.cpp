@@ -13,6 +13,7 @@
 #include "Lines.h"
 #include "OculonApp.h"
 #include "Interface.h"
+#include "Parsec.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -246,6 +247,17 @@ void Lines::generateFormationTextures()
 //	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
 //	mInitialVelTex.setMinFilter( GL_NEAREST );
 //	mInitialVelTex.setMagFilter( GL_NEAREST );
+    
+    // HACK
+    Scene *scene = mApp->getScene("parsec");
+    
+    if (scene)
+    {
+        Surface32f starsSurface = Surface32f(kBufSize,kBufSize,true);
+        
+        Parsec *parsec = static_cast<Parsec*>(scene);
+        mFormationPosTex[FORMATION_PARSEC] = parsec->getStarPositionsTexture();
+    }
 }
 
 void Lines::setupVBO()

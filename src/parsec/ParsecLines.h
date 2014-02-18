@@ -6,9 +6,40 @@
 //
 //
 
-#ifndef __Oculon__ParsecLines__
-#define __Oculon__ParsecLines__
+#pragma once
 
-#include <iostream>
+#include "cinder/gl/GlslProg.h"
+#include "cinder/gl/Texture.h"
+#include "cinder/gl/Vbo.h"
 
-#endif /* defined(__Oculon__ParsecLines__) */
+#include "ParsecStars.h"
+
+#include "PingPongFbo.h"
+
+class ParsecLines
+{
+public:
+    ParsecLines();
+    ~ParsecLines();
+    
+    void setup(std::vector<ParsecStars::Star>& stars);
+    void update();
+    void draw();
+    void preRender();
+    void postRender();
+    
+private:
+    PingPongFbo         mParticlesFbo;
+    int                 mFboSize;
+    int                 mNumParticles;
+    
+    ci::gl::GlslProg	mRenderShader;
+    ci::gl::GlslProg	mSimulationShader;
+    ci::gl::VboMesh		mVboMesh;
+    
+    ci::gl::Texture     mInitialPosTex;
+    ci::gl::Texture     mInitialVelTex;
+};
+
+    
+    

@@ -46,7 +46,7 @@ void ParsecLabels::update(const ci::Camera &cam, float distance, float screenWid
     
     static const float minimum = 0.25f;
 	static const float maximum = 1.0f;
-	static const float range = 10.0f;
+	static const float range = 100.0f;
     
 	if( distance > range ) {
 		mAttenuation = ci::lerp<float>( minimum, 0.0f, (distance - range) / range );

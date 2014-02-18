@@ -137,11 +137,9 @@ OS_SHADERS_TUPLE
                          .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 20));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
-                         .oscReceiver(getName())
-                         .midiInput(1, 2, 21));
+                         .oscReceiver(getName()));
     
     // SHADER_METAHEX
     mInterface->gui()->addColumn();

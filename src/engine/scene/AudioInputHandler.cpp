@@ -112,8 +112,7 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     interface->gui()->addLabel("falloff");
     interface->addParam(CreateFloatParam( "falloff", &mFalloffTime )
                         .maxValue(5.0f)
-                        .oscReceiver(name,"audio/falloff")
-                        .midiInput(1, 2, 22));
+                        .oscReceiver(name,"audio/falloff"));
     interface->addParam(CreateBoolParam( "freq_falloff", &mFalloffByFreq )
                         .oscReceiver(name,"audio/freq_falloff"));
     

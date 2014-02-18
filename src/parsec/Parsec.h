@@ -16,6 +16,7 @@
 #include "ParsecGrid.h"
 #include "ParsecStars.h"
 #include "ParsecLabels.h"
+#include "ParsecLines.h"
 #include "StarCam.h"
 #include "SplineCam.h"
 #include "AudioInputHandler.h"
@@ -34,6 +35,10 @@ public:
     void draw();
     void drawDebug();
     const ci::Camera& getCamera();
+    
+public:
+    ci::gl::Texture& getStarPositionsTexture() { return mStars.mTextureStarPositions; }
+    std::vector<ParsecStars::Star> getBrightStars() { return mStars.mBrightStars; }
     
 protected:// from Scene
     void setupInterface();
@@ -58,6 +63,7 @@ protected:
     ParsecGrid          mGrid;
     Constellations      mConstellations;
     ConstellationArt    mConstellationArt;
+    ParsecLines         mLines;
   
     // frame buffer and shader used for cylindrical projection
     ci::gl::Fbo			mProjectionFbo;

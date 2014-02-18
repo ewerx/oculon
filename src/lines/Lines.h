@@ -87,6 +87,7 @@ private:
 #define FORMATION_TUPLE \
 FORMATION_ENTRY( "Random", FORMATION_RANDOM ) \
 FORMATION_ENTRY( "Straight", FORMATION_STRAIGHT ) \
+FORMATION_ENTRY( "Parsec", FORMATION_PARSEC ) \
 // end tuple
     
     enum eFormation

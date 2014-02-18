@@ -80,7 +80,7 @@ void AudioInput::setupInterface( Interface* interface )
                         .maxValue(50.0f)
                         .oscReceiver("master", "gain")
                         .sendFeedback()
-                        .midiInput(1,2,23));
+                        .midiInput(0,2,23));
 }
 
 bool AudioInput::changeInput( const int index )

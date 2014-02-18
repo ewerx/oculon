@@ -59,6 +59,10 @@ private:
 	static const double		LATITUDE_THRESHOLD;
 	static const double		DISTANCE_MIN;
 	static const double		DISTANCE_MAX;
+    
+    float                   mDistanceMin;
+    float                   mLatitudeLimit;
+    float                   mLatitudeThreshold;
 
 	ci::CameraPersp			mCurrentCam;
 

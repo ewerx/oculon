@@ -36,6 +36,8 @@ void Parsec::setup()
 	mStars.setup();
 	mStars.setAspectRatio(1.0f);// ( mIsStereoscopic ? 0.5f : 1.0f ); // TODO
     
+    mLines.setup(mStars.mBrightStars);
+    
     if( fs::exists( getAssetPath("") / "parsec-constellations.cdb" ) )
     {
 		mConstellations.read( loadFile( getAssetPath("") / "parsec-constellations.cdb" ) );
@@ -66,7 +68,10 @@ void Parsec::setup()
     mConstellationAlpha = 1.0f;
     
     mLabels.mAlpha = 1.0f;
-    mBackground.mAlpha = 1.0f;
+    mLabels.mFadeByDistance = true;
+    mLabels.mAudioResponsive = true;
+    mBackground.mAlpha = 0.75f;
+    
 }
 
 void Parsec::reset()
@@ -81,7 +86,8 @@ void Parsec::setupInterface()
                          .minValue(0.5f)
                          .maxValue(3.0f));
     mInterface->addParam(CreateFloatParam("background", &mBackground.mAlpha));
-    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha));
+    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha)
+                         .midiInput(0, 2, 22));
     mInterface->addParam(CreateBoolParam("labels-fadebydist", &mLabels.mFadeByDistance));
     mInterface->addParam(CreateBoolParam("labels-audioresponsive", &mLabels.mAudioResponsive));
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
@@ -164,6 +170,7 @@ void Parsec::update(double dt)
     }
     
     mStars.update();
+    mLines.update();
 }
 
 #pragma mark - Draw
@@ -199,6 +206,10 @@ void Parsec::render()
     
 	// draw stars
 	mStars.draw();
+    
+    const float scale = mApp->getViewportWidth() / 128.0f;
+    glScalef(scale, scale, scale);
+    mLines.draw();
     
 	// draw constellations
 	if(mShowConstellations)

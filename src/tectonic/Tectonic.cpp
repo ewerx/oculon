@@ -157,8 +157,8 @@ void Tectonic::setupInterface()
                         .isVertical()
                         .oscReceiver(mName,"triggermode"));
     mInterface->addParam(CreateFloatParam("BPM", &mBpm)
-                         .minValue(40.0f)
-                         .maxValue(300.0f)
+                         .minValue(20.0f)
+                         .maxValue(600.0f)
                          .oscReceiver(mName,"bpm")
                          .sendFeedback());    
     mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)

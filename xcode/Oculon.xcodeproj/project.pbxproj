@@ -362,6 +362,10 @@
 		7C89249A189C81A900AF4698 /* lines_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892496189C81A900AF4698 /* lines_render_vert.glsl */; };
 		7C89249B189C81A900AF4698 /* lines_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */; };
 		7C89249C189C81A900AF4698 /* lines_simulation_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */; };
+		7C97D23D18AF10B300BB63A1 /* ParsecLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C97D23B18AF10B300BB63A1 /* ParsecLines.cpp */; };
+		7C97D24018AF14E400BB63A1 /* parsec_lines_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C97D23E18AF14E400BB63A1 /* parsec_lines_frag.glsl */; };
+		7C97D24118AF14E400BB63A1 /* parsec_lines_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C97D23F18AF14E400BB63A1 /* parsec_lines_vert.glsl */; };
+		7C97D24318B00F0500BB63A1 /* graviton_formation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C97D24218B00F0500BB63A1 /* graviton_formation_frag.glsl */; };
 		7CA78BF61825988100505794 /* ObjectShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA78BF41825988100505794 /* ObjectShaders.cpp */; };
 		7CAD1B681883964500512843 /* Fluid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAD1B661883964500512843 /* Fluid.cpp */; };
 		7CAD1B6F18839A3400512843 /* fluidmodel_gpu_glsl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAD1B6B18839A3400512843 /* fluidmodel_gpu_glsl.cpp */; };
@@ -941,6 +945,11 @@
 		7C892496189C81A900AF4698 /* lines_render_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_render_vert.glsl; sourceTree = "<group>"; };
 		7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_simulation_frag.glsl; sourceTree = "<group>"; };
 		7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_simulation_vert.glsl; sourceTree = "<group>"; };
+		7C97D23B18AF10B300BB63A1 /* ParsecLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecLines.cpp; sourceTree = "<group>"; };
+		7C97D23C18AF10B300BB63A1 /* ParsecLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecLines.h; sourceTree = "<group>"; };
+		7C97D23E18AF14E400BB63A1 /* parsec_lines_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_lines_frag.glsl; sourceTree = "<group>"; };
+		7C97D23F18AF14E400BB63A1 /* parsec_lines_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = parsec_lines_vert.glsl; sourceTree = "<group>"; };
+		7C97D24218B00F0500BB63A1 /* graviton_formation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_formation_frag.glsl; sourceTree = "<group>"; };
 		7CA78BF41825988100505794 /* ObjectShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectShaders.cpp; sourceTree = "<group>"; };
 		7CA78BF51825988100505794 /* ObjectShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectShaders.h; sourceTree = "<group>"; };
 		7CAD1B661883964500512843 /* Fluid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fluid.cpp; sourceTree = "<group>"; };
@@ -2252,6 +2261,8 @@
 				7C83B39A1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl */,
 				7C83B39B1856BE5900EB22F8 /* parsec_stars_frag.glsl */,
 				7C83B39C1856BE5900EB22F8 /* parsec_stars_vert.glsl */,
+				7C97D23E18AF14E400BB63A1 /* parsec_lines_frag.glsl */,
+				7C97D23F18AF14E400BB63A1 /* parsec_lines_vert.glsl */,
 			);
 			path = parsec;
 			sourceTree = "<group>";
@@ -2360,6 +2371,8 @@
 				7CD666461853F678004BD521 /* ParsecStars.h */,
 				7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */,
 				7CD1A840185AC930002925A0 /* ParsecLabels.h */,
+				7C97D23B18AF10B300BB63A1 /* ParsecLines.cpp */,
+				7C97D23C18AF10B300BB63A1 /* ParsecLines.h */,
 			);
 			name = parsec;
 			path = ../src/parsec;
@@ -2397,6 +2410,7 @@
 		7CE8AFB1186FAD150087AC7A /* graviton */ = {
 			isa = PBXGroup;
 			children = (
+				7C97D24218B00F0500BB63A1 /* graviton_formation_frag.glsl */,
 				7CE8AFB2186FAD150087AC7A /* graviton_render_frag.glsl */,
 				7CE8AFB3186FAD150087AC7A /* graviton_render_vert.glsl */,
 				7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */,
@@ -2784,6 +2798,7 @@
 				7C79C8F117650F8F00E71F9D /* star.png in Resources */,
 				7CF6AD5918AB55A000FA795A /* parsec_simulation_frag.glsl in Resources */,
 				7C79C8F217650F8F00E71F9D /* starGlow.png in Resources */,
+				7C97D24118AF14E400BB63A1 /* parsec_lines_vert.glsl in Resources */,
 				7C79C8F317650F8F00E71F9D /* colortex1.jpg in Resources */,
 				7C06A8F21853D4ED00D1C8A3 /* inversion_frag.glsl in Resources */,
 				7C06A9021853D4ED00D1C8A3 /* simplicity_frag.glsl in Resources */,
@@ -2801,6 +2816,7 @@
 				7C89249C189C81A900AF4698 /* lines_simulation_vert.glsl in Resources */,
 				7C79C8F917650F8F00E71F9D /* corona.png in Resources */,
 				7C79C8FA17650F8F00E71F9D /* cubeNegX.jpg in Resources */,
+				7C97D24018AF14E400BB63A1 /* parsec_lines_frag.glsl in Resources */,
 				7C79C8FB17650F8F00E71F9D /* cubeNegY.jpg in Resources */,
 				7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */,
 				7CAD1B7F18839A9800512843 /* frag_linsolve.glsl in Resources */,
@@ -2886,6 +2902,7 @@
 				7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */,
 				7C79C95817650F8F00E71F9D /* terrain_shader_frag.glsl in Resources */,
 				7C06A8EF1853D4ED00D1C8A3 /* hypnorings_frag.glsl in Resources */,
+				7C97D24318B00F0500BB63A1 /* graviton_formation_frag.glsl in Resources */,
 				7C79C95917650F8F00E71F9D /* terrain_shader_vert.glsl in Resources */,
 				7C79C95A17650F8F00E71F9D /* terrain_tex_frag.glsl in Resources */,
 				7C06A8ED1853D4ED00D1C8A3 /* glassfield_frag.glsl in Resources */,
@@ -2983,6 +3000,7 @@
 				4EF9E730685A49A8A1E22E21 /* NetworkingUtils.cpp in Sources */,
 				352FDF51EA7B4CC7A07F2BDD /* UdpSocket.cpp in Sources */,
 				7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */,
+				7C97D23D18AF10B300BB63A1 /* ParsecLines.cpp in Sources */,
 				7C409E6A185C0CAD0028934D /* Constellations.cpp in Sources */,
 				7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */,
 				7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */,

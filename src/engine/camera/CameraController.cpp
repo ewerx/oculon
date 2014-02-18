@@ -149,6 +149,21 @@ const Camera& CameraController::getCamera()
         }
             break;
             
+        case CAM_CATALOG:
+        {
+            Scene* orbiterScene = mApp->getScene("parsec");
+            
+            if( orbiterScene && orbiterScene->isRunning() )
+            {
+                return orbiterScene->getCamera();
+            }
+            else
+            {
+                return mStarCam.getCamera();
+            }
+        }
+            break;
+            
         case CAM_SPIN:
             return mSpinCam;
             

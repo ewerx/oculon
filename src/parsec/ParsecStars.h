@@ -108,6 +108,9 @@ public:
     // params
 	float				mScale;
     
+    ci::gl::Texture     mTextureStarPositions;
+    std::vector< Star > mBrightStars;
+    
 private:
     PingPongFbo         mParticlesFbo;
     int                 mFboSize;

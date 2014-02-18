@@ -55,6 +55,10 @@ StarCam::StarCam()
 	mDistance = 0.015 * 33333;
 	mFov = 65.0;
     
+    mLatitudeLimit = LATITUDE_LIMIT;
+    mLatitudeThreshold = LATITUDE_THRESHOLD;
+    mDistanceMin = DISTANCE_MIN;
+    
     mTimeScale = 0.005f;
     mLookAt = Vec3f::zero();
 }
@@ -82,6 +86,15 @@ void StarCam::setupInterface( Interface* interface, const std::string& name)
                         .oscReceiver(name, "splinecamradius"));
     interface->addButton(CreateTriggerParam("reset", NULL)
                          .oscReceiver(name,"starcamreset"))->registerCallback( this, &StarCam::reset );
+    interface->addParam(CreateFloatParam( "lat-limit", &mLatitudeLimit )
+                        .maxValue(360.0f)
+                        .oscReceiver(name));
+    interface->addParam(CreateFloatParam( "lat-thresh", &mLatitudeThreshold )
+                        .maxValue(360.0f)
+                        .oscReceiver(name));
+    interface->addParam(CreateFloatParam( "min-distance", &mDistanceMin )
+                        .maxValue(0.01f)
+                        .oscReceiver(name));
 }
 
 void StarCam::update(double elapsed)
@@ -100,11 +113,11 @@ void StarCam::update(double elapsed)
 		double t_frac = (time) - math<double>::floor(time);
 		double n = sqrt2pi * t_frac;
 		double f = cos( n * n );
-		double distance = DISTANCE_MAX - (DISTANCE_MAX-DISTANCE_MIN) * f;//500.0 - 499.95 * f;
+		double distance = DISTANCE_MAX - (DISTANCE_MAX-mDistanceMin) * f;//500.0 - 499.95 * f;
 
 		// determine where to look
 		double longitude = toDegrees( mElapsedTime );//toDegrees(t * ( mTimeScale ? (*mTimeScale * 2) : 0.034f ));
-		double latitude = LATITUDE_LIMIT * sin(t * 0.029);
+		double latitude = mLatitudeLimit * sin(t * 0.029);
 
 		// determine interpolation factor
 		t = math<double>::clamp( (getElapsedSeconds() - mTimeMouse - mTimeOut) / 100.0, 0.0, 1.0);
@@ -131,19 +144,19 @@ void StarCam::update(double elapsed)
 
 			// update latitude speed and value
 			mDeltaY *= 0.975;
-			mLatitude = math<double>::clamp( mLatitude.value() + mDeltaY, -LATITUDE_LIMIT, LATITUDE_LIMIT );
+			mLatitude = math<double>::clamp( mLatitude.value() + mDeltaY, -mLatitudeLimit, mLatitudeLimit );
 
 			// update distance
 			//mDeltaD *= 0.975;
 			//mDistance = math<double>::clamp( mDistance.value() + mDeltaD, DISTANCE_MIN, DISTANCE_MAX );
 
 			// move latitude back to its threshold
-			if( mLatitude.value() < -LATITUDE_THRESHOLD ) {
-				mLatitude = 0.9f * mLatitude.value() + 0.1f * -LATITUDE_THRESHOLD;
+			if( mLatitude.value() < -mLatitudeThreshold ) {
+				mLatitude = 0.9f * mLatitude.value() + 0.1f * -mLatitudeThreshold;
 				mDeltaY = 0.0;
 			}
-			else if( mLatitude.value() > LATITUDE_THRESHOLD ) {
-				mLatitude = 0.9f * mLatitude.value() + 0.1f * LATITUDE_THRESHOLD;
+			else if( mLatitude.value() > mLatitudeThreshold ) {
+				mLatitude = 0.9f * mLatitude.value() + 0.1f * mLatitudeThreshold;
 				mDeltaY = 0.0;
 			}
 		}
@@ -196,13 +209,13 @@ void StarCam::mouseDrag( const Vec2i &mousePos, bool leftDown, bool middleDown, 
 		mLongitude = Utils::wrap( mLongitude.value() - mDeltaX, -180.0, 180.0 ); 
 		// adjust latitude (north-south)
 		mDeltaY = (mousePos.y - mInitialMousePos.y) * sensitivity;
-		mLatitude = math<double>::clamp( mLatitude.value() + mDeltaY, -LATITUDE_LIMIT, LATITUDE_LIMIT );
+		mLatitude = math<double>::clamp( mLatitude.value() + mDeltaY, -mLatitudeLimit, mLatitudeLimit );
 	}
 	else if(rightDown) {
 		mDeltaD = ( mousePos.x - mInitialMousePos.x ) + ( mousePos.y - mInitialMousePos.y );
 		// adjust distance
 		sensitivity = math<double>::max(0.005, math<double>::log10(mDistance) / math<double>::log10(100.0) * 0.075);
-		mDistance = math<double>::clamp( mDistance.value() + mDeltaD * sensitivity, DISTANCE_MIN, DISTANCE_MAX );
+		mDistance = math<double>::clamp( mDistance.value() + mDeltaD * sensitivity, mDistanceMin, DISTANCE_MAX );
 	}
 
 	mInitialMousePos = mousePos;

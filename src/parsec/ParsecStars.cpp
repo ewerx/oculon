@@ -269,6 +269,11 @@ void ParsecStars::load(DataSourceRef source, ParsecLabels& labels)
 			std::string name = boost::trim_copy( tokens[6] );
 			if( name.empty() ) name = boost::trim_copy( tokens[4] );
 			//if( name.empty() ) name = boost::trim_copy( tokens[5] );
+            
+            if ((!name.empty() || abs_mag < 4.0f) && mBrightStars.size() < (128*128)) {
+                mBrightStars.push_back(star);
+            }
+            
 			if( name.empty() || abs_mag > 6.0f ) continue;
             
             name = std::regex_replace(name,std::regex("\\s\\s+"), " ");
@@ -397,6 +402,32 @@ void ParsecStars::setupFBO()
     surfaces.push_back( velSurface );
     surfaces.push_back( infoSurface );
     mParticlesFbo = PingPongFbo( surfaces );
+    
+    gl::Texture::Format format;
+    format.setInternalFormat( GL_RGBA32F_ARB );
+	
+    // LINES HACK
+    Surface32f starsSurface = Surface32f(128,128,true);
+    iterator = starsSurface.getIter();
+    
+    int index = 0;
+    
+    while(iterator.line())
+	{
+		while(iterator.pixel())
+		{
+            Star& star = mBrightStars[index];
+            Vec3f pos = star.getPosition() / star.getDistance();
+            float magnitude = star.getMagnitude();
+            starsSurface.setPixel(iterator.getPos(), ColorA(pos.x,pos.y,pos.z,magnitude));
+            ++index;
+        }
+    }
+    
+	mTextureStarPositions = gl::Texture(starsSurface, format);
+	mTextureStarPositions.setWrap( GL_REPEAT, GL_REPEAT );
+	mTextureStarPositions.setMinFilter( GL_NEAREST );
+	mTextureStarPositions.setMagFilter( GL_NEAREST );
 }
 
 void ParsecStars::createMesh()
