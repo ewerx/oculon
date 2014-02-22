@@ -140,11 +140,6 @@ void GravitonRenderer::preRender()
     gl::disableDepthWrite();
 }
 
-void GravitonRenderer::drawParticles()
-{
-    
-}
-
 void GravitonRenderer::postRender()
 {
     

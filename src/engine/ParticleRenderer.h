@@ -27,7 +27,7 @@ protected:
     virtual void preRender() {};
     virtual void postRender() {};
     
-public:
+protected:
     ci::gl::VboMesh mVboMesh;
     ci::gl::GlslProg mShader;
     

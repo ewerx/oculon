@@ -1,5 +1,5 @@
 //
-//  GravitonRenderer.h
+//  LinesRenderer.h
 //  Oculon
 //
 //  Created by Ehsan Rezaie on 2/22/2014.
@@ -12,12 +12,11 @@
 #include "AudioInputHandler.h"
 #include "cinder/gl/Texture.h"
 
-
-class GravitonRenderer : public ParticleRenderer
+class LinesRenderer : public ParticleRenderer
 {
 public:
-    GravitonRenderer();
-    virtual ~GravitonRenderer();
+    LinesRenderer();
+    virtual ~LinesRenderer();
     
     // from ParticleRenderer
     virtual void setup(int fboSize);
@@ -29,10 +28,8 @@ protected:
     
 protected:
     // params
-    ci::gl::Texture     mParticleTexture1;
-    ci::gl::Texture     mParticleTexture2;
-    float				mPointSize;
-    bool				mAdditiveBlending;
-    bool                mUseImageForPoints;
+    float               mLineWidth;
+    bool                mAudioReactive;
+    ci::gl::Texture     mColorMapTex;
     ci::ColorAf         mColor;
 };

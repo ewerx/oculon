@@ -385,6 +385,7 @@
 		7CAD1B8118839A9800512843 /* frag_project2.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7818839A9800512843 /* frag_project2.glsl */; };
 		7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7918839A9800512843 /* frag_project3.glsl */; };
 		7CAD1B8318839A9800512843 /* frag_setbnd.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */; };
+		7CAE28BA18B8A2CD0069AF35 /* LinesRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */; };
 		7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */; };
 		7CC3C026183ED0330082C322 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C024183ED0330082C322 /* Dust.cpp */; };
 		7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */; };
@@ -985,6 +986,8 @@
 		7CAD1B7818839A9800512843 /* frag_project2.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_project2.glsl; sourceTree = "<group>"; };
 		7CAD1B7918839A9800512843 /* frag_project3.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_project3.glsl; sourceTree = "<group>"; };
 		7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_setbnd.glsl; sourceTree = "<group>"; };
+		7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinesRenderer.cpp; sourceTree = "<group>"; };
+		7CAE28B918B8A2CD0069AF35 /* LinesRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinesRenderer.h; sourceTree = "<group>"; };
 		7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EaseCurveSelector.cpp; sourceTree = "<group>"; };
 		7CC3AF1018A37C0500E6CA78 /* EaseCurveSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EaseCurveSelector.h; sourceTree = "<group>"; };
 		7CC3C024183ED0330082C322 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../src/dust/Dust.cpp; sourceTree = "<group>"; };
@@ -2319,6 +2322,8 @@
 			children = (
 				7C892491189C7C7A00AF4698 /* Lines.cpp */,
 				7C892492189C7C7A00AF4698 /* Lines.h */,
+				7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */,
+				7CAE28B918B8A2CD0069AF35 /* LinesRenderer.h */,
 			);
 			name = lines;
 			path = ../src/lines;
@@ -2985,6 +2990,7 @@
 				D698C40166CC43D3B0DAF533 /* b2CircleShape.cpp in Sources */,
 				B1233A49B5D147AB84356C9D /* b2EdgeShape.cpp in Sources */,
 				126D41216C734D5997032DB6 /* b2PolygonShape.cpp in Sources */,
+				7CAE28BA18B8A2CD0069AF35 /* LinesRenderer.cpp in Sources */,
 				E28FF5E58F644D1084C7F393 /* b2BlockAllocator.cpp in Sources */,
 				B4BD4009006343C6ACE6495B /* b2Draw.cpp in Sources */,
 				ECAAD9C519E241EDA77B152F /* b2Math.cpp in Sources */,
