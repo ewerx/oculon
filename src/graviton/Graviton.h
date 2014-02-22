@@ -20,6 +20,7 @@
 #include "AudioInputHandler.h"
 #include "CameraController.h"
 #include "EaseCurveSelector.h"
+#include "GravitonRenderer.h"
 
 
 /// Graviton
@@ -48,7 +49,6 @@ protected:
 
 private:
     void setupPingPongFbo();
-    void setupVBO();
     void initParticles();
     
     bool resetGravityNodes();
@@ -140,18 +140,8 @@ enm,
     
     // particle system
     PingPongFbo mParticlesFbo;
-    ci::gl::VboMesh mVboMesh;
     ci::gl::GlslProg mSimulationShader;
-    ci::gl::GlslProg mRenderShader;
     ci::gl::GlslProg mFormationShader;
-
-    // rendering
-    ci::gl::Texture     mParticleTexture1;
-    ci::gl::Texture     mParticleTexture2;
-    float				mPointSize;
-    bool				mAdditiveBlending;
-    bool                mUseImageForPoints;
-    ci::ColorAf         mColorScale;
     
     // audio
     AudioInputHandler   mAudioInputHandler;
@@ -159,5 +149,7 @@ enm,
     // camera
     CameraController    mCameraController;
     
+    // rendering
+    GravitonRenderer    mRenderer;
 };
 

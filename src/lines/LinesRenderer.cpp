@@ -39,6 +39,18 @@ void LinesRenderer::setup(int fboSize)
     setupVBO(fboSize, GL_LINES);
 }
 
+void LinesRenderer::setupInterface( Interface* interface, const std::string& name )
+{
+    interface->addParam(CreateFloatParam( "line_width", &mLineWidth )
+                         .minValue(0.01f)
+                         .maxValue(6.0f));
+    
+    interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
+                         .oscReceiver(name));
+    
+    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
+}
+
 void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
 {
     // pre-render - set state

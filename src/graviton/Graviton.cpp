@@ -44,11 +44,6 @@ void Graviton::setup()
     mInitialFormation = FORMATION_SPHERE;
     mFormationRadius = 80.0f;
     
-    mAdditiveBlending = true;
-    mUseImageForPoints = true;
-    mPointSize = 0.6f;
-    mColorScale = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
-    
     mDamping = 0.0f;
     mGravity = 0.05f;
     mEps = 0.0f;
@@ -60,18 +55,10 @@ void Graviton::setup()
     
     // shaders
     mSimulationShader = loadFragShader("graviton_simulation_frag.glsl" );
-    mRenderShader = loadVertAndFragShaders("graviton_render_vert.glsl",  "graviton_render_frag.glsl");
     mFormationShader = loadFragShader("graviton_formation_frag.glsl");
     
     setupPingPongFbo();
-    // THE VBO HAS TO BE DRAWN AFTER FBO!
-    setupVBO();
-    
-    // textures
-    mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
-    mParticleTexture2 = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
-    mParticleTexture1.setWrap( GL_REPEAT, GL_REPEAT );
-    mParticleTexture2.setWrap( GL_REPEAT, GL_REPEAT );
+    mRenderer.setup(kStep); // 512^2 = 262144 particles
     
     mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
     mAudioInputHandler.setup(false);
@@ -83,9 +70,13 @@ void Graviton::setupPingPongFbo()
 {
 	std::vector<Surface32f> surfaces;
     // Position 2D texture array
-    surfaces.push_back( generatePositionSurface() );
+    Surface32f posSurface = generatePositionSurface();
+    surfaces.push_back( posSurface );
     //Velocity 2D texture array
     surfaces.push_back( generateVelocitySurface() );
+    
+    // TODO: infos
+    surfaces.push_back( posSurface );
     
     mParticlesFbo = PingPongFbo( surfaces );
 }
@@ -165,30 +156,6 @@ Surface32f Graviton::generateVelocitySurface()
     return surface;
 }
 
-void Graviton::setupVBO()
-{
-    // A dummy VboMesh the same size as the texture to keep the vertices on the GPU
-    int totalVertices = kStep * kStep;
-    vector<Vec2f> texCoords;
-    vector<uint32_t> indices;
-    gl::VboMesh::Layout layout;
-    layout.setStaticIndices();
-    layout.setStaticPositions();
-    layout.setStaticTexCoords2d();
-    //layout.setStaticNormals();
-    //layout.setDynamicColorsRGBA();
-    mVboMesh = gl::VboMesh( totalVertices, totalVertices, layout, GL_POINTS);
-    for( int x = 0; x < kStep; ++x ) {
-        for( int y = 0; y < kStep; ++y ) {
-            indices.push_back( x * kStep + y );
-            texCoords.push_back( Vec2f( x/(float)kStep, y/(float)kStep ) );
-        }
-    }
-    mVboMesh.bufferIndices( indices );
-    mVboMesh.bufferTexCoords2d( 0, texCoords );
-    mVboMesh.unbindBuffers();
-}
-
 void Graviton::setupDebugInterface()
 {
     Scene::setupDebugInterface(); // add all interface params
@@ -259,13 +226,7 @@ nodeFormationNames.push_back(nam);
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
-    mInterface->addParam(CreateColorParam("color", &mColorScale, kMinColor, kMaxColor)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "pointsize", &mPointSize )
-                         .minValue(0.01f)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "texturedpoints", &mUseImageForPoints ));
+    mRenderer.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -639,92 +600,8 @@ const Camera& Graviton::getCamera()
 void Graviton::draw()
 {
     gl::pushMatrices();
-    
-    drawParticles();
-    
+    mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mApp->getAudioInputHandler(), mGain);
     gl::popMatrices();
-}
-
-void Graviton::preRender() 
-{
-    gl::setMatrices( getCamera() );
-    gl::setViewport( mApp->getViewportBounds() );
-
-    gl::enable(GL_POINT_SPRITE);
-    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
-    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-    // when false, point sprites just have one texture coordinate
-    // when true, iterates over the point sprite texture...
-    // TODO: understand what the difference is!
-    // when it is on, the color param from the displacement_vert shaders cannot be applied to the frag color in displacement_frag, it always looks like a gradient between green/yellow instead... have on idea why
-    // also don't really know what enabling this actually does so leaving it off
-    // until i understand...
-    //glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-	
-	if(mAdditiveBlending)
-    {
-        gl::enableAdditiveBlending();
-	}
-    else 
-    {
-		gl::enableAlphaBlending();
-	}
-    
-    gl::disableDepthWrite();
-}
-
-
-void Graviton::drawParticles() 
-{
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
-    preRender();
-    glEnable(GL_TEXTURE_2D);
-    if(mUseImageForPoints)
-    {
-        mParticleTexture1.bind(2);
-    }
-    else
-    {
-        mParticleTexture2.bind(2);
-    }
-    
-    if (mApp->getAudioInputHandler().hasTexture())
-    {
-        mApp->getAudioInputHandler().getFbo().bindTexture(3);
-    }
-    
-    mParticlesFbo.bindTexture(0);
-    mParticlesFbo.bindTexture(1);
-    mRenderShader.bind();
-    mRenderShader.uniform("displacementMap", 0 );
-    mRenderShader.uniform("velocityMap", 1);
-    mRenderShader.uniform("pointSpriteTex", 2);
-    mRenderShader.uniform("intensityMap", 3);
-    mRenderShader.uniform("screenWidth", (float)mApp->getViewportWidth());
-    mRenderShader.uniform("spriteWidth", mPointSize);
-    mRenderShader.uniform("MV", getCamera().getModelViewMatrix());
-    mRenderShader.uniform("P", getCamera().getProjectionMatrix());
-    mRenderShader.uniform("colorScale", mColorScale);
-    mRenderShader.uniform("gain", mGain);
-    
-    gl::draw( mVboMesh );
-    mRenderShader.unbind();
-    mParticlesFbo.unbindTexture();
-    
-    if(mUseImageForPoints)
-    {
-        mParticleTexture1.unbind();
-    }
-    else
-    {
-        mParticleTexture2.unbind();
-    }
-    if (mApp->getAudioInputHandler().hasTexture())
-    {
-        mApp->getAudioInputHandler().getFbo().unbindTexture();
-    }
-    glPopAttrib();
 }
 
 void Graviton::drawDebug()

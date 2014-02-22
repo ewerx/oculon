@@ -40,12 +40,9 @@ void Lines::setup()
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE|CameraController::CAM_GRAVITON, CameraController::CAM_MANUAL);
     
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
-    mRenderShader = loadVertAndFragShaders("lines_render_vert.glsl", "lines_render_frag.glsl");
-    
-    mColorMapTex = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
     
     setupFBO();
-    setupVBO();
+    mRenderer.setup(kBufSize);
     generateFormationTextures();
     
     mAudioInputHandler.setup(true);
@@ -55,14 +52,11 @@ void Lines::setup()
     
     // params
     mTimeStep = 0.1f;
-    mLineWidth = 1.25f;
-    mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
     mFormationStep = 1.0f;
     mFormationAnimSelector.mDuration = 0.75f;
     mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;
     
-    mAudioReactive = false;
     mUseDynamicTex = true;
     setupDynamicTexture();
     
@@ -260,33 +254,6 @@ void Lines::generateFormationTextures()
     }
 }
 
-void Lines::setupVBO()
-{
-    // A dummy VboMesh the same size as the texture to keep the vertices on the GPU
-    vector<Vec2f> texCoords;
-    vector<uint32_t> indices;
-    gl::VboMesh::Layout layout;
-    layout.setStaticIndices();
-    layout.setStaticPositions();
-    layout.setStaticTexCoords2d();
-    layout.setStaticNormals();
-    
-    mVboMesh = gl::VboMesh( kNumParticles, kNumParticles, layout, GL_LINES);
-    for( int y = 0; y < kBufSize; ++y ) {
-        for( int x = 0; x < kBufSize; ++x ) {
-            indices.push_back( y * kBufSize + x );
-            texCoords.push_back( Vec2f( x/(float)kBufSize, y/(float)kBufSize ) );
-        }
-    }
-    mVboMesh.bufferIndices( indices );
-    mVboMesh.bufferTexCoords2d( 0, texCoords );
-    mVboMesh.unbindBuffers();
-}
-
-//vector<Surface32f> Lines::generateInitialSurfaces()
-//{
-//}
-
 void Lines::reset()
 {
     mReset = true;
@@ -301,13 +268,6 @@ void Lines::setupInterface()
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
                          .minValue(0.001f)
                          .maxValue(3.0f));
-    
-    mInterface->addParam(CreateFloatParam( "line_width", &mLineWidth )
-                         .minValue(0.01f)
-                         .maxValue(6.0f));
-    
-    mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
-                         .oscReceiver(mName));
     
     mInterface->gui()->addColumn();
     vector<string> motionNames;
@@ -339,9 +299,9 @@ void Lines::setupInterface()
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
                          .oscReceiver(mName));
     
-    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
-    //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
-    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("display");
+    mRenderer.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -401,13 +361,13 @@ void Lines::update(double dt)
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );
     mSimulationShader.uniform( "information", 2);
-	mSimulationShader.uniform( "oVelocities", 3);
-	mSimulationShader.uniform( "oPositions", 4);
-  	mSimulationShader.uniform( "noiseTex", 5);
-    mSimulationShader.uniform( "dt", simdt );
-    mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "formationStep", mFormationStep );
-    mSimulationShader.uniform( "motion", mMotion );
+	//mSimulationShader.uniform( "oVelocities", 3);
+	//mSimulationShader.uniform( "oPositions", 4);
+  	//mSimulationShader.uniform( "noiseTex", 5);
+    mSimulationShader.uniform( "dt", (float)dt );
+    mSimulationShader.uniform( "reset", false );
+    mSimulationShader.uniform( "formationStep", 0.0f );
+    mSimulationShader.uniform( "motion", 0 );
     mSimulationShader.uniform( "containmentSize", 3.0f );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
@@ -443,59 +403,7 @@ const Camera& Lines::getCamera()
 void Lines::draw()
 {
     gl::pushMatrices();
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
-    
-    gl::setMatrices( getCamera() );
-    //gl::setMatricesWindow( getWindowSize() );
-    gl::setViewport( mApp->getViewportBounds() );
-    
-//    gl::enable(GL_POINT_SPRITE);
-//    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
-//    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-//    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    
-    //gl::enableAlphaBlending();
-    gl::enableAdditiveBlending();
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
-    
-    glEnable(GL_TEXTURE_2D);
-    
-    gl::lineWidth(mLineWidth);
-    
-    mParticlesFbo.bindTexture(0);//pos
-    mParticlesFbo.bindTexture(1);//vel
-    mParticlesFbo.bindTexture(2);//info
-    
-    mColorMapTex.bind(3);
-    
-    if (mAudioReactive && mAudioInputHandler.hasTexture())
-    {
-        mAudioInputHandler.getFbo().bindTexture(4);
-    }
-    
-    mRenderShader.bind();
-    mRenderShader.uniform("posMap", 0);
-    mRenderShader.uniform("velMap", 1);
-    mRenderShader.uniform("information", 2);
-    mRenderShader.uniform("colorMap", 3);
-    mRenderShader.uniform("intensityMap", 4);
-    mRenderShader.uniform("gain", mGain);
-    mRenderShader.uniform("screenWidth", (float)kBufSize);
-    mRenderShader.uniform("colorBase", mColor);
-    mRenderShader.uniform("audioReactive", mAudioReactive);
-    
-    const float scale = mApp->getViewportWidth() / (float)kBufSize;
-    glScalef(scale, scale, scale);
-    
-    gl::draw( mVboMesh );
-    
-    mRenderShader.unbind();
-//    mParticleDataTex.unbind();
-    mColorMapTex.unbind();
-    mParticlesFbo.unbindTexture();
-    
-    glPopAttrib();
+    mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
     gl::popMatrices();
 }
 

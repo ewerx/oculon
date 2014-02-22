@@ -43,6 +43,17 @@ void GravitonRenderer::setup(int fboSize)
     setupVBO(fboSize, GL_POINTS);
 }
 
+void GravitonRenderer::setupInterface( Interface* interface, const std::string& name )
+{
+    interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+                         .oscReceiver(name));
+    interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
+                         .minValue(0.01f)
+                         .maxValue(2.0f)
+                         .oscReceiver(name));
+    interface->addParam(CreateBoolParam( "texturedpoints", &mUseImageForPoints ));
+}
+
 void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
 {
     // pre-render - set state

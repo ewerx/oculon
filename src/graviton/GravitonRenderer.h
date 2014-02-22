@@ -21,6 +21,7 @@ public:
     
     // from ParticleRenderer
     virtual void setup(int fboSize);
+    virtual void setupInterface( Interface* interface, const std::string& name );
     virtual void draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain );
     
 protected:

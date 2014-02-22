@@ -19,6 +19,7 @@
 #include "AudioInputHandler.h"
 #include "CameraController.h"
 #include "EaseCurveSelector.h"
+#include "LinesRenderer.h"
 
 //
 // Lines
@@ -72,16 +73,11 @@ private:
     };
     
     PingPongFbo mParticlesFbo;
-    ci::gl::VboMesh mVboMesh;
     ci::gl::GlslProg mSimulationShader;
-    ci::gl::GlslProg mRenderShader;
     
 	ci::gl::Texture mInitialVelTex;
 	ci::gl::Texture mParticleDataTex;
     ci::gl::Texture mNoiseTex;
-    
-    ci::gl::Texture mColorMapTex;
-    ci::ColorAf mColor;
     
     // formations
 #define FORMATION_TUPLE \
@@ -125,7 +121,6 @@ enm,
     
     // params
     float mTimeStep;
-    float mLineWidth;
     
     bool mUseDynamicTex;
     bool mReset;
@@ -134,10 +129,9 @@ enm,
     
     // audio
     AudioInputHandler mAudioInputHandler;
-    
-    bool mAudioReactive;
     bool mAudioTime;
 
+    LinesRenderer mRenderer;
 };
 
 
