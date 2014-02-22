@@ -13,6 +13,7 @@
 #include "cinder/Filesystem.h"
 #include "cinder/Vector.h"
 #include "cinder/Color.h"
+#include "cinder/gl/GlslProg.h"
 #include <boost/date_time.hpp>
 
 class Utils
@@ -62,6 +63,10 @@ public:
         
 		return min + (frac * range);
 	};
+    
+    // shader convenience
+    static ci::gl::GlslProg loadFragShader( const std::string& filename );
+    static ci::gl::GlslProg loadVertAndFragShaders( const std::string& vertShader, const std::string& fragShader );
 };
 
 #endif

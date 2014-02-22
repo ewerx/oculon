@@ -16,6 +16,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+#pragma mark - path helpers
+
 /*static*/ ci::fs::path Utils::getUniquePath( const std::string &path, int padding, const std::string &sep ) 
 {
     // expand to resolve ~
@@ -46,6 +48,8 @@ using namespace std;
     
 	return output;
 }
+
+#pragma mark - conversions
  
 /*static*/ Vec2f Utils::toMercatorProjection( const float aLat, const float aLong, const float aMapWidth, const float aMapHeight ) 
 {
@@ -132,6 +136,36 @@ using namespace std;
 	if (!(i >> x)) throw std::exception();
     
 	return x;
+}
+
+#pragma mark - shader helpers
+
+gl::GlslProg Utils::loadFragShader( const std::string& filename )
+{
+    return loadVertAndFragShaders("passThru.vert", filename);
+}
+
+gl::GlslProg Utils::loadVertAndFragShaders(const std::string &vertShader, const std::string &fragShader)
+{
+    gl::GlslProg shader;
+    
+    try
+    {
+        shader = gl::GlslProg( loadResource( vertShader ), loadResource( fragShader ) );
+    }
+    catch( gl::GlslProgCompileExc &exc )
+    {
+		console() << "Shader (" << vertShader << " / " << fragShader << ") compile error: " << std::endl;
+		console() << exc.what();
+        assert(false);
+	}
+	catch( ... )
+    {
+		console() << "Unable to load shaders (" << vertShader << " / " << fragShader << ")"  << std::endl;
+        assert(false);
+	}
+    
+    return shader;
 }
 
 

@@ -51,5 +51,4 @@ void main(void)
     gl_FragData[0] = vec4(p1, invmass);
     //Render to velocities texture
     gl_FragData[1] = vec4(v1, 0.5+length(v0)); //alpha component used for coloring
-} 
-
+}

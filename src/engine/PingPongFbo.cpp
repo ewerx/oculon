@@ -10,11 +10,45 @@
 #include <utility>
 
 using namespace ci;
+using namespace std;
+
 
 PingPongFbo::PingPongFbo( const std::vector<Surface32f>& surfaces )
 : mCurrentFbo(0)
 {
-	if( surfaces.empty() ) return;
+	init(surfaces);
+	reset();
+}
+
+PingPongFbo::PingPongFbo( const int numTextures, const int size )
+: mCurrentFbo(0)
+{
+    // create and populate surfaces
+    vector<Surface32f> surfaces;
+    for (int i = 0; i < numTextures; ++i)
+    {
+        surfaces.push_back( Surface32f(size,size,true) );
+    }
+    
+    Surface32f::Iter iterator = surfaces.front().getIter();
+    while(iterator.line())
+	{
+		while(iterator.pixel())
+		{
+            for (Surface32f& s : surfaces)
+            {
+                s.setPixel(iterator.getPos(), ColorA::black());
+            }
+		}
+	}
+    
+    init(surfaces);
+    reset();
+}
+
+void PingPongFbo::init( const std::vector<Surface32f>& surfaces )
+{
+    if( surfaces.empty() ) return;
 	
 	int i = 0;
 	mTextureSize = surfaces[0].getSize();
@@ -36,8 +70,6 @@ PingPongFbo::PingPongFbo( const std::vector<Surface32f>& surfaces )
 	format.setColorInternalFormat( GL_RGBA32F_ARB );
 	mFbos[0] = gl::Fbo( mTextureSize.x, mTextureSize.y, format );
 	mFbos[1] = gl::Fbo( mTextureSize.x, mTextureSize.y, format );
-	
-	reset();
 }
 
 void PingPongFbo::addTexture(const Surface32f &surface)
@@ -127,7 +159,11 @@ void PingPongFbo::unbindUpdate()
 
 void PingPongFbo::bindTexture(int textureUnit)
 {
-    mFbos[mCurrentFbo].bindTexture(textureUnit, textureUnit);
+    if (textureUnit < mAttachments.size()) {
+        mFbos[mCurrentFbo].bindTexture(textureUnit, textureUnit);
+    } else {
+        assert(false && "invalid textureUnit");
+    }
 }
 
 void PingPongFbo::unbindTexture()

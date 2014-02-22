@@ -20,6 +20,10 @@ public:
     PingPongFbo() {};
     //! Create a ping-pong fbo with n texture attachments.
     PingPongFbo( const std::vector<ci::Surface32f>& surfaces );
+    //! Create a ping-pong fbo with n texture attachments.
+    PingPongFbo( const int numTextures, const int size );
+    // ! Init fbos with surfaces
+    void init( const std::vector<ci::Surface32f>& surfaces );
     //! Rerender initial textures into both fbos.
     void reset();
     //! Replace the content of the textures

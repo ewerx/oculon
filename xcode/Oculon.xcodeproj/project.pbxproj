@@ -50,6 +50,7 @@
 		6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE541461BB6E47318E673CFF /* b2BroadPhase.cpp */; };
 		754B4CB40F424443A99DB50E /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CD9DACED57C4F30B659A33B /* OscOutboundPacketStream.cpp */; };
 		75C76C78400B4451B6B8FA0D /* b2Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A501110D8A2431AB1044F72 /* b2Settings.cpp */; };
+		7C024ED218B4770500A019E5 /* graviton_simulation_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C024ED118B4770500A019E5 /* graviton_simulation_vert.glsl */; };
 		7C06A8AD1853AFAC00D1C8A3 /* SkyGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8AB1853AFAC00D1C8A3 /* SkyGrid.cpp */; };
 		7C06A8B01853B00800D1C8A3 /* Conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */; };
 		7C06A8E21853D4ED00D1C8A3 /* acidcontours_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8B31853D4ED00D1C8A3 /* acidcontours_frag.glsl */; };
@@ -98,6 +99,9 @@
 		7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
 		7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
+		7C159BA318B6F9C5005245CB /* ParticleBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA118B6F9C5005245CB /* ParticleBehavior.cpp */; };
+		7C159BA518B6FCD3005245CB /* static_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */; };
+		7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA618B7017E005245CB /* ParticleRenderer.cpp */; };
 		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
 		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
@@ -113,6 +117,8 @@
 		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
 		7C62765D1824A92E00724B87 /* PingPongFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C62765B1824A92E00724B87 /* PingPongFbo.cpp */; };
 		7C6276651824B29500724B87 /* Graviton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9D617650FD700E71F9D /* Graviton.cpp */; };
+		7C6B241418B87815007BA146 /* GravitonRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241218B87815007BA146 /* GravitonRenderer.cpp */; };
+		7C6B241718B87859007BA146 /* GravitonNodesBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */; };
 		7C79C02B1764384C00E71F9D /* SimpleGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */; };
 		7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE421764384B00E71F9D /* SyphonNameboundClient.m */; };
 		7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE471764384B00E71F9D /* syphonClient.mm */; };
@@ -547,6 +553,7 @@
 		760E928A7AC841B4A0BA71CF /* b2ChainShape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2ChainShape.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Collision/Shapes/b2ChainShape.cpp; sourceTree = "<group>"; };
 		762B46BCC05E485AB77602C4 /* b2DynamicTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2DynamicTree.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Collision/b2DynamicTree.cpp; sourceTree = "<group>"; };
 		7A501110D8A2431AB1044F72 /* b2Settings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = b2Settings.cpp; path = ../../sdks/cinder/blocks/Box2D/src/Box2D/Common/b2Settings.cpp; sourceTree = "<group>"; };
+		7C024ED118B4770500A019E5 /* graviton_simulation_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = graviton_simulation_vert.glsl; path = ../graviton/graviton_simulation_vert.glsl; sourceTree = "<group>"; };
 		7C06A8AB1853AFAC00D1C8A3 /* SkyGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkyGrid.cpp; sourceTree = "<group>"; };
 		7C06A8AC1853AFAC00D1C8A3 /* SkyGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyGrid.h; sourceTree = "<group>"; };
 		7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Conversions.cpp; sourceTree = "<group>"; };
@@ -597,6 +604,11 @@
 		7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
 		7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.vert; sourceTree = "<group>"; };
+		7C159BA118B6F9C5005245CB /* ParticleBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleBehavior.cpp; path = particlesystem/ParticleBehavior.cpp; sourceTree = "<group>"; };
+		7C159BA218B6F9C5005245CB /* ParticleBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleBehavior.h; path = particlesystem/ParticleBehavior.h; sourceTree = "<group>"; };
+		7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = static_sim_frag.glsl; sourceTree = "<group>"; };
+		7C159BA618B7017E005245CB /* ParticleRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleRenderer.cpp; sourceTree = "<group>"; };
+		7C159BA718B7017E005245CB /* ParticleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleRenderer.h; sourceTree = "<group>"; };
 		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
 		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
@@ -616,6 +628,10 @@
 		7C6276591824780000724B87 /* FractalShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractalShaders.h; sourceTree = "<group>"; };
 		7C62765B1824A92E00724B87 /* PingPongFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingPongFbo.cpp; sourceTree = "<group>"; };
 		7C62765C1824A92E00724B87 /* PingPongFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingPongFbo.h; sourceTree = "<group>"; };
+		7C6B241218B87815007BA146 /* GravitonRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonRenderer.cpp; sourceTree = "<group>"; };
+		7C6B241318B87815007BA146 /* GravitonRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GravitonRenderer.h; sourceTree = "<group>"; };
+		7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonNodesBehavior.cpp; sourceTree = "<group>"; };
+		7C6B241618B87859007BA146 /* GravitonNodesBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GravitonNodesBehavior.h; sourceTree = "<group>"; };
 		7C79BDE71764384A00E71F9D /* SimpleGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleGUI.h; sourceTree = "<group>"; };
 		7C79BE2F1764384B00E71F9D /* SimpleGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGUI.cpp; sourceTree = "<group>"; };
 		7C79BE401764384B00E71F9D /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
@@ -1506,6 +1522,19 @@
 			path = ../src/shaders;
 			sourceTree = "<group>";
 		};
+		7C6B241818B88092007BA146 /* particles */ = {
+			isa = PBXGroup;
+			children = (
+				7C159BA118B6F9C5005245CB /* ParticleBehavior.cpp */,
+				7C159BA218B6F9C5005245CB /* ParticleBehavior.h */,
+				7CF6AD5318A9E68600FA795A /* ParticleController.cpp */,
+				7CF6AD5418A9E68600FA795A /* ParticleController.h */,
+				7C159BA618B7017E005245CB /* ParticleRenderer.cpp */,
+				7C159BA718B7017E005245CB /* ParticleRenderer.h */,
+			);
+			name = particles;
+			sourceTree = "<group>";
+		};
 		7C79BDE31764384A00E71F9D /* SimpleGUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1792,6 +1821,7 @@
 				7C79C8C317650F8F00E71F9D /* passThru.vert */,
 				7C79C8C617650F8F00E71F9D /* passThruNormals.vert */,
 				7C79C8C417650F8F00E71F9D /* passthru.vsh */,
+				7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */,
 				7C83B3981856BE5900EB22F8 /* parsec */,
 				7C06A8DD1853D4ED00D1C8A3 /* catalog */,
 				7C79C89C17650F8F00E71F9D /* corona */,
@@ -1981,8 +2011,7 @@
 				7C79C9A817650FD700E71F9D /* MindWave.h */,
 				7C79C9AC17650FD700E71F9D /* OscServer.cpp */,
 				7C79C9AD17650FD700E71F9D /* OscServer.h */,
-				7CF6AD5318A9E68600FA795A /* ParticleController.cpp */,
-				7CF6AD5418A9E68600FA795A /* ParticleController.h */,
+				7C6B241818B88092007BA146 /* particles */,
 				7C62765B1824A92E00724B87 /* PingPongFbo.cpp */,
 				7C62765C1824A92E00724B87 /* PingPongFbo.h */,
 				7CF6AD4918A9E3E100FA795A /* render */,
@@ -2071,6 +2100,10 @@
 			children = (
 				7C79C9D617650FD700E71F9D /* Graviton.cpp */,
 				7C79C9D717650FD700E71F9D /* Graviton.h */,
+				7C6B241218B87815007BA146 /* GravitonRenderer.cpp */,
+				7C6B241318B87815007BA146 /* GravitonRenderer.h */,
+				7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */,
+				7C6B241618B87859007BA146 /* GravitonNodesBehavior.h */,
 			);
 			name = graviton;
 			path = ../src/graviton;
@@ -2298,6 +2331,7 @@
 				7C892496189C81A900AF4698 /* lines_render_vert.glsl */,
 				7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */,
 				7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */,
+				7C024ED118B4770500A019E5 /* graviton_simulation_vert.glsl */,
 			);
 			path = lines;
 			sourceTree = "<group>";
@@ -2824,6 +2858,7 @@
 				7C79C8FC17650F8F00E71F9D /* cubeNegZ.jpg in Resources */,
 				7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */,
 				7C06A8EE1853D4ED00D1C8A3 /* glasswalls_frag.glsl in Resources */,
+				7C159BA518B6FCD3005245CB /* static_sim_frag.glsl in Resources */,
 				7C06A8F71853D4ED00D1C8A3 /* mainsequence_frag.glsl in Resources */,
 				7C79C8FD17650F8F00E71F9D /* cubePosX.jpg in Resources */,
 				7C79C8FE17650F8F00E71F9D /* cubePosY.jpg in Resources */,
@@ -2853,6 +2888,7 @@
 				7C79C90D17650F8F00E71F9D /* jupitermap.jpg in Resources */,
 				7C79C90E17650F8F00E71F9D /* marsmap1k.jpg in Resources */,
 				7C06A8E91853D4ED00D1C8A3 /* cymatics_frag.glsl in Resources */,
+				7C024ED218B4770500A019E5 /* graviton_simulation_vert.glsl in Resources */,
 				7C06A8FF1853D4ED00D1C8A3 /* retina_frag.glsl in Resources */,
 				7C79C90F17650F8F00E71F9D /* mercurymap.jpg in Resources */,
 				7C83B39D1856BE5900EB22F8 /* parsec_cylindrical_frag.glsl in Resources */,
@@ -3055,6 +3091,7 @@
 				7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */,
 				7C79C94817650F8F00E71F9D /* passThru.vert in Sources */,
 				7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */,
+				7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */,
 				7C79C94917650F8F00E71F9D /* passthru.vsh in Sources */,
 				7C79C94B17650F8F00E71F9D /* passThruNormals.vert in Sources */,
 				7C79C95417650F8F00E71F9D /* shader.fsh in Sources */,
@@ -3097,6 +3134,7 @@
 				7C79CA5617650FD800E71F9D /* Utils.cpp in Sources */,
 				7C79CA5717650FD800E71F9D /* Controller.cpp in Sources */,
 				7C79CA5817650FD800E71F9D /* Flock.cpp in Sources */,
+				7C6B241718B87859007BA146 /* GravitonNodesBehavior.cpp in Sources */,
 				7C79CA5917650FD800E71F9D /* Glow.cpp in Sources */,
 				7C79CA5A17650FD800E71F9D /* Lantern.cpp in Sources */,
 				7C06A90C1853D4ED00D1C8A3 /* brightStars.frag in Sources */,
@@ -3129,6 +3167,8 @@
 				7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */,
 				7CC3C026183ED0330082C322 /* Dust.cpp in Sources */,
 				7C79CA7817650FD800E71F9D /* Trails.cpp in Sources */,
+				7C159BA318B6F9C5005245CB /* ParticleBehavior.cpp in Sources */,
+				7C6B241418B87815007BA146 /* GravitonRenderer.cpp in Sources */,
 				7C79CA7917650FD800E71F9D /* Corona.cpp in Sources */,
 				7C79CA7A17650FD800E71F9D /* CoronaController.cpp in Sources */,
 				7C79CA7B17650FD800E71F9D /* CoronaGlow.cpp in Sources */,
