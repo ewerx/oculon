@@ -99,6 +99,8 @@
 		7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
 		7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
+		7C0E673318BABE9C00C387FC /* CameraStereoHMD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0E653618BABE9C00C387FC /* CameraStereoHMD.cpp */; };
+		7C0E673418BABE9C00C387FC /* OculusVR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0E653818BABE9C00C387FC /* OculusVR.cpp */; };
 		7C159BA318B6F9C5005245CB /* ParticleBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA118B6F9C5005245CB /* ParticleBehavior.cpp */; };
 		7C159BA518B6FCD3005245CB /* static_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */; };
 		7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA618B7017E005245CB /* ParticleRenderer.cpp */; };
@@ -605,6 +607,12 @@
 		7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
 		7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.vert; sourceTree = "<group>"; };
+		7C0E62D418BABE9800C387FC /* OVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OVR.h; sourceTree = "<group>"; };
+		7C0E62D518BABE9800C387FC /* OVRVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OVRVersion.h; sourceTree = "<group>"; };
+		7C0E653618BABE9C00C387FC /* CameraStereoHMD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraStereoHMD.cpp; sourceTree = "<group>"; };
+		7C0E653718BABE9C00C387FC /* CameraStereoHMD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraStereoHMD.h; sourceTree = "<group>"; };
+		7C0E653818BABE9C00C387FC /* OculusVR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OculusVR.cpp; sourceTree = "<group>"; };
+		7C0E653918BABE9C00C387FC /* OculusVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OculusVR.h; sourceTree = "<group>"; };
 		7C159BA118B6F9C5005245CB /* ParticleBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleBehavior.cpp; path = particlesystem/ParticleBehavior.cpp; sourceTree = "<group>"; };
 		7C159BA218B6F9C5005245CB /* ParticleBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleBehavior.h; path = particlesystem/ParticleBehavior.h; sourceTree = "<group>"; };
 		7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = static_sim_frag.glsl; sourceTree = "<group>"; };
@@ -1187,6 +1195,7 @@
 				7C79C1561764396E00E71F9D /* KissFft */,
 				7C79C7A617650C5D00E71F9D /* MeshHelper */,
 				7C79C7DD17650D5F00E71F9D /* MIDI */,
+				7C0E62CF18BABE9800C387FC /* OculusRift */,
 				0E1715E9BB644818BD13AACA /* OSC */,
 				7C79BDE31764384A00E71F9D /* SimpleGUI */,
 				7C79BE301764384B00E71F9D /* Syphon */,
@@ -1497,6 +1506,44 @@
 				7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */,
 			);
 			path = catalog;
+			sourceTree = "<group>";
+		};
+		7C0E62CF18BABE9800C387FC /* OculusRift */ = {
+			isa = PBXGroup;
+			children = (
+				7C0E62D218BABE9800C387FC /* LibOVR */,
+				7C0E653518BABE9C00C387FC /* src */,
+			);
+			name = OculusRift;
+			path = ../../sdks/cinder_master/blocks/OculusRift;
+			sourceTree = "<group>";
+		};
+		7C0E62D218BABE9800C387FC /* LibOVR */ = {
+			isa = PBXGroup;
+			children = (
+				7C0E62D318BABE9800C387FC /* Include */,
+			);
+			path = LibOVR;
+			sourceTree = "<group>";
+		};
+		7C0E62D318BABE9800C387FC /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				7C0E62D418BABE9800C387FC /* OVR.h */,
+				7C0E62D518BABE9800C387FC /* OVRVersion.h */,
+			);
+			path = Include;
+			sourceTree = "<group>";
+		};
+		7C0E653518BABE9C00C387FC /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7C0E653618BABE9C00C387FC /* CameraStereoHMD.cpp */,
+				7C0E653718BABE9C00C387FC /* CameraStereoHMD.h */,
+				7C0E653818BABE9C00C387FC /* OculusVR.cpp */,
+				7C0E653918BABE9C00C387FC /* OculusVR.h */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		7C5B69741819745800AB2C8D /* shaders */ = {
@@ -2986,6 +3033,7 @@
 				CDAA9EEFFFFD4DB39BB0BA93 /* b2DynamicTree.cpp in Sources */,
 				3F195DD00DEE43BE87A5B516 /* b2TimeOfImpact.cpp in Sources */,
 				2AE65599EB844A56A8FD913D /* b2ChainShape.cpp in Sources */,
+				7C0E673418BABE9C00C387FC /* OculusVR.cpp in Sources */,
 				7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */,
 				D698C40166CC43D3B0DAF533 /* b2CircleShape.cpp in Sources */,
 				B1233A49B5D147AB84356C9D /* b2EdgeShape.cpp in Sources */,
@@ -3105,6 +3153,7 @@
 				7C79CA2E17650FD800E71F9D /* Barcode.cpp in Sources */,
 				7C79CA2F17650FD800E71F9D /* Circles.cpp in Sources */,
 				7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */,
+				7C0E673318BABE9C00C387FC /* CameraStereoHMD.cpp in Sources */,
 				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
 				7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */,
 				7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */,
@@ -3209,23 +3258,36 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					"\"$(CINDER_PATH)/boost\"",
+					"\"$(CINDER_PATH)/blocks/LibOVR/Src\"/**",
+					"\"$(CINDER_PATH)/blocks/LibOVR/Include\"",
+					"\"$(CINDER_PATH)/blocks/Box2D/src\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/ios\"",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/ios-sim\"",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/macosx\"",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/msw\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios-sim\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/macosx\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/msw\"",
-					"\"$(SRCROOT)/../blocks/Kinect/lib/macosx\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios\\\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios-sim\\\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/macosx\\\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/msw\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios-sim\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/macosx\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/msw\\\"",
+					"\\\"$(SRCROOT)/../blocks/Kinect/lib/macosx\\\"",
+					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Debug,
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/i386",
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/x86_64",
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/i386",
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/x86_64",
+					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Release,
 				);
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
-					../../sdks/cinder/blocks/FMOD/lib/macosx/libfmodex.dylib,
+					"\"$(CINDER_PATH)/blocks/OculusRift/LibOVR/Lib/MacOS/Debug/libovr.a\"",
+					"\"$(CINDER_PATH)/blocks/FMOD/lib/macosx/libfmodex.dylib\"",
 					"-lcurl",
 				);
 				PRODUCT_NAME = Oculon;
@@ -3251,23 +3313,36 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Oculon_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					"\"$(CINDER_PATH)/boost\"",
+					"\"$(CINDER_PATH)/blocks/LibOVR/Src\"/**",
+					"\"$(CINDER_PATH)/blocks/LibOVR/Include\"",
+					"\"$(CINDER_PATH)/blocks/Box2D/src\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/ios\"",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/ios-sim\"",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/macosx\"",
-					"\"$(SRCROOT)/../blocks/KissFft/lib/msw\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios-sim\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/macosx\"",
-					"\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/msw\"",
-					"\"$(SRCROOT)/../blocks/Kinect/lib/macosx\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios\\\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios-sim\\\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/macosx\\\"",
+					"\\\"$(SRCROOT)/../blocks/KissFft/lib/msw\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios-sim\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/macosx\\\"",
+					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/msw\\\"",
+					"\\\"$(SRCROOT)/../blocks/Kinect/lib/macosx\\\"",
+					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Debug,
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/i386",
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/x86_64",
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/i386",
+					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/x86_64",
+					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Release,
 				);
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder.a\"",
-					../../sdks/cinder/blocks/FMOD/lib/macosx/libfmodex.dylib,
+					"\"$(CINDER_PATH)/blocks/OculusRift/LibOVR/Lib/MacOS/Release/libovr.a\"",
+					"\"$(CINDER_PATH)/blocks/FMOD/lib/macosx/libfmodex.dylib\"",
 					"-lcurl",
 				);
 				PRODUCT_NAME = Oculon;
