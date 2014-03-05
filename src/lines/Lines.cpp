@@ -403,7 +403,21 @@ const Camera& Lines::getCamera()
 void Lines::draw()
 {
     gl::pushMatrices();
-    mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
+    if (mApp->outputToOculus())
+    {
+        // render left eye
+        Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
+        gl::setViewport(leftViewport);
+        mRenderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+        
+        Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
+        gl::setViewport(rightViewport);
+        mRenderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+    }
+    else
+    {
+        mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
+    }
     gl::popMatrices();
 }
 

@@ -138,7 +138,14 @@ void Parsec::loadData()
 
 const ci::Camera& Parsec::getCamera()
 {
-    return mCameraController.getCamera();
+    if (mApp->outputToOculus())
+    {
+        return mApp->getOculusCam().getCamera();
+    }
+    else
+    {
+        return mCameraController.getCamera();
+    }
 }
 
 #pragma mark - Update
@@ -181,16 +188,46 @@ void Parsec::draw()
     //TODO: stereoscopic rendering
     
     gl::pushMatrices();
-    gl::setMatrices( getCamera() );
-    render();
+    if (mApp->outputToOculus())
+    {
+        // render left eye
+        Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
+        gl::setViewport(leftViewport);
+        mApp->getOculusCam().enableStereoLeft();
+        gl::setMatrices( mApp->getOculusCam().getCamera() );
+        render();
+        
+        if (mLabels.mAlpha > 0.0f)
+        {
+            mLabels.draw(leftViewport.getWidth(), leftViewport.getHeight());
+        }
+        
+        // render right eye
+        Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
+        gl::setViewport(rightViewport);
+        mApp->getOculusCam().enableStereoLeft();
+        gl::setMatrices( mApp->getOculusCam().getCamera() );
+        render();
+        
+        if (mLabels.mAlpha > 0.0f)
+        {
+            mLabels.draw(rightViewport.getWidth(), rightViewport.getHeight());
+        }
+    }
+    else
+    {
+        gl::setMatrices( getCamera() );
+        render();
+        
+        if (mLabels.mAlpha > 0.0f)
+        {
+            gl::pushMatrices();
+            mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight());
+            gl::popMatrices();
+        }
+    }
     gl::popMatrices();
     
-    if (mLabels.mAlpha > 0.0f)
-    {
-        gl::pushMatrices();
-        mLabels.draw(mApp->getViewportWidth(), mApp->getViewportHeight());
-        gl::popMatrices();
-    }
 }
 
 void Parsec::render()
