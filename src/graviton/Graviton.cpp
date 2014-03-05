@@ -524,7 +524,10 @@ void Graviton::update(double dt)
     
     mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
     
-    if (mAudioGravity) {
+    mCameraController.update(dt);
+    
+    if (mAudioGravity)
+    {
         mGravity = MIN(mAudioInputHandler.getAverageVolumeHighFreq(), 1.0f);
     }
 
@@ -559,8 +562,6 @@ void Graviton::update(double dt)
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
-    
-    mCameraController.update(dt);
 }
 
 #pragma mark - Input
@@ -592,7 +593,14 @@ void Graviton::update(double dt)
 
 const Camera& Graviton::getCamera()
 {
-    return mCameraController.getCamera();
+    if (mApp->outputToOculus())
+    {
+        return mApp->getOculusCam().getCamera();
+    }
+    else
+    {
+        return mCameraController.getCamera();
+    }
 }
 
 #pragma mark - Render
@@ -600,7 +608,23 @@ const Camera& Graviton::getCamera()
 void Graviton::draw()
 {
     gl::pushMatrices();
-    mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mApp->getAudioInputHandler(), mGain);
+    if (mApp->outputToOculus())
+    {
+        // render left eye
+        Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
+        gl::setViewport(leftViewport);
+        mApp->getOculusCam().enableStereoLeft();
+        mRenderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+        
+        Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
+        gl::setViewport(rightViewport);
+        mApp->getOculusCam().enableStereoRight();
+        mRenderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+    }
+    else
+    {
+        mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mApp->getAudioInputHandler(), mGain);
+    }
     gl::popMatrices();
 }
 

@@ -57,7 +57,7 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
 void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
 {
     // pre-render - set state
-    //gl::pushMatrices();
+    gl::pushMatrices();
     gl::setMatrices( cam );
     
     preRender();
@@ -65,7 +65,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     // bind textures
     particlesFbo.bindTexture(0);//pos
     particlesFbo.bindTexture(1);//vel
-    //particlesFbo.bindTexture(2);//info
+    particlesFbo.bindTexture(2);//info
     
     if(mUseImageForPoints)
     {
@@ -87,7 +87,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     mShader.uniform("velocityMap", 1);
     mShader.uniform("pointSpriteTex", 3);
     mShader.uniform("intensityMap", 4);
-    mShader.uniform("screenWidth", (float)screenSize.x);
+    mShader.uniform("screenWidth", (float)screenSize.x*2.0f);
     mShader.uniform("spriteWidth", mPointSize);
     mShader.uniform("MV", cam.getModelViewMatrix());
     mShader.uniform("P", cam.getProjectionMatrix());
@@ -116,7 +116,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     
     // post-render - restore state
     glPopAttrib();
-    //gl::popMatrices();
+    gl::popMatrices();
 }
 
 void GravitonRenderer::preRender()
@@ -148,7 +148,10 @@ void GravitonRenderer::preRender()
 		gl::enableAlphaBlending();
 	}
     
-    gl::disableDepthWrite();
+    //gl::disableDepthWrite();
+    
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
 }
 
 void GravitonRenderer::postRender()

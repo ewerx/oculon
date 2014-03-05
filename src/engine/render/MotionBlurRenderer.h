@@ -14,7 +14,6 @@
 #include "cinder/Cinder.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
-#include "Scene.h"
 
 
 class MotionBlurRenderer
