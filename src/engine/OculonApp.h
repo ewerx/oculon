@@ -20,6 +20,7 @@
 #include "MindWave.h"
 #include "OscServer.h"
 #include "SimpleGUI.h"
+#include "OculusCam.h"
 
 #include "cinder/Camera.h"
 #include "cinder/MayaCamUI.h"
@@ -64,6 +65,7 @@ OUTPUTMODE_ENTRY( "Direct", OUTPUT_DIRECT ) \
 OUTPUTMODE_ENTRY( "FBO", OUTPUT_FBO ) \
 OUTPUTMODE_ENTRY( "Multi-FBO", OUTPUT_MULTIFBO ) \
 OUTPUTMODE_ENTRY( "Dome", OUTPUT_DOME ) \
+OUTPUTMODE_ENTRY( "Oculus", OUTPUT_OCULUS ) \
 //end tuple
     enum eOutputMode
     {
@@ -113,6 +115,9 @@ public: // new
     void setCamera( const ci::Vec3f& eye, const ci::Vec3f& look, const ci::Vec3f& up );
     const ci::Camera& getMayaCam() const                    { return mMayaCam.getCamera(); }
     //const Camera& getGlobalCam()                        { return mCameraController.getCamera(); }
+    
+    bool outputToOculus() const { return mEnableOculus; }
+    OculusCam& getOculusCam() { return mOculusCam; }
     
     inline double getElapsedSecondsThisFrame() const    { return mElapsedSecondsThisFrame; }
     
@@ -190,6 +195,10 @@ private: // members
     bool                    mDebugRender;
     //CameraController        mCameraController;
     
+    // Oculus Rift
+    bool                        mEnableOculus;
+    OculusCam                   mOculusCam;
+    ovr::DistortionHelperRef    mDistortionHelper;
     
     eOutputMode             mOutputMode;
     ci::gl::Fbo             mFbo[MAX_LAYERS];

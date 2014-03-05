@@ -103,6 +103,19 @@ void OculonApp::prepareSettings( Settings *settings )
     mEnableOscServer    = mConfig.getBool("osc_enabled");
     mEnableKinect       = mConfig.getBool("kinect_enabled");
     mEnableMindWave     = mConfig.getBool("mindwave_enabled");
+    mEnableOculus       = mConfig.getBool("oculusrift");
+    
+    // oculus
+    if( mEnableOculus )
+    {
+        // if there are multiple displays, assume last one is rift
+        if( Display::getDisplays().size() > 1 )
+        {
+            settings->setDisplay( Display::getDisplays().back() );
+        }
+        
+        settings->setFullScreen();
+    }
 }
 
 void OculonApp::setup()
@@ -197,6 +210,23 @@ void OculonApp::setup()
         {
             mScreenSyphon[0].setName("DEBUG");
         }
+    }
+    
+    if( mEnableOculus )
+    {
+        // Setup Extra Window
+        if( Display::getDisplays().size() > 1 )
+        {
+            WindowRef secondWindow = createWindow();
+            secondWindow->setSize( 1280, 800 );
+        }
+        else
+        {
+            setWindowSize( 1280, 800 );
+        }
+        
+        mOculusCam.setup();
+        mDistortionHelper = ovr::DistortionHelper::create();
     }
     
     mLastElapsedSeconds = getElapsedSeconds();
@@ -857,6 +887,11 @@ void OculonApp::update()
 //        mKinectController.update(); // TODO: update kinect setup
     }
     
+    if( mEnableOculus )
+    {
+        mOculusCam.update();
+    }
+    
     // update scenes
     for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
@@ -998,7 +1033,19 @@ void OculonApp::drawScenes(int layerIndex)
         float y1 = getWindowHeight() - height;
         float y2 = y1 + height;
         
-        if( mDrawOnlyLastScene )
+        if( mEnableOculus )
+        {
+            if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
+            {
+                Scene* scene = mScenes[mLastActiveScene];
+                if( scene && scene->isVisible() )
+                {
+                    mDistortionHelper->render( scene->getFboTexture(), getWindowBounds() );
+//                    gl::draw( scene->getFboTexture(), Rectf( 0, y1, width, y2 ) );
+                }
+            }
+        }
+        else if( mDrawOnlyLastScene )
         {
             if( mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
             {
