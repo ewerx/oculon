@@ -1155,7 +1155,10 @@ void OculonApp::draw()
         ++mFrameCaptureCount;
         if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
         {
-            mMovieWriter.addFrame( Surface(mScenes[mLastActiveScene]->getFbo().getTexture()) );
+            gl::Texture& tex = mScenes[mLastActiveScene]->getFbo().getTexture();
+            tex.setFlipped();
+            Surface surface = Surface(tex);
+            mMovieWriter.addFrame( surface );
             // not sure why but copyWindowSurface is faster...
             //mMovieWriter.addFrame( copyWindowSurface() );
         }
