@@ -3266,8 +3266,8 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(CINDER_PATH)/boost\"",
-					"\"$(CINDER_PATH)/blocks/LibOVR/Src\"/**",
-					"\"$(CINDER_PATH)/blocks/LibOVR/Include\"",
+					"\"$(SRCROOT)/../blocks/OcuusRift/LibOVR/Src\"/**",
+					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Include\"",
 					"\"$(CINDER_PATH)/blocks/Box2D/src\"",
 				);
 				INFOPLIST_FILE = Info.plist;
@@ -3292,7 +3292,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
-					"\"$(CINDER_PATH)/blocks/OculusRift/LibOVR/Lib/MacOS/Debug/libovr.a\"",
+					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Lib/MacOS/Debug/libovr.a\"",
 					"\"$(CINDER_PATH)/blocks/FMOD/lib/macosx/libfmodex.dylib\"",
 					"-lcurl",
 				);
@@ -3321,8 +3321,8 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(CINDER_PATH)/boost\"",
-					"\"$(CINDER_PATH)/blocks/LibOVR/Src\"/**",
-					"\"$(CINDER_PATH)/blocks/LibOVR/Include\"",
+					"\"$(SRCROOT)/../blocks/OcuusRift/LibOVR/Src\"/**",
+					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Include\"",
 					"\"$(CINDER_PATH)/blocks/Box2D/src\"",
 				);
 				INFOPLIST_FILE = Info.plist;
@@ -3347,7 +3347,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder.a\"",
-					"\"$(CINDER_PATH)/blocks/OculusRift/LibOVR/Lib/MacOS/Release/libovr.a\"",
+					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Lib/MacOS/Release/libovr.a\"",
 					"\"$(CINDER_PATH)/blocks/FMOD/lib/macosx/libfmodex.dylib\"",
 					"-lcurl",
 				);

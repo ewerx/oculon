@@ -26,3 +26,6 @@
 [submodule "blocks/CinderFx"]
 	path = blocks/CinderFx
 	url = https://github.com/chaoticbob/CinderFx.git
+[submodule "blocks/OculusRift"]
+	path = blocks/OculusRift
+	url = https://github.com/ewerx/Cinder-OculusRift
