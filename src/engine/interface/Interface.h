@@ -11,7 +11,11 @@
 #include <vector>
 #include "OscParam.h"
 
-class mowa::sgui::SimpleGUI;
+namespace mowa {
+    namespace sgui {
+        class SimpleGUI;
+    };
+};
 class OscServer;
 
 class Interface

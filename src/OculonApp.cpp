@@ -1142,7 +1142,7 @@ void OculonApp::draw()
     if( mCaptureDebugOutput )
     {
         drawDebug();
-        // HACKHACK: to show interface through Resolume
+        // hack to show interface through Resolume
         if( mEnableSyphonServer )
         {
             mScreenSyphon[0].publishScreen();
