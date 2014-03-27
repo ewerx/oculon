@@ -404,6 +404,7 @@
 		7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666431853F678004BD521 /* ParsecBackground.cpp */; };
 		7CD666481853F678004BD521 /* ParsecStars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666451853F678004BD521 /* ParsecStars.cpp */; };
 		7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666491853F770004BD521 /* ParsecGrid.cpp */; };
+		7CD826D418E1071A00C66D8D /* DomeCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD826D218E1071A00C66D8D /* DomeCam.cpp */; };
 		7CE8AFB6186FAD150087AC7A /* graviton_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB2186FAD150087AC7A /* graviton_render_frag.glsl */; };
 		7CE8AFB7186FAD150087AC7A /* graviton_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB3186FAD150087AC7A /* graviton_render_vert.glsl */; };
 		7CE8AFB9186FAD150087AC7A /* graviton_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */; };
@@ -1023,6 +1024,8 @@
 		7CD666461853F678004BD521 /* ParsecStars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecStars.h; sourceTree = "<group>"; };
 		7CD666491853F770004BD521 /* ParsecGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecGrid.cpp; sourceTree = "<group>"; };
 		7CD6664A1853F770004BD521 /* ParsecGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecGrid.h; sourceTree = "<group>"; };
+		7CD826D218E1071A00C66D8D /* DomeCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeCam.cpp; sourceTree = "<group>"; };
+		7CD826D318E1071A00C66D8D /* DomeCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeCam.h; sourceTree = "<group>"; };
 		7CE8AFB2186FAD150087AC7A /* graviton_render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_render_frag.glsl; sourceTree = "<group>"; };
 		7CE8AFB3186FAD150087AC7A /* graviton_render_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_render_vert.glsl; sourceTree = "<group>"; };
 		7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_simulation_frag.glsl; sourceTree = "<group>"; };
@@ -2091,6 +2094,8 @@
 				7C79C99217650FD700E71F9D /* TunnelCam.h */,
 				7C0E673E18BAC88700C387FC /* OculusCam.cpp */,
 				7C0E673F18BAC88700C387FC /* OculusCam.h */,
+				7CD826D218E1071A00C66D8D /* DomeCam.cpp */,
+				7CD826D318E1071A00C66D8D /* DomeCam.h */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -3179,6 +3184,7 @@
 				7C79CA4117650FD800E71F9D /* InfoPanel.cpp in Sources */,
 				7C79CA4217650FD800E71F9D /* OscParam.cpp in Sources */,
 				7C79CA4317650FD800E71F9D /* Interface.cpp in Sources */,
+				7CD826D418E1071A00C66D8D /* DomeCam.cpp in Sources */,
 				7C6276651824B29500724B87 /* Graviton.cpp in Sources */,
 				7C79CA4517650FD800E71F9D /* MidiInput.cpp in Sources */,
 				7C79CA4617650FD800E71F9D /* MidiMap.cpp in Sources */,

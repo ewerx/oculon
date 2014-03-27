@@ -185,7 +185,6 @@ void Parsec::update(double dt)
 void Parsec::draw()
 {
     //TODO: cylindrical projection
-    //TODO: stereoscopic rendering
     
     gl::pushMatrices();
     if (mApp->outputToOculus())
