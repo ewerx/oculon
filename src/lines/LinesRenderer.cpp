@@ -22,7 +22,7 @@ LinesRenderer::LinesRenderer()
     // params
     mLineWidth = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
-    mAudioReactive = false;
+    mAudioReactive = true;
 }
 
 LinesRenderer::~LinesRenderer()
