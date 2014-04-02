@@ -43,6 +43,7 @@ void Lines::setup()
     
     setupFBO();
     mRenderer.setup(kBufSize);
+    mGravitonRenderer.setup(kBufSize);
     generateFormationTextures();
     
     mAudioInputHandler.setup(true);
@@ -56,6 +57,8 @@ void Lines::setup()
     mFormationAnimSelector.mDuration = 0.75f;
     mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;
+    
+    mAltRenderer = false;
     
     mUseDynamicTex = true;
     setupDynamicTexture();
@@ -301,7 +304,9 @@ void Lines::setupInterface()
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
+    mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
     mRenderer.setupInterface(mInterface, mName);
+    mGravitonRenderer.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -400,23 +405,37 @@ const Camera& Lines::getCamera()
     return mCameraController.getCamera();
 }
 
+ParticleRenderer& Lines::getRenderer()
+{
+    if (mAltRenderer)
+    {
+        return mGravitonRenderer;
+    }
+    else
+    {
+        return mRenderer;
+    }
+}
+
 void Lines::draw()
 {
+    ParticleRenderer& renderer = getRenderer();
+    
     gl::pushMatrices();
     if (mApp->outputToOculus())
     {
         // render left eye
         Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
         gl::setViewport(leftViewport);
-        mRenderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+        renderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
         
         Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
         gl::setViewport(rightViewport);
-        mRenderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+        renderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
     }
     else
     {
-        mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
+        renderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
     }
     gl::popMatrices();
 }

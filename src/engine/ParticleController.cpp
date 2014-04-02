@@ -116,15 +116,18 @@ void ParticleController::update(double dt)
 
 void ParticleController::updateSimulation(double dt)
 {
-    if (mCurrentBehavior < mBehaviors.size()) {
+    if (mCurrentBehavior < mBehaviors.size())
+    {
         mBehaviors[mCurrentBehavior]->update(dt, mParticlesFbo);
     }
 }
 
 void ParticleController::draw(const ci::Camera& cam)
 {
-    if (mCurrentBehavior < mBehaviors.size()) {
-        mRenderers[mCurrentBehavior]->draw(mParticlesFbo, cam);
+    if (mCurrentBehavior < mBehaviors.size())
+    {
+        // FIXME: need to update method signature to match ParticleRenderer::draw
+        //mRenderers[mCurrentBehavior]->draw(mParticlesFbo, cam);
     }
     
 //    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );

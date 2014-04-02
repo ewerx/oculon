@@ -20,6 +20,7 @@
 #include "CameraController.h"
 #include "EaseCurveSelector.h"
 #include "LinesRenderer.h"
+#include "GravitonRenderer.h"
 
 //
 // Lines
@@ -57,6 +58,8 @@ private:
     void generateDynamicTexture();
     
     void generateFormationTextures();
+    
+    ParticleRenderer& getRenderer();
     
     ci::gl::Fbo mDynamicTexFbo;
     ci::gl::GlslProg mDynamicTexShader;
@@ -132,6 +135,8 @@ enm,
     bool mAudioTime;
 
     LinesRenderer mRenderer;
+    GravitonRenderer mGravitonRenderer;
+    bool mAltRenderer;
 };
 
 
