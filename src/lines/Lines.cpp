@@ -349,7 +349,7 @@ void Lines::update(double dt)
     //mParticleDataTex.bind(2);
     mInitialVelTex.bind(3);
     mFormationPosTex[mFormation].bind(4);
-    //mNoiseTex.bind(5);
+    mNoiseTex.bind(5);
     
     if (mUseDynamicTex)
     {
@@ -366,13 +366,13 @@ void Lines::update(double dt)
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );
     mSimulationShader.uniform( "information", 2);
-	//mSimulationShader.uniform( "oVelocities", 3);
-	//mSimulationShader.uniform( "oPositions", 4);
-  	//mSimulationShader.uniform( "noiseTex", 5);
+	mSimulationShader.uniform( "oVelocities", 3);
+	mSimulationShader.uniform( "oPositions", 4);
+  	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", (float)dt );
-    mSimulationShader.uniform( "reset", false );
-    mSimulationShader.uniform( "formationStep", 0.0f );
-    mSimulationShader.uniform( "motion", 0 );
+    mSimulationShader.uniform( "reset", mReset );
+    mSimulationShader.uniform( "formationStep", mFormationStep );
+    mSimulationShader.uniform( "motion", mMotion );
     mSimulationShader.uniform( "containmentSize", 3.0f );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
