@@ -427,10 +427,12 @@ void Lines::draw()
         // render left eye
         Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
         gl::setViewport(leftViewport);
+        mApp->getOculusCam().enableStereoLeft();
         renderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
         
         Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
         gl::setViewport(rightViewport);
+        mApp->getOculusCam().enableStereoRight();
         renderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
     }
     else

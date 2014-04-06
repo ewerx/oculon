@@ -204,7 +204,7 @@ void Parsec::draw()
         // render right eye
         Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
         gl::setViewport(rightViewport);
-        mApp->getOculusCam().enableStereoLeft();
+        mApp->getOculusCam().enableStereoRight();
         gl::setMatrices( mApp->getOculusCam().getCamera() );
         render();
         
