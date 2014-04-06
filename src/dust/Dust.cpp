@@ -36,12 +36,12 @@ void Dust::setup()
     Scene::setup();
     
     mSimulationShader = loadVertAndFragShaders("dust_simulation_vert.glsl", "dust_simulation_frag.glsl");
-    mRenderShader = loadVertAndFragShaders("dust_render_vert.glsl", "dust_render_frag.glsl");
+    //mRenderShader = loadVertAndFragShaders("dust_render_vert.glsl", "dust_render_frag.glsl");
     
-    mSpriteTex = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
+    //mSpriteTex = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
     
     setupFBO();
-    setupVBO();
+    mRenderer.setup(kBufSize);
     
     mAudioInputHandler.setup(false);
     
@@ -50,7 +50,6 @@ void Dust::setup()
     
     // params
     mTimeStep = 0.1f;
-    mPointSize = 1.0f;
     mDecayRate = 0.5f;
     
     mAudioReactive = false;
@@ -161,28 +160,28 @@ void Dust::setupFBO()
 	mParticleDataTex.setMagFilter( GL_NEAREST );
 }
 
-void Dust::setupVBO()
-{
-    // A dummy VboMesh the same size as the texture to keep the vertices on the GPU
-    vector<Vec2f> texCoords;
-    vector<uint32_t> indices;
-    gl::VboMesh::Layout layout;
-    layout.setStaticIndices();
-    layout.setStaticPositions();
-    layout.setStaticTexCoords2d();
-    layout.setStaticNormals();
-    
-    mVboMesh = gl::VboMesh( kNumParticles, kNumParticles, layout, GL_POINTS);
-    for( int x = 0; x < kBufSize; ++x ) {
-        for( int y = 0; y < kBufSize; ++y ) {
-            indices.push_back( x * kBufSize + y );
-            texCoords.push_back( Vec2f( x/(float)kBufSize, y/(float)kBufSize ) );
-        }
-    }
-    mVboMesh.bufferIndices( indices );
-    mVboMesh.bufferTexCoords2d( 0, texCoords );
-    mVboMesh.unbindBuffers();
-}
+//void Dust::setupVBO()
+//{
+//    // A dummy VboMesh the same size as the texture to keep the vertices on the GPU
+//    vector<Vec2f> texCoords;
+//    vector<uint32_t> indices;
+//    gl::VboMesh::Layout layout;
+//    layout.setStaticIndices();
+//    layout.setStaticPositions();
+//    layout.setStaticTexCoords2d();
+//    layout.setStaticNormals();
+//    
+//    mVboMesh = gl::VboMesh( kNumParticles, kNumParticles, layout, GL_POINTS);
+//    for( int x = 0; x < kBufSize; ++x ) {
+//        for( int y = 0; y < kBufSize; ++y ) {
+//            indices.push_back( x * kBufSize + y );
+//            texCoords.push_back( Vec2f( x/(float)kBufSize, y/(float)kBufSize ) );
+//        }
+//    }
+//    mVboMesh.bufferIndices( indices );
+//    mVboMesh.bufferTexCoords2d( 0, texCoords );
+//    mVboMesh.unbindBuffers();
+//}
 
 //vector<Surface32f> Dust::generateInitialSurfaces()
 //{
@@ -201,10 +200,6 @@ void Dust::setupInterface()
                          .minValue(0.001f)
                          .maxValue(3.0f));
     
-    mInterface->addParam(CreateFloatParam( "point_size", &mPointSize )
-                         .minValue(0.01f)
-                         .maxValue(3.0f));
-    
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
                          .maxValue(1.0f));
@@ -216,7 +211,13 @@ void Dust::setupInterface()
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
                          .oscReceiver(mName));
     
-    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("display");
+//    mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
+    mRenderer.setupInterface(mInterface, mName);
+//    mGravitonRenderer.setupInterface(mInterface, mName);
+    
+//    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
     //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
     
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -299,72 +300,87 @@ void Dust::update(double dt)
 
 #pragma mark - Draw
 
+ParticleRenderer& Dust::getRenderer()
+{
+//    if (mAltRenderer)
+//    {
+//        return mGravitonRenderer;
+//    }
+//    else
+    {
+        return mRenderer;
+    }
+}
+
 void Dust::draw()
 {
+    ParticleRenderer& renderer = getRenderer();
+    
     gl::pushMatrices();
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
-    
-    //gl::setMatrices( getCamera() );
-    gl::setMatricesWindow( getWindowSize() );
-    gl::setViewport( mApp->getViewportBounds() );
-    
-    gl::enable(GL_POINT_SPRITE);
-    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
-    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    
-    gl::enableAlphaBlending();
-    //gl::enableAdditiveBlending();
-//    gl::disableDepthWrite();
-//    gl::disableDepthRead();
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
-    
-    glEnable(GL_TEXTURE_2D);
-    
-    mParticlesFbo.bindTexture(0);
-    mParticlesFbo.bindTexture(1);
-    mSpriteTex.bind(2);
-    mParticleDataTex.bind(3);
-    
-    mRenderShader.bind();
-    mRenderShader.uniform("posMap", 0);
-    mRenderShader.uniform("velMap", 1);
-    mRenderShader.uniform("spriteTex", 2);
-    mRenderShader.uniform("information", 3);
-    mRenderShader.uniform("screenWidth", (float)kBufSize);
-    mRenderShader.uniform("spriteWidth", mPointSize);
-    
-    mRenderShader.uniform("audioReactive", mAudioReactive);
-    if (mAudioReactive)
-    {
-        const int NUM_TRACKS = 4;
-        Vec3f trackLevels[NUM_TRACKS];
-//        for( int i = 0; i < NUM_TRACKS; ++i )
-//        {
-//            trackLevels[i] = Vec3f(mApp->getAudioInput().getLowLevelForLiveTrack(i),
-//                                   mApp->getAudioInput().getMidLevelForLiveTrack(i),
-//                                   mApp->getAudioInput().getHighLevelForLiveTrack(i));
-//        }
-        trackLevels[0] = Vec3f(mAudioInputHandler.getAverageVolumeLowFreq(),
-                               mAudioInputHandler.getAverageVolumeMidFreq(),
-                               mAudioInputHandler.getAverageVolumeHighFreq());
-        mRenderShader.uniform("trackAudio1", trackLevels[0]);
-//        mRenderShader.uniform("trackAudio2", trackLevels[1]);
-//        mRenderShader.uniform("trackAudio3", trackLevels[2]);
-//        mRenderShader.uniform("trackAudio4", trackLevels[3]);
-    }
-    
-    glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
-    
-    gl::draw( mVboMesh );
-    
-    mRenderShader.unbind();
-    mParticleDataTex.unbind();
-    mSpriteTex.unbind();
-    mParticlesFbo.unbindTexture();
-    
-    glPopAttrib();
+//    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
+//    
+//    //gl::setMatrices( getCamera() );
+//    gl::setMatricesWindow( getWindowSize() );
+//    gl::setViewport( mApp->getViewportBounds() );
+//    
+//    gl::enable(GL_POINT_SPRITE);
+//    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
+//    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
+//    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+//    
+//    gl::enableAlphaBlending();
+//    //gl::enableAdditiveBlending();
+////    gl::disableDepthWrite();
+////    gl::disableDepthRead();
+//    gl::enableDepthRead();
+//    gl::enableDepthWrite();
+//    
+//    glEnable(GL_TEXTURE_2D);
+//    
+//    mParticlesFbo.bindTexture(0);
+//    mParticlesFbo.bindTexture(1);
+//    mSpriteTex.bind(2);
+//    mParticleDataTex.bind(3);
+//    
+//    mRenderShader.bind();
+//    mRenderShader.uniform("posMap", 0);
+//    mRenderShader.uniform("velMap", 1);
+//    mRenderShader.uniform("spriteTex", 2);
+//    mRenderShader.uniform("information", 3);
+//    mRenderShader.uniform("screenWidth", (float)kBufSize);
+//    mRenderShader.uniform("spriteWidth", mPointSize);
+//    
+//    mRenderShader.uniform("audioReactive", mAudioReactive);
+//    if (mAudioReactive)
+//    {
+//        const int NUM_TRACKS = 4;
+//        Vec3f trackLevels[NUM_TRACKS];
+////        for( int i = 0; i < NUM_TRACKS; ++i )
+////        {
+////            trackLevels[i] = Vec3f(mApp->getAudioInput().getLowLevelForLiveTrack(i),
+////                                   mApp->getAudioInput().getMidLevelForLiveTrack(i),
+////                                   mApp->getAudioInput().getHighLevelForLiveTrack(i));
+////        }
+//        trackLevels[0] = Vec3f(mAudioInputHandler.getAverageVolumeLowFreq(),
+//                               mAudioInputHandler.getAverageVolumeMidFreq(),
+//                               mAudioInputHandler.getAverageVolumeHighFreq());
+//        mRenderShader.uniform("trackAudio1", trackLevels[0]);
+////        mRenderShader.uniform("trackAudio2", trackLevels[1]);
+////        mRenderShader.uniform("trackAudio3", trackLevels[2]);
+////        mRenderShader.uniform("trackAudio4", trackLevels[3]);
+//    }
+//    
+//    glScalef(mApp->getViewportWidth() / (float)kBufSize , mApp->getViewportHeight() / (float)kBufSize ,1.0f);
+//    
+//    gl::draw( mVboMesh );
+//    
+//    mRenderShader.unbind();
+//    mParticleDataTex.unbind();
+//    mSpriteTex.unbind();
+//    mParticlesFbo.unbindTexture();
+//    
+//    glPopAttrib();
+    renderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
     gl::popMatrices();
 }
 

@@ -410,6 +410,7 @@
 		7CE8AFB9186FAD150087AC7A /* graviton_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */; };
 		7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF04609188639FE00150FD3 /* Oscillator.cpp */; };
 		7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF0460C188645D300150FD3 /* oscillator_frag.glsl */; };
+		7CF1002318ED0C05002876A1 /* DustRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF1002118ED0C05002876A1 /* DustRenderer.cpp */; };
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
 		7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */; };
 		7CF6AD5118A9E3E100FA795A /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */; };
@@ -1032,6 +1033,8 @@
 		7CF04609188639FE00150FD3 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
 		7CF0460A188639FE00150FD3 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
 		7CF0460C188645D300150FD3 /* oscillator_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oscillator_frag.glsl; sourceTree = "<group>"; };
+		7CF1002118ED0C05002876A1 /* DustRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DustRenderer.cpp; path = ../src/dust/DustRenderer.cpp; sourceTree = "<group>"; };
+		7CF1002218ED0C05002876A1 /* DustRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DustRenderer.h; path = ../src/dust/DustRenderer.h; sourceTree = "<group>"; };
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
 		7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
 		7CF6AD4B18A9E3E100FA795A /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
@@ -2435,6 +2438,8 @@
 			children = (
 				7CC3C024183ED0330082C322 /* Dust.cpp */,
 				7CC3C025183ED0330082C322 /* Dust.h */,
+				7CF1002118ED0C05002876A1 /* DustRenderer.cpp */,
+				7CF1002218ED0C05002876A1 /* DustRenderer.h */,
 			);
 			name = dust;
 			sourceTree = "<group>";
@@ -3037,6 +3042,7 @@
 				6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */,
 				0F8E5D279996421AA4C7F140 /* b2CollideCircle.cpp in Sources */,
 				6441107BE6AC498F99714408 /* b2CollideEdge.cpp in Sources */,
+				7CF1002318ED0C05002876A1 /* DustRenderer.cpp in Sources */,
 				132BB54FEA9541A79DD9CB6F /* b2CollidePolygon.cpp in Sources */,
 				3902F9C6F061427CB3811E92 /* b2Collision.cpp in Sources */,
 				144F584BD9494F3C80D366D9 /* b2Distance.cpp in Sources */,

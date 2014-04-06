@@ -17,6 +17,7 @@
 #include "Scene.h"
 #include "PingPongFbo.h"
 #include "AudioInputHandler.h"
+#include "DustRenderer.h"
 
 //
 // Dust
@@ -40,9 +41,11 @@ protected:// from Scene
     
 private:
     void setupFBO();
-    void setupVBO();
+//    void setupVBO();
     
 //    std::vector<ci::Surface32f> generateInitialSurfaces();
+    
+    ParticleRenderer& getRenderer();
     
     void initParticles();
     void updateParticles();
@@ -65,20 +68,17 @@ private:
     };
     
     PingPongFbo mParticlesFbo;
-    ci::gl::VboMesh mVboMesh;
     ci::gl::GlslProg mSimulationShader;
-    ci::gl::GlslProg mRenderShader;
+    
+    DustRenderer mRenderer;
     
     ci::gl::Texture mInitialPosTex;
 	ci::gl::Texture mInitialVelTex;
 	ci::gl::Texture mParticleDataTex;
     ci::gl::Texture mNoiseTex;
     
-    ci::gl::Texture mSpriteTex;
-    
     // params
     float mTimeStep;
-    float mPointSize;
     float mDecayRate;
     
     bool mUseDynamicTex;
