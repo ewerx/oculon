@@ -69,11 +69,11 @@ void main()
             if (motion == 1) // force by noise
             {
                 vec3 noise = texture2D( noiseTex, pos.xy ).rgb;
-                //vec3 force = vec3(noise - pos.xy,0.0);
-                vec3 force = vec3(noise.x,noise.y,noise.z);
+                vec3 force = noise - pos;
+                //vec3 force = vec3(noise.x,noise.y,noise.z);
                 //float fMag = length(force);
                 vec3 a = invMass * force;// * pow(fMag,0.9);
-                vel += dt * a;
+                vel = dt * a;
             }
             else if (motion == 1) // gravition -- single source at center
             {
