@@ -37,17 +37,20 @@ EaseCurveSelector::~EaseCurveSelector()
 void EaseCurveSelector::setupInterface(Interface *interface, const std::string &name)
 {
     interface->addParam(CreateFloatParam( "anim_time", &mDuration )
-                         .minValue(0.0f)
-                         .maxValue(mMaxDuration));
+                        .minValue(0.0f)
+                        .maxValue(mMaxDuration)
+                        .oscReceiver(name));
     vector<string> animCurveNames;
 #define ANIMCURVE_ENTRY( nam, enm ) \
 animCurveNames.push_back(nam);
     ANIMCURVE_TUPLE
 #undef  ANIMCURVE_ENTRY
     interface->addEnum(CreateEnumParam( "anim_curve", (int*)(&mSelectedCurve) )
-                        .maxValue(ANIMCURVE_COUNT)
-                        .isVertical(), animCurveNames);
-    interface->addParam(CreateBoolParam( "reverse", &mReverseEase));
+                       .maxValue(ANIMCURVE_COUNT)
+                       .isVertical()
+                       .oscReceiver(name), animCurveNames);
+    interface->addParam(CreateBoolParam( "anim_reverse", &mReverseEase)
+                        .oscReceiver(name));
 }
 
 EaseCurveSelector::tEaseFn EaseCurveSelector::getEaseFunction()

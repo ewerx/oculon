@@ -54,7 +54,7 @@ void Parsec::setup()
 	mSectionOverlap = 1.0f;
     
     // cameras
-    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE|CameraController::CAM_GRAVITON, CameraController::CAM_STAR);
+    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_SPLINE);
     
     mAudioInputHandler.setup(false);
     mAudioInputHandler.mRandomEveryFrame = true;

@@ -43,12 +43,14 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& nam
 {
     interface->addParam(CreateFloatParam( "line_width", &mLineWidth )
                          .minValue(0.01f)
-                         .maxValue(6.0f));
+                         .maxValue(6.0f)
+                        .oscReceiver(name));
     
     interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                          .oscReceiver(name));
     
-    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
+    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
+                        .oscReceiver(name));
 }
 
 void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
