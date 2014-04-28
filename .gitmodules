@@ -29,3 +29,6 @@
 [submodule "blocks/OculusRift"]
 	path = blocks/OculusRift
 	url = https://github.com/ewerx/Cinder-OculusRift
+[submodule "blocks/MinimalUI"]
+	path = blocks/MinimalUI
+	url = https://github.com/nselikoff/Cinder-MinimalUI.git
