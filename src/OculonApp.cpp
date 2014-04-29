@@ -162,8 +162,8 @@ void OculonApp::setup()
     mMayaCam.setCurrentCam( cam );
     
     // params
-    mParams = params::InterfaceGl::create( getWindow(), "Parameters", toPixels(Vec2i( 350, getWindowHeight()*0.8f )) );
-    mParams->hide();
+    //mParams = params::InterfaceGl::create( getWindow(), "Parameters", toPixels(Vec2i( 350, getWindowHeight()*0.8f )) );
+    //mParams->hide();
     //mParams->setOptions("","position='10 600'");
     
     // audio input
@@ -594,11 +594,11 @@ void OculonApp::keyDown( KeyEvent event )
             // toggle pause-all
         case KeyEvent::KEY_p:
         {
-            if( event.isShiftDown() )
-            {
-                mParams->show( !mParams->isVisible() );
-            }
-            else
+//            if( event.isShiftDown() )
+//            {
+//                mParams->show( !mParams->isVisible() );
+//            }
+//            else
             {
                 for (tSceneList::iterator sceneIt = mScenes.begin();
                      sceneIt != mScenes.end();
@@ -1260,7 +1260,7 @@ void OculonApp::drawDebug()
     if( !mIsPresentationMode )
     {
         mInterface->draw();
-        mParams->draw();
+//        mParams->draw();
     }
     gl::popMatrices();
 }

@@ -141,9 +141,9 @@ void Circles::setupInterface()
     
 }
 
-void Circles::setupDebugInterface()
-{
-}
+//void Circles::setupDebugInterface()
+//{
+//}
 
 void Circles::reset()
 {

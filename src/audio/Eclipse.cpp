@@ -162,9 +162,9 @@ void Eclipse::setupInterface()
                         .oscReceiver(mName,"color"));
 }
 
-void Eclipse::setupDebugInterface()
-{
-}
+//void Eclipse::setupDebugInterface()
+//{
+//}
 
 void Eclipse::reset()
 {

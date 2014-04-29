@@ -250,10 +250,10 @@ void Terrain::setupInterface()
 
 // ----------------------------------------------------------------
 //
-void Terrain::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-}
+//void Terrain::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface();
+//}
 
 // ----------------------------------------------------------------
 //

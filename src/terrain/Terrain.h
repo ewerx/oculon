@@ -43,7 +43,7 @@ public:
 protected:
     // inherited from Scene
     void setupInterface();
-    void setupDebugInterface();
+    //void setupDebugInterface();
     
     void updateAudioResponse();
     

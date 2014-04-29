@@ -140,12 +140,12 @@ void Trails::setupInterface()
     
 }
 
-void Trails::setupDebugInterface()
-{
-    Scene::setupDebugInterface(); // add all interface params
-    
-    mDebugParams.setOptions("Trails/s", "min=0 max=10000");
-}
+//void Trails::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface(); // add all interface params
+//    
+//    mDebugParams.setOptions("Trails/s", "min=0 max=10000");
+//}
 
 void Trails::update(double dt)
 {

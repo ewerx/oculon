@@ -24,7 +24,7 @@ public:
 
     void setup();
     void setupInterface();
-    void setupDebugInterface();
+    //void setupDebugInterface();
     void resize();
     void reset();
     void update(double dt);

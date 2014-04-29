@@ -42,7 +42,7 @@ public:
     
 protected:// from Scene
     void setupInterface();
-    //void setupDebugInterface();
+    ////void setupDebugInterface();
     
 protected:
     void loadData();

@@ -50,8 +50,8 @@ Scene::Scene(const std::string& name)
 		mCachedFrustumPlane[i].mDistance = 0.0f;
 	}
     
-    mDebugParams = params::InterfaceGl( name, Vec2i( 350, 400 ) );
-    mDebugParams.show(mIsDebug);
+//    mDebugParams = params::InterfaceGl( name, Vec2i( 350, 400 ) );
+//    mDebugParams.show(mIsDebug);
 }
 
 Scene::~Scene()
@@ -118,7 +118,7 @@ void Scene::setup()
 void Scene::setupInterfaces()
 {
     setupInterface();
-    setupDebugInterface();
+    //setupDebugInterface();
 }
 
 void Scene::setupFbo()
@@ -149,38 +149,38 @@ void Scene::resize()
     }
 }
 
-void Scene::setupDebugInterface()
-{
-    // add all interface params as debug params
-    for (Interface::const_iterator it = mInterface->paramsBegin();
-         it != mInterface->paramsEnd();
-         ++it)
-    {
-        OscParam* param = (*it);
-        Control* control = param->getControl();
-        
-        switch( control->type )
-        {
-            case Control::FLOAT_VAR:
-                mDebugParams.addParam( control->name, static_cast<FloatVarControl*>(control)->var );
-                break;
-            case Control::DOUBLE_VAR:
-                mDebugParams.addParam( control->name, static_cast<DoubleVarControl*>(control)->var );
-                break;
-            case Control::INT_VAR:
-                mDebugParams.addParam( control->name, static_cast<IntVarControl*>(control)->var );
-                break;
-            case Control::BOOL_VAR:
-                mDebugParams.addParam( control->name, static_cast<BoolVarControl*>(control)->var );
-                break;
-            case Control::SEPARATOR:
-                mDebugParams.addSeparator();
-                break;
-            default:
-                break;
-        }
-    }
-}
+//void Scene::setupDebugInterface()
+//{
+//    // add all interface params as debug params
+//    for (Interface::const_iterator it = mInterface->paramsBegin();
+//         it != mInterface->paramsEnd();
+//         ++it)
+//    {
+//        OscParam* param = (*it);
+//        Control* control = param->getControl();
+//        
+//        switch( control->type )
+//        {
+//            case Control::FLOAT_VAR:
+//                mDebugParams.addParam( control->name, static_cast<FloatVarControl*>(control)->var );
+//                break;
+//            case Control::DOUBLE_VAR:
+//                mDebugParams.addParam( control->name, static_cast<DoubleVarControl*>(control)->var );
+//                break;
+//            case Control::INT_VAR:
+//                mDebugParams.addParam( control->name, static_cast<IntVarControl*>(control)->var );
+//                break;
+//            case Control::BOOL_VAR:
+//                mDebugParams.addParam( control->name, static_cast<BoolVarControl*>(control)->var );
+//                break;
+//            case Control::SEPARATOR:
+//                mDebugParams.addSeparator();
+//                break;
+//            default:
+//                break;
+//        }
+//    }
+//}
 
 void Scene::setupLoadParamsInterface()
 {
@@ -273,7 +273,7 @@ void Scene::drawDebug()
     gl::disableDepthRead();
     gl::disableDepthWrite();
     gl::enableAlphaBlending();
-    mDebugParams.draw();
+//    mDebugParams.draw();
 }
 
 const Camera& Scene::getCamera()
@@ -310,7 +310,7 @@ void Scene::setVisible(bool visible)
 
 bool Scene::onVisibleChanged()
 {
-    mDebugParams.show(mIsDebug && mIsVisible);
+//    mDebugParams.show(mIsDebug && mIsVisible);
     handleVisibleChanged();
     return false;
 }
@@ -335,7 +335,7 @@ void Scene::setDebug(bool debug)
 
 bool Scene::onDebugChanged()
 {
-    mDebugParams.show(false);//mIsDebug && mIsVisible);
+//    mDebugParams.show(false);//mIsDebug && mIsVisible);
     handleDebugChanged();
     return false;
 }

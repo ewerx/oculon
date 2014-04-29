@@ -140,9 +140,9 @@ camTypeNames.push_back(nam);
 
 // ----------------------------------------------------------------
 //
-void Flock::setupDebugInterface()
-{
-}
+//void Flock::setupDebugInterface()
+//{
+//}
 
 // ----------------------------------------------------------------
 //

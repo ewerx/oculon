@@ -90,15 +90,15 @@ void AudioSignal::setupInterface()
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
-void AudioSignal::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-    
-    BOOST_FOREACH( SubScene* &ss, mSubScenes )
-    {
-		ss->setupDebugInterface();
-	}
-}
+//void AudioSignal::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface();
+//    
+//    BOOST_FOREACH( SubScene* &ss, mSubScenes )
+//    {
+//		ss->setupDebugInterface();
+//	}
+//}
 
 void AudioSignal::update(double dt)
 {

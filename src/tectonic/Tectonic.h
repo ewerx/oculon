@@ -69,7 +69,7 @@ protected:
     };
     
     void setupInterface();
-    void setupDebugInterface();
+    //void setupDebugInterface();
     
     void initEvents(const eDataSource src);
     void clearQuakes();

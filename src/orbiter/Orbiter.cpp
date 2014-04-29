@@ -177,22 +177,22 @@ void Orbiter::setupInterface()
 }
 
 
-void Orbiter::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-    
-    mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
-    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
-    mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
-    mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
-    mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
-    mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
-    mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
-    mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
-    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
-    //mDebugParams.addSeparator();
-    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
-}
+//void Orbiter::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface();
+//    
+//    mDebugParams.addParam("Gravity Constant", &mGravityConstant, "step=0.00000000001 keyIncr== keyDecr=-");
+//    //mDebugParams.addParam("Follow Target", &mFollowTargetIndex, "keyIncr=] keyDecr=[");
+//    mDebugParams.addParam("Time Scale", &mTimeScale, "step=86400.0 KeyIncr=. keyDecr=,");
+//    mDebugParams.addParam("Trails - Smooth", &Orbiter::sUseSmoothLines, "key=t");
+//    mDebugParams.addParam("Trails - Ribbon", &Orbiter::sUseTriStripLine);
+//    mDebugParams.addParam("Trails - LengthFact", &Orbiter::sMinTrailLength, "");
+//    mDebugParams.addParam("Trails - Width", &Orbiter::sTrailWidth, "step=0.1");
+//    mDebugParams.addParam("Planet Grayscale", &Orbiter::sPlanetGrayScale, "step=0.05");
+//    //mDebugParams.addParam("Real Sun Radius", &Orbiter::sDrawRealSun, "key=r");
+//    //mDebugParams.addSeparator();
+//    //mDebugParams.addParam("Frustum Culling", &mEnableFrustumCulling, "keyIncr=f");
+//}
 
 void Orbiter::reset()
 {

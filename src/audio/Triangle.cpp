@@ -72,9 +72,9 @@ void Triangle::setupInterface()
     
 }
 
-void Triangle::setupDebugInterface()
-{
-}
+//void Triangle::setupDebugInterface()
+//{
+//}
 
 void Triangle::reset()
 {

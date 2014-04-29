@@ -41,7 +41,7 @@ public:
     
 protected:// from Scene
     void setupInterface();
-    //void setupDebugInterface();
+    ////void setupDebugInterface();
     
     // callbacks
     bool takeFormation();

@@ -34,7 +34,7 @@ public:
 protected:
     // inherited from Scene
     void setupInterface();
-//    void setupDebugInterface();
+//    //void setupDebugInterface();
     
     void createMesh();
     void generateDeformationTexture();

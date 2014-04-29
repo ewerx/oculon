@@ -175,13 +175,13 @@ void Tectonic::setupInterface()
 
 // ----------------------------------------------------------------
 //
-void Tectonic::setupDebugInterface()
-{
-    mDebugParams.addParam("Show Map", &mShowMap );
-    mDebugParams.addParam("Show Labels", &mShowLabels );
-    mDebugParams.addParam("Show All Points", &mShowAllPoints );
-    mDebugParams.addParam("Longitude Offset", &mLongitudeOffsetDegrees );
-}
+//void Tectonic::setupDebugInterface()
+//{
+//    mDebugParams.addParam("Show Map", &mShowMap );
+//    mDebugParams.addParam("Show Labels", &mShowLabels );
+//    mDebugParams.addParam("Show All Points", &mShowAllPoints );
+//    mDebugParams.addParam("Longitude Offset", &mLongitudeOffsetDegrees );
+//}
 
 // ----------------------------------------------------------------
 //

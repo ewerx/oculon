@@ -174,10 +174,10 @@ void Contour::setupInterface()
     
 }
 
-void Contour::setupDebugInterface()
-{
-    Scene::setupDebugInterface(); // add all interface params
-}
+//void Contour::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface(); // add all interface params
+//}
 
 void Contour::update(double dt)
 {

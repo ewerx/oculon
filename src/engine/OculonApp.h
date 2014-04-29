@@ -107,7 +107,7 @@ public: // new
     OscServer& getOscServer()                           { return mOscServer; }
                 
     InfoPanel& getInfoPanel()                           { return mInfoPanel; }
-    ci::params::InterfaceGlRef getParams()              { return mParams; }
+    //ci::params::InterfaceGlRef getParams()              { return mParams; }
     
     inline bool isPresentationMode() const              { return mIsPresentationMode; }
     inline void setUseMayaCam(bool use)                 { mUseMayaCam = use; }
@@ -222,7 +222,7 @@ private: // members
     
     // ui
     InfoPanel                   mInfoPanel;
-    ci::params::InterfaceGlRef	mParams;
+    //ci::params::InterfaceGlRef	mParams;
     Interface*                  mInterface;
     bool                        mIsPresentationMode;
     std::vector<mowa::sgui::TextureVarControl*> mThumbnailControls;

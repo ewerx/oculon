@@ -21,7 +21,7 @@ public:
 
     virtual void setup() = 0;
     virtual void setupInterface();
-    virtual void setupDebugInterface() {}
+    //virtual void setupDebugInterface() {}
     virtual void resize() {}
     virtual void reset() {}
     virtual void update(double dt) = 0;

@@ -38,7 +38,7 @@ public:
     
 protected:
     void setupInterface();
-    void setupDebugInterface();
+    //void setupDebugInterface();
     
 private:
     void drawSubScenes();

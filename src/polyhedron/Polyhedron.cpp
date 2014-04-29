@@ -234,10 +234,10 @@ void Polyhedron::setupInterface()
 
 // ----------------------------------------------------------------
 //
-void Polyhedron::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-}
+//void Polyhedron::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface();
+//}
 
 // ----------------------------------------------------------------
 //
