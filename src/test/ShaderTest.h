@@ -43,7 +43,7 @@ public:
     
 protected:// from Scene
     void setupInterface();
-    //void setupDebugInterface();
+    ////void setupDebugInterface();
     
 private:
     void setupShaders();

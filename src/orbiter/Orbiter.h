@@ -71,7 +71,7 @@ public:
     float getLabelBrightnessByAudio() const { return mLabelBrightnessByAudio; }
 protected:// from Scene
     void setupInterface();
-    void setupDebugInterface();
+    //void setupDebugInterface();
     
 private:
     

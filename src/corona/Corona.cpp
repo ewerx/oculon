@@ -227,9 +227,9 @@ void Corona::setupInterface()
 
 // ----------------------------------------------------------------
 //
-void Corona::setupDebugInterface()
-{
-}
+//void Corona::setupDebugInterface()
+//{
+//}
 // ----------------------------------------------------------------
 //
 void Corona::reset()

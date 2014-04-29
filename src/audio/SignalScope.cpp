@@ -99,18 +99,18 @@ void SignalScope::setupInterface()
                                            .oscReceiver(mName,"color"));
 }
 
-void SignalScope::setupDebugInterface()
-{
-    mParentScene->getDebugInterface()->addSeparator("Signal Scope");
-    mParentScene->getDebugInterface()->setOptions("Falloff Min", "step=0.001");
-    mParentScene->getDebugInterface()->setOptions("Falloff Max", "step=0.001");
-    mParentScene->getDebugInterface()->setOptions("Smoothing Min", "step=0.001");
-    mParentScene->getDebugInterface()->setOptions("Smoothing Max", "step=0.001");
-    
-    mParentScene->getDebugInterface()->setOptions("Center Bias Range", "max=128");
-    mParentScene->getDebugInterface()->setOptions("Signal Cap", "");
-    mParentScene->getDebugInterface()->setOptions("Signal Scale", "step=0.01");
-}
+//void SignalScope::setupDebugInterface()
+//{
+//    mParentScene->getDebugInterface()->addSeparator("Signal Scope");
+//    mParentScene->getDebugInterface()->setOptions("Falloff Min", "step=0.001");
+//    mParentScene->getDebugInterface()->setOptions("Falloff Max", "step=0.001");
+//    mParentScene->getDebugInterface()->setOptions("Smoothing Min", "step=0.001");
+//    mParentScene->getDebugInterface()->setOptions("Smoothing Max", "step=0.001");
+//    
+//    mParentScene->getDebugInterface()->setOptions("Center Bias Range", "max=128");
+//    mParentScene->getDebugInterface()->setOptions("Signal Cap", "");
+//    mParentScene->getDebugInterface()->setOptions("Signal Scale", "step=0.01");
+//}
 
 void SignalScope::reset()
 {

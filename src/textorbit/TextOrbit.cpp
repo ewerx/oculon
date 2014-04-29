@@ -65,10 +65,10 @@ void TextOrbit::setupInterface()
     
 }
 
-void TextOrbit::setupDebugInterface()
-{
-    Scene::setupDebugInterface(); // add all interface params
-}
+//void TextOrbit::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface(); // add all interface params
+//}
 
 
 void TextOrbit::addChar( char c )

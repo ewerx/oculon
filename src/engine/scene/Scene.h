@@ -65,7 +65,7 @@ public:
     const std::string& getName() const      { return mName; }
     
     Interface* getInterface()                       { return mInterface; }
-    ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
+//    ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
     
     bool isSetup() const            { return mIsSetup; }
     bool isRunning() const          { return mIsRunning; }
@@ -97,7 +97,7 @@ public:
 protected:
     
     virtual void setupInterface() {}
-    virtual void setupDebugInterface();
+    //virtual void setupDebugInterface();
     void setupFbo();
     
     bool saveInterfaceParams();
@@ -133,7 +133,7 @@ protected:
     Interface*              mInterface;
     Interface*              mParamsInterface;
     Interface*              mLoadParamsInterface;
-    ci::params::InterfaceGl mDebugParams;
+//    ci::params::InterfaceGl mDebugParams;
     
     bool mDoReset;
     

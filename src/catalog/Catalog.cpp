@@ -235,11 +235,11 @@ camTypeNames.push_back(nam);
 
 // ----------------------------------------------------------------
 //
-void Catalog::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-    //mDebugParams.addParam("Camera Distance", &mCameraDistance, "readonly=true");
-}
+//void Catalog::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface();
+//    //mDebugParams.addParam("Camera Distance", &mCameraDistance, "readonly=true");
+//}
 
 // ----------------------------------------------------------------
 //

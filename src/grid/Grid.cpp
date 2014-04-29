@@ -262,10 +262,10 @@ particleSpawnNames.push_back(nam);
 
 }
 
-void Grid::setupDebugInterface()
-{
-    Scene::setupDebugInterface(); // add all interface params
-}
+//void Grid::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface(); // add all interface params
+//}
 
 void Grid::update(double dt)
 {

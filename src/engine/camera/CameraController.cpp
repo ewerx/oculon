@@ -46,14 +46,16 @@ void CameraController::setupInterface(Interface *interface, const std::string& s
     CAMCTRLR_CAMTYPE_TUPLE
 #undef  CAMCTRLR_CAMTYPE_ENTRY
     interface->addEnum(CreateEnumParam( "camera", (int*)(&mCamType), sceneName )
-                        .maxValue(camCount)
-                        .isVertical(), camTypeNames)->registerCallback( this, &CameraController::onCameraChanged );
+                       .maxValue(camCount)
+                       .isVertical()
+                       .oscReceiver(sceneName)
+                       .sendFeedback(), camTypeNames)->registerCallback( this, &CameraController::onCameraChanged );
     
     mInterfacePanels[CAM_SPLINE] = interface->gui()->addPanel();
     mSplineCam.setupInterface(interface, sceneName);
     
-    mInterfacePanels[CAM_STAR] = interface->gui()->addPanel();
-    mStarCam.setupInterface(interface, sceneName);
+//    mInterfacePanels[CAM_STAR] = interface->gui()->addPanel();
+//    mStarCam.setupInterface(interface, sceneName);
     
     mInterfacePanels[CAM_SPIN] = interface->gui()->addPanel();
     interface->gui()->addLabel("spin cam");
@@ -93,8 +95,8 @@ void CameraController::update(double dt)
             mSplineCam.update(dt);
             break;
             
-        case CAM_STAR:
-            mStarCam.update(dt);
+//        case CAM_STAR:
+//            mStarCam.update(dt);
             
         case CAM_SPIN:
             mSpinQuat *= Quatf(Vec3f(0.0f,1.0f,0.0f), dt*mSpinRate);
@@ -116,53 +118,53 @@ const Camera& CameraController::getCamera()
         case CAM_SPLINE:
             return mSplineCam.getCamera();
             
-        case CAM_STAR:
-            return mStarCam.getCamera();
-            
-        case CAM_GRAVITON:
-        {
-            Scene* gravitonScene = mApp->getScene("graviton");
-            
-            if( gravitonScene && gravitonScene->isRunning() )
-            {
-                return gravitonScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            break;
-            
-        case CAM_ORBITER:
-        {
-            Scene* orbiterScene = mApp->getScene("orbiter");
-            
-            if( orbiterScene && orbiterScene->isRunning() )
-            {
-                return orbiterScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            break;
-            
-        case CAM_CATALOG:
-        {
-            Scene* orbiterScene = mApp->getScene("parsec");
-            
-            if( orbiterScene && orbiterScene->isRunning() )
-            {
-                return orbiterScene->getCamera();
-            }
-            else
-            {
-                return mStarCam.getCamera();
-            }
-        }
-            break;
+//        case CAM_STAR:
+//            return mStarCam.getCamera();
+//            
+//        case CAM_GRAVITON:
+//        {
+//            Scene* gravitonScene = mApp->getScene("graviton");
+//            
+//            if( gravitonScene && gravitonScene->isRunning() )
+//            {
+//                return gravitonScene->getCamera();
+//            }
+//            else
+//            {
+//                return mSpringCam.getCam();
+//            }
+//        }
+//            break;
+//            
+//        case CAM_ORBITER:
+//        {
+//            Scene* orbiterScene = mApp->getScene("orbiter");
+//            
+//            if( orbiterScene && orbiterScene->isRunning() )
+//            {
+//                return orbiterScene->getCamera();
+//            }
+//            else
+//            {
+//                return mSpringCam.getCam();
+//            }
+//        }
+//            break;
+//            
+//        case CAM_CATALOG:
+//        {
+//            Scene* orbiterScene = mApp->getScene("parsec");
+//            
+//            if( orbiterScene && orbiterScene->isRunning() )
+//            {
+//                return orbiterScene->getCamera();
+//            }
+//            else
+//            {
+//                return mStarCam.getCamera();
+//            }
+//        }
+//            break;
             
         case CAM_SPIN:
             return mSpinCam;

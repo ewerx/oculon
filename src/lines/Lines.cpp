@@ -37,7 +37,7 @@ void Lines::setup()
 {
     Scene::setup();
     
-    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE|CameraController::CAM_GRAVITON, CameraController::CAM_MANUAL);
+    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     
@@ -255,6 +255,11 @@ void Lines::generateFormationTextures()
         Parsec *parsec = static_cast<Parsec*>(scene);
         mFormationPosTex[FORMATION_PARSEC] = parsec->getStarPositionsTexture();
     }
+    else
+    {
+        // prevent crash if parsec not running
+        mFormationPosTex[FORMATION_PARSEC] = mFormationPosTex[FORMATION_STRAIGHT];
+    }
 }
 
 void Lines::reset()
@@ -270,7 +275,8 @@ void Lines::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
                          .minValue(0.001f)
-                         .maxValue(3.0f));
+                         .maxValue(3.0f)
+                         .oscReceiver(mName));
     
     mInterface->gui()->addColumn();
     vector<string> motionNames;
@@ -280,7 +286,9 @@ void Lines::setupInterface()
 #undef  MOTION_ENTRY
     mInterface->addEnum(CreateEnumParam( "motion", (int*)(&mMotion) )
                         .maxValue(MOTION_COUNT)
-                        .isVertical(), motionNames);
+                        .isVertical()
+                        .oscReceiver(mName)
+                        .sendFeedback(), motionNames);
     
     vector<string> formationNames;
 #define FORMATION_ENTRY( nam, enm ) \
@@ -289,7 +297,9 @@ void Lines::setupInterface()
 #undef  FORMATION_ENTRY
     mInterface->addEnum(CreateEnumParam( "formation", (int*)(&mFormation) )
                         .maxValue(FORMATION_COUNT)
-                        .isVertical(), formationNames)->registerCallback(this, &Lines::takeFormation);;
+                        .isVertical()
+                        .oscReceiver(mName)
+                        .sendFeedback(), formationNames)->registerCallback(this, &Lines::takeFormation);;
     
     mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
     mFormationAnimSelector.setupInterface(mInterface, mName);
@@ -304,9 +314,9 @@ void Lines::setupInterface()
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
-    mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
+    //mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
     mRenderer.setupInterface(mInterface, mName);
-    mGravitonRenderer.setupInterface(mInterface, mName);
+    //mGravitonRenderer.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);

@@ -150,15 +150,15 @@ void Sol::setupInterface()
 
 // ----------------------------------------------------------------
 //
-void Sol::setupDebugInterface()
-{
-    Scene::setupDebugInterface();
-    
-    mDebugParams.addParam("Draw Mask", &mDrawMask );
-    mDebugParams.addParam("Index", &mIndex, "readonly" );
-    
-    mDebugParams.setOptions("Source", "min=0 max=5");
-}
+//void Sol::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface();
+//    
+//    mDebugParams.addParam("Draw Mask", &mDrawMask );
+//    mDebugParams.addParam("Index", &mIndex, "readonly" );
+//    
+//    mDebugParams.setOptions("Source", "min=0 max=5");
+//}
 
 // ----------------------------------------------------------------
 //  

@@ -117,9 +117,9 @@ widthModeNames.push_back(nam);
                        .isVertical(), widthModeNames);
 }
 
-void Barcode::setupDebugInterface()
-{
-}
+//void Barcode::setupDebugInterface()
+//{
+//}
 
 void Barcode::reset()
 {

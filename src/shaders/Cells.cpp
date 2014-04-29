@@ -81,14 +81,16 @@ void Cells::setupInterface()
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
     
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor)
+                         .oscReceiver(mName));
     
-    mInterface->addParam(CreateFloatParam( "Highlight", &mHighlight )
+    mInterface->addParam(CreateFloatParam( "highlight", &mHighlight )
                          .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(1, 2, 17));
-    mInterface->addParam(CreateFloatParam( "Intensity", &mIntensity )
+    mInterface->addParam(CreateFloatParam( "intensity", &mIntensity )
                          .minValue(1.0f)
                          .maxValue(8.0f)
                          .oscReceiver(getName()));

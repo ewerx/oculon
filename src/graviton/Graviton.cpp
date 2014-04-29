@@ -156,11 +156,11 @@ Surface32f Graviton::generateVelocitySurface()
     return surface;
 }
 
-void Graviton::setupDebugInterface()
-{
-    Scene::setupDebugInterface(); // add all interface params
-    
-}
+//void Graviton::setupDebugInterface()
+//{
+//    Scene::setupDebugInterface(); // add all interface params
+//    
+//}
 
 void Graviton::setupInterface()
 {

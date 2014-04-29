@@ -198,13 +198,16 @@ void Dust::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
                          .minValue(0.001f)
-                         .maxValue(3.0f));
+                         .maxValue(3.0f)
+                         .oscReceiver(mName));
     
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
-                         .maxValue(1.0f));
+                         .maxValue(1.0f)
+                         .oscReceiver(mName));
     
-    mInterface->addParam(CreateBoolParam("dynamic noise", &mUseDynamicTex));
+    mInterface->addParam(CreateBoolParam("dynamic_noise", &mUseDynamicTex)
+                         .oscReceiver(mName));
     mInterface->addParam(CreateFloatParam("noise_speed", &mNoiseSpeed )
                          .maxValue(1.0f)
                          .oscReceiver(mName));

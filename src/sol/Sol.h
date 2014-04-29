@@ -45,7 +45,7 @@ public:
     
 protected:
     void setupInterface();
-    void setupDebugInterface();
+    //void setupDebugInterface();
     
     void setupHud();
     void updateHud();
