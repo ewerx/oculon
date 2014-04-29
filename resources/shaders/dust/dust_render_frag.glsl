@@ -4,7 +4,7 @@ uniform sampler2D posMap;
 uniform sampler2D velMap;
 
 uniform sampler2D spriteTex;
-
+uniform vec4 colorBase;
 
 varying float age;
 varying float maxAge;
@@ -13,6 +13,7 @@ void main()
 {
 	//vec4 colFac = vec4(age,age,age,age);
     vec4 colFac = texture2D(spriteTex, gl_PointCoord);
+    colFac *= colorBase;
     //colFac.rgb *= texture2D( velMap, gl_TexCoord[0].st ).rgb;
     
     // darker with age

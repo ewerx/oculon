@@ -17,12 +17,12 @@ DustRenderer::DustRenderer()
 : ParticleRenderer()
 {
     // load textures
-    mColorMapTex    = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
+    mColorMapTex    = gl::Texture( loadImage( app::loadResource( "colortex1.jpg" ) ) );
     mSpriteTex      = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
     
     // params
     mPointSize = 1.25f;
-    mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
+    mColor = ColorAf(1.0f,1.0f,1.0f,1.0f);
     mAudioReactive = false;
 }
 
@@ -86,7 +86,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     mShader.uniform("spriteWidth", mPointSize);
     mShader.uniform("gain", gain);
     mShader.uniform("screenWidth", (float)screenSize.x);
-    //mShader.uniform("colorBase", mColor);
+    mShader.uniform("colorBase", mColor);
     mShader.uniform("audioReactive", mAudioReactive);
     
     //const float scale = 1.0f;
