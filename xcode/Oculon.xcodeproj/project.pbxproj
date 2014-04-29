@@ -3280,15 +3280,6 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios\\\"",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios-sim\\\"",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/macosx\\\"",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/msw\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios-sim\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/macosx\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/msw\\\"",
-					"\\\"$(SRCROOT)/../blocks/Kinect/lib/macosx\\\"",
 					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Debug,
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/i386",
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/x86_64",
@@ -3335,15 +3326,6 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios\\\"",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/ios-sim\\\"",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/macosx\\\"",
-					"\\\"$(SRCROOT)/../blocks/KissFft/lib/msw\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/ios-sim\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/macosx\\\"",
-					"\\\"$(SRCROOT)/../../sdks/cinder_master/blocks/KissFft/lib/msw\\\"",
-					"\\\"$(SRCROOT)/../blocks/Kinect/lib/macosx\\\"",
 					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Debug,
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/i386",
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Debug/ovr.build/Objects-normal/x86_64",
