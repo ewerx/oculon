@@ -35,6 +35,8 @@ public:
     void draw();
     void drawDebug();
     
+    const ci::Camera& getCamera();
+    
 protected:// from Scene
     void setupInterface();
     ////void setupDebugInterface();
@@ -72,9 +74,10 @@ private:
     
     DustRenderer mRenderer;
     
+    ci::CameraOrtho mCamera;
+    
     ci::gl::Texture mInitialPosTex;
 	ci::gl::Texture mInitialVelTex;
-	ci::gl::Texture mParticleDataTex;
     ci::gl::Texture mNoiseTex;
     
     // params

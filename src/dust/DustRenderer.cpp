@@ -23,7 +23,7 @@ DustRenderer::DustRenderer()
     // params
     mPointSize = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
-    mAudioReactive = true;
+    mAudioReactive = false;
 }
 
 DustRenderer::~DustRenderer()
@@ -42,9 +42,10 @@ void DustRenderer::setup(int fboSize)
 
 void DustRenderer::setupInterface( Interface* interface, const std::string& name )
 {
-    interface->addParam(CreateFloatParam( "line_width", &mPointSize )
+    interface->addParam(CreateFloatParam( "point_size", &mPointSize )
                         .minValue(0.01f)
-                        .maxValue(6.0f));
+                        .maxValue(6.0f)
+                        .oscReceiver(name));
     
     interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                         .oscReceiver(name));
@@ -57,15 +58,17 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     // pre-render - set state
     gl::pushMatrices();
     gl::setMatrices( cam );
+    gl::setViewport(Area(Vec2i(0,0), screenSize));
     
     preRender();
     
     // bind textures
     particlesFbo.bindTexture(0);//pos
     particlesFbo.bindTexture(1);//vel
-    //particlesFbo.bindTexture(2);//info
+    particlesFbo.bindTexture(2);//info
     
-    mColorMapTex.bind(3);
+    mSpriteTex.bind(3);
+    //mColorMapTex.bind(4);
     
     if (audioInputHandler.hasTexture())
     {
@@ -76,18 +79,19 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     mShader.bind();
     mShader.uniform("posMap", 0);
     mShader.uniform("velMap", 1);
-    //mShader.uniform("information", 2);
-    mShader.uniform("spriteTex", 2);
+    mShader.uniform("information", 2);
+    mShader.uniform("spriteTex", 3);
     //mShader.uniform("colorMap", 3);
     //mShader.uniform("intensityMap", 4);
     mShader.uniform("spriteWidth", mPointSize);
     mShader.uniform("gain", gain);
-    mShader.uniform("screenWidth", (float)1.0f);
+    mShader.uniform("screenWidth", (float)screenSize.x);
     //mShader.uniform("colorBase", mColor);
     mShader.uniform("audioReactive", mAudioReactive);
     
-    const float scale = 1.0f;
-    glScalef(scale, scale, scale);
+    //const float scale = 1.0f;
+    //glScalef(scale, scale, scale);
+    //glScalef(screenSize.x / 512.0f , screenSize.y / 512.0f, 1.0f);
     
     // do magic
     gl::draw( mVboMesh );
@@ -95,7 +99,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     // cleanup
     mShader.unbind();
     particlesFbo.unbindTexture();
-    mColorMapTex.unbind();
+    mSpriteTex.unbind();
     if (audioInputHandler.hasTexture())
     {
         audioInputHandler.getFbo().unbindTexture();
@@ -118,7 +122,7 @@ void DustRenderer::preRender()
     glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     
-    gl::enableAdditiveBlending();
+    gl::enableAlphaBlending();
     gl::enableDepthRead();
     gl::enableDepthWrite();
 }

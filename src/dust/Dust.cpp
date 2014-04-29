@@ -55,6 +55,8 @@ void Dust::setup()
     mAudioReactive = false;
     mUseDynamicTex = true;
     setupDynamicTexture();
+    
+    mCamera.setOrtho( 0, mApp->getViewportWidth(), mApp->getViewportHeight(), 0, -1, 1 );
 }
 
 void Dust::setupDynamicTexture()
@@ -134,6 +136,7 @@ void Dust::setupFBO()
     std::vector<Surface32f> surfaces;
     surfaces.push_back( posSurface );
     surfaces.push_back( velSurface );
+    surfaces.push_back( infoSurface );
     mParticlesFbo = PingPongFbo( surfaces );
     
     gl::Texture::Format format;
@@ -154,10 +157,6 @@ void Dust::setupFBO()
 	mInitialVelTex.setMinFilter( GL_NEAREST );
 	mInitialVelTex.setMagFilter( GL_NEAREST );
     
-	mParticleDataTex = gl::Texture(infoSurface, format);
-	mParticleDataTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mParticleDataTex.setMinFilter( GL_NEAREST );
-	mParticleDataTex.setMagFilter( GL_NEAREST );
 }
 
 //void Dust::setupVBO()
@@ -248,7 +247,6 @@ void Dust::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
-    mParticleDataTex.bind(2);
     mInitialVelTex.bind(3);
     mInitialPosTex.bind(4);
     //mNoiseTex.bind(5);
@@ -291,7 +289,6 @@ void Dust::update(double dt)
     }
     mInitialPosTex.unbind();
     mInitialVelTex.unbind();
-    mParticleDataTex.unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -302,6 +299,11 @@ void Dust::update(double dt)
 }
 
 #pragma mark - Draw
+
+const Camera& Dust::getCamera()
+{
+    return mCamera;
+}
 
 ParticleRenderer& Dust::getRenderer()
 {
