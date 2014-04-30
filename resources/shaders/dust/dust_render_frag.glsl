@@ -5,9 +5,11 @@ uniform sampler2D velMap;
 
 uniform sampler2D spriteTex;
 uniform vec4 colorBase;
+uniform bool audioReactive;
 
 varying float age;
 varying float maxAge;
+varying vec4 color;
 
 void main()
 {
@@ -26,6 +28,10 @@ void main()
     float aF = age - (maxAge * 0.4);
     alpha = 1.0 - abs(aF * 2.0);
     colFac *= alpha;
+    
+    if (audioReactive) {
+        colFac.a *= (colFac.a + 10.0*color.a);
+    }
     
 	gl_FragColor = colFac;
 }

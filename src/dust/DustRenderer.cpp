@@ -82,7 +82,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     mShader.uniform("information", 2);
     mShader.uniform("spriteTex", 3);
     //mShader.uniform("colorMap", 3);
-    //mShader.uniform("intensityMap", 4);
+    mShader.uniform("intensityMap", 4);
     mShader.uniform("spriteWidth", mPointSize);
     mShader.uniform("gain", gain);
     mShader.uniform("screenWidth", (float)screenSize.x);

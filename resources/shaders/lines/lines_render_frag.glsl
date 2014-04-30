@@ -3,6 +3,7 @@
 uniform sampler2D posMap;
 uniform sampler2D velMap;
 uniform sampler2D colorMap;
+
 uniform vec4 colorBase;
 uniform bool audioReactive;
 

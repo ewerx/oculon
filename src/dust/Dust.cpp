@@ -53,7 +53,7 @@ void Dust::setup()
     mRenderer.setup(kBufSize);
     mLinesRenderer.setup(kBufSize);
     
-    mAudioInputHandler.setup(false);
+    mAudioInputHandler.setup(true);
     
     mDynamicTexture.setup(kBufSize, kBufSize);
     
