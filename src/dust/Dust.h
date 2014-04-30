@@ -18,6 +18,7 @@
 #include "PingPongFbo.h"
 #include "AudioInputHandler.h"
 #include "DustRenderer.h"
+#include "LinesRenderer.h"
 #include "SimplexNoiseTexture.h"
 
 //
@@ -68,6 +69,8 @@ private:
     ci::gl::GlslProg mSimulationShader;
     
     DustRenderer mRenderer;
+    LinesRenderer mLinesRenderer;
+    bool mAltRenderer;
     
     ci::CameraOrtho mCamera;
     

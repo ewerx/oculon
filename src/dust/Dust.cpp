@@ -51,6 +51,7 @@ void Dust::setup()
     
     setupFBO();
     mRenderer.setup(kBufSize);
+    mLinesRenderer.setup(kBufSize);
     
     mAudioInputHandler.setup(false);
     
@@ -164,9 +165,9 @@ void Dust::setupInterface()
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
-//    mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
+    mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
     mRenderer.setupInterface(mInterface, mName);
-//    mGravitonRenderer.setupInterface(mInterface, mName);
+    mLinesRenderer.setupInterface(mInterface, mName);
     
 //    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
     //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
@@ -254,11 +255,11 @@ const Camera& Dust::getCamera()
 
 ParticleRenderer& Dust::getRenderer()
 {
-//    if (mAltRenderer)
-//    {
-//        return mGravitonRenderer;
-//    }
-//    else
+    if (mAltRenderer)
+    {
+        return mLinesRenderer;
+    }
+    else
     {
         return mRenderer;
     }
