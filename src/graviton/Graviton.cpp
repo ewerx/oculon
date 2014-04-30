@@ -39,6 +39,7 @@ void Graviton::setup()
 {
     Scene::setup();
     
+    // params
     mTimeStep = 0.00075f;
         
     mInitialFormation = FORMATION_SPHERE;
@@ -58,7 +59,7 @@ void Graviton::setup()
     mFormationShader = loadFragShader("graviton_formation_frag.glsl");
     
     setupPingPongFbo();
-    mRenderer.setup(kStep); // 512^2 = 262144 particles
+    mRenderer.setup(kBufSize); // 512^2 = 262144 particles
     
     mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
     mAudioInputHandler.setup(false);
@@ -85,7 +86,7 @@ Surface32f Graviton::generatePositionSurface()
 {
     float r = mFormationRadius;
     
-    Surface32f surface( kStep, kStep, true );
+    Surface32f surface( kBufSize, kBufSize, true );
     Surface32f::Iter pixelIter = surface.getIter();
     while( pixelIter.line() )
     {
@@ -143,7 +144,7 @@ Surface32f Graviton::generatePositionSurface()
 
 Surface32f Graviton::generateVelocitySurface()
 {
-    Surface32f surface( kStep, kStep, true );
+    Surface32f surface( kBufSize, kBufSize, true );
     Surface32f::Iter pixelIter = surface.getIter();
     while( pixelIter.line() ) {
         while( pixelIter.pixel() ) {

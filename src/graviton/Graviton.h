@@ -64,8 +64,8 @@ private:
 private:
     enum
     {
-        kStep =                 512,
-        kNumParticles =         (kStep * kStep)
+        kBufSize =                 512,
+        kNumParticles =         (kBufSize * kBufSize)
     };
     
     // INITIAL FORMATION

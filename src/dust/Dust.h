@@ -18,6 +18,7 @@
 #include "PingPongFbo.h"
 #include "AudioInputHandler.h"
 #include "DustRenderer.h"
+#include "SimplexNoiseTexture.h"
 
 //
 // Dust
@@ -53,13 +54,7 @@ private:
     void updateParticles();
     void drawParticles();
     
-    void setupDynamicTexture();
-    void generateDynamicTexture();
-    ci::gl::Fbo mDynamicTexFbo;
-    ci::gl::GlslProg mDynamicTexShader;
-    float mNoiseSpeed;
-	float mNoiseTheta;
-    ci::Vec3f mNoiseScale;
+    SimplexNoiseTexture mDynamicTexture;
     
 private:
     // particle system

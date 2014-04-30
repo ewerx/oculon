@@ -105,6 +105,7 @@
 		7C159BA318B6F9C5005245CB /* ParticleBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA118B6F9C5005245CB /* ParticleBehavior.cpp */; };
 		7C159BA518B6FCD3005245CB /* static_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */; };
 		7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA618B7017E005245CB /* ParticleRenderer.cpp */; };
+		7C187E48191093D3003590EC /* SimplexNoiseTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */; };
 		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
 		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
@@ -623,6 +624,8 @@
 		7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = static_sim_frag.glsl; sourceTree = "<group>"; };
 		7C159BA618B7017E005245CB /* ParticleRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleRenderer.cpp; sourceTree = "<group>"; };
 		7C159BA718B7017E005245CB /* ParticleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleRenderer.h; sourceTree = "<group>"; };
+		7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimplexNoiseTexture.cpp; sourceTree = "<group>"; };
+		7C187E47191093D3003590EC /* SimplexNoiseTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplexNoiseTexture.h; sourceTree = "<group>"; };
 		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
 		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
@@ -2079,6 +2082,8 @@
 				7CC3C032183FECCE0082C322 /* TextureGenerator.h */,
 				7C79C9C617650FD700E71F9D /* Utils.cpp */,
 				7C79C9C717650FD700E71F9D /* Utils.h */,
+				7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */,
+				7C187E47191093D3003590EC /* SimplexNoiseTexture.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -3159,6 +3164,7 @@
 				7C79C94217650F8F00E71F9D /* Velocity.frag in Sources */,
 				7C79C94617650F8F00E71F9D /* motionBlur.frag in Sources */,
 				7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */,
+				7C187E48191093D3003590EC /* SimplexNoiseTexture.cpp in Sources */,
 				7C79C94817650F8F00E71F9D /* passThru.vert in Sources */,
 				7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */,
 				7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */,

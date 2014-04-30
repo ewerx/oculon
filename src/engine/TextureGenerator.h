@@ -19,27 +19,26 @@
 class TextureGenerator
 {
 public:
-    // shaders
-#define TS_SHADERS_TUPLE \
-TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
-TS_SHADERS_ENTRY( "Simplicity", "simplicity_frag.glsl", SHADER_SIMPLICITY ) \
-TS_SHADERS_ENTRY( "Voronoi", "voronoi_frag.glsl", SHADER_VORONOI ) \
-//TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
-//end tuple
-    
-public:
     TextureGenerator();
     virtual ~TextureGenerator();
     
-    void setup(const int width, const int height, int type);
+    void setup(const int width, const int height);
     void update(double dt);
     
-    void setupInterface( Interface &interface );
+    ci::gl::Texture getTexture()        { return mFbo.getTexture(); }
+    void bindTexture(int textureUnit)   { mFbo.bindTexture(textureUnit); }
+    void unbindTexture()                { mFbo.unbindTexture(); }
     
-    ci::gl::Texture getTexture();
+    // interface
+    virtual void setupInterface( Interface* interface, const std::string& name ) {};
+    virtual void initShader() = 0;
+    virtual void configShader(double dt) = 0;
     
 protected:
     double mElapsedTime;
     float mTimeScale;
+    
+    ci::gl::Fbo mFbo;
+    ci::gl::GlslProg mShader;
     
 };
