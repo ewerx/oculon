@@ -15,7 +15,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
-#include "PingPongFbo.h"
+#include "ParticleController.h"
 #include "AudioInputHandler.h"
 #include "CameraController.h"
 #include "EaseCurveSelector.h"
@@ -54,31 +54,20 @@ private:
     void updateParticles();
     void drawParticles();
     
-    void generateFormationTextures();
-    
     ParticleRenderer& getRenderer();
     
     SimplexNoiseTexture mDynamicTexture;
     
 private:
     // particle system
-    enum
-    {
-        kBufSize = 128,
-        kNumParticles = (kBufSize * kBufSize)
-    };
+    ParticleController mParticleController;
     
-    PingPongFbo mParticlesFbo;
     ci::gl::GlslProg mSimulationShader;
-    
-	ci::gl::Texture mInitialVelTex;
-	ci::gl::Texture mParticleDataTex;
     
     // formations
 #define FORMATION_TUPLE \
 FORMATION_ENTRY( "Random", FORMATION_RANDOM ) \
 FORMATION_ENTRY( "Straight", FORMATION_STRAIGHT ) \
-FORMATION_ENTRY( "Parsec", FORMATION_PARSEC ) \
 // end tuple
     
     enum eFormation
@@ -128,6 +117,8 @@ enm,
     LinesRenderer mRenderer;
     GravitonRenderer mGravitonRenderer;
     bool mAltRenderer;
+    
+    int mBufSize;
 };
 
 

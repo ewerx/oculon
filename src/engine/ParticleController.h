@@ -64,12 +64,16 @@ public:
     };
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
     
+    PingPongFbo& getParticleFbo() { return mParticlesFbo; }
+    int getFormationCount() { return mFormations.size(); }
+    
+    std::vector<tFormation>& getFormations() { return mFormations; }
+    
 public:
     //void addBehavior(ParticleBehavior* behavior) { mBehaviors.push_back(behavior); }
     
 private:
     void setupFBO();
-    void setupVBO();
     
     void updateSimulation(double dt);
     void render();

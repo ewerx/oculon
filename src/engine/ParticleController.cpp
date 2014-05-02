@@ -33,8 +33,6 @@ void ParticleController::setup(int bufSize)
     mFboSize = bufSize;
     mNumParticles = mFboSize * mFboSize;
     
-//    assert(initPositions.size() == initVelocities.size() == initData.size() == mNumParticles);
-    
     // setup the framebuffers
     // bufSize x bufSize
     Surface32f posSurface = Surface32f(bufSize,bufSize,true);
@@ -42,23 +40,15 @@ void ParticleController::setup(int bufSize)
 	Surface32f dataSurface = Surface32f(bufSize,bufSize,true);
     
     Surface32f::Iter surfaceIter = posSurface.getIter();
-//    vector<Vec4f>::iterator posIter = initPositions.begin();
-//    vector<Vec4f>::iterator velIter = initVelocities.begin();
-//    vector<Vec4f>::iterator dataIter = initData.begin();
     
     // encode the values as colors
     while(surfaceIter.line())
 	{
 		while(surfaceIter.pixel())
 		{
-//            ColorAf posPixel = ColorAf( (*posIter).x, (*posIter).y, (*posIter).z, (*posIter).w );
-//            posSurface.setPixel(surfaceIter.getPos(), posPixel);
-//            
-//            ColorAf velPixel = ColorAf( (*velIter).x, (*velIter).y, (*velIter).z, (*velIter).w );
-//            velSurface.setPixel(surfaceIter.getPos(), velPixel);
-//            
-//            ColorAf dataPixel = ColorAf( (*dataIter).x, (*dataIter).y, (*dataIter).z, (*dataIter).w );
-            dataSurface.setPixel(surfaceIter.getPos(), ColorA::zero());
+            posSurface.setPixel(surfaceIter.getPos(), ColorA::white());
+            velSurface.setPixel(surfaceIter.getPos(), ColorA::white());
+            dataSurface.setPixel(surfaceIter.getPos(), ColorA::white());
         }
     }
     
@@ -93,23 +83,18 @@ void ParticleController::addFormation(const std::string &name,
 		{
             ColorAf posPixel = ColorAf( (*posIter).x, (*posIter).y, (*posIter).z, (*posIter).w );
             posSurface.setPixel(surfaceIter.getPos(), posPixel);
+            posIter++;
             
             ColorAf velPixel = ColorAf( (*velIter).x, (*velIter).y, (*velIter).z, (*velIter).w );
             velSurface.setPixel(surfaceIter.getPos(), velPixel);
+            velIter++;
             
             ColorAf dataPixel = ColorAf( (*dataIter).x, (*dataIter).y, (*dataIter).z, (*dataIter).w );
             dataSurface.setPixel(surfaceIter.getPos(), dataPixel);
+            dataIter++;
         }
     }
     
-    // create ping-pong fbo with multiple texture channels
-    std::vector<Surface32f> surfaces;
-    surfaces.push_back( posSurface );
-    surfaces.push_back( velSurface );
-    surfaces.push_back( dataSurface );
-    mParticlesFbo = PingPongFbo( surfaces );
-    
-    // store the original textures
     gl::Texture::Format format;
     format.setInternalFormat( GL_RGBA32F_ARB );
     

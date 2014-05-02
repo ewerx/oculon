@@ -52,14 +52,14 @@ void Lines::setup()
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     
+    mBufSize = 128;
     setupFBO();
     
     // rendering
-    mRenderer.setup(kBufSize);
-    mGravitonRenderer.setup(kBufSize);
-    generateFormationTextures();
+    mRenderer.setup(mBufSize);
+    mGravitonRenderer.setup(mBufSize);
     
-    mDynamicTexture.setup(kBufSize, kBufSize);
+    mDynamicTexture.setup(mBufSize, mBufSize);
     
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     mApp->setCamera(Vec3f(480.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
@@ -70,153 +70,84 @@ void Lines::setup()
 
 void Lines::setupFBO()
 {
-    console() << "[Lines] initializing " << kNumParticles << " particles, hang on!" << std::endl;
-    //initialize buffer
-	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
-	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
-	Surface32f infoSurface = Surface32f(kBufSize,kBufSize,true);
+    mParticleController.setup(mBufSize);
+    int numParticles = mBufSize*mBufSize;
     
-	Surface32f::Iter iterator = posSurface.getIter();
-	
-    Perlin perlin(32, clock() * .1f);
+    console() << "[Lines] initializing " << numParticles << " particles, hang on!" << std::endl;
     
-	while(iterator.line())
-	{
-		while(iterator.pixel())
-		{
-            // position + mass
-            float x = Rand::randFloat(-1.0f,1.0f);
-            float y = Rand::randFloat(-1.0f,1.0f);
-            float z = Rand::randFloat(-1.0f,1.0f);
-            float mass = Rand::randFloat(0.01f,1.0f);
-			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
-            
-            // velocity + age
-            float vx = Rand::randFloat(-.005f,.005f);
-            float vy = Rand::randFloat(-.005f,.005f);
-            float vz = Rand::randFloat(-.005f,.005f);
-            float age = Rand::randFloat(.007f,0.9f);
-			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
-            
-			// extra info
-            float decay = Rand::randFloat(.01f,10.00f);
-			infoSurface.setPixel(iterator.getPos(),
-                                 ColorA(x,y,z,decay));
-		}
-	}
+    // TODO: refactor as formation classes
+    vector<Vec4f> randomPositions;
+    vector<Vec4f> straightPositions;
+    vector<Vec4f> velocities;
+    vector<Vec4f> data;
     
-    std::vector<Surface32f> surfaces;
-    surfaces.push_back( posSurface );
-    surfaces.push_back( velSurface );
-    surfaces.push_back( infoSurface );
-    mParticlesFbo = PingPongFbo( surfaces );
+    // random
+    for (int i = 0; i < numParticles; ++i)
+    {
+        // position + mass
+        float x = Rand::randFloat(-1.0f,1.0f);
+        float y = Rand::randFloat(-1.0f,1.0f);
+        float z = Rand::randFloat(-1.0f,1.0f);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        randomPositions.push_back(Vec4f(x,y,z,mass));
+        
+        // velocity + age
+        float vx = Rand::randFloat(-.005f,.005f);
+        float vy = Rand::randFloat(-.005f,.005f);
+        float vz = Rand::randFloat(-.005f,.005f);
+        float age = Rand::randFloat(.007f,0.9f);
+        velocities.push_back(Vec4f(vx,vy,vz,age));
+        
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
+    }
+    mParticleController.addFormation("random", randomPositions, velocities, data);
     
-    gl::Texture::Format format;
-    format.setInternalFormat( GL_RGBA32F_ARB );
-	
-	mFormationPosTex[FORMATION_RANDOM] = gl::Texture(posSurface, format);
-	mFormationPosTex[FORMATION_RANDOM].setWrap( GL_REPEAT, GL_REPEAT );
-	mFormationPosTex[FORMATION_RANDOM].setMinFilter( GL_NEAREST );
-	mFormationPosTex[FORMATION_RANDOM].setMagFilter( GL_NEAREST );
-	
-	mInitialVelTex = gl::Texture(velSurface, format);
-	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mInitialVelTex.setMinFilter( GL_NEAREST );
-	mInitialVelTex.setMagFilter( GL_NEAREST );
-}
-
-void Lines::generateFormationTextures()
-{
-    //TODO: make setupFBO use this formation function
-    
-    //initialize buffer
-	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
-	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
-    
-	Surface32f::Iter iterator = posSurface.getIter();
-    
+    // straight lines
+    bool pair = false;
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;
     
-    bool pair = false;
-    
-    
-	while(iterator.line())
-	{
-		while(iterator.pixel())
-		{
-            if (pair)
-            {
-                int axis = Rand::randInt(3); // x=0,y=1,z=2
-                switch(axis)
-                {
-                    case 0:
-                        x = -x;
-                        break;
-                    case 1:
-                        y = -y;
-                        break;
-                    case 2:
-                        z = -z;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                x = Rand::randFloat(-1.0f,1.0f);
-                y = Rand::randFloat(-1.0f,1.0f);
-                z = Rand::randFloat(-1.0f,1.0f);
-            }
-            
-            float mass = Rand::randFloat(0.01f,1.0f);
-            
-            // position + mass
-			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
-            
-//            // velocity
-//            float vx = Rand::randFloat(-.005f,.005f);
-//            float vy = Rand::randFloat(-.005f,.005f);
-//            float vz = Rand::randFloat(-.005f,.005f);
-//            float age = Rand::randFloat(.007f,0.9f);
-//            
-//			// velocity + age
-//			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
-            
-            pair = !pair;
-		}
-	}
-    
-    gl::Texture::Format format;
-    format.setInternalFormat( GL_RGBA32F_ARB );
-	
-	mFormationPosTex[FORMATION_STRAIGHT] = gl::Texture(posSurface, format);
-	mFormationPosTex[FORMATION_STRAIGHT].setWrap( GL_REPEAT, GL_REPEAT );
-	mFormationPosTex[FORMATION_STRAIGHT].setMinFilter( GL_NEAREST );
-	mFormationPosTex[FORMATION_STRAIGHT].setMagFilter( GL_NEAREST );
-	
-//	mInitialVelTex = gl::Texture(velSurface, format);
-//	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
-//	mInitialVelTex.setMinFilter( GL_NEAREST );
-//	mInitialVelTex.setMagFilter( GL_NEAREST );
-    
-    // HACK
-    Scene *scene = mApp->getScene("parsec");
-    
-    if (scene)
+    for (int i = 0; i < numParticles; ++i)
     {
-        Surface32f starsSurface = Surface32f(kBufSize,kBufSize,true);
+        if (pair)
+        {
+            int axis = Rand::randInt(3); // x=0,y=1,z=2
+            switch(axis)
+            {
+                case 0:
+                    x = -x;
+                    break;
+                case 1:
+                    y = -y;
+                    break;
+                case 2:
+                    z = -z;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            x = Rand::randFloat(-1.0f,1.0f);
+            y = Rand::randFloat(-1.0f,1.0f);
+            z = Rand::randFloat(-1.0f,1.0f);
+        }
         
-        Parsec *parsec = static_cast<Parsec*>(scene);
-        mFormationPosTex[FORMATION_PARSEC] = parsec->getStarPositionsTexture();
+        float mass = Rand::randFloat(0.01f,1.0f);
+        
+        // position + mass
+        straightPositions.push_back(Vec4f(x,y,z,mass));
+        
+        pair = !pair;
     }
-    else
-    {
-        // prevent crash if parsec not running
-        mFormationPosTex[FORMATION_PARSEC] = mFormationPosTex[FORMATION_STRAIGHT];
-    }
+    
+    mParticleController.addFormation("straight", straightPositions, velocities, data);
+    
+    mParticleController.resetToFormation(0);
 }
 
 void Lines::reset()
@@ -299,14 +230,19 @@ void Lines::update(double dt)
     
     mDynamicTexture.update(dt);
     
+    // TODO: refactor
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
+    
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
     gl::setViewport( mParticlesFbo.getBounds() );
     
     mParticlesFbo.bindUpdate();
     
-    mInitialVelTex.bind(3);
-    mFormationPosTex[mFormation].bind(4);
+    mParticleController.getFormations().at(mFormation).mVelocityTex.bind(3);
+    mParticleController.getFormations().at(mFormation).mPositionTex.bind(4);
+    
+    
     mDynamicTexture.bindTexture(5);
     
     float simdt = (float)(dt*mTimeStep);
@@ -328,8 +264,8 @@ void Lines::update(double dt)
     mSimulationShader.unbind();
     
     mDynamicTexture.unbindTexture();
-    mFormationPosTex[mFormation].unbind();
-    mInitialVelTex.unbind();
+    mParticleController.getFormations().at(mFormation).mPositionTex.unbind();
+    mParticleController.getFormations().at(mFormation).mVelocityTex.unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -361,6 +297,9 @@ ParticleRenderer& Lines::getRenderer()
 void Lines::draw()
 {
     ParticleRenderer& renderer = getRenderer();
+    
+    //HACK
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
     
     gl::pushMatrices();
     if (mApp->outputToOculus())
@@ -396,6 +335,9 @@ void Lines::drawDebug()
     const float size = 80.0f;
     const float paddingX = 20.0f;
     const float paddingY = 240.0f;
+    
+    //HACK
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
     
     Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
     gl::draw( mParticlesFbo.getTexture(0), preview );
