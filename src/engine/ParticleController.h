@@ -23,16 +23,49 @@
 class ParticleController
 {
 public:
+    struct tFormation
+    {
+        tFormation(const std::string& name,
+                   ci::gl::Texture posTex,
+                   ci::gl::Texture velTex,
+                   ci::gl::Texture dataTex)
+        : mName(name)
+        , mPositionTex(posTex)
+        , mVelocityTex(velTex)
+        , mDataTex(dataTex)
+        {}
+        
+        std::string mName;
+        ci::gl::Texture mPositionTex;
+        ci::gl::Texture mVelocityTex;
+        ci::gl::Texture mDataTex;
+    };
+public:
     ParticleController();
     virtual ~ParticleController();
     
-    void setup(int fboSize = 256);
+    void setup(int bufSize);
+    
     void update(double dt);
     void draw(const ci::Camera& cam);
     void drawDebug();
     
+    void addFormation(const std::string& name,
+                      std::vector<ci::Vec4f>& positions,
+                      std::vector<ci::Vec4f>& velocities,
+                      std::vector<ci::Vec4f>& data);
+    
+    enum eResetFlag
+    {
+        RESET_POSITION    = (1<<0),
+        RESET_VELOCITY    = (1<<1),
+        RESET_DATA        = (1<<2),
+        RESET_ALL         = RESET_POSITION | RESET_VELOCITY | RESET_DATA
+    };
+    void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
+    
 public:
-    void addBehavior(ParticleBehavior* behavior) { mBehaviors.push_back(behavior); }
+    //void addBehavior(ParticleBehavior* behavior) { mBehaviors.push_back(behavior); }
     
 private:
     void setupFBO();
@@ -43,16 +76,9 @@ private:
     
 private:
     PingPongFbo mParticlesFbo;
-//    ci::gl::VboMesh mVboMesh;
-//    ci::gl::GlslProg mRenderShader;
-    
-    std::vector<ParticleBehavior*> mBehaviors;
-    int mCurrentBehavior;
-    
-    std::vector<ParticleRenderer*> mRenderers;
-    int mCurrentRenderer;
     
     int mFboSize;
     int mNumParticles;
-    
+
+    std::vector<tFormation> mFormations;
 };

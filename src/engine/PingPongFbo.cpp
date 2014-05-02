@@ -100,9 +100,9 @@ void PingPongFbo::setTextures(const std::vector<ci::Surface32f> &surfaces)
     reset();
 }
 
-void PingPongFbo::setTexture(const int index, const ci::Surface32f &surface)
+void PingPongFbo::setTexture(const int attachment, const ci::Surface32f &surface)
 {
-    assert( index < mTextures.size() );
+    assert( attachment < mTextures.size() );
     
     gl::Texture::Format format;
     format.setInternalFormat( GL_RGBA32F_ARB );
@@ -110,7 +110,14 @@ void PingPongFbo::setTexture(const int index, const ci::Surface32f &surface)
     tex.setWrap( GL_REPEAT, GL_REPEAT );
     tex.setMinFilter( GL_NEAREST );
     tex.setMagFilter( GL_NEAREST );
-    mTextures[index] = tex;
+    mTextures[attachment] = tex;
+}
+
+void PingPongFbo::setTexture(const int attachment, ci::gl::Texture &texture)
+{
+    assert( attachment < mTextures.size() );
+    
+    mTextures[attachment] = texture;
 }
 
 void PingPongFbo::reset()

@@ -17,97 +17,139 @@ using namespace ci::app;
 #pragma mark - construction
 
 ParticleController::ParticleController()
-: mFboSize(256)
-, mNumParticles(mFboSize*mFboSize)
+: mFboSize(0)
+, mNumParticles(0)
 {
 }
 
 ParticleController::~ParticleController()
 {
-    for (ParticleRenderer *pr : mRenderers)
-    {
-        delete pr;
-    }
-    mRenderers.clear();
 }
 
 #pragma mark - setup
 
-void ParticleController::setup(int fboSize)
+void ParticleController::setup(int bufSize)
 {
-    mFboSize = fboSize;
+    mFboSize = bufSize;
     mNumParticles = mFboSize * mFboSize;
     
-    // add default behavior
-    mBehaviors.push_back(new ParticleBehavior());
+//    assert(initPositions.size() == initVelocities.size() == initData.size() == mNumParticles);
     
-    setupFBO();
-    //setupVBO();
+    // setup the framebuffers
+    // bufSize x bufSize
+    Surface32f posSurface = Surface32f(bufSize,bufSize,true);
+	Surface32f velSurface = Surface32f(bufSize,bufSize,true);
+	Surface32f dataSurface = Surface32f(bufSize,bufSize,true);
     
-    // add default renderer
-    mRenderers.push_back(new ParticleRenderer());
-    mRenderers[0]->setup(256);
+    Surface32f::Iter surfaceIter = posSurface.getIter();
+//    vector<Vec4f>::iterator posIter = initPositions.begin();
+//    vector<Vec4f>::iterator velIter = initVelocities.begin();
+//    vector<Vec4f>::iterator dataIter = initData.begin();
+    
+    // encode the values as colors
+    while(surfaceIter.line())
+	{
+		while(surfaceIter.pixel())
+		{
+//            ColorAf posPixel = ColorAf( (*posIter).x, (*posIter).y, (*posIter).z, (*posIter).w );
+//            posSurface.setPixel(surfaceIter.getPos(), posPixel);
+//            
+//            ColorAf velPixel = ColorAf( (*velIter).x, (*velIter).y, (*velIter).z, (*velIter).w );
+//            velSurface.setPixel(surfaceIter.getPos(), velPixel);
+//            
+//            ColorAf dataPixel = ColorAf( (*dataIter).x, (*dataIter).y, (*dataIter).z, (*dataIter).w );
+            dataSurface.setPixel(surfaceIter.getPos(), ColorA::zero());
+        }
+    }
+    
+    // create ping-pong fbo with multiple texture channels
+    std::vector<Surface32f> surfaces;
+    surfaces.push_back( posSurface );
+    surfaces.push_back( velSurface );
+    surfaces.push_back( dataSurface );
+    mParticlesFbo = PingPongFbo( surfaces );
 }
 
-void ParticleController::setupFBO()
+void ParticleController::addFormation(const std::string &name,
+                                      std::vector<ci::Vec4f> &positions,
+                                      std::vector<ci::Vec4f> &velocities,
+                                      std::vector<ci::Vec4f> &data)
 {
-    // shaders
+    // setup the framebuffers
+    // bufSize x bufSize
+    Surface32f posSurface = Surface32f(mFboSize,mFboSize,true);
+	Surface32f velSurface = Surface32f(mFboSize,mFboSize,true);
+	Surface32f dataSurface = Surface32f(mFboSize,mFboSize,true);
     
-//    mRenderShader = Utils::loadVertAndFragShaders("lines_render_vert.glsl", "lines_render_frag.glsl");
+    Surface32f::Iter surfaceIter = posSurface.getIter();
+    vector<Vec4f>::iterator posIter = positions.begin();
+    vector<Vec4f>::iterator velIter = velocities.begin();
+    vector<Vec4f>::iterator dataIter = data.begin();
     
-    // setup fbo
-//    Surface32f posSurface = Surface32f(mFboSize,mFboSize,true);
-//	Surface32f velSurface = Surface32f(mFboSize,mFboSize,true);
-//	Surface32f infoSurface = Surface32f(mFboSize,mFboSize,true);
-//    
-//	Surface32f::Iter iterator = posSurface.getIter();
-//    
-//    // random positions with fixed seed
-//    Rand rand(1010);
-//    
-//    while(iterator.line())
-//	{
-//		while(iterator.pixel())
-//		{
-//            float x = rand.randFloat(-1.0f,1.0f);
-//            float y = rand.randFloat(-1.0f,1.0f);
-//            float z = rand.randFloat(-1.0f,1.0f);
-//            posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,0.0f));
-//			velSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
-//            infoSurface.setPixel(iterator.getPos(), ColorA(0.0f,0.0f,0.0f,0.0f));
-//		}
-//	}
-//    
-//    std::vector<Surface32f> surfaces;
-//    surfaces.push_back( posSurface );
-//    surfaces.push_back( velSurface );
-//    surfaces.push_back( infoSurface );
-    mParticlesFbo = PingPongFbo( 3, mFboSize );
+    // encode the values as colors
+    while(surfaceIter.line())
+	{
+		while(surfaceIter.pixel())
+		{
+            ColorAf posPixel = ColorAf( (*posIter).x, (*posIter).y, (*posIter).z, (*posIter).w );
+            posSurface.setPixel(surfaceIter.getPos(), posPixel);
+            
+            ColorAf velPixel = ColorAf( (*velIter).x, (*velIter).y, (*velIter).z, (*velIter).w );
+            velSurface.setPixel(surfaceIter.getPos(), velPixel);
+            
+            ColorAf dataPixel = ColorAf( (*dataIter).x, (*dataIter).y, (*dataIter).z, (*dataIter).w );
+            dataSurface.setPixel(surfaceIter.getPos(), dataPixel);
+        }
+    }
+    
+    // create ping-pong fbo with multiple texture channels
+    std::vector<Surface32f> surfaces;
+    surfaces.push_back( posSurface );
+    surfaces.push_back( velSurface );
+    surfaces.push_back( dataSurface );
+    mParticlesFbo = PingPongFbo( surfaces );
+    
+    // store the original textures
+    gl::Texture::Format format;
+    format.setInternalFormat( GL_RGBA32F_ARB );
+    
+    gl::Texture posTex = gl::Texture(posSurface, format);
+    posTex.setWrap( GL_REPEAT, GL_REPEAT );
+    posTex.setMinFilter( GL_NEAREST );
+    posTex.setMagFilter( GL_NEAREST );
+    
+    gl::Texture velTex = gl::Texture(velSurface, format);
+    velTex.setWrap( GL_REPEAT, GL_REPEAT );
+    velTex.setMinFilter( GL_NEAREST );
+    velTex.setMagFilter( GL_NEAREST );
+    
+    gl::Texture dataTex = gl::Texture(dataSurface, format);
+    dataTex.setWrap( GL_REPEAT, GL_REPEAT );
+    dataTex.setMinFilter( GL_NEAREST );
+    dataTex.setMagFilter( GL_NEAREST );
+    
+    mFormations.push_back( tFormation(name,posTex,velTex,dataTex) );
 }
 
-//void ParticleController::setupVBO()
-//{
-//    // setup VBO
-//    // A dummy VboMesh the same size as the texture to keep the vertices on the GPU
-//    vector<Vec2f> texCoords;
-//    vector<uint32_t> indices;
-//    gl::VboMesh::Layout layout;
-//    layout.setStaticIndices();
-//    layout.setStaticPositions();
-//    layout.setStaticTexCoords2d();
-//    layout.setStaticNormals();
-//    
-//    mVboMesh = gl::VboMesh( mNumParticles, mNumParticles, layout, GL_LINES);
-//    for( int y = 0; y < mFboSize; ++y ) {
-//        for( int x = 0; x < mFboSize; ++x ) {
-//            indices.push_back( y * mFboSize + x );
-//            texCoords.push_back( Vec2f( x/(float)mFboSize, y/(float)mFboSize ) );
-//        }
-//    }
-//    mVboMesh.bufferIndices( indices );
-//    mVboMesh.bufferTexCoords2d( 0, texCoords );
-//    mVboMesh.unbindBuffers();
-//}
+void ParticleController::resetToFormation(const int formationIndex, const int resetFlags)
+{
+    assert(formationIndex < mFormations.size());
+    
+    if (resetFlags & RESET_POSITION)
+    {
+        mParticlesFbo.setTexture(0, mFormations[formationIndex].mPositionTex);
+    }
+    if (resetFlags & RESET_VELOCITY)
+    {
+        mParticlesFbo.setTexture(1, mFormations[formationIndex].mVelocityTex);
+    }
+    if (resetFlags & RESET_DATA)
+    {
+        mParticlesFbo.setTexture(2, mFormations[formationIndex].mDataTex);
+    }
+    
+    mParticlesFbo.reset();
+}
 
 void ParticleController::update(double dt)
 {
@@ -116,19 +158,19 @@ void ParticleController::update(double dt)
 
 void ParticleController::updateSimulation(double dt)
 {
-    if (mCurrentBehavior < mBehaviors.size())
-    {
-        mBehaviors[mCurrentBehavior]->update(dt, mParticlesFbo);
-    }
+//    if (mCurrentBehavior < mBehaviors.size())
+//    {
+//        mBehaviors[mCurrentBehavior]->update(dt, mParticlesFbo);
+//    }
 }
 
 void ParticleController::draw(const ci::Camera& cam)
 {
-    if (mCurrentBehavior < mBehaviors.size())
-    {
-        // FIXME: need to update method signature to match ParticleRenderer::draw
-        //mRenderers[mCurrentBehavior]->draw(mParticlesFbo, cam);
-    }
+//    if (mCurrentBehavior < mBehaviors.size())
+//    {
+//        // FIXME: need to update method signature to match ParticleRenderer::draw
+//        //mRenderers[mCurrentBehavior]->draw(mParticlesFbo, cam);
+//    }
     
 //    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
 //    
