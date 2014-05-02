@@ -46,18 +46,21 @@ void Dust::setup()
     
     mAudioTime = false;
     
-    // shaders
+    // simulation
     mSimulationShader = loadVertAndFragShaders("dust_simulation_vert.glsl", "dust_simulation_frag.glsl");
     
     setupFBO();
+    
+    // rendering
     mRenderer.setup(kBufSize);
     mLinesRenderer.setup(kBufSize);
-    
-    mAudioInputHandler.setup(true);
     
     mDynamicTexture.setup(kBufSize, kBufSize);
     
     mCamera.setOrtho( 0, mApp->getViewportWidth(), mApp->getViewportHeight(), 0, -1, 1 );
+    
+    // audio
+    mAudioInputHandler.setup(true);
 }
 
 void Dust::setupFBO()

@@ -41,13 +41,10 @@ public:
     
 protected:// from Scene
     void setupInterface();
-    ////void setupDebugInterface();
+    //void setupDebugInterface();
     
 private:
     void setupFBO();
-//    void setupVBO();
-    
-//    std::vector<ci::Surface32f> generateInitialSurfaces();
     
     ParticleRenderer& getRenderer();
     

@@ -21,6 +21,7 @@
 #include "EaseCurveSelector.h"
 #include "LinesRenderer.h"
 #include "GravitonRenderer.h"
+#include "SimplexNoiseTexture.h"
 
 //
 // Lines
@@ -48,24 +49,16 @@ protected:// from Scene
     
 private:
     void setupFBO();
-    void setupVBO();
     
     void initParticles();
     void updateParticles();
     void drawParticles();
     
-    void setupDynamicTexture();
-    void generateDynamicTexture();
-    
     void generateFormationTextures();
     
     ParticleRenderer& getRenderer();
     
-    ci::gl::Fbo mDynamicTexFbo;
-    ci::gl::GlslProg mDynamicTexShader;
-    float mNoiseSpeed;
-	float mNoiseTheta;
-    ci::Vec3f mNoiseScale;
+    SimplexNoiseTexture mDynamicTexture;
     
 private:
     // particle system

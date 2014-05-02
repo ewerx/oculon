@@ -37,19 +37,7 @@ void Lines::setup()
 {
     Scene::setup();
     
-    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
-    
-    mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
-    
-    setupFBO();
-    mRenderer.setup(kBufSize);
-    mGravitonRenderer.setup(kBufSize);
-    generateFormationTextures();
-    
-    mAudioInputHandler.setup(true);
-    
     mReset = false;
-    mAudioTime = false;
     
     // params
     mTimeStep = 0.1f;
@@ -58,32 +46,26 @@ void Lines::setup()
     mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;
     
+    mAudioTime = false;
     mAltRenderer = false;
     
-    mUseDynamicTex = true;
-    setupDynamicTexture();
+    // simulation
+    mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     
+    setupFBO();
+    
+    // rendering
+    mRenderer.setup(kBufSize);
+    mGravitonRenderer.setup(kBufSize);
+    generateFormationTextures();
+    
+    mDynamicTexture.setup(kBufSize, kBufSize);
+    
+    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     mApp->setCamera(Vec3f(480.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
-}
-
-void Lines::setupDynamicTexture()
-{
-    mNoiseTheta = 0.0f;
-    mNoiseSpeed = 0.1f;
-    mNoiseScale = Vec3f(1.0f,1.0f,0.25f);
     
-    mDynamicTexShader = loadFragShader("simplex_frag.glsl");
-    
-    gl::Fbo::Format format;
-	format.setColorInternalFormat( GL_RGB32F_ARB );
-	mDynamicTexFbo = gl::Fbo( kBufSize, kBufSize, format );
-    
-    // initialize
-    mDynamicTexFbo.bindFramebuffer();
-	gl::setViewport( mDynamicTexFbo.getBounds() );
-	gl::clear();
-	mDynamicTexFbo.unbindFramebuffer();
-	mDynamicTexFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
+    // audio
+    mAudioInputHandler.setup(true);
 }
 
 void Lines::setupFBO()
@@ -306,11 +288,7 @@ void Lines::setupInterface()
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateBoolParam("dynamic noise", &mUseDynamicTex));
-    mInterface->addParam(CreateFloatParam("noise_speed", &mNoiseSpeed )
-                         .maxValue(1.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
-                         .oscReceiver(mName));
+    mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
@@ -345,10 +323,8 @@ void Lines::update(double dt)
     gl::disableAlphaBlending();
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
-    mNoiseTheta += dt * mNoiseSpeed;
-    //float time = (float)getElapsedSeconds();
-	//mNoiseTheta = time;
-    generateDynamicTexture();
+    
+    mDynamicTexture.update(dt);
     
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
@@ -363,7 +339,7 @@ void Lines::update(double dt)
     
     if (mUseDynamicTex)
     {
-        mDynamicTexFbo.bindTexture(5);
+        mDynamicTexture.bindTexture(5);
     }
     else
     {
@@ -390,7 +366,7 @@ void Lines::update(double dt)
     
     if (mUseDynamicTex)
     {
-        mDynamicTexFbo.unbindTexture();
+        mDynamicTexture.unbindTexture();
     }
     else
     {
@@ -475,7 +451,7 @@ void Lines::drawDebug()
     Rectf preview3 = preview2 - Vec2f(size+paddingX, 0.0f);
     if (mUseDynamicTex)
     {
-        gl::draw(mDynamicTexFbo.getTexture(), preview3);
+        gl::draw(mDynamicTexture.getTexture(), preview3);
     }
     else
     {
@@ -484,66 +460,4 @@ void Lines::drawDebug()
     
     glPopAttrib();
     gl::popMatrices();
-}
-
-#pragma mark - Texture Geneator
-
-void Lines::generateDynamicTexture()
-{
-    gl::pushMatrices();
-    
-    // Bind FBO and set up window
-	mDynamicTexFbo.bindFramebuffer();
-	gl::setViewport( mDynamicTexFbo.getBounds() );
-	gl::setMatricesWindow( mDynamicTexFbo.getSize() );
-	gl::clear();
-    
-	// Bind and configure dynamic texture shader
-	mDynamicTexShader.bind();
-	mDynamicTexShader.uniform( "theta", mNoiseTheta );
-    mDynamicTexShader.uniform( "scale", mNoiseScale );
-    
-	// Draw shader output
-	gl::enable( GL_TEXTURE_2D );
-	gl::color( Colorf::white() );
-	gl::begin( GL_TRIANGLES );
-    
-     // TODO: cleanup
-	// Define quad vertices
-	Vec2f vert0( (float)mDynamicTexFbo.getBounds().x1, (float)mDynamicTexFbo.getBounds().y1 );
-	Vec2f vert1( (float)mDynamicTexFbo.getBounds().x2, (float)mDynamicTexFbo.getBounds().y1 );
-	Vec2f vert2( (float)mDynamicTexFbo.getBounds().x1, (float)mDynamicTexFbo.getBounds().y2 );
-	Vec2f vert3( (float)mDynamicTexFbo.getBounds().x2, (float)mDynamicTexFbo.getBounds().y2 );
-    
-	// Define quad texture coordinates
-	Vec2f uv0( 0.0f, 0.0f );
-	Vec2f uv1( 1.0f, 0.0f );
-	Vec2f uv2( 0.0f, 1.0f );
-	Vec2f uv3( 1.0f, 1.0f );
-    
-	// Draw quad (two triangles)
-	gl::texCoord( uv0 );
-	gl::vertex( vert0 );
-	gl::texCoord( uv2 );
-	gl::vertex( vert2 );
-	gl::texCoord( uv1 );
-	gl::vertex( vert1 );
-    
-	gl::texCoord( uv1 );
-	gl::vertex( vert1 );
-	gl::texCoord( uv2 );
-	gl::vertex( vert2 );
-	gl::texCoord( uv3 );
-	gl::vertex( vert3 );
-    
-	gl::end();
-    gl::disable( GL_TEXTURE_2D );
-    
-	// Unbind everything
-	mDynamicTexShader.unbind();
-	mDynamicTexFbo.unbindFramebuffer();
-    
-    gl::popMatrices();
-    
-	///////////////////////////////////////////////////////////////
 }
