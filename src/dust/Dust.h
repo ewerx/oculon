@@ -73,13 +73,11 @@ private:
     
     ci::gl::Texture mInitialPosTex;
 	ci::gl::Texture mInitialVelTex;
-    ci::gl::Texture mNoiseTex;
     
     // params
     float mTimeStep;
     float mDecayRate;
     
-    bool mUseDynamicTex;
     bool mReset;
     
     AudioInputHandler mAudioInputHandler;

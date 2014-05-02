@@ -73,7 +73,6 @@ private:
     
 	ci::gl::Texture mInitialVelTex;
 	ci::gl::Texture mParticleDataTex;
-    ci::gl::Texture mNoiseTex;
     
     // formations
 #define FORMATION_TUPLE \
@@ -118,7 +117,6 @@ enm,
     // params
     float mTimeStep;
     
-    bool mUseDynamicTex;
     bool mReset;
     ci::Anim<float> mFormationStep;
     EaseCurveSelector mFormationAnimSelector;

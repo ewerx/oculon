@@ -75,7 +75,6 @@ void Lines::setupFBO()
 	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
 	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
 	Surface32f infoSurface = Surface32f(kBufSize,kBufSize,true);
-    Surface32f noiseSurface = Surface32f(kBufSize,kBufSize,true);
     
 	Surface32f::Iter iterator = posSurface.getIter();
 	
@@ -103,18 +102,6 @@ void Lines::setupFBO()
             float decay = Rand::randFloat(.01f,10.00f);
 			infoSurface.setPixel(iterator.getPos(),
                                  ColorA(x,y,z,decay));
-            
-            // noise
-            float nX = iterator.x() * 0.005f;
-            float nY = iterator.y() * 0.005f;
-            float nZ = app::getElapsedSeconds() * 0.1f;
-            Vec3f v( nX, nY, nZ );
-            float noise = perlin.fBm( v );
-            
-            float angle = noise * 15.0f;
-            
-            noiseSurface.setPixel(iterator.getPos(),
-                                  ColorA( cos( angle ) * Rand::randFloat(.1f,.4f), sin( angle ) * Rand::randFloat(.1f,.4f), cos( angle ), 1.0f ));
 		}
 	}
     
@@ -126,11 +113,6 @@ void Lines::setupFBO()
     
     gl::Texture::Format format;
     format.setInternalFormat( GL_RGBA32F_ARB );
-    
-    mNoiseTex = gl::Texture(noiseSurface, format);
-	mNoiseTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mNoiseTex.setMinFilter( GL_NEAREST );
-	mNoiseTex.setMagFilter( GL_NEAREST );
 	
 	mFormationPosTex[FORMATION_RANDOM] = gl::Texture(posSurface, format);
 	mFormationPosTex[FORMATION_RANDOM].setWrap( GL_REPEAT, GL_REPEAT );
@@ -141,11 +123,6 @@ void Lines::setupFBO()
 	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
 	mInitialVelTex.setMinFilter( GL_NEAREST );
 	mInitialVelTex.setMagFilter( GL_NEAREST );
-    
-//	mParticleDataTex = gl::Texture(infoSurface, format);
-//	mParticleDataTex.setWrap( GL_REPEAT, GL_REPEAT );
-//	mParticleDataTex.setMinFilter( GL_NEAREST );
-//	mParticleDataTex.setMagFilter( GL_NEAREST );
 }
 
 void Lines::generateFormationTextures()
@@ -157,8 +134,6 @@ void Lines::generateFormationTextures()
 	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
     
 	Surface32f::Iter iterator = posSurface.getIter();
-	
-    Perlin perlin(32, clock() * .1f);
     
     float x = 0.0f;
     float y = 0.0f;
@@ -286,8 +261,6 @@ void Lines::setupInterface()
     mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
     mFormationAnimSelector.setupInterface(mInterface, mName);
     
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateBoolParam("dynamic noise", &mUseDynamicTex));
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
@@ -332,19 +305,9 @@ void Lines::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
-    //mParticleDataTex.bind(2);
     mInitialVelTex.bind(3);
     mFormationPosTex[mFormation].bind(4);
-    mNoiseTex.bind(5);
-    
-    if (mUseDynamicTex)
-    {
-        mDynamicTexture.bindTexture(5);
-    }
-    else
-    {
-        mNoiseTex.bind(5);
-    }
+    mDynamicTexture.bindTexture(5);
     
     float simdt = (float)(dt*mTimeStep);
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
@@ -364,17 +327,9 @@ void Lines::update(double dt)
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
     
-    if (mUseDynamicTex)
-    {
-        mDynamicTexture.unbindTexture();
-    }
-    else
-    {
-        mNoiseTex.unbind();
-    }
+    mDynamicTexture.unbindTexture();
     mFormationPosTex[mFormation].unbind();
     mInitialVelTex.unbind();
-//    mParticleDataTex.unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -449,14 +404,7 @@ void Lines::drawDebug()
     gl::draw( mParticlesFbo.getTexture(1), preview2 );
     
     Rectf preview3 = preview2 - Vec2f(size+paddingX, 0.0f);
-    if (mUseDynamicTex)
-    {
-        gl::draw(mDynamicTexture.getTexture(), preview3);
-    }
-    else
-    {
-        gl::draw(mNoiseTex, preview3);
-    }
+    gl::draw(mDynamicTexture.getTexture(), preview3);
     
     glPopAttrib();
     gl::popMatrices();

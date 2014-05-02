@@ -42,7 +42,6 @@ void Dust::setup()
     mDecayRate = 0.5f;
     
     mAudioReactive = false;
-    mUseDynamicTex = true;
     
     mAudioTime = false;
     
@@ -70,11 +69,8 @@ void Dust::setupFBO()
 	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
 	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
 	Surface32f infoSurface = Surface32f(kBufSize,kBufSize,true);
-    Surface32f noiseSurface = Surface32f(kBufSize,kBufSize,true);
     
 	Surface32f::Iter iterator = posSurface.getIter();
-	
-    Perlin perlin(32, clock() * .1f);
     
 	while(iterator.line())
 	{
@@ -102,18 +98,6 @@ void Dust::setupFBO()
             float maxAge = Rand::randFloat(1.0f,10.0f);
 			infoSurface.setPixel(iterator.getPos(),
                                  ColorA(decay, maxAge, 0.0f, 0.0f));
-            
-            // noise
-            float nX = iterator.x() * 0.005f;
-            float nY = iterator.y() * 0.005f;
-            float nZ = app::getElapsedSeconds() * 0.1f;
-            Vec3f v( nX, nY, nZ );
-            float noise = perlin.fBm( v );
-            
-            float angle = noise * 15.0f;
-            
-            noiseSurface.setPixel(iterator.getPos(),
-                                  ColorA( cos( angle ) * Rand::randFloat(.1f,.4f), sin( angle ) * Rand::randFloat(.1f,.4f), 0.25f, 1.0f ));
 		}
 	}
     
@@ -125,11 +109,6 @@ void Dust::setupFBO()
     
     gl::Texture::Format format;
     format.setInternalFormat( GL_RGBA32F_ARB );
-    
-    mNoiseTex = gl::Texture(noiseSurface, format);
-	mNoiseTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mNoiseTex.setMinFilter( GL_NEAREST );
-	mNoiseTex.setMagFilter( GL_NEAREST );
 	
 	mInitialPosTex = gl::Texture(posSurface, format);
 	mInitialPosTex.setWrap( GL_REPEAT, GL_REPEAT );
@@ -162,8 +141,6 @@ void Dust::setupInterface()
                          .maxValue(1.0f)
                          .oscReceiver(mName));
     
-    mInterface->addParam(CreateBoolParam("dynamic_noise", &mUseDynamicTex)
-                         .oscReceiver(mName));
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
@@ -200,16 +177,7 @@ void Dust::update(double dt)
     
     mInitialVelTex.bind(3);
     mInitialPosTex.bind(4);
-    //mNoiseTex.bind(5);
-    
-    if (mUseDynamicTex)
-    {
-        mDynamicTexture.bindTexture(5);
-    }
-    else
-    {
-        mNoiseTex.bind(5);
-    }
+    mDynamicTexture.bindTexture(5);
     
     float simdt = (float)(dt*mTimeStep);
     float decayRate = mDecayRate;
@@ -230,14 +198,7 @@ void Dust::update(double dt)
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
     
-    if (mUseDynamicTex)
-    {
-        mDynamicTexture.unbindTexture();
-    }
-    else
-    {
-        mNoiseTex.unbind();
-    }
+    mDynamicTexture.unbindTexture();
     mInitialPosTex.unbind();
     mInitialVelTex.unbind();
     
@@ -298,14 +259,7 @@ void Dust::drawDebug()
     gl::draw( mParticlesFbo.getTexture(1), preview2 );
     
     Rectf preview3 = preview2 - Vec2f(size+paddingX, 0.0f);
-    if (mUseDynamicTex)
-    {
-        gl::draw(mDynamicTexture.getTexture(), preview3);
-    }
-    else
-    {
-        gl::draw(mNoiseTex, preview3);
-    }
+    gl::draw(mDynamicTexture.getTexture(), preview3);
     
     glPopAttrib();
     gl::popMatrices();
