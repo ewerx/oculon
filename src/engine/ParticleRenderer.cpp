@@ -13,21 +13,13 @@
 using namespace ci;
 using namespace std;
 
-ParticleRenderer::ParticleRenderer()
+ParticleRenderer::ParticleRenderer(const std::string& name)
+: mName(name)
 {
 }
 
 ParticleRenderer::~ParticleRenderer()
 {
-}
-
-void ParticleRenderer::setup(int fboSize)
-{
-    // load shader
-    mShader = Utils::loadVertAndFragShaders("lines_render_vert.glsl", "lines_render_frag.glsl");
-    
-    // setup VBO
-    setupVBO(fboSize, GL_POINTS);
 }
 
 void ParticleRenderer::setupVBO(int fboSize, GLuint primitiveType)

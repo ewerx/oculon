@@ -43,23 +43,22 @@ void Lines::setup()
     mTimeStep = 0.1f;
     mFormationStep = 1.0f;
     mFormationAnimSelector.mDuration = 0.75f;
-    mFormation = FORMATION_RANDOM;
     mMotion = MOTION_NOISE;
     
     mAudioTime = false;
-    mAltRenderer = false;
     
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     
-    mBufSize = 128;
-    setupFBO();
+    const int bufSize = 128;
+    setupParticles(bufSize);
     
     // rendering
-    mRenderer.setup(mBufSize);
-    mGravitonRenderer.setup(mBufSize);
+    mParticleController.addRenderer( new LinesRenderer() );
+    mParticleController.addRenderer( new GravitonRenderer() );
+    mParticleController.addRenderer( new DustRenderer() );
     
-    mDynamicTexture.setup(mBufSize, mBufSize);
+    mDynamicTexture.setup(bufSize, bufSize);
     
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     mApp->setCamera(Vec3f(480.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
@@ -68,10 +67,10 @@ void Lines::setup()
     mAudioInputHandler.setup(true);
 }
 
-void Lines::setupFBO()
+void Lines::setupParticles(const int bufSize)
 {
-    mParticleController.setup(mBufSize);
-    int numParticles = mBufSize*mBufSize;
+    mParticleController.setup(bufSize);
+    int numParticles = bufSize*bufSize;
     
     console() << "[Lines] initializing " << numParticles << " particles, hang on!" << std::endl;
     
@@ -147,6 +146,7 @@ void Lines::setupFBO()
     
     mParticleController.addFormation("straight", straightPositions, velocities, data);
     
+    // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
 }
 
@@ -172,22 +172,11 @@ void Lines::setupInterface()
     motionNames.push_back(nam);
     MOTION_TUPLE
 #undef  MOTION_ENTRY
-    mInterface->addEnum(CreateEnumParam( "motion", (int*)(&mMotion) )
+    mInterface->addEnum(CreateEnumParam( "behavior", (int*)(&mMotion) )
                         .maxValue(MOTION_COUNT)
                         .isVertical()
                         .oscReceiver(mName)
                         .sendFeedback(), motionNames);
-    
-    vector<string> formationNames;
-#define FORMATION_ENTRY( nam, enm ) \
-    formationNames.push_back(nam);
-    FORMATION_TUPLE
-#undef  FORMATION_ENTRY
-    mInterface->addEnum(CreateEnumParam( "formation", (int*)(&mFormation) )
-                        .maxValue(FORMATION_COUNT)
-                        .isVertical()
-                        .oscReceiver(mName)
-                        .sendFeedback(), formationNames)->registerCallback(this, &Lines::takeFormation);;
     
     mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
     mFormationAnimSelector.setupInterface(mInterface, mName);
@@ -195,10 +184,7 @@ void Lines::setupInterface()
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("display");
-    //mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
-    mRenderer.setupInterface(mInterface, mName);
-    //mGravitonRenderer.setupInterface(mInterface, mName);
+    mParticleController.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -239,9 +225,8 @@ void Lines::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
-    mParticleController.getFormations().at(mFormation).mVelocityTex.bind(3);
-    mParticleController.getFormations().at(mFormation).mPositionTex.bind(4);
-    
+    mParticleController.getFormation().getVelocityTex().bind(3);
+    mParticleController.getFormation().getPositionTex().bind(4);
     
     mDynamicTexture.bindTexture(5);
     
@@ -261,11 +246,13 @@ void Lines::update(double dt)
     mSimulationShader.uniform( "containmentSize", 3.0f );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
+    
     mSimulationShader.unbind();
     
     mDynamicTexture.unbindTexture();
-    mParticleController.getFormations().at(mFormation).mPositionTex.unbind();
-    mParticleController.getFormations().at(mFormation).mVelocityTex.unbind();
+    
+    mParticleController.getFormation().getPositionTex().unbind();
+    mParticleController.getFormation().getVelocityTex().unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -282,25 +269,8 @@ const Camera& Lines::getCamera()
     return mCameraController.getCamera();
 }
 
-ParticleRenderer& Lines::getRenderer()
-{
-    if (mAltRenderer)
-    {
-        return mGravitonRenderer;
-    }
-    else
-    {
-        return mRenderer;
-    }
-}
-
 void Lines::draw()
 {
-    ParticleRenderer& renderer = getRenderer();
-    
-    //HACK
-    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
-    
     gl::pushMatrices();
     if (mApp->outputToOculus())
     {
@@ -308,16 +278,16 @@ void Lines::draw()
         Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
         gl::setViewport(leftViewport);
         mApp->getOculusCam().enableStereoLeft();
-        renderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+        mParticleController.draw(leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler);
         
         Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
         gl::setViewport(rightViewport);
         mApp->getOculusCam().enableStereoRight();
-        renderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler, mGain);
+        mParticleController.draw(rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler);
     }
     else
     {
-        renderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
+        mParticleController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
     }
     gl::popMatrices();
 }

@@ -113,7 +113,7 @@ void PingPongFbo::setTexture(const int attachment, const ci::Surface32f &surface
     mTextures[attachment] = tex;
 }
 
-void PingPongFbo::setTexture(const int attachment, ci::gl::Texture &texture)
+void PingPongFbo::setTexture(const int attachment, const ci::gl::Texture &texture)
 {
     assert( attachment < mTextures.size() );
     

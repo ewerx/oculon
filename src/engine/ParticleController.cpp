@@ -19,11 +19,24 @@ using namespace ci::app;
 ParticleController::ParticleController()
 : mFboSize(0)
 , mNumParticles(0)
+, mCurrentFormationIndex(0)
+, mCurrentRendererIndex(0)
 {
 }
 
 ParticleController::~ParticleController()
 {
+    for(auto formation : mFormations)
+    {
+        delete formation;
+    }
+    mFormations.clear();
+    
+    for(auto renderer : mRenderers)
+    {
+        delete renderer;
+    }
+    mRenderers.clear();
 }
 
 #pragma mark - setup
@@ -58,6 +71,43 @@ void ParticleController::setup(int bufSize)
     surfaces.push_back( velSurface );
     surfaces.push_back( dataSurface );
     mParticlesFbo = PingPongFbo( surfaces );
+}
+
+void ParticleController::setupInterface(Interface *interface, const std::string &name)
+{
+    vector<string> formationNames = getFormationNames();
+    interface->addEnum(CreateEnumParam( "formation", (int*)(&mCurrentFormationIndex) )
+                        .maxValue(formationNames.size())
+                        .isVertical()
+                        .oscReceiver(name)
+                        .sendFeedback(), formationNames)->registerCallback(this, &ParticleController::takeFormation);
+    
+    interface->gui()->addSeparator();
+    vector<string> rendererNames = getRendererNames();
+    interface->addEnum(CreateEnumParam( "renderer", (int*)(&mCurrentRendererIndex) )
+                       .maxValue(rendererNames.size())
+                       .isVertical()
+                       .oscReceiver(name)
+                       .sendFeedback(), rendererNames);
+    // TODO: panels?
+    for( vector<ParticleRenderer*>::const_reference renderer: mRenderers )
+    {
+        renderer->setupInterface(interface, name);
+    }
+}
+
+#pragma mark - Formations
+
+ParticleFormation& ParticleController::getFormation()
+{
+    assert(mCurrentFormationIndex < mFormations.size());
+    return *(mFormations[mCurrentFormationIndex]);
+}
+
+void ParticleController::addFormation(ParticleFormation* formation)
+{
+    assert(formation);
+    mFormations.push_back(formation);
 }
 
 void ParticleController::addFormation(const std::string &name,
@@ -113,7 +163,17 @@ void ParticleController::addFormation(const std::string &name,
     dataTex.setMinFilter( GL_NEAREST );
     dataTex.setMagFilter( GL_NEAREST );
     
-    mFormations.push_back( tFormation(name,posTex,velTex,dataTex) );
+    mFormations.push_back( new ParticleFormation(name,posTex,velTex,dataTex) );
+}
+
+const std::vector<std::string> ParticleController::getFormationNames()
+{
+    vector<string> names;
+    for( vector<ParticleFormation*>::const_reference formation: mFormations )
+    {
+        names.push_back(formation->getName());
+    }
+    return names;
 }
 
 void ParticleController::resetToFormation(const int formationIndex, const int resetFlags)
@@ -122,19 +182,52 @@ void ParticleController::resetToFormation(const int formationIndex, const int re
     
     if (resetFlags & RESET_POSITION)
     {
-        mParticlesFbo.setTexture(0, mFormations[formationIndex].mPositionTex);
+        mParticlesFbo.setTexture( 0, mFormations[formationIndex]->getPositionTex() );
     }
     if (resetFlags & RESET_VELOCITY)
     {
-        mParticlesFbo.setTexture(1, mFormations[formationIndex].mVelocityTex);
+        mParticlesFbo.setTexture( 1, mFormations[formationIndex]->getVelocityTex() );
     }
     if (resetFlags & RESET_DATA)
     {
-        mParticlesFbo.setTexture(2, mFormations[formationIndex].mDataTex);
+        mParticlesFbo.setTexture( 2, mFormations[formationIndex]->getDataTex() );
     }
     
     mParticlesFbo.reset();
 }
+
+bool ParticleController::takeFormation()
+{
+    // TODO: store lambdas for taking formation and call them...
+    return true;
+}
+
+#pragma mark - Renderers
+
+ParticleRenderer& ParticleController::getRenderer()
+{
+    assert(mCurrentRendererIndex < mRenderers.size());
+    return *(mRenderers[mCurrentRendererIndex]);
+}
+
+void ParticleController::addRenderer(ParticleRenderer* renderer)
+{
+    assert(renderer);
+    renderer->setup(mFboSize);
+    mRenderers.push_back(renderer);
+}
+
+const std::vector<std::string> ParticleController::getRendererNames()
+{
+    vector<string> names;
+    for( vector<ParticleRenderer*>::const_reference renderer: mRenderers )
+    {
+        names.push_back(renderer->getName());
+    }
+    return names;
+}
+
+#pragma mark - update
 
 void ParticleController::update(double dt)
 {
@@ -149,60 +242,9 @@ void ParticleController::updateSimulation(double dt)
 //    }
 }
 
-void ParticleController::draw(const ci::Camera& cam)
+#pragma mark - draw
+
+void ParticleController::draw(const ci::Vec2i &screenSize, const ci::Camera &cam, AudioInputHandler &audioInputHandler)
 {
-//    if (mCurrentBehavior < mBehaviors.size())
-//    {
-//        // FIXME: need to update method signature to match ParticleRenderer::draw
-//        //mRenderers[mCurrentBehavior]->draw(mParticlesFbo, cam);
-//    }
-    
-//    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
-//    
-//    //    gl::enable(GL_POINT_SPRITE);
-//    //    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
-//    //    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-//    //    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-//    
-//    //gl::enableAlphaBlending();
-//    gl::enableAdditiveBlending();
-//    gl::enableDepthRead();
-//    gl::enableDepthWrite();
-//    
-//    glEnable(GL_TEXTURE_2D);
-//    
-//    gl::lineWidth(1.0f);
-//    
-//    mParticlesFbo.bindTexture(0);//pos
-//    mParticlesFbo.bindTexture(1);//vel
-//    mParticlesFbo.bindTexture(2);//info
-//    
-////    mColorMapTex.bind(3);
-//    
-////    if (mAudioReactive && mAudioInputHandler.hasTexture())
-////    {
-////        mAudioInputHandler.getFbo().bindTexture(4);
-////    }
-//    
-//    mRenderShader.bind();
-//    mRenderShader.uniform("posMap", 0);
-//    mRenderShader.uniform("velMap", 1);
-//    mRenderShader.uniform("information", 2);
-//    mRenderShader.uniform("colorMap", 3);
-//    mRenderShader.uniform("intensityMap", 4);
-//    mRenderShader.uniform("gain", 1.0f);
-//    mRenderShader.uniform("screenWidth", (float)mFboSize);
-//    mRenderShader.uniform("colorBase", ColorA::white());
-//    mRenderShader.uniform("audioReactive", false);
-//    
-//    const float scale = 10.0f;
-//    //glScalef(scale, scale, scale);
-//    
-//    gl::draw( mVboMesh );
-//    
-//    mRenderShader.unbind();
-////    mColorMapTex.unbind();
-//    mParticlesFbo.unbindTexture();
-//    
-//    glPopAttrib();
+    getRenderer().draw(mParticlesFbo, screenSize, cam, audioInputHandler, 1.0f);
 }

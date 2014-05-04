@@ -31,7 +31,7 @@ public:
     //! Replace a single texture at index
     void setTexture( const int attachment, const ci::Surface32f& surface );
     //! Replace a single texture at index
-    void setTexture( const int attachment, ci::gl::Texture& texture );
+    void setTexture( const int attachment, const ci::gl::Texture& texture );
 
     //! Bind one fbo as the source, and the other as a target texture to update the texture.
     void bindUpdate();

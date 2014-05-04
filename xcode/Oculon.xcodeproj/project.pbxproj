@@ -116,6 +116,7 @@
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
+		7C5165E11915DAAF003E94F8 /* ParticleFormation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
 		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
@@ -635,6 +636,8 @@
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
 		7C4C6744181CCD78003049AA /* CircleWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CircleWave.cpp; sourceTree = "<group>"; };
 		7C4C6745181CCD78003049AA /* CircleWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleWave.h; sourceTree = "<group>"; };
+		7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleFormation.cpp; path = particlesystem/ParticleFormation.cpp; sourceTree = "<group>"; };
+		7C5165E01915DAAF003E94F8 /* ParticleFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleFormation.h; path = particlesystem/ParticleFormation.h; sourceTree = "<group>"; };
 		7C5B69751819745800AB2C8D /* Tilings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tilings.cpp; sourceTree = "<group>"; };
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
@@ -1593,6 +1596,8 @@
 				7CF6AD5418A9E68600FA795A /* ParticleController.h */,
 				7C159BA618B7017E005245CB /* ParticleRenderer.cpp */,
 				7C159BA718B7017E005245CB /* ParticleRenderer.h */,
+				7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */,
+				7C5165E01915DAAF003E94F8 /* ParticleFormation.h */,
 			);
 			name = particles;
 			sourceTree = "<group>";
@@ -3212,6 +3217,7 @@
 				7C79CA5617650FD800E71F9D /* Utils.cpp in Sources */,
 				7C79CA5717650FD800E71F9D /* Controller.cpp in Sources */,
 				7C79CA5817650FD800E71F9D /* Flock.cpp in Sources */,
+				7C5165E11915DAAF003E94F8 /* ParticleFormation.cpp in Sources */,
 				7C6B241718B87859007BA146 /* GravitonNodesBehavior.cpp in Sources */,
 				7C79CA5917650FD800E71F9D /* Glow.cpp in Sources */,
 				7C79CA5A17650FD800E71F9D /* Lantern.cpp in Sources */,

@@ -8,10 +8,14 @@
 
 #pragma once
 
+#include "AudioInputHandler.h"
+#include "Interface.h"
 #include "PingPongFbo.h"
 #include "ParticleBehavior.h"
+#include "ParticleFormation.h"
 #include "ParticleRenderer.h"
 
+#include "cinder/Camera.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Texture.h"
@@ -23,37 +27,28 @@
 class ParticleController
 {
 public:
-    struct tFormation
-    {
-        tFormation(const std::string& name,
-                   ci::gl::Texture posTex,
-                   ci::gl::Texture velTex,
-                   ci::gl::Texture dataTex)
-        : mName(name)
-        , mPositionTex(posTex)
-        , mVelocityTex(velTex)
-        , mDataTex(dataTex)
-        {}
-        
-        std::string mName;
-        ci::gl::Texture mPositionTex;
-        ci::gl::Texture mVelocityTex;
-        ci::gl::Texture mDataTex;
-    };
-public:
     ParticleController();
     virtual ~ParticleController();
     
     void setup(int bufSize);
+    void setupInterface( Interface* interface, const std::string& name );
     
     void update(double dt);
-    void draw(const ci::Camera& cam);
+    void draw(const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler);
     void drawDebug();
     
+    // TODO: refactor so this is not needed
+    PingPongFbo& getParticleFbo() { return mParticlesFbo; }
+    
+    // formations
+    ParticleFormation& getFormation();
+    void addFormation(ParticleFormation* formation);
     void addFormation(const std::string& name,
                       std::vector<ci::Vec4f>& positions,
                       std::vector<ci::Vec4f>& velocities,
                       std::vector<ci::Vec4f>& data);
+    
+    bool takeFormation(); // callback
     
     enum eResetFlag
     {
@@ -63,14 +58,12 @@ public:
         RESET_ALL         = RESET_POSITION | RESET_VELOCITY | RESET_DATA
     };
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
+    const std::vector<std::string> getFormationNames();
     
-    PingPongFbo& getParticleFbo() { return mParticlesFbo; }
-    int getFormationCount() { return mFormations.size(); }
     
-    std::vector<tFormation>& getFormations() { return mFormations; }
-    
-public:
-    //void addBehavior(ParticleBehavior* behavior) { mBehaviors.push_back(behavior); }
+    ParticleRenderer& getRenderer();
+    void addRenderer(ParticleRenderer* renderer);
+    const std::vector<std::string> getRendererNames();
     
 private:
     void setupFBO();
@@ -79,10 +72,17 @@ private:
     void render();
     
 private:
+    // particles
     PingPongFbo mParticlesFbo;
     
     int mFboSize;
     int mNumParticles;
-
-    std::vector<tFormation> mFormations;
+    
+    // formations
+    std::vector<ParticleFormation*> mFormations;
+    int mCurrentFormationIndex;
+    
+    // rendering
+    std::vector<ParticleRenderer*> mRenderers;
+    int mCurrentRendererIndex;
 };

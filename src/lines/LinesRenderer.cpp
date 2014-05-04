@@ -11,10 +11,11 @@
 #include "cinder/Camera.h"
 
 using namespace ci;
+using namespace std;
 
 
 LinesRenderer::LinesRenderer()
-: ParticleRenderer()
+: ParticleRenderer("lines")
 {
     // load textures
     mColorMapTex = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
@@ -39,18 +40,21 @@ void LinesRenderer::setup(int fboSize)
     setupVBO(fboSize, GL_LINES);
 }
 
-void LinesRenderer::setupInterface( Interface* interface, const std::string& name )
+void LinesRenderer::setupInterface( Interface* interface, const std::string& prefix )
 {
+    string oscName = prefix + "/" + mName;
+    
+    interface->gui()->addLabel(mName);
     interface->addParam(CreateFloatParam( "line_width", &mLineWidth )
                          .minValue(0.01f)
                          .maxValue(6.0f)
-                        .oscReceiver(name));
+                        .oscReceiver(oscName));
     
     interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
-                         .oscReceiver(name));
+                         .oscReceiver(oscName));
     
     interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
-                        .oscReceiver(name));
+                        .oscReceiver(oscName));
 }
 
 void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )

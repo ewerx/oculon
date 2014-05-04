@@ -11,10 +11,11 @@
 #include "cinder/Camera.h"
 
 using namespace ci;
+using namespace std;
 
 
 DustRenderer::DustRenderer()
-: ParticleRenderer()
+: ParticleRenderer("dust")
 {
     // load textures
     mColorMapTex    = gl::Texture( loadImage( app::loadResource( "colortex1.jpg" ) ) );
@@ -40,15 +41,18 @@ void DustRenderer::setup(int fboSize)
     setupVBO(fboSize, GL_POINTS);
 }
 
-void DustRenderer::setupInterface( Interface* interface, const std::string& name )
+void DustRenderer::setupInterface( Interface* interface, const std::string& prefix )
 {
+    string oscName = prefix + "/" + mName;
+    
+    interface->gui()->addLabel(mName);
     interface->addParam(CreateFloatParam( "point_size", &mPointSize )
                         .minValue(0.01f)
                         .maxValue(6.0f)
-                        .oscReceiver(name));
+                        .oscReceiver(oscName));
     
     interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
-                        .oscReceiver(name));
+                        .oscReceiver(oscName));
     
     interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
 }

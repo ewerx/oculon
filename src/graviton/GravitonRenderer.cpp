@@ -11,10 +11,10 @@
 #include "cinder/Camera.h"
 
 using namespace ci;
-
+using namespace std;
 
 GravitonRenderer::GravitonRenderer()
-: ParticleRenderer()
+: ParticleRenderer("graviton")
 {
     // load textures
     mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
@@ -43,14 +43,17 @@ void GravitonRenderer::setup(int fboSize)
     setupVBO(fboSize, GL_POINTS);
 }
 
-void GravitonRenderer::setupInterface( Interface* interface, const std::string& name )
+void GravitonRenderer::setupInterface( Interface* interface, const std::string& prefix )
 {
+    string oscName = prefix + "/" + mName;
+    
+    interface->gui()->addLabel(mName);
     interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
-                         .oscReceiver(name));
+                         .oscReceiver(oscName));
     interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
                          .minValue(0.01f)
                          .maxValue(2.0f)
-                         .oscReceiver(name));
+                         .oscReceiver(oscName));
     interface->addParam(CreateBoolParam( "texturedpoints", &mUseImageForPoints ));
 }
 

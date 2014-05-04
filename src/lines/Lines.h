@@ -8,20 +8,22 @@
 
 #pragma once
 
-#include <vector>
-#include "cinder/Cinder.h"
-#include "cinder/gl/Fbo.h"
-#include "cinder/gl/Vbo.h"
-#include "cinder/gl/Texture.h"
-#include "cinder/gl/GlslProg.h"
-#include "Scene.h"
-#include "ParticleController.h"
 #include "AudioInputHandler.h"
 #include "CameraController.h"
+#include "DustRenderer.h"
 #include "EaseCurveSelector.h"
-#include "LinesRenderer.h"
 #include "GravitonRenderer.h"
+#include "LinesRenderer.h"
+#include "ParticleController.h"
+#include "Scene.h"
 #include "SimplexNoiseTexture.h"
+
+#include "cinder/Cinder.h"
+#include "cinder/gl/Fbo.h"
+#include "cinder/gl/GlslProg.h"
+#include "cinder/gl/Texture.h"
+#include "cinder/gl/Vbo.h"
+#include <vector>
 
 //
 // Lines
@@ -48,13 +50,11 @@ protected:// from Scene
     bool takeFormation();
     
 private:
-    void setupFBO();
+    void setupParticles(const int bufSize);
     
     void initParticles();
     void updateParticles();
     void drawParticles();
-    
-    ParticleRenderer& getRenderer();
     
     SimplexNoiseTexture mDynamicTexture;
     
@@ -63,24 +63,6 @@ private:
     ParticleController mParticleController;
     
     ci::gl::GlslProg mSimulationShader;
-    
-    // formations
-#define FORMATION_TUPLE \
-FORMATION_ENTRY( "Random", FORMATION_RANDOM ) \
-FORMATION_ENTRY( "Straight", FORMATION_STRAIGHT ) \
-// end tuple
-    
-    enum eFormation
-    {
-#define FORMATION_ENTRY( nam, enm ) \
-enm,
-        FORMATION_TUPLE
-#undef  FORMATION_ENTRY
-        
-        FORMATION_COUNT
-    };
-    eFormation mFormation;
-    ci::gl::Texture mFormationPosTex[FORMATION_COUNT];
     
     // motion
 #define MOTION_TUPLE \
@@ -113,12 +95,6 @@ enm,
     // audio
     AudioInputHandler mAudioInputHandler;
     bool mAudioTime;
-
-    LinesRenderer mRenderer;
-    GravitonRenderer mGravitonRenderer;
-    bool mAltRenderer;
-    
-    int mBufSize;
 };
 
 
