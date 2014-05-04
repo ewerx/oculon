@@ -47,7 +47,7 @@ protected:// from Scene
     ////void setupDebugInterface();
     
     // callbacks
-    bool takeFormation();
+    void takeFormation();
     
 private:
     void setupParticles(const int bufSize);

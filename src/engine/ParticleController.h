@@ -22,10 +22,22 @@
 #include "cinder/gl/GlslProg.h"
 
 #include <vector>
+#include <boost/signals2.hpp>
 
 
 class ParticleController
 {
+public:
+    typedef boost::signals2::signal<void()> ValueChangedSignal;
+    
+    enum eResetFlag
+    {
+        RESET_POSITION    = (1<<0),
+        RESET_VELOCITY    = (1<<1),
+        RESET_DATA        = (1<<2),
+        RESET_ALL         = RESET_POSITION | RESET_VELOCITY | RESET_DATA
+    };
+    
 public:
     ParticleController();
     virtual ~ParticleController();
@@ -48,19 +60,12 @@ public:
                       std::vector<ci::Vec4f>& velocities,
                       std::vector<ci::Vec4f>& data);
     
-    bool takeFormation(); // callback
-    
-    enum eResetFlag
-    {
-        RESET_POSITION    = (1<<0),
-        RESET_VELOCITY    = (1<<1),
-        RESET_DATA        = (1<<2),
-        RESET_ALL         = RESET_POSITION | RESET_VELOCITY | RESET_DATA
-    };
+    bool onFormationChange(); // callback
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
     const std::vector<std::string> getFormationNames();
+    ValueChangedSignal& getFormationChangedSignal() { return mFormationChangedSignal; }
     
-    
+    // renderer
     ParticleRenderer& getRenderer();
     void addRenderer(ParticleRenderer* renderer);
     const std::vector<std::string> getRendererNames();
@@ -81,6 +86,7 @@ private:
     // formations
     std::vector<ParticleFormation*> mFormations;
     int mCurrentFormationIndex;
+    ValueChangedSignal mFormationChangedSignal;
     
     // rendering
     std::vector<ParticleRenderer*> mRenderers;

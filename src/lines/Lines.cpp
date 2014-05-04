@@ -185,6 +185,7 @@ void Lines::setupInterface()
     
     mInterface->gui()->addColumn();
     mParticleController.setupInterface(mInterface, mName);
+    mParticleController.getFormationChangedSignal().connect( bind(&Lines::takeFormation, this) );
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -192,12 +193,11 @@ void Lines::setupInterface()
 
 #pragma mark - Callbacks
 
-bool Lines::takeFormation()
+void Lines::takeFormation()
 {
     mFormationStep = 0.0f;
     timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
     mFormationStep = 0.0f;
-    return true;
 }
 
 #pragma mark - Update

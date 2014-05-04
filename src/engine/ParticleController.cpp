@@ -80,7 +80,7 @@ void ParticleController::setupInterface(Interface *interface, const std::string 
                         .maxValue(formationNames.size())
                         .isVertical()
                         .oscReceiver(name)
-                        .sendFeedback(), formationNames)->registerCallback(this, &ParticleController::takeFormation);
+                        .sendFeedback(), formationNames)->registerCallback(this, &ParticleController::onFormationChange);
     
     interface->gui()->addSeparator();
     vector<string> rendererNames = getRendererNames();
@@ -196,9 +196,9 @@ void ParticleController::resetToFormation(const int formationIndex, const int re
     mParticlesFbo.reset();
 }
 
-bool ParticleController::takeFormation()
+bool ParticleController::onFormationChange()
 {
-    // TODO: store lambdas for taking formation and call them...
+    mFormationChangedSignal();
     return true;
 }
 
