@@ -329,7 +329,7 @@ void Rings::update(double dt)
     
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
-        mRingSetParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+        mRingSetParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput());
         mRingSetParams[i].mElapsedTime += mRingSetParams[i].mTimeScale*dt;
         
         if (mRingSetParams[i].mSpin) {

@@ -154,7 +154,7 @@ void Parsec::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     if (mConstellationAudio)
     {
@@ -172,7 +172,8 @@ void Parsec::update(double dt)
     
     if (mLabels.mAlpha > 0.0f)
     {
-        mLabels.updateAudio(mAudioInputHandler, mGain);
+        //TODO: refactor
+        mLabels.updateAudio(mAudioInputHandler, mAudioInputHandler.getGain());
         mLabels.update(getCamera(), distance, mApp->getViewportWidth(), mApp->getViewportHeight());
     }
     

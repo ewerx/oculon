@@ -427,7 +427,7 @@ void Terrain::updateAudioResponse()
 		while( it.pixel() )
         {
             int32_t bandIndex = Rand::randInt(dataSize);//randIndex.nextInt(dataSize);
-            float value = fftLogData[bandIndex].y * mGain;
+            float value = fftLogData[bandIndex].y;
             if (value > mFftFalloff[index])
             {
                 //mFftFalloff[index] = fftLogData[bandIndex].y;

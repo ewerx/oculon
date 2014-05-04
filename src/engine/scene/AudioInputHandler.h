@@ -27,7 +27,7 @@ public:
     
     void setup(bool fboEnabled =false);
     void setupInterface( Interface *interface, const std::string &name );
-    void update(double dt, AudioInput& audioInput, float gain =1.0f);
+    void update(double dt, AudioInput& audioInput);
     
     void drawDebug(const ci::Vec2f& size);
     
@@ -39,6 +39,8 @@ public:
         else return ci::gl::Texture();
     }
     ci::gl::Fbo& getFbo() { return mAudioFbo; }
+    
+    float getGain() { return mGain; }
     
     // AVG VOLUME
     float getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio);
@@ -111,6 +113,7 @@ enm,
     tEaseFn getReverseFalloffFunction();
     
     // Filtering
+    float   mGain;
     bool    mFalloffAveragesOnly;
     float   mLowPassFilter;
     float   mHighPassFilter;

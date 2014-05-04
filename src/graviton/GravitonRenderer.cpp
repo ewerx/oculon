@@ -57,7 +57,7 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     interface->addParam(CreateBoolParam( "texturedpoints", &mUseImageForPoints ));
 }
 
-void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
+void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
 {
     // pre-render - set state
     gl::pushMatrices();
@@ -95,7 +95,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     mShader.uniform("MV", cam.getModelViewMatrix());
     mShader.uniform("P", cam.getProjectionMatrix());
     mShader.uniform("colorScale", mColor);
-    mShader.uniform("gain", gain);
+    mShader.uniform("gain", audioInputHandler.getGain());
     
     // do magic
     gl::draw( mVboMesh );

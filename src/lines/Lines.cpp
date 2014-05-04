@@ -204,7 +204,7 @@ bool Lines::takeFormation()
 
 void Lines::update(double dt)
 {
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mCameraController.update(dt);
     

@@ -276,7 +276,7 @@ void TextureShaders::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mElapsedTime += dt;
     
@@ -344,21 +344,21 @@ void TextureShaders::shaderPreDraw()
             Vec2f fold = mKaliParams.fold;
             if (mKaliParams.mAudioFold)
             {
-                fold.x *= mAudioInputHandler.getAverageVolumeMidFreq() * mGain * 5.0f;
-                fold.y *= mAudioInputHandler.getAverageVolumeLowFreq() * mGain * 5.0f;
+                fold.x *= mAudioInputHandler.getAverageVolumeMidFreq() * 5.0f;
+                fold.y *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
             }
             
             Vec2f translate = mKaliParams.translate;
             if (mKaliParams.mAudioFold)
             {
-                translate.x *= mAudioInputHandler.getAverageVolumeMidFreq() * mGain * 5.0f;
-                translate.y *= mAudioInputHandler.getAverageVolumeLowFreq() * mGain * 5.0f;
+                translate.x *= mAudioInputHandler.getAverageVolumeMidFreq() * 5.0f;
+                translate.y *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
             }
             
             float rotationOffset = mKaliParams.mRotationOffset;
             if (mKaliParams.mAudioRot)
             {
-                rotationOffset *= mAudioInputHandler.getAverageVolumeHighFreq() * mGain * 5.0f;
+                rotationOffset *= mAudioInputHandler.getAverageVolumeHighFreq() * 5.0f;
             }
             
             shader.uniform( "iChannel0", 0 );

@@ -159,7 +159,7 @@ void Dust::setupInterface()
 
 void Dust::update(double dt)
 {
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     gl::disableAlphaBlending();
     
@@ -234,7 +234,7 @@ void Dust::draw()
     ParticleRenderer& renderer = getRenderer();
     
     gl::pushMatrices();
-    renderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler, mGain);
+    renderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler);
     gl::popMatrices();
 }
 

@@ -45,7 +45,7 @@ void ParticleRenderer::setupVBO(int fboSize, GLuint primitiveType)
     mVboMesh.unbindBuffers();
 }
 
-void ParticleRenderer::draw(PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera &cam, AudioInputHandler& audioInputHandler, float gain)
+void ParticleRenderer::draw(PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera &cam, AudioInputHandler& audioInputHandler)
 {
     // pre-render - set state
     gl::pushMatrices();

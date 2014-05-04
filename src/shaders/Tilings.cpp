@@ -112,7 +112,7 @@ void Tilings::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     if (mOffsetResponse > 0) {
         float audioLevel = getAudioLevelForBand(mOffsetResponse);
@@ -127,13 +127,13 @@ float Tilings::getAudioLevelForBand(int bandIndex)
     float audioLevel = 0.0f;
     switch (bandIndex) {
         case 1:
-        audioLevel = mAudioInputHandler.getAverageVolumeLowFreq() * mGain;
+        audioLevel = mAudioInputHandler.getAverageVolumeLowFreq();
         break;
         case 2:
-        audioLevel = mAudioInputHandler.getAverageVolumeMidFreq() * mGain;
+        audioLevel = mAudioInputHandler.getAverageVolumeMidFreq();
         break;
         case 3:
-        audioLevel = mAudioInputHandler.getAverageVolumeHighFreq() * mGain;
+        audioLevel = mAudioInputHandler.getAverageVolumeHighFreq();
         break;
         case 0:
         default:

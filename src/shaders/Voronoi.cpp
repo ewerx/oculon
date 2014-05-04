@@ -109,7 +109,7 @@ void Voronoi::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mElapsedTime += dt * mTimeScale;
 }

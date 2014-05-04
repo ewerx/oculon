@@ -29,6 +29,7 @@ void AudioInputHandler::setup(bool fboEnabled)
 {
     // SOURCE
     mInputSource        = SOURCE_AUDIO;
+    mGain               = 1.0f;
     
     // DISTRIBUTION
     mRandomSignal       = false;
@@ -72,9 +73,12 @@ void AudioInputHandler::setup(bool fboEnabled)
 void AudioInputHandler::setupInterface( Interface* interface, const std::string &name )
 {
     interface->gui()->addColumn();
-    std::stringstream labelss;
-    labelss << name << "/" << "audio";
-    interface->gui()->addLabel(labelss.str());
+    string label = name + "/audio";
+    interface->gui()->addLabel(label);
+    
+    interface->addParam(CreateFloatParam("gain", &mGain)
+                        .maxValue(50.0f)
+                        .oscReceiver(name).sendFeedback());
     
 //    vector<string> sourceNames;
 //#define AUDIO_SOURCE_ENTRY( nam, enm ) \
@@ -128,7 +132,7 @@ interface->addEnum(CreateEnumParam( "falloff_mode", (int*)(&mFalloffMode) )
 
 }
 
-void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
+void AudioInputHandler::update(double dt, AudioInput& audioInput)
 {
     if (audioInput.getFft() == NULL)
     {
@@ -161,9 +165,9 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
         }
         else
         {
-            mAvgVolume[BAND_LOW].mValue = values[BAND_LOW] * gain;
-            mAvgVolume[BAND_MID].mValue = values[BAND_MID] * gain;
-            mAvgVolume[BAND_HIGH].mValue = values[BAND_HIGH] * gain;
+            mAvgVolume[BAND_LOW].mValue = values[BAND_LOW] * mGain;
+            mAvgVolume[BAND_MID].mValue = values[BAND_MID] * mGain;
+            mAvgVolume[BAND_HIGH].mValue = values[BAND_HIGH] * mGain;
         }
         
         return;
@@ -196,7 +200,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
             float falloff = mFalloffByFreq ? (mFalloffTime * (1.0f - bandIndex / dataSize)) : mFalloffTime;
             
             float value = mLinearScale ? (fftLogData[bandIndex].y * (1+bandIndex)) : fftLogData[bandIndex].y;
-            value *= gain;
+            value *= mGain;
             
             if (value > mFftFalloff[index].mValue)
             {
@@ -234,7 +238,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput, float gain)
                 }
                 else
                 {
-                    float value = timeData[col] * gain;
+                    float value = timeData[col] * mGain;
                     it.r() = 0.5f + 0.5f * value;
                     it.g() = 0.5f + 0.5f * value;
                     it.b() = 0.5f + 0.5f * value;

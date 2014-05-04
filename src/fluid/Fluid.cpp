@@ -179,7 +179,7 @@ void Fluid::handleMouseDrag(const ci::app::MouseEvent &event)
 
 void Fluid::update(double dt)
 {
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     {
         int x = Rand::randInt(1,mQuadraticSize);

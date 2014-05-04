@@ -528,7 +528,7 @@ void Orbiter::updateAudioResponse()
         bodyIt != mBodies.end();
         ++bodyIt)
     {
-        float volume = audioInput.getAverageVolumeByFrequencyRange( minBand, maxBand ) * mGain;
+        float volume = audioInput.getAverageVolumeByFrequencyRange( minBand, maxBand );
         
         (*bodyIt)->applyFftBandValue( volume );
         
@@ -836,7 +836,7 @@ void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float 
         if( (i * space + barWidth) > width )
             break;
         
-        float barY = fftLogData[i].y * height * mGain;
+        float barY = fftLogData[i].y * height * mApp->getAudioInputHandler().getGain();
         barY = math<float>::min( barY, height );
         glBegin( GL_QUADS );
         glColor3f( 0.8f,0.8f,0.8f );

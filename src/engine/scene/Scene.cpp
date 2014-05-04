@@ -39,7 +39,6 @@ Scene::Scene(const std::string& name)
 , mLoadParamsInterface(NULL)
 , mIsFrustumPlaneCached(false)
 , mDoReset(false)
-, mGain(1.0f)
 , mBackgroundAlpha(1.0f)
 {
     // frustum culling
@@ -97,9 +96,6 @@ void Scene::init(OculonApp* app)
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateFloatParam("bg_alpha", &mBackgroundAlpha)
                          .oscReceiver(mName).sendFeedback());
-    mInterface->addParam(CreateFloatParam("gain", &mGain)
-                         .maxValue(50.0f)
-                         .oscReceiver(mName).sendFeedback());
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
@@ -110,7 +106,6 @@ void Scene::init(OculonApp* app)
 void Scene::setup()
 {
     mIsSetup = true;
-    mGain = 1.0f;
     mBackgroundAlpha = 1.0f;
     mLayerIndex = 0;
 }

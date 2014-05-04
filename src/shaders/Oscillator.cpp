@@ -79,7 +79,7 @@ void Oscillator::update(double dt)
     
     for (int i = 0; i < MAX_WAVES; ++i)
     {
-//        mWaveParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+//        mWaveParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput());
         mWaveParams[i].mElapsedTime += mTimeScale*dt;
         mFrequency += mTimeScale *dt;
     }

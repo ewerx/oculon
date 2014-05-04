@@ -178,7 +178,7 @@ void Cells::update(double dt)
 {
     Scene::update(dt);
     
-    mAudioInputHandler.update(dt, mApp->getAudioInput(), mGain);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     for (int i = 0; i < CELLS_NUM_LAYERS; ++i)
     {
@@ -235,13 +235,13 @@ void Cells::shaderPreDraw()
     if (mAudioResponseType == AUDIO_RESPONSE_MULTI)
     {
         AudioInputHandler &aih = mAudioInputHandler;
-        mShader.uniform("iBrightness1", mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * mGain * 10.0f);
-        mShader.uniform("iBrightness2", mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * mGain * 10.0f);
-        mShader.uniform("iBrightness3", mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * mGain * 10.0f);
-        mShader.uniform("iBrightness4", mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * mGain * 10.0f);
-        mShader.uniform("iBrightness5", mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * mGain * 10.0f);
-        mShader.uniform("iBrightness6", mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * mGain * 10.0f);
-        mShader.uniform("iBrightness7", mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * mGain * 10.0f);
+        mShader.uniform("iBrightness1", mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * 10.0f);
+        mShader.uniform("iBrightness2", mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * 10.0f);
+        mShader.uniform("iBrightness3", mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * 10.0f);
+        mShader.uniform("iBrightness4", mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * 10.0f);
+        mShader.uniform("iBrightness5", mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * 10.0f);
+        mShader.uniform("iBrightness6", mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * 10.0f);
+        mShader.uniform("iBrightness7", mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * 10.0f);
     }
     else
     {
@@ -249,7 +249,7 @@ void Cells::shaderPreDraw()
         
         if (mAudioResponseType == AUDIO_RESPONSE_SINGLE)
         {
-            brightness *= 100.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax) * mGain;
+            brightness *= 100.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
         }
         
         mShader.uniform("iBrightness1", brightness);

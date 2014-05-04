@@ -319,7 +319,7 @@ void ObjectShaders::shaderPreDraw()
     shader.uniform( "iBackgroundAlpha", mBackgroundAlpha);
     shader.uniform( "iTimeScale", mTimeScale);
     
-    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq() * mGain;
+    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq();
     
     switch (mShaderType) {
         case SHADER_METAHEX:

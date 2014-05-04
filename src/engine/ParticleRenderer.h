@@ -22,7 +22,7 @@ public:
     
     virtual void setup(int fboSize) = 0;
     virtual void setupInterface( Interface* interface, const std::string& prefix ) {};
-    virtual void draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain );
+    virtual void draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler );
     
     const std::string& getName() const            { return mName; }
     

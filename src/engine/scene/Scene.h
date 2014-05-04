@@ -71,7 +71,6 @@ public:
     bool isRunning() const          { return mIsRunning; }
     bool isVisible() const          { return mIsVisible; }
     bool isDebug() const            { return mIsDebug; }
-    float getGain() const           { return mGain; }
     int getLayerIndex() const       { return mLayerIndex; }
     
     void setRunning(bool running);
@@ -128,7 +127,6 @@ protected:
     bool        mEnableFrustumCulling;
     
     float       mBackgroundAlpha;
-    float       mGain;
     
     Interface*              mInterface;
     Interface*              mParamsInterface;

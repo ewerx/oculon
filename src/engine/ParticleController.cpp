@@ -246,5 +246,5 @@ void ParticleController::updateSimulation(double dt)
 
 void ParticleController::draw(const ci::Vec2i &screenSize, const ci::Camera &cam, AudioInputHandler &audioInputHandler)
 {
-    getRenderer().draw(mParticlesFbo, screenSize, cam, audioInputHandler, 1.0f);
+    getRenderer().draw(mParticlesFbo, screenSize, cam, audioInputHandler);
 }

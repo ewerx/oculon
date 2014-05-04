@@ -57,7 +57,7 @@ void DustRenderer::setupInterface( Interface* interface, const std::string& pref
     interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
 }
 
-void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
+void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
 {
     // pre-render - set state
     gl::pushMatrices();
@@ -88,7 +88,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     //mShader.uniform("colorMap", 3);
     mShader.uniform("intensityMap", 4);
     mShader.uniform("spriteWidth", mPointSize);
-    mShader.uniform("gain", gain);
+    mShader.uniform("gain", audioInputHandler.getGain());
     mShader.uniform("screenWidth", (float)screenSize.x);
     mShader.uniform("colorBase", mColor);
     mShader.uniform("audioReactive", mAudioReactive);

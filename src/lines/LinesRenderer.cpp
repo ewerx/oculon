@@ -57,7 +57,7 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
                         .oscReceiver(oscName));
 }
 
-void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler, float gain )
+void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
 {
     // pre-render - set state
     gl::pushMatrices();
@@ -84,7 +84,7 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     mShader.uniform("information", 2);
     mShader.uniform("colorMap", 3);
     mShader.uniform("intensityMap", 4);
-    mShader.uniform("gain", gain);
+    mShader.uniform("gain", audioInputHandler.getGain());
     mShader.uniform("screenWidth", (float)1.0f);
     mShader.uniform("colorBase", mColor);
     mShader.uniform("audioReactive", mAudioReactive);
