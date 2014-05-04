@@ -161,8 +161,8 @@ void Lines::reset()
 void Lines::setupInterface()
 {
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
-                         .minValue(0.001f)
-                         .maxValue(3.0f)
+                         .minValue(0.0001f)
+                         .maxValue(0.1f)
                          .oscReceiver(mName));
     
     mInterface->gui()->addColumn();

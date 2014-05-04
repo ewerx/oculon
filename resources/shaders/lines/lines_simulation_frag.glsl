@@ -75,7 +75,7 @@ void main()
                 vec3 a = invMass * force;// * pow(fMag,0.9);
                 vel = dt * a;
             }
-            else if (motion == 1) // gravition -- single source at center
+            else if (motion == 2) // gravition -- single source at center
             {
                 vec3 a = invMass * -pos/(dist*dist);
                 vel += dt * a;
