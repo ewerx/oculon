@@ -110,62 +110,6 @@ void ParticleController::addFormation(ParticleFormation* formation)
     mFormations.push_back(formation);
 }
 
-void ParticleController::addFormation(const std::string &name,
-                                      std::vector<ci::Vec4f> &positions,
-                                      std::vector<ci::Vec4f> &velocities,
-                                      std::vector<ci::Vec4f> &data)
-{
-    // setup the framebuffers
-    // bufSize x bufSize
-    Surface32f posSurface = Surface32f(mFboSize,mFboSize,true);
-	Surface32f velSurface = Surface32f(mFboSize,mFboSize,true);
-	Surface32f dataSurface = Surface32f(mFboSize,mFboSize,true);
-    
-    Surface32f::Iter surfaceIter = posSurface.getIter();
-    vector<Vec4f>::iterator posIter = positions.begin();
-    vector<Vec4f>::iterator velIter = velocities.begin();
-    vector<Vec4f>::iterator dataIter = data.begin();
-    
-    // encode the values as colors
-    while(surfaceIter.line())
-	{
-		while(surfaceIter.pixel())
-		{
-            ColorAf posPixel = ColorAf( (*posIter).x, (*posIter).y, (*posIter).z, (*posIter).w );
-            posSurface.setPixel(surfaceIter.getPos(), posPixel);
-            posIter++;
-            
-            ColorAf velPixel = ColorAf( (*velIter).x, (*velIter).y, (*velIter).z, (*velIter).w );
-            velSurface.setPixel(surfaceIter.getPos(), velPixel);
-            velIter++;
-            
-            ColorAf dataPixel = ColorAf( (*dataIter).x, (*dataIter).y, (*dataIter).z, (*dataIter).w );
-            dataSurface.setPixel(surfaceIter.getPos(), dataPixel);
-            dataIter++;
-        }
-    }
-    
-    gl::Texture::Format format;
-    format.setInternalFormat( GL_RGBA32F_ARB );
-    
-    gl::Texture posTex = gl::Texture(posSurface, format);
-    posTex.setWrap( GL_REPEAT, GL_REPEAT );
-    posTex.setMinFilter( GL_NEAREST );
-    posTex.setMagFilter( GL_NEAREST );
-    
-    gl::Texture velTex = gl::Texture(velSurface, format);
-    velTex.setWrap( GL_REPEAT, GL_REPEAT );
-    velTex.setMinFilter( GL_NEAREST );
-    velTex.setMagFilter( GL_NEAREST );
-    
-    gl::Texture dataTex = gl::Texture(dataSurface, format);
-    dataTex.setWrap( GL_REPEAT, GL_REPEAT );
-    dataTex.setMinFilter( GL_NEAREST );
-    dataTex.setMagFilter( GL_NEAREST );
-    
-    mFormations.push_back( new ParticleFormation(name,posTex,velTex,dataTex) );
-}
-
 const std::vector<std::string> ParticleController::getFormationNames()
 {
     vector<string> names;

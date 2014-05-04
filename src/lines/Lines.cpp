@@ -74,7 +74,6 @@ void Lines::setupParticles(const int bufSize)
     
     console() << "[Lines] initializing " << numParticles << " particles, hang on!" << std::endl;
     
-    // TODO: refactor as formation classes
     vector<Vec4f> randomPositions;
     vector<Vec4f> straightPositions;
     vector<Vec4f> velocities;
@@ -101,7 +100,7 @@ void Lines::setupParticles(const int bufSize)
         float decay = Rand::randFloat(.01f,10.00f);
         data.push_back(Vec4f(x,y,z,decay));
     }
-    mParticleController.addFormation("random", randomPositions, velocities, data);
+    mParticleController.addFormation(new ParticleFormation("random", bufSize, randomPositions, velocities, data));
     
     // straight lines
     bool pair = false;
@@ -144,7 +143,7 @@ void Lines::setupParticles(const int bufSize)
         pair = !pair;
     }
     
-    mParticleController.addFormation("straight", straightPositions, velocities, data);
+    mParticleController.addFormation(new ParticleFormation("straight", bufSize, straightPositions, velocities, data));
     
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);

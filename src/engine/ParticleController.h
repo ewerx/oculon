@@ -55,10 +55,6 @@ public:
     // formations
     ParticleFormation& getFormation();
     void addFormation(ParticleFormation* formation);
-    void addFormation(const std::string& name,
-                      std::vector<ci::Vec4f>& positions,
-                      std::vector<ci::Vec4f>& velocities,
-                      std::vector<ci::Vec4f>& data);
     
     bool onFormationChange(); // callback
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
