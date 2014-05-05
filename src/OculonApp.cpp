@@ -32,6 +32,7 @@
 #include "Deformer.h"
 #include "Lines.h"
 #include "Fluid.h"
+#include "Geometry.h"
 // shader scenes
 #include "Cells.h"
 #include "CircleWave.h"
@@ -404,6 +405,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("corona") )     addScene( new Corona() );
     if( mConfig.getBool("fluid") )      addScene( new Fluid() );
+    if( mConfig.getBool("geometry") )   addScene( new Geometry() );
     
     // Shader Scenes
     if( mConfig.getBool("cells") )              addScene( new Cells() );
