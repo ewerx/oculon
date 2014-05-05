@@ -19,10 +19,7 @@
 #include "SimplexNoiseTexture.h"
 
 #include "cinder/Cinder.h"
-#include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
-#include "cinder/gl/Texture.h"
-#include "cinder/gl/Vbo.h"
 #include <vector>
 
 //
@@ -51,10 +48,6 @@ protected:// from Scene
     
 private:
     void setupParticles(const int bufSize);
-    
-    void initParticles();
-    void updateParticles();
-    void drawParticles();
     
     SimplexNoiseTexture mDynamicTexture;
     

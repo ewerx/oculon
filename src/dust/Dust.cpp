@@ -11,6 +11,7 @@
 #include "Interface.h"
 #include "cinder/Perlin.h"
 #include "cinder/Rand.h"
+#include "ParticleFormation.h"
 
 #include "Resources.h"
 
@@ -48,13 +49,13 @@ void Dust::setup()
     // simulation
     mSimulationShader = loadVertAndFragShaders("dust_simulation_vert.glsl", "dust_simulation_frag.glsl");
     
-    setupFBO();
+    const int bufSize = 512;
+    setupParticles(bufSize);
     
     // rendering
-    mRenderer.setup(kBufSize);
-    mLinesRenderer.setup(kBufSize);
+    mParticleController.addRenderer( new DustRenderer() );
     
-    mDynamicTexture.setup(kBufSize, kBufSize);
+    mDynamicTexture.setup(bufSize, bufSize);
     
     mCamera.setOrtho( 0, mApp->getViewportWidth(), mApp->getViewportHeight(), 0, -1, 1 );
     
@@ -62,64 +63,26 @@ void Dust::setup()
     mAudioInputHandler.setup(true);
 }
 
-void Dust::setupFBO()
+void Dust::setupParticles(const int bufSize)
 {
-    console() << "[dust] initializing " << kNumParticles << " particles, hang on!" << std::endl;
-    //initialize buffer
-	Surface32f posSurface = Surface32f(kBufSize,kBufSize,true);
-	Surface32f velSurface = Surface32f(kBufSize,kBufSize,true);
-	Surface32f infoSurface = Surface32f(kBufSize,kBufSize,true);
+    mParticleController.setup(bufSize);
+    int numParticles = bufSize*bufSize;
     
-	Surface32f::Iter iterator = posSurface.getIter();
+    console() << "[dust] initializing " << numParticles << " particles, hang on!" << std::endl;
     
-	while(iterator.line())
-	{
-		while(iterator.pixel())
-		{
-            float x = Rand::randFloat(mApp->getViewportWidth()) / (float)mApp->getViewportWidth();
-            float y = Rand::randFloat(mApp->getViewportHeight()) / (float)mApp->getViewportHeight();
-            float z = 0.0f;
-            float mass = Rand::randFloat(0.01f,1.0f);
-            
-            // position + mass
-			posSurface.setPixel(iterator.getPos(), ColorA(x,y,z,mass));
-            
-            // velocity
-            float vx = Rand::randFloat(-.005f,.005f);
-            float vy = Rand::randFloat(-.005f,.005f);
-            float vz = 1.0f;
-            float age = Rand::randFloat(.007f,0.9f);
-            
-			// velocity + age
-			velSurface.setPixel(iterator.getPos(), ColorA(vx,vy,vz,age));
-            
-			// decay + max age
-            float decay = Rand::randFloat(.01f,10.00f);
-            float maxAge = Rand::randFloat(1.0f,10.0f);
-			infoSurface.setPixel(iterator.getPos(),
-                                 ColorA(decay, maxAge, 0.0f, 0.0f));
-		}
-	}
+    const float maxPosX = mApp->getViewportWidth() / (float)mApp->getViewportWidth();
     
-    std::vector<Surface32f> surfaces;
-    surfaces.push_back( posSurface );
-    surfaces.push_back( velSurface );
-    surfaces.push_back( infoSurface );
-    mParticlesFbo = PingPongFbo( surfaces );
+    Vec4f posMin(0.0f,      0.0f,       0.0f,   0.01f);
+    Vec4f posMax(maxPosX,    1.0f,      0.0f,   1.0f);
+    Vec4f velMin(-0.005f,   -0.005f,    0.0f,   0.007f);// age
+    Vec4f velMax(0.005f,    0.005f,     1.0f,   0.9f);
+    Vec4f dataMin(0.01f,    1.0f,       0.0f,   0.0f);
+    Vec4f dataMax(10.0f,    10.0f,      1.0f,   1.0f);
+    mParticleController.addFormation(new RandomFormation(bufSize, posMin, posMax,
+                                                         velMin, velMax,
+                                                         dataMin, dataMax));
     
-    gl::Texture::Format format;
-    format.setInternalFormat( GL_RGBA32F_ARB );
-	
-	mInitialPosTex = gl::Texture(posSurface, format);
-	mInitialPosTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mInitialPosTex.setMinFilter( GL_NEAREST );
-	mInitialPosTex.setMagFilter( GL_NEAREST );
-	
-	mInitialVelTex = gl::Texture(velSurface, format);
-	mInitialVelTex.setWrap( GL_REPEAT, GL_REPEAT );
-	mInitialVelTex.setMinFilter( GL_NEAREST );
-	mInitialVelTex.setMagFilter( GL_NEAREST );
-    
+    mParticleController.resetToFormation(0);
 }
 
 void Dust::reset()
@@ -144,10 +107,9 @@ void Dust::setupInterface()
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("display");
-    mInterface->addParam(CreateBoolParam("alt render", &mAltRenderer));
-    mRenderer.setupInterface(mInterface, mName);
-    mLinesRenderer.setupInterface(mInterface, mName);
+    mParticleController.setupInterface(mInterface, mName);
+    //mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
+    //mFormationAnimSelector.setupInterface(mInterface, mName);
     
 //    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
     //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
@@ -169,14 +131,18 @@ void Dust::update(double dt)
 
     mDynamicTexture.update(dt);
     
+    // TODO: refactor
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
+    
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
     gl::setViewport( mParticlesFbo.getBounds() );
     
     mParticlesFbo.bindUpdate();
     
-    mInitialVelTex.bind(3);
-    mInitialPosTex.bind(4);
+    mParticleController.getFormation().getVelocityTex().bind(3);
+    mParticleController.getFormation().getPositionTex().bind(4);
+    
     mDynamicTexture.bindTexture(5);
     
     float simdt = (float)(dt*mTimeStep);
@@ -199,8 +165,9 @@ void Dust::update(double dt)
     mSimulationShader.unbind();
     
     mDynamicTexture.unbindTexture();
-    mInitialPosTex.unbind();
-    mInitialVelTex.unbind();
+    
+    mParticleController.getFormation().getPositionTex().unbind();
+    mParticleController.getFormation().getVelocityTex().unbind();
     
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
@@ -217,24 +184,10 @@ const Camera& Dust::getCamera()
     return mCamera;
 }
 
-ParticleRenderer& Dust::getRenderer()
-{
-    if (mAltRenderer)
-    {
-        return mLinesRenderer;
-    }
-    else
-    {
-        return mRenderer;
-    }
-}
-
 void Dust::draw()
 {
-    ParticleRenderer& renderer = getRenderer();
-    
     gl::pushMatrices();
-    renderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mAudioInputHandler);
+    mParticleController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
     gl::popMatrices();
 }
 
@@ -251,6 +204,9 @@ void Dust::drawDebug()
     const float size = 80.0f;
     const float paddingX = 20.0f;
     const float paddingY = 240.0f;
+    
+    //HACK
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
     
     Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
     gl::draw( mParticlesFbo.getTexture(0), preview );

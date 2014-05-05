@@ -13,7 +13,6 @@
 #include "Lines.h"
 #include "OculonApp.h"
 #include "Interface.h"
-#include "Parsec.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -72,7 +71,7 @@ void Lines::setupParticles(const int bufSize)
     mParticleController.setup(bufSize);
     int numParticles = bufSize*bufSize;
     
-    console() << "[Lines] initializing " << numParticles << " particles, hang on!" << std::endl;
+    console() << "[lines] initializing " << numParticles << " particles, hang on!" << std::endl;
     
     vector<Vec4f> randomPositions;
     vector<Vec4f> straightPositions;

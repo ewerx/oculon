@@ -20,6 +20,7 @@
 #include "DustRenderer.h"
 #include "LinesRenderer.h"
 #include "SimplexNoiseTexture.h"
+#include "ParticleController.h"
 
 //
 // Dust
@@ -44,35 +45,17 @@ protected:// from Scene
     //void setupDebugInterface();
     
 private:
-    void setupFBO();
-    
-    ParticleRenderer& getRenderer();
-    
-    void initParticles();
-    void updateParticles();
-    void drawParticles();
+    void setupParticles(const int bufSize);
     
     SimplexNoiseTexture mDynamicTexture;
     
 private:
-    // particle system
-    enum
-    {
-        kBufSize = 512,
-        kNumParticles = (kBufSize * kBufSize)
-    };
+    ParticleController mParticleController;
     
-    PingPongFbo mParticlesFbo;
     ci::gl::GlslProg mSimulationShader;
     
-    DustRenderer mRenderer;
-    LinesRenderer mLinesRenderer;
-    bool mAltRenderer;
     
     ci::CameraOrtho mCamera;
-    
-    ci::gl::Texture mInitialPosTex;
-	ci::gl::Texture mInitialVelTex;
     
     // params
     float mTimeStep;
