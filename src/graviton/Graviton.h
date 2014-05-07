@@ -21,6 +21,7 @@
 #include "CameraController.h"
 #include "EaseCurveSelector.h"
 #include "GravitonRenderer.h"
+#include "ParticleController.h"
 
 
 /// Graviton
@@ -42,51 +43,14 @@ public:
 protected:// from Scene
     void setupInterface();
     //void setupDebugInterface();
-    
-protected:
-    ci::Surface32f generatePositionSurface();
-    ci::Surface32f generateVelocitySurface();
 
 private:
-    void setupPingPongFbo();
-    void initParticles();
+    void setupParticles(const int bufSize);
     
     bool resetGravityNodes();
-    void computeAttractorPosition();
     void updateGravityNodes(const double dt);
-    
-    void updateAudioResponse();
-    void updateCamera(const double dt);
-    
-    void preRender();
-    void drawParticles();
 
 private:
-    enum
-    {
-        kBufSize =                 512,
-        kNumParticles =         (kBufSize * kBufSize)
-    };
-    
-    // INITIAL FORMATION
-#define GRAVITON_FORMATION_TUPLE \
-GRAVITON_FORMATION_ENTRY( "Cube", FORMATION_CUBE ) \
-GRAVITON_FORMATION_ENTRY( "Sphere", FORMATION_SPHERE ) \
-GRAVITON_FORMATION_ENTRY( "Shell", FORMATION_SPHERE_SHELL ) \
-GRAVITON_FORMATION_ENTRY( "Disc", FORMATION_DISC ) \
-GRAVITON_FORMATION_ENTRY( "Galaxy", FORMATION_GALAXY ) \
-// end tuple
-    
-    enum eFormation
-    {
-#define GRAVITON_FORMATION_ENTRY( nam, enm ) \
-enm,
-        GRAVITON_FORMATION_TUPLE
-#undef  GRAVITON_FORMATION_ENTRY
-        
-        FORMATION_COUNT
-    };
-    
     // NODE FORMATION
 #define GRAVITON_NODE_FORMATION_TUPLE \
 GRAVITON_NODE_FORMATION_ENTRY( "Static", NODE_FORMATION_STATIC ) \
@@ -118,7 +82,6 @@ enm,
         float       mMass;
     };
     
-    eFormation              mInitialFormation;
     float                   mFormationRadius;
     
     eNodeFormation                  mGravityNodeFormation;
@@ -129,6 +92,7 @@ enm,
     float mTimeStep;
     float mDamping;
     float mGravity;
+    bool mReset;
     bool mAudioGravity;
     bool mAudioContainer;
     bool mAudioMirror;
@@ -139,17 +103,13 @@ enm,
     int32_t mNumNodes;
     
     // particle system
-    PingPongFbo mParticlesFbo;
+    ParticleController mParticleController;
     ci::gl::GlslProg mSimulationShader;
-    ci::gl::GlslProg mFormationShader;
     
     // audio
     AudioInputHandler   mAudioInputHandler;
 
     // camera
     CameraController    mCameraController;
-    
-    // rendering
-    GravitonRenderer    mRenderer;
 };
 

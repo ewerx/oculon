@@ -140,8 +140,8 @@ void Dust::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
-    mParticleController.getFormation().getVelocityTex().bind(3);
-    mParticleController.getFormation().getPositionTex().bind(4);
+    mParticleController.getFormation().getPositionTex().bind(3);
+    mParticleController.getFormation().getVelocityTex().bind(4);
     
     mDynamicTexture.bindTexture(5);
     
@@ -153,8 +153,8 @@ void Dust::update(double dt)
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );
     mSimulationShader.uniform( "information", 2);
-	mSimulationShader.uniform( "oVelocities", 3);
-	mSimulationShader.uniform( "oPositions", 4);
+    mSimulationShader.uniform( "oPositions", 3);
+	mSimulationShader.uniform( "oVelocities", 4);
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", simdt );
     mSimulationShader.uniform( "decayRate", decayRate );

@@ -16,6 +16,7 @@
 #include "OculonApp.h"
 #include "Utils.h"
 #include "Interface.h"
+#include "ParticleFormation.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -39,10 +40,11 @@ void Graviton::setup()
 {
     Scene::setup();
     
+    mReset = false;
+    
     // params
     mTimeStep = 0.00075f;
-        
-    mInitialFormation = FORMATION_SPHERE;
+    
     mFormationRadius = 80.0f;
     
     mDamping = 0.0f;
@@ -54,12 +56,14 @@ void Graviton::setup()
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_STATIC;
     
-    // shaders
+    // simulation
     mSimulationShader = loadFragShader("graviton_simulation_frag.glsl" );
-    mFormationShader = loadFragShader("graviton_formation_frag.glsl");
     
-    setupPingPongFbo();
-    mRenderer.setup(kBufSize); // 512^2 = 262144 particles
+    const int bufSize = 512;
+    setupParticles(bufSize);
+    
+    // rendering
+    mParticleController.addRenderer( new GravitonRenderer() );
     
     mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
     mAudioInputHandler.setup(false);
@@ -67,94 +71,99 @@ void Graviton::setup()
     reset();
 }
 
-void Graviton::setupPingPongFbo()
+void Graviton::setupParticles(const int bufSize)
 {
-	std::vector<Surface32f> surfaces;
-    // Position 2D texture array
-    Surface32f posSurface = generatePositionSurface();
-    surfaces.push_back( posSurface );
-    //Velocity 2D texture array
-    surfaces.push_back( generateVelocitySurface() );
+	int numParticles = bufSize*bufSize;
+    console() << "[graviton] initializing " << numParticles << " particles, hang on!" << std::endl;
     
-    // TODO: infos
-    surfaces.push_back( posSurface );
+    mParticleController.setup(bufSize);
     
-    mParticlesFbo = PingPongFbo( surfaces );
-}
-
-Surface32f Graviton::generatePositionSurface()
-{
-    float r = mFormationRadius;
+    const float r = mFormationRadius;
     
-    Surface32f surface( kBufSize, kBufSize, true );
-    Surface32f::Iter pixelIter = surface.getIter();
-    while( pixelIter.line() )
+    vector<Vec4f> positions;
+    vector<Vec4f> velocities;
+    vector<Vec4f> data;
+    
+    // sphere
+    for (int i = 0; i < numParticles; ++i)
     {
-        while( pixelIter.pixel() )
-        {
-            double x = 0.0f;
-            double y = 0.0f;
-            double z = 0.0f;
-            double mass = Rand::randFloat(0.1f, 1.0f);
-            
-            
-            switch( mInitialFormation )
-            {
-                case FORMATION_SPHERE:
-                {
-                    double rho = Utils::randDouble() * (M_PI * 2.0);
-                    double theta = Utils::randDouble() * (M_PI * 2.0);
-                    
-                    const float d = Rand::randFloat(10.0f, r);
-                    x = d * cos(rho) * sin(theta);
-                    y = d * sin(rho) * sin(theta);
-                    z = d * cos(theta);
-                }
-                    break;
-                    
-                case FORMATION_SPHERE_SHELL:
-                {
-                    double rho = Utils::randDouble() * (M_PI * 2.0);
-                    double theta = Utils::randDouble() * (M_PI * 2.0);
-                    
-                    x = r * cos(rho) * sin(theta);
-                    y = r * sin(rho) * sin(theta);
-                    z = r * cos(theta);
-                }
-                    break;
-                    
-                case FORMATION_CUBE:
-                    x = r*(Rand::randFloat()-0.5f);
-                    y = r*(Rand::randFloat()-0.5f);
-                    z = r*(Rand::randFloat()-0.5f);
-                    break;
-                    
-                default:
-                    break;
-            }
-
-            // RGB = position
-            // A = mass
-            surface.setPixel(pixelIter.getPos(), ColorAf(x, y, z, mass) );
-        }
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        const float d = Rand::randFloat(10.0f, r);
+        
+        // position + mass
+        float x = d * cos(rho) * sin(theta);
+        float y = d * sin(rho) * sin(theta);
+        float z = d * cos(theta);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        
+        // velocity + age
+//        float vx = Rand::randFloat(-.005f,.005f);
+//        float vy = Rand::randFloat(-.005f,.005f);
+//        float vz = Rand::randFloat(-.005f,.005f);
+        float age = Rand::randFloat(.007f,0.9f);
+        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+        
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
     }
+    mParticleController.addFormation(new ParticleFormation("sphere", bufSize, positions, velocities, data));
     
-    return surface;
-}
-
-Surface32f Graviton::generateVelocitySurface()
-{
-    Surface32f surface( kBufSize, kBufSize, true );
-    Surface32f::Iter pixelIter = surface.getIter();
-    while( pixelIter.line() ) {
-        while( pixelIter.pixel() ) {
-            /* Initial particle velocities are
-             passed in as R,G,B float values. */
-            surface.setPixel( pixelIter.getPos(), ColorAf( 0.0f, 0.0f, 0.0f, 1.0f ) );
-        }
+    positions.clear();
+    // shell
+    for (int i = 0; i < numParticles; ++i)
+    {
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        // position + mass
+        float x = r * cos(rho) * sin(theta);
+        float y = r * sin(rho) * sin(theta);
+        float z = r * cos(theta);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        
+//        // velocity + age
+//        //        float vx = Rand::randFloat(-.005f,.005f);
+//        //        float vy = Rand::randFloat(-.005f,.005f);
+//        //        float vz = Rand::randFloat(-.005f,.005f);
+//        float age = Rand::randFloat(.007f,0.9f);
+//        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+//        
+//        // extra info
+//        float decay = Rand::randFloat(.01f,10.00f);
+//        data.push_back(Vec4f(x,y,z,decay));
     }
+    mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
     
-    return surface;
+    
+    positions.clear();
+    // cube
+    for (int i = 0; i < numParticles; ++i)
+    {
+        // position + mass
+        float x = r * (Rand::randFloat()-0.5f);
+        float y = r * (Rand::randFloat()-0.5f);
+        float z = r * (Rand::randFloat()-0.5f);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        
+//        // velocity + age
+//        //        float vx = Rand::randFloat(-.005f,.005f);
+//        //        float vy = Rand::randFloat(-.005f,.005f);
+//        //        float vz = Rand::randFloat(-.005f,.005f);
+//        float age = Rand::randFloat(.007f,0.9f);
+//        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+        
+//        // extra info
+//        float decay = Rand::randFloat(.01f,10.00f);
+//        data.push_back(Vec4f(x,y,z,decay));
+    }
+    mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
+    
+    mParticleController.resetToFormation(0);
 }
 
 //void Graviton::setupDebugInterface()
@@ -166,16 +175,6 @@ Surface32f Graviton::generateVelocitySurface()
 void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
-    mInterface->gui()->addLabel("formation");
-    vector<string> formationNames;
-#define GRAVITON_FORMATION_ENTRY( nam, enm ) \
-formationNames.push_back(nam);
-    GRAVITON_FORMATION_TUPLE
-#undef  GRAVITON_FORMATION_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Particle Formation", (int*)(&mInitialFormation) )
-                        .maxValue(FORMATION_COUNT)
-                        .oscReceiver(getName(), "pformation")
-                        .isVertical(), formationNames);
     
     vector<string> nodeFormationNames;
 #define GRAVITON_NODE_FORMATION_ENTRY( nam, enm ) \
@@ -227,58 +226,16 @@ nodeFormationNames.push_back(nam);
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
-    mRenderer.setupInterface(mInterface, mName);
+    mParticleController.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
-void Graviton::initParticles()
-{
-    gl::Texture::Format format;
-    format.setInternalFormat( GL_RGBA32F_ARB );
-    
-	gl::Texture posTexture = gl::Texture( generatePositionSurface(), format );
-    posTexture.setWrap( GL_REPEAT, GL_REPEAT );
-    posTexture.setMinFilter( GL_NEAREST );
-    posTexture.setMagFilter( GL_NEAREST );
-    
-    gl::Texture velTexture = gl::Texture( generateVelocitySurface(), format );
-    velTexture.setWrap( GL_REPEAT, GL_REPEAT );
-    velTexture.setMinFilter( GL_NEAREST );
-    velTexture.setMagFilter( GL_NEAREST );
-    
-    posTexture.bind(3);
-    velTexture.bind(2);
-    
-    mFormationShader.bind();
-    mFormationShader.uniform( "positions", 3 );
-    mFormationShader.uniform( "velocities", 2 );
-    
-    // draw to particle fbo
-    gl::pushMatrices();
-    gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
-    gl::setViewport( mParticlesFbo.getBounds() );
-    
-    mParticlesFbo.bindUpdate();
-    gl::drawSolidRect(mParticlesFbo.getBounds());
-    mParticlesFbo.unbindUpdate();
-    
-    mParticlesFbo.bindUpdate();
-    gl::drawSolidRect(mParticlesFbo.getBounds());
-    mParticlesFbo.unbindUpdate();
-    
-    gl::popMatrices();
-    
-    posTexture.unbind();
-    velTexture.unbind();
-    mFormationShader.unbind();
-}
-
 void Graviton::reset()
 {
+    mReset = true;
     resetGravityNodes();
-    initParticles();
 }
 
 #pragma mark - Gravity Nodes
@@ -521,8 +478,6 @@ void Graviton::updateGravityNodes(const double dt)
 
 void Graviton::update(double dt)
 {
-    Scene::update(dt);
-    
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mCameraController.update(dt);
@@ -533,8 +488,10 @@ void Graviton::update(double dt)
     }
 
     // update particle system
-    //computeAttractorPosition();
     updateGravityNodes(dt * 0.005f);
+    
+    // TODO: refactor
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
     
     gl::pushMatrices();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
@@ -542,9 +499,16 @@ void Graviton::update(double dt)
     
     mParticlesFbo.bindUpdate();
     
+    mParticleController.getFormation().getPositionTex().bind(3);
+    mParticleController.getFormation().getVelocityTex().bind(4);
+    
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );
+    mSimulationShader.uniform( "information", 2 );
+	mSimulationShader.uniform( "oPositions", 3);
+    mSimulationShader.uniform( "oVelocities", 4);
+    mSimulationShader.uniform( "reset", mReset );
     mSimulationShader.uniform( "dt", (float)(dt * mTimeStep * 100.0f) );
     mSimulationShader.uniform( "eps", mEps );
     mSimulationShader.uniform( "damping", mDamping );
@@ -561,8 +525,15 @@ void Graviton::update(double dt)
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();
     
+    mParticleController.getFormation().getPositionTex().unbind();
+    mParticleController.getFormation().getVelocityTex().unbind();
+    
     mParticlesFbo.unbindUpdate();
     gl::popMatrices();
+    
+    mReset = false;
+    
+    Scene::update(dt);
 }
 
 #pragma mark - Input
@@ -604,7 +575,7 @@ const Camera& Graviton::getCamera()
     }
 }
 
-#pragma mark - Render
+#pragma mark - Draw
 
 void Graviton::draw()
 {
@@ -615,16 +586,16 @@ void Graviton::draw()
         Area leftViewport = Area( Vec2f( 0.0f, 0.0f ), Vec2f( getFbo().getWidth() / 2.0f, getFbo().getHeight() ) );
         gl::setViewport(leftViewport);
         mApp->getOculusCam().enableStereoLeft();
-        mRenderer.draw(mParticlesFbo, leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler);
+        mParticleController.draw(leftViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler);
         
         Area rightViewport = Area( Area( Vec2f( getFbo().getWidth() / 2.0f, 0.0f ), Vec2f( getFbo().getWidth(), getFbo().getHeight() ) ) );
         gl::setViewport(rightViewport);
         mApp->getOculusCam().enableStereoRight();
-        mRenderer.draw(mParticlesFbo, rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler);
+        mParticleController.draw(rightViewport.getSize(), mApp->getOculusCam().getCamera(), mAudioInputHandler);
     }
     else
     {
-        mRenderer.draw(mParticlesFbo, mApp->getViewportSize(), getCamera(), mApp->getAudioInputHandler());
+        mParticleController.draw(mApp->getViewportSize(), getCamera(), mApp->getAudioInputHandler());
     }
     gl::popMatrices();
 }
@@ -657,6 +628,10 @@ void Graviton::drawDebug()
     const float size = 80.0f;
     const float paddingX = 20.0f;
     const float paddingY = 240.0f;
+    
+    //HACK
+    PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
+    
     Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
     
     gl::draw( mParticlesFbo.getTexture(0), preview );

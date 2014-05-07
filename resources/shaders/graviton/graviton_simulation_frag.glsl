@@ -4,6 +4,9 @@
 
 uniform sampler2D positions;
 uniform sampler2D velocities;
+uniform sampler2D information;
+uniform sampler2D oVelocities;
+uniform sampler2D oPositions;
 uniform vec3 attractorPos1;
 uniform vec3 attractorPos2;
 uniform vec3 attractorPos3;
@@ -13,6 +16,8 @@ uniform float damping;
 uniform float gravity;
 uniform float containerradius;
 
+uniform bool reset;
+
 varying vec4 texCoord;
 
 
@@ -21,6 +26,9 @@ void main(void)
     vec3 p0 = texture2D( positions, texCoord.st).rgb;
     vec3 v0 = texture2D( velocities, texCoord.st).rgb;
     float invmass = texture2D( positions, texCoord.st ).a;
+    
+    vec3 startPos = texture2D( information, texCoord.st ).rgb;
+	float decay = texture2D( information, texCoord.st ).a;
  
     // the simulation
     
@@ -47,8 +55,21 @@ void main(void)
         v1 *= 0.9;
     }
     
+    // reincarnation
+	if( reset )
+    {
+        vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
+        vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
+        p1 = origPos;
+        v1 = origVel;
+    }
+    
+    float age = 0.5+length(v0); // for coloring
+    
     //Render to positions texture
     gl_FragData[0] = vec4(p1, invmass);
     //Render to velocities texture
     gl_FragData[1] = vec4(v1, 0.5+length(v0)); //alpha component used for coloring
+    //age information
+	gl_FragData[2] = vec4(startPos, decay);
 }
