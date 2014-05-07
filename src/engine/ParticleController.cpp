@@ -157,6 +157,7 @@ ParticleRenderer& ParticleController::getRenderer()
 void ParticleController::addRenderer(ParticleRenderer* renderer)
 {
     assert(renderer);
+    assert(mFboSize > 0 && "ParticleController not setup");
     renderer->setup(mFboSize);
     mRenderers.push_back(renderer);
 }
@@ -188,7 +189,30 @@ void ParticleController::updateSimulation(double dt)
 
 #pragma mark - draw
 
-void ParticleController::draw(const ci::Vec2i &screenSize, const ci::Camera &cam, AudioInputHandler &audioInputHandler)
+void ParticleController::draw(const ci::Vec2i &viewportSize, const ci::Camera &cam, AudioInputHandler &audioInputHandler)
 {
-    getRenderer().draw(mParticlesFbo, screenSize, cam, audioInputHandler);
+    getRenderer().draw(mParticlesFbo, viewportSize, cam, audioInputHandler);
+}
+
+void ParticleController::drawDebug(const ci::Vec2i &windowSize)
+{
+    gl::pushMatrices();
+    glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT);
+    gl::enable( GL_TEXTURE_2D );
+    gl::setMatricesWindow( windowSize );
+    
+    const float size = 80.0f;
+    const float paddingX = 20.0f;
+    const float paddingY = 240.0f;
+    
+    Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
+    gl::draw( mParticlesFbo.getTexture(0), preview );
+    
+    Rectf preview2 = preview - Vec2f(size+paddingX, 0.0f);
+    gl::draw( mParticlesFbo.getTexture(1), preview2 );
+    
+    Rectf preview3 = preview2 - Vec2f(size+paddingX, 0.0f);
+    gl::draw( mParticlesFbo.getTexture(2), preview3 );
+    
+    glPopAttrib();
 }

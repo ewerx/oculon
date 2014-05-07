@@ -46,8 +46,8 @@ public:
     void setupInterface( Interface* interface, const std::string& name );
     
     void update(double dt);
-    void draw(const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler);
-    void drawDebug();
+    void draw(const ci::Vec2i& viewportSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler);
+    void drawDebug(const ci::Vec2i& windowSize);
     
     // TODO: refactor so this is not needed
     PingPongFbo& getParticleFbo() { return mParticlesFbo; }
