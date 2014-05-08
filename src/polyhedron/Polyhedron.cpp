@@ -56,7 +56,6 @@ void Polyhedron::setup()
     mObjectScale        = 10.0f;
     mDivision           = 1;
     mResolution         = 12;
-    mCamType            = CAM_SPLINE;
     mLineWidth          = 2.0f;
     mColor              = ColorAf::white();
     
@@ -64,17 +63,13 @@ void Polyhedron::setup()
 	mGridSize           = Vec3i( 16, 16, 16 );
 	mGridSpacing        = Vec3f( 2.5f, 2.5f, 2.5f );
     
-    mMeshType           = MESH_TYPE_ICOSAHEDRON;
+    mMeshType           = 0;
     
     // Load shader
-	try {
-		mShader = gl::GlslProg( loadResource( RES_POLYHEDRON_SHADER_VERT ), loadResource( RES_POLYHEDRON_SHADER_FRAG ) );
-	} catch ( gl::GlslProgCompileExc ex ) {
-		console() << ex.what() << endl;
-	}
+	mShader = loadVertAndFragShaders("polyhedron_vert.glsl", "polyhedron_frag.glsl");
     
 	// Load the texture map
-	mTexture = gl::Texture( loadImage( loadResource( RES_POLYHEDRON_TEX1 ) ) );
+	mTexture = gl::Texture( loadImage( loadResource( "redgreenyellow.png" ) ) );
     
     // Set up the light
 	mLight = new gl::Light( gl::Light::DIRECTIONAL, 0 );
@@ -85,27 +80,14 @@ void Polyhedron::setup()
 	mLight->setSpecular( ColorAf::white() );
 	mLight->enable();
     
-    // camera
-    mSplineCam.setup(5000.0f);
-    
     //loadMesh();
     createMeshes();
     
-    // Audio
-    mFalloff = 0.32f;
-    mFalloffMode = FALLOFF_OUTBOUNCE;
-    mAudioRowShift = 0;
-    mAudioRowShiftTime = 0.0f;
-    mAudioRowShiftDelay = 0.25f;
-    mDisplacementScale = 1.0f;
+    // camera
+    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     
-    // AUDIO
-    mAudioFboDim    = 16; // 256 bands
-    mAudioFboSize   = Vec2f( mAudioFboDim, mAudioFboDim );
-    mAudioFboBounds = Area( 0, 0, mAudioFboDim, mAudioFboDim );
-    gl::Fbo::Format audioFboFormat;
-	audioFboFormat.setColorInternalFormat( GL_RGB32F_ARB );
-    mAudioFbo       = gl::Fbo( mAudioFboDim, mAudioFboDim, audioFboFormat );
+    // audio
+    mAudioInputHandler.setup(true);
     
     reset();
 }
@@ -119,15 +101,29 @@ void Polyhedron::loadMesh()
 
 void Polyhedron::createMeshes()
 {
-    mCircle			= gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, 1 ), 2.0f ) );
-	//mCone			= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ), 0.0f, 1.0f, false, true ) );
-	mCube			= gl::VboMesh( MeshHelper::createCube( Vec3i( 4, 4, 4 ) ) );
-	//mCylinder		= gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ) ) );
-	mIcosahedron	= gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
-	//mRing			= gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, mResolution ) ) );
-	mSphere			= gl::VboMesh( MeshHelper::createSphere( Vec2i( 8, 8 ) ) );
-	//mSquare			= gl::VboMesh( MeshHelper::createSquare( Vec2i( mResolution, mResolution ) ) );
-	//mTorus			= gl::VboMesh( MeshHelper::createTorus( Vec2i( mResolution, mResolution ) ) );
+    gl::VboMesh ring = gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, 1 ), 2.0f ) );
+    mMeshes.push_back( make_pair( "ring", ring ) );
+    
+	gl::VboMesh cone = gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ), 0.0f, 1.0f, false, true ) );
+    mMeshes.push_back( make_pair( "cone", cone ) );
+    
+	gl::VboMesh cube = gl::VboMesh( MeshHelper::createCube( Vec3i( 4, 4, 4 ) ) );
+    mMeshes.push_back( make_pair( "cube", cube ) );
+    
+	gl::VboMesh cylinder = gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ) ) );
+    mMeshes.push_back( make_pair( "cylinder", cylinder ) );
+    
+	gl::VboMesh icosahedron	= gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
+    mMeshes.push_back( make_pair( "icosahedron", icosahedron ) );
+	
+    gl::VboMesh sphere = gl::VboMesh( MeshHelper::createSphere( Vec2i( 8, 8 ) ) );
+    mMeshes.push_back( make_pair( "sphere", sphere ) );
+    
+	gl::VboMesh square = gl::VboMesh( MeshHelper::createSquare( Vec2i( mResolution, mResolution ) ) );
+    mMeshes.push_back( make_pair( "square", square ) );
+    
+	gl::VboMesh torus = gl::VboMesh( MeshHelper::createTorus( Vec2i( mResolution, mResolution ) ) );
+    mMeshes.push_back( make_pair( "torus", torus ) );
 }
 
 // ----------------------------------------------------------------
@@ -195,13 +191,13 @@ void Polyhedron::setupInterface()
                          .sendFeedback());
     
     vector<string> meshTypeNames;
-#define POLYHEDRON_MESHTYPE_ENTRY( nam, enm ) \
-    meshTypeNames.push_back(nam);
-    POLYHEDRON_MESHTYPE_TUPLE
-#undef  POLYHEDRON_MESHTYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Mesh", (int*)(&mMeshType) )
-                        .maxValue(MESH_COUNT)
-                        .oscReceiver(getName(), "mesh")
+    for( tNamedMesh namedMesh : mMeshes )
+    {
+        meshTypeNames.push_back(namedMesh.first);
+    }
+    mInterface->addEnum(CreateEnumParam( "mesh", (int*)(&mMeshType) )
+                        .maxValue(mMeshes.size())
+                        .oscReceiver(getName())
                         .isVertical(), meshTypeNames);
     
     mInterface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
@@ -219,17 +215,8 @@ void Polyhedron::setupInterface()
 //                         .oscReceiver(mName, "resolution")
 //                         .sendFeedback());
     
-    mInterface->gui()->addColumn();
-    vector<string> camTypeNames;
-#define POLYHEDRON_CAMTYPE_ENTRY( nam, enm ) \
-    camTypeNames.push_back(nam);
-    POLYHEDRON_CAMTYPE_TUPLE
-#undef  POLYHEDRON_CAMTYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camtype")
-                        .isVertical(), camTypeNames);
-    mSplineCam.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
 // ----------------------------------------------------------------
@@ -257,10 +244,9 @@ void Polyhedron::update(double dt)
 {
     Scene::update(dt);
     
-    if( mCamType == CAM_SPLINE )
-        mSplineCam.update(dt);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
     
-    mAudioRowShiftTime += dt;
+    mCameraController.update(dt);
     
     if (mDynamicLight)
     {
@@ -276,6 +262,8 @@ void Polyhedron::update(double dt)
 //
 void Polyhedron::draw()
 {
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    
     // Set up OpenGL to work with default lighting
 	glShadeModel( GL_SMOOTH );
 	gl::enable( GL_POLYGON_SMOOTH );
@@ -293,16 +281,20 @@ void Polyhedron::draw()
 	gl::enableDepthWrite();
     
     // setup
-    if ( mLightEnabled ) {
+    if ( mLightEnabled )
+    {
 		gl::enable( GL_LIGHTING );
         Color diffuse = mColor * mColor.a;
         mLight->setDiffuse( diffuse );
         mLight->setSpecular( mColor );
 	}
-	if ( mTextureEnabled && mTexture ) {
+    
+	if ( mTextureEnabled && mTexture )
+    {
 		gl::enable( GL_TEXTURE_2D );
 		mTexture.bind();
 	}
+    
 	if ( mWireframe )
     {
         glLineWidth( (GLfloat)mLineWidth );
@@ -328,17 +320,24 @@ void Polyhedron::draw()
     gl::popMatrices();
     
     // restore
-    if ( mWireframe ) {
+    if ( mWireframe )
+    {
 		gl::disableWireframe();
         glLineWidth( 1.0f );
 	}
-	if ( mTextureEnabled && mTexture ) {
+    
+	if ( mTextureEnabled && mTexture )
+    {
 		mTexture.unbind();
 		gl::disable( GL_TEXTURE_2D );
 	}
-	if ( mLightEnabled ) {
+    
+	if ( mLightEnabled )
+    {
 		gl::disable( GL_LIGHTING );
 	}
+    
+    glPopAttrib();
 }
 
 void Polyhedron::drawInstances( const ci::gl::VboMesh &mesh )
@@ -386,97 +385,20 @@ void Polyhedron::drawInstanced( const gl::VboMesh &vbo, size_t count )
 
 void Polyhedron::drawDebug()
 {
-    gl::enable( GL_TEXTURE_2D );
-    gl::setMatricesWindow( getWindowSize() );
-    
-    mAudioFbo.bindTexture();
-    //TODO: make utility func for making rects with origin/size
-    gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
-    
-    gl::disable( GL_TEXTURE_2D );
+//    gl::enable( GL_TEXTURE_2D );
+//    gl::setMatricesWindow( getWindowSize() );
+//    
+//    gl::disable( GL_TEXTURE_2D );
 }
 
 const Camera& Polyhedron::getCamera()
 {
-    switch( mCamType )
-    {
-        case CAM_SPLINE:
-            return mSplineCam.getCamera();
-            
-        case CAM_CATALOG:
-        {
-            Scene* scene = mApp->getScene("catalog");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_GRAVITON:
-        {
-            Scene* scene = mApp->getScene("graviton");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_ORBITER:
-        {
-            Scene* scene = mApp->getScene("orbiter");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        default:
-            return mApp->getMayaCam();
-    }
+    return mCameraController.getCamera();
 }
 
 const ci::gl::VboMesh& Polyhedron::getMesh()
 {
-    switch( mMeshType )
-    {
-        case MESH_TYPE_CIRCLE:
-            return mCircle;
-//        case MESH_TYPE_CONE:
-//            return mCone;
-//        case MESH_TYPE_CYLINDER:
-//            return mCylinder;
-//        case MESH_TYPE_RING:
-//            return mRing;
-//        case MESH_TYPE_SQUARE:
-//            return mSquare;
-//        case MESH_TYPE_TORUS:
-//            return mTorus;
-        case MESH_TYPE_ICOSAHEDRON:
-            return mIcosahedron;
-        case MESH_TYPE_SPHERE:
-            return mSphere;
-        case MESH_TYPE_CUBE:
-            return mCube;
-//        case MESH_TYPE_CUSTOM:
-//            return mCustom;
-            
-        default:
-            console() << "[polyhedron] invalid mesh type" << std::endl;
-            return mIcosahedron;
-	}
+    assert(mMeshType < mMeshes.size());
+    
+    return mMeshes[mMeshType].second;
 }

@@ -6,11 +6,11 @@
 // Copyright 2012 ewerx. All rights reserved.
 //
 
-#ifndef __Polyhedron_H__
-#define __Polyhedron_H__
+#pragma once
 
 #include "Scene.h"
 #include "SplineCam.h"
+#include "AudioInputHandler.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Light.h"
@@ -49,18 +49,6 @@ protected:
     const ci::gl::VboMesh& getMesh();
     
 private:
-    //ci::gl::VboMesh             mTriMesh;
-    ci::gl::VboMesh				mCircle;
-	ci::gl::VboMesh				mCone;
-	ci::gl::VboMesh				mCube;
-	//ci::gl::VboMesh				mCustom;
-	ci::gl::VboMesh				mCylinder;
-	ci::gl::VboMesh				mIcosahedron;
-	ci::gl::VboMesh				mRing;
-	ci::gl::VboMesh				mSphere;
-	ci::gl::VboMesh				mSquare;
-	ci::gl::VboMesh				mTorus;
-    
     ci::gl::Fbo                 mFbo;
     
     // Lighting
@@ -91,74 +79,13 @@ private:
     int                         mLineWidth;
     
     // meshes
-#define POLYHEDRON_MESHTYPE_TUPLE \
-POLYHEDRON_MESHTYPE_ENTRY( "Circle", MESH_TYPE_CIRCLE ) \
-POLYHEDRON_MESHTYPE_ENTRY( "Cube", MESH_TYPE_CUBE ) \
-POLYHEDRON_MESHTYPE_ENTRY( "Sphere", MESH_TYPE_SPHERE ) \
-POLYHEDRON_MESHTYPE_ENTRY( "Icosahedron", MESH_TYPE_ICOSAHEDRON ) \
-//end tuple
-    enum eMeshType
-    {
-#define POLYHEDRON_MESHTYPE_ENTRY( nam, enm ) \
-        enm,
-        POLYHEDRON_MESHTYPE_TUPLE
-#undef  POLYHEDRON_MESHTYPE_ENTRY
-        
-        MESH_COUNT
-    };
-    eMeshType                   mMeshType;
+    typedef std::pair<std::string, ci::gl::VboMesh> tNamedMesh;
+    std::vector<tNamedMesh>     mMeshes;
+    int                         mMeshType;
     
     // camera
-#define POLYHEDRON_CAMTYPE_TUPLE \
-POLYHEDRON_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
-POLYHEDRON_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
-POLYHEDRON_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON ) \
-POLYHEDRON_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
-POLYHEDRON_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
-//end tuple
+    CameraController            mCameraController;
     
-    enum eCamType
-    {
-#define POLYHEDRON_CAMTYPE_ENTRY( nam, enm ) \
-        enm,
-        POLYHEDRON_CAMTYPE_TUPLE
-#undef  POLYHEDRON_CAMTYPE_ENTRY
-        
-        CAM_COUNT
-    };
-    eCamType                    mCamType;
-    
-    SplineCam                   mSplineCam;
-    
-    // AUDIO
-    int                 mAudioFboDim;
-    ci::Vec2f           mAudioFboSize;
-    ci::Area            mAudioFboBounds;
-    ci::gl::Fbo         mAudioFbo;
-    std::vector< ci::Anim<float> >    mFftFalloff;
-    float               mFalloff;
-    int                 mAudioRowShift;
-    float               mAudioRowShiftTime;
-    float               mAudioRowShiftDelay;
-    float               mDisplacementScale;
-    
-    typedef std::function<float (float)> tEaseFn;
-    tEaseFn getFalloffFunction();
-    tEaseFn getReverseFalloffFunction();
-    
-    enum eFalloffMode
-    {
-        FALLOFF_LINEAR,
-        FALLOFF_OUTQUAD,
-        FALLOFF_OUTEXPO,
-        FALLOFF_OUTBACK,
-        FALLOFF_OUTBOUNCE,
-        FALLOFF_OUTINEXPO,
-        FALLOFF_OUTINBACK,
-        
-        FALLOFF_COUNT
-    };
-    eFalloffMode mFalloffMode;
+    // audio
+    AudioInputHandler           mAudioInputHandler;
 };
-
-#endif // __Polyhedron_H__
