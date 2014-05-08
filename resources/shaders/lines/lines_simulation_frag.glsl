@@ -19,7 +19,6 @@ const float eps = 0.001;
 
 void main()
 {
-    
 	vec3 pos = texture2D( positions, texCoord.st ).rgb;
 	float invMass = texture2D( positions, texCoord.st ).a;
 

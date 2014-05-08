@@ -3,10 +3,12 @@
 uniform sampler2D posMap;
 uniform sampler2D velMap;
 uniform sampler2D information;
+uniform sampler2D colorMap;
 uniform sampler2D intensityMap;
 
 uniform float screenWidth;
 
+uniform bool useColorMap;
 uniform bool audioReactive;
 uniform float gain;
 
@@ -24,11 +26,22 @@ void main()
     // scale vertex position to screen size
 	newVertexPos = vec4(screenWidth * dv.x, screenWidth * dv.y, screenWidth * dv.z, 1.0);
 	
-    color = vec4(1.0,1.0,1.0,0.0);
-    if (audioReactive) {
+    if (useColorMap)
+    {
+        color = texture2D( colorMap, gl_MultiTexCoord0.st );
+    }
+    else
+    {
+        color = vec4(1.0,1.0,1.0,0.0);
+    }
+    
+    if (audioReactive)
+    {
         // alpha from audio texture
         color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
-    } else {
+    }
+    else
+    {
         color.a = 1.0;
     }
 

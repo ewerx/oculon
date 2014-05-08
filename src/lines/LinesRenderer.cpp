@@ -17,13 +17,14 @@ using namespace std;
 LinesRenderer::LinesRenderer()
 : ParticleRenderer("lines")
 {
-    // load textures
-    mColorMapTex = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
-    
     // params
-    mLineWidth = 1.25f;
-    mColor = ColorAf(1.0f,1.0f,1.0f,0.025f);
-    mAudioReactive = true;
+    mLineWidth              = 1.25f;
+    mColor                  = ColorAf(1.0f,1.0f,1.0f,0.025f);
+    mUseColorMap            = false;
+    mAudioReactive          = true;
+    
+    // load textures
+    mColorMapTex = gl::Texture( loadImage( app::loadResource( "colortex1.jpg" ) ) );
 }
 
 LinesRenderer::~LinesRenderer()
@@ -55,6 +56,8 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
     
     interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
                         .oscReceiver(oscName));
+    interface->addParam(CreateBoolParam("colormap", &mUseColorMap)
+                        .oscReceiver(oscName));
 }
 
 void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
@@ -84,10 +87,11 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     mShader.uniform("information", 2);
     mShader.uniform("colorMap", 3);
     mShader.uniform("intensityMap", 4);
-    mShader.uniform("gain", audioInputHandler.getGain());
     mShader.uniform("screenWidth", (float)1.0f);
     mShader.uniform("colorBase", mColor);
+    mShader.uniform("gain", audioInputHandler.getGain());
     mShader.uniform("audioReactive", mAudioReactive);
+    mShader.uniform("useColorMap", mUseColorMap);
     
     const float scale = 1000.0f;
     glScalef(scale, scale, scale);
