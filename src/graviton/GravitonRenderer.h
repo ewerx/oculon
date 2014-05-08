@@ -36,4 +36,5 @@ protected:
     bool				mAdditiveBlending;
     bool                mUseImageForPoints;
     ci::ColorAf         mColor;
+    bool                mAudioReactive;
 };

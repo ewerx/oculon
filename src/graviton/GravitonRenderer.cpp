@@ -13,20 +13,22 @@
 using namespace ci;
 using namespace std;
 
+
 GravitonRenderer::GravitonRenderer()
 : ParticleRenderer("graviton")
 {
+    // params
+    mAdditiveBlending       = true;
+    mUseImageForPoints      = true;
+    mPointSize              = 0.6f;
+    mColor                  = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
+    mAudioReactive          = true;
+    
     // load textures
     mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
     mParticleTexture2 = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
     mParticleTexture1.setWrap( GL_REPEAT, GL_REPEAT );
     mParticleTexture2.setWrap( GL_REPEAT, GL_REPEAT );
-    
-    // params
-    mAdditiveBlending = true;
-    mUseImageForPoints = true;
-    mPointSize = 0.6f;
-    mColor = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
 }
 
 GravitonRenderer::~GravitonRenderer()
@@ -50,6 +52,8 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     interface->gui()->addLabel(mName);
     interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
                          .oscReceiver(oscName));
+    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
+                        .oscReceiver(oscName));
     interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
                          .minValue(0.01f)
                          .maxValue(2.0f)
@@ -95,6 +99,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     mShader.uniform("MV", cam.getModelViewMatrix());
     mShader.uniform("P", cam.getProjectionMatrix());
     mShader.uniform("colorScale", mColor);
+    mShader.uniform("audioReactive", mAudioReactive);
     mShader.uniform("gain", audioInputHandler.getGain());
     
     // do magic

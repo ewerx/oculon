@@ -24,8 +24,10 @@ varying vec4 texCoord;
 void main(void)
 {
     vec3 p0 = texture2D( positions, texCoord.st).rgb;
-    vec3 v0 = texture2D( velocities, texCoord.st).rgb;
     float invmass = texture2D( positions, texCoord.st ).a;
+    
+    vec3 v0 = texture2D( velocities, texCoord.st).rgb;
+    float age = texture2D( velocities, texCoord.st ).a;
     
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float decay = texture2D( information, texCoord.st ).a;
@@ -64,12 +66,12 @@ void main(void)
         v1 = origVel;
     }
     
-    float age = 0.5+length(v0); // for coloring
+    //float age = 0.5+length(v0); // for coloring
     
     //Render to positions texture
     gl_FragData[0] = vec4(p1, invmass);
     //Render to velocities texture
-    gl_FragData[1] = vec4(v1, 0.5+length(v0)); //alpha component used for coloring
+    gl_FragData[1] = vec4(v1, age); //alpha component used for coloring
     //age information
 	gl_FragData[2] = vec4(startPos, decay);
 }
