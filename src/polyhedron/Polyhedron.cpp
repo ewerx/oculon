@@ -60,7 +60,7 @@ void Polyhedron::setup()
     mColor              = ColorAf::white();
     
     // Set up the instancing grid
-	mGridSize           = Vec3i( 16, 16, 16 );
+	mGridSize           = Vec3i( 16, 16, 1 );
 	mGridSpacing        = Vec3f( 2.5f, 2.5f, 2.5f );
     
     mMeshType           = 0;
@@ -79,6 +79,9 @@ void Polyhedron::setup()
 	mLight->setPosition( Vec3f::one() * -1.0f );
 	mLight->setSpecular( ColorAf::white() );
 	mLight->enable();
+    
+    // displacement texture
+    mDynamicTexture.setup(mGridSize.x, mGridSize.y);
     
     //loadMesh();
     createMeshes();
@@ -101,28 +104,16 @@ void Polyhedron::loadMesh()
 
 void Polyhedron::createMeshes()
 {
-    gl::VboMesh ring = gl::VboMesh( MeshHelper::createRing( Vec2i( mResolution, 1 ), 2.0f ) );
-    mMeshes.push_back( make_pair( "ring", ring ) );
-    
-	gl::VboMesh cone = gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ), 0.0f, 1.0f, false, true ) );
-    mMeshes.push_back( make_pair( "cone", cone ) );
+    gl::VboMesh icosahedron	= gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
+    mMeshes.push_back( make_pair( "icosahedron", icosahedron ) );
     
 	gl::VboMesh cube = gl::VboMesh( MeshHelper::createCube( Vec3i( 4, 4, 4 ) ) );
     mMeshes.push_back( make_pair( "cube", cube ) );
     
-	gl::VboMesh cylinder = gl::VboMesh( MeshHelper::createCylinder( Vec2i( mResolution, mResolution ) ) );
-    mMeshes.push_back( make_pair( "cylinder", cylinder ) );
-    
-	gl::VboMesh icosahedron	= gl::VboMesh( MeshHelper::createIcosahedron( mDivision ) );
-    mMeshes.push_back( make_pair( "icosahedron", icosahedron ) );
-	
     gl::VboMesh sphere = gl::VboMesh( MeshHelper::createSphere( Vec2i( 8, 8 ) ) );
     mMeshes.push_back( make_pair( "sphere", sphere ) );
     
-	gl::VboMesh square = gl::VboMesh( MeshHelper::createSquare( Vec2i( mResolution, mResolution ) ) );
-    mMeshes.push_back( make_pair( "square", square ) );
-    
-	gl::VboMesh torus = gl::VboMesh( MeshHelper::createTorus( Vec2i( mResolution, mResolution ) ) );
+    gl::VboMesh torus = gl::VboMesh( MeshHelper::createTorus( Vec2i( mResolution, mResolution ) ) );
     mMeshes.push_back( make_pair( "torus", torus ) );
 }
 
@@ -190,6 +181,7 @@ void Polyhedron::setupInterface()
                          .oscReceiver(mName, "linewidth")
                          .sendFeedback());
     
+    mInterface->gui()->addColumn();
     vector<string> meshTypeNames;
     for( tNamedMesh namedMesh : mMeshes )
     {
@@ -214,6 +206,7 @@ void Polyhedron::setupInterface()
 //                         .maxValue(100)
 //                         .oscReceiver(mName, "resolution")
 //                         .sendFeedback());
+    mDynamicTexture.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
@@ -247,6 +240,8 @@ void Polyhedron::update(double dt)
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mCameraController.update(dt);
+    
+    mDynamicTexture.update(dt);
     
     if (mDynamicLight)
     {
@@ -292,8 +287,10 @@ void Polyhedron::draw()
 	if ( mTextureEnabled && mTexture )
     {
 		gl::enable( GL_TEXTURE_2D );
-		mTexture.bind();
+		mTexture.bind(0);
 	}
+    
+    mDynamicTexture.bindTexture(1);
     
 	if ( mWireframe )
     {
@@ -319,6 +316,8 @@ void Polyhedron::draw()
     
     gl::popMatrices();
     
+    mDynamicTexture.unbindTexture();
+    
     // restore
     if ( mWireframe )
     {
@@ -342,34 +341,27 @@ void Polyhedron::draw()
 
 void Polyhedron::drawInstances( const ci::gl::VboMesh &mesh )
 {
+    // config shader
+    mShader.bind();
+    mShader.uniform( "eyePoint",		getCamera().getEyePoint() );
+    mShader.uniform( "lightingEnabled",	mLightEnabled );
+    mShader.uniform( "size",			Vec3f( mGridSize ) );
+    mShader.uniform( "spacing",			mGridSpacing );
+    mShader.uniform( "tex",				0 );
+    mShader.uniform( "textureEnabled",	mTextureEnabled );
+    mShader.uniform( "displacement",    1 );
+//    mShader.uniform( "dispScale",       mDisplacementScale );
     
-    // Bind and configure shader
-	if ( mShader ) {
-		mShader.bind();
-		mShader.uniform( "eyePoint",		getCamera().getEyePoint() );
-		mShader.uniform( "lightingEnabled",	mLightEnabled );
-		mShader.uniform( "size",			Vec3f( mGridSize ) );
-		mShader.uniform( "spacing",			mGridSpacing );
-		mShader.uniform( "tex",				0 );
-		mShader.uniform( "textureEnabled",	mTextureEnabled );
-        //mShader.uniform( "displacement",    1 );
-        //mShader.uniform( "dispScale",       mDisplacementScale );
-        
-        //TODO: texture method
-        //TODO: then with dynamic texture
-        //TODO: ARB instanced array method -- if textured works don't bother
-        //mShader.getAttribLocation("");
-	}
+    //TODO: texture method
+    //TODO: then with dynamic texture
+    //TODO: ARB instanced array method -- if textured works don't bother
+    //mShader.getAttribLocation("");
     
     // draw instanced
     size_t instanceCount = (size_t)( mGridSize.x * mGridSize.y * mGridSize.z );
     drawInstanced( mesh, instanceCount );
-
-    // Unbind shader
-	if ( mShader ) {
-		mShader.unbind();
-	}
     
+    mShader.unbind();
 }
 
 // Draw VBO instanced
@@ -385,10 +377,23 @@ void Polyhedron::drawInstanced( const gl::VboMesh &vbo, size_t count )
 
 void Polyhedron::drawDebug()
 {
-//    gl::enable( GL_TEXTURE_2D );
-//    gl::setMatricesWindow( getWindowSize() );
-//    
-//    gl::disable( GL_TEXTURE_2D );
+    //Scene::drawDebug();
+    
+    gl::pushMatrices();
+    glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT);
+    gl::enable( GL_TEXTURE_2D );
+    const Vec2f& windowSize( getWindowSize() );
+    gl::setMatricesWindow( windowSize );
+    
+    const float size = 80.0f;
+    const float paddingX = 20.0f;
+    const float paddingY = 240.0f;
+    
+    Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
+    gl::draw(mDynamicTexture.getTexture(), preview);
+    
+    glPopAttrib();
+    gl::popMatrices();
 }
 
 const Camera& Polyhedron::getCamera()

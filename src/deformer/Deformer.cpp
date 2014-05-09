@@ -154,12 +154,15 @@ void Deformer::draw()
 //	if ( mLightEnabled ) {
 //		gl::enable( GL_LIGHTING );
 //	}
-	if ( mMeshTextureEnabled && mMeshTexture ) {
-		mMeshTexture.bind();
-	}
-	if ( mWireframe ) {
+	
+	if ( mWireframe )
+    {
 		gl::enableWireframe();
 	}
+    
+	// Bind textures
+	mVtfFbo.bindTexture( 0, 0 );
+	mMeshTexture.bind( 1 );
     
 	// Bind and configure displacement shader
 	mShaderVtf.bind();
@@ -170,10 +173,6 @@ void Deformer::draw()
 	mShaderVtf.uniform( "scale", mMeshScale );
 	mShaderVtf.uniform( "tex", 1 );
 	mShaderVtf.uniform( "textureEnabled", mMeshTextureEnabled );
-	
-	// Bind textures
-	mVtfFbo.bindTexture( 0, 0 );
-	mMeshTexture.bind( 1 );
     
 	// Draw sphere
 	gl::draw( mMesh );

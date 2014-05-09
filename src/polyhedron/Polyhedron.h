@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "SplineCam.h"
 #include "AudioInputHandler.h"
+#include "SimplexNoiseTexture.h"
 #include "cinder/TriMesh.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Light.h"
@@ -49,8 +50,6 @@ protected:
     const ci::gl::VboMesh& getMesh();
     
 private:
-    ci::gl::Fbo                 mFbo;
-    
     // Lighting
 	ci::gl::Light				*mLight;
 	bool						mLightEnabled;
@@ -82,6 +81,9 @@ private:
     typedef std::pair<std::string, ci::gl::VboMesh> tNamedMesh;
     std::vector<tNamedMesh>     mMeshes;
     int                         mMeshType;
+    
+    // noise
+    SimplexNoiseTexture         mDynamicTexture;
     
     // camera
     CameraController            mCameraController;
