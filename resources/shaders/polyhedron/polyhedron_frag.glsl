@@ -6,6 +6,7 @@ uniform bool		textureEnabled;
 varying vec3 normal;
 varying vec4 position;
 varying vec2 uv;
+varying float instanceID;
 
 void main( void )
 {

@@ -60,8 +60,9 @@ void Polyhedron::setup()
     mColor              = ColorAf::white();
     
     // Set up the instancing grid
-	mGridSize           = Vec3i( 16, 16, 1 );
+	mGridSize           = Vec3i( 16, 16, 16 );
 	mGridSpacing        = Vec3f( 2.5f, 2.5f, 2.5f );
+    mNumObjects         = mGridSize.x * mGridSize.y * mGridSize.z;
     
     mMeshType           = 0;
     
@@ -147,17 +148,21 @@ void Polyhedron::setupInterface()
                          .minValue(0)
                          .maxValue(100)
                          .oscReceiver(mName, "countx")
-                         .sendFeedback());
+                         .sendFeedback())->registerCallback(this, &Polyhedron::onGridSizeChange);
     mInterface->addParam(CreateIntParam("count y", &mGridSize.y)
                          .minValue(0)
                          .maxValue(100)
                          .oscReceiver(mName, "county")
-                         .sendFeedback());
+                         .sendFeedback())->registerCallback(this, &Polyhedron::onGridSizeChange);
     mInterface->addParam(CreateIntParam("count z", &mGridSize.z)
                          .minValue(0)
                          .maxValue(100)
                          .oscReceiver(mName, "countz")
-                         .sendFeedback());
+                         .sendFeedback())->registerCallback(this, &Polyhedron::onGridSizeChange);
+    
+//    mInterface->addParam(CreateIntParam("total objects", &mNumObjects)
+//                         .maxValue(100000)
+//                         .sendFeedback()); // read-only
     
     mInterface->addParam(CreateFloatParam("spacing x", &mGridSpacing.x)
                          .minValue(0.0f)
@@ -231,6 +236,16 @@ void Polyhedron::resize()
 {
 }
 
+#pragma mark - callbacks
+
+bool Polyhedron::onGridSizeChange()
+{
+    mNumObjects = mGridSize.x * mGridSize.y * mGridSize.z;
+    return false;
+}
+
+#pragma mark - update
+
 // ----------------------------------------------------------------
 //
 void Polyhedron::update(double dt)
@@ -252,6 +267,8 @@ void Polyhedron::update(double dt)
     // Update light on every frame
 	mLight->update( getCamera() );
 }
+
+#pragma mark - draw
 
 // ----------------------------------------------------------------
 //

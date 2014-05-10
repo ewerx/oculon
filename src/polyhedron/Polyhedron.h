@@ -49,6 +49,9 @@ protected:
     void drawInstanced( const ci::gl::VboMesh &vbo, size_t count = 1 );
     const ci::gl::VboMesh& getMesh();
     
+    // callbacks
+    bool onGridSizeChange();
+    
 private:
     // Lighting
 	ci::gl::Light				*mLight;
@@ -64,6 +67,7 @@ private:
     // Instance grid
 	ci::Vec3i					mGridSize;
 	ci::Vec3f					mGridSpacing;
+    int                         mNumObjects;
     
     ci::ColorAf                 mColor;
     
