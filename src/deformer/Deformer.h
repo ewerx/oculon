@@ -6,10 +6,12 @@
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
-#ifndef __Oculon__Deformer__
-#define __Oculon__Deformer__
+#pragma once
 
 #include "Scene.h"
+#include "CameraController.h"
+#include "SimplexNoiseTexture.h"
+
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
@@ -29,7 +31,7 @@ public:
     void update(double dt);
     void draw();
     void drawDebug();
-//    const ci::Camera& getCamera();
+    const ci::Camera& getCamera();
     
 protected:
     // inherited from Scene
@@ -37,7 +39,6 @@ protected:
 //    //void setupDebugInterface();
     
     void createMesh();
-    void generateDeformationTexture();
     
 private:
     // mesh
@@ -50,17 +51,12 @@ private:
 	bool				mMeshTextureEnabled;
     bool                mWireframe;
     bool                mLightEnabled;
-    
-    // VTF
     ci::gl::GlslProg    mShaderVtf;
     
-    // deformation texture
-    ci::gl::Fbo         mVtfFbo;
-    ci::gl::GlslProg    mShaderTex;
-    float               mDisplacementSpeed;
-    float               mDisplacementHeight;
-    float               mDeformTheta;
+    // dynamic texture
+    SimplexNoiseTexture mDynamicTexture;
+    float mDisplacementHeight;
 
+    // camera
+    CameraController mCameraController;
 };
-
-#endif /* defined(__Oculon__Deformer__) */
