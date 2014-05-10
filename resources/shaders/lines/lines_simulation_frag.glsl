@@ -90,10 +90,8 @@ void main()
     // reincarnation
 	if( reset )
     {
-        vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
-        vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
-        pos = origPos;
-        vel = origVel;
+        pos = texture2D(oPositions, texCoord.st).rgb;
+        vel = texture2D(oVelocities, texCoord.st).rgb;
     }
 	
     //position + mass

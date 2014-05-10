@@ -15,64 +15,77 @@ uniform float dt;
 uniform float damping;
 uniform float gravity;
 uniform float containerradius;
+uniform float formationStep;
 
 uniform bool reset;
 
 varying vec4 texCoord;
 
 
-void main(void)
+void main()
 {
-    vec3 p0 = texture2D( positions, texCoord.st).rgb;
+    vec3 pos = texture2D( positions, texCoord.st ).rgb;
     float invmass = texture2D( positions, texCoord.st ).a;
     
-    vec3 v0 = texture2D( velocities, texCoord.st).rgb;
+    vec3 vel = texture2D( velocities, texCoord.st ).rgb;
     float age = texture2D( velocities, texCoord.st ).a;
     
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float decay = texture2D( information, texCoord.st ).a;
- 
-    // the simulation
     
-    vec3 f1 = attractorPos1-p0; //force
-    float f1Mag = length(f1); //force magnitude
-    vec3 f2 = attractorPos2-p0; //force
-    float f2Mag = length(f2); //force magnitude
-    //vec3 f3 = attractorPos3-p0; //force
-    //float f3Mag = length(f3); //force magnitude
-    
-    vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
-    vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
-    vec3 a3 = vec3(0.0,0.0,0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps);
-    
-    vec3 v1 = v0 + dt * (a1 + a2 + a3); //velocity update
-    v1 = v1 - damping * v1; //friction/damping
-    vec3 p1	= p0 + dt * v1; //(symplectic euler) position update
-    
-    // contain within sphere
-    float dist = length(p1);
-    if (containerradius > 5.0 && dist > containerradius || dist > 1000.0)
+    if (formationStep < 1.0)
     {
-        vec3 norm = normalize(p1);
-        p1 = norm * containerradius;
-        v1 *= 0.9;
+        // animate to formation
+        if (formationStep < 0.01)
+        {
+            startPos = pos;
+        }
+        
+        vel = vec3(0.0,0.0,0.0);
+        vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
+        
+        pos = mix(startPos,targetPos,formationStep);
     }
-    
-    // reincarnation
-	if( reset )
+	else if( reset )
     {
-        vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
-        vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
-        p1 = origPos;
-        v1 = origVel;
+        // reincarnation
+        pos = texture2D(oPositions, texCoord.st).rgb;
+        vel = texture2D(oVelocities, texCoord.st).rgb;
+    }
+    else
+    {
+        // gravity simulation
+        vec3 f1 = attractorPos1 - pos; //force
+        float f1Mag = length(f1); //force magnitude
+        vec3 f2 = attractorPos2 - pos; //force
+        float f2Mag = length(f2); //force magnitude
+        //vec3 f3 = attractorPos3-p0; //force
+        //float f3Mag = length(f3); //force magnitude
+        
+        vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
+        vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
+        vec3 a3 = vec3(0.0,0.0,0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps);
+        
+        vel = vel + dt * (a1 + a2 + a3); //velocity update
+        vel = vel - damping * vel; //friction/damping
+        pos	= pos + dt * vel; //(symplectic euler) position update
+        
+        // contain within sphere
+        float dist = length(pos);
+        if (containerradius > 5.0 && dist > containerradius || dist > 1000.0)
+        {
+            vec3 norm = normalize(pos);
+            pos = norm * containerradius;
+            vel *= 0.9;
+        }
     }
     
     //float age = 0.5+length(v0); // for coloring
     
     //Render to positions texture
-    gl_FragData[0] = vec4(p1, invmass);
+    gl_FragData[0] = vec4(pos, invmass);
     //Render to velocities texture
-    gl_FragData[1] = vec4(v1, age); //alpha component used for coloring
+    gl_FragData[1] = vec4(vel, age); //alpha component used for coloring
     //age information
 	gl_FragData[2] = vec4(startPos, decay);
 }

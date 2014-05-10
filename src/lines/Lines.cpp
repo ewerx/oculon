@@ -201,8 +201,6 @@ void Lines::update(double dt)
     mCameraController.update(dt);
     
     gl::disableAlphaBlending();
-    
-    gl::disableAlphaBlending();
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
     

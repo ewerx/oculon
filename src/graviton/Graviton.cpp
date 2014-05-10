@@ -496,6 +496,9 @@ void Graviton::update(double dt)
     PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
     
     gl::pushMatrices();
+    gl::disableAlphaBlending();
+	gl::disableDepthRead();
+	gl::disableDepthWrite();
     gl::setMatricesWindow( mParticlesFbo.getSize(), false ); // false to prevent vertical flipping
     gl::setViewport( mParticlesFbo.getBounds() );
     
@@ -511,7 +514,7 @@ void Graviton::update(double dt)
 	mSimulationShader.uniform( "oPositions", 3);
     mSimulationShader.uniform( "oVelocities", 4);
     mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "dt", (float)(dt * mTimeStep * 100.0f) );
+    mSimulationShader.uniform( "dt", (float)(dt * mTimeStep * 10.0f) );
     mSimulationShader.uniform( "eps", mEps );
     mSimulationShader.uniform( "damping", mDamping );
     mSimulationShader.uniform( "gravity", mGravity );
@@ -523,8 +526,10 @@ void Graviton::update(double dt)
     mSimulationShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
     mSimulationShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
     mSimulationShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
+    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
+    
     mSimulationShader.unbind();
     
     mParticleController.getFormation().getPositionTex().unbind();
