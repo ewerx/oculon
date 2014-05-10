@@ -93,8 +93,6 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     mShader.uniform("audioReactive", mAudioReactive);
     mShader.uniform("useColorMap", mUseColorMap);
     
-    const float scale = 1000.0f;
-    glScalef(scale, scale, scale);
     
     // do magic
     gl::draw( mVboMesh );

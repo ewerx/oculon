@@ -33,7 +33,8 @@ void main()
     // containment
     {
         
-        if ((containmentSize > 1.0 && dist > containmentSize) || dist > 10.0) {
+        if (containmentSize > 1.0 && dist > containmentSize)
+        {
             vec3 norm = normalize(pos);
             pos = norm * containmentSize;
             vel *= -0.999;

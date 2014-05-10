@@ -18,13 +18,10 @@ varying vec4 color;
 
 void main()
 {
-	vec4 newVertexPos;
-	vec4 dv;
-
-	dv = texture2D( posMap, gl_MultiTexCoord0.st );
+	vec4 dv = texture2D( posMap, gl_MultiTexCoord0.st );
 	
-    // scale vertex position to screen size
-	newVertexPos = vec4(screenWidth * dv.x, screenWidth * dv.y, screenWidth * dv.z, 1.0);
+    // filter out the mass stored in last element
+	vec4 newVertexPos  = vec4(dv.xyz,1.0);
 	
     if (useColorMap)
     {

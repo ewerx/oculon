@@ -42,20 +42,20 @@ public:
 protected:// from Scene
     void setupInterface();
     ////void setupDebugInterface();
-    
-    // callbacks
-    void takeFormation();
-    
+
 private:
     void setupParticles(const int bufSize);
     
-    SimplexNoiseTexture mDynamicTexture;
-    
+    // callbacks
+    void takeFormation();
+
 private:
     // particle system
     ParticleController mParticleController;
     
     ci::gl::GlslProg mSimulationShader;
+    
+    SimplexNoiseTexture mDynamicTexture;
     
     // motion
 #define MOTION_TUPLE \
@@ -84,6 +84,8 @@ enm,
     bool mReset;
     ci::Anim<float> mFormationStep;
     EaseCurveSelector mFormationAnimSelector;
+    
+    float mContainmentRadius;
     
     // audio
     AudioInputHandler mAudioInputHandler;

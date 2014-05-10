@@ -44,6 +44,8 @@ void Lines::setup()
     mFormationAnimSelector.mDuration = 0.75f;
     mMotion = MOTION_NOISE;
     
+    mContainmentRadius = 0.0f;
+    
     mAudioTime = false;
     
     // simulation
@@ -78,13 +80,15 @@ void Lines::setupParticles(const int bufSize)
     vector<Vec4f> velocities;
     vector<Vec4f> data;
     
+    const float r = 1000.0f;
+    
     // random
     for (int i = 0; i < numParticles; ++i)
     {
         // position + mass
-        float x = Rand::randFloat(-1.0f,1.0f);
-        float y = Rand::randFloat(-1.0f,1.0f);
-        float z = Rand::randFloat(-1.0f,1.0f);
+        float x = r * Rand::randFloat(-1.0f,1.0f);
+        float y = r * Rand::randFloat(-1.0f,1.0f);
+        float z = r * Rand::randFloat(-1.0f,1.0f);
         float mass = Rand::randFloat(0.01f,1.0f);
         randomPositions.push_back(Vec4f(x,y,z,mass));
         
@@ -129,9 +133,9 @@ void Lines::setupParticles(const int bufSize)
         }
         else
         {
-            x = Rand::randFloat(-1.0f,1.0f);
-            y = Rand::randFloat(-1.0f,1.0f);
-            z = Rand::randFloat(-1.0f,1.0f);
+            x = r * Rand::randFloat(-1.0f,1.0f);
+            y = r * Rand::randFloat(-1.0f,1.0f);
+            z = r * Rand::randFloat(-1.0f,1.0f);
         }
         
         float mass = Rand::randFloat(0.01f,1.0f);
@@ -181,6 +185,11 @@ void Lines::setupInterface()
     
     mDynamicTexture.setupInterface(mInterface, mName);
     
+    mInterface->addParam(CreateFloatParam( "contain_radius", &mContainmentRadius )
+                         .maxValue(10000.0f)
+                         .oscReceiver(mName)
+                         .sendFeedback());
+    
     mInterface->gui()->addColumn();
     mParticleController.setupInterface(mInterface, mName);
     mParticleController.getFormationChangedSignal().connect( bind(&Lines::takeFormation, this) );
@@ -195,7 +204,6 @@ void Lines::takeFormation()
 {
     mFormationStep = 0.0f;
     timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
-    mFormationStep = 0.0f;
 }
 
 #pragma mark - Update
@@ -241,7 +249,7 @@ void Lines::update(double dt)
     mSimulationShader.uniform( "reset", mReset );
     mSimulationShader.uniform( "formationStep", mFormationStep );
     mSimulationShader.uniform( "motion", mMotion );
-    mSimulationShader.uniform( "containmentSize", 3.0f );
+    mSimulationShader.uniform( "containmentSize", mContainmentRadius );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     
