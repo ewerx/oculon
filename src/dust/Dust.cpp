@@ -54,7 +54,7 @@ void Dust::setup()
     // simulation
     mSimulationShader = loadVertAndFragShaders("dust_simulation_vert.glsl", "dust_simulation_frag.glsl");
     
-    const int bufSize = 512;
+    const int bufSize = 1024;
     setupParticles(bufSize);
     
     // rendering

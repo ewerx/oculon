@@ -25,6 +25,7 @@ DustRenderer::DustRenderer()
     mPointSize = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,1.0f);
     mAudioReactive = false;
+    mAdditiveBlend = false;
 }
 
 DustRenderer::~DustRenderer()
@@ -55,16 +56,37 @@ void DustRenderer::setupInterface( Interface* interface, const std::string& pref
                         .oscReceiver(oscName));
     
     interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
+    interface->addParam(CreateBoolParam("additive", &mAdditiveBlend));
 }
 
 void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
 {
     // pre-render - set state
+    glPushAttrib( GL_ALL_ATTRIB_BITS );
+    
+    gl::enable(GL_TEXTURE_2D);
+    
+    // point rendering
+    gl::enable(GL_POINT_SPRITE);
+    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
+    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    
+    if (mAdditiveBlend)
+    {
+        gl::enableAdditiveBlending();
+    }
+    else
+    {
+        gl::enableAlphaBlending();
+    }
+    
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
+    
     gl::pushMatrices();
     gl::setMatrices( cam );
     gl::setViewport(Area(Vec2i(0,0), screenSize));
-    
-    preRender();
     
     // bind textures
     particlesFbo.bindTexture(0);//pos
@@ -93,10 +115,6 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     mShader.uniform("colorBase", mColor);
     mShader.uniform("audioReactive", mAudioReactive);
     
-    //const float scale = 1.0f;
-    //glScalef(scale, scale, scale);
-    //glScalef(screenSize.x / 512.0f , screenSize.y / 512.0f, 1.0f);
-    
     // do magic
     gl::draw( mVboMesh );
     
@@ -112,26 +130,4 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     // post-render - restore state
     glPopAttrib();
     gl::popMatrices();
-}
-
-void DustRenderer::preRender()
-{
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
-    
-    gl::enable(GL_TEXTURE_2D);
-    
-    // point rendering
-    gl::enable(GL_POINT_SPRITE);
-    gl::enable(GL_PROGRAM_POINT_SIZE_EXT);
-    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    
-    gl::enableAlphaBlending();
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
-}
-
-void DustRenderer::postRender()
-{
-    
 }

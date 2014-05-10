@@ -24,13 +24,13 @@ public:
     virtual void draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler );
     
 protected:
-    virtual void preRender();
-    virtual void postRender();
+
     
 protected:
     // params
     float               mPointSize;
     bool                mAudioReactive;
+    bool                mAdditiveBlend;
     ci::gl::Texture     mColorMapTex;
     ci::gl::Texture     mSpriteTex;
     ci::ColorAf         mColor;
