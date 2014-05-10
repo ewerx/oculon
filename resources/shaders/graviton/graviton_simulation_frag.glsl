@@ -51,7 +51,8 @@ void main(void)
     
     // contain within sphere
     float dist = length(p1);
-    if (containerradius > 5.0 && dist > containerradius || dist > 1000.0) {
+    if (containerradius > 5.0 && dist > containerradius || dist > 1000.0)
+    {
         vec3 norm = normalize(p1);
         p1 = norm * containerradius;
         v1 *= 0.9;
@@ -60,8 +61,8 @@ void main(void)
     // reincarnation
 	if( reset )
     {
-        vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
         vec3 origPos = texture2D(oPositions, texCoord.st).rgb;
+        vec3 origVel = texture2D(oVelocities, texCoord.st).rgb;
         p1 = origPos;
         v1 = origVel;
     }

@@ -16,7 +16,8 @@
 #include "OculonApp.h"
 #include "Utils.h"
 #include "Interface.h"
-#include "ParticleFormation.h"
+#include "GravitonRenderer.h"
+#include "LinesRenderer.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -50,7 +51,7 @@ void Graviton::setup()
     mDamping = 0.0f;
     mGravity = 0.05f;
     mEps = 0.0f;
-    mConstraintSphereRadius = 100.0f;
+    mConstraintSphereRadius = mFormationRadius * 1.25f;
     mNodeSpeed = 1.0f;
     
     mNumNodes = 0;
@@ -64,6 +65,7 @@ void Graviton::setup()
     
     // rendering
     mParticleController.addRenderer( new GravitonRenderer() );
+    mParticleController.addRenderer( new LinesRenderer() );
     
     mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
     mAudioInputHandler.setup(false);

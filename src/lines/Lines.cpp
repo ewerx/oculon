@@ -62,7 +62,7 @@ void Lines::setup()
     mDynamicTexture.setup(bufSize, bufSize);
     
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
-    mApp->setCamera(Vec3f(480.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
+    mApp->setCamera(Vec3f(100.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
     
     // audio
     mAudioInputHandler.setup(true);
@@ -80,7 +80,7 @@ void Lines::setupParticles(const int bufSize)
     vector<Vec4f> velocities;
     vector<Vec4f> data;
     
-    const float r = 1000.0f;
+    const float r = 100.0f;
     
     // random
     for (int i = 0; i < numParticles; ++i)
