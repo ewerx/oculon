@@ -40,8 +40,6 @@ void Lines::setup()
     
     // params
     mTimeStep = 0.1f;
-    mFormationStep = 1.0f;
-    mFormationAnimSelector.mDuration = 0.75f;
     mMotion = MOTION_NOISE;
     
     mContainmentRadius = 0.0f;
@@ -180,9 +178,6 @@ void Lines::setupInterface()
                         .oscReceiver(mName)
                         .sendFeedback(), motionNames);
     
-    mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
-    mFormationAnimSelector.setupInterface(mInterface, mName);
-    
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->addParam(CreateFloatParam( "contain_radius", &mContainmentRadius )
@@ -192,18 +187,9 @@ void Lines::setupInterface()
     
     mInterface->gui()->addColumn();
     mParticleController.setupInterface(mInterface, mName);
-    mParticleController.getFormationChangedSignal().connect( bind(&Lines::takeFormation, this) );
     
     mCameraController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
-}
-
-#pragma mark - Callbacks
-
-void Lines::takeFormation()
-{
-    mFormationStep = 0.0f;
-    timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
 }
 
 #pragma mark - Update
@@ -247,7 +233,7 @@ void Lines::update(double dt)
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "dt", (float)dt );
     mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "formationStep", mFormationStep );
+    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     mSimulationShader.uniform( "motion", mMotion );
     mSimulationShader.uniform( "containmentSize", mContainmentRadius );
     

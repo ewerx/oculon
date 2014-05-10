@@ -9,6 +9,7 @@
 #pragma once
 
 #include "AudioInputHandler.h"
+#include "EaseCurveSelector.h"
 #include "Interface.h"
 #include "PingPongFbo.h"
 #include "ParticleBehavior.h"
@@ -16,6 +17,7 @@
 #include "ParticleRenderer.h"
 
 #include "cinder/Camera.h"
+#include "cinder/Timeline.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/Vbo.h"
 #include "cinder/gl/Texture.h"
@@ -60,6 +62,7 @@ public:
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
     const std::vector<std::string> getFormationNames();
     ValueChangedSignal& getFormationChangedSignal() { return mFormationChangedSignal; }
+    float getFormationStep() { return mFormationStep; }
     
     // renderer
     ParticleRenderer& getRenderer();
@@ -83,6 +86,8 @@ private:
     std::vector<ParticleFormation*> mFormations;
     int mCurrentFormationIndex;
     ValueChangedSignal mFormationChangedSignal;
+    ci::Anim<float> mFormationStep;
+    EaseCurveSelector mFormationAnimSelector;
     
     // rendering
     std::vector<ParticleRenderer*> mRenderers;

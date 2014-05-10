@@ -38,6 +38,11 @@ void Dust::setup()
     
     mReset = false;
     
+    // should match simulaion shader
+    mMotionTypes.push_back( "static" );
+    mMotionTypes.push_back( "noise" );
+    mMotion = 1;
+    
     // params
     mTimeStep = 0.1f;
     mDecayRate = 0.5f;
@@ -82,6 +87,31 @@ void Dust::setupParticles(const int bufSize)
                                                          velMin, velMax,
                                                          dataMin, dataMax));
     
+    // chrysanthemum
+    int i;
+    double u,r,p4,p8;
+    Vec3f p;
+    
+    vector<Vec4f> positions;
+    vector<Vec4f> velocities;
+    vector<Vec4f> data;
+    
+    for (i=0;i<=numParticles;i++)
+    {
+        u = i * 21.0f * M_PI / numParticles;
+        p4 = sin(17.f * u / 3.f);
+        p8 = sin(2.f * cos(3.f * u) - 28.f * u);
+        r = 0.5f*(1.f + sin(11.f*u/5.f)) - 4.f*p4*p4*p4*p4 * p8*p8*p8*p8*p8*p8*p8*p8;
+        float x = r * cos(u)+0.5f;
+        float y = r * sin(u)+0.25f;
+        float z = (r/20.f+.2f)*sin(r*2.0f*M_PI/7.0f);
+        
+        positions.push_back(Vec4f(x,y,z,1.0f));
+        velocities.push_back(Vec4f::zero());
+        data.push_back(Vec4f::zero());
+    }
+    mParticleController.addFormation(new ParticleFormation("chrysanthemum", bufSize, positions, velocities, data));
+    
     mParticleController.resetToFormation(0);
 }
 
@@ -104,13 +134,15 @@ void Dust::setupInterface()
                          .maxValue(1.0f)
                          .oscReceiver(mName));
     
+    mInterface->addEnum(CreateEnumParam( "motion", &mMotion )
+                        .maxValue(mMotionTypes.size())
+                        .oscReceiver(getName())
+                        .isVertical(), mMotionTypes);
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
     mParticleController.setupInterface(mInterface, mName);
-    //mInterface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() ));
-    //mFormationAnimSelector.setupInterface(mInterface, mName);
-    
+
 //    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
     //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
     
@@ -159,7 +191,8 @@ void Dust::update(double dt)
     mSimulationShader.uniform( "dt", simdt );
     mSimulationShader.uniform( "decayRate", decayRate );
     mSimulationShader.uniform( "reset", mReset );
-    //mSimulationShader.uniform( "takeFormation", mTakeFormation );
+    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
+    mSimulationShader.uniform( "motion", mMotion );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
     mSimulationShader.unbind();

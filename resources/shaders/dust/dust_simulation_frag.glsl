@@ -10,7 +10,8 @@ uniform float dt;
 uniform float decayRate;
 uniform vec3 constraints;
 uniform bool reset;
-uniform bool takeFormation;
+uniform float formationStep;
+uniform int motion;
 
 varying vec4 texCoord;
 
@@ -27,34 +28,48 @@ void main()
     
 	float decay = texture2D( information, texCoord.st ).r;
 	float maxAge = texture2D( information, texCoord.st ).g;
+    vec3 startPos = vec3( texture2D( information, texCoord.st ).ba, 0.0 );
     
     age += dt * decay * decayRate;
     
-    vec3 a;
-    if (takeFormation) {
-        // where tex is white those points have strongest attraction to their position
-        // which is the tex coord
-        //vec2 noise = texture2D( noiseTex, pos.xy ).rg;
-        float targetPow = length(texture2D( noiseTex, texCoord.st ).rgb);
-        vec3 target = vec3(texCoord.st, 0.0);
-        vec3 dv = target - pos;
-        float mag = length(dv);
-        //a = target * invMass * mag * dv * targetPow;
-        //a = 0.0;
-        vel += dv * targetPow;
-    }
+    // animate to formation
+    if (formationStep < 0.01)
     {
-        vec2 noise = texture2D( noiseTex, pos.xy ).rg;
-        //vec3 force = vec3(noise - pos.xy,0.0);
-        vec3 force = vec3(noise.x,noise.y,0.0);
-        float fMag = length(force);
-        a = invMass * force;// * pow(fMag,0.9);
+        startPos = pos;
     }
-	vel += dt * a;
     
-    pos.x += vel.x * dt;
-    pos.y += vel.y * dt;
-    //pos.z += vel.z * dt * 10.0;
+    if (formationStep < 1.0)
+    {
+        // take formation
+        vel = vec3(0.0,0.0,0.0);
+        vec3 targetPos = vec3( texture2D( oPositions, texCoord.st ).rg, 0.0 );
+        
+        pos = mix(startPos,targetPos,formationStep);
+    }
+    else
+    {
+        if (motion == 0)
+        {
+            // static, no sim
+        }
+        else
+        {
+            if (motion == 1) // force by noise
+            {
+                // noise motion
+                vec2 noise = texture2D( noiseTex, pos.xy ).rg;
+                //vec3 force = vec3(noise - pos.xy,0.0);
+                vec3 force = vec3(noise.x,noise.y,0.0);
+                float fMag = length(force);
+                vec3 a = invMass * force;// * pow(fMag,0.9);
+                vel += dt * a;
+            }
+            
+            pos.x += vel.x * dt;
+            pos.y += vel.y * dt;
+            //pos.z += vel.z * dt * 10.0;
+        }
+    }
 	
     // reincarnation
 	if( age >= maxAge || reset )
@@ -100,5 +115,5 @@ void main()
     //velocity + decay
 	gl_FragData[1] = vec4(vel, age);
     //age information
-	//gl_FragData[2] = vec4(age, maxAge, 0.0, 1.0);
+	gl_FragData[2] = vec4(decay, maxAge, startPos.x, startPos.y);
 }

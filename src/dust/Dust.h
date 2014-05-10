@@ -63,6 +63,9 @@ private:
     
     bool mReset;
     
+    std::vector<std::string> mMotionTypes;
+    int mMotion;
+    
     AudioInputHandler mAudioInputHandler;
     
     // MUTEK HACKS

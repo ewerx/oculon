@@ -21,7 +21,9 @@ ParticleController::ParticleController()
 , mNumParticles(0)
 , mCurrentFormationIndex(0)
 , mCurrentRendererIndex(0)
+, mFormationStep(1.0f)
 {
+    mFormationAnimSelector.mDuration = 1.0f;
 }
 
 ParticleController::~ParticleController()
@@ -81,6 +83,8 @@ void ParticleController::setupInterface(Interface *interface, const std::string 
                         .isVertical()
                         .oscReceiver(name)
                         .sendFeedback(), formationNames)->registerCallback(this, &ParticleController::onFormationChange);
+    interface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() )); // read-only
+    mFormationAnimSelector.setupInterface(interface, name);
     
     interface->gui()->addSeparator();
     vector<string> rendererNames = getRendererNames();
@@ -140,8 +144,13 @@ void ParticleController::resetToFormation(const int formationIndex, const int re
     mParticlesFbo.reset();
 }
 
+#pragma mark Callbacks
+
 bool ParticleController::onFormationChange()
 {
+    mFormationStep = 0.0f;
+    timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
+    
     mFormationChangedSignal();
     return true;
 }

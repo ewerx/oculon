@@ -45,9 +45,6 @@ protected:// from Scene
 
 private:
     void setupParticles(const int bufSize);
-    
-    // callbacks
-    void takeFormation();
 
 private:
     // particle system
@@ -82,8 +79,6 @@ enm,
     float mTimeStep;
     
     bool mReset;
-    ci::Anim<float> mFormationStep;
-    EaseCurveSelector mFormationAnimSelector;
     
     float mContainmentRadius;
     
