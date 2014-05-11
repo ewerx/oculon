@@ -24,7 +24,7 @@
 #include "Corona.h"
 #include "Trails.h"
 #include "Contour.h"
-#include "Grid.h"
+//#include "Grid.h"
 #include "Parsec.h"
 #include "TextOrbit.h"
 #include "Polyhedron.h"
@@ -32,6 +32,7 @@
 #include "Deformer.h"
 #include "Lines.h"
 #include "Fluid.h"
+#include "Viscosity.h"
 #include "Geometry.h"
 // shader scenes
 #include "Cells.h"
@@ -400,11 +401,11 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("terrain") )    addScene( new Deformer() );
     if( mConfig.getBool("lines") )      addScene( new Lines() );
     if( mConfig.getBool("contour") )    addScene( new Contour() );
-    if( mConfig.getBool("grid") )       addScene( new Grid() );
+//    if( mConfig.getBool("grid") )       addScene( new Grid() );
     if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
     
     if( mConfig.getBool("corona") )     addScene( new Corona() );
-    if( mConfig.getBool("fluid") )      addScene( new Fluid() );
+    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
     if( mConfig.getBool("geometry") )   addScene( new Geometry() );
     
     // Shader Scenes

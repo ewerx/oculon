@@ -113,6 +113,8 @@
 		7C409E67185C08BA0028934D /* water_ripple.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DC1853D4ED00D1C8A3 /* water_ripple.fsh */; };
 		7C409E6A185C0CAD0028934D /* Constellations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E68185C0CAD0028934D /* Constellations.cpp */; };
 		7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E6B185C0CB50028934D /* ConstellationArt.cpp */; };
+		7C47F04A191F2B0000244E5F /* Fluid2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F047191F2B0000244E5F /* Fluid2D.cpp */; };
+		7C47F051191F31C500244E5F /* Viscosity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F04F191F31C500244E5F /* Viscosity.cpp */; };
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
@@ -633,6 +635,12 @@
 		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
 		7C409E6C185C0CB50028934D /* ConstellationArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstellationArt.h; sourceTree = "<group>"; };
+		7C47F046191F2B0000244E5F /* Clamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clamp.h; sourceTree = "<group>"; };
+		7C47F047191F2B0000244E5F /* Fluid2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fluid2D.cpp; sourceTree = "<group>"; };
+		7C47F048191F2B0000244E5F /* Fluid2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fluid2D.h; sourceTree = "<group>"; };
+		7C47F049191F2B0000244E5F /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
+		7C47F04F191F31C500244E5F /* Viscosity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Viscosity.cpp; path = ../src/viscosity/Viscosity.cpp; sourceTree = "<group>"; };
+		7C47F050191F31C500244E5F /* Viscosity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viscosity.h; path = ../src/viscosity/Viscosity.h; sourceTree = "<group>"; };
 		7C4C672E181B6405003049AA /* noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise256.png; sourceTree = "<group>"; };
 		7C4C6740181C9928003049AA /* TextureShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureShaders.cpp; sourceTree = "<group>"; };
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
@@ -1211,6 +1219,7 @@
 			isa = PBXGroup;
 			children = (
 				91CFCD12D2E34876AB416D11 /* Box2D */,
+				7C47F045191F2B0000244E5F /* cinderfx */,
 				7CF735AF181F81D500B21DE9 /* cinderpane */,
 				A8F2E50881364FAC9F935010 /* FMOD */,
 				7C79C1561764396E00E71F9D /* KissFft */,
@@ -1565,6 +1574,27 @@
 				7C0E653918BABE9C00C387FC /* OculusVR.h */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		7C47F045191F2B0000244E5F /* cinderfx */ = {
+			isa = PBXGroup;
+			children = (
+				7C47F046191F2B0000244E5F /* Clamp.h */,
+				7C47F047191F2B0000244E5F /* Fluid2D.cpp */,
+				7C47F048191F2B0000244E5F /* Fluid2D.h */,
+				7C47F049191F2B0000244E5F /* Grid.h */,
+			);
+			name = cinderfx;
+			path = ../blocks/CinderFx/src/cinderfx;
+			sourceTree = "<group>";
+		};
+		7C47F04E191F318700244E5F /* viscosity */ = {
+			isa = PBXGroup;
+			children = (
+				7C47F04F191F31C500244E5F /* Viscosity.cpp */,
+				7C47F050191F31C500244E5F /* Viscosity.h */,
+			);
+			name = viscosity;
 			sourceTree = "<group>";
 		};
 		7C5165E51917091B003E94F8 /* geometry */ = {
@@ -2519,8 +2549,8 @@
 				7CC3C027183ED0370082C322 /* dust */,
 				7C79C9C817650FD700E71F9D /* flock */,
 				7CAD1B651883964500512843 /* fluid */,
-				7C79C9D517650FD700E71F9D /* graviton */,
 				7C5165E51917091B003E94F8 /* geometry */,
+				7C79C9D517650FD700E71F9D /* graviton */,
 				7C79C9D917650FD700E71F9D /* grid */,
 				7C892490189C7C7A00AF4698 /* lines */,
 				7C79CA0D17650FD700E71F9D /* orbiter */,
@@ -2533,6 +2563,7 @@
 				7C79C9ED17650FD700E71F9D /* test */,
 				7C79C9FA17650FD700E71F9D /* textorbit */,
 				7C79CA1717650FD700E71F9D /* trails */,
+				7C47F04E191F318700244E5F /* viscosity */,
 			);
 			name = scenes;
 			sourceTree = "<group>";
@@ -3202,6 +3233,7 @@
 				7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */,
 				7C0E673318BABE9C00C387FC /* CameraStereoHMD.cpp in Sources */,
 				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
+				7C47F04A191F2B0000244E5F /* Fluid2D.cpp in Sources */,
 				7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */,
 				7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */,
 				7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */,
@@ -3209,6 +3241,7 @@
 				7C79CA3517650FD800E71F9D /* BinnedParticleSystem.cpp in Sources */,
 				7C79CA3617650FD800E71F9D /* Contour.cpp in Sources */,
 				7C79CA3717650FD800E71F9D /* contours.cpp in Sources */,
+				7C47F051191F31C500244E5F /* Viscosity.cpp in Sources */,
 				7C79CA3817650FD800E71F9D /* AudioInput.cpp in Sources */,
 				7C79CA3A17650FD800E71F9D /* CameraController.cpp in Sources */,
 				7C79CA3B17650FD800E71F9D /* SplineCam.cpp in Sources */,

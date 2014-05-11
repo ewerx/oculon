@@ -44,7 +44,7 @@ public:
     virtual void drawDebug();
     
     virtual bool handleKeyDown( const ci::app::KeyEvent& keyEvent )         { return false; }
-    virtual void handleMouseDown( const ci::app::MouseEvent& mouseEvent )   { }
+    virtual void handleMouseDown( const ci::app::MouseEvent& event )        { }
 	virtual void handleMouseUp( const ci::app::MouseEvent& event)           { }
 	virtual void handleMouseDrag( const ci::app::MouseEvent& event )        { }
     virtual void handleMouseMove( const ci::app::MouseEvent& event )        { }
