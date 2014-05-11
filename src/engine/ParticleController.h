@@ -58,7 +58,7 @@ public:
     ParticleFormation& getFormation();
     void addFormation(ParticleFormation* formation);
     
-    bool onFormationChange(); // callback
+    bool onFormationChanged(); // callback
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
     const std::vector<std::string> getFormationNames();
     ValueChangedSignal& getFormationChangedSignal() { return mFormationChangedSignal; }

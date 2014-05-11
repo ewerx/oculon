@@ -11,6 +11,9 @@
 #include "Scene.h"
 #include "Fluid2D.h"
 
+#include "AudioInputHandler.h"
+#include "NodeController.h"
+
 #include "cinder/gl/Texture.h"
 
 //
@@ -43,6 +46,15 @@ private:
     
     cinderfx::Fluid2D		mFluid2D;
     ci::gl::Texture         mTex;
+    ci::TriMesh2d			mTriMesh;
+    bool                    mDrawMesh;
+    
+    float					mVelocityScale;
+	float					mDensityScale;
+    ci::ColorAf             mColor;
     
     ci::Vec2f				mPrevPos;
+    
+    AudioInputHandler       mAudioInputHandler;
+    NodeController          mSplatNodeController;
 };

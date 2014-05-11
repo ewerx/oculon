@@ -115,6 +115,7 @@
 		7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C409E6B185C0CB50028934D /* ConstellationArt.cpp */; };
 		7C47F04A191F2B0000244E5F /* Fluid2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F047191F2B0000244E5F /* Fluid2D.cpp */; };
 		7C47F051191F31C500244E5F /* Viscosity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F04F191F31C500244E5F /* Viscosity.cpp */; };
+		7C47F054191FE9BD00244E5F /* NodeController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F052191FE9BD00244E5F /* NodeController.cpp */; };
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
@@ -641,6 +642,8 @@
 		7C47F049191F2B0000244E5F /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
 		7C47F04F191F31C500244E5F /* Viscosity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Viscosity.cpp; path = ../src/viscosity/Viscosity.cpp; sourceTree = "<group>"; };
 		7C47F050191F31C500244E5F /* Viscosity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viscosity.h; path = ../src/viscosity/Viscosity.h; sourceTree = "<group>"; };
+		7C47F052191FE9BD00244E5F /* NodeController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NodeController.cpp; path = ../src/viscosity/NodeController.cpp; sourceTree = "<group>"; };
+		7C47F053191FE9BD00244E5F /* NodeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeController.h; path = ../src/viscosity/NodeController.h; sourceTree = "<group>"; };
 		7C4C672E181B6405003049AA /* noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise256.png; sourceTree = "<group>"; };
 		7C4C6740181C9928003049AA /* TextureShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureShaders.cpp; sourceTree = "<group>"; };
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
@@ -1593,6 +1596,8 @@
 			children = (
 				7C47F04F191F31C500244E5F /* Viscosity.cpp */,
 				7C47F050191F31C500244E5F /* Viscosity.h */,
+				7C47F052191FE9BD00244E5F /* NodeController.cpp */,
+				7C47F053191FE9BD00244E5F /* NodeController.h */,
 			);
 			name = viscosity;
 			sourceTree = "<group>";
@@ -3098,6 +3103,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C47F054191FE9BD00244E5F /* NodeController.cpp in Sources */,
 				6B5DD2F06F6B4B088DB99A04 /* OculonApp.cpp in Sources */,
 				6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */,
 				0F8E5D279996421AA4C7F140 /* b2CollideCircle.cpp in Sources */,

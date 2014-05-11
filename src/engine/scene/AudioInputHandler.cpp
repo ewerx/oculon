@@ -45,9 +45,9 @@ void AudioInputHandler::setup(bool fboEnabled)
     // FILTER
     mLowPassFilter      = 0.25f;
     mHighPassFilter     = 0.75f;
-    mAvgVolume[BAND_LOW].mValue       = 0.0f;
+    mAvgVolume[BAND_LOW].mValue      = 0.0f;
     mAvgVolume[BAND_MID].mValue      = 0.0f;
-    mAvgVolume[BAND_HIGH].mValue      = 0.0f;
+    mAvgVolume[BAND_HIGH].mValue     = 0.0f;
 
     // FBO
     mAudioFboDim        = KISS_DEFAULT_DATASIZE; // 256 bands
@@ -346,6 +346,7 @@ float AudioInputHandler::getAverageVolumeByFrequencyRange(const int minBand /*=0
         amplitude += mFftFalloff[i].mValue;
     }
     
+    // WAT?
     amplitude = amplitude / (float)(maxIndex-minIndex);
     
     return amplitude;

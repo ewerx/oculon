@@ -82,7 +82,7 @@ void ParticleController::setupInterface(Interface *interface, const std::string 
                         .maxValue(formationNames.size())
                         .isVertical()
                         .oscReceiver(name)
-                        .sendFeedback(), formationNames)->registerCallback(this, &ParticleController::onFormationChange);
+                        .sendFeedback(), formationNames)->registerCallback(this, &ParticleController::onFormationChanged);
     interface->addParam(CreateFloatParam( "formation_step", mFormationStep.ptr() )); // read-only
     mFormationAnimSelector.setupInterface(interface, name);
     
@@ -146,7 +146,7 @@ void ParticleController::resetToFormation(const int formationIndex, const int re
 
 #pragma mark Callbacks
 
-bool ParticleController::onFormationChange()
+bool ParticleController::onFormationChanged()
 {
     mFormationStep = 0.0f;
     timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
