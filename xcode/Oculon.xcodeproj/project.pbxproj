@@ -116,6 +116,7 @@
 		7C47F04A191F2B0000244E5F /* Fluid2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F047191F2B0000244E5F /* Fluid2D.cpp */; };
 		7C47F051191F31C500244E5F /* Viscosity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F04F191F31C500244E5F /* Viscosity.cpp */; };
 		7C47F054191FE9BD00244E5F /* NodeController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F052191FE9BD00244E5F /* NodeController.cpp */; };
+		7C47F0571920355500244E5F /* TimeController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C47F0551920355500244E5F /* TimeController.cpp */; };
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
@@ -644,6 +645,8 @@
 		7C47F050191F31C500244E5F /* Viscosity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viscosity.h; path = ../src/viscosity/Viscosity.h; sourceTree = "<group>"; };
 		7C47F052191FE9BD00244E5F /* NodeController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NodeController.cpp; path = ../src/viscosity/NodeController.cpp; sourceTree = "<group>"; };
 		7C47F053191FE9BD00244E5F /* NodeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeController.h; path = ../src/viscosity/NodeController.h; sourceTree = "<group>"; };
+		7C47F0551920355500244E5F /* TimeController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeController.cpp; sourceTree = "<group>"; };
+		7C47F0561920355500244E5F /* TimeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeController.h; sourceTree = "<group>"; };
 		7C4C672E181B6405003049AA /* noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise256.png; sourceTree = "<group>"; };
 		7C4C6740181C9928003049AA /* TextureShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureShaders.cpp; sourceTree = "<group>"; };
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
@@ -2142,6 +2145,8 @@
 				7C79C9C717650FD700E71F9D /* Utils.h */,
 				7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */,
 				7C187E47191093D3003590EC /* SimplexNoiseTexture.h */,
+				7C47F0551920355500244E5F /* TimeController.cpp */,
+				7C47F0561920355500244E5F /* TimeController.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -3117,6 +3122,7 @@
 				2AE65599EB844A56A8FD913D /* b2ChainShape.cpp in Sources */,
 				7C0E673418BABE9C00C387FC /* OculusVR.cpp in Sources */,
 				7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */,
+				7C47F0571920355500244E5F /* TimeController.cpp in Sources */,
 				D698C40166CC43D3B0DAF533 /* b2CircleShape.cpp in Sources */,
 				B1233A49B5D147AB84356C9D /* b2EdgeShape.cpp in Sources */,
 				126D41216C734D5997032DB6 /* b2PolygonShape.cpp in Sources */,
