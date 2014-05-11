@@ -46,10 +46,6 @@ Corona::~Corona()
 void Corona::setup()
 {
     Scene::setup();
-    
-	// CAMERA
-	mSpringCam			= SpringCam( -466.0f, mApp->getViewportAspectRatio(), 30000.0f );
-    mCamType = CAM_CATALOG;
 	
 	// FBOS
 	gl::Fbo::Format format;
@@ -197,7 +193,7 @@ void Corona::setup()
 	
 	setStage( mStage );
     
-    
+    mCameraController.setup(mApp, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
     mTimeController.setTimeScale(60.0f);
 }
 
@@ -207,10 +203,11 @@ void Corona::setupInterface()
 {
     mTimeController.setupInterface(mInterface, mName);
     
-    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camera")
-                        .isVertical());
+    mInterface->addParam(CreateIntParam("stage", &mStage)
+                         .maxValue(STAGE_COUNT)
+                         .oscReceiver(mName));
+    
+    mCameraController.setupInterface(mInterface, mName);
 }
 
 // ----------------------------------------------------------------
@@ -440,7 +437,7 @@ void Corona::setStage( int i )
 		mRenderCorona	= true;
 		mRenderTexture	= true;
 		mRenderDusts	= true;
-		mSpringCam.mEyeNode.mRestPos = Vec3f( 0.0f, 80.0f, -466.0f );
+		//mSpringCam.mEyeNode.mRestPos = Vec3f( 0.0f, 80.0f, -466.0f );
 		mBillboard		= true;
 		setStar( 0 );
 	}
@@ -455,7 +452,10 @@ void Corona::update(double dt)
 {
     mTimeController.update(dt);
     double tcDelta = mTimeController.getDelta();
+    
+	mCameraController.update(dt);
 	
+    
 	if( mRenderCanisMajoris )
     {
 		mCanisMajorisPer -= ( mCanisMajorisPer - 1.0f ) * 0.1f * tcDelta;
@@ -501,12 +501,6 @@ void Corona::update(double dt)
 	}
 	mController.update( tcDelta );
 	
-	// CAMERA
-	if( mMousePressed )
-    {
-		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01 );
-	}
-	mSpringCam.update( 0.4f );//mTimeAdjusted );
 }
 
 void Corona::draw()
@@ -758,40 +752,5 @@ void Corona::drawCanisMajoris()
 
 const Camera& Corona::getCamera()
 {
-    switch( mCamType )
-    {
-        case CAM_SPRING:
-            return mSpringCam.getCam();
-            
-        case CAM_CATALOG:
-        {
-            Scene* scene = mApp->getScene("catalog");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            
-        case CAM_ORBITER:
-        {
-            Scene* orbiterScene = mApp->getScene("orbiter");
-            
-            if( orbiterScene && orbiterScene->isRunning() )
-            {
-                return orbiterScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            
-        default:
-            return mSpringCam.getCam();
-    }
+    return mCameraController.getCamera();
 }

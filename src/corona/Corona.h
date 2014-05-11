@@ -16,6 +16,7 @@
 #include "CoronaController.h"
 #include "CubeMap.h"
 
+#include "CameraController.h"
 #include "TimeController.h"
 
 #include "cinder/Cinder.h"
@@ -62,9 +63,6 @@ public:
     void handleMouseMove( const ci::app::MouseEvent& event );
     const ci::Camera& getCamera();
     
-    // callbacks
-    bool setCamType();
-    
     ///////------------------------------------------------------
     //
     void			createSphere( gl::VboMesh &mesh, int res );
@@ -92,10 +90,7 @@ private:
     ///////------------------------------------------------------
     //
     enum stageName
-    { INTRO, CIRCLE, GRADIENT, CORONA, SPHERE, NEBULAS, GLOWS, DUSTS, EVERYTHING, LESSON };
-    
-    // CAMERA
-	SpringCam			mSpringCam;
+    { INTRO, CIRCLE, GRADIENT, CORONA, SPHERE, NEBULAS, GLOWS, DUSTS, EVERYTHING, LESSON, STAGE_COUNT };
 	
 	// SHADERS
 	gl::GlslProg		mGradientShader;
@@ -172,13 +167,6 @@ private:
     
     TimeController      mTimeController;
     
-    enum eCamType
-    {
-        CAM_SPRING,
-        CAM_CATALOG,
-        CAM_ORBITER,
-        
-        CAM_COUNT
-    };
-    eCamType mCamType;
+    // camera
+    CameraController mCameraController;
 };
