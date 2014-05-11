@@ -27,15 +27,12 @@
 #include "Resources.h"
 #include "CubeMap.h"
 #include "Controller.h"
-#include "Room.h"
 #include "SpringCam.h"
 #include "Star.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
-
-#define ROOM_FBO_RES	2
 
 Corona::Corona()
 : Scene("corona")
@@ -63,7 +60,6 @@ void Corona::setup()
 	// LOAD SHADERS
 	try {
 		mGradientShader = gl::GlslProg( loadResource( "passThruCorona.vert" ), loadResource( "gradient.frag" ) );
-		mRoomShader		= gl::GlslProg( loadResource( "room.vert" ), loadResource( "room.frag" ) );
 		mStarShader		= gl::GlslProg( loadResource( "star.vert" ), loadResource( "star.frag" ) );
 		mGlowShader		= gl::GlslProg( loadResource( "passThruCorona.vert" ), loadResource( "glowCorona.frag" ) );
 		mNebulaShader	= gl::GlslProg( loadResource( "passThruCorona.vert" ), loadResource( "nebulaCorona.frag" ) );
@@ -101,19 +97,6 @@ void Corona::setup()
 	mTextureFontS		= gl::TextureFont::create( mFontBlackS );
 	mTextureFontM		= gl::TextureFont::create( mFontBlackM );
 	mTextureFontL		= gl::TextureFont::create( mFontBlackL );
-
-	
-	// ROOM
-	gl::Fbo::Format roomFormat;
-	roomFormat.setColorInternalFormat( GL_RGB );
-	int fboXRes			= mApp->getViewportWidth()/ROOM_FBO_RES;
-	int fboYRes			= mApp->getViewportHeight()/ROOM_FBO_RES;
-	//mRoomFbo			= gl::Fbo( fboXRes, fboYRes, roomFormat );
-	bool isPowerOn		= true;
-	bool isGravityOn	= true;
-	mRoom				= Room( Vec3f( 350.0f, 200.0f, 350.0f ), isPowerOn, isGravityOn );
-	mRoomLightIntensity	= 0.5f;
-	mRoom.init();
 	
 	// STAR
 	mStar				= CoronaStar( Vec3f::zero(), 4000000.0f );
@@ -213,12 +196,17 @@ void Corona::setup()
 	mStarPlanets.push_back( 0 );
 	
 	setStage( mStage );
+    
+    
+    mTimeController.setTimeScale(60.0f);
 }
 
 // ----------------------------------------------------------------
 //
 void Corona::setupInterface()
 {
+    mTimeController.setupInterface(mInterface, mName);
+    
     mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
                         .maxValue(CAM_COUNT)
                         .oscReceiver(getName(), "camera")
@@ -234,7 +222,7 @@ void Corona::setupInterface()
 //
 void Corona::reset()
 {
-    
+    mTimeController.reset();
 }
 
 // ----------------------------------------------------------------
@@ -321,12 +309,6 @@ void Corona::handleMouseDrag( const MouseEvent& event )
 	mMouseOffset = ( mMousePos - mMouseDownPos );
 }
 
-//void Corona::mouseWheel( MouseEvent event )
-//{
-//	float dWheel = event.getWheelIncrement();
-//	mRoom.adjustTimeMulti( dWheel );
-//}
-
 bool Corona::handleKeyDown( const KeyEvent& event )
 {
 	switch( event.getChar() ) {
@@ -340,7 +322,6 @@ bool Corona::handleKeyDown( const KeyEvent& event )
 		case '7':	setStage( 7 );				break;
 		case 'E':	setStage( 8 );				break;
 		case 'D':	setStage( 9 );				break;
-		case ' ':	mRoom.togglePower();		break;
 		case 'b':	mBillboard		= !mBillboard;		break;
 		case 'g':	mRenderGlows	= !mRenderGlows;	break;
 		case 'n':	mRenderNebulas	= !mRenderNebulas;	break;
@@ -472,30 +453,31 @@ void Corona::randSeed()
 
 void Corona::update(double dt)
 {
-	// ROOM
-	mRoom.update();
+    mTimeController.update(dt);
+    double tcDelta = mTimeController.getDelta();
 	
-	if( mRenderCanisMajoris ){
-		mCanisMajorisPer -= ( mCanisMajorisPer - 1.0f ) * 0.1f * mRoom.getTimeDelta();
-		mCanisMajorisPos.x -= mCanisMajorisPos.x * 0.1f * mRoom.getTimeDelta();
-	} else {
-		mCanisMajorisPer -= ( mCanisMajorisPer - 0.0f ) * 0.1f * mRoom.getTimeDelta();
-		mCanisMajorisPos.x -= ( mCanisMajorisPos.x - mBigGlow0Tex.getWidth() ) * 0.1f * mRoom.getTimeDelta();
+	if( mRenderCanisMajoris )
+    {
+		mCanisMajorisPer -= ( mCanisMajorisPer - 1.0f ) * 0.1f * tcDelta;
+		mCanisMajorisPos.x -= mCanisMajorisPos.x * 0.1f * tcDelta;
+	}
+    else
+    {
+		mCanisMajorisPer -= ( mCanisMajorisPer - 0.0f ) * 0.1f * tcDelta;
+		mCanisMajorisPos.x -= ( mCanisMajorisPos.x - mBigGlow0Tex.getWidth() ) * 0.1f * tcDelta;
 	}
 
 	// STAR
-	mStar.update( mRoom.getTimeDelta() );
+	mStar.update( tcDelta );
 	
 	// CONTROLLER
-	if( mRoom.getTick() ){
+	if( mTimeController.getTick() ){
 		// ADD GLOWS
-		int numGlowsToSpawn = 4;
-		if( mRoom.isPowerOn() ) numGlowsToSpawn = (int)( 24 );//* mStar.mRadiusMulti );
-		mController.addGlows( mStar, mRoom.getPower(), numGlowsToSpawn );
+		int numGlowsToSpawn = 24;//* mStar.mRadiusMulti );
+		mController.addGlows( mStar, 1.0f, numGlowsToSpawn );
 		
 		// ADD NEBULAS
-		int numNebulasToSpawn = 5;
-		if( mRoom.isPowerOn() ) numNebulasToSpawn = (int)( 8 );//* mStar.mRadiusMulti );
+		int numNebulasToSpawn = 8;//* mStar.mRadiusMulti );
 		mController.addNebulas( mStar, numNebulasToSpawn );
 		
 		// ADD DUSTS
@@ -503,7 +485,8 @@ void Corona::update(double dt)
 		mController.addDusts( mStar, numDustsToSpawn );
 		
 		
-		if( mCanisMajorisPer > 0.01f ){
+		if( mCanisMajorisPer > 0.01f )
+        {
 			float radius = 4000.0f;
 			Vec3f pos = Vec3f( radius + 350.0f, 0.0f, 0.0f ) + mCanisMajorisPos * 0.5f;
 			int amt = 24;
@@ -516,69 +499,14 @@ void Corona::update(double dt)
 			mController.addCMNebulas( Vec3f::zero(), 0.0f, 1.0f, 1 );
 		}
 	}
-	mController.update( mRoom.getTimeDelta() );
+	mController.update( tcDelta );
 	
 	// CAMERA
-	if( mMousePressed ){
+	if( mMousePressed )
+    {
 		mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01 );
 	}
 	mSpringCam.update( 0.4f );//mTimeAdjusted );
-
-	// ROOM
-	mRoomLightIntensity = 0.0f;
-	if( mRenderDusts )		mRoomLightIntensity += Rand::randFloat( 0.1f, 0.15f );
-	if( mRenderNebulas )	mRoomLightIntensity += Rand::randFloat( 0.1f, 0.15f );
-	if( mRenderGlows )		mRoomLightIntensity += Rand::randFloat( 0.2f, 0.25f );
-	if( mRenderCorona )		mRoomLightIntensity += 0.2f;
-	if( mRenderSphere )		mRoomLightIntensity += 0.4f;
-	if( mRenderTexture )	mRoomLightIntensity += 0.15f;
-	
-	if( mRoom.mPower < 0.9f ){ // TURN ROOM OFF WHEN POWER IS ON
-		drawIntoRoomFbo();
-	}
-}
-
-void Corona::drawIntoRoomFbo()
-{
-	mRoomFbo.bindFramebuffer();
-	gl::clear( ColorA( 0.0f, 0.0f, 0.0f, 0.0f ), true );
-	
-	gl::setMatricesWindow( mRoomFbo.getSize(), false );
-	gl::setViewport( mRoomFbo.getBounds() );
-	gl::disableAlphaBlending();
-	gl::enable( GL_TEXTURE_2D );
-	glEnable( GL_CULL_FACE );
-	glCullFace( GL_BACK );
-	Matrix44f m;
-	m.setToIdentity();
-	m.scale( mRoom.getDims() );
-	
-	//	mLightsTex.bind( 0 );
-	mCubeMap.bind();
-	mSpectrumTex.bind( 1 );
-	mRoomShader.bind();
-//	mRoomShader.uniform( "lightsTex", 0 );
-//	mRoomShader.uniform( "numLights", (float)mNumLights );
-//	mRoomShader.uniform( "invNumLights", mInvNumLights );
-//	mRoomShader.uniform( "invNumLightsHalf", mInvNumLights * 0.5f );
-	mRoomShader.uniform( "att", 1.0115f );
-	mRoomShader.uniform( "cubeMap", 0 );
-	mRoomShader.uniform( "spectrumTex", 1 );
-	mRoomShader.uniform( "starPos", Vec4f( mStar.mPos.xyz(), mStar.mRadius ) );
-	mRoomShader.uniform( "color", mStar.mColor );
-	mRoomShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix()  );
-	mRoomShader.uniform( "mMatrix", m );
-	mRoomShader.uniform( "eyePos", getCamera().getEyePoint() );
-	mRoomShader.uniform( "roomDims", mRoom.getDims() );
-	mRoomShader.uniform( "mainPower", mRoom.getPower() );
-	mRoomShader.uniform( "lightPower", mRoom.getLightPower() );
-	mRoomShader.uniform( "lightIntensity", mRoomLightIntensity );
-	mRoomShader.uniform( "timePer", mRoom.getTimePer() * 1.5f + 0.5f );
-	mRoom.draw();
-	mRoomShader.unbind();
-	
-	mRoomFbo.unbindFramebuffer();
-	glDisable( GL_CULL_FACE );
 }
 
 void Corona::draw()
@@ -593,12 +521,6 @@ void Corona::draw()
 	gl::enableAlphaBlending();
 	gl::enable( GL_TEXTURE_2D );
 	gl::color( ColorA( 1, 1, 1, 1 ) );
-	
-	// DRAW ROOM
-	if( mRoom.getPower() < 0.9f ){ // TURN ROOM OFF WHEN POWER IS ON
-		mRoomFbo.bindTexture();
-		gl::drawSolidRect( mApp->getViewportBounds() );
-	}
 	
 	gl::enableAdditiveBlending();
 	
@@ -625,16 +547,14 @@ void Corona::draw()
 		drawFlat();
 	}
 	
-	if( !mRoom.isPowerOn() ) gl::enableAlphaBlending();
-	else					gl::enableAdditiveBlending();
+	gl::enableAdditiveBlending();
 	
 	// DRAW CORONA
 	if( mRenderCorona ){
 		drawCorona();
 	}
 	
-	if( !mRoom.isPowerOn() ) gl::enableAlphaBlending();
-	else					gl::enableAdditiveBlending();
+	gl::enableAdditiveBlending();
 	gl::enable( GL_TEXTURE_2D );
 	
 	gl::color( ColorA( 1, 1, 1, 1 ) );	
@@ -656,12 +576,11 @@ void Corona::draw()
 		drawDusts();
 	}
 	
-	if( !mRoom.isPowerOn() ) gl::enableAlphaBlending();
-	else					gl::enableAdditiveBlending();
+	gl::enableAdditiveBlending();
 	
 	// DRAW ORBIT RINGS
 	//Color c = Color( 0.1f, 0.2f, 0.6f );
-	//gl::color( ColorA( c * mRoom.getPower(), 0.4f ) );
+	//gl::color( ColorA( c * 1.0f, 0.4f ) );
 	//mStar.drawOrbitRings();
 	
 	gl::enableAlphaBlending();
@@ -674,7 +593,7 @@ void Corona::draw()
 	mPlanetShader.bind();
 	mPlanetShader.uniform( "spectrumTex", 0 );
 	mPlanetShader.uniform( "starColor", mStar.mColor );
-	mPlanetShader.uniform( "power", mRoom.getPower() );
+	mPlanetShader.uniform( "power", 1.0f );
 	mPlanetShader.uniform( "windowDims", Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() ) );
 	mPlanetShader.uniform( "eyePos", mSpringCam.getEye() );
 	mStar.drawPlanets( &mPlanetShader );
@@ -697,12 +616,11 @@ void Corona::drawSphere()
 	mStarShader.uniform( "cubeMap", 0 );
 	mStarShader.uniform( "spectrumTex", 1 );
 	mStarShader.uniform( "color", mStar.mColor );
-	mStarShader.uniform( "time", mRoom.mTimeElapsed );
+	mStarShader.uniform( "time", (float)mTimeController.getElapsedSeconds() );
 	mStarShader.uniform( "radius", mStar.mRadiusDrawn );
 	mStarShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix() );
 	mStarShader.uniform( "eyePos", getCamera().getEyePoint() );
-	mStarShader.uniform( "mainPower", mRoom.getPower() );
-	mStarShader.uniform( "roomDim", mRoom.getDims() );
+	mStarShader.uniform( "mainPower", 1.0f );
 	gl::draw( mStarVbo );
 	mStarShader.unbind();
 }
@@ -722,7 +640,7 @@ void Corona::drawCorona()
 	mCoronaShader.uniform( "coronaTex", 0 );
 	mCoronaShader.uniform( "spectrumTex", 1 );
 	mCoronaShader.uniform( "starColor", mStar.mColor );
-	mCoronaShader.uniform( "power", mRoom.getPower() );
+	mCoronaShader.uniform( "power", 1.0f );
 	gl::drawSolidRect( Rectf( -radius, -radius, radius, radius ) );
 	mCoronaShader.unbind();
 	
@@ -742,7 +660,7 @@ void Corona::drawFlat()
 	if( mStage == CIRCLE ){
 		radius = mStar.mRadius;
 	} else if( mStage > CIRCLE ){
-		radius *= ( 5.0f + mRoom.getPower() );
+		radius *= ( 5.0f + 1.0f );
 	}
 	
 
@@ -754,9 +672,9 @@ void Corona::drawFlat()
 	mGradientShader.uniform( "color", mStar.mColor );
 	mGradientShader.uniform( "radius", radius );
 	mGradientShader.uniform( "starRadius", mStar.mRadiusDrawn );
-	mGradientShader.uniform( "power", mRoom.getPower() );
+	mGradientShader.uniform( "power", 1.0f );
 	mGradientShader.uniform( "time", (float)getElapsedSeconds() );
-	mGradientShader.uniform( "roomDim", mRoom.getDims() );
+	mGradientShader.uniform( "roomDim", 320.0f ); // TODO: what does this affect?
 	mGradientShader.uniform( "randIterations", mRandIterations );
 	mGradientShader.uniform( "stage", mStage );
 
@@ -782,7 +700,7 @@ void Corona::drawGlows()
 	mGlowShader.uniform( "gridTex", 1 );
 	mGlowShader.uniform( "spectrumTex", 2 );
 	mGlowShader.uniform( "color", mStar.mColor );
-	mGlowShader.uniform( "power", mRoom.getPower() );
+	mGlowShader.uniform( "power", 1.0f );
 	mGlowShader.uniform( "starRadius", mStar.mRadiusDrawn );
 	Vec3f right = Vec3f::xAxis();
 	Vec3f up	= Vec3f::yAxis();
@@ -802,7 +720,7 @@ void Corona::drawNebulas()
 	mNebulaShader.uniform( "gridTex", 1 );
 	mNebulaShader.uniform( "spectrumTex", 2 );
 	mNebulaShader.uniform( "color", mStar.mColor );
-	mNebulaShader.uniform( "power", mRoom.getPower() );
+	mNebulaShader.uniform( "power", 1.0f );
 	mNebulaShader.uniform( "starRadius", mStar.mRadiusDrawn );
 	Vec3f right = Vec3f::xAxis();
 	Vec3f up	= Vec3f::yAxis();
@@ -821,7 +739,7 @@ void Corona::drawDusts()
 	mDustShader.bind();
 	mDustShader.uniform( "spectrumTex", 0 );
 	mDustShader.uniform( "color", mStar.mColor );
-	mDustShader.uniform( "power", mRoom.getPower() );
+	mDustShader.uniform( "power", 1.0f );
 	mController.drawDusts();
 	mDustShader.unbind();
 	gl::popModelView();

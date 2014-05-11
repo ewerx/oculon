@@ -35,6 +35,7 @@ public:
     double getElapsedSeconds() const    { return mElapsedSeconds; }
     double getDelta() const             { return mDelta; }
     bool getTick()                      { return mTick; }
+    void setTimeScale(float scale)      { mTimeScale = scale; }
     void setTickDuration(float seconds) { mTickDuration = seconds; }
     
 private:

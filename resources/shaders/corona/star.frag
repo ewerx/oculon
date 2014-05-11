@@ -1,6 +1,5 @@
 uniform vec3 eyePos;
 uniform float radius;
-uniform vec3 roomDim;
 uniform float mainPower;
 uniform samplerCube	cubeMap;
 uniform sampler2D spectrumTex;
@@ -17,15 +16,6 @@ varying vec4 vColor;
 
 void main()
 {
-//	if( vVertex.x > roomDim.x || vVertex.x < -roomDim.x )
-//		discard;
-//	
-//	if( vVertex.y > roomDim.y || vVertex.y < -roomDim.y )
-//		discard;
-//	
-//	if( vVertex.z > roomDim.z || vVertex.z < -roomDim.z )
-//		discard;
-	
 	vec3 spectrumCol	= texture2D( spectrumTex, vec2( color, 0.25 ) ).rgb;
 	
 	vec3 lightPos		= vec3( 0.0, 500.0, 0.0 );

@@ -14,8 +14,9 @@
 #include "StarCam.h"
 #include "CoronaStar.h"
 #include "CoronaController.h"
-#include "Room.h"
 #include "CubeMap.h"
+
+#include "TimeController.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
@@ -66,7 +67,6 @@ public:
     
     ///////------------------------------------------------------
     //
-	void			drawIntoRoomFbo();
     void			createSphere( gl::VboMesh &mesh, int res );
 	void			drawSphereTri( ci::Vec3f va, ci::Vec3f vb, ci::Vec3f vc, int div );
     void			toggleCanisMajoris();
@@ -99,7 +99,6 @@ private:
 	
 	// SHADERS
 	gl::GlslProg		mGradientShader;
-	gl::GlslProg		mRoomShader;
 	gl::GlslProg		mStarShader;
 	gl::GlslProg		mGlowShader;
 	gl::GlslProg		mNebulaShader;
@@ -118,11 +117,6 @@ private:
 	gl::Texture			mBigGlow0Tex;
 	gl::Texture			mBigGlow1Tex;
 	gl::Texture			mIconTex;
-    
-    // ROOM
-	Room				mRoom;
-	gl::Fbo				mRoomFbo;
-	float				mRoomLightIntensity;
 	
 	// STAR
 	CoronaStar          mStar;
@@ -175,6 +169,8 @@ private:
 	bool				mMousePressed;
     //
     ////////------------------------------------------------------
+    
+    TimeController      mTimeController;
     
     enum eCamType
     {
