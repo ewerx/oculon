@@ -18,7 +18,7 @@
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
 #include "AudioInputHandler.h"
-
+#include "TimeController.h"
 #include "OscMessage.h"
 
 //
@@ -68,6 +68,7 @@ private:
     
     // shaders
 #define SHADERS_TUPLE \
+SHADERS_ENTRY( "Test", SHADER_TEST ) \
 SHADERS_ENTRY( "Tripping", SHADER_TRIPPING ) \
 SHADERS_ENTRY( "Stripes", SHADER_STRIPES ) \
 SHADERS_ENTRY( "Flicker", SHADER_FLICKER ) \
@@ -139,7 +140,7 @@ enm,
     };
     tAfterEffectsParams mAfterEffectParams;
     
-    double mElapsedTime;
+    TimeController mTimeController;
 };
 
 #endif // __MOVIETEST_H__

@@ -50,21 +50,24 @@ void ShaderTest::setup()
     mTextureIndex = 0;
     // OSC TEST
     //mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
-    mElapsedTime = 0.0f;
 }
 
 void ShaderTest::reset()
 {
-    mElapsedTime = 0.0f;
+    mTimeController.reset();
 }
 
 void ShaderTest::setupShaders()
 {
-    mShaderType = SHADER_AFTEREFFECT;
+    mShaderType = SHADER_TEST;
     
     try
     {
         gl::GlslProg shader;
+        
+        // TEST DU JOUR
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "test_frag.glsl" ) );
+        mShaders.push_back(shader);
         
         // too slow!
         // MENGER
@@ -194,8 +197,14 @@ shaderNames.push_back(nam);
                         .oscReceiver(getName(), "shader")
                         .isVertical(), shaderNames);
     
+    mTimeController.setupInterface(mInterface, mName);
+    
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
     mInterface->addParam(CreateBoolParam( "Grid Render", &mGrid ));
+    
+    mInterface->addParam(CreateIntParam("texture", &mTextureIndex)
+                         .maxValue(MAX_TEXTURES-1)
+                         .oscReceiver(getName()));
     
     // SHADER_STRIPES
     mInterface->gui()->addColumn();
@@ -240,7 +249,7 @@ void ShaderTest::update(double dt)
         mMotionBlurRenderer.preDraw();
     }
     
-    mElapsedTime += dt;
+    mTimeController.update(dt);
 }
 
 void ShaderTest::draw()
@@ -292,7 +301,7 @@ void ShaderTest::shaderPreDraw()
     {            
         case SHADER_STRIPES:
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
             shader.uniform( "timeScale", mStripesParams.mTimeScale );
             shader.uniform( "color1", mStripesParams.mColor1 );
             shader.uniform( "color2", mStripesParams.mColor2 );
@@ -308,26 +317,30 @@ void ShaderTest::shaderPreDraw()
         case SHADER_CYMATICS:
 //            shader.uniform( "iMouse", mKaliParams.translate );
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
             break;
             
         case SHADER_INTERSTELLAR:
         case SHADER_MAINSEQUENCE:
         case SHADER_INFINITEFALL:
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
             shader.uniform( "iChannel0", 0 );
             shader.uniform( "iChannel1", 1 );
             break;
             
         case SHADER_AFTEREFFECT:
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mElapsedTime );
+            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
             shader.uniform( "iPattern", mAfterEffectParams.mEffect );
             
         default:
             shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
+            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
+            shader.uniform( "iChannelTime", (float)mTimeController.getElapsedSeconds() );
+            shader.uniform( "iChannel0", 0 );
+            shader.uniform( "iChannel1", 1 );
+            shader.uniform( "iMouse", Vec2f::zero() );
             break;
     }
 }
