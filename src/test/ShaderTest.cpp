@@ -43,10 +43,13 @@ void ShaderTest::setup()
     
     setupShaders();
     
+    mDynamicTexture.setup(512, 512);
+    
     mTexture[0] = gl::Texture( loadImage( loadResource( "gaussian_noise_256_3c.png" ) ) );
     mTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) );
     mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ) );
-    mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
+    //mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
+    mTexture[3] = mDynamicTexture.getTexture();
     mTextureIndex = 0;
     // OSC TEST
     //mApp->getOscServer().registerCallback( "/multi/1", this, &ShaderTest::handleOscMessage );
@@ -228,6 +231,8 @@ shaderNames.push_back(nam);
                          .maxValue(2)
                          .oscReceiver(getName()));
     
+    mDynamicTexture.setupInterface(mInterface, mName);
+    
     
    //mAudioInputHandler.setupInterface(mInterface);
 
@@ -248,6 +253,8 @@ void ShaderTest::update(double dt)
     {
         mMotionBlurRenderer.preDraw();
     }
+    
+    mDynamicTexture.update(dt);
     
     mTimeController.update(dt);
 }
@@ -418,6 +425,7 @@ void ShaderTest::drawScene()
 void ShaderTest::drawDebug()
 {
     mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
+
 }
 
 //void ShaderTest::handleOscMessage( const ci::osc::Message& message )

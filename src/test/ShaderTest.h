@@ -20,6 +20,7 @@
 #include "AudioInputHandler.h"
 #include "TimeController.h"
 #include "OscMessage.h"
+#include "SimplexNoiseTexture.h"
 
 //
 // Audio input tests
@@ -141,6 +142,8 @@ enm,
     tAfterEffectsParams mAfterEffectParams;
     
     TimeController mTimeController;
+    
+    SimplexNoiseTexture mDynamicTexture;
 };
 
 #endif // __MOVIETEST_H__

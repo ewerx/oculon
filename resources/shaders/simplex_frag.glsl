@@ -137,7 +137,8 @@ float snoise3d(float x, float y, float z)
 void main( void )
 {
     vec2 coord = texCoord.st;
-    vec3 v = vec3( coord, theta ) * scale;
+    vec3 v = vec3( coord, 0.0 ) * scale;
+    v.z = theta;
     float n = snoise3d( v );
     
     float angle = 15.0 * n;
