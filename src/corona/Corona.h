@@ -18,6 +18,7 @@
 
 #include "CameraController.h"
 #include "TimeController.h"
+#include "AudioInputHandler.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/Input.h"
@@ -85,6 +86,9 @@ public:
 protected:
     void setupInterface();
     //void setupDebugInterface();
+    
+    // callbacks
+    bool onStarTypeChanged();
         
 private:
     ///////------------------------------------------------------
@@ -169,4 +173,9 @@ private:
     
     // camera
     CameraController mCameraController;
+    
+    // audio
+    AudioInputHandler mAudioInputHandler;
+    int mRadiusAudioResponseBand; // 0 for none
+    float mMinAudioRadius;
 };

@@ -132,6 +132,17 @@ interface->addEnum(CreateEnumParam( "falloff_mode", (int*)(&mFalloffMode) )
 
 }
 
+vector<string> AudioInputHandler::getBandNames()
+{
+    vector<string> names;
+    names.push_back("low");
+    names.push_back("mid");
+    names.push_back("high");
+    names.push_back("none");
+    
+    return names;
+}
+
 void AudioInputHandler::update(double dt, AudioInput& audioInput)
 {
     if (audioInput.getFft() == NULL)

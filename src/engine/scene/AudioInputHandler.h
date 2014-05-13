@@ -48,6 +48,7 @@ public:
     float getAverageVolumeLowFreq() const { return mAvgVolume[BAND_LOW].mValue; }
     float getAverageVolumeMidFreq() const { return mAvgVolume[BAND_MID].mValue; }
     float getAverageVolumeHighFreq() const { return mAvgVolume[BAND_HIGH].mValue; }
+    float getAverageVolumeByBand(const int bandIndex) {  assert(bandIndex < BAND_COUNT); return mAvgVolume[bandIndex].mValue; }
 
     // RAW FFT VALUES
     struct tFftValue
@@ -124,9 +125,12 @@ enm,
         BAND_MID,
         BAND_HIGH,
         
-        BAND_COUNT
+        BAND_COUNT,
+        BAND_NONE = BAND_COUNT
     };
     tFftValue   mAvgVolume[BAND_COUNT];
+    
+    std::vector<std::string> getBandNames();
     
     // OSC Tracks
 #define AUDIO_SOURCE_TUPLE \

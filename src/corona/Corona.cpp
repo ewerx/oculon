@@ -46,6 +46,10 @@ Corona::~Corona()
 void Corona::setup()
 {
     Scene::setup();
+    
+    // params
+    mRadiusAudioResponseBand = AudioInputHandler::BAND_NONE;
+    mMinAudioRadius = 0.1f;
 	
 	// FBOS
 	gl::Fbo::Format format;
@@ -195,6 +199,7 @@ void Corona::setup()
     
     mCameraController.setup(mApp, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
     mTimeController.setTimeScale(60.0f);
+    mAudioInputHandler.setup();
 }
 
 // ----------------------------------------------------------------
@@ -203,11 +208,57 @@ void Corona::setupInterface()
 {
     mTimeController.setupInterface(mInterface, mName);
     
+    vector<string> bandNames = mAudioInputHandler.getBandNames();
+    mInterface->addEnum(CreateEnumParam( "audio-radius", (int*)(&mRadiusAudioResponseBand) )
+                        .maxValue(bandNames.size())
+                        .isVertical()
+                        .oscReceiver(mName)
+                        .sendFeedback(), bandNames);
+    mInterface->addParam(CreateFloatParam("min_radius_ratio", &mMinAudioRadius)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("radius", &mStar.mRadiusDest)
+                         .maxValue(mStar.mMaxRadius)
+                         .oscReceiver(mName));
+    
+    // TODO: refactor
     mInterface->addParam(CreateIntParam("stage", &mStage)
-                         .maxValue(STAGE_COUNT)
+                         .maxValue(STAGE_COUNT));
+    
+    mInterface->addParam(CreateIntParam("star_type", &mStarTypeIndex)
+                         .maxValue(mNumStarTypes)
+                         .oscReceiver(mName))->registerCallback(this, &Corona::onStarTypeChanged);
+    mInterface->addParam(CreateFloatParam("radius", &mStar.mRadiusDest)
+                         .maxValue(mStar.mMaxRadius)
+                         .oscReceiver(mName));
+    
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("-rendering-");
+    mInterface->addParam(CreateBoolParam("billboard", &mBillboard)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("glows", &mRenderGlows)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("nebulas", &mRenderNebulas)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("sphere", &mRenderSphere)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("texture", &mRenderTexture)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("dust", &mRenderDusts)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("corona", &mRenderCorona)
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateBoolParam("canismajoris", &mRenderCanisMajoris)
                          .oscReceiver(mName));
     
     mCameraController.setupInterface(mInterface, mName);
+    
+    mAudioInputHandler.setupInterface(mInterface, mName);
+}
+
+bool Corona::onStarTypeChanged()
+{
+    setStar(0);
+    return true;
 }
 
 // ----------------------------------------------------------------
@@ -265,7 +316,7 @@ void Corona::drawSphereTri( Vec3f va, Vec3f vb, Vec3f vc, int div )
 		mPosCoords.push_back( va );
 		mPosCoords.push_back( vb );
 		mPosCoords.push_back( vc );
-		Vec3f vn = ( va + vb + vc ) * 0.3333f;
+		//Vec3f vn = ( va + vb + vc ) * 0.3333f;
 		mNormals.push_back( va );
 		mNormals.push_back( vb );
 		mNormals.push_back( vc );
@@ -455,6 +506,13 @@ void Corona::update(double dt)
     
 	mCameraController.update(dt);
 	
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    
+    if (mRadiusAudioResponseBand != AudioInputHandler::BAND_NONE)
+    {
+        mStar.mRadius = mStarRadii[ mStarTypeIndex ] * (mAudioInputHandler.getAverageVolumeByBand(mRadiusAudioResponseBand) + mMinAudioRadius);
+        mStar.mRadiusDest = mStar.mRadius;
+    }
     
 	if( mRenderCanisMajoris )
     {
