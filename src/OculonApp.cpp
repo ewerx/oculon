@@ -450,7 +450,7 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     const int sceneIndex = mScenes.size()-1;
     
     // interface
-    if( (sceneIndex) % 2 == 0 )
+    if( (sceneIndex) % 3 == 0 )
     {
         mInterface->gui()->addColumn();
     }
