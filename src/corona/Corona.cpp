@@ -8,9 +8,10 @@
  */
 
 #include "Corona.h"
+#include "CubeMap.h"
+#include "Star.h"
 
 #include "OculonApp.h"
-#include "AudioInput.h"
 #include "Interface.h"
 #include "Resources.h"
 
@@ -24,11 +25,6 @@
 #include "cinder/Utilities.h"
 #include "cinder/Camera.h"
 #include "cinder/Rand.h"
-#include "Resources.h"
-#include "CubeMap.h"
-#include "Controller.h"
-#include "SpringCam.h"
-#include "Star.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -198,7 +194,6 @@ void Corona::setup()
 	setStage( mStage );
     
     mCameraController.setup(mApp, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
-    mTimeController.setTimeScale(60.0f);
     mAudioInputHandler.setup();
 }
 
@@ -502,11 +497,10 @@ void Corona::randSeed()
 void Corona::update(double dt)
 {
     mTimeController.update(dt);
-    double tcDelta = mTimeController.getDelta();
-    
 	mCameraController.update(dt);
-	
     mAudioInputHandler.update(dt, mApp->getAudioInput());
+    
+    double simDt = 60.0f * mTimeController.getDelta();
     
     if (mRadiusAudioResponseBand != AudioInputHandler::BAND_NONE)
     {
@@ -516,17 +510,17 @@ void Corona::update(double dt)
     
 	if( mRenderCanisMajoris )
     {
-		mCanisMajorisPer -= ( mCanisMajorisPer - 1.0f ) * 0.1f * tcDelta;
-		mCanisMajorisPos.x -= mCanisMajorisPos.x * 0.1f * tcDelta;
+		mCanisMajorisPer -= ( mCanisMajorisPer - 1.0f ) * 0.1f * simDt;
+		mCanisMajorisPos.x -= mCanisMajorisPos.x * 0.1f * simDt;
 	}
     else
     {
-		mCanisMajorisPer -= ( mCanisMajorisPer - 0.0f ) * 0.1f * tcDelta;
-		mCanisMajorisPos.x -= ( mCanisMajorisPos.x - mBigGlow0Tex.getWidth() ) * 0.1f * tcDelta;
+		mCanisMajorisPer -= ( mCanisMajorisPer - 0.0f ) * 0.1f * simDt;
+		mCanisMajorisPos.x -= ( mCanisMajorisPos.x - mBigGlow0Tex.getWidth() ) * 0.1f * simDt;
 	}
 
 	// STAR
-	mStar.update( tcDelta );
+	mStar.update( simDt );
 	
 	// CONTROLLER
 	if( mTimeController.getTick() ){
@@ -557,7 +551,7 @@ void Corona::update(double dt)
 			mController.addCMNebulas( Vec3f::zero(), 0.0f, 1.0f, 1 );
 		}
 	}
-	mController.update( tcDelta );
+	mController.update( simDt );
 	
 }
 

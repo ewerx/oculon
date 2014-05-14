@@ -94,6 +94,10 @@ void Deformer::setupInterface()
     mInterface->addParam(CreateBoolParam( "lighting", &mLightEnabled )
                          .oscReceiver(mName));
     
+    mInterface->addParam(CreateFloatParam( "disp_height", &mDisplacementHeight )
+                         .maxValue(10.0f)
+                         .oscReceiver(mName));
+    
     mDynamicTexture.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);

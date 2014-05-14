@@ -13,8 +13,6 @@
 #include "AudioInput.h"
 #include "Interface.h"
 #include "Resources.h"
-#include "SpringCam.h"
-#include "Controller.h"
 #include "Lantern.h"
 
 #include "cinder/Utilities.h"
@@ -46,7 +44,6 @@ Flock::~Flock()
 
 void Flock::setup()
 {
-    mCamType = CAM_SPRING;
     mDrawNebulas = false;
     mDrawPredators = false;
     mTimeScale = 1.0f;
@@ -54,8 +51,7 @@ void Flock::setup()
     ////////------------------------------------------------------
     //
     // CAMERA
-	mSpringCam			= SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
-    mSplineCam.setup(8000.0f,1000.0f);
+	mCameraController.setup(mApp, 0, CameraController::CAM_MANUAL);
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );
@@ -96,7 +92,7 @@ void Flock::setup()
 	}
 	
 	// CONTROLLER
-	mController			= Controller( MAX_LANTERNS );
+	mController			= FlockController( MAX_LANTERNS );
     
     // MOUSE
 	mMousePos			= Vec2f::zero();
@@ -120,22 +116,14 @@ void Flock::setup()
 void Flock::setupInterface()
 {
     mInterface->gui()->addColumn();
-    vector<string> camTypeNames;
-#define FLOCK_CAMTYPE_ENTRY( nam, enm ) \
-camTypeNames.push_back(nam);
-    FLOCK_CAMTYPE_TUPLE
-#undef  FLOCK_CAMTYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camtype")
-                        .isVertical(), camTypeNames);
+    
+    mCameraController.setupInterface(mInterface, mName);
     
     mInterface->addParam(CreateBoolParam("draw nebulas", &mDrawNebulas));
     mInterface->addParam(CreateBoolParam("draw predators", &mDrawPredators));
     mInterface->addParam(CreateFloatParam("time scale", &mTimeScale, 0.001f, 10.0f));
     
     mController.setupInterface(mInterface);
-    mSplineCam.setupInterface(mInterface, mName);
 }
 
 // ----------------------------------------------------------------
@@ -148,7 +136,6 @@ camTypeNames.push_back(nam);
 //
 void Flock::reset()
 {
-    
 }
 
 // ----------------------------------------------------------------
@@ -589,23 +576,15 @@ void Flock::update(double dt)
     if( !mInitUpdateCalled )
         mInitUpdateCalled = true;
     
-    dt *= (60 * mTimeScale);
+
+    mTimeController.update(dt);
+    mCameraController.update(dt);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
+    
+    const float simDt = 60.0f * mTimeController.getDelta();
     
 	// CONTROLLER
-	mController.update(dt);
-    
-    // CAMERA
-    if( mCamType == CAM_SPRING )
-    {
-        if( mMousePressed ){
-            mSpringCam.dragCam( ( mMouseOffset ) * 0.01f, ( mMouseOffset ).length() * 0.01f );
-        }
-        mSpringCam.update( 0.3f );
-	}
-    else if( mCamType == CAM_SPLINE )
-    {
-        mSplineCam.update(dt);
-    }
+	mController.update(simDt);
     
 	gl::disableAlphaBlending();
 	gl::disableDepthRead();
@@ -613,10 +592,10 @@ void Flock::update(double dt)
 	gl::color( Color( 1, 1, 1 ) );
     gl::pushMatrices();
 
-	drawIntoVelocityFbo(dt);
-	drawIntoPositionFbo(dt);
-	drawIntoPredatorVelocityFbo(dt);
-	drawIntoPredatorPositionFbo(dt);
+	drawIntoVelocityFbo(simDt);
+	drawIntoPositionFbo(simDt);
+	drawIntoPredatorVelocityFbo(simDt);
+	drawIntoPredatorPositionFbo(simDt);
 	drawIntoLanternsFbo();
     
     gl::popMatrices();
@@ -626,47 +605,7 @@ void Flock::update(double dt)
 
 const Camera& Flock::getCamera()
 {
-    switch( mCamType )
-    {
-        case CAM_SPRING:
-            return mSpringCam.getCam();
-            
-        case CAM_SPLINE:
-            return mSplineCam.getCamera();
-            
-        case CAM_GRAVITON:
-        {
-            Scene* gravitonScene = mApp->getScene("graviton");
-            
-            if( gravitonScene && gravitonScene->isRunning() )
-            {
-                return gravitonScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            break;
-            
-        case CAM_ORBITER:
-        {
-            Scene* orbiterScene = mApp->getScene("orbiter");
-            
-            if( orbiterScene && orbiterScene->isRunning() )
-            {
-                return orbiterScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
-            break;
-            
-        default:
-            return mApp->getMayaCam();
-    }
+    return mCameraController.getCamera();
 }
 
 // FISH VELOCITY

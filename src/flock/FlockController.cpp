@@ -1,5 +1,5 @@
 //
-//  Controller.cpp
+//  FlockController.cpp
 //  Flocking
 //
 //  Created by Robert Hodgin on 4/26/12.
@@ -9,15 +9,15 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/Gl.h"
 #include "cinder/Rand.h"
-#include "Controller.h"
+#include "FlockController.h"
 #include "Interface.h"
 
 using namespace ci;
 using std::vector;
 
-Controller::Controller(){}
+FlockController::FlockController(){}
 
-Controller::Controller( int maxLanterns )
+FlockController::FlockController( int maxLanterns )
 {
 	mMaxLanterns	= maxLanterns;
     
@@ -29,12 +29,12 @@ Controller::Controller( int maxLanterns )
 //	}
 }
 
-void Controller::setupInterface( Interface* interface )
+void FlockController::setupInterface( Interface* interface )
 {
     interface->addParam(CreateFloatParam("lantern pos x", &mLanternPosX, -500,500));
 }
 
-void Controller::updatePredatorBodies( gl::Fbo *fbo )
+void FlockController::updatePredatorBodies( gl::Fbo *fbo )
 {
 	// BOTH THESE METHODS ARE TOO SLOW.
 	// IS THERE NO WAY TO READ OUT THE CONTENTS OF A TINY FBO TEXTURE
@@ -68,7 +68,7 @@ void Controller::updatePredatorBodies( gl::Fbo *fbo )
 //	fbo->unbindFramebuffer();
 }
 
-void Controller::update(double dt)
+void FlockController::update(double dt)
 {
     Vec3f dims( 350.0f, 200.0f, 350.0f );
     
@@ -141,7 +141,7 @@ void Controller::update(double dt)
 
 
 
-void Controller::drawLanterns( gl::GlslProg *shader )
+void FlockController::drawLanterns( gl::GlslProg *shader )
 {
 	for( std::vector<Lantern>::iterator it = mLanterns.begin(); it != mLanterns.end(); ++it ){
 		shader->uniform( "color", it->mColor );
@@ -149,7 +149,7 @@ void Controller::drawLanterns( gl::GlslProg *shader )
 	}
 }
 
-void Controller::drawLanternGlows( const Vec3f &right, const Vec3f &up )
+void FlockController::drawLanternGlows( const Vec3f &right, const Vec3f &up )
 {
 	for( std::vector<Lantern>::iterator it = mLanterns.begin(); it != mLanterns.end(); ++it ){
 		float radius = it->mRadius * 10.0f;// * it->mVisiblePer * 10.0f;
@@ -160,7 +160,7 @@ void Controller::drawLanternGlows( const Vec3f &right, const Vec3f &up )
 	}
 }
 
-void Controller::drawGlows( gl::GlslProg *shader, const Vec3f &right, const Vec3f &up )
+void FlockController::drawGlows( gl::GlslProg *shader, const Vec3f &right, const Vec3f &up )
 {
 	for( vector<Glow>::iterator it = mGlows.begin(); it != mGlows.end(); ++it ){
 		shader->uniform( "alpha", it->mAgePer );
@@ -169,7 +169,7 @@ void Controller::drawGlows( gl::GlslProg *shader, const Vec3f &right, const Vec3
 	}
 }
 
-void Controller::drawNebulas( gl::GlslProg *shader, const Vec3f &right, const Vec3f &up )
+void FlockController::drawNebulas( gl::GlslProg *shader, const Vec3f &right, const Vec3f &up )
 {
 	for( vector<Nebula>::iterator it = mNebulas.begin(); it != mNebulas.end(); ++it ){
 		shader->uniform( "alpha", it->mAgePer );
@@ -178,14 +178,14 @@ void Controller::drawNebulas( gl::GlslProg *shader, const Vec3f &right, const Ve
 	}
 }
 
-void Controller::addLantern( const Vec3f &pos )
+void FlockController::addLantern( const Vec3f &pos )
 {
 	if( mNumLanterns < mMaxLanterns ){
 		mLanterns.push_back( Lantern( pos ) );
 	}
 }
 
-void Controller::addGlows( Lantern *lantern, int amt )
+void FlockController::addGlows( Lantern *lantern, int amt )
 {
 	for( int i=0; i<amt; i++ ){
 		float radius	= Rand::randFloat( 5.0f, 6.0f );
@@ -203,7 +203,7 @@ void Controller::addGlows( Lantern *lantern, int amt )
 	}
 }
 
-void Controller::addNebulas( Lantern *lantern, int amt )
+void FlockController::addNebulas( Lantern *lantern, int amt )
 {
 	for( int i=0; i<amt; i++ ){
 		float radius		= Rand::randFloat( 5.0f, 8.0f );
@@ -222,6 +222,6 @@ void Controller::addNebulas( Lantern *lantern, int amt )
 }
 
 
-bool Controller::depthSortFunc( Lantern a, Lantern b ){
+bool FlockController::depthSortFunc( Lantern a, Lantern b ){
 	return a.mPos.z > b.mPos.z;
 }

@@ -1,5 +1,5 @@
 //
-//  Controller.h
+//  FlockController.h
 //  Flocking
 //
 //  Created by Robert Hodgin on 4/26/12.
@@ -16,10 +16,10 @@
 
 class Interface;
 
-class Controller {
+class FlockController {
 public:
-	Controller();
-	Controller( int maxLanterns );
+	FlockController();
+	FlockController( int maxLanterns );
     void setupInterface( Interface* interface );
 	void update(double dt);
 	void updatePredatorBodies( ci::gl::Fbo *fbo );

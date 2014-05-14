@@ -9,9 +9,10 @@
 #pragma once
 
 #include "Scene.h"
-#include "SpringCam.h"
-#include "SplineCam.h"
-#include "Controller.h"
+#include "FlockController.h"
+#include "CameraController.h"
+#include "TimeController.h"
+#include "AudioInputHandler.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/gl.h"
@@ -50,7 +51,6 @@ protected:
 	void				setPredatorFboVelocities( ci::gl::Fbo fbo );
 	void				initVbo();
 	void				initPredatorVbo();
-	void				drawIntoRoomFbo();
 	void				drawInfoPanel();
 	void				drawIntoVelocityFbo(double dt);
 	void				drawIntoPositionFbo(double dt);
@@ -69,8 +69,6 @@ private:
     ////////------------------------------------------------------
     //
 	// CAMERA
-	SpringCam			mSpringCam;
-    SplineCam           mSplineCam;
 	
 	// TEXTURES
 	ci::gl::Texture			mLanternGlowTex;
@@ -84,14 +82,13 @@ private:
 	ci::gl::GlslProg		mP_VelocityShader;
 	ci::gl::GlslProg		mP_PositionShader;
 	ci::gl::GlslProg		mLanternShader;
-	ci::gl::GlslProg		mRoomShader;
 	ci::gl::GlslProg		mShader;
 	ci::gl::GlslProg		mP_Shader;
 	ci::gl::GlslProg		mGlowShader;
 	ci::gl::GlslProg		mNebulaShader;
 	
 	// CONTROLLER
-	Controller              mController;
+	FlockController         mController;
     
 	// LANTERNS (point lights)
 	ci::gl::Fbo				mLanternsFbo;
@@ -123,25 +120,9 @@ private:
     //
     ////////------------------------------------------------------
     
-#define FLOCK_CAMTYPE_TUPLE \
-FLOCK_CAMTYPE_ENTRY( "Manual", CAM_MANUAL ) \
-FLOCK_CAMTYPE_ENTRY( "Orbiter", CAM_ORBITER ) \
-FLOCK_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON ) \
-FLOCK_CAMTYPE_ENTRY( "Catalog", CAM_CATALOG ) \
-FLOCK_CAMTYPE_ENTRY( "Spring", CAM_SPRING ) \
-FLOCK_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
-//end tuple
-    
-    enum eCamType
-    {
-#define FLOCK_CAMTYPE_ENTRY( nam, enm ) \
-enm,
-        FLOCK_CAMTYPE_TUPLE
-#undef  FLOCK_CAMTYPE_ENTRY
-        
-        CAM_COUNT
-    };
-    eCamType                    mCamType;
+    CameraController mCameraController;
+    TimeController mTimeController;
+    AudioInputHandler mAudioInputHandler;
     
     bool mDrawPredators;
     
