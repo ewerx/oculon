@@ -140,6 +140,9 @@ MirrorBounceFormation::MirrorBounceFormation(float radius)
 , mRadius(radius)
 , mRandomizeDirection(false)
 , mRandomizeNext(false)
+, mSpinRate(0.0f)
+, mSpinTheta(0.0f)
+, mSpinCenter(Vec3f::zero())
 , mMirrorAxis(Vec3f::xAxis())
 {
     mNodes.push_back( NodeFormation::Node( Vec3f::zero(), mMirrorAxis ) );
@@ -159,6 +162,10 @@ void MirrorBounceFormation::setupInterface(Interface *interface, const std::stri
     interface->addParam(CreateVec3fParam("mirror_axis", &mMirrorAxis, Vec3f::zero(), Vec3f::one())
                         .oscReceiver(name))->registerCallback(this, &MirrorBounceFormation::onMirrorAxisChanged);
     
+    interface->addParam(CreateFloatParam("spinrate", &mSpinRate)
+                         .minValue(-2.0f)
+                         .maxValue(2.0f));
+    
     // TODO: control radius externally?
 }
 
@@ -171,6 +178,8 @@ bool MirrorBounceFormation::onMirrorAxisChanged()
 
 void MirrorBounceFormation::update(double dt, AudioInputHandler &audioInputHandler)
 {
+    mSpinTheta += dt * mSpinRate;
+    
     if (mAudioReactive)
     {
         float distance = audioInputHandler.getAverageVolumeLowFreq();
@@ -189,9 +198,20 @@ void MirrorBounceFormation::update(double dt, AudioInputHandler &audioInputHandl
             }
         }
         
+        float mirror = 1.0f;
         for ( tNodeList::reference node : mNodes )
         {
-            node.mPosition = node.mVelocity * distance;
+            if ( mSpinRate > 0.0f )
+            {
+                node.mPosition.x = mSpinCenter.x + distance * sin( mSpinTheta ) * mirror;
+                node.mPosition.y = mSpinCenter.y + distance * cos( mSpinTheta ) * mirror;
+                node.mVelocity = node.mPosition;
+                mirror *= -1.0f;
+            }
+            else
+            {
+                node.mPosition = node.mVelocity * distance;
+            }
         }
     }
     else

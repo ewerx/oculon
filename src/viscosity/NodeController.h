@@ -66,6 +66,9 @@ public:
     float mRadius;
     bool mRandomizeDirection;
     bool mRandomizeNext;
+    float mSpinRate;
+    float mSpinTheta;
+    ci::Vec3f mSpinCenter;
     ci::Vec3f mMirrorAxis;
 };
 

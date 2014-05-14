@@ -40,7 +40,7 @@ void Viscosity::setup()
 
     mCamera.setOrtho( 0, mApp->getViewportWidth(), mApp->getViewportHeight(), 0, -1, 1 );
     
-    mFluid2D.set( mApp->getViewportWidth()/4.0f, mApp->getViewportHeight()/4.0f );
+    mFluid2D.set( mApp->getViewportWidth()/3.0f, mApp->getViewportHeight()/3.0f );
    	mFluid2D.setDensityDissipation( 0.99f );
 	mFluid2D.setRgbDissipation( 0.99f );
 	mFluid2D.enableDensity();
@@ -97,6 +97,16 @@ void Viscosity::setupInterface()
     mInterface->addParam(CreateFloatParam("density_scale", &mDensityScale)
                          .oscReceiver(mName));
     
+    mInterface->addParam(CreateBoolParam("buoyancy", mFluid2D.enableBuoyancyAddr())
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("temperature", mFluid2D.ambientTemperatureAddr())
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("buoyancy_amt", mFluid2D.materialBuoyancyAddr())
+                         .oscReceiver(mName));
+    mInterface->addParam(CreateFloatParam("material_wt", mFluid2D.materialWeightAddr())
+                         .oscReceiver(mName));
+    
+    
     mSplatNodeController.setupInterface(mInterface, mName);
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
@@ -108,8 +118,8 @@ void Viscosity::handleMouseDown(const ci::app::MouseEvent &event)
 
 void Viscosity::handleMouseDrag(const ci::app::MouseEvent &event)
 {
-    float x = Rand::randFloat() * mFluid2D.resX();
-	float y = Rand::randFloat() * mFluid2D.resY();
+    float x = ((float)event.getX() / mApp->getViewportWidth()) * mFluid2D.resX();//Rand::randFloat() * mFluid2D.resX();
+	float y = ((float)event.getY() / mApp->getViewportHeight()) * mFluid2D.resY();//Rand::randFloat() * mFluid2D.resY();
 	
     //float mVelScale = 600.0f;
     float mRgbScale = 50.0f;
@@ -126,7 +136,7 @@ void Viscosity::handleMouseDrag(const ci::app::MouseEvent &event)
 			mFluid2D.splatDensity( x, y, mDensityScale * 1000.0f );
 		}
         
-        console() << "splat: " << x << ", " << y << std::endl;
+        //console() << "splat: " << x << ", " << y << std::endl;
 	}
 	
 	mPrevPos = event.getPos();
@@ -142,23 +152,22 @@ void Viscosity::update(double dt)
     
     for ( NodeFormation::Node& node : mSplatNodeController.getNodes() )
     {
-        if (abs(node.mPosition.x) < 0.05f && abs(node.mPosition.y) < 0.05f)
+        if (abs(node.mPosition.x) < 0.001f && abs(node.mPosition.y) < 0.001f)
         {
-            continue;
+            //continue;
         }
         
         float x = (node.mPosition.x * 0.5f + 0.5f) * mFluid2D.resX();
         float y = (node.mPosition.y * 0.5f + 0.5f) * mFluid2D.resY();
         
         mFluid2D.splatVelocity( x, y, node.mVelocity.xy() * mVelocityScale * 10000.0f );
-        //mFluid2D.splatVelocity( x, y, Rand::randVec2f() * mVelocityScale * 10000.0f );
         mFluid2D.splatRgb( x, y, 50.0f*mColor );
         if( mFluid2D.isBuoyancyEnabled() )
         {
 			mFluid2D.splatDensity( x, y, mDensityScale * 1000.0f );
 		}
         
-        console() << "splat: " << x << ", " << y << std::endl;
+        //console() << "splat: " << x << ", " << y << std::endl;
     }
     
     mFluid2D.step();
