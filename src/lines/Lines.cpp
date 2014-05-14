@@ -73,8 +73,7 @@ void Lines::setupParticles(const int bufSize)
     
     mParticleController.setup(bufSize);
     
-    vector<Vec4f> randomPositions;
-    vector<Vec4f> straightPositions;
+    vector<Vec4f> positions;
     vector<Vec4f> velocities;
     vector<Vec4f> data;
     
@@ -88,7 +87,7 @@ void Lines::setupParticles(const int bufSize)
         float y = r * Rand::randFloat(-1.0f,1.0f);
         float z = r * Rand::randFloat(-1.0f,1.0f);
         float mass = Rand::randFloat(0.01f,1.0f);
-        randomPositions.push_back(Vec4f(x,y,z,mass));
+        positions.push_back(Vec4f(x,y,z,mass));
         
         // velocity + age
         float vx = Rand::randFloat(-.005f,.005f);
@@ -101,7 +100,8 @@ void Lines::setupParticles(const int bufSize)
         float decay = Rand::randFloat(.01f,10.00f);
         data.push_back(Vec4f(x,y,z,decay));
     }
-    mParticleController.addFormation(new ParticleFormation("random", bufSize, randomPositions, velocities, data));
+    mParticleController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
+    positions.clear();
     
     // straight lines
     bool pair = false;
@@ -139,12 +139,51 @@ void Lines::setupParticles(const int bufSize)
         float mass = Rand::randFloat(0.01f,1.0f);
         
         // position + mass
-        straightPositions.push_back(Vec4f(x,y,z,mass));
+        positions.push_back(Vec4f(x,y,z,mass));
         
         pair = !pair;
     }
     
-    mParticleController.addFormation(new ParticleFormation("straight", bufSize, straightPositions, velocities, data));
+    mParticleController.addFormation(new ParticleFormation("straight", bufSize, positions, velocities, data));
+    positions.clear();
+    
+    // inner and outer cirlces
+    {
+        bool outer = false;
+        
+        float ratio = 2.0f;
+        
+        float rho = Rand::randFloat() * (M_PI * 2.0);
+        float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            float radius = r;
+            
+            if (outer)
+            {
+                radius *= ratio;
+            }
+            else
+            {
+                rho = Rand::randFloat() * (M_PI * 2.0);
+                theta = Rand::randFloat() * (M_PI * 2.0);
+            }
+            
+            float x = radius * cos(rho) * sin(theta);
+            float y = radius * sin(rho) * sin(theta);
+            float z = radius * cos(theta);
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            outer = !outer;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
+    }
     
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
