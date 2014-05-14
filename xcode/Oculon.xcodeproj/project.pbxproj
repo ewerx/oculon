@@ -99,6 +99,8 @@
 		7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
 		7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */ = {isa = PBXBuildFile; fileRef = 7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */; };
+		7C0D6F7419231D74008F56CB /* RootFract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0D6F7219231D74008F56CB /* RootFract.cpp */; };
+		7C0D6F7619231FE2008F56CB /* rootfract_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C0D6F7519231FE2008F56CB /* rootfract_frag.glsl */; };
 		7C0E673318BABE9C00C387FC /* CameraStereoHMD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0E653618BABE9C00C387FC /* CameraStereoHMD.cpp */; };
 		7C0E673418BABE9C00C387FC /* OculusVR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0E653818BABE9C00C387FC /* OculusVR.cpp */; };
 		7C0E674018BAC88700C387FC /* OculusCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0E673E18BAC88700C387FC /* OculusCam.cpp */; };
@@ -630,6 +632,9 @@
 		7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = brightStars.vert; sourceTree = "<group>"; };
 		7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.frag; sourceTree = "<group>"; };
 		7C06A8E11853D4ED00D1C8A3 /* faintStars.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = faintStars.vert; sourceTree = "<group>"; };
+		7C0D6F7219231D74008F56CB /* RootFract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RootFract.cpp; sourceTree = "<group>"; };
+		7C0D6F7319231D74008F56CB /* RootFract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootFract.h; sourceTree = "<group>"; };
+		7C0D6F7519231FE2008F56CB /* rootfract_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rootfract_frag.glsl; sourceTree = "<group>"; };
 		7C0E62D418BABE9800C387FC /* OVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OVR.h; sourceTree = "<group>"; };
 		7C0E62D518BABE9800C387FC /* OVRVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OVRVersion.h; sourceTree = "<group>"; };
 		7C0E653618BABE9C00C387FC /* CameraStereoHMD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraStereoHMD.cpp; sourceTree = "<group>"; };
@@ -1548,6 +1553,7 @@
 				7C06A8CF1853D4ED00D1C8A3 /* rasterizer_frag.glsl */,
 				7C06A8D01853D4ED00D1C8A3 /* retina_frag.glsl */,
 				7C06A8D11853D4ED00D1C8A3 /* rings_frag.glsl */,
+				7C0D6F7519231FE2008F56CB /* rootfract_frag.glsl */,
 				7C8DA8721921D29D00FCD9A2 /* sacred_frag.glsl */,
 				7C06A8D21853D4ED00D1C8A3 /* shapeshifter_frag.glsl */,
 				7C06A8D31853D4ED00D1C8A3 /* simplicity_frag.glsl */,
@@ -1674,6 +1680,8 @@
 				7C5B69761819745800AB2C8D /* Tilings.h */,
 				7C60384E18417A910068F4C1 /* Voronoi.cpp */,
 				7C60384F18417A910068F4C1 /* Voronoi.h */,
+				7C0D6F7219231D74008F56CB /* RootFract.cpp */,
+				7C0D6F7319231D74008F56CB /* RootFract.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -2989,6 +2997,7 @@
 				7C06A9011853D4ED00D1C8A3 /* shapeshifter_frag.glsl in Resources */,
 				7C79CB2A1765288500E71F9D /* passThru.vert in Resources */,
 				7C06A8F81853D4ED00D1C8A3 /* menger_frag.glsl in Resources */,
+				7C0D6F7619231FE2008F56CB /* rootfract_frag.glsl in Resources */,
 				7C79CB2B1765288500E71F9D /* passthru.vsh in Resources */,
 				7C8DA8731921D29D00FCD9A2 /* sacred_frag.glsl in Resources */,
 				7C79CB2C1765288500E71F9D /* passThruNormals.vert in Resources */,
@@ -3212,6 +3221,7 @@
 				3B39B9A14B4D4091B88FB1F0 /* b2WheelJoint.cpp in Sources */,
 				7CAD1B7018839A3400512843 /* gradient.cpp in Sources */,
 				5992024D05E8458B844AABC1 /* b2Rope.cpp in Sources */,
+				7C0D6F7419231D74008F56CB /* RootFract.cpp in Sources */,
 				2DC1CC2FBCC74F788272027A /* OscBundle.cpp in Sources */,
 				AEA4267B44DC44B48B88ACF0 /* OscListener.cpp in Sources */,
 				7C06A8AD1853AFAC00D1C8A3 /* SkyGrid.cpp in Sources */,

@@ -135,7 +135,6 @@ void Voronoi::shaderPreDraw()
     mShader.uniform( "iColor2", mColor2);
     
     mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );
     mShader.uniform( "borderColor", mBorderColor );
     mShader.uniform( "zoom", mZoom );
     mShader.uniform( "speed", mSpeed );
