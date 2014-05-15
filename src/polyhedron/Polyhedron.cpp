@@ -60,7 +60,7 @@ void Polyhedron::setup()
     mColor              = ColorAf::white();
     
     // Set up the instancing grid
-	mGridSize           = Vec3i( 16, 16, 16 );
+	mGridSize           = Vec3i( 4, 4, 4 );
 	mGridSpacing        = Vec3f( 2.5f, 2.5f, 2.5f );
     mNumObjects         = mGridSize.x * mGridSize.y * mGridSize.z;
     

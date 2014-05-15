@@ -39,7 +39,8 @@ void main()
     y               += spacing.y * size.y * 0.5;
 	z				+= spacing.z * size.z * 0.5;
 	vec3 offset		= vec3( x, y, z );
-	position.xyz	+= disp.xyz * spacing.x;
+    position.xyz    += offset;
+	//position.xyz	+= disp.xyz * spacing.x;
 
 	gl_Position		= gl_ModelViewProjectionMatrix * position;
 }
