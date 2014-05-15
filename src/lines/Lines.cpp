@@ -259,6 +259,11 @@ void Lines::update(double dt)
     
     mDynamicTexture.bindTexture(5);
     
+    if (mAudioInputHandler.hasTexture())
+    {
+        mAudioInputHandler.getFbo().bindTexture(6);
+    }
+    
     float simdt = (float)(dt*mTimeStep);
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
     mSimulationShader.bind();
@@ -268,6 +273,8 @@ void Lines::update(double dt)
     mSimulationShader.uniform( "oPositions", 3);
 	mSimulationShader.uniform( "oVelocities", 4);
   	mSimulationShader.uniform( "noiseTex", 5);
+    mSimulationShader.uniform( "audioData", 6);
+    mSimulationShader.uniform( "gain", mAudioInputHandler.getGain());
     mSimulationShader.uniform( "dt", (float)dt );
     mSimulationShader.uniform( "reset", mReset );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );

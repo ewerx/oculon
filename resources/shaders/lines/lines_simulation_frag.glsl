@@ -13,6 +13,9 @@ uniform float formationStep;
 uniform int motion;
 uniform float containmentSize;
 
+uniform sampler2D audioData;
+uniform float gain;
+
 varying vec4 texCoord;
 
 const float eps = 0.001;
@@ -74,16 +77,18 @@ void main()
                 //float fMag = length(force);
                 vec3 a = invMass * force;// * pow(fMag,0.9);
                 vel = dt * a;
+                pos += vel * dt;
             }
             else if (motion == 2) // gravition -- single source at center
             {
                 vec3 a = invMass * -pos/(dist*dist);
                 vel += dt * a;
+                pos += vel * dt;
             }
-            
-            pos.x += vel.x * dt;
-            pos.y += vel.y * dt;
-            pos.z += vel.z * dt;
+            else if (motion == 3) // audio-reactive positions
+            {
+                pos = texture2D(oPositions, texCoord.st).rgb * texture2D( audioData, vec2(texCoord.s,1.0) ).x * gain;
+            }
         }
     }
 	

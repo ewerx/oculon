@@ -59,6 +59,7 @@ private:
 MOTION_ENTRY( "Static", MOTION_STATIC ) \
 MOTION_ENTRY( "Noise", MOTION_NOISE ) \
 MOTION_ENTRY( "Gravity", MOTION_GRAVITY ) \
+MOTION_ENTRY( "Audio", MOTION_AUDIO ) \
 // end tuple
     
     enum eMotion
