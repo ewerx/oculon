@@ -22,7 +22,7 @@ public:
     SplineCam();
     ~SplineCam();
 
-    void setup(const float maxDistance = 1000.0f, const float radius = 100.0f);
+    void setup(const float maxDistance = 1000.0f, const float radius = 100.0f, const float aspectRatio = (16.f/9.f));
     bool resetSpline();
     void setupInterface(Interface* interface, const std::string& name);
     void update(double dt);

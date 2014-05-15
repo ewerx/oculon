@@ -23,7 +23,7 @@ SplineCam::~SplineCam()
 {
 }
 
-void SplineCam::setup(const float maxDistance, const float radius)
+void SplineCam::setup(const float maxDistance, const float radius, const float aspectRatio)
 {
     mTarget = Vec3f::zero();
     mSpeed = 0.25f;
@@ -34,7 +34,7 @@ void SplineCam::setup(const float maxDistance, const float radius)
     
     //mCam.setFarClip(10000.0f);
     //mCam.setNearClip(0.0001f);
-    mCam.setPerspective(60.0f, 1280.0f/768.0f, 10000.0f, 0.0001f);
+    mCam.setPerspective(60.0f, aspectRatio, 0.0001f, 10000.0f);
     
     resetSpline();
 }
@@ -82,7 +82,7 @@ void SplineCam::update(double dt)
     mSplineValue += dt * (mSpeed*mSpeedMulti);
     Vec3f pos = mSpline.getPosition( mSplineValue );
     Vec3f delta = pos - mLastPos;
-    Vec3f up = delta.cross(pos);
+    Vec3f up = Vec3f::yAxis();//delta.cross(pos);
     //up.normalize();
     if( mLookForward )
     {

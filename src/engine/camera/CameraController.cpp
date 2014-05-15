@@ -28,12 +28,16 @@ void CameraController::setup(OculonApp *app, const unsigned int camTypes, eCamTy
     mApp = app;
     mAvailableCamTypes = camTypes;
     mCamType = defaultCam;
-    mSplineCam.setup(5000.0f,500.0f);
+    mSplineCam.setup(5000.0f,500.0f,mApp->getViewportAspectRatio());
     mStarCam.setup(mApp);
     mSpringCam = SpringCam( -420.0f, mApp->getViewportAspectRatio(), 3000.0f );
     
     mSpinCam.lookAt(Vec3f(0.0f,0.0f,-420.0f), Vec3f(0.0f,0.0f,0.0f), Vec3f(0.0f,1.0f,0.0f));
-    mSpinRate = 0.1f;
+    mSpinCam.setPerspective(60.0f, mApp->getViewportAspectRatio(), 0.0001f, 10000.0f);
+    mSpinRate = Vec3f::zero();//Vec3f::yAxis()*0.1f;
+    //mSpinAxis = Vec3f::xAxis();
+    mSpinDistance = 100.0f;
+    mSpinUp = Vec3f::yAxis();
 }
 
 void CameraController::setupInterface(Interface *interface, const std::string& sceneName)
@@ -59,7 +63,12 @@ void CameraController::setupInterface(Interface *interface, const std::string& s
     
     mInterfacePanels[CAM_SPIN] = interface->gui()->addPanel();
     interface->gui()->addLabel("spin cam");
-    interface->addParam(CreateFloatParam("spin_rate", &mSpinRate));
+//    interface->addParam(CreateFloatParam("spin_rate", &mSpinRate)
+//                        .maxValue(10.0f));
+    interface->addParam(CreateFloatParam("spin_dist", &mSpinDistance)
+                        .maxValue(2000.f));
+    interface->addParam(CreateVec3fParam("spin_axis", &mSpinRate, Vec3f::zero(), Vec3f::one()*3.f));
+    interface->addParam(CreateVec3fParam("spin_up", &mSpinUp, Vec3f::zero(), Vec3f::one()));
     
     onCameraChanged();
 }
@@ -74,7 +83,8 @@ bool CameraController::onCameraChanged()
         }
     }
     
-    if (mInterfacePanels[mCamType]) {
+    if (mInterfacePanels[mCamType])
+    {
         mInterfacePanels[mCamType]->enabled = true;
     }
     
@@ -99,8 +109,15 @@ void CameraController::update(double dt)
 //            mStarCam.update(dt);
             
         case CAM_SPIN:
-            mSpinQuat *= Quatf(Vec3f(0.0f,1.0f,0.0f), dt*mSpinRate);
-            //mSpinCam.setOrientation(mSpinQuat);
+        {
+            mSpinQuat *= Quatf(Vec3f::xAxis(), dt*mSpinRate.x);
+            mSpinQuat *= Quatf(Vec3f::yAxis(), dt*mSpinRate.y);
+            mSpinQuat *= Quatf(Vec3f::zAxis(), dt*mSpinRate.z);
+            Vec3f pos = Vec3f::one() * mSpinQuat;
+            pos.normalize();
+            pos *= mSpinDistance;
+            mSpinCam.lookAt(pos, Vec3f::zero(), mSpinUp);
+        }
             break;
             
         default:

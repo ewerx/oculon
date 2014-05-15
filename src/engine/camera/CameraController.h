@@ -81,6 +81,10 @@ protected:
     
     ci::CameraPersp             mSpinCam;//TODO: refactor
     ci::Quatf                   mSpinQuat;
-    float                       mSpinRate;
+    //float                       mSpinRate;
+    ci::Vec3f                   mSpinRate;
+    ci::Vec3f                   mSpinUp;
+    float                       mSpinDistance;
+    float                       mSpinTheta;
 };
 
