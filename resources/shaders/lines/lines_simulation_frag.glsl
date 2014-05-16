@@ -56,7 +56,7 @@ void main()
     
     if (formationStep < 1.0)
     {
-        vel = vec3(0.0,0.0,0.0);
+        //vel = vec3(0.0,0.0,0.0);
         vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
         
         pos = mix(startPos,targetPos,formationStep);
@@ -85,9 +85,13 @@ void main()
                 vel += dt * a;
                 pos += vel * dt;
             }
-            else if (motion == 3) // audio-reactive positions
+            else if (motion == 3) // audio-reactive positions (wave)
             {
                 pos = texture2D(oPositions, texCoord.st).rgb * texture2D( audioData, vec2(texCoord.s,1.0) ).x * gain;
+            }
+            else if (motion == 4) // audio-reactive positions (fft)
+            {
+                pos = texture2D(oPositions, texCoord.st).rgb + vel * texture2D( audioData, vec2(texCoord.s,0.0) ).x * gain * 10.0;
             }
         }
     }

@@ -149,6 +149,7 @@ void Lines::setupParticles(const int bufSize)
         
         mParticleController.addFormation(new ParticleFormation("straight", bufSize, positions, velocities, data));
         positions.clear();
+        velocities.clear();
     }
     
     // inner and outer cirlces
@@ -182,6 +183,8 @@ void Lines::setupParticles(const int bufSize)
             
             // position + mass
             positions.push_back(Vec4f(x,y,z,mass));
+        
+            velocities.push_back(Vec4f(Rand::randVec3f(),1.0f));
             
             pair = !pair;
         }
