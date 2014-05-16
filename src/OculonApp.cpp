@@ -44,6 +44,7 @@
 #include "Voronoi.h"
 #include "Oscillator.h"
 #include "RootFract.h"
+#include "EffectShaders.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -419,6 +420,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
     
     // Test Scenes
     //addScene( new MovieTest() );
