@@ -80,78 +80,82 @@ void Lines::setupParticles(const int bufSize)
     const float r = 100.0f;
     
     // random
-    for (int i = 0; i < numParticles; ++i)
     {
-        // position + mass
-        float x = r * Rand::randFloat(-1.0f,1.0f);
-        float y = r * Rand::randFloat(-1.0f,1.0f);
-        float z = r * Rand::randFloat(-1.0f,1.0f);
-        float mass = Rand::randFloat(0.01f,1.0f);
-        positions.push_back(Vec4f(x,y,z,mass));
-        
-        // velocity + age
-        float vx = Rand::randFloat(-.005f,.005f);
-        float vy = Rand::randFloat(-.005f,.005f);
-        float vz = Rand::randFloat(-.005f,.005f);
-        float age = Rand::randFloat(.007f,0.9f);
-        velocities.push_back(Vec4f(vx,vy,vz,age));
-        
-        // extra info
-        float decay = Rand::randFloat(.01f,10.00f);
-        data.push_back(Vec4f(x,y,z,decay));
+        for (int i = 0; i < numParticles; ++i)
+        {
+            // position + mass
+            float x = r * Rand::randFloat(-1.0f,1.0f);
+            float y = r * Rand::randFloat(-1.0f,1.0f);
+            float z = r * Rand::randFloat(-1.0f,1.0f);
+            float mass = Rand::randFloat(0.01f,1.0f);
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            // velocity + age
+            float vx = Rand::randFloat(-.005f,.005f);
+            float vy = Rand::randFloat(-.005f,.005f);
+            float vz = Rand::randFloat(-.005f,.005f);
+            float age = Rand::randFloat(.007f,0.9f);
+            velocities.push_back(Vec4f(vx,vy,vz,age));
+            
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
+        }
+        mParticleController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
+        positions.clear();
     }
-    mParticleController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
-    positions.clear();
     
     // straight lines
-    bool pair = false;
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-    
-    for (int i = 0; i < numParticles; ++i)
     {
-        if (pair)
+        bool pair = false;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+        
+        for (int i = 0; i < numParticles; ++i)
         {
-            int axis = Rand::randInt(3); // x=0,y=1,z=2
-            switch(axis)
+            if (pair)
             {
-                case 0:
-                    x = -x;
-                    break;
-                case 1:
-                    y = -y;
-                    break;
-                case 2:
-                    z = -z;
-                    break;
-                default:
-                    break;
+                int axis = Rand::randInt(3); // x=0,y=1,z=2
+                switch(axis)
+                {
+                    case 0:
+                        x = -x;
+                        break;
+                    case 1:
+                        y = -y;
+                        break;
+                    case 2:
+                        z = -z;
+                        break;
+                    default:
+                        break;
+                }
             }
+            else
+            {
+                x = r * Rand::randFloat(-1.0f,1.0f);
+                y = r * Rand::randFloat(-1.0f,1.0f);
+                z = r * Rand::randFloat(-1.0f,1.0f);
+            }
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            pair = !pair;
         }
-        else
-        {
-            x = r * Rand::randFloat(-1.0f,1.0f);
-            y = r * Rand::randFloat(-1.0f,1.0f);
-            z = r * Rand::randFloat(-1.0f,1.0f);
-        }
         
-        float mass = Rand::randFloat(0.01f,1.0f);
-        
-        // position + mass
-        positions.push_back(Vec4f(x,y,z,mass));
-        
-        pair = !pair;
+        mParticleController.addFormation(new ParticleFormation("straight", bufSize, positions, velocities, data));
+        positions.clear();
     }
-    
-    mParticleController.addFormation(new ParticleFormation("straight", bufSize, positions, velocities, data));
-    positions.clear();
     
     // inner and outer cirlces
     {
-        bool outer = false;
+        bool pair = false;
         
-        float ratio = 2.0f;
+        float ratio = 0.5f;
         
         float rho = Rand::randFloat() * (M_PI * 2.0);
         float theta = Rand::randFloat() * (M_PI * 2.0);
@@ -160,7 +164,7 @@ void Lines::setupParticles(const int bufSize)
         {
             float radius = r;
             
-            if (outer)
+            if (pair)
             {
                 radius *= ratio;
             }
@@ -179,12 +183,50 @@ void Lines::setupParticles(const int bufSize)
             // position + mass
             positions.push_back(Vec4f(x,y,z,mass));
             
-            outer = !outer;
+            pair = !pair;
         }
         
         mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
+        positions.clear();
     }
     
+    // cone
+    {
+        bool pair = false;
+        
+        float rho = Rand::randFloat() * (M_PI * 2.0);
+        float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            float radius = 0.0f;
+            
+            if (pair)
+            {
+                radius = r;
+            }
+            else
+            {
+                rho = Rand::randFloat() * (M_PI * 0.75f);
+                theta = Rand::randFloat() * (M_PI * 0.75f);
+                radius = -r;
+            }
+            
+            float x = radius * cos(rho) * sin(theta);
+            float y = radius * sin(rho) * sin(theta);
+            float z = radius * cos(theta);
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            pair = !pair;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("cone", bufSize, positions, velocities, data));
+    }
+
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
 }
