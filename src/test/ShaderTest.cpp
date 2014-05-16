@@ -74,8 +74,8 @@ void ShaderTest::setupShaders()
         
         // too slow!
         // MENGER
-//        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_MENGER_FRAG ) );
-//        mShaders.push_back(shader);
+        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "menger_frag.glsl" ) );
+        mShaders.push_back(shader);
         
         // FRAGMENT: ERROR: 0:180: Swizzle component 'z' indexes beyond end of input vector (length 2)
         // METAHEXBALLS
@@ -347,7 +347,7 @@ void ShaderTest::shaderPreDraw()
             shader.uniform( "iChannelTime", (float)mTimeController.getElapsedSeconds() );
             shader.uniform( "iChannel0", 0 );
             shader.uniform( "iChannel1", 1 );
-            shader.uniform( "iMouse", Vec2f::zero() );
+            shader.uniform( "iMouse", Vec2f::one()*0.5f );
             break;
     }
 }

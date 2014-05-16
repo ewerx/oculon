@@ -93,7 +93,7 @@ void OculonApp::prepareSettings( Settings *settings )
     mDrawToScreen       = true;
     mDrawOnlyLastScene  = true;
     mDebugRender        = false;
-    mEnableManualCamControls = false;
+    mEnableManualCamControls = true;
     mBackgroundAlpha    = 1.0f;
     
     mOutputMode         = OUTPUT_FBO;

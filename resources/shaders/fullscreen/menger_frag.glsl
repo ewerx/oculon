@@ -1,9 +1,8 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-//uniform float     iChannelTime[4]; // channel playback time (in seconds)
-//uniform vec4      iMouse;          // mouse pixel coords. xy: current (if MLB down), zw: click
-//uniform samplerXX iChannel0..3;    // input channel. XX = 2D/Cube
-//uniform vec4      iDate;           // (year, month, day, time in seconds)
+uniform sampler2D iChannel0;
+uniform sampler2D iChannel1;
+uniform vec2      iMouse;
 
 #define MaxSteps 30
 #define MinimumDistance 0.0009
@@ -30,7 +29,7 @@ vec2 rotate(vec2 v, float a) {
 	return vec2(cos(a)*v.x + sin(a)*v.y, -sin(a)*v.x + cos(a)*v.y);
 }
 
-// Two light sources. No specular 
+// Two light sources. No specular
 vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
 	vec3 lightDir = normalize(LightDir);
 	float diffuse = max(0.0,dot(-normal, lightDir)); // Lambertian
@@ -60,10 +59,10 @@ float DE(in vec3 z)
 	}
 	// Folding 'tiling' of 3D space;
 	z  = abs(1.0-mod(z,2.0));
-
+    
 	float d = 1000.0;
 	for (int n = 0; n < Iterations; n++) {
-		z.xy = rotate(z.xy,4.0+2.0*cos( iGlobalTime/8.0));		
+		z.xy = rotate(z.xy,4.0+2.0*cos( iGlobalTime/8.0));
 		z = abs(z);
 		if (z.x<z.y){ z.xy = z.yx;}
 		if (z.x< z.z){ z.xz = z.zx;}
@@ -81,14 +80,14 @@ vec3 getNormal(in vec3 pos) {
 	vec3 e = vec3(0.0,normalDistance,0.0);
 	
 	return normalize(vec3(
-			DE(pos+e.yxx)-DE(pos-e.yxx),
-			DE(pos+e.xyx)-DE(pos-e.xyx),
-			DE(pos+e.xxy)-DE(pos-e.xxy)
-			)
-		);
+                          DE(pos+e.yxx)-DE(pos-e.yxx),
+                          DE(pos+e.xyx)-DE(pos-e.xyx),
+                          DE(pos+e.xxy)-DE(pos-e.xxy)
+                          )
+                     );
 }
 
-// Solid color 
+// Solid color
 vec3 getColor(vec3 normal, vec3 pos) {
 	return vec3(1.0);
 }

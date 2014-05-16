@@ -127,7 +127,7 @@ void main() {
 	freqs[1] = texture2D( iChannel0, vec2( 0.07, 0.25 ) ).x;
 	freqs[2] = texture2D( iChannel0, vec2( 0.15, 0.25 ) ).x;
 	freqs[3] = texture2D( iChannel0, vec2( 0.30, 0.25 ) ).x;
-
+    
 	float t = field(p,freqs[2]);
 	float v = (1. - exp((abs(uv.x) - 1.) * 6.)) * (1. - exp((abs(uv.y) - 1.) * 6.));
 	
@@ -140,7 +140,7 @@ void main() {
 	
 	//Let's add some stars
 	//Thanks to http://glsl.heroku.com/e#6904.0
-	vec2 seed = p.xy * 2.0;	
+	vec2 seed = p.xy * 2.0;
 	seed = floor(seed * iResolution.x);
 	vec3 rnd = nrand3( seed );
 	vec4 starcolor = vec4(pow(rnd.y,40.0));
