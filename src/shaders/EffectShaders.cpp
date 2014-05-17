@@ -36,6 +36,11 @@ void EffectShaders::setup()
     vector<Scene*> scenes;
     scenes.push_back( mApp->getScene("lines") );
     scenes.push_back( mApp->getScene("rings") );
+    scenes.push_back( mApp->getScene("textureshaders") );
+    scenes.push_back( mApp->getScene("audio") );
+    scenes.push_back( mApp->getScene("rootfract") );
+    scenes.push_back( mApp->getScene("tilings") );
+    scenes.push_back( mApp->getScene("graviton") );
     
     for (Scene* scene : scenes )
     {
