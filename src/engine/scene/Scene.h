@@ -140,7 +140,7 @@ private:
     std::vector<std::string> mIniFilenames;
     // fbo
     ci::gl::Fbo             mFbo;
-    syphonServer            mSyphon;
+    syphonServer*            mSyphon;
     int                     mLayerIndex;
     
     // frustum culling

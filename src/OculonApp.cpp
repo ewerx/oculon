@@ -207,12 +207,12 @@ void OculonApp::setup()
             for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
             {
                 snprintf(nameBuf, 256, "oculon-%d", layerIndex+1);
-                mScreenSyphon[layerIndex].setName(nameBuf);
+                //mScreenSyphon[layerIndex].setName(nameBuf);
             }
         }
         else
         {
-            mScreenSyphon[0].setName("DEBUG");
+            //mScreenSyphon[0].setName("DEBUG");
         }
     }
     
@@ -1152,7 +1152,7 @@ void OculonApp::draw()
         // hack to show interface through Resolume
         if( mEnableSyphonServer )
         {
-            mScreenSyphon[0].publishScreen();
+            //mScreenSyphon[0].publishScreen();
         }
     }
     
@@ -1193,14 +1193,14 @@ void OculonApp::draw()
         switch( mOutputMode )
         {
             case OUTPUT_DIRECT:
-                mScreenSyphon[mVisibleLayerIndex].publishScreen();
+                //mScreenSyphon[mVisibleLayerIndex].publishScreen();
                 break;
                 
             case OUTPUT_FBO:
             {
                 for( int layerIndex = 0; layerIndex < MAX_LAYERS; ++layerIndex )
                 {
-                    mScreenSyphon[layerIndex].publishTexture(&mFbo[layerIndex].getTexture(), flipTexture);
+                    //mScreenSyphon[layerIndex].publishTexture(&mFbo[layerIndex].getTexture(), flipTexture);
                 }
             }
                 break;
@@ -1221,7 +1221,7 @@ void OculonApp::draw()
                 break;
                 
             case OUTPUT_DOME:
-                mScreenSyphon[mVisibleLayerIndex].publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture(), flipTexture );
+                //mScreenSyphon[mVisibleLayerIndex].publishTexture( & mDomeRenderer.getDomeProjectionFbo().getTexture(), flipTexture );
                 break;
                 
             default:

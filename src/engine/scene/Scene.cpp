@@ -51,13 +51,20 @@ Scene::Scene(const std::string& name)
     
 //    mDebugParams = params::InterfaceGl( name, Vec2i( 350, 400 ) );
 //    mDebugParams.show(mIsDebug);
+    
+    mSyphon = new syphonServer();
 }
 
 Scene::~Scene()
 {
+    console() << "[" << mName << "] destructor" << std::endl;
     delete mParamsInterface;
+    mParamsInterface = NULL;
     delete mLoadParamsInterface;
+    mLoadParamsInterface = NULL;
     mInterface = NULL;
+    delete mSyphon;
+    mSyphon = NULL;
 }
 
 void Scene::init(OculonApp* app)
@@ -68,7 +75,7 @@ void Scene::init(OculonApp* app)
     if( mApp->getOutputMode() == OculonApp::OUTPUT_MULTIFBO )
     {
         setupFbo();
-        mSyphon.setName(mName);
+        mSyphon->setName(mName);
     }
     
     // setup master interface
@@ -181,7 +188,8 @@ void Scene::setupLoadParamsInterface()
 {
     if (mLoadParamsInterface)
     {
-        if (mInterface == mLoadParamsInterface) {
+        if (mInterface == mLoadParamsInterface)
+        {
             mInterface = NULL;
         }
         delete mLoadParamsInterface;
@@ -255,7 +263,7 @@ void Scene::drawToFbo()
 
 void Scene::publishToSyphon()
 {
-    mSyphon.publishTexture(&mFbo.getTexture(), /*flipped=*/false);
+    mSyphon->publishTexture(&mFbo.getTexture(), /*flipped=*/false);
 }
 
 void Scene::drawInterface()

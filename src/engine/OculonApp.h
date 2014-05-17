@@ -239,7 +239,7 @@ private: // members
     bool                    mCaptureDebugOutput;
     
     // syphon
-    syphonServer            mScreenSyphon[MAX_LAYERS];
+    //syphonServer            mScreenSyphon[MAX_LAYERS];
     //syphonClient            mSyphonClient;
     bool                    mEnableSyphonServer;
     
