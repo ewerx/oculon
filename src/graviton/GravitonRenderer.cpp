@@ -11,6 +11,7 @@
 #include "cinder/Camera.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 
@@ -19,16 +20,22 @@ GravitonRenderer::GravitonRenderer()
 {
     // params
     mAdditiveBlending       = true;
-    mUseImageForPoints      = true;
     mPointSize              = 0.6f;
     mColor                  = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
     mAudioReactive          = true;
     
     // load textures
-    mParticleTexture1 = gl::Texture( loadImage( app::loadResource( "particle_white.png" ) ) );
-    mParticleTexture2 = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
-    mParticleTexture1.setWrap( GL_REPEAT, GL_REPEAT );
-    mParticleTexture2.setWrap( GL_REPEAT, GL_REPEAT );
+    mCurPointTexture        = 0;
+    gl::Texture pointTex;
+    gl::Texture::Format format;
+    format.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    pointTex = gl::Texture( loadImage( loadResource( "particle_white.png" ) ), format );
+    mPointTextures.push_back( make_pair("glow", pointTex) );
+    pointTex = gl::Texture( loadImage( loadResource( "glitter.png" ) ), format );
+    mPointTextures.push_back( make_pair("solid", pointTex) );
+    pointTex = gl::Texture( loadImage( loadResource( "parsec-sparkle.png" ) ), format );
+    mPointTextures.push_back( make_pair("sparkle", pointTex) );
 }
 
 GravitonRenderer::~GravitonRenderer()
@@ -50,15 +57,24 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     string oscName = prefix + "/" + mName;
     
     interface->gui()->addLabel(mName);
-    interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
-                         .oscReceiver(oscName));
     interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
                         .oscReceiver(oscName));
     interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
                          .minValue(0.01f)
                          .maxValue(2.0f)
                          .oscReceiver(oscName));
-    interface->addParam(CreateBoolParam( "texturedpoints", &mUseImageForPoints ));
+    
+    interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+                        .oscReceiver(oscName));
+    vector<string> pointTexNames;
+    for( tNamedTexture namedTex : mPointTextures )
+    {
+        pointTexNames.push_back(namedTex.first);
+    }
+    interface->addEnum(CreateEnumParam( "point_tex", (int*)(&mCurPointTexture) )
+                       .maxValue(pointTexNames.size())
+                       .oscReceiver(oscName)
+                       .isVertical(), pointTexNames);
 }
 
 void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
@@ -74,14 +90,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     particlesFbo.bindTexture(1);//vel
     particlesFbo.bindTexture(2);//info
     
-    if(mUseImageForPoints)
-    {
-        mParticleTexture1.bind(3);
-    }
-    else
-    {
-        mParticleTexture2.bind(3);
-    }
+    mPointTextures[mCurPointTexture].second.bind(3);
     
     if (audioInputHandler.hasTexture())
     {
@@ -109,14 +118,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     mShader.unbind();
     particlesFbo.unbindTexture();
     
-    if(mUseImageForPoints)
-    {
-        mParticleTexture1.unbind();
-    }
-    else
-    {
-        mParticleTexture2.unbind();
-    }
+    mPointTextures[mCurPointTexture].second.unbind();
     if (audioInputHandler.hasTexture())
     {
         audioInputHandler.getFbo().unbindTexture();

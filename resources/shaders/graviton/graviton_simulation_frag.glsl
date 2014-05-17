@@ -36,7 +36,7 @@ void main()
     if (formationStep < 1.0)
     {
         // animate to formation
-        if (formationStep < 0.01)
+        if (formationStep < 0.001)
         {
             startPos = pos;
         }

@@ -29,12 +29,14 @@ protected:
     virtual void postRender();
     
 protected:
+    // textures
+    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
+    std::vector<tNamedTexture> mPointTextures;
+    int mCurPointTexture;
+    
     // params
-    ci::gl::Texture     mParticleTexture1;
-    ci::gl::Texture     mParticleTexture2;
     float				mPointSize;
     bool				mAdditiveBlending;
-    bool                mUseImageForPoints;
     ci::ColorAf         mColor;
     bool                mAudioReactive;
 };

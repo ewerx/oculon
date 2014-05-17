@@ -67,7 +67,7 @@ void CameraController::setupInterface(Interface *interface, const std::string& s
 //                        .maxValue(10.0f));
     interface->addParam(CreateFloatParam("spin_dist", &mSpinDistance)
                         .maxValue(2000.f));
-    interface->addParam(CreateVec3fParam("spin_axis", &mSpinRate, Vec3f::zero(), Vec3f::one()*3.f));
+    interface->addParam(CreateVec3fParam("spin_axis", &mSpinRate, Vec3f::zero(), Vec3f::one()*1.f));
     interface->addParam(CreateVec3fParam("spin_up", &mSpinUp, Vec3f::zero(), Vec3f::one()));
     
     onCameraChanged();
