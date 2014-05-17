@@ -14,6 +14,9 @@
 #include "cinder/Timeline.h"
 #include "MotionBlurRenderer.h"
 #include "AudioInputHandler.h"
+#include "AudioDrawUtils.h"
+
+#include <vector>
 
 class SubScene;
 
@@ -42,7 +45,7 @@ protected:
 private:
     void drawSubScenes();
     //void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
-    void drawFft        ( std::shared_ptr<float> fftDataRef );
+    void drawSpectrum( const std::vector<float>& magSpectrum );
     
     bool setFilter();
     bool removeFilter();
@@ -59,5 +62,7 @@ private:
     std::vector<SubScene*> mSubScenes;
     
     AudioInputHandler mAudioInputHandler;
+    
+    SpectrumPlot mSpectrumPlot;
 };
 

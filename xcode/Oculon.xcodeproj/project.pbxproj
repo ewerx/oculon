@@ -122,6 +122,7 @@
 		7C4C672F181B6405003049AA /* noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4C672E181B6405003049AA /* noise256.png */; };
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
+		7C4DBFBD1927F19300FDDDC3 /* AudioDrawUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DBFBC1927F19300FDDDC3 /* AudioDrawUtils.cpp */; };
 		7C5165E11915DAAF003E94F8 /* ParticleFormation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */; };
 		7C5165E81917091B003E94F8 /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E61917091B003E94F8 /* Geometry.cpp */; };
 		7C5165EB191709D2003E94F8 /* Pentagon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E9191709D2003E94F8 /* Pentagon.cpp */; };
@@ -679,6 +680,8 @@
 		7C4C6741181C9928003049AA /* TextureShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureShaders.h; sourceTree = "<group>"; };
 		7C4C6744181CCD78003049AA /* CircleWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CircleWave.cpp; sourceTree = "<group>"; };
 		7C4C6745181CCD78003049AA /* CircleWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleWave.h; sourceTree = "<group>"; };
+		7C4DBFBB1927F19300FDDDC3 /* AudioDrawUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDrawUtils.h; sourceTree = "<group>"; };
+		7C4DBFBC1927F19300FDDDC3 /* AudioDrawUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDrawUtils.cpp; sourceTree = "<group>"; };
 		7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleFormation.cpp; path = particlesystem/ParticleFormation.cpp; sourceTree = "<group>"; };
 		7C5165E01915DAAF003E94F8 /* ParticleFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleFormation.h; path = particlesystem/ParticleFormation.h; sourceTree = "<group>"; };
 		7C5165E61917091B003E94F8 /* Geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geometry.cpp; sourceTree = "<group>"; };
@@ -2186,6 +2189,8 @@
 		7C79C98517650FD700E71F9D /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				7C4DBFBB1927F19300FDDDC3 /* AudioDrawUtils.h */,
+				7C4DBFBC1927F19300FDDDC3 /* AudioDrawUtils.cpp */,
 				7C79C98617650FD700E71F9D /* AudioInput.cpp */,
 				7C79C98717650FD700E71F9D /* AudioInput.h */,
 				7C79C98817650FD700E71F9D /* BlobTracker.cpp */,
@@ -3291,6 +3296,7 @@
 				7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */,
 				7CD666481853F678004BD521 /* ParsecStars.cpp in Sources */,
 				7C79C82717650D5F00E71F9D /* RtMidi.cpp in Sources */,
+				7C4DBFBD1927F19300FDDDC3 /* AudioDrawUtils.cpp in Sources */,
 				7C79C84D17650D5F00E71F9D /* MidiHub.cpp in Sources */,
 				7C79C84E17650D5F00E71F9D /* MidiIn.cpp in Sources */,
 				7C892493189C7C7A00AF4698 /* Lines.cpp in Sources */,

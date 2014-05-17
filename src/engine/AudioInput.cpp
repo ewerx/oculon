@@ -45,7 +45,15 @@ void AudioInput::setup()
     
 	mInputDeviceNode = ctx->createInputDeviceNode();
     
-	auto scopeFmt = audio::ScopeSpectralNode::Format().fftSize( 1024 ).windowSize( 1024 );
+    audio::Device::printDevices();
+    
+	reset();
+}
+
+void AudioInput::reset()
+{
+    auto ctx = audio::Context::master();
+    auto scopeFmt = audio::ScopeSpectralNode::Format().fftSize( 1024 ).windowSize( 1024 );
 	mScopeSpectralNode = ctx->makeNode( new audio::ScopeSpectralNode( scopeFmt ) );
     mScopeNode = ctx->makeNode( new audio::ScopeNode() );
     
@@ -64,6 +72,8 @@ void AudioInput::setup()
         mLiveTrackData[i].mMidLevel = 0.0f;
         mLiveTrackData[i].mLowLevel = 0.0f;
     }
+    
+    console() << "[audio] input source: " << mInputDeviceNode->getDevice()->getName() << endl;
 }
 
 void AudioInput::setupInterface( Interface* interface )
@@ -71,18 +81,18 @@ void AudioInput::setupInterface( Interface* interface )
     assert( interface );
     
     //iterate input devices
-    auto devices = Device::getInputDevices();
     
     string oscName;
     
     int index = 0;
-    console() << "[audio] input devices found:\n";
-	for( DeviceRef device : devices )
+    console() << "[audio] available input sources :\n";
+	for( const auto& device : Device::getInputDevices() )
     {
         oscName = "audioinput" + to_string(index);
 		console() << '\t' << device->getName() << std::endl;
-        interface->addButton(CreateTriggerParam(device->getName(), NULL)
-                             .oscReceiver("master", oscName))->registerCallback( boost::bind( &AudioInput::changeInput, this, index) );
+        interface->gui()->addLabel(device->getName());
+//        interface->addButton(CreateTriggerParam(device->getName(), NULL)
+//                             .oscReceiver("master", oscName))->registerCallback( boost::bind( &AudioInput::changeInput, this, index) );
         ++index;
 	}
     
@@ -98,22 +108,34 @@ bool AudioInput::changeInput( const int index )
     auto ctx = audio::Context::master();
     auto devices = Device::getInputDevices();
     
+    if ( mInputDeviceNode->getDevice() == devices[index] )
+    {
+        return true;
+    }
+    
+    console() << "[audio] switching to input " << index << ": " << devices[index]->getName() << endl;
+    
     mInputDeviceNode->disable();
+    mScopeNode->disconnectAll();
+    mScopeSpectralNode->disconnectAll();
     mInputDeviceNode->disconnectAll();
-    
+//
     mInputDeviceNode = ctx->createInputDeviceNode( devices[index] );
-    mInputDeviceNode >> mScopeSpectralNode;
-    
-    console() << "[audio] input switched to: " << mInputDeviceNode->getDevice()->getName() << endl;
+//    mInputDeviceNode >> mScopeSpectralNode;
+//    
+//    mInputDeviceNode->enable();
+    reset();
     
     return false;
 }
 
 void AudioInput::shutdown()
 {
-    mInputDeviceNode->disable();
-    mInputDeviceNode->disconnectAll();
-    mScopeSpectralNode->disconnectAll();
+//    mInputDeviceNode->disconnectAll();
+//    mScopeSpectralNode->disconnectAll();
+//    mScopeNode->disconnectAll();
+    
+//    mInputDeviceNode->disable();
 }
 
 // update

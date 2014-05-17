@@ -156,7 +156,7 @@ void AudioSignal::drawDebug()
     gl::setMatricesWindow( mApp->getWindowSize() );
     
     //drawWaveform( mApp->getAudioInput().getPcmBuffer() );
-    //drawFft( mApp->getAudioInput().getFftDataRef() );
+    drawSpectrum( mApp->getAudioInput().getMagSpectrum() );
     
     mAudioInputHandler.drawDebug(mApp->getWindowSize());
     
@@ -280,41 +280,23 @@ void AudioSignal::drawDebug()
 //    }
 //    gl::popMatrices();
 //}
-//
-//void AudioSignal::drawFft( std::shared_ptr<float> fftDataRef )
-//{
-//    AudioInput& audioInput = mApp->getAudioInput();
-//	float ht = mApp->getWindowHeight() / 3.0f;
-//	float bottom = mApp->getWindowHeight() - 80.f;
-//    const float width = 5.0f;
-//    const float space = width + 0.0f;
-//    
-//    gl::pushMatrices();
-//    
-//    int32_t dataSize = audioInput.getFft()->getBinSize();
-//    //float * timeData = audioInput.getFft()->getData(); // normalized -1 to +1
-//    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-//    
-//    //TODO: dropping peaks
-//    for( int i = 0; i < dataSize; i++ )
-//    {
-//        float barY = fftLogData[i].y * ht;
-//        glBegin( GL_QUADS );
-//        // bottom
-//        glColor3f( 0.25f, 0.0f, 0.0f );
-//        glVertex2f( i * space, bottom );
-//        glVertex2f( i * space + width, bottom );
-//        // top
-//        glColor3f( 1.0f, 0.25f, 0.0f );
-//        glVertex2f( i * space + width, bottom - barY );
-//        glVertex2f( i * space, bottom - barY );
-//        glEnd();
-//    }
-//    
-//    //console() << "min: " << min << " max: " << max << std::endl;
-//    
-//    gl::popMatrices();
-//}
+
+void AudioSignal::drawSpectrum( const vector<float>& magSpectrum )
+{
+	float height = mApp->getWindowHeight() / 3.0f;
+	float bottom = mApp->getWindowHeight() - 80.f;
+    float top = bottom - height;
+    float left = 80.0f;
+    float width = mApp->getWindowWidth() - left*2.0f;
+    
+    gl::pushMatrices();
+    
+    //gl::setMatricesWindow( getWindowSize() );
+    mSpectrumPlot.setBounds( Rectf( left, height, width, bottom ) );
+    mSpectrumPlot.draw( magSpectrum );
+    
+    gl::popMatrices();
+}
 
 bool AudioSignal::setFilter()
 {

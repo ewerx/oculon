@@ -28,6 +28,7 @@ public:
     ~AudioInput();
     
     void setup();
+    void reset();
     void shutdown();
     void update();
     
