@@ -68,7 +68,7 @@ void Graviton::setup()
     mParticleController.addRenderer( new LinesRenderer() );
     
     mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
-    mAudioInputHandler.setup(false);
+    mAudioInputHandler.setup(true);
     
     reset();
 }
@@ -602,7 +602,7 @@ void Graviton::draw()
     }
     else
     {
-        mParticleController.draw(mApp->getViewportSize(), getCamera(), mApp->getAudioInputHandler());
+        mParticleController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
     }
     gl::popMatrices();
 }
