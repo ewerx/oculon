@@ -195,6 +195,8 @@ void Corona::setup()
     
     mCameraController.setup(mApp, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
     mAudioInputHandler.setup();
+    
+    mTimeController.setTimeScaleMultiplier(60.0f);
 }
 
 // ----------------------------------------------------------------
@@ -500,7 +502,7 @@ void Corona::update(double dt)
 	mCameraController.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
-    double simDt = 60.0f * mTimeController.getDelta();
+    float simDt = mTimeController.getDelta();
     
     if (mRadiusAudioResponseBand != AudioInputHandler::BAND_NONE)
     {

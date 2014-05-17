@@ -31,17 +31,19 @@ public:
     void reset();
     void update(double dt);
 
-    TriggerSignal& getTickSignal()      { return mTickSignal; }
-    double getElapsedSeconds() const    { return mElapsedSeconds; }
-    double getDelta() const             { return mDelta; }
-    bool getTick()                      { return mTick; }
-    void setTimeScale(float scale)      { mTimeScale = scale; }
-    void setTickDuration(float seconds) { mTickDuration = seconds; }
+    TriggerSignal& getTickSignal()              { return mTickSignal; }
+    double getElapsedSeconds() const            { return mElapsedSeconds; }
+    double getDelta() const                     { return mDelta; }
+    bool getTick()                              { return mTick; }
+    void setTimeScale(float scale)              { mTimeScale = scale; }
+    void setTimeScaleMultiplier(float scale)    { mTimeScaleMultiplier = scale; }
+    void setTickDuration(float seconds)         { mTickDuration = seconds; }
     
 private:
     double mElapsedSeconds;
     double mDelta;
     float mTimeScale;
+    float mTimeScaleMultiplier;
     
     // tick
     bool mTick;
