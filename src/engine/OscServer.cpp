@@ -8,14 +8,12 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/app/App.h"
-#include "cinder/audio/FftProcessor.h"
 #include "OscServer.h"
 #include <iostream>
 #include <vector>
 
 using namespace ci;
 using namespace ci::app;
-using namespace ci::audio;
 
 // constructor
 //

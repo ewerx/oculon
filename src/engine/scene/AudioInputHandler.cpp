@@ -145,11 +145,6 @@ vector<string> AudioInputHandler::getBandNames()
 
 void AudioInputHandler::update(double dt, AudioInput& audioInput)
 {
-    if (audioInput.getFft() == NULL)
-    {
-        return;
-    }
-    
     if (mInputSource > SOURCE_AUDIO)
     {
         float values[BAND_COUNT];
@@ -184,8 +179,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
         return;
     }
     
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+    vector<float> magSpectrum = audioInput.getMagSpectrum();
     
     //TODO: calc average in the main loop
     //int lowPassBand = (int)(mLowPassFilter * KISS_DEFAULT_DATASIZE);
@@ -193,9 +187,9 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     
     if( mFftFalloff.size() == 0 )
     {
-        for( int i=0; i< dataSize; ++i )
+        for( int band = 0; band < magSpectrum.size(); ++band )
         {
-            mFftFalloff.push_back( tFftValue( i, 0.0f ) );
+            mFftFalloff.push_back( tFftValue( band, 0.0f ) );
         }
     }
     else
@@ -204,13 +198,13 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             mRandomSeed = Rand::randInt();
         }
         Rand randIndex(mRandomSeed);
-        for( int index=0; index< dataSize; ++index )
+        for( int index=0; index< magSpectrum.size(); ++index )
         {
-            int32_t bandIndex = mRandomSignal ? randIndex.nextInt(dataSize) : index;
+            int32_t bandIndex = mRandomSignal ? randIndex.nextInt(magSpectrum.size()) : index;
             
-            float falloff = mFalloffByFreq ? (mFalloffTime * (1.0f - bandIndex / dataSize)) : mFalloffTime;
+            float falloff = mFalloffByFreq ? (mFalloffTime * (1.0f - bandIndex / magSpectrum.size())) : mFalloffTime;
             
-            float value = mLinearScale ? (fftLogData[bandIndex].y * (1+bandIndex)) : fftLogData[bandIndex].y;
+            float value = magSpectrum[bandIndex];
             value *= mGain;
             
             if (value > mFftFalloff[index].mValue)
@@ -230,7 +224,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     
     if (mAudioFboEnabled)
     {
-        float * timeData = audioInput.getFft()->getData(); // normalized -1 to +1
+        audio::Buffer buffer = audioInput.getBuffer();
         Surface32f fftSurface = Surface32f( mAudioFbo.getTexture() );
         
         Surface32f::Iter it = fftSurface.getIter();
@@ -249,13 +243,16 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
                 }
                 else
                 {
-                    float value = timeData[col] * mGain;
-                    it.r() = 0.5f + 0.5f * value;
-                    it.g() = 0.5f + 0.5f * value;
-                    it.b() = 0.5f + 0.5f * value;
-                    it.a() = 1.0f;
+                    if (col < buffer.getNumChannels())
+                    {
+                        float value = buffer.getChannel(0)[col] * mGain;
+                        it.r() = 0.5f + 0.5f * value;
+                        it.g() = 0.5f + 0.5f * value;
+                        it.b() = 0.5f + 0.5f * value;
+                        it.a() = 1.0f;
+                    }
                 }
-                
+            
                 ++col;
             }
             ++row;

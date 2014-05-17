@@ -9,12 +9,16 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/app/App.h"
-#include "cinder/audio/FftProcessor.h"
+#include "cinder/audio/Context.h"
+#include "cinder/audio/Device.h"
+#include "cinder/audio/ScopeNode.h"
+#include "cinder/audio/Utilities.h"
 #include "AudioInput.h"
 #include <iostream>
 #include <vector>
 #include <boost/bind.hpp>
 
+using namespace std;
 using namespace ci;
 using namespace ci::app;
 using namespace ci::audio;
@@ -22,10 +26,7 @@ using namespace ci::audio;
 // constructor
 //
 AudioInput::AudioInput()
-: mInput(NULL)
-, mFftBandCount(FftProcessor::DEFAULT_BAND_COUNT)
-, mFftLogPlot(KISS_DEFAULT_DATASIZE)
-, mGain(1.0f)
+: mGain(1.0f)
 {
 }
 
@@ -33,7 +34,6 @@ AudioInput::AudioInput()
 //
 AudioInput::~AudioInput()
 {
-    delete mInput;
 }
 
 // init
@@ -41,7 +41,19 @@ AudioInput::~AudioInput()
 void AudioInput::setup()
 {
 	//initialize the audio Input, using the default input device
-	mInput = new audio::Input( /*devices.front()*/ );
+	auto ctx = audio::Context::master();
+    
+	mInputDeviceNode = ctx->createInputDeviceNode();
+    
+	auto scopeFmt = audio::ScopeSpectralNode::Format().fftSize( 1024 ).windowSize( 1024 );
+	mScopeSpectralNode = ctx->makeNode( new audio::ScopeSpectralNode( scopeFmt ) );
+    mScopeNode = ctx->makeNode( new audio::ScopeNode() );
+    
+    mInputDeviceNode >> mScopeSpectralNode;
+    mInputDeviceNode >> mScopeNode;
+    
+    mInputDeviceNode->enable();
+	ctx->enable();
     
     mFftInit = false;
     mGain = 1.0f;
@@ -59,24 +71,23 @@ void AudioInput::setupInterface( Interface* interface )
     assert( interface );
     
     //iterate input devices
-	const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
+    auto devices = Device::getInputDevices();
     
-    char oscCmdBuf[128];
+    string oscName;
     
     int index = 0;
     console() << "[audio] input devices found:\n";
-	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin();
-        iter != devices.end(); ++iter )
+	for( DeviceRef device : devices )
     {
-        snprintf(oscCmdBuf, 128, "audioinput%d", index);
-		console() << '\t' << (*iter)->getName() << std::endl;
-        interface->addButton(CreateTriggerParam((*iter)->getName(), NULL)
-                             .oscReceiver("master", oscCmdBuf))->registerCallback( boost::bind( &AudioInput::changeInput, this, index) );
+        oscName = "audioinput" + to_string(index);
+		console() << '\t' << device->getName() << std::endl;
+        interface->addButton(CreateTriggerParam(device->getName(), NULL)
+                             .oscReceiver("master", oscName))->registerCallback( boost::bind( &AudioInput::changeInput, this, index) );
         ++index;
 	}
     
     interface->addParam(CreateFloatParam("Global Input Gain", &mGain)
-                        .maxValue(50.0f)
+                        .maxValue(10.0f)
                         .oscReceiver("master", "gain")
                         .sendFeedback()
                         .midiInput(0,2,23));
@@ -84,126 +95,49 @@ void AudioInput::setupInterface( Interface* interface )
 
 bool AudioInput::changeInput( const int index )
 {
-    const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
+    auto ctx = audio::Context::master();
+    auto devices = Device::getInputDevices();
     
-    int i = 0;
-    console() << "[audio] input devices found:\n";
-	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin();
-        iter != devices.end(); ++iter )
-    {
-        if( i == index )
-        {
-            if( mInput )
-            {
-                mInput->stop();
-                delete mInput;
-                mInput = NULL;
-            }
-            mInput = new audio::Input( *iter );
-            //mFftInit = false;
-            break;
-        }
-        i++;
-    }
+    mInputDeviceNode->disable();
+    mInputDeviceNode->disconnectAll();
+    
+    mInputDeviceNode = ctx->createInputDeviceNode( devices[index] );
+    mInputDeviceNode >> mScopeSpectralNode;
+    
+    console() << "[audio] input switched to: " << mInputDeviceNode->getDevice()->getName() << endl;
     
     return false;
 }
 
 void AudioInput::shutdown()
 {
-    if( mInput )
-    {
-        mInput->stop();
-    }
+    mInputDeviceNode->disable();
+    mInputDeviceNode->disconnectAll();
+    mScopeSpectralNode->disconnectAll();
 }
 
 // update
 //
 void AudioInput::update()
 {
-    if( !mInput)
-    {
-        return;
-    }
     
-    if( !mInput->isCapturing() )
-    {
-        //tell the input to start capturing audio
-        mInput->start();
-        console() << "[audio] capturing input from device: " << mInput->getDefaultDevice()->getName() << std::endl;
-    }
-    else
-    {
-        mPcmBuffer = mInput->getPcmBuffer();
-        
-        if( !mPcmBuffer ) 
-        {
-            console() << "[audio] no pcm buffer\n";
-            return;
-        }
-        
-        //KISS
-        {
-            if ( mPcmBuffer->getInterleavedData() )
-            {
-                
-                // Get sample count
-                uint32_t sampleCount = mPcmBuffer->getInterleavedData()->mSampleCount;
-                if ( sampleCount > 0 ) {
-                    
-                    // Kiss is not initialized
-                    if ( !mFftInit ) 
-                    {
-                        console() << "[audio] KISS initialized (" << sampleCount << " bands)" << std::endl;
-                        // Initialize analyzer
-                        mFftInit = true;
-                        mFft = Kiss::create( /*sampleCount*/ );
-                        
-                        for( int i=0; i < sampleCount; ++i )
-                        {
-                            mFftLogPlot.push_back(Vec2f::zero());
-                        }
-                    }
-                    
-                    // Analyze data
-                    if (mPcmBuffer->getInterleavedData()->mData != 0) 
-                    {
-                        mInputData = mPcmBuffer->getInterleavedData()->mData;
-                        mInputSize = mPcmBuffer->getInterleavedData()->mSampleCount;
-                        mFft->setData( mInputData );
-                    }
-                    
-                    analyzeKissFft();
-
-                    
-                }
-            }
-        }
-        
-        if( mPcmBuffer->getSampleCount() > 0 )
-        {
-            //presently FFT only works on OS X, not iOS or Windows
-            //mFftDataRef = audio::calculateFft( mPcmBuffer->getInterleavedData(), mFftBandCount );
-            mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( CHANNEL_FRONT_LEFT ), mFftBandCount );
-        }
-    }
 }
 
-void AudioInput::analyzeKissFft()
-{
-    // Get data
-    float * freqData = mFft->getAmplitude();
-    int32_t dataSize = mFft->getBinSize();
-    
-    // Iterate through data
-    for (int32_t i = 0; i < dataSize; i++) 
-    {
-        // Do logarithmic plotting for frequency domain
-        double mLogSize = log((double)dataSize);
-        mFftLogPlot[i].x = (float)(log((double)i) / mLogSize) * (double)dataSize;
-        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f) * mGain;
-    }
-}
+//void AudioInput::analyzeKissFft()
+//{
+//    // Get data
+//    float * freqData = mFft->getAmplitude();
+//    int32_t dataSize = mFft->getBinSize();
+//    
+//    // Iterate through data
+//    for (int32_t i = 0; i < dataSize; i++) 
+//    {
+//        // Do logarithmic plotting for frequency domain
+//        double mLogSize = log((double)dataSize);
+//        mFftLogPlot[i].x = (float)(log((double)i) / mLogSize) * (double)dataSize;
+//        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f) * mGain;
+//    }
+//}
 
 float AudioInput::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
 {

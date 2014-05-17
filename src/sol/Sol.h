@@ -14,7 +14,6 @@
 #include "SolFrame.h"
 
 #include "cinder/Cinder.h"
-#include "cinder/audio/Input.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 

@@ -98,8 +98,8 @@ void Triangle::draw()
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
     //float * freqData = audioInput.getFft()->getAmplitude();
     //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+//    int32_t dataSize = audioInput.getFft()->getBinSize();
+//    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
     // dimensions
     const float windowHeight = mParentScene->getApp()->getViewportHeight();

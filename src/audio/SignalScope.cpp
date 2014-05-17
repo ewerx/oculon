@@ -127,21 +127,21 @@ void SignalScope::update(double dt)
     
     // Get data
     //const float * timeData = audioInput.getFft()->getData();
-    const float * amplitude = audioInput.getFft()->getAmplitude();
-    const int32_t	binSize = audioInput.getFft()->getBinSize();
-    const float *	imaginary = audioInput.getFft()->getImaginary();
-    //const float *	phase = audioInput.getFft()->getPhase();
-    const float *	real = audioInput.getFft()->getReal();
-    const int32_t dataSize = audioInput.getFft()->getBinSize();
+    vector<float> amplitude = audioInput.getMagSpectrum();
+    const int32_t	binCount = audioInput.getFftBandCount();
+//    const float *	imaginary = audioInput.getFft()->getImaginary();
+//    //const float *	phase = audioInput.getFft()->getPhase();
+//    const float *	real = audioInput.getFft()->getReal();
+//    const int32_t dataSize = audioInput.getFft()->getBinSize();
     //const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
-    assert( binSize < NUM_POINTS );
+//    assert( binSize < NUM_POINTS );
     
     // Get dimensions
     const float windowHeight = mParentScene->getApp()->getViewportHeight();
     const float windowWidth = mParentScene->getApp()->getViewportWidth();
     
-    const float scaleX = mLineWidth / (float)dataSize;
+    const float scaleX = mLineWidth / (float)binCount;
     const float xOffset = (windowWidth - mLineWidth) / 2.0f; 
     
     const float gap = windowHeight / (mNumLines+1);
@@ -152,7 +152,7 @@ void SignalScope::update(double dt)
     
     
     Rand indexRand;
-    float adjacentY[mNumLines][binSize];
+    float adjacentY[mNumLines][binCount];
     //const float threshold = 0.0000015f;
     
     for( int lineIndex=0; lineIndex < mNumLines; ++lineIndex )
@@ -161,20 +161,20 @@ void SignalScope::update(double dt)
         
         int signalType = Rand::randInt(SIGNAL_COUNT);
         
-        int center = (binSize/2) + mCenterBiasRange * Rand::randFloat(-1.0f,1.0f);
+        int center = (binCount/2) + mCenterBiasRange * Rand::randFloat(-1.0f,1.0f);
         
         float falloff = Rand::randFloat(mFallOffMin,mFallOffMax);
         float horizSmoothing = Rand::randFloat(mHorizSmoothingMin,mHorizSmoothingMax);
         
         indexRand.seed(lineIndex);
-        for( int32_t i=0; i < binSize; ++i ) 
+        for( int32_t i=0; i < binCount; ++i )
         {
             // center bias
             float centerRatio = (center - math<float>::abs( center - i )) / center;
             float centerBias = easeInExpo(centerRatio);
             float scaleFactor = centerBias * mSignalScale;
             
-            int bandIndex = mRandomizeSignal ? Rand::randInt(binSize) : indexRand.nextInt(binSize);
+            int bandIndex = mRandomizeSignal ? Rand::randInt(binCount) : indexRand.nextInt(binCount);
             
             float signal = 0.0f;
             switch(signalType)
@@ -182,18 +182,18 @@ void SignalScope::update(double dt)
                 case SIGNAL_AMPLITUDE:
                     signal = amplitude[bandIndex];
                     break;
-                case SIGNAL_IMAGINARY:
-                    signal = imaginary[bandIndex];
-                    break;
-                case SIGNAL_REAL:
-                    signal = real[bandIndex];
-                    break;
+//                case SIGNAL_IMAGINARY:
+//                    signal = imaginary[bandIndex];
+//                    break;
+//                case SIGNAL_REAL:
+//                    signal = real[bandIndex];
+//                    break;
             }
             
             float y = signal * scaleFactor * scaleY;
             
             float min = 0.0f;
-            if( i > 0 && i < binSize-1)
+            if( i > 0 && i < binCount-1)
             {
                 min = mLines[lineIndex].mValue[i] * falloff;
                 
@@ -207,7 +207,7 @@ void SignalScope::update(double dt)
             mLines[lineIndex].mValue[i] = y;
         }
         
-        for( int32_t i=0; i < binSize; ++i ) 
+        for( int32_t i=0; i < binCount; ++i ) 
         {
             // smoothen height diff of point to the right
             float damp = mLines[lineIndex].mValue[i+1] * horizSmoothing;

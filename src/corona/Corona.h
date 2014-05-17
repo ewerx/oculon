@@ -21,7 +21,6 @@
 #include "AudioInputHandler.h"
 
 #include "cinder/Cinder.h"
-#include "cinder/audio/Input.h"
 #include "cinder/Timeline.h"
 #include "cinder/Text.h"
 #include "cinder/Font.h"

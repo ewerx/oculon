@@ -15,7 +15,6 @@
 #include "Quake.h"
 
 #include "cinder/Cinder.h"
-#include "cinder/audio/Input.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 
@@ -30,7 +29,7 @@ class SineWave
 public:
 	SineWave( uint32_t freq, float duration );
 	~SineWave() {}
-	void getData( uint64_t inSampleOffset, uint32_t inSampleCount, ci::audio::Buffer32f *ioBuffer );
+	//void getData( uint64_t inSampleOffset, uint32_t inSampleCount, ci::audio::Buffer32f *ioBuffer );
 private:
 	uint32_t mFreq;
 	float mDuration;

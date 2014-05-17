@@ -17,10 +17,6 @@
 #include "Resources.h"
 #include "Binned.h"
 
-#include "cinder/audio/Output.h"
-#include "cinder/audio/Callback.h"
-#include "cinder/audio/PcmBuffer.h"
-
 #include "cinder/Rand.h"
 
 
@@ -317,12 +313,12 @@ bool Tectonic::triggerNextQuake()
                 }
             }
             
-            if( mGenerateAudio )
-            {
-                const float freqMultiplier = 1.0f - (mQuakes[mCurrentIndex]->getEventData()->getMag() / 50000.0f);
-                uint32_t freq = 15 + freqMultiplier * 500;
-                audio::Output::play( audio::createCallback( new SineWave( freq, duration ), &SineWave::getData, true ) );
-            }
+//            if( mGenerateAudio )
+//            {
+//                const float freqMultiplier = 1.0f - (mQuakes[mCurrentIndex]->getEventData()->getMag() / 50000.0f);
+//                uint32_t freq = 15 + freqMultiplier * 500;
+//                audio::Output::play( audio::createCallback( new SineWave( freq, duration ), &SineWave::getData, true ) );
+//            }
         }
     }
     
@@ -515,29 +511,29 @@ bool Tectonic::changeDataSource()
 // ----------------------------------------------------------------
 //
 
-SineWave::SineWave( uint32_t freq, float duration )
-: mFreq( freq ), mDuration( duration )
-{
-}
-
-// ----------------------------------------------------------------
+//SineWave::SineWave( uint32_t freq, float duration )
+//: mFreq( freq ), mDuration( duration )
+//{
+//}
 //
-void SineWave::getData( uint64_t inSampleOffset, uint32_t inSampleCount, ci::audio::Buffer32f *ioBuffer )
-{
-	if( ( inSampleOffset / 44100.0f ) > mDuration ) {
-		ioBuffer->mDataByteSize = 0;
-		return;
-	}
-	
-	uint64_t idx = inSampleOffset;
-	
-	for( int  i = 0; i < inSampleCount; i++ ) {
-		
-		float val = ci::math<float>::sin( idx * ( mFreq / 44100.0f ) * 2.0f * M_PI );
-		
-		ioBuffer->mData[i*ioBuffer->mNumberChannels] = val;
-		ioBuffer->mData[i*ioBuffer->mNumberChannels + 1] = val;
-		idx++;
-	}
-}
+//// ----------------------------------------------------------------
+////
+//void SineWave::getData( uint64_t inSampleOffset, uint32_t inSampleCount, ci::audio::Buffer32f *ioBuffer )
+//{
+//	if( ( inSampleOffset / 44100.0f ) > mDuration ) {
+//		ioBuffer->mDataByteSize = 0;
+//		return;
+//	}
+//	
+//	uint64_t idx = inSampleOffset;
+//	
+//	for( int  i = 0; i < inSampleCount; i++ ) {
+//		
+//		float val = ci::math<float>::sin( idx * ( mFreq / 44100.0f ) * 2.0f * M_PI );
+//		
+//		ioBuffer->mData[i*ioBuffer->mNumberChannels] = val;
+//		ioBuffer->mData[i*ioBuffer->mNumberChannels + 1] = val;
+//		idx++;
+//	}
+//}
 

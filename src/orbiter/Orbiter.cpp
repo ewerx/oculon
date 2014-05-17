@@ -817,43 +817,43 @@ void Orbiter::drawHud()
 
 void Orbiter::drawHudSpectrumAnalyzer(float left, float top, float width, float height)
 {
-    AudioInput& audioInput = mApp->getAudioInput();
-    //int32_t bandCount = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    uint16_t bandsToShow = math<int>::max( 200, (width / 2.0f) );
-    
-    const float gap = 1.0f;
-    const float barWidth = width / (bandsToShow * (1.0f + gap));
-    const float bumpUp = 1.0f;
-    const float space = gap + barWidth;
-    
-    gl::pushMatrices();
-    glTranslatef(left,top,0.0f);
-    
-    for( int i = 0; i < bandsToShow; i++ ) 
-    {
-        if( (i * space + barWidth) > width )
-            break;
-        
-        float barY = fftLogData[i].y * height * mApp->getAudioInputHandler().getGain();
-        barY = math<float>::min( barY, height );
-        glBegin( GL_QUADS );
-        glColor3f( 0.8f,0.8f,0.8f );
-        glVertex2f( i * space, height-3.f );
-        glVertex2f( i * space + barWidth, height-bumpUp );
-        glColor3f( 1.0f, 1.0f, 1.0f );
-        glVertex2f( i * space + barWidth, height - barY-bumpUp );
-        glVertex2f( i * space, height - barY-3.f );
-        glEnd();
-    }
-    
-    float shade = 0.6f;
-    gl::color( ColorA(shade,shade,shade,0.75f) );
-    glLineWidth(2.0f);
-    gl::drawStrokedRect(Rectf(0.0f, 0.0f, width, height));
-    
-    gl::popMatrices();
+//    AudioInput& audioInput = mApp->getAudioInput();
+//    //int32_t bandCount = audioInput.getFft()->getBinSize();
+//    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+//    
+//    uint16_t bandsToShow = math<int>::max( 200, (width / 2.0f) );
+//    
+//    const float gap = 1.0f;
+//    const float barWidth = width / (bandsToShow * (1.0f + gap));
+//    const float bumpUp = 1.0f;
+//    const float space = gap + barWidth;
+//    
+//    gl::pushMatrices();
+//    glTranslatef(left,top,0.0f);
+//    
+//    for( int i = 0; i < bandsToShow; i++ ) 
+//    {
+//        if( (i * space + barWidth) > width )
+//            break;
+//        
+//        float barY = fftLogData[i].y * height * mApp->getAudioInputHandler().getGain();
+//        barY = math<float>::min( barY, height );
+//        glBegin( GL_QUADS );
+//        glColor3f( 0.8f,0.8f,0.8f );
+//        glVertex2f( i * space, height-3.f );
+//        glVertex2f( i * space + barWidth, height-bumpUp );
+//        glColor3f( 1.0f, 1.0f, 1.0f );
+//        glVertex2f( i * space + barWidth, height - barY-bumpUp );
+//        glVertex2f( i * space, height - barY-3.f );
+//        glEnd();
+//    }
+//    
+//    float shade = 0.6f;
+//    gl::color( ColorA(shade,shade,shade,0.75f) );
+//    glLineWidth(2.0f);
+//    gl::drawStrokedRect(Rectf(0.0f, 0.0f, width, height));
+//    
+//    gl::popMatrices();
 }
 
 const Camera& Orbiter::getCamera()

@@ -10,7 +10,6 @@
 #pragma once
 
 #include "cinder/Cinder.h"
-#include "cinder/audio/Input.h"
 #include "Scene.h"
 #include "cinder/Timeline.h"
 #include "MotionBlurRenderer.h"
@@ -42,7 +41,7 @@ protected:
     
 private:
     void drawSubScenes();
-    void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
+    //void drawWaveform   ( ci::audio::PcmBuffer32fRef pcmBufferRef );
     void drawFft        ( std::shared_ptr<float> fftDataRef );
     
     bool setFilter();

@@ -181,8 +181,8 @@ void Circles::draw()
     AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
     //float * freqData = audioInput.getFft()->getAmplitude();
     //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+//    int32_t dataSize = audioInput.getFft()->getBinSize();
+//    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
     
     // dimensions
     const float windowHeight = mParentScene->getApp()->getViewportHeight();
@@ -236,36 +236,36 @@ void Circles::draw()
                 mCircles[col][row].mPos.y = 0.0f;
             }
             
-            int fftIndex = 0;
-            if( 1 ) // random signal - HACK
-            {
-                fftIndex = math<int>::max(2,Rand::randInt(dataSize));
-            }
-            else
-            {
-                fftIndex = math<int>::abs(midCol-col) + 2;
-            }
-            float falloff = mFftFalloff ? (mFalloff * (1.0f - fftIndex / dataSize)) : mFalloff;
-            
-            float radius = math<float>::max(mBaseRadius * mMinRadiusFactor,fftLogData[fftIndex].y * maxRadius * (1+fftIndex * mSignalScale));
-            radius = math<float>::min(radius, maxRadius * overlapFactor);
-            
-            if (radius > mCircles[col][row].mRadius) {
-                mCircles[col][row].mRadius = radius;
-                timeline().apply( &mCircles[col][row].mRadius, 0.0f, falloff, getFalloffFunction() );
-            }
+//            int fftIndex = 0;
+//            if( 1 ) // random signal - HACK
+//            {
+//                fftIndex = math<int>::max(2,Rand::randInt(dataSize));
+//            }
+//            else
+//            {
+//                fftIndex = math<int>::abs(midCol-col) + 2;
+//            }
+//            float falloff = mFftFalloff ? (mFalloff * (1.0f - fftIndex / dataSize)) : mFalloff;
+//            
+//            float radius = math<float>::max(mBaseRadius * mMinRadiusFactor,fftLogData[fftIndex].y * maxRadius * (1+fftIndex * mSignalScale));
+//            radius = math<float>::min(radius, maxRadius * overlapFactor);
+//            
+//            if (radius > mCircles[col][row].mRadius) {
+//                mCircles[col][row].mRadius = radius;
+//                timeline().apply( &mCircles[col][row].mRadius, 0.0f, falloff, getFalloffFunction() );
+//            }
             
             float alpha = mColorPrimary.a;
             
-            if (mAlphaByAudio)
-            {
-                alpha = math<float>::max( mColorPrimary.a, (radius-mBaseRadius) / (maxRadius*overlapFactor-mBaseRadius) );
-                if (mCircles[col][row].mAlpha < alpha )
-                {
-                    mCircles[col][row].mAlpha = alpha;
-                    timeline().apply( &mCircles[col][row].mAlpha, 0.0f, falloff, getFalloffFunction() );
-                }
-            }
+//            if (mAlphaByAudio)
+//            {
+//                alpha = math<float>::max( mColorPrimary.a, (radius-mBaseRadius) / (maxRadius*overlapFactor-mBaseRadius) );
+//                if (mCircles[col][row].mAlpha < alpha )
+//                {
+//                    mCircles[col][row].mAlpha = alpha;
+//                    timeline().apply( &mCircles[col][row].mAlpha, 0.0f, falloff, getFalloffFunction() );
+//                }
+//            }
             
             gl::color( mColorPrimary.r, mColorPrimary.g, mColorPrimary.b, mCircles[col][row].mAlpha );
             

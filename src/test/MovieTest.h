@@ -12,7 +12,6 @@
 
 #include <vector>
 #include "cinder/Cinder.h"
-#include "cinder/audio/Input.h"
 #include "Scene.h"
 #include "MoviePlayer.h"
 

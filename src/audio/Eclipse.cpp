@@ -345,27 +345,27 @@ void Eclipse::drawRects()
 
 float Eclipse::getThicknessValue(const int baseIndex)
 {
-    AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
-    const float* amplitude = audioInput.getFft()->getAmplitude();
-    const int32_t binSize = audioInput.getFft()->getBinSize();
-    const int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    const int maxIndex = mUseFftData ? dataSize : binSize;
-    
-    const float maxThickness = ( mMode == MODE_LINES ) ? 5.0f : mMaxThickness;
+//    AudioInput& audioInput = mParentScene->getApp()->getAudioInput();
+//    const float* amplitude = audioInput.getFft()->getAmplitude();
+//    const int32_t binSize = audioInput.getFft()->getBinSize();
+//    const int32_t dataSize = audioInput.getFft()->getBinSize();
+//    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+//    
+//    const int maxIndex = mUseFftData ? dataSize : binSize;
+//    
+//    const float maxThickness = ( mMode == MODE_LINES ) ? 5.0f : mMaxThickness;
     
     float thickness = 0.0f;
-    int index = mRandomizeSignal ? Rand::randInt(maxIndex) : baseIndex;
-    if( mUseFftData )
-    {
-        index = math<int>::max(2,index);
-        thickness = fftLogData[index].y * maxThickness * (1.0f + index * mSignalScale);
-    }
-    else
-    {
-        thickness = amplitude[index] * maxThickness * (1.0f + index * mSignalScale);
-    }
+//    int index = mRandomizeSignal ? Rand::randInt(maxIndex) : baseIndex;
+//    if( mUseFftData )
+//    {
+//        index = math<int>::max(2,index);
+//        thickness = fftLogData[index].y * maxThickness * (1.0f + index * mSignalScale);
+//    }
+//    else
+//    {
+//        thickness = amplitude[index] * maxThickness * (1.0f + index * mSignalScale);
+//    }
     
     return thickness;
 }

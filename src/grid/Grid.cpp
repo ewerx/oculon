@@ -402,9 +402,9 @@ void Grid::updatePixels()
                 value = mPixels[row-1][col].mValue;
             }
             
-            mPixels[row][col].mValue = value;
-            float freq = (float)(fftValue.mBandIndex) / (float)(mApp->getAudioInput().getFft()->getBinSize());
-            mPixels[row][col].mFreq = freq;
+//            mPixels[row][col].mValue = value;
+//            float freq = (float)(fftValue.mBandIndex) / (float)(mApp->getAudioInput().getFft()->getBinSize());
+//            mPixels[row][col].mFreq = freq;
 
             if (mGroupCols == 0 || ((col+1) % mGroupCols == 0))
             {

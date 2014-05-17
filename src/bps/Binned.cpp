@@ -743,9 +743,11 @@ void Binned::updateAudioResponse()
         return;
     }
     
-    float * freqData = audioInput.getFft()->getAmplitude();
+    //float * freqData = audioInput.getFft()->getAmplitude();
     //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
+    int32_t dataSize = audioInput.getFftBandCount();
+    
+    vector<float> freqData = audioInput.getMagSpectrum();
     
     const float width = mApp->getViewportWidth();
     const float height = mApp->getViewportHeight();

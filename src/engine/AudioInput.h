@@ -11,7 +11,7 @@
 #define __AUDIOINPUT_H__
 
 #include "cinder/Cinder.h"
-#include "cinder/audio/Input.h"
+#include "cinder/audio/ScopeNode.h"
 #include "cinder/Vector.h"
 #include "KissFFT.h"
 #include "Interface.h"
@@ -32,16 +32,19 @@ public:
     void update();
     
     // accessors
-    ci::audio::PcmBuffer32fRef getPcmBuffer()   { return mPcmBuffer; }
+    //ci::audio::PcmBuffer32fRef getPcmBuffer()   { return mPcmBuffer; }
     std::shared_ptr<float> getFftDataRef()  { return mFftDataRef; }
     
-    unsigned int getFftBandCount() const { return mFftBandCount; }
-    void setFftBandCount(const unsigned int count) { mFftBandCount = count; }
+    // TODO: rename
+    unsigned int getFftBandCount() const { return mScopeSpectralNode->getNumBins(); }
     
-    KissRef getFft() { return mFft; }
-    FftLogPlot::const_iterator   fftPlotBegin() const     { return mFftLogPlot.begin(); }
-    FftLogPlot::const_iterator   fftPlotEnd() const       { return mFftLogPlot.end(); }
-    const FftLogPlot& getFftLogData() const { return mFftLogPlot; }
+//    KissRef getFft() { return mFft; }
+//    FftLogPlot::const_iterator   fftPlotBegin() const     { return mFftLogPlot.begin(); }
+//    FftLogPlot::const_iterator   fftPlotEnd() const       { return mFftLogPlot.end(); }
+//    const FftLogPlot& getFftLogData() const { return mFftLogPlot; }
+    
+    const std::vector<float>& getMagSpectrum()              { return mScopeSpectralNode->getMagSpectrum(); }
+    const ci::audio::Buffer& getBuffer() { return mScopeNode->getBuffer(); }
     
     float getAverageVolumeByFrequencyRange(const float minRatio =0.0f, const float maxRatio =1.0f);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
@@ -75,8 +78,11 @@ public:
 private:
     void analyzeKissFft();
     
-    ci::audio::Input* mInput;
-    ci::audio::PcmBuffer32fRef mPcmBuffer;
+    //ci::audio::Input* mInput;
+    //ci::audio::PcmBuffer32fRef mPcmBuffer;
+    ci::audio::InputDeviceNodeRef	mInputDeviceNode;
+    ci::audio::ScopeNodeRef         mScopeNode;
+    ci::audio::ScopeSpectralNodeRef	mScopeSpectralNode;
     
     std::shared_ptr<float> mFftDataRef;
     unsigned int mFftBandCount;

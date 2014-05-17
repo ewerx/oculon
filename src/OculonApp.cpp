@@ -60,7 +60,6 @@
 
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Fbo.h"
-#include "cinder/audio/Input.h"
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
 #include "cinder/Filesystem.h"

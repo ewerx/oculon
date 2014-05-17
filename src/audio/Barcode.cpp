@@ -49,6 +49,7 @@ void Barcode::setup()
     mAlphaByFft = true;
     
     mPositionMode = POSITION_SHIFT_RANDOM;
+    mWidthMode = WIDTH_AUDIO_FREQ;
     
     mNumBars = 1;
     mBarGap = 0;

@@ -399,89 +399,90 @@ bool Terrain::updateStaticCamPos()
 
 void Terrain::updateAudioResponse()
 {
-    AudioInput& audioInput = mApp->getAudioInput();
-	
-    // Get data
-    //float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFft()->getBinSize();
-    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
-    
-    if( mFftFalloff.size() == 0 )
-    {
-        for( int i=0; i< dataSize; ++i )
-        {
-            mFftFalloff.push_back( fftLogData[i].y );
-        }
-    }
-    
-    int32_t row = mAudioRowShift;
-    
-    Rand randIndex(0);
-	Surface32f fftSurface( mAudioFbo.getTexture() );
-	Surface32f::Iter it = fftSurface.getIter();
-    int32_t index = 0;
-	while( it.line() )
-    {
-        //int32_t index = row * mAudioFboDim;
-		while( it.pixel() )
-        {
-            int32_t bandIndex = Rand::randInt(dataSize);//randIndex.nextInt(dataSize);
-            float value = fftLogData[bandIndex].y;
-            if (value > mFftFalloff[index])
-            {
-                //mFftFalloff[index] = fftLogData[bandIndex].y;
-                timeline().apply( &mFftFalloff[index], value, mFalloff/2.0f, getReverseFalloffFunction() );
-                timeline().appendTo(&mFftFalloff[index], 0.0f, mFalloff, getReverseFalloffFunction() );
-                //timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
-            } else if (fftLogData[bandIndex].y < mFftFalloff[index]) {
-                timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
-            }
-            
-			it.r() = mFftFalloff[index]();
-            it.g() = 0.0f; // UNUSED
-			it.b() = 0.0f; // UNUSED
-			it.a() = 1.0f; // UNUSED
-            
-            ++index;
-            if (index == dataSize) {
-                index = 0;
-            }
-		}
-        
-        ++row;
-        if (row >= mAudioFboDim)
-        {
-            row = 0;
-        }
-	}
-    
-    if (mAudioRowShiftTime >= mAudioRowShiftDelay)
-    {
-        mAudioRowShiftTime = 0.0f;
-        ++mAudioRowShift;
-        if (mAudioRowShift >= mAudioFboDim) {
-            mAudioRowShift = 0;
-        }
-    }
-	
-    gl::pushMatrices();
-	gl::Texture fftTexture( fftSurface );
-	mAudioFbo.bindFramebuffer();
-	gl::setMatricesWindow( mAudioFboSize, false );
-	gl::setViewport( mAudioFboBounds );
-	gl::draw( fftTexture );
-	mAudioFbo.unbindFramebuffer();
-    gl::popMatrices();
-    
-    if (mAudioEffectNoise)
-    {
-        float newHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange(0.0f,1.0f);
-        if (newHeight > mDisplacementHeight) {
-            timeline().apply( &mDisplacementHeight, newHeight, mFalloff/2.0f, getReverseFalloffFunction() );
-            timeline().appendTo(&mDisplacementHeight, 0.0f, mFalloff, getFalloffFunction() );
-        }
-    }
+    assert(false && "implement w/ new cinder audio");
+//    AudioInput& audioInput = mApp->getAudioInput();
+//	
+//    // Get data
+//    //float * freqData = audioInput.getFft()->getAmplitude();
+//    //float * timeData = audioInput.getFft()->getData();
+//    int32_t dataSize = audioInput.getFft()->getBinSize();
+//    const AudioInput::FftLogPlot& fftLogData = audioInput.getFftLogData();
+//    
+//    if( mFftFalloff.size() == 0 )
+//    {
+//        for( int i=0; i< dataSize; ++i )
+//        {
+//            mFftFalloff.push_back( fftLogData[i].y );
+//        }
+//    }
+//    
+//    int32_t row = mAudioRowShift;
+//    
+//    Rand randIndex(0);
+//	Surface32f fftSurface( mAudioFbo.getTexture() );
+//	Surface32f::Iter it = fftSurface.getIter();
+//    int32_t index = 0;
+//	while( it.line() )
+//    {
+//        //int32_t index = row * mAudioFboDim;
+//		while( it.pixel() )
+//        {
+//            int32_t bandIndex = Rand::randInt(dataSize);//randIndex.nextInt(dataSize);
+//            float value = fftLogData[bandIndex].y;
+//            if (value > mFftFalloff[index])
+//            {
+//                //mFftFalloff[index] = fftLogData[bandIndex].y;
+//                timeline().apply( &mFftFalloff[index], value, mFalloff/2.0f, getReverseFalloffFunction() );
+//                timeline().appendTo(&mFftFalloff[index], 0.0f, mFalloff, getReverseFalloffFunction() );
+//                //timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
+//            } else if (fftLogData[bandIndex].y < mFftFalloff[index]) {
+//                timeline().apply( &mFftFalloff[index], 0.0f, mFalloff, getFalloffFunction() );
+//            }
+//            
+//			it.r() = mFftFalloff[index]();
+//            it.g() = 0.0f; // UNUSED
+//			it.b() = 0.0f; // UNUSED
+//			it.a() = 1.0f; // UNUSED
+//            
+//            ++index;
+//            if (index == dataSize) {
+//                index = 0;
+//            }
+//		}
+//        
+//        ++row;
+//        if (row >= mAudioFboDim)
+//        {
+//            row = 0;
+//        }
+//	}
+//    
+//    if (mAudioRowShiftTime >= mAudioRowShiftDelay)
+//    {
+//        mAudioRowShiftTime = 0.0f;
+//        ++mAudioRowShift;
+//        if (mAudioRowShift >= mAudioFboDim) {
+//            mAudioRowShift = 0;
+//        }
+//    }
+//	
+//    gl::pushMatrices();
+//	gl::Texture fftTexture( fftSurface );
+//	mAudioFbo.bindFramebuffer();
+//	gl::setMatricesWindow( mAudioFboSize, false );
+//	gl::setViewport( mAudioFboBounds );
+//	gl::draw( fftTexture );
+//	mAudioFbo.unbindFramebuffer();
+//    gl::popMatrices();
+//    
+//    if (mAudioEffectNoise)
+//    {
+//        float newHeight = 20.0f * audioInput.getAverageVolumeByFrequencyRange(0.0f,1.0f);
+//        if (newHeight > mDisplacementHeight) {
+//            timeline().apply( &mDisplacementHeight, newHeight, mFalloff/2.0f, getReverseFalloffFunction() );
+//            timeline().appendTo(&mDisplacementHeight, 0.0f, mFalloff, getFalloffFunction() );
+//        }
+//    }
 }
 
 Terrain::tEaseFn Terrain::getFalloffFunction()

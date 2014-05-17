@@ -25,7 +25,6 @@
 #include "cinder/Camera.h"
 #include "cinder/MayaCamUI.h"
 #include "cinder/app/AppNative.h"
-#include "cinder/audio/Input.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/params/Params.h"
 #include "cinderSyphon.h"
