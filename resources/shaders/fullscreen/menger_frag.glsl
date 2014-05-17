@@ -1,29 +1,26 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
-uniform vec2      iMouse;
 
-#define MaxSteps 30
-#define MinimumDistance 0.0009
-#define normalDistance     0.0002
+uniform int     iIterations;
+uniform int     iMaxSteps;
+uniform float     iFieldOfView;
+uniform float     iScale;
+uniform float     iJitter;
+uniform float     iFudgeFactor;
+uniform float     iPerspective;
+uniform float     iMinDistance;
+uniform float     iNormalDistance;
 
-#define Iterations 7
-#define PI 3.141592
-#define Scale 3.0
-#define FieldOfView 1.0
-#define Jitter 0.05
-#define FudgeFactor 0.7
-#define NonLinearPerspective 2.0
-#define DebugNonlinearPerspective false
+uniform float     iAmbientLight;
+uniform float     iDiffuseLight;
+uniform vec3      iLight1Dir;
+uniform vec3      iLight2Dir;
 
-#define Ambient 0.32184
-#define Diffuse 0.5
-#define LightDir vec3(1.0)
-#define LightColor vec3(1.0,1.0,0.858824)
-#define LightDir2 vec3(1.0,-1.0,1.0)
-#define LightColor2 vec3(0.0,0.333333,1.0)
-#define Offset vec3(0.92858,0.92858,0.32858)
+uniform vec3      iOffset;
+uniform vec3      iColor1;
+uniform vec3      iColor2;
+
+#define PI 3.1415927
 
 vec2 rotate(vec2 v, float a) {
 	return vec2(cos(a)*v.x + sin(a)*v.y, -sin(a)*v.x + cos(a)*v.y);
@@ -31,15 +28,15 @@ vec2 rotate(vec2 v, float a) {
 
 // Two light sources. No specular
 vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
-	vec3 lightDir = normalize(LightDir);
+	vec3 lightDir = normalize(iLight1Dir);
 	float diffuse = max(0.0,dot(-normal, lightDir)); // Lambertian
 	
-	vec3 lightDir2 = normalize(LightDir2);
+	vec3 lightDir2 = normalize(iLight2Dir);
 	float diffuse2 = max(0.0,dot(-normal, lightDir2)); // Lambertian
 	
 	return
-	(diffuse*Diffuse)*(LightColor*color) +
-	(diffuse2*Diffuse)*(LightColor2*color);
+	(diffuse*iDiffuseLight)*(iColor1*color) +
+	(diffuse2*iDiffuseLight)*(iColor2*color);
 }
 
 
@@ -50,26 +47,26 @@ vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
 float DE(in vec3 z)
 {
 	// enable this to debug the non-linear perspective
-	if (DebugNonlinearPerspective) {
-		z = fract(z);
-		float d=length(z.xy-vec2(0.5));
-		d = min(d, length(z.xz-vec2(0.5)));
-		d = min(d, length(z.yz-vec2(0.5)));
-		return d-0.01;
-	}
+//	if (DebugiPerspective) {
+//		z = fract(z);
+//		float d=length(z.xy-vec2(0.5));
+//		d = min(d, length(z.xz-vec2(0.5)));
+//		d = min(d, length(z.yz-vec2(0.5)));
+//		return d-0.01;
+//	}
 	// Folding 'tiling' of 3D space;
 	z  = abs(1.0-mod(z,2.0));
     
 	float d = 1000.0;
-	for (int n = 0; n < Iterations; n++) {
+	for (int n = 0; n < iIterations; n++) {
 		z.xy = rotate(z.xy,4.0+2.0*cos( iGlobalTime/8.0));
 		z = abs(z);
 		if (z.x<z.y){ z.xy = z.yx;}
 		if (z.x< z.z){ z.xz = z.zx;}
 		if (z.y<z.z){ z.yz = z.zy;}
-		z = Scale*z-Offset*(Scale-1.0);
-		if( z.z<-0.5*Offset.z*(Scale-1.0))  z.z+=Offset.z*(Scale-1.0);
-		d = min(d, length(z) * pow(Scale, float(-n)-1.0));
+		z = iScale*z-iOffset*(iScale-1.0);
+		if( z.z<-0.5*iOffset.z*(iScale-1.0))  z.z+=iOffset.z*(iScale-1.0);
+		d = min(d, length(z) * pow(iScale, float(-n)-1.0));
 	}
 	
 	return d-0.001;
@@ -77,7 +74,7 @@ float DE(in vec3 z)
 
 // Finite difference normal
 vec3 getNormal(in vec3 pos) {
-	vec3 e = vec3(0.0,normalDistance,0.0);
+	vec3 e = vec3(0.0,iNormalDistance,0.0);
 	
 	return normalize(vec3(
                           DE(pos+e.yxx)-DE(pos-e.yxx),
@@ -101,34 +98,34 @@ float rand(vec2 co){
 
 vec4 rayMarch(in vec3 from, in vec3 dir) {
 	// Add some noise to prevent banding
-	float totalDistance = Jitter*rand(gl_FragCoord.xy+vec2(iGlobalTime));
+	float totalDistance = iJitter*rand(gl_FragCoord.xy+vec2(iGlobalTime));
 	vec3 dir2 = dir;
 	float distance;
 	int steps = 0;
 	vec3 pos;
-	for (int i=0; i < MaxSteps; i++) {
+	for (int i=0; i < iMaxSteps; i++) {
 		// Non-linear perspective applied here.
-		dir.zy = rotate(dir2.zy,totalDistance*cos( iGlobalTime/4.0)*NonLinearPerspective);
+		dir.zy = rotate(dir2.zy,totalDistance*cos( iGlobalTime/4.0)*iPerspective);
 		
 		pos = from + totalDistance * dir;
-		distance = DE(pos)*FudgeFactor;
+		distance = DE(pos)*iFudgeFactor;
 		totalDistance += distance;
-		if (distance < MinimumDistance) break;
+		if (distance < iMinDistance) break;
 		steps = i;
 	}
 	
 	// 'AO' is based on number of steps.
 	// Try to smooth the count, to combat banding.
-	float smoothStep =   float(steps) + distance/MinimumDistance;
-	float ao = 1.1-smoothStep/float(MaxSteps);
+	float smoothStep =   float(steps) + distance/iMinDistance;
+	float ao = 1.1-smoothStep/float(iMaxSteps);
 	
 	// Since our distance field is not signed,
 	// backstep when calc'ing normal
-	vec3 normal = getNormal(pos-dir*normalDistance*3.0);
+	vec3 normal = getNormal(pos-dir*iNormalDistance*3.0);
 	
 	vec3 color = getColor(normal, pos);
 	vec3 light = getLight(color, normal, dir);
-	color = (color*Ambient+light)*ao;
+	color = (color*iAmbientLight+light)*ao;
 	return vec4(color,1.0);
 }
 
@@ -148,7 +145,7 @@ void main(void)
 	coord.x *= iResolution.x/iResolution.y;
 	
 	// Get direction for this pixel
-	vec3 rayDir = normalize(camDir + (coord.x*camRight + coord.y*camUp)*FieldOfView);
+	vec3 rayDir = normalize(camDir + (coord.x*camRight + coord.y*camUp)*iFieldOfView);
 	
 	gl_FragColor = rayMarch(camPos, rayDir);
 }

@@ -57,9 +57,12 @@ precision highp float;
 
 vec4 calcRingSet(vec2 pos, float time, float frequency, float scale, float thickness, float power, int format)
 {
-    if (format == 1) {
+    if (format == 1)
+    {
         pos.y = pos.x;
-    } else if (format == 2) {
+    }
+    else if (format == 2)
+    {
         pos.x = pos.y;
     }
     

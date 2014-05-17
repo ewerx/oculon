@@ -132,7 +132,7 @@ void RootFract::shaderPreDraw()
     mShader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
     mShader.uniform( "iColor1", mColor1);
     mShader.uniform( "iColor2", mColor2);
-    mShader.uniform( "iColor3", mColor2);
+    mShader.uniform( "iColor3", mColor3);
     mShader.uniform( "iIterations", mIterations );
     mShader.uniform( "iScale", mScale );
     mShader.uniform( "iSaturation", mSaturation );

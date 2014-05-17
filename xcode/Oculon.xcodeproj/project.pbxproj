@@ -123,6 +123,7 @@
 		7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6740181C9928003049AA /* TextureShaders.cpp */; };
 		7C4C6746181CCD78003049AA /* CircleWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C6744181CCD78003049AA /* CircleWave.cpp */; };
 		7C4DBFBD1927F19300FDDDC3 /* AudioDrawUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DBFBC1927F19300FDDDC3 /* AudioDrawUtils.cpp */; };
+		7C4DBFC01928002E00FDDDC3 /* Menger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DBFBE1928002E00FDDDC3 /* Menger.cpp */; };
 		7C5165E11915DAAF003E94F8 /* ParticleFormation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */; };
 		7C5165E81917091B003E94F8 /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E61917091B003E94F8 /* Geometry.cpp */; };
 		7C5165EB191709D2003E94F8 /* Pentagon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E9191709D2003E94F8 /* Pentagon.cpp */; };
@@ -682,6 +683,8 @@
 		7C4C6745181CCD78003049AA /* CircleWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleWave.h; sourceTree = "<group>"; };
 		7C4DBFBB1927F19300FDDDC3 /* AudioDrawUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDrawUtils.h; sourceTree = "<group>"; };
 		7C4DBFBC1927F19300FDDDC3 /* AudioDrawUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDrawUtils.cpp; sourceTree = "<group>"; };
+		7C4DBFBE1928002E00FDDDC3 /* Menger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Menger.cpp; sourceTree = "<group>"; };
+		7C4DBFBF1928002E00FDDDC3 /* Menger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menger.h; sourceTree = "<group>"; };
 		7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleFormation.cpp; path = particlesystem/ParticleFormation.cpp; sourceTree = "<group>"; };
 		7C5165E01915DAAF003E94F8 /* ParticleFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleFormation.h; path = particlesystem/ParticleFormation.h; sourceTree = "<group>"; };
 		7C5165E61917091B003E94F8 /* Geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geometry.cpp; sourceTree = "<group>"; };
@@ -1717,6 +1720,8 @@
 				7C0D6F7319231D74008F56CB /* RootFract.h */,
 				7C6CB4351925AFDD00D83614 /* EffectShaders.cpp */,
 				7C6CB4361925AFDD00D83614 /* EffectShaders.h */,
+				7C4DBFBE1928002E00FDDDC3 /* Menger.cpp */,
+				7C4DBFBF1928002E00FDDDC3 /* Menger.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -3364,6 +3369,7 @@
 				7C79CA3B17650FD800E71F9D /* SplineCam.cpp in Sources */,
 				7C79CA3C17650FD800E71F9D /* StarCam.cpp in Sources */,
 				7CF6AD5518A9E68600FA795A /* ParticleController.cpp in Sources */,
+				7C4DBFC01928002E00FDDDC3 /* Menger.cpp in Sources */,
 				7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */,
 				7C79CA3D17650FD800E71F9D /* TunnelCam.cpp in Sources */,
 				7C79CA3E17650FD800E71F9D /* Config.cpp in Sources */,

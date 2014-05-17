@@ -70,7 +70,6 @@ private:
     // shaders
 #define SHADERS_TUPLE \
 SHADERS_ENTRY( "Test", SHADER_TEST ) \
-SHADERS_ENTRY( "Menger", SHADER_MENGER ) \
 SHADERS_ENTRY( "Tripping", SHADER_TRIPPING ) \
 SHADERS_ENTRY( "Stripes", SHADER_STRIPES ) \
 SHADERS_ENTRY( "Flicker", SHADER_FLICKER ) \

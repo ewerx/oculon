@@ -72,11 +72,6 @@ void ShaderTest::setupShaders()
         shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "test_frag.glsl" ) );
         mShaders.push_back(shader);
         
-        // too slow!
-        // MENGER
-        shader = gl::GlslProg( loadResource( "passThru.vert" ), loadResource( "menger_frag.glsl" ) );
-        mShaders.push_back(shader);
-        
         // FRAGMENT: ERROR: 0:180: Swizzle component 'z' indexes beyond end of input vector (length 2)
         // METAHEXBALLS
 //        shader = gl::GlslProg( loadResource( RES_PASSTHRU2_VERT ), loadResource( RES_SHADER_METAHEXBALLS_FRAG ) );
