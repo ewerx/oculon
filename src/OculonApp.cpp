@@ -281,7 +281,7 @@ void OculonApp::shutdown()
 
 void OculonApp::setupInterface()
 {
-    mThumbnailControls.clear();
+    //mThumbnailControls.clear();
     mInterface = new Interface(this, &mOscServer);
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("OCULON");
@@ -476,9 +476,8 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     // scene thumbnails
     if( scene->getFbo() )
     {
-        mowa::sgui::TextureVarControl* texControl = mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture()));
-        texControl->registerCallback( boost::bind( &OculonApp::showInterface, this, sceneIndex) );
-        mThumbnailControls.push_back( texControl );
+        mInterface->gui()->addParam(scene->getName(), &(scene->getFbo().getTexture()))->registerCallback( boost::bind( &OculonApp::showInterface, this, sceneIndex) );
+        //mThumbnailControls.push_back( texControl );
     }
     //mInterface->gui()->addButton("toggle")->registerCallback( boost::bind( &OculonApp::toggleScene, this, mScenes.size()-1) );
     mInterface->addParam(CreateBoolParam("on", &(scene->mIsVisible)))->registerCallback( scene, &Scene::setRunningByVisibleState );
