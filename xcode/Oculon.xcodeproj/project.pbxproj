@@ -148,9 +148,6 @@
 		7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE421764384B00E71F9D /* SyphonNameboundClient.m */; };
 		7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE471764384B00E71F9D /* syphonClient.mm */; };
 		7C79C0341764384C00E71F9D /* syphonServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C79BE491764384B00E71F9D /* syphonServer.mm */; };
-		7C79C2471764396F00E71F9D /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C1D41764396F00E71F9D /* kiss_fft.c */; };
-		7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C1D61764396F00E71F9D /* kiss_fftr.c */; };
-		7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C1D81764396F00E71F9D /* KissFFT.cpp */; };
 		7C79C27F176439A000E71F9D /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79C27E176439A000E71F9D /* OpenCL.framework */; };
 		7C79C75117650AA900E71F9D /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C79BE401764384B00E71F9D /* Syphon.framework */; };
 		7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C7A717650C5D00E71F9D /* MeshHelper.cpp */; };
@@ -726,13 +723,6 @@
 		7C79BE471764384B00E71F9D /* syphonClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonClient.mm; sourceTree = "<group>"; };
 		7C79BE481764384B00E71F9D /* syphonServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syphonServer.h; sourceTree = "<group>"; };
 		7C79BE491764384B00E71F9D /* syphonServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = syphonServer.mm; sourceTree = "<group>"; };
-		7C79C1D31764396F00E71F9D /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
-		7C79C1D41764396F00E71F9D /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
-		7C79C1D51764396F00E71F9D /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
-		7C79C1D61764396F00E71F9D /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
-		7C79C1D71764396F00E71F9D /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
-		7C79C1D81764396F00E71F9D /* KissFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KissFFT.cpp; sourceTree = "<group>"; };
-		7C79C1D91764396F00E71F9D /* KissFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KissFFT.h; sourceTree = "<group>"; };
 		7C79C27E176439A000E71F9D /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		7C79C7A717650C5D00E71F9D /* MeshHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshHelper.cpp; sourceTree = "<group>"; };
 		7C79C7A817650C5D00E71F9D /* MeshHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshHelper.h; sourceTree = "<group>"; };
@@ -1284,7 +1274,6 @@
 				7C47F045191F2B0000244E5F /* cinderfx */,
 				7CF735AF181F81D500B21DE9 /* cinderpane */,
 				A8F2E50881364FAC9F935010 /* FMOD */,
-				7C79C1561764396E00E71F9D /* KissFft */,
 				7C79C7A617650C5D00E71F9D /* MeshHelper */,
 				7C79C7DD17650D5F00E71F9D /* MIDI */,
 				7C0E62CF18BABE9800C387FC /* OculusRift */,
@@ -1801,37 +1790,6 @@
 				7C79BE491764384B00E71F9D /* syphonServer.mm */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		7C79C1561764396E00E71F9D /* KissFft */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C1D11764396F00E71F9D /* src */,
-			);
-			name = KissFft;
-			path = ../blocks/KissFft;
-			sourceTree = "<group>";
-		};
-		7C79C1D11764396F00E71F9D /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C1D21764396F00E71F9D /* kiss */,
-				7C79C1D81764396F00E71F9D /* KissFFT.cpp */,
-				7C79C1D91764396F00E71F9D /* KissFFT.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		7C79C1D21764396F00E71F9D /* kiss */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C1D31764396F00E71F9D /* _kiss_fft_guts.h */,
-				7C79C1D41764396F00E71F9D /* kiss_fft.c */,
-				7C79C1D51764396F00E71F9D /* kiss_fft.h */,
-				7C79C1D61764396F00E71F9D /* kiss_fftr.c */,
-				7C79C1D71764396F00E71F9D /* kiss_fftr.h */,
-			);
-			path = kiss;
 			sourceTree = "<group>";
 		};
 		7C79C7A617650C5D00E71F9D /* MeshHelper */ = {
@@ -3294,9 +3252,6 @@
 				7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */,
 				7C79C0341764384C00E71F9D /* syphonServer.mm in Sources */,
 				7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */,
-				7C79C2471764396F00E71F9D /* kiss_fft.c in Sources */,
-				7C79C2481764396F00E71F9D /* kiss_fftr.c in Sources */,
-				7C79C2491764396F00E71F9D /* KissFFT.cpp in Sources */,
 				7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */,
 				7C79C7D317650C5D00E71F9D /* MeshHelper.cpp in Sources */,
 				7CD666481853F678004BD521 /* ParsecStars.cpp in Sources */,

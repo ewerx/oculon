@@ -54,6 +54,7 @@ private:
     MotionBlurRenderer  mMotionBlurRenderer;
     bool                mUseMotionBlur;
     
+    //TODO: audio2 cleanup
     // kiss
     int mFilter;
     float mFilterFrequency;

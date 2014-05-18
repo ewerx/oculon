@@ -13,11 +13,10 @@
 #include "cinder/Cinder.h"
 #include "cinder/audio/ScopeNode.h"
 #include "cinder/Vector.h"
-#include "KissFFT.h"
 #include "Interface.h"
 #include "OscServer.h"
 
-#define KISS_DEFAULT_DATASIZE 512
+#define DEFAULT_FREQ_BIN_SIZE 512
 
 class AudioInput
 {
@@ -33,22 +32,15 @@ public:
     void update();
     
     // accessors
-    //ci::audio::PcmBuffer32fRef getPcmBuffer()   { return mPcmBuffer; }
-    std::shared_ptr<float> getFftDataRef()  { return mFftDataRef; }
     
     // TODO: rename
     unsigned int getFftBandCount() const { return mScopeSpectralNode->getNumBins(); }
-    
-//    KissRef getFft() { return mFft; }
-//    FftLogPlot::const_iterator   fftPlotBegin() const     { return mFftLogPlot.begin(); }
-//    FftLogPlot::const_iterator   fftPlotEnd() const       { return mFftLogPlot.end(); }
-//    const FftLogPlot& getFftLogData() const { return mFftLogPlot; }
     
     const std::vector<float>& getMagSpectrum()              { return mScopeSpectralNode->getMagSpectrum(); }
     const ci::audio::Buffer& getBuffer() { return mScopeNode->getBuffer(); }
     
     float getAverageVolumeByFrequencyRange(const float minRatio =0.0f, const float maxRatio =1.0f);
-    float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
+    float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =DEFAULT_FREQ_BIN_SIZE);
     
     // TODO: refactor
     inline float getHighLevelForLiveTrack( const int trackIndex )
@@ -77,29 +69,11 @@ public:
     void handleLowOsc( const ci::osc::Message& message );
     
 private:
-    void analyzeKissFft();
-    
-    //ci::audio::Input* mInput;
-    //ci::audio::PcmBuffer32fRef mPcmBuffer;
     ci::audio::InputDeviceNodeRef	mInputDeviceNode;
     ci::audio::ScopeNodeRef         mScopeNode;
     ci::audio::ScopeSpectralNodeRef	mScopeSpectralNode;
     
-    std::shared_ptr<float> mFftDataRef;
-    unsigned int mFftBandCount;
-    
     float mGain;
-    
-    // Kiss Analyzer
-	bool    mFftInit;
-	KissRef mFft;
-    FftLogPlot mFftLogPlot;
-    
-	// Data
-	int32_t mDataSize;
-	int32_t mInputSize;
-	float * mInputData;
-	float * mTimeData;
     
     // LiveGrabber Data
     enum { NUM_TRACKS = 4 };

@@ -16,7 +16,6 @@
 #include "Eclipse.h"
 #include "Circles.h"
 
-#include "KissFFT.h"
 #include "cinder/Rand.h"
 #include <algorithm>
 
@@ -73,12 +72,14 @@ void AudioSignal::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
                          .oscReceiver(mName,"blur"));
+    
+    //TODO: audio2 cleanup
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
                          .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );
-    mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
-                        .maxValue(Kiss::Filter::NOTCH+1)
-                        .isVertical()
-                        .oscReceiver(mName,"filter"))->registerCallback( this, &AudioSignal::setFilter );
+//    mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
+//                        .maxValue(Kiss::Filter::NOTCH+1)
+//                        .isVertical()
+//                        .oscReceiver(mName,"filter"))->registerCallback( this, &AudioSignal::setFilter );
     mInterface->addButton(CreateTriggerParam("Remove Filter", NULL)
                           .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
@@ -285,7 +286,6 @@ void AudioSignal::drawSpectrum( const vector<float>& magSpectrum )
 {
 	float height = mApp->getWindowHeight() / 3.0f;
 	float bottom = mApp->getWindowHeight() - 80.f;
-    float top = bottom - height;
     float left = 80.0f;
     float width = mApp->getWindowWidth() - left*2.0f;
     
@@ -306,9 +306,9 @@ bool AudioSignal::setFilter()
 
 bool AudioSignal::removeFilter()
 {
-    mFilter = Kiss::Filter::NONE;
-    mFilterFrequency = 0.0f;
-    //mApp->getAudioInput().getFft()->removeFilter();
+//    mFilter = Kiss::Filter::NONE;
+//    mFilterFrequency = 0.0f;
+//    //mApp->getAudioInput().getFft()->removeFilter();
     return false;
 }
 

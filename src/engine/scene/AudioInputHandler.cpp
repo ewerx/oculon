@@ -49,7 +49,8 @@ void AudioInputHandler::setup(bool fboEnabled)
     mAvgVolume[BAND_HIGH].mValue     = 0.0f;
 
     // FBO
-    mAudioFboDim        = KISS_DEFAULT_DATASIZE;
+    //TODO: audio2 cleanup
+    mAudioFboDim        = DEFAULT_FREQ_BIN_SIZE;
     mAudioFboEnabled    = fboEnabled;
     const int audioFboHeight = 2;
     if (mAudioFboEnabled)
@@ -184,9 +185,10 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     
     vector<float> magSpectrum = audioInput.getMagSpectrum();
     
+    //TODO: audio2 cleanup
     //TODO: calc average in the main loop
-    //int lowPassBand = (int)(mLowPassFilter * KISS_DEFAULT_DATASIZE);
-    //int highPassBand = (int)(mHighPassFilter * KISS_DEFAULT_DATASIZE);
+    //int lowPassBand = (int)(mLowPassFilter * DEFAULT_FREQ_BIN_SIZE);
+    //int highPassBand = (int)(mHighPassFilter * DEFAULT_FREQ_BIN_SIZE);
     
     if( mFftFalloff.size() == 0 )
     {
@@ -340,7 +342,8 @@ AudioInputHandler::tEaseFn AudioInputHandler::getReverseFalloffFunction()
 
 float AudioInputHandler::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
 {
-    return getAverageVolumeByFrequencyRange( (int)(minRatio * KISS_DEFAULT_DATASIZE), (int)(maxRatio * KISS_DEFAULT_DATASIZE) );
+    //TODO: audio2 cleanup
+    return getAverageVolumeByFrequencyRange( (int)(minRatio * DEFAULT_FREQ_BIN_SIZE), (int)(maxRatio * DEFAULT_FREQ_BIN_SIZE) );
 }
 
 float AudioInputHandler::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=256*/)

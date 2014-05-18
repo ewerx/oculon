@@ -6,8 +6,7 @@
 //
 //
 
-#ifndef __Oculon__AudioInputHandler__
-#define __Oculon__AudioInputHandler__
+#pragma once
 
 #include "AudioInput.h"
 
@@ -44,7 +43,7 @@ public:
     
     // AVG VOLUME
     float getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio);
-    float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =KISS_DEFAULT_DATASIZE);
+    float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =DEFAULT_FREQ_BIN_SIZE);
     float getAverageVolumeLowFreq() const { return mAvgVolume[BAND_LOW].mValue; }
     float getAverageVolumeMidFreq() const { return mAvgVolume[BAND_MID].mValue; }
     float getAverageVolumeHighFreq() const { return mAvgVolume[BAND_HIGH].mValue; }
@@ -154,5 +153,3 @@ enm,
     bool mOSCFalloff;
     
 };
-
-#endif /* defined(__Oculon__AudioInputHandler__) */

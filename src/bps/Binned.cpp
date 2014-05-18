@@ -737,6 +737,7 @@ void Binned::drawDebug()
 void Binned::updateAudioResponse()
 {
     AudioInput& audioInput = mApp->getAudioInput();
+    //TODO: audio2 cleanup
     //TODO: why is kiss null?
     if( mAudioSensitivity == 0.0f || mApp->getElapsedSeconds() < 2.0f || mApp->getElapsedFrames() < 5 )
     {

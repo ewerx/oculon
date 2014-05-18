@@ -1,6 +1,3 @@
-[submodule "blocks/KissFft"]
-	path = blocks/KissFft
-	url = https://github.com/BanTheRewind/Cinder-KissFft.git
 [submodule "blocks/Syphon"]
 	path = blocks/Syphon
 	url = https://github.com/ewerx/Cinder-Syphon.git

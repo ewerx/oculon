@@ -63,7 +63,6 @@ void AudioInput::reset()
     mInputDeviceNode->enable();
 	ctx->enable();
     
-    mFftInit = false;
     mGain = 1.0f;
     
     for (int i = 0; i < NUM_TRACKS; ++i)
@@ -145,25 +144,9 @@ void AudioInput::update()
     
 }
 
-//void AudioInput::analyzeKissFft()
-//{
-//    // Get data
-//    float * freqData = mFft->getAmplitude();
-//    int32_t dataSize = mFft->getBinSize();
-//    
-//    // Iterate through data
-//    for (int32_t i = 0; i < dataSize; i++) 
-//    {
-//        // Do logarithmic plotting for frequency domain
-//        double mLogSize = log((double)dataSize);
-//        mFftLogPlot[i].x = (float)(log((double)i) / mLogSize) * (double)dataSize;
-//        mFftLogPlot[i].y = math<float>::clamp(freqData[i] * (mFftLogPlot[i].x / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f) * mGain;
-//    }
-//}
-
 float AudioInput::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
 {
-    return getAverageVolumeByFrequencyRange( (int)(minRatio * KISS_DEFAULT_DATASIZE), (int)(maxRatio * KISS_DEFAULT_DATASIZE) );
+    return getAverageVolumeByFrequencyRange( (int)(minRatio * mScopeSpectralNode->getNumBins()), (int)(maxRatio * mScopeSpectralNode->getNumBins()) );
 }
 
 float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=256*/)
@@ -171,11 +154,11 @@ float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, con
     float amplitude = 0.0f;
     
     int minIndex = math<int>::max( 0, minBand );
-    int maxIndex = math<int>::min( mFft->getBinSize(), maxBand );
+    int maxIndex = math<int>::min( mScopeSpectralNode->getNumBins(), maxBand );
     
     for (int32_t i = minIndex; i < maxIndex; i++)
     {
-        amplitude += mFftLogPlot[i].y;
+        amplitude += mScopeSpectralNode->getMagSpectrum()[i];
     }
     
     amplitude = amplitude / (float)(maxIndex-minIndex);
