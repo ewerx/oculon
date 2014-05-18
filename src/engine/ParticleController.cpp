@@ -22,6 +22,7 @@ ParticleController::ParticleController()
 , mCurrentFormationIndex(0)
 , mCurrentRendererIndex(0)
 , mFormationStep(1.0f)
+, mStartAnim(false)
 {
     mFormationAnimSelector.mDuration = 1.0f;
 }
@@ -96,6 +97,7 @@ void ParticleController::setupInterface(Interface *interface, const std::string 
     // TODO: panels?
     for( vector<ParticleRenderer*>::const_reference renderer: mRenderers )
     {
+        interface->gui()->addColumn();
         renderer->setupInterface(interface, name);
     }
 }
@@ -149,6 +151,7 @@ void ParticleController::resetToFormation(const int formationIndex, const int re
 bool ParticleController::onFormationChanged()
 {
     mFormationStep = 0.0f;
+    mStartAnim = true;
     timeline().apply( &mFormationStep, 1.0f, mFormationAnimSelector.mDuration,mFormationAnimSelector.getEaseFunction() );
     
     mFormationChangedSignal();
@@ -194,6 +197,13 @@ void ParticleController::updateSimulation(double dt)
 //    {
 //        mBehaviors[mCurrentBehavior]->update(dt, mParticlesFbo);
 //    }
+}
+
+bool ParticleController::isStartingAnim()
+{
+    bool starting = mStartAnim;
+    mStartAnim = false;
+    return starting;
 }
 
 #pragma mark - draw

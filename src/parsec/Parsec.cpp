@@ -57,7 +57,6 @@ void Parsec::setup()
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_SPLINE);
     
     mAudioInputHandler.setup(false);
-    mAudioInputHandler.mRandomEveryFrame = true;
     mAudioInputHandler.mRandomSignal = true;
     
     // params

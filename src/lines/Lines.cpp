@@ -322,6 +322,7 @@ void Lines::update(double dt)
     mSimulationShader.uniform( "gain", mAudioInputHandler.getGain());
     mSimulationShader.uniform( "dt", (float)dt );
     mSimulationShader.uniform( "reset", mReset );
+    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     mSimulationShader.uniform( "motion", mMotion );
     mSimulationShader.uniform( "containmentSize", mContainmentRadius );

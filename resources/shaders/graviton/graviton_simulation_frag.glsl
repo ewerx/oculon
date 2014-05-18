@@ -18,6 +18,7 @@ uniform float containerradius;
 uniform float formationStep;
 
 uniform bool reset;
+uniform bool startAnim;
 
 varying vec4 texCoord;
 
@@ -33,14 +34,14 @@ void main()
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float decay = texture2D( information, texCoord.st ).a;
     
+    if (startAnim)
+    {
+        startPos = pos;
+    }
+    
     if (formationStep < 1.0)
     {
         // animate to formation
-        if (formationStep < 0.001)
-        {
-            startPos = pos;
-        }
-        
         vel = vec3(0.0,0.0,0.0);
         vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
         

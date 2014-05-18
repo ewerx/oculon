@@ -57,6 +57,8 @@ public:
     // formations
     ParticleFormation& getFormation();
     void addFormation(ParticleFormation* formation);
+    // TODO: refactor
+    bool isStartingAnim();
     
     bool onFormationChanged(); // callback
     void resetToFormation(const int formationIndex, const int resetFlags =RESET_ALL );
@@ -88,6 +90,7 @@ private:
     ValueChangedSignal mFormationChangedSignal;
     ci::Anim<float> mFormationStep;
     EaseCurveSelector mFormationAnimSelector;
+    bool mStartAnim;
     
     // rendering
     std::vector<ParticleRenderer*> mRenderers;

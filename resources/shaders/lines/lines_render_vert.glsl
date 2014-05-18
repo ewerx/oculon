@@ -35,7 +35,7 @@ void main()
     if (audioReactive)
     {
         // alpha from audio texture
-        color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
+        color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).b;
     }
     else
     {

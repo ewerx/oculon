@@ -526,6 +526,7 @@ void Graviton::update(double dt)
     mSimulationShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
     mSimulationShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
     mSimulationShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
+    mSimulationShader.uniform( "reset", mParticleController.isStartingAnim() );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());

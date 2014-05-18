@@ -9,6 +9,7 @@ uniform sampler2D noiseTex;
 uniform float dt;
 uniform vec3 constraints;
 uniform bool reset;
+uniform bool startAnim;
 uniform float formationStep;
 uniform int motion;
 uniform float containmentSize;
@@ -49,7 +50,7 @@ void main()
     }
     
     // animate to formation
-    if (formationStep < 0.01)
+    if (startAnim)
     {
         startPos = pos;
     }

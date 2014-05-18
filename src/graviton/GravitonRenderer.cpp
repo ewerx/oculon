@@ -57,21 +57,21 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     string oscName = prefix + "/" + mName;
     
     interface->gui()->addLabel(mName);
-    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
+    interface->addParam(CreateBoolParam("graviton/audioreactive", &mAudioReactive)
                         .oscReceiver(oscName));
     interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
                          .minValue(0.01f)
                          .maxValue(2.0f)
                          .oscReceiver(oscName));
     
-    interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+    interface->addParam(CreateColorParam("graviton/color", &mColor, kMinColor, kMaxColor)
                         .oscReceiver(oscName));
     vector<string> pointTexNames;
     for( tNamedTexture namedTex : mPointTextures )
     {
         pointTexNames.push_back(namedTex.first);
     }
-    interface->addEnum(CreateEnumParam( "point_tex", (int*)(&mCurPointTexture) )
+    interface->addEnum(CreateEnumParam( "graviton/point_tex", (int*)(&mCurPointTexture) )
                        .maxValue(pointTexNames.size())
                        .oscReceiver(oscName)
                        .isVertical(), pointTexNames);

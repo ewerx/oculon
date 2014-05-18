@@ -46,17 +46,17 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
     string oscName = prefix + "/" + mName;
     
     interface->gui()->addLabel(mName);
-    interface->addParam(CreateFloatParam( "line_width", &mLineWidth )
+    interface->addParam(CreateFloatParam( "lines/line_width", &mLineWidth )
                          .minValue(0.01f)
                          .maxValue(6.0f)
                         .oscReceiver(oscName));
     
-    interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
+    interface->addParam(CreateColorParam("lines/color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                          .oscReceiver(oscName));
     
-    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive)
+    interface->addParam(CreateBoolParam("lines/audioreactive", &mAudioReactive)
                         .oscReceiver(oscName));
-    interface->addParam(CreateBoolParam("colormap", &mUseColorMap)
+    interface->addParam(CreateBoolParam("lines/colormap", &mUseColorMap)
                         .oscReceiver(oscName));
 }
 
