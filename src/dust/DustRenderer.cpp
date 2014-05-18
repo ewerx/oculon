@@ -47,16 +47,16 @@ void DustRenderer::setupInterface( Interface* interface, const std::string& pref
     string oscName = prefix + "/" + mName;
     
     interface->gui()->addLabel(mName);
-    interface->addParam(CreateFloatParam( "point_size", &mPointSize )
+    interface->addParam(CreateFloatParam( "dust/point_size", &mPointSize )
                         .minValue(0.01f)
                         .maxValue(6.0f)
                         .oscReceiver(oscName));
     
-    interface->addParam(CreateColorParam("color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
+    interface->addParam(CreateColorParam("dust/color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                         .oscReceiver(oscName));
     
-    interface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
-    interface->addParam(CreateBoolParam("additive", &mAdditiveBlend));
+    interface->addParam(CreateBoolParam("dust/audioreactive", &mAudioReactive));
+    interface->addParam(CreateBoolParam("dust/additive", &mAdditiveBlend));
 }
 
 void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
