@@ -39,6 +39,12 @@ public:
     void setTimeScaleMultiplier(float scale)    { mTimeScaleMultiplier = scale; }
     void setTickDuration(float seconds)         { mTickDuration = seconds; }
     
+public:
+    float mMinTimeScale;
+    float mMaxTimeScale;
+    float mMinTimeScaleMultiplier;
+    float mMaxTimeScaleMultiplier;
+    
 private:
     double mElapsedSeconds;
     double mDelta;

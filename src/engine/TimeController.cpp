@@ -18,6 +18,10 @@ TimeController::TimeController()
 , mTick(false)
 , mTickTimer(0.0f)
 , mTickDuration(1.0f)
+, mMinTimeScale(0.00001f)
+, mMaxTimeScale(1.0f)
+, mMinTimeScaleMultiplier(1.0f)
+, mMaxTimeScaleMultiplier(10.0f)
 {
 }
 
@@ -38,10 +42,12 @@ void TimeController::reset()
 void TimeController::setupInterface(Interface *interface, const std::string &name)
 {
     interface->addParam(CreateFloatParam("timescale", &mTimeScale)
-                        .maxValue(10.0f)
+                        .minValue(mMinTimeScale)
+                        .maxValue(mMaxTimeScale)
                         .oscReceiver(name));
     interface->addParam(CreateFloatParam("time_multi", &mTimeScale)
-                        .maxValue(100.0f)
+                        .minValue(mMinTimeScaleMultiplier)
+                        .maxValue(mMaxTimeScaleMultiplier)
                         .oscReceiver(name));
 }
 
