@@ -277,9 +277,12 @@ void Polyhedron::draw()
     glPushAttrib(GL_ALL_ATTRIB_BITS);
     
     // Set up OpenGL to work with default lighting
-	glShadeModel( GL_SMOOTH );
+	glShadeModel( GL_FLAT );
 	gl::enable( GL_POLYGON_SMOOTH );
 	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+    
+	glCullFace( GL_BACK );
+	glEnable( GL_CULL_FACE );
     
     if (mAdditiveBlending)
     {
@@ -395,6 +398,13 @@ void Polyhedron::drawInstanced( const gl::VboMesh &vbo, size_t count )
 void Polyhedron::drawDebug()
 {
     //Scene::drawDebug();
+    
+    gl::pushMatrices();
+    gl::setMatrices( getCamera() );
+    
+    gl::drawSphere(mLight->getPosition(), 5.0f);
+    
+    gl::popMatrices();
     
     gl::pushMatrices();
     glPushAttrib(GL_TEXTURE_BIT|GL_ENABLE_BIT);

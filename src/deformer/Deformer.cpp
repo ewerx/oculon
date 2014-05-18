@@ -147,9 +147,6 @@ void Deformer::draw()
     glDepthFunc( GL_LESS );
 	glEnable( GL_DEPTH_TEST );
     
-    // seems to be opposite what it should be... but...
-    // GL_FRONT for being inside object
-    // GL_BACK for being outside
 	glCullFace( GL_BACK );
 	glEnable( GL_CULL_FACE );
     
