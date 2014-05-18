@@ -33,7 +33,6 @@ protected:// from Scene
     
 private:
     void shaderPreDraw();
-    void drawShaderOutput();
     void shaderPostDraw();
     
 protected:
@@ -48,9 +47,6 @@ protected:
         virtual void setupInterface( Interface* interface, const std::string& name );
         
         const std::string& getName() { return mName; }
-        
-    protected:
-        void drawShaderOutput(const ci::Vec2i& viewportSize);
         
     protected:
         std::string mName;

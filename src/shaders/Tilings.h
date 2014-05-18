@@ -43,7 +43,6 @@ private:
     void drawScene();
     
     void shaderPreDraw();
-    void drawShaderOutput();
     void shaderPostDraw();
     
     float getAudioLevelForBand(int bandIndex);

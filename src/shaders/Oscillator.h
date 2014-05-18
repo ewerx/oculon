@@ -36,7 +36,6 @@ protected:// from Scene
     
 private:
     void shaderPreDraw();
-    void drawShaderOutput();
     void shaderPostDraw();
 
 private:

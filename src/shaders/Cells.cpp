@@ -9,6 +9,7 @@
 #include "OculonApp.h"
 #include "Interface.h"
 #include "Cells.h"
+#include "Utils.h"
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
@@ -262,45 +263,6 @@ void Cells::shaderPreDraw()
     }
 }
 
-void Cells::drawShaderOutput()
-{
-    // Draw shader output
-    gl::enable( GL_TEXTURE_2D );
-    gl::color( Colorf::white() );
-    gl::begin( GL_TRIANGLES );
-    
-    // Define quad vertices
-    const Area& bounds = mApp->getViewportBounds();
-    
-    Vec2f vert0( (float)bounds.x1, (float)bounds.y1 );
-    Vec2f vert1( (float)bounds.x2, (float)bounds.y1 );
-    Vec2f vert2( (float)bounds.x1, (float)bounds.y2 );
-    Vec2f vert3( (float)bounds.x2, (float)bounds.y2 );
-    
-    // Define quad texture coordinates
-    Vec2f uv0( 0.0f, 0.0f );
-    Vec2f uv1( 1.0f, 0.0f );
-    Vec2f uv2( 0.0f, 1.0f );
-    Vec2f uv3( 1.0f, 1.0f );
-    
-    // Draw quad (two triangles)
-    gl::texCoord( uv0 );
-    gl::vertex( vert0 );
-    gl::texCoord( uv2 );
-    gl::vertex( vert2 );
-    gl::texCoord( uv1 );
-    gl::vertex( vert1 );
-    
-    gl::texCoord( uv1 );
-    gl::vertex( vert1 );
-    gl::texCoord( uv2 );
-    gl::vertex( vert2 );
-    gl::texCoord( uv3 );
-    gl::vertex( vert3 );
-    
-    gl::end();
-}
-
 void Cells::shaderPostDraw()
 {
     mShader.unbind();
@@ -324,7 +286,7 @@ void Cells::drawScene()
     
     shaderPreDraw();
     
-    drawShaderOutput();
+    Utils::drawTexturedRect( mApp->getViewportBounds() );
     
     shaderPostDraw();
     

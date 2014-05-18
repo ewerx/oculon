@@ -67,6 +67,8 @@ public:
     // shader convenience
     static ci::gl::GlslProg loadFragShader( const std::string& filename );
     static ci::gl::GlslProg loadVertAndFragShaders( const std::string& vertShader, const std::string& fragShader );
+    
+    static void drawTexturedRect(const ci::Area& bounds);
 };
 
 #endif

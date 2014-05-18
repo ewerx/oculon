@@ -49,7 +49,6 @@ private:
     void drawScene();
     
     void shaderPreDraw();
-    void drawShaderOutput();
     void shaderPostDraw();
     
 private:
