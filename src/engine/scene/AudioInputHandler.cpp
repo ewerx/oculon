@@ -33,9 +33,8 @@ void AudioInputHandler::setup(bool fboEnabled)
     
     // DISTRIBUTION
     mRandomSignal       = false;
-    mRandomEveryFrame   = false;
+    mRandomize          = false;
     mRandomSeed         = 1234;
-    mLinearScale        = false;
     
     // FALLOFF
     mFalloffTime        = 0.32f;
@@ -50,7 +49,7 @@ void AudioInputHandler::setup(bool fboEnabled)
     mAvgVolume[BAND_HIGH].mValue     = 0.0f;
 
     // FBO
-    mAudioFboDim        = KISS_DEFAULT_DATASIZE; // 256 bands
+    mAudioFboDim        = KISS_DEFAULT_DATASIZE;
     mAudioFboEnabled    = fboEnabled;
     const int audioFboHeight = 2;
     if (mAudioFboEnabled)
@@ -108,10 +107,8 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
 //                        .oscReceiver(name,"audio/texture"));
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
                          .oscReceiver(name,"audio/random"));
-    interface->addParam(CreateBoolParam( "randomize", &mRandomEveryFrame )
-                        .oscReceiver(name,"audio/randomize"));
-    interface->addParam(CreateBoolParam( "linear", &mLinearScale )
-                        .oscReceiver(name,"audio/linear"));
+    interface->addButton(CreateTriggerParam( "randomize", NULL )
+                        .oscReceiver(name,"audio/randomize"))->registerCallback( this, &AudioInputHandler::onRandomize );
     
     interface->gui()->addLabel("falloff");
     interface->addParam(CreateFloatParam( "falloff", &mFalloffTime )
@@ -130,6 +127,12 @@ interface->addEnum(CreateEnumParam( "falloff_mode", (int*)(&mFalloffMode) )
                         .oscReceiver(name, "audio/falloff_mode")
                         .isVertical(), falloffModeNames);
 
+}
+
+bool AudioInputHandler::onRandomize()
+{
+    mRandomize = true;
+    return true;
 }
 
 vector<string> AudioInputHandler::getBandNames()
@@ -194,8 +197,10 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     }
     else
     {
-        if (mRandomEveryFrame) {
+        if (mRandomize)
+        {
             mRandomSeed = Rand::randInt();
+            mRandomize = false;
         }
         Rand randIndex(mRandomSeed);
         for( int index=0; index< magSpectrum.size(); ++index )
@@ -236,17 +241,17 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             {
                 if (row == 0)
                 {
-                    it.r() = mFftFalloff[col].mValue();
-                    it.g() = mFftFalloff[col].mValue();
-                    it.b() = mFftFalloff[col].mValue();
+                    it.r() = mFftFalloff[col].mValue(); // falloff value
+                    it.g() = magSpectrum[col]; // raw value
+                    it.b() = mFftFalloff[col].mValue() * mGain; // falloff w/gain
                     it.a() = 1.0f;
                 }
                 else
                 {
-                    if (col < buffer.getNumChannels())
+                    if (col < buffer.getNumFrames())
                     {
-                        float value = buffer.getChannel(0)[col] * mGain;
-                        it.r() = 0.5f + 0.5f * value;
+                        float value = buffer.getChannel(0)[col];
+                        it.r() = 0.5f + 0.5f * value * mGain;
                         it.g() = 0.5f + 0.5f * value;
                         it.b() = 0.5f + 0.5f * value;
                         it.a() = 1.0f;
@@ -288,13 +293,9 @@ void AudioInputHandler::drawDebug(const Vec2f& windowSize)
         
         const float size = 80.0f;
         const float paddingX = 20.0f;
-        const float paddingY = 240.0f;
+        const float paddingY = 320.0f;
         Rectf preview( windowSize.x - (size+paddingX), windowSize.y - (size+paddingY), windowSize.x-paddingX, windowSize.y - paddingY );
         gl::draw( mAudioFbo.getTexture(), preview );
-        
-        //mAudioFbo.bindTexture();
-        //TODO: make utility func for making rects with origin/size
-        //gl::drawSolidRect( Rectf( 100.0f, mApp->getWindowHeight() - 120.0f, 180.0f, mApp->getWindowHeight() - 40.0f ) );
         
         glPopAttrib();
         gl::popMatrices();

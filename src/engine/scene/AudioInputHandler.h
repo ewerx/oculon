@@ -66,7 +66,8 @@ public:
     FftValues& getFftValues()                              { return mFftFalloff; }
     
 private:
-    
+    // callback
+    bool onRandomize();
     
 public:
     // Texture
@@ -78,9 +79,8 @@ public:
     
     // Distribution
     bool                mRandomSignal;
-    bool                mRandomEveryFrame;
+    bool                mRandomize;
     int                 mRandomSeed;
-    bool                mLinearScale;
 
     // FALLOFF
 #define AUDIO_FALLOFF_MODE_TUPLE \

@@ -17,7 +17,7 @@
 #include "Interface.h"
 #include "OscServer.h"
 
-#define KISS_DEFAULT_DATASIZE 256
+#define KISS_DEFAULT_DATASIZE 512
 
 class AudioInput
 {
