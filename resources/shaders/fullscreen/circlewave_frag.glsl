@@ -1,6 +1,6 @@
 uniform vec3      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;       // audio texture
+uniform sampler2D audioDataTex;       // audio texture
 uniform float     iSeparation;
 uniform float     iDetail;
 uniform int       iStrands;
@@ -34,14 +34,17 @@ void main(void)
 //         f = f*f*(3.0-2.0*f);
 //         u = floor(u);
 //         float sound = mix( texture2D( iChannel0, vec2((u+.5)/256.0,1.0) ).x, texture2D( iChannel0, vec2((u+1.5)/256.0,1.0) ).x, f );
-		float sound = texture2D( iChannel0, vec2(uv.x,1.0) ).x;
+		float sound = texture2D( audioDataTex, vec2(uv.x,1.0) ).x;
 		
 		// choose colour from spectrum
 		float a = .9*float(i)*tau/float(n)-.6;
 		vec3 phase;
-        if (iColorSep) {
+        if (iColorSep)
+        {
             phase = smoothstep(-1.0,.5,vec3(cos(a),cos(a-tau/3.0),cos(a-tau/3.0)));
-        } else {
+        }
+        else
+        {
             float g = cos(a-tau*2.0/3.0);
             phase = smoothstep(-1.0,.5,vec3(g));
         }
@@ -53,18 +56,19 @@ void main(void)
     
     // background
 	vec4 col = iColor2;
-    if (iBackgroundFlash) {
+    if (iBackgroundFlash)
+    {
         col = vec4(0);
         col.w = 1.0;
-        col.z  += texture2D( iChannel0, vec2(.000,.25) ).x;
-        col.zy += texture2D( iChannel0, vec2(.125,.25) ).xx*vec2(1.5,.5);
-        col.zy += texture2D( iChannel0, vec2(.250,.25) ).xx;
-        col.zy += texture2D( iChannel0, vec2(.375,.25) ).xx*vec2(.5,1.5);
-        col.y  += texture2D( iChannel0, vec2(.500,.25) ).x;
-        col.yx += texture2D( iChannel0, vec2(.625,.25) ).xx*vec2(1.5,.5);
-        col.yx += texture2D( iChannel0, vec2(.750,.25) ).xx;
-        col.yx += texture2D( iChannel0, vec2(.875,.25) ).xx*vec2(.5,1.5);
-        col.x  += texture2D( iChannel0, vec2(1.00,.25) ).x;
+        col.z  += texture2D( audioDataTex, vec2(.000,.25) ).x;
+        col.zy += texture2D( audioDataTex, vec2(.125,.25) ).xx*vec2(1.5,.5);
+        col.zy += texture2D( audioDataTex, vec2(.250,.25) ).xx;
+        col.zy += texture2D( audioDataTex, vec2(.375,.25) ).xx*vec2(.5,1.5);
+        col.y  += texture2D( audioDataTex, vec2(.500,.25) ).x;
+        col.yx += texture2D( audioDataTex, vec2(.625,.25) ).xx*vec2(1.5,.5);
+        col.yx += texture2D( audioDataTex, vec2(.750,.25) ).xx;
+        col.yx += texture2D( audioDataTex, vec2(.875,.25) ).xx*vec2(.5,1.5);
+        col.x  += texture2D( audioDataTex, vec2(1.00,.25) ).x;
         col *= iColor2;
         // vignetting
         col *= smoothstep( 1.2, 0.0, uv.y );

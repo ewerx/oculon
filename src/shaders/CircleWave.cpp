@@ -119,7 +119,7 @@ void CircleWave::shaderPreDraw()
     
     mShader.uniform( "iResolution", resolution );
     mShader.uniform( "iGlobalTime", (float)mElapsedTime );
-    mShader.uniform( "iChannel0", 1 );
+    mShader.uniform( "audioDataTex", 1 );
     mShader.uniform( "iColor1", mColor1 );
     mShader.uniform( "iColor2", mColor2 );
     
