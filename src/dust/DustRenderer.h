@@ -31,7 +31,13 @@ protected:
     float               mPointSize;
     bool                mAudioReactive;
     bool                mAdditiveBlend;
-    ci::gl::Texture     mColorMapTex;
-    ci::gl::Texture     mSpriteTex;
     ci::ColorAf         mColor;
+    
+    // textures
+    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
+    std::vector<tNamedTexture> mPointTextures;
+    int mCurPointTexture;
+    
+    std::vector<tNamedTexture> mColorMaps;
+    int mCurColorMap;
 };

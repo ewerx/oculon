@@ -38,14 +38,18 @@ void main()
 	gl_PointSize = 6.0 * spriteWidth - (6.0 * spriteWidth * age);
     
     color = vec4(1.0,1.0,1.0,0.0);
-    if (audioReactive) {
+    if (audioReactive)
+    {
         // size based on audio level
-        float baseSize = gl_PointSize;
-        gl_PointSize = baseSize * 0.5 + baseSize * texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
+        float pointSize = gl_PointSize;
+        pointSize = pointSize * 0.5 + pointSize * texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
+        gl_PointSize = min( pointSize, 15.0 );
         
         // alpha from audio texture
         color.a = texture2D( intensityMap, vec2(gl_MultiTexCoord0.s,0.0) ).x * gain;
-    } else {
+    }
+    else
+    {
         color.a = 1.0;
     }
 

@@ -63,10 +63,17 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
 void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
 {
     // pre-render - set state
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
     gl::pushMatrices();
     gl::setMatrices( cam );
     
-    preRender();
+    glEnable(GL_TEXTURE_2D);
+    
+    gl::enableAdditiveBlending();
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
+    
+    gl::lineWidth(mLineWidth);
     
     // bind textures
     particlesFbo.bindTexture(0);//pos
@@ -93,7 +100,6 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     mShader.uniform("audioReactive", mAudioReactive);
     mShader.uniform("useColorMap", mUseColorMap);
     
-    
     // do magic
     gl::draw( mVboMesh );
     
@@ -109,22 +115,4 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     // post-render - restore state
     glPopAttrib();
     gl::popMatrices();
-}
-
-void LinesRenderer::preRender()
-{
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT );
-    
-    glEnable(GL_TEXTURE_2D);
-    
-    gl::enableAdditiveBlending();
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
-    
-    gl::lineWidth(mLineWidth);
-}
-
-void LinesRenderer::postRender()
-{
-    
 }

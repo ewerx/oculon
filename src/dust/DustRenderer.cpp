@@ -11,21 +11,41 @@
 #include "cinder/Camera.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 
 DustRenderer::DustRenderer()
 : ParticleRenderer("dust")
 {
-    // load textures
-    mColorMapTex    = gl::Texture( loadImage( app::loadResource( "colortex1.jpg" ) ) );
-    mSpriteTex      = gl::Texture( loadImage( app::loadResource( "glitter.png" ) ) );
-    
     // params
     mPointSize = 1.25f;
     mColor = ColorAf(1.0f,1.0f,1.0f,1.0f);
-    mAudioReactive = false;
+    mAudioReactive = true;
     mAdditiveBlend = false;
+ 
+    // load textures
+    gl::Texture tex;
+    gl::Texture::Format format;
+    format.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    mCurPointTexture = 0;
+    tex = gl::Texture( loadImage( loadResource( "particle_white.png" ) ), format );
+    mPointTextures.push_back( make_pair("glow", tex) );
+    tex = gl::Texture( loadImage( loadResource( "glitter.png" ) ), format );
+    mPointTextures.push_back( make_pair("solid", tex) );
+    tex = gl::Texture( loadImage( loadResource( "parsec-sparkle.png" ) ), format );
+    mPointTextures.push_back( make_pair("sparkle", tex) );
+    
+    mCurColorMap = 0;
+    tex = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ), format );
+    mColorMaps.push_back( make_pair("colormap1", tex) );
+    tex = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ), format );
+    mColorMaps.push_back( make_pair("colormap1", tex) );
+    tex = gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ), format );
+    mColorMaps.push_back( make_pair("colormap1", tex) );
+    tex = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ), format );
+    mColorMaps.push_back( make_pair("colormap1", tex) );
 }
 
 DustRenderer::~DustRenderer()
@@ -47,16 +67,39 @@ void DustRenderer::setupInterface( Interface* interface, const std::string& pref
     string oscName = prefix + "/" + mName;
     
     interface->gui()->addLabel(mName);
+    
+    // point sprite
     interface->addParam(CreateFloatParam( "dust/point_size", &mPointSize )
                         .minValue(0.01f)
                         .maxValue(6.0f)
                         .oscReceiver(oscName));
     
+    vector<string> pointTexNames;
+    for( tNamedTexture namedTex : mPointTextures )
+    {
+        pointTexNames.push_back(namedTex.first);
+    }
+    interface->addEnum(CreateEnumParam( "dust/point_tex", (int*)(&mCurPointTexture) )
+                       .maxValue(pointTexNames.size())
+                       .oscReceiver(oscName)
+                       .isVertical(), pointTexNames);
+    
+    // color
     interface->addParam(CreateColorParam("dust/color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                         .oscReceiver(oscName));
     
-    interface->addParam(CreateBoolParam("dust/audioreactive", &mAudioReactive));
+    vector<string> colorMapNames;
+    for( tNamedTexture namedTex : mColorMaps )
+    {
+        colorMapNames.push_back(namedTex.first);
+    }
+    interface->addEnum(CreateEnumParam( "dust/colormap", (int*)(&mCurColorMap) )
+                       .maxValue(colorMapNames.size())
+                       .oscReceiver(oscName)
+                       .isVertical(), colorMapNames);
+    
     interface->addParam(CreateBoolParam("dust/additive", &mAdditiveBlend));
+    interface->addParam(CreateBoolParam("dust/audioreactive", &mAudioReactive));
 }
 
 void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )
@@ -93,7 +136,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     particlesFbo.bindTexture(1);//vel
     particlesFbo.bindTexture(2);//info
     
-    mSpriteTex.bind(3);
+    mPointTextures[mCurPointTexture].second.bind(3);
     //mColorMapTex.bind(4);
     
     if (audioInputHandler.hasTexture())
@@ -121,7 +164,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     // cleanup
     mShader.unbind();
     particlesFbo.unbindTexture();
-    mSpriteTex.unbind();
+    mPointTextures[mCurPointTexture].second.unbind();
     if (audioInputHandler.hasTexture())
     {
         audioInputHandler.getFbo().unbindTexture();

@@ -24,10 +24,6 @@ public:
     virtual void draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler );
     
 protected:
-    virtual void preRender();
-    virtual void postRender();
-    
-protected:
     // params
     float               mLineWidth;
     bool                mAudioReactive;
