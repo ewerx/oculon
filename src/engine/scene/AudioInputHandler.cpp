@@ -39,11 +39,11 @@ void AudioInputHandler::setup(bool fboEnabled)
     // FALLOFF
     mFalloffTime        = 0.32f;
     mFalloffMode        = FALLOFF_OUTQUAD;
-    mFalloffByFreq      = true;
+    mFalloffByFreq      = false;
     
     // FILTER
     mLowPassFilter      = 0.25f;
-    mHighPassFilter     = 0.75f;
+    mHighPassFilter     = 0.5f;
     mAvgVolume[BAND_LOW].mValue      = 0.0f;
     mAvgVolume[BAND_MID].mValue      = 0.0f;
     mAvgVolume[BAND_HIGH].mValue     = 0.0f;
@@ -218,8 +218,8 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             {
                 mFftFalloff[index].mFalling = false;
                 mFftFalloff[index].mBandIndex = bandIndex;
-                // fade in (20ms)
-                timeline().apply( &mFftFalloff[index].mValue, value, 0.002f, EaseNone() );
+                // fade in (10ms)
+                timeline().apply( &mFftFalloff[index].mValue, value, 0.001f, EaseNone() );
                 //mFftFalloff[index].mValue = value;
             } else if (!mFftFalloff[index].mFalling && value < (mFftFalloff[index].mValue*0.5f)) {
                 // fade out
@@ -280,8 +280,8 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     // calculate avg volumes for low/mid/high for quick access and visual display
     mAvgVolume[BAND_LOW].mValue = getAverageVolumeByFrequencyRange(0.0f, mLowPassFilter);
     //HACKHACK: need to figure out why mid/high are always so low compared to bass
-    mAvgVolume[BAND_MID].mValue = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter) * 10.0f;
-    mAvgVolume[BAND_HIGH].mValue = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f) * 5.0f;
+    mAvgVolume[BAND_MID].mValue = getAverageVolumeByFrequencyRange(mLowPassFilter, mHighPassFilter);
+    mAvgVolume[BAND_HIGH].mValue = getAverageVolumeByFrequencyRange(mHighPassFilter, 1.0f);
 }
 
 void AudioInputHandler::drawDebug(const Vec2f& windowSize)
@@ -343,7 +343,7 @@ AudioInputHandler::tEaseFn AudioInputHandler::getReverseFalloffFunction()
 float AudioInputHandler::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
 {
     //TODO: audio2 cleanup
-    return getAverageVolumeByFrequencyRange( (int)(minRatio * DEFAULT_FREQ_BIN_SIZE), (int)(maxRatio * DEFAULT_FREQ_BIN_SIZE) );
+    return getAverageVolumeByFrequencyRange( (int)(minRatio * mFftFalloff.size()), (int)(maxRatio * mFftFalloff.size()) );
 }
 
 float AudioInputHandler::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=256*/)
@@ -355,10 +355,10 @@ float AudioInputHandler::getAverageVolumeByFrequencyRange(const int minBand /*=0
     
     for (int32_t i = minIndex; i < maxIndex; i++)
     {
-        amplitude += mFftFalloff[i].mValue;
+        // TODO: should already be multiplied by gain but it's too low...
+        amplitude += mFftFalloff[i].mValue * mGain;
     }
     
-    // WAT?
     amplitude = amplitude / (float)(maxIndex-minIndex);
     
     return amplitude;
