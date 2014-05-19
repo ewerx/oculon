@@ -70,3 +70,4 @@ void main(void)
 	}
 	gl_FragColor = vec4(aacolor/(antialias*antialias),1.0);
 }
+

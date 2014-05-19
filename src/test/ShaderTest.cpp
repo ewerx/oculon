@@ -65,26 +65,60 @@ void ShaderTest::reset()
 
 void ShaderTest::setupShaders()
 {
-    mShaderType = SHADER_TEST;
+    mShaderType = 0;
     
-#define SHADERS_ENTRY( nam, glsl, enm ) \
-mShaders.push_back( loadFragShader( glsl ) );
-    SHADERS_TUPLE
-#undef SHADERS_ENTRY
+    mShaders.push_back( new FragShader( "Test",      "test_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Organism",    "organism_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "fractraps1",    "fractraps1_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Truchets",    "truchets_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Shapeshifter",    "shapeshifter_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Gyroid",    "gyroid_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Blood",    "redcells_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Fire2D",    "fire2d_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Circuit",    "circuit_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "GooSpin",    "goospin_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Urchin",    "urchin_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "FrameGrid",    "framegrid_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Sacred",    "sacred_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "FluffyCloud",    "fluffycloud_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "CloudTunnel",    "cloudtunnel_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Cloud",    "cloud_frag.glsl" ) ); // slow
+//    mShaders.push_back( new FragShader( "Clouds",    "clouds_frag.glsl" ) ); // bad noise
+    mShaders.push_back( new FragShader( "Triangle",    "triangle_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Tripping",  "tripping_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Stripes",   "stripes_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Flicker",   "energyflicker_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Inversion", "inversion_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "Logistic",          "logistic_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Interstellar",      "interstellar_frag.glsl" ) ); // bad noise
+    mShaders.push_back( new FragShader( "MainSequence",      "mainsequence_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "InfiniteFall",      "infinitefall_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "AfterEffect",       "aftereffect_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "Rasterizer" ) );
+    //mShaders.push_back( new FragShader( "Glassfield" ) );
+    //mShaders.push_back( new FragShader( "Cosmos" ) );
+    //mShaders.push_back( new FragShader( "Glow" ) );
+    //mShaders.push_back( new FragShader( "Cloud" ) );
+    //mShaders.push_back( new FragShader( "MetaHexBalls" ) );
+    //mShaders.push_back( new FragShader( "Stripey" ) );
+    //mShaders.push_back( new FragShader( "Moire" ) );
+    //mShaders.push_back( new FragShader( "Polychora" ) );
+
 }
 
 void ShaderTest::setupInterface()
 {
     vector<string> shaderNames;
-#define SHADERS_ENTRY( nam, glsl, enm ) \
-shaderNames.push_back(nam);
-    SHADERS_TUPLE
-#undef  SHADERS_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Shader", (int*)(&mShaderType) )
-                        .maxValue(SHADERS_COUNT)
-                        .oscReceiver(getName(), "shader")
+    for( FragShader* shader : mShaders )
+    {
+        shaderNames.push_back(shader->getName());
+    }
+    mInterface->addEnum(CreateEnumParam( "shader", (int*)(&mShaderType) )
+                        .maxValue(shaderNames.size())
+                        .oscReceiver(getName())
                         .isVertical(), shaderNames);
     
+    mInterface->gui()->addColumn();
     mTimeController.setupInterface(mInterface, mName);
     
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
@@ -93,6 +127,8 @@ shaderNames.push_back(nam);
     mInterface->addParam(CreateIntParam("texture", &mTextureIndex)
                          .maxValue(MAX_TEXTURES-1)
                          .oscReceiver(getName()));
+    
+    mDynamicTexture.setupInterface(mInterface, mName);
     
     // SHADER_STRIPES
     mInterface->gui()->addColumn();
@@ -116,7 +152,6 @@ shaderNames.push_back(nam);
 //                         .maxValue(2)
 //                         .oscReceiver(getName()));
     
-    mDynamicTexture.setupInterface(mInterface, mName);
     
     
    //mAudioInputHandler.setupInterface(mInterface);
@@ -166,54 +201,30 @@ void ShaderTest::draw()
 
 void ShaderTest::shaderPreDraw()
 {
-    //mAudioInputHandler.getFbo().bindTexture(1);
-    Scene* contourScene = mApp->getScene("contour");
-    
-    if( contourScene && contourScene->isRunning() )
+    if( mApp->getAudioInputHandler().hasTexture() )
     {
-        Contour* contour = static_cast<Contour*>(contourScene);
-        contour->getVtfFbo().bindTexture(1);
-    }
-    else
-    {
-        if( mApp->getAudioInputHandler().hasTexture() )
-        {
-            mApp->getAudioInputHandler().getFbo().bindTexture(1);
-        }
+        mApp->getAudioInputHandler().getFbo().bindTexture(1);
     }
     
     mTexture[mTextureIndex].bind(0);
     
-    gl::GlslProg shader = mShaders[mShaderType];
+    gl::GlslProg shader = mShaders[mShaderType]->getShader();
     shader.bind();
     
     Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
     
-    switch( mShaderType )
-    {
-        case SHADER_STRIPES:
-            shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
-            shader.uniform( "timeScale", mStripesParams.mTimeScale );
-            shader.uniform( "color1", mStripesParams.mColor1 );
-            shader.uniform( "color2", mStripesParams.mColor2 );
-            shader.uniform( "countScale", mStripesParams.mCountScale );
-            break;
-        
-        default:
-            shader.uniform( "iResolution", resolution );
-            shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
-            shader.uniform( "iChannelTime", (float)mTimeController.getElapsedSeconds() );
-            shader.uniform( "iChannel0", 0 );
-            shader.uniform( "iChannel1", 1 );
-            shader.uniform( "iMouse", Vec2f::one()*0.5f );
-            break;
-    }
+    shader.uniform( "iResolution", resolution );
+    shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
+    shader.uniform( "iChannelTime", (float)mTimeController.getElapsedSeconds() );
+    shader.uniform( "iChannel0", 1 );
+    shader.uniform( "iChannel1", 0 );
+    shader.uniform( "iMouse", Vec2f::one()*0.5f );
 }
+
 
 void ShaderTest::shaderPostDraw()
 {
-    gl::GlslProg shader = mShaders[mShaderType];
+    gl::GlslProg shader = mShaders[mShaderType]->getShader();
     shader.unbind();
     
     if( mApp->getAudioInputHandler().hasTexture() )

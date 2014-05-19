@@ -258,7 +258,7 @@ void main(void)
 {
 	vec2 uv = gl_FragCoord.xy / iResolution.xy - 0.5;
 	uv.x *= iResolution.x/iResolution.y; //fix aspect ratio
-	vec3 mouse = vec3(iMouse.xy/iResolution.xy - 0.5,iMouse.z-.5);
+	vec3 mouse = vec3(iMouse.xy/iResolution.xy - 0.5,0.0);
 	
 	mouse.x+=iGlobalTime*.00015;
 	
