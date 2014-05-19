@@ -395,7 +395,7 @@
 		7C8CBB2C1929B4DF00588689 /* organism_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2B1929B4DF00588689 /* organism_frag.glsl */; };
 		7C8CBB2E1929B64700588689 /* gyroid_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2D1929B64700588689 /* gyroid_frag.glsl */; };
 		7C8CBB30192A835B00588689 /* cloudtunnel_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2F192A835B00588689 /* cloudtunnel_frag.glsl */; };
-		7C8CBB32192A9EB100588689 /* fractaps1_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB31192A9EB100588689 /* fractaps1_frag.glsl */; };
+		7C8CBB32192A9EB100588689 /* fractraps1_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB31192A9EB100588689 /* fractraps1_frag.glsl */; };
 		7C8DA8651921AB9300FCD9A2 /* test_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */; };
 		7C8DA8671921B43200FCD9A2 /* hexagons_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8DA8661921B43200FCD9A2 /* hexagons_frag.glsl */; };
 		7C8DA8691921B4A200FCD9A2 /* triangle_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8DA8681921B4A200FCD9A2 /* triangle_frag.glsl */; };
@@ -1050,7 +1050,7 @@
 		7C8CBB2B1929B4DF00588689 /* organism_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = organism_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB2D1929B64700588689 /* gyroid_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gyroid_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB2F192A835B00588689 /* cloudtunnel_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cloudtunnel_frag.glsl; sourceTree = "<group>"; };
-		7C8CBB31192A9EB100588689 /* fractaps1_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fractaps1_frag.glsl; sourceTree = "<group>"; };
+		7C8CBB31192A9EB100588689 /* fractraps1_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fractraps1_frag.glsl; sourceTree = "<group>"; };
 		7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_frag.glsl; sourceTree = "<group>"; };
 		7C8DA8661921B43200FCD9A2 /* hexagons_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hexagons_frag.glsl; sourceTree = "<group>"; };
 		7C8DA8681921B4A200FCD9A2 /* triangle_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = triangle_frag.glsl; sourceTree = "<group>"; };
@@ -1601,7 +1601,7 @@
 				7C06A8D61853D4ED00D1C8A3 /* stripey_frag.glsl */,
 				7C6CB43D1925DAA900D83614 /* terminal_frag.glsl */,
 				7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */,
-				7C8CBB31192A9EB100588689 /* fractaps1_frag.glsl */,
+				7C8CBB31192A9EB100588689 /* fractraps1_frag.glsl */,
 				7C8CBB2F192A835B00588689 /* cloudtunnel_frag.glsl */,
 				7C06A8D71853D4ED00D1C8A3 /* tilings_frag.glsl */,
 				7C8DA8681921B4A200FCD9A2 /* triangle_frag.glsl */,
@@ -3084,7 +3084,7 @@
 				7C159BA518B6FCD3005245CB /* static_sim_frag.glsl in Resources */,
 				7C06A8F71853D4ED00D1C8A3 /* mainsequence_frag.glsl in Resources */,
 				7C79C8FD17650F8F00E71F9D /* cubePosX.jpg in Resources */,
-				7C8CBB32192A9EB100588689 /* fractaps1_frag.glsl in Resources */,
+				7C8CBB32192A9EB100588689 /* fractraps1_frag.glsl in Resources */,
 				7C79C8FE17650F8F00E71F9D /* cubePosY.jpg in Resources */,
 				7C79C8FF17650F8F00E71F9D /* cubePosZ.jpg in Resources */,
 				7C79C90017650F8F00E71F9D /* glowCorona.png in Resources */,
