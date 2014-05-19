@@ -82,7 +82,6 @@ SHADERS_ENTRY( "Tripping",  "tripping_frag.glsl", SHADER_TRIPPING ) \
 SHADERS_ENTRY( "Stripes",   "stripes_frag.glsl", SHADER_STRIPES ) \
 SHADERS_ENTRY( "Flicker",   "energyflicker_frag.glsl", SHADER_FLICKER ) \
 SHADERS_ENTRY( "Inversion", "inversion_frag.glsl", SHADER_INVERSION ) \
-SHADERS_ENTRY( "Cymatics",  "cymatics_frag.glsl", SHADER_CYMATICS ) \
 SHADERS_ENTRY( "Logistic",          "logistic_frag.glsl", SHADER_LOGISTIC ) \
 SHADERS_ENTRY( "Interstellar",      "interstellar_frag.glsl", SHADER_INTERSTELLAR ) \
 SHADERS_ENTRY( "MainSequence",      "mainsequence_frag.glsl", SHADER_MAINSEQUENCE ) \

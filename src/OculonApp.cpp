@@ -46,6 +46,7 @@
 #include "RootFract.h"
 #include "Menger.h"
 #include "EffectShaders.h"
+#include "Cymatics.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -71,6 +72,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 using namespace boost;
+
+#define SCENES_PER_COLUMN 4
 
 void OculonApp::prepareSettings( Settings *settings )
 {
@@ -389,39 +392,44 @@ void OculonApp::setupScenes()
     mScenes.clear();
     
     if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
+    if( mConfig.getBool("binned") )     addScene( new Binned() );
+    if( mConfig.getBool("dust") )       addScene( new Dust() );
+    if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
+    
+    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
+    if( mConfig.getBool("lines") )      addScene( new Lines() );
+    if( mConfig.getBool("parsec") )     addScene( new Parsec() );
+    if( mConfig.getBool("flock") )      addScene( new Flock() );
+    
     if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
-    if( mConfig.getBool("parsec") )     addScene( new Parsec() );
-    if( mConfig.getBool("binned") )     addScene( new Binned() );
-    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
-    if( mConfig.getBool("dust") )       addScene( new Dust() );
-    
-    if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
-    if( mConfig.getBool("flock") )      addScene( new Flock() );
+//    if( mConfig.getBool("grid") )       addScene( new Grid() );
+//    if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
     if( mConfig.getBool("trails") )     addScene( new Trails() );
+    
+    if( mConfig.getBool("rings") )              addScene( new Rings() );
+    if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
+    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+    if( mConfig.getBool("rings") )              addScene( new Cymatics() );
+    
     if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
     if( mConfig.getBool("terrain") )    addScene( new Deformer() );
-    if( mConfig.getBool("lines") )      addScene( new Lines() );
-    if( mConfig.getBool("contour") )    addScene( new Contour() );
-//    if( mConfig.getBool("grid") )       addScene( new Grid() );
-    if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
-    
-    if( mConfig.getBool("corona") )     addScene( new Corona() );
-    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
     if( mConfig.getBool("geometry") )   addScene( new Geometry() );
+    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
     
-    // Shader Scenes
-    if( mConfig.getBool("cells") )              addScene( new Cells() );
-    if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
-    if( mConfig.getBool("rings") )              addScene( new Rings() );
-    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
-    if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
-    if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
-    if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
-    if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
+    if( mConfig.getBool("cells") )              addScene( new Cells() );
     if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
+    if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
+    
+    
+    if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
+    if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
+    if( mConfig.getBool("corona") )             addScene( new Corona() );
+    if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
+    
     if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
+    if( mConfig.getBool("contour") )            addScene( new Contour() );
     
     // Test Scenes
     //addScene( new MovieTest() );
@@ -455,7 +463,7 @@ void OculonApp::addScene(Scene* scene, bool autoStart)
     const int sceneIndex = mScenes.size()-1;
     
     // interface
-    if( (sceneIndex) % 3 == 0 )
+    if( sceneIndex % SCENES_PER_COLUMN == 0 )
     {
         mInterface->gui()->addColumn();
     }

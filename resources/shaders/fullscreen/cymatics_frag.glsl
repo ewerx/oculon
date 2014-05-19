@@ -1,51 +1,50 @@
-uniform vec3      iResolution;     // viewport resolution (in pixels)
-uniform float     iGlobalTime;     // shader playback time (in seconds)
-//uniform float     iChannelTime[4]; // channel playback time (in seconds)
-uniform vec4      iMouse;          // mouse pixel coords. xy: current (if MLB down), zw: click
-//uniform samplerXX iChannel0..3;    // input channel. XX = 2D/Cube
-//uniform vec4      iDate;           // (year, month, day, time in seconds)
+uniform vec3      iResolution;     
+uniform float     iGlobalTime;
+uniform vec4      iColor1;
+uniform vec4      iColor2;
+uniform int iPoles;
+uniform float iDistance;
+uniform float iShift;
 
+//
 float ripple(float dist, float shift)
 {
 	return cos(64.0 * dist + shift) / (1.0 + 1.0 * dist);
 }
-
-
-#define POLES 250
-
-#define REFLECTIONS 100.0
 
 void main(void)
 {
 	float larger = max(iResolution.x, iResolution.y);
 	vec2 uv = (gl_FragCoord.xy - .5*iResolution.xy) / larger;
 	vec2 uvflip = vec2(uv.x, -uv.y);
-	vec2 cursor = (iMouse.xy - .5*iResolution.xy) / larger;
-	vec2 blessr = vec2(-cursor.x, cursor.y);
 	
-	//float on = float(abs(uv.x)<.25 && abs(uv.y)<.25);
-	
-	float lum = .5;// +
-//    .1 * ripple(length(cursor - uv), -iGlobalTime) +
-//    .1 * ripple(length(blessr - uv), -iGlobalTime) +
-//    .1 * ripple(length(cursor - uvflip), -iGlobalTime) +
-//    .1 * ripple(length(blessr - uvflip), -iGlobalTime) +
-//    .1 * ripple(length(uv), 0.0) +
-//    .1 * cos(64.0*uv.y - iGlobalTime) +
-//    .1 * cos(64.0*(uv.x*uv.x) - iGlobalTime) +
-//    0.0;
+	float lum = .5;
 	
 	float twopi = 2.0*3.141592654;
-	const int count = POLES;
-	float fcount = float(count);
+	float fcount = float(iPoles);
 	vec2 rot = vec2(cos(twopi*.618), sin(twopi*.618));
 	vec2 tor = vec2(-sin(twopi*.618), cos(twopi*.618));
-	for (int i = 0; i < count; ++i)
+    vec2 values = vec2( iDistance, iDistance );
+	for (int i = 0; i < iPoles; ++i)
 	{
-		lum += .2 * ripple(length(cursor - uv), -iGlobalTime);
-		cursor = cursor.x*rot + cursor.y*tor;
+		lum += .2 * ripple(length(values - uv), -iGlobalTime + iShift);
+		values = values.x*rot + values.y*tor;
 	}
 	
+    lum = 3.0*lum*lum - 2.0*lum*lum*lum;
+	gl_FragColor = vec4(lum, lum, lum, 1.0);
+    
+    // vec2 blessr = vec2(-cursor.x, cursor.y);
+    // float lum = .5 +
+    //    .1 * ripple(length(cursor - uv), -iGlobalTime) +
+    //    .1 * ripple(length(blessr - uv), -iGlobalTime) +
+    //    .1 * ripple(length(cursor - uvflip), -iGlobalTime) +
+    //    .1 * ripple(length(blessr - uvflip), -iGlobalTime) +
+    //    .1 * ripple(length(uv), 0.0) +
+    //    .1 * cos(64.0*uv.y - iGlobalTime) +
+    //    .1 * cos(64.0*(uv.x*uv.x) - iGlobalTime) +
+    //    0.0;
+    
 	/*float lum = .5, dist;
      vec2 part, flip = vec2(1.0, 1.0);
      
@@ -63,9 +62,8 @@ void main(void)
      }
      flip.x *= -1.0;
      }
-     */
-	lum = 3.0*lum*lum - 2.0*lum*lum*lum;
-	gl_FragColor = vec4(lum, lum, lum, 1.0);
+     
+	
 	
 	
 	/*gl_FragColor = vec4(.5+.5*sin(3000.0*iGlobalTime),

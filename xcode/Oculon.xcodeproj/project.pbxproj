@@ -127,6 +127,7 @@
 		7C4DBFC31929131A00FDDDC3 /* MeshInstanceRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DBFC11929131A00FDDDC3 /* MeshInstanceRenderer.cpp */; };
 		7C4DBFC5192913FC00FDDDC3 /* meshinstance_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4DBFC4192913FC00FDDDC3 /* meshinstance_render_vert.glsl */; };
 		7C4DBFC71929141300FDDDC3 /* meshinstance_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4DBFC61929141300FDDDC3 /* meshinstance_render_frag.glsl */; };
+		7C4DBFCA19295E3000FDDDC3 /* Cymatics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */; };
 		7C5165E11915DAAF003E94F8 /* ParticleFormation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */; };
 		7C5165E81917091B003E94F8 /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E61917091B003E94F8 /* Geometry.cpp */; };
 		7C5165EB191709D2003E94F8 /* Pentagon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E9191709D2003E94F8 /* Pentagon.cpp */; };
@@ -689,6 +690,8 @@
 		7C4DBFC21929131A00FDDDC3 /* MeshInstanceRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshInstanceRenderer.h; path = particlesystem/MeshInstanceRenderer.h; sourceTree = "<group>"; };
 		7C4DBFC4192913FC00FDDDC3 /* meshinstance_render_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = meshinstance_render_vert.glsl; path = ../particlesystem/meshinstance_render_vert.glsl; sourceTree = "<group>"; };
 		7C4DBFC61929141300FDDDC3 /* meshinstance_render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = meshinstance_render_frag.glsl; path = ../particlesystem/meshinstance_render_frag.glsl; sourceTree = "<group>"; };
+		7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cymatics.cpp; sourceTree = "<group>"; };
+		7C4DBFC919295E3000FDDDC3 /* Cymatics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cymatics.h; sourceTree = "<group>"; };
 		7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleFormation.cpp; path = particlesystem/ParticleFormation.cpp; sourceTree = "<group>"; };
 		7C5165E01915DAAF003E94F8 /* ParticleFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleFormation.h; path = particlesystem/ParticleFormation.h; sourceTree = "<group>"; };
 		7C5165E61917091B003E94F8 /* Geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geometry.cpp; sourceTree = "<group>"; };
@@ -1718,6 +1721,8 @@
 				7C6CB4361925AFDD00D83614 /* EffectShaders.h */,
 				7C4DBFBE1928002E00FDDDC3 /* Menger.cpp */,
 				7C4DBFBF1928002E00FDDDC3 /* Menger.h */,
+				7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */,
+				7C4DBFC919295E3000FDDDC3 /* Cymatics.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -3187,6 +3192,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C4DBFCA19295E3000FDDDC3 /* Cymatics.cpp in Sources */,
 				7C47F054191FE9BD00244E5F /* NodeController.cpp in Sources */,
 				6B5DD2F06F6B4B088DB99A04 /* OculonApp.cpp in Sources */,
 				6C15B82F53A74ADCAD8F04F1 /* b2BroadPhase.cpp in Sources */,
