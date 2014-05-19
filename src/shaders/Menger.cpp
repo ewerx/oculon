@@ -13,135 +13,6 @@
 using namespace ci;
 using namespace std;
 
-#pragma mark - Menger Shader
-
-Menger::MengerShader::MengerShader()
-: FragShader("menger", "menger_frag.glsl")
-{
-    mIterations = 7;
-    mMaxSteps = 30;
-    mFieldOfView = 1.0f;
-    mScale = 3.0f;
-    mJitter = 0.05f;
-    mFudgeFactor = 0.7f;
-    mPerspective = 2.0f;
-    mMinDistance = 0.0009f;
-    mNormalDistance = 0.0002f;
-    mOffset = Vec3f(0.92858f,0.92858f,0.32858f);
-}
-
-void Menger::MengerShader::setupInterface(Interface *interface, const std::string &name)
-{
-    string oscName = name + "/" + mName;
-    
-    interface->addParam(CreateIntParam( "iterations", &mIterations )
-                        .minValue(1)
-                        .maxValue(12)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateIntParam( "max_steps", &mMaxSteps )
-                        .minValue(10)
-                        .maxValue(120)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateVec3fParam("offset", &mOffset, Vec3f::zero(), Vec3f::one()*2.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("mScale", &mScale)
-                        .minValue(1.0f)
-                        .maxValue(10.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("fov", &mFieldOfView)
-                        .minValue(0.4f)
-                        .maxValue(20.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("jitter", &mJitter)
-                        .maxValue(0.4f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("fudge", &mFudgeFactor)
-                        .maxValue(3.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("twist", &mPerspective)
-                        .maxValue(10.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("min_dist", &mMinDistance)
-                        .maxValue(0.001f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("norm_dist", &mNormalDistance)
-                        .maxValue(0.001f)
-                        .oscReceiver(oscName));
-}
-
-void Menger::MengerShader::setCustomParams()
-{
-    mShader.uniform( "iIterations", mIterations );
-    mShader.uniform( "iScale", mScale );
-    mShader.uniform( "iMaxSteps", mMaxSteps );
-    mShader.uniform( "iFieldOfView", mFieldOfView );
-    mShader.uniform( "iJitter", mJitter );
-    mShader.uniform( "iFudgeFactor", mFudgeFactor );
-    mShader.uniform( "iPerspective", mPerspective );
-    mShader.uniform( "iMinDistance", mMinDistance );
-    mShader.uniform( "iNormalDistance", mNormalDistance );
-    mShader.uniform( "iOffset", mOffset );
-}
-
-#pragma mark - Polychora Shader
-
-Menger::PolychoraShader::PolychoraShader()
-: FragShader("polychora", "polychora_frag.glsl")
-{
-    mZone = 0;
-    mMaxSteps = 30;
-    mFieldOfView = 1.0f;
-    mJitter = 0.05f;
-    mFudgeFactor = 0.7f;
-    mAntiAlias = 0.5f;
-    mMinDistance = 0.0009f;
-    mNormalDistance = 0.0002f;
-}
-
-void Menger::PolychoraShader::setupInterface(Interface *interface, const std::string &name)
-{
-    string oscName = name + "/" + mName;
-    
-    interface->addParam(CreateIntParam( "zone", &mZone )
-                        .minValue(0)
-                        .maxValue(5)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateIntParam( "max_steps", &mMaxSteps )
-                        .minValue(2)
-                        .maxValue(50)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("fov", &mFieldOfView)
-                        .minValue(0.4f)
-                        .maxValue(20.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("jitter", &mJitter)
-                        .maxValue(0.4f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("fudge", &mFudgeFactor)
-                        .maxValue(3.0f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("anti-alias", &mAntiAlias)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("min_dist", &mMinDistance)
-                        .maxValue(0.001f)
-                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("norm_dist", &mNormalDistance)
-                        .maxValue(0.001f)
-                        .oscReceiver(oscName));
-}
-
-void Menger::PolychoraShader::setCustomParams()
-{
-    mShader.uniform( "iZone", mZone );
-    mShader.uniform( "iMaxSteps", mMaxSteps );
-    mShader.uniform( "iFieldOfView", mFieldOfView );
-    mShader.uniform( "iJitter", mJitter );
-    mShader.uniform( "iFudgeFactor", mFudgeFactor );
-    mShader.uniform( "iAntiAlias", mAntiAlias );
-    mShader.uniform( "iMinDistance", mMinDistance );
-    mShader.uniform( "iNormalDistance", mNormalDistance );
-}
-
 #pragma mark - Scene
 
 Menger::Menger()
@@ -266,7 +137,7 @@ void Menger::shaderPreDraw()
     shader.uniform( "iLight1Dir", mLight1Dir );
     shader.uniform( "iLight2Dir", mLight2Dir );
 
-    mShaders[mShaderIndex]->setCustomParams();
+    mShaders[mShaderIndex]->setCustomParams( mAudioInputHandler );
     
     //    float distortion = mDistortion;
     //    if (mAudioDistortion)
@@ -294,4 +165,168 @@ void Menger::shaderPreDraw()
 void Menger::shaderPostDraw()
 {
     mShaders[mShaderIndex]->getShader().unbind();
+}
+
+#pragma mark - Menger Shader
+
+Menger::MengerShader::MengerShader()
+: FragShader("menger", "menger_frag.glsl")
+{
+    mIterations = 7;
+    mMaxSteps = 30;
+    mFieldOfView = 1.0f;
+    mScale = 3.0f;
+    mJitter = 0.05f;
+    mFudgeFactor = 0.7f;
+    mPerspective = 2.0f;
+    mMinDistance = 0.0009f;
+    mNormalDistance = 0.0002f;
+    mOffset = Vec3f(0.92858f,0.92858f,0.32858f);
+    mOffsetXResponseBand = AudioInputHandler::BAND_NONE;
+    mOffsetYResponseBand = AudioInputHandler::BAND_NONE;
+    mOffsetZResponseBand = AudioInputHandler::BAND_NONE;
+}
+
+void Menger::MengerShader::setupInterface(Interface *interface, const std::string &name)
+{
+    string oscName = name + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->addParam(CreateIntParam( "iterations", &mIterations )
+                        .minValue(1)
+                        .maxValue(12)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "max_steps", &mMaxSteps )
+                        .minValue(10)
+                        .maxValue(120)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateVec3fParam("offset", &mOffset, Vec3f::zero(), Vec3f::one()*2.0f)
+                        .oscReceiver(oscName));
+    
+    interface->addEnum(CreateEnumParam( "audio-offset.x", &mOffsetXResponseBand )
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(mName)
+                       .sendFeedback(), bandNames);
+    interface->addEnum(CreateEnumParam( "audio-offset.y", &mOffsetYResponseBand )
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(mName)
+                       .sendFeedback(), bandNames);
+    interface->addEnum(CreateEnumParam( "audio-offset.z", &mOffsetYResponseBand )
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(mName)
+                       .sendFeedback(), bandNames);
+    
+    interface->addParam(CreateFloatParam("mScale", &mScale)
+                        .minValue(1.0f)
+                        .maxValue(10.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("fov", &mFieldOfView)
+                        .minValue(0.4f)
+                        .maxValue(20.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("jitter", &mJitter)
+                        .maxValue(0.4f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("fudge", &mFudgeFactor)
+                        .maxValue(3.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("twist", &mPerspective)
+                        .maxValue(10.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("min_dist", &mMinDistance)
+                        .maxValue(0.001f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("norm_dist", &mNormalDistance)
+                        .maxValue(0.001f)
+                        .oscReceiver(oscName));
+}
+
+void Menger::MengerShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "iIterations", mIterations );
+    mShader.uniform( "iScale", mScale );
+    mShader.uniform( "iMaxSteps", mMaxSteps );
+    mShader.uniform( "iFieldOfView", mFieldOfView );
+    mShader.uniform( "iJitter", mJitter );
+    mShader.uniform( "iFudgeFactor", mFudgeFactor );
+    mShader.uniform( "iPerspective", mPerspective );
+    mShader.uniform( "iMinDistance", mMinDistance );
+    mShader.uniform( "iNormalDistance", mNormalDistance );
+    
+    Vec3f offset = mOffset * Vec3f(audioInputHandler.getAverageVolumeByBand(mOffsetXResponseBand),
+                                   audioInputHandler.getAverageVolumeByBand(mOffsetYResponseBand),
+                                   audioInputHandler.getAverageVolumeByBand(mOffsetZResponseBand));
+    
+    mShader.uniform( "iOffset", offset );
+}
+
+#pragma mark - Polychora Shader
+
+Menger::PolychoraShader::PolychoraShader()
+: FragShader("polychora", "polychora_frag.glsl")
+{
+    mZone = 0;
+    mMaxSteps = 30;
+    mFieldOfView = 1.0f;
+    mJitter = 0.05f;
+    mFudgeFactor = 0.7f;
+    mAngle = 0.5f;
+    mMinDistance = 0.0009f;
+    mNormalDistance = 0.0002f;
+    mAngleResponseBand = AudioInputHandler::BAND_NONE;
+}
+
+void Menger::PolychoraShader::setupInterface(Interface *interface, const std::string &name)
+{
+    string oscName = name + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->addParam(CreateIntParam( "zone", &mZone )
+                        .minValue(0)
+                        .maxValue(5)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("angle", &mAngle)
+                        .oscReceiver(oscName));
+    interface->addEnum(CreateEnumParam( "audio-angle", &mAngleResponseBand )
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(mName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam("fov", &mFieldOfView)
+                        .minValue(0.4f)
+                        .maxValue(20.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "max_steps", &mMaxSteps )
+                        .minValue(2)
+                        .maxValue(50)
+                        .oscReceiver(oscName));
+    
+//    interface->addParam(CreateFloatParam("jitter", &mJitter)
+//                        .maxValue(0.4f)
+//                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("fudge", &mFudgeFactor)
+                        .maxValue(3.0f)
+                        .oscReceiver(oscName));
+    
+//    interface->addParam(CreateFloatParam("min_dist", &mMinDistance)
+//                        .maxValue(0.001f)
+//                        .oscReceiver(oscName));
+//    interface->addParam(CreateFloatParam("norm_dist", &mNormalDistance)
+//                        .maxValue(0.001f)
+//                        .oscReceiver(oscName));
+}
+
+void Menger::PolychoraShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "iZone", mZone );
+    mShader.uniform( "iMaxSteps", mMaxSteps );
+    mShader.uniform( "iFieldOfView", mFieldOfView );
+    mShader.uniform( "iJitter", mJitter );
+    mShader.uniform( "iFudgeFactor", mFudgeFactor );
+    mShader.uniform( "iAngle", mAngle * audioInputHandler.getAverageVolumeByBand(mAngleResponseBand) );
+    mShader.uniform( "iMinDistance", mMinDistance );
+    mShader.uniform( "iNormalDistance", mNormalDistance );
 }

@@ -12,7 +12,7 @@ uniform float     iJitter;
 uniform float     iFudgeFactor;
 uniform float     iMinDistance;
 uniform float     iNormalDistance;
-uniform float     iAntiAlias;
+uniform float     iAngle;
 
 uniform float     iAmbientLight;
 uniform float     iDiffuseLight;
@@ -122,7 +122,7 @@ void init() {
 			Type = 5;U = 0.; V = 0.; W = 0.; T = 1.;
 			zone = 6.0;
 		}
-		aa = iAntiAlias*90.;
+		aa = iAngle*90.;
 	}
 	float cospin=cos(PI/float(Type)), isinpin=1./sin(PI/float(Type));
 	float scospin=sqrt(2./3.-cospin*cospin), issinpin=1./sqrt(3.-4.*cospin*cospin);
@@ -273,14 +273,16 @@ vec3 cartesianToSpherical(vec3 p) {
 }
 
 
-vec4 rayMarch(in vec3 from, in vec3 dir) {
+vec4 rayMarch(in vec3 from, in vec3 dir)
+{
 	// Add some noise to prevent banding
 	float totalDistance = iJitter*rand(gl_FragCoord.xy+vec2(iGlobalTime));
 	vec3 dir2 = dir;
 	float distance;
 	int steps = 0;
 	vec3 pos;
-	for (int i=0; i <= iMaxSteps; i++) {
+	for (int i=0; i <= iMaxSteps; i++)
+    {
 		pos = from + totalDistance * dir;
 		distance = DE(pos)*iFudgeFactor;
 		
@@ -335,10 +337,10 @@ void main(void)
     col *=(1.0-vignette);
 	
 	// Marker at the bottom to indicate zone
-	float pos =6.0*gl_FragCoord.x/iResolution.x;
-	if (pos<zone && pos>zone-1.0 && coord.y<-0.8) {
-		col = col.xxx;
-	}
+//	float pos =6.0*gl_FragCoord.x/iResolution.x;
+//	if (pos<zone && pos>zone-1.0 && coord.y<0.8) {
+//		col = col.xxx;
+//	}
 	
 	gl_FragColor = vec4(col,1.0);
 }

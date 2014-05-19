@@ -24,7 +24,7 @@ public:
     virtual ~FragShader() {}
     
     virtual void setupInterface( Interface* interface, const std::string& name ) {};
-    virtual void setCustomParams() {}
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler ) {}
     
     const std::string& getName()        { return mName; }
     ci::gl::GlslProg& getShader()       { return mShader; }

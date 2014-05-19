@@ -50,8 +50,8 @@ private:
     {
     public:
         MengerShader();
-        void setCustomParams();
         void setupInterface( Interface* interface, const std::string& name );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
         int                 mIterations;
@@ -64,14 +64,17 @@ private:
         float               mMinDistance;
         float               mNormalDistance;
         ci::Vec3f           mOffset;
+        int                 mOffsetXResponseBand;
+        int                 mOffsetYResponseBand;
+        int                 mOffsetZResponseBand;
     };
     
     class PolychoraShader : public FragShader
     {
     public:
         PolychoraShader();
-        void setCustomParams();
         void setupInterface( Interface* interface, const std::string& name );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
         int                 mZone;
@@ -79,7 +82,8 @@ private:
         float               mFieldOfView;
         float               mJitter;
         float               mFudgeFactor;
-        float               mAntiAlias;
+        float               mAngle;
+        int                 mAngleResponseBand;
         float               mMinDistance;
         float               mNormalDistance;
     };

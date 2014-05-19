@@ -136,7 +136,7 @@ bool AudioInputHandler::onRandomize()
     return true;
 }
 
-vector<string> AudioInputHandler::getBandNames()
+/*static*/ vector<string> AudioInputHandler::getBandNames()
 {
     vector<string> names;
     names.push_back("low");
@@ -145,6 +145,18 @@ vector<string> AudioInputHandler::getBandNames()
     names.push_back("none");
     
     return names;
+}
+
+float AudioInputHandler::getAverageVolumeByBand(const int bandIndex)
+{
+    if (bandIndex >= BAND_NONE)
+    {
+        return 1.0f;
+    }
+    else
+    {
+        return mAvgVolume[bandIndex].mValue;
+    }
 }
 
 void AudioInputHandler::update(double dt, AudioInput& audioInput)
