@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "TimeController.h"
 #include "AudioInputHandler.h"
+#include "FragShader.h"
 
 #include "cinder/gl/GlslProg.h"
 
@@ -34,27 +35,54 @@ private:
     void shaderPostDraw();
     
 private:
-    ci::gl::GlslProg    mShader;
+    std::vector<FragShader*> mShaders;
+    int mShaderIndex;
     
     // params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
-    
-    int                 mIterations;
-    int                 mMaxSteps;
-    float               mFieldOfView;
-    float               mScale;
-    float               mJitter;
-    float               mFudgeFactor;
-    float               mPerspective;
-    float               mMinDistance;
-    float               mNormalDistance;
-    
     float               mAmbientLight;
     float               mDiffuseLight;
     ci::Vec3f           mLight1Dir;
     ci::Vec3f           mLight2Dir;
-    ci::Vec3f           mOffset;
+    
+    class MengerShader : public FragShader
+    {
+    public:
+        MengerShader();
+        void setCustomParams();
+        void setupInterface( Interface* interface, const std::string& name );
+        
+    private:
+        int                 mIterations;
+        int                 mMaxSteps;
+        float               mFieldOfView;
+        float               mScale;
+        float               mJitter;
+        float               mFudgeFactor;
+        float               mPerspective;
+        float               mMinDistance;
+        float               mNormalDistance;
+        ci::Vec3f           mOffset;
+    };
+    
+    class PolychoraShader : public FragShader
+    {
+    public:
+        PolychoraShader();
+        void setCustomParams();
+        void setupInterface( Interface* interface, const std::string& name );
+        
+    private:
+        int                 mZone;
+        int                 mMaxSteps;
+        float               mFieldOfView;
+        float               mJitter;
+        float               mFudgeFactor;
+        float               mAntiAlias;
+        float               mMinDistance;
+        float               mNormalDistance;
+    };
     
     // control
     TimeController      mTimeController;

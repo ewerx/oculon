@@ -22,12 +22,14 @@ uniform vec3      iColor2;
 
 #define PI 3.1415927
 
-vec2 rotate(vec2 v, float a) {
+vec2 rotate(vec2 v, float a)
+{
 	return vec2(cos(a)*v.x + sin(a)*v.y, -sin(a)*v.x + cos(a)*v.y);
 }
 
 // Two light sources. No specular
-vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
+vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir)
+{
 	vec3 lightDir = normalize(iLight1Dir);
 	float diffuse = max(0.0,dot(-normal, lightDir)); // Lambertian
 	
@@ -73,7 +75,8 @@ float DE(in vec3 z)
 }
 
 // Finite difference normal
-vec3 getNormal(in vec3 pos) {
+vec3 getNormal(in vec3 pos)
+{
 	vec3 e = vec3(0.0,iNormalDistance,0.0);
 	
 	return normalize(vec3(
@@ -85,18 +88,21 @@ vec3 getNormal(in vec3 pos) {
 }
 
 // Solid color
-vec3 getColor(vec3 normal, vec3 pos) {
+vec3 getColor(vec3 normal, vec3 pos)
+{
 	return vec3(1.0);
 }
 
 
 // Pseudo-random number
 // From: lumina.sourceforge.net/Tutorials/Noise.html
-float rand(vec2 co){
+float rand(vec2 co)
+{
 	return fract(cos(dot(co,vec2(4.898,7.23))) * 23421.631);
 }
 
-vec4 rayMarch(in vec3 from, in vec3 dir) {
+vec4 rayMarch(in vec3 from, in vec3 dir)
+{
 	// Add some noise to prevent banding
 	float totalDistance = iJitter*rand(gl_FragCoord.xy+vec2(iGlobalTime));
 	vec3 dir2 = dir;
