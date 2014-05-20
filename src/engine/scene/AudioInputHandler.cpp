@@ -239,8 +239,8 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
                 mFftFalloff[index].mFalling = false;
                 mFftFalloff[index].mBandIndex = bandIndex;
                 // fade in (10ms)
-                timeline().apply( &mFftFalloff[index].mValue, value, 0.001f, EaseNone() );
-                //mFftFalloff[index].mValue = value;
+                //timeline().apply( &mFftFalloff[index].mValue, value, 0.001f, EaseNone() );
+                mFftFalloff[index].mValue = value;
             } else if (!mFftFalloff[index].mFalling && value < (mFftFalloff[index].mValue*0.5f)) {
                 // fade out
                 mFftFalloff[index].mFalling = true;
