@@ -24,8 +24,7 @@ public:
     tEaseFn getReverseEaseFunction();
     
     float mDuration;
-    
-private:
+
     
 #define ANIMCURVE_TUPLE \
 ANIMCURVE_ENTRY( "Linear", EASE_LINEAR ) \
@@ -48,6 +47,7 @@ enm,
     };
     eAnimCurve mSelectedCurve;
     
+private:
     float mMaxDuration;
     bool mReverseEase;
 };

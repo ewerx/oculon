@@ -61,6 +61,7 @@ void Lines::setup()
     
     mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     mApp->setCamera(Vec3f(100.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
+    mCameraController.setCamType(CameraController::CAM_SPIN);
     
     // audio
     mAudioInputHandler.setup(true);

@@ -213,7 +213,7 @@ void Menger::MengerShader::setupInterface(Interface *interface, const std::strin
                        .isVertical()
                        .oscReceiver(mName)
                        .sendFeedback(), bandNames);
-    interface->addEnum(CreateEnumParam( "audio-offset.z", &mOffsetYResponseBand )
+    interface->addEnum(CreateEnumParam( "audio-offset.z", &mOffsetZResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
                        .oscReceiver(mName)

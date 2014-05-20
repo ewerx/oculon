@@ -11,7 +11,6 @@
 #include "AudioInputHandler.h"
 #include "CameraController.h"
 #include "DustRenderer.h"
-#include "EaseCurveSelector.h"
 #include "GravitonRenderer.h"
 #include "LinesRenderer.h"
 #include "ParticleController.h"
