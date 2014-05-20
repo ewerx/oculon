@@ -112,10 +112,6 @@ NodeFormation::NodeFormation(const std::string& name)
 
 void NodeFormation::setupInterface(Interface *interface, const std::string &prefix)
 {
-    string name = prefix + "/" + mName;
-    interface->addParam(CreateBoolParam("audio_reactive", &mAudioReactive)
-                        .oscReceiver(name));
-    
 }
 
 void NodeFormation::draw()
@@ -138,6 +134,7 @@ void NodeFormation::drawDebug()
 MirrorBounceFormation::MirrorBounceFormation()
 : NodeFormation("mirrorbounce")
 , mRadius(1.0f)
+, mBounceMultiplier(1.0f)
 , mNumNodes(2)
 , mRandomizeDirection(false)
 , mRandomizeNext(false)
@@ -160,6 +157,9 @@ void MirrorBounceFormation::setupInterface(Interface *interface, const std::stri
     NodeFormation::setupInterface(interface, prefix);
     
     string name = prefix + "/" + mName;
+    
+    interface->addParam(CreateBoolParam("audio_reactive", &mAudioReactive)
+                        .oscReceiver(name));
     
 //    interface->addParam(CreateIntParam("num_nodes", &mNumNodes)
 //                        .minValue(2)

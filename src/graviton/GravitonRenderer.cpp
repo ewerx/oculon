@@ -23,6 +23,7 @@ GravitonRenderer::GravitonRenderer()
     mPointSize              = 0.6f;
     mColor                  = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
     mAudioReactive          = true;
+    mAlphaGain              = 5.0f;
     
     // load textures
     mCurPointTexture        = 0;
@@ -58,6 +59,10 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     
     interface->gui()->addLabel(mName);
     interface->addParam(CreateBoolParam("graviton/audioreactive", &mAudioReactive)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("graviton/alphagain", &mAlphaGain)
+                        .minValue(1.0f)
+                        .maxValue(20.0f)
                         .oscReceiver(oscName));
     interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
                          .minValue(0.01f)
@@ -109,7 +114,7 @@ void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenS
     mShader.uniform("P", cam.getProjectionMatrix());
     mShader.uniform("colorScale", mColor);
     mShader.uniform("audioReactive", mAudioReactive);
-    mShader.uniform("gain", audioInputHandler.getGain());
+    mShader.uniform("gain", audioInputHandler.getGain() * mAlphaGain);
     
     // do magic
     gl::draw( mVboMesh );

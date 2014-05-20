@@ -70,12 +70,12 @@ void main()
 //        vec3 f4 = attractorPos4 - pos; //force
 //        float f4Mag = length(f4); //force magnitude
         
-        vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps) * attractorMass1;
-        vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps) * attractorMass2;
-        vec3 a3 = vec3(0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps) * attractorMass3;
-        vec3 a4 = vec3(0.0);//gravity * invmass * f4/(f4Mag*f4Mag + eps) * attractorMass4;
+        vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
+        vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
+//        vec3 a3 = vec3(0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps) * attractorMass3;
+//        vec3 a4 = vec3(0.0);//gravity * invmass * f4/(f4Mag*f4Mag + eps) * attractorMass4;
         
-        vel = vel + dt * (a1 + a2 + a3 + a4); //velocity update
+        vel = vel + dt * (a1 + a2); //velocity update
         vel = vel - damping * vel; //friction/damping
         pos	= pos + dt * vel; //(symplectic euler) position update
         

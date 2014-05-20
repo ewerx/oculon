@@ -22,6 +22,7 @@
 #include "EaseCurveSelector.h"
 #include "ParticleController.h"
 #include "NodeController.h"
+#include "TimeController.h"
 
 
 /// Graviton
@@ -89,7 +90,7 @@ enm,
     
     
     // simulation params
-    float mTimeStep;
+//    float mTimeStep;
     float mDamping;
     float mGravity;
     bool mReset;
@@ -113,5 +114,7 @@ enm,
 
     // camera
     CameraController    mCameraController;
+    
+    TimeController      mTimeContoller;
 };
 

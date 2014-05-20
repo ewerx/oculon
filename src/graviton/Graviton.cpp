@@ -44,15 +44,19 @@ void Graviton::setup()
     mReset = false;
     
     // params
-    mTimeStep = 0.00075f;
+//    mTimeStep = 0.01f;
+    mTimeContoller.setTimeScale(0.1f);
+    mTimeContoller.setTimeScaleMultiplier(20.0f);
     
     mFormationRadius = 80.0f;
     
-    mDamping = 0.0f;
-    mGravity = 0.05f;
-    mEps = 0.00001f;
+    mDamping = 0.01f;
+    mGravity = 0.5f;
+    mEps = 0.0f;
     mConstraintSphereRadius = mFormationRadius * 1.25f;
     mNodeSpeed = 1.0f;
+    mAudioContainer = false;
+    mAudioGravity = false;
     
     mNumNodes = 0;
     mGravityNodeFormation = NODE_FORMATION_STATIC;
@@ -67,11 +71,13 @@ void Graviton::setup()
     mParticleController.addRenderer( new GravitonRenderer() );
     mParticleController.addRenderer( new LinesRenderer() );
     
-    mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
+    mCameraController.setup(mApp, 0, CameraController::CAM_SPIN);
     mAudioInputHandler.setup(true);
     
     MirrorBounceFormation* formation = new MirrorBounceFormation();
     formation->mRadius = mFormationRadius * 3.0f;
+    formation->mBounceMultiplier = 50.0f;
+    formation->mSpinRate = 0.3f;
     mNodeController.addFormation( formation );
     
     reset();
@@ -184,6 +190,9 @@ void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
     
+    mTimeContoller.setupInterface(mInterface, mName);
+    mInterface->gui()->addColumn();
+    
 //    vector<string> nodeFormationNames;
 //#define GRAVITON_NODE_FORMATION_ENTRY( nam, enm ) \
 //nodeFormationNames.push_back(nam);
@@ -196,17 +205,17 @@ void Graviton::setupInterface()
     
     mNodeController.setupInterface(mInterface, mName);
     
-    mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
-                         .minValue(10.0f)
-                         .maxValue(1000.0f)
-                         .oscReceiver(getName(), "formradius"));
+//    mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
+//                         .minValue(10.0f)
+//                         .maxValue(1000.0f)
+//                         .oscReceiver(getName(), "formradius"));
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("simulation");
-    mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
-                         .minValue(0.0f)
-                         .maxValue(100.001f)
-                         .oscReceiver(getName()));
+//    mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
+//                         .minValue(0.0f)
+//                         .maxValue(5.0f)
+//                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "damping", &mDamping )
                          .maxValue(0.5f)
                          .oscReceiver(getName()));
@@ -220,16 +229,16 @@ void Graviton::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "gravity", &mGravity )
                          .minValue(0.0f)
-                         .maxValue(1.0f)
+                         .maxValue(5.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "nodespeed", &mNodeSpeed )
-                         .minValue(0.0f)
-                         .maxValue(1000.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "audio-node", &mAudioMirror )
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam( "random-mirror", &mRandomMirror )
-                         .oscReceiver(getName()));
+//    mInterface->addParam(CreateFloatParam( "nodespeed", &mNodeSpeed )
+//                         .minValue(0.0f)
+//                         .maxValue(1000.0f)
+//                         .oscReceiver(getName()));
+//    mInterface->addParam(CreateBoolParam( "audio-node", &mAudioMirror )
+//                         .oscReceiver(getName()));
+//    mInterface->addParam(CreateBoolParam( "random-mirror", &mRandomMirror )
+//                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "audio-gravity", &mAudioGravity )
                          .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "audio-container", &mAudioContainer )
@@ -489,15 +498,25 @@ void Graviton::updateGravityNodes(const double dt)
 
 void Graviton::update(double dt)
 {
+    mTimeContoller.update(dt);
+    
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mCameraController.update(dt);
     
     mNodeController.update(dt, mAudioInputHandler);
     
+    float gravity = mGravity;
     if (mAudioGravity)
     {
-        mGravity = MIN(mAudioInputHandler.getAverageVolumeHighFreq(), 1.0f);
+        if (mNodeController.getNodes().size() > 0)
+        {
+            gravity *= mNodeController.getNodes().front().mPosition.length() * 0.1f;
+        }
+        else
+        {
+            gravity *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
+        }
     }
 
     // update particle system
@@ -525,10 +544,10 @@ void Graviton::update(double dt)
 	mSimulationShader.uniform( "oPositions", 3);
     mSimulationShader.uniform( "oVelocities", 4);
     mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "dt", (float)(dt * mTimeStep * 10.0f) );
+    mSimulationShader.uniform( "dt", (float)mTimeContoller.getDelta() );
     mSimulationShader.uniform( "eps", mEps );
     mSimulationShader.uniform( "damping", mDamping );
-    mSimulationShader.uniform( "gravity", mGravity );
+    mSimulationShader.uniform( "gravity", gravity );
     float containRadius = mConstraintSphereRadius;
     if (mAudioContainer) {
         containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;

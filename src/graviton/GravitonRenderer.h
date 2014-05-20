@@ -39,4 +39,5 @@ protected:
     bool				mAdditiveBlending;
     ci::ColorAf         mColor;
     bool                mAudioReactive;
+    float               mAlphaGain;
 };
