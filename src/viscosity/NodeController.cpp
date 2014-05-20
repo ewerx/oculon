@@ -129,15 +129,16 @@ void NodeFormation::drawDebug()
     {
         gl::color(1.0f, 0.0f, 0.0f);
         gl::drawSphere(node.mPosition, 2.0f);
-        gl::drawSolidCircle(node.mPosition.xy(), 10.0f);
+        //gl::drawSolidCircle(node.mPosition.xy(), 10.0f);
     }
 }
 
 #pragma mark - Mirror Bounce
 
-MirrorBounceFormation::MirrorBounceFormation(float radius)
+MirrorBounceFormation::MirrorBounceFormation()
 : NodeFormation("mirrorbounce")
-, mRadius(radius)
+, mRadius(1.0f)
+, mNumNodes(2)
 , mRandomizeDirection(false)
 , mRandomizeNext(false)
 , mSpinRate(0.0f)
@@ -148,6 +149,9 @@ MirrorBounceFormation::MirrorBounceFormation(float radius)
     mNodes.push_back( NodeFormation::Node( Vec3f::zero(), mMirrorAxis ) );
     mNodes.push_back( NodeFormation::Node( Vec3f::zero(), -mMirrorAxis ) );
     
+//    mNodes.push_back( NodeFormation::Node( Vec3f::zero(), Vec3f::yAxis() ) );
+//    mNodes.push_back( NodeFormation::Node( Vec3f::zero(), -Vec3f::yAxis() ) );
+    
     mAudioReactive = true;
 }
 
@@ -156,6 +160,11 @@ void MirrorBounceFormation::setupInterface(Interface *interface, const std::stri
     NodeFormation::setupInterface(interface, prefix);
     
     string name = prefix + "/" + mName;
+    
+//    interface->addParam(CreateIntParam("num_nodes", &mNumNodes)
+//                        .minValue(2)
+//                        .maxValue(6))->registerCallback(this, &MirrorBounceFormation::onNumNodesChanged);
+    
     interface->addParam(CreateBoolParam("randomize_dir", &mRandomizeDirection)
                         .oscReceiver(name));
     
@@ -166,6 +175,14 @@ void MirrorBounceFormation::setupInterface(Interface *interface, const std::stri
                          .minValue(-2.0f)
                          .maxValue(2.0f));
     
+    interface->addParam(CreateFloatParam("radius", &mRadius)
+                        .minValue(1.0f)
+                        .maxValue(1000.0f));
+    
+    interface->addParam(CreateFloatParam("bounce_multi", &mBounceMultiplier)
+                        .minValue(1.0f)
+                        .maxValue(100.0f));
+    
     // TODO: control radius externally?
 }
 
@@ -173,16 +190,40 @@ bool MirrorBounceFormation::onMirrorAxisChanged()
 {
     mNodes[0].mVelocity = mMirrorAxis;
     mNodes[1].mVelocity = -mMirrorAxis;
+//    mNodes[2].mVelocity = mMirrorAxis.cross(-mMirrorAxis);
+//    mNodes[3].mVelocity = -mNodes[2].mVelocity;
     return true;
 }
+
+//bool MirrorBounceFormation::onNumNodesChanged()
+//{
+//    if (mNumNodes > mNodes.size())
+//    {
+//        int numToAdd = mNumNodes - mNodes.size();
+//        float mirror = (mNodes.size() % 2 == 0) ? 1.0f : -1.0f;
+//        Vec3f axis = mMirrorAxis.cross(-mMirrorAxis);
+//        for (int i = 0; i < numToAdd; ++i)
+//        {
+//            mNodes.push_back( NodeFormation::Node( Vec3f::zero(), axis * mirror ) );
+//            mirror *= -1.0f;
+//        }
+//    }
+//    else
+//    {
+//        int numToRemove = mNodes.size() - mNumNodes;
+//        mNodes.pop_back()
+//    }
+//}
 
 void MirrorBounceFormation::update(double dt, AudioInputHandler &audioInputHandler)
 {
     mSpinTheta += dt * mSpinRate;
+    mSpinRho += dt * mSpinRate * 0.3333f;
     
     if (mAudioReactive)
     {
         float distance = audioInputHandler.getAverageVolumeLowFreq();
+        float radius = distance * mRadius * mBounceMultiplier;
         
         if (mRandomizeDirection)
         {
@@ -192,7 +233,7 @@ void MirrorBounceFormation::update(double dt, AudioInputHandler &audioInputHandl
                 mNodes[1].mVelocity = mNodes[0].mVelocity * -1.0f;
                 mRandomizeNext = false;
             }
-            else if (distance > 0.5f)
+            else if (radius > (0.5f * mRadius))
             {
                 mRandomizeNext = true;
             }
@@ -203,14 +244,15 @@ void MirrorBounceFormation::update(double dt, AudioInputHandler &audioInputHandl
         {
             if ( mSpinRate > 0.0f )
             {
-                node.mPosition.x = mSpinCenter.x + distance * sin( mSpinTheta ) * mirror;
-                node.mPosition.y = mSpinCenter.y + distance * cos( mSpinTheta ) * mirror;
+                node.mPosition.x = mSpinCenter.x + cos( mSpinRho ) * sin( mSpinTheta ) * radius * mirror;
+                node.mPosition.y = mSpinCenter.y + sin( mSpinRho ) * sin( mSpinTheta ) * radius * mirror;
+                node.mPosition.z = mSpinCenter.z + cos( mSpinTheta ) * radius * mirror;
                 node.mVelocity = node.mPosition;
                 mirror *= -1.0f;
             }
             else
             {
-                node.mPosition = node.mVelocity * distance;
+                node.mPosition = node.mVelocity * radius;
             }
         }
     }

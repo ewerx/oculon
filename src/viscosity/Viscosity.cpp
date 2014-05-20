@@ -79,7 +79,8 @@ void Viscosity::setup()
     
     mAudioInputHandler.setup();
     
-    mSplatNodeController.addFormation( new MirrorBounceFormation(mApp->getViewportWidth() * 0.75f) );
+    mSplatNodeController.addFormation( new MirrorBounceFormation() );
+    //formation.mRadius = mApp->getViewportWidth() * 0.75f;
 }
 
 void Viscosity::reset()

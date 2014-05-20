@@ -50,7 +50,7 @@ void Graviton::setup()
     
     mDamping = 0.0f;
     mGravity = 0.05f;
-    mEps = 0.0f;
+    mEps = 0.00001f;
     mConstraintSphereRadius = mFormationRadius * 1.25f;
     mNodeSpeed = 1.0f;
     
@@ -69,6 +69,10 @@ void Graviton::setup()
     
     mCameraController.setup(mApp, 0, CameraController::CAM_SPLINE);
     mAudioInputHandler.setup(true);
+    
+    MirrorBounceFormation* formation = new MirrorBounceFormation();
+    formation->mRadius = mFormationRadius * 3.0f;
+    mNodeController.addFormation( formation );
     
     reset();
 }
@@ -114,6 +118,7 @@ void Graviton::setupParticles(const int bufSize)
     mParticleController.addFormation(new ParticleFormation("sphere", bufSize, positions, velocities, data));
     
     positions.clear();
+    data.clear();
     // shell
     for (int i = 0; i < numParticles; ++i)
     {
@@ -134,14 +139,15 @@ void Graviton::setupParticles(const int bufSize)
 //        float age = Rand::randFloat(.007f,0.9f);
 //        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
 //        
-//        // extra info
-//        float decay = Rand::randFloat(.01f,10.00f);
-//        data.push_back(Vec4f(x,y,z,decay));
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
     }
     mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
     
     
     positions.clear();
+    data.clear();
     // cube
     for (int i = 0; i < numParticles; ++i)
     {
@@ -159,9 +165,9 @@ void Graviton::setupParticles(const int bufSize)
 //        float age = Rand::randFloat(.007f,0.9f);
 //        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
         
-//        // extra info
-//        float decay = Rand::randFloat(.01f,10.00f);
-//        data.push_back(Vec4f(x,y,z,decay));
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
     }
     mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
     
@@ -178,15 +184,18 @@ void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
     
-    vector<string> nodeFormationNames;
-#define GRAVITON_NODE_FORMATION_ENTRY( nam, enm ) \
-nodeFormationNames.push_back(nam);
-    GRAVITON_NODE_FORMATION_TUPLE
-#undef  GRAVITON_NODE_FORMATION_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Node Formation", (int*)(&mGravityNodeFormation) )
-                        .maxValue(NODE_FORMATION_COUNT)
-                        .oscReceiver(getName(), "nformation")
-                        .isVertical(), nodeFormationNames)->registerCallback(this, &Graviton::resetGravityNodes);
+//    vector<string> nodeFormationNames;
+//#define GRAVITON_NODE_FORMATION_ENTRY( nam, enm ) \
+//nodeFormationNames.push_back(nam);
+//    GRAVITON_NODE_FORMATION_TUPLE
+//#undef  GRAVITON_NODE_FORMATION_ENTRY
+//    mInterface->addEnum(CreateEnumParam( "Node Formation", (int*)(&mGravityNodeFormation) )
+//                        .maxValue(NODE_FORMATION_COUNT)
+//                        .oscReceiver(getName(), "nformation")
+//                        .isVertical(), nodeFormationNames)->registerCallback(this, &Graviton::resetGravityNodes);
+    
+    mNodeController.setupInterface(mInterface, mName);
+    
     mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
                          .minValue(10.0f)
                          .maxValue(1000.0f)
@@ -484,13 +493,15 @@ void Graviton::update(double dt)
     
     mCameraController.update(dt);
     
+    mNodeController.update(dt, mAudioInputHandler);
+    
     if (mAudioGravity)
     {
         mGravity = MIN(mAudioInputHandler.getAverageVolumeHighFreq(), 1.0f);
     }
 
     // update particle system
-    updateGravityNodes(dt * 0.005f);
+    //updateGravityNodes(dt * 0.005f);
     
     // TODO: refactor
     PingPongFbo& mParticlesFbo = mParticleController.getParticleFbo();
@@ -523,10 +534,20 @@ void Graviton::update(double dt)
         containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;
     }
     mSimulationShader.uniform( "containerradius", containRadius );
-    mSimulationShader.uniform( "attractorPos1", mGravityNodes[0].mPos);
-    mSimulationShader.uniform( "attractorPos2", mGravityNodes[1].mPos);
-    mSimulationShader.uniform( "attractorPos3", mGravityNodes[2].mPos);
-    mSimulationShader.uniform( "reset", mParticleController.isStartingAnim() );
+    
+    NodeFormation::tNodeList& nodes = mNodeController.getNodes();
+    // TODO: glsl array uniform?
+    if (nodes.size() > 0) mSimulationShader.uniform( "attractorPos1", nodes[0].mPosition );
+    if (nodes.size() > 1) mSimulationShader.uniform( "attractorPos2", nodes[1].mPosition );
+    if (nodes.size() > 2) mSimulationShader.uniform( "attractorPos3", nodes[2].mPosition );
+    if (nodes.size() > 3) mSimulationShader.uniform( "attractorPos4", nodes[3].mPosition );
+    
+    mSimulationShader.uniform( "attractorMass1", nodes.size() > 0 ? 1.0f : 0.0f );
+    mSimulationShader.uniform( "attractorMass2", nodes.size() > 1 ? 1.0f : 0.0f );
+    mSimulationShader.uniform( "attractorMass3", nodes.size() > 2 ? 1.0f : 0.0f );
+    mSimulationShader.uniform( "attractorMass4", nodes.size() > 3 ? 1.0f : 0.0f );
+    
+    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     
     gl::drawSolidRect(mParticlesFbo.getBounds());
@@ -615,14 +636,15 @@ void Graviton::drawDebug()
     gl::pushMatrices();
     gl::setMatrices( getCamera() );
     
-    for (int i = 0; i < mGravityNodes.size(); ++i)
-    {
-        gl::color(1.0f, 0.0f, 0.0f);
-        gl::drawSphere(mGravityNodes[i].mPos, 2.0f);
-//        gl::enableWireframe();
-//        gl::drawSphere(Vec3f::zero(), mConstraintSphereRadius);
-//        gl::disableWireframe();
-    }
+//    for (int i = 0; i < mGravityNodes.size(); ++i)
+//    {
+//        gl::color(1.0f, 0.0f, 0.0f);
+//        gl::drawSphere(mGravityNodes[i].mPos, 2.0f);
+////        gl::enableWireframe();
+////        gl::drawSphere(Vec3f::zero(), mConstraintSphereRadius);
+////        gl::disableWireframe();
+//    }
+    mNodeController.drawDebug();
     
     gl::popMatrices();
     

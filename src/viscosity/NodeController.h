@@ -52,8 +52,7 @@ protected:
 class MirrorBounceFormation : public NodeFormation
 {
 public:
-    MirrorBounceFormation() : MirrorBounceFormation(1.0f) {}
-    MirrorBounceFormation(float radius);
+    MirrorBounceFormation();
     ~MirrorBounceFormation() {}
     
     void setupInterface( Interface* interface, const std::string& prefix );
@@ -61,15 +60,21 @@ public:
     
     // callbacks
     bool onMirrorAxisChanged();
+//    bool onNumNodesChanged();
     
 public:
     float mRadius;
+    float mBounceMultiplier;
     bool mRandomizeDirection;
-    bool mRandomizeNext;
     float mSpinRate;
-    float mSpinTheta;
     ci::Vec3f mSpinCenter;
     ci::Vec3f mMirrorAxis;
+    
+private:
+    int mNumNodes;
+    bool mRandomizeNext;
+    float mSpinTheta;
+    float mSpinRho;
 };
 
 #pragma mark - Node Controller

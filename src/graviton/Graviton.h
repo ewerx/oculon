@@ -21,6 +21,7 @@
 #include "CameraController.h"
 #include "EaseCurveSelector.h"
 #include "ParticleController.h"
+#include "NodeController.h"
 
 
 /// Graviton
@@ -100,6 +101,8 @@ enm,
     float mConstraintSphereRadius;
     float mNodeSpeed;
     int32_t mNumNodes;
+    
+    NodeController mNodeController;
     
     // particle system
     ParticleController mParticleController;

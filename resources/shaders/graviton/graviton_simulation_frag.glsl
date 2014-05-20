@@ -10,6 +10,11 @@ uniform sampler2D oPositions;
 uniform vec3 attractorPos1;
 uniform vec3 attractorPos2;
 uniform vec3 attractorPos3;
+uniform vec3 attractorPos4;
+uniform float attractorMass1;
+uniform float attractorMass2;
+uniform float attractorMass3;
+uniform float attractorMass4;
 uniform float eps;
 uniform float dt;
 uniform float damping;
@@ -60,14 +65,17 @@ void main()
         float f1Mag = length(f1); //force magnitude
         vec3 f2 = attractorPos2 - pos; //force
         float f2Mag = length(f2); //force magnitude
-        //vec3 f3 = attractorPos3-p0; //force
-        //float f3Mag = length(f3); //force magnitude
+//        vec3 f3 = attractorPos3 - pos; //force
+//        float f3Mag = length(f3); //force magnitude
+//        vec3 f4 = attractorPos4 - pos; //force
+//        float f4Mag = length(f4); //force magnitude
         
-        vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
-        vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
-        vec3 a3 = vec3(0.0,0.0,0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps);
+        vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps) * attractorMass1;
+        vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps) * attractorMass2;
+        vec3 a3 = vec3(0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps) * attractorMass3;
+        vec3 a4 = vec3(0.0);//gravity * invmass * f4/(f4Mag*f4Mag + eps) * attractorMass4;
         
-        vel = vel + dt * (a1 + a2 + a3); //velocity update
+        vel = vel + dt * (a1 + a2 + a3 + a4); //velocity update
         vel = vel - damping * vel; //friction/damping
         pos	= pos + dt * vel; //(symplectic euler) position update
         
