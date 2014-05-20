@@ -72,7 +72,10 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     gl::pushMatrices();
     gl::setMatrices( cam );
     
-    glEnable(GL_TEXTURE_2D);
+    gl::enable( GL_TEXTURE_2D );
+    gl::enable( GL_LINE_SMOOTH );
+    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+    glShadeModel( GL_SMOOTH );
     
     gl::enableAdditiveBlending();
     gl::enableDepthRead();
