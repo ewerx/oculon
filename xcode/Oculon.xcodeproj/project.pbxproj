@@ -396,6 +396,7 @@
 		7C8CBB2E1929B64700588689 /* gyroid_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2D1929B64700588689 /* gyroid_frag.glsl */; };
 		7C8CBB30192A835B00588689 /* cloudtunnel_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2F192A835B00588689 /* cloudtunnel_frag.glsl */; };
 		7C8CBB32192A9EB100588689 /* fractraps1_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB31192A9EB100588689 /* fractraps1_frag.glsl */; };
+		7C8CBB35192AF7B100588689 /* TextureSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CBB33192AF7B100588689 /* TextureSelector.cpp */; };
 		7C8DA8651921AB9300FCD9A2 /* test_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */; };
 		7C8DA8671921B43200FCD9A2 /* hexagons_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8DA8661921B43200FCD9A2 /* hexagons_frag.glsl */; };
 		7C8DA8691921B4A200FCD9A2 /* triangle_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8DA8681921B4A200FCD9A2 /* triangle_frag.glsl */; };
@@ -1051,6 +1052,8 @@
 		7C8CBB2D1929B64700588689 /* gyroid_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gyroid_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB2F192A835B00588689 /* cloudtunnel_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cloudtunnel_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB31192A9EB100588689 /* fractraps1_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fractraps1_frag.glsl; sourceTree = "<group>"; };
+		7C8CBB33192AF7B100588689 /* TextureSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureSelector.cpp; sourceTree = "<group>"; };
+		7C8CBB34192AF7B100588689 /* TextureSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureSelector.h; sourceTree = "<group>"; };
 		7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_frag.glsl; sourceTree = "<group>"; };
 		7C8DA8661921B43200FCD9A2 /* hexagons_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hexagons_frag.glsl; sourceTree = "<group>"; };
 		7C8DA8681921B4A200FCD9A2 /* triangle_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = triangle_frag.glsl; sourceTree = "<group>"; };
@@ -2215,6 +2218,8 @@
 				7C47F0551920355500244E5F /* TimeController.cpp */,
 				7C47F0561920355500244E5F /* TimeController.h */,
 				7C8CBB291929AA1600588689 /* FragShader.h */,
+				7C8CBB33192AF7B100588689 /* TextureSelector.cpp */,
+				7C8CBB34192AF7B100588689 /* TextureSelector.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -3283,6 +3288,7 @@
 				7C79C0311764384C00E71F9D /* SyphonNameboundClient.m in Sources */,
 				7C79C0331764384C00E71F9D /* syphonClient.mm in Sources */,
 				7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */,
+				7C8CBB35192AF7B100588689 /* TextureSelector.cpp in Sources */,
 				7C79C0341764384C00E71F9D /* syphonServer.mm in Sources */,
 				7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */,
 				7C4C6743181C9928003049AA /* TextureShaders.cpp in Sources */,
