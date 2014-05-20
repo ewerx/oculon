@@ -34,7 +34,7 @@ void CameraController::setup(OculonApp *app, const unsigned int camTypes, eCamTy
     
     mSpinCam.lookAt(Vec3f(0.0f,0.0f,-420.0f), Vec3f(0.0f,0.0f,0.0f), Vec3f(0.0f,1.0f,0.0f));
     mSpinCam.setPerspective(60.0f, mApp->getViewportAspectRatio(), 0.0001f, 10000.0f);
-    mSpinRate = Vec3f::zero();//Vec3f::yAxis()*0.1f;
+    mSpinRate = Vec3f::yAxis()*0.01f;
     //mSpinAxis = Vec3f::xAxis();
     mSpinDistance = 100.0f;
     mSpinUp = Vec3f::yAxis();
