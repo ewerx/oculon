@@ -16,6 +16,7 @@
 #include "ParticleController.h"
 #include "Scene.h"
 #include "SimplexNoiseTexture.h"
+#include "TimeController.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/GlslProg.h"
@@ -77,7 +78,7 @@ enm,
     CameraController mCameraController;
     
     // params
-    float mTimeStep;
+    TimeController mTimeContoller;
     
     bool mReset;
     

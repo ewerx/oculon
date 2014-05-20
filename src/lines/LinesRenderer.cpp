@@ -19,7 +19,7 @@ LinesRenderer::LinesRenderer()
 {
     // params
     mLineWidth              = 1.25f;
-    mColor                  = ColorAf(1.0f,1.0f,1.0f,0.025f);
+    mColor                  = ColorAf(1.0f,1.0f,1.0f,0.075f);
     mUseColorMap            = false;
     mAudioReactive          = true;
     mAlphaGain              = 3.0f;

@@ -88,11 +88,11 @@ void main()
             }
             else if (motion == 3) // audio-reactive positions (wave)
             {
-                pos = texture2D(oPositions, texCoord.st).rgb * texture2D( audioData, vec2(texCoord.s,1.0) ).x * gain;
+                pos = texture2D(oPositions, texCoord.st).rgb + texture2D( audioData, vec2(texCoord.s * texCoord.t,1.0) ).x * gain * 10.0;
             }
             else if (motion == 4) // audio-reactive positions (fft)
             {
-                pos = texture2D(oPositions, texCoord.st).rgb + vel * texture2D( audioData, vec2(texCoord.s,0.0) ).x * gain * 10.0;
+                pos = texture2D(oPositions, texCoord.st).rgb + vel * texture2D( audioData, vec2(texCoord.s * texCoord.t,0.0) ).x * gain * 10.0;
             }
         }
     }

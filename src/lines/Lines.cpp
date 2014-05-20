@@ -39,7 +39,6 @@ void Lines::setup()
     mReset = false;
     
     // params
-    mTimeStep = 0.1f;
     mMotion = MOTION_NOISE;
     
     mContainmentRadius = 0.0f;
@@ -55,7 +54,7 @@ void Lines::setup()
     // rendering
     mParticleController.addRenderer( new LinesRenderer() );
     mParticleController.addRenderer( new GravitonRenderer() );
-    mParticleController.addRenderer( new DustRenderer() );
+//    mParticleController.addRenderer( new DustRenderer() );
     
     mDynamicTexture.setup(bufSize, bufSize);
     
@@ -65,6 +64,8 @@ void Lines::setup()
     
     // audio
     mAudioInputHandler.setup(true);
+    
+    mTimeContoller.setTimeScale(0.01f);
 }
 
 void Lines::setupParticles(const int bufSize)
@@ -229,6 +230,88 @@ void Lines::setupParticles(const int bufSize)
         }
         
         mParticleController.addFormation(new ParticleFormation("cone", bufSize, positions, velocities, data));
+        positions.clear();
+    }
+    
+    {
+        // connected lines
+        bool pair = false;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+        
+        // start
+        positions.push_back(Vec4f(x,y,z,0.0f));
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            if (!pair)
+            {
+                x = r * Rand::randFloat(-1.0f,1.0f);
+                y = r * Rand::randFloat(-1.0f,1.0f);
+                z = r * Rand::randFloat(-1.0f,1.0f);
+            }
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            pair = !pair;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("connected", bufSize, positions, velocities, data));
+        positions.clear();
+    }
+    
+    // square snake
+    {
+        bool pair = false;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+        
+        int axis = 0;
+        
+        // start
+        positions.push_back(Vec4f(x,y,z,0.0f));
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            if (pair)
+            {
+                axis = (axis + 1) % 3;
+            }
+            else
+            {
+                axis = Rand::randInt(3); // x=0,y=1,z=2
+            }
+            
+            switch(axis)
+            {
+                case 0:
+                    x = r * Rand::randFloat(-1.0f,1.0f);
+                    break;
+                case 1:
+                    y = r * Rand::randFloat(-1.0f,1.0f);
+                    break;
+                case 2:
+                    z = r * Rand::randFloat(-1.0f,1.0f);
+                    break;
+                default:
+                    break;
+            }
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            pair = !pair;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("snake", bufSize, positions, velocities, data));
+        positions.clear();
     }
 
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
@@ -246,10 +329,7 @@ void Lines::reset()
 
 void Lines::setupInterface()
 {
-    mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
-                         .minValue(0.0001f)
-                         .maxValue(0.1f)
-                         .oscReceiver(mName));
+    mTimeContoller.setupInterface(mInterface, mName);
     
     mInterface->gui()->addColumn();
     vector<string> motionNames;
@@ -281,6 +361,7 @@ void Lines::setupInterface()
 
 void Lines::update(double dt)
 {
+    mTimeContoller.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mCameraController.update(dt);
@@ -310,7 +391,7 @@ void Lines::update(double dt)
         mAudioInputHandler.getFbo().bindTexture(6);
     }
     
-    float simdt = (float)(dt*mTimeStep);
+    float simdt = mTimeContoller.getDelta();
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );
@@ -321,7 +402,7 @@ void Lines::update(double dt)
   	mSimulationShader.uniform( "noiseTex", 5);
     mSimulationShader.uniform( "audioData", 6);
     mSimulationShader.uniform( "gain", mAudioInputHandler.getGain());
-    mSimulationShader.uniform( "dt", (float)dt );
+    mSimulationShader.uniform( "dt", (float)simdt );
     mSimulationShader.uniform( "reset", mReset );
     mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
