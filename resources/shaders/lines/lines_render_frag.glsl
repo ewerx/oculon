@@ -7,6 +7,7 @@ uniform sampler2D colorMap;
 uniform vec4 colorBase;
 uniform bool audioReactive;
 uniform bool useColorMap;
+uniform float gain;
 
 varying float age;
 varying float maxAge;
@@ -19,7 +20,7 @@ void main()
     finalColor.a = colorBase.a;
     if (audioReactive)
     {
-        finalColor.a *= (finalColor.a + 10.0*color.a);
+        finalColor.a *= (finalColor.a + 10.0*gain*color.a);
     }
     
 	gl_FragColor = finalColor;

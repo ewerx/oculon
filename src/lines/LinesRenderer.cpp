@@ -22,6 +22,7 @@ LinesRenderer::LinesRenderer()
     mColor                  = ColorAf(1.0f,1.0f,1.0f,0.025f);
     mUseColorMap            = false;
     mAudioReactive          = true;
+    mAlphaGain              = 3.0f;
     
     // load textures
     mColorMapTex = gl::Texture( loadImage( app::loadResource( "colortex1.jpg" ) ) );
@@ -55,6 +56,10 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
                          .oscReceiver(oscName));
     
     interface->addParam(CreateBoolParam("lines/audioreactive", &mAudioReactive)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("lines/alphagain", &mAlphaGain)
+                        .minValue(1.0f)
+                        .maxValue(10.0f)
                         .oscReceiver(oscName));
     interface->addParam(CreateBoolParam("lines/colormap", &mUseColorMap)
                         .oscReceiver(oscName));
@@ -96,7 +101,7 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     mShader.uniform("intensityMap", 4);
     mShader.uniform("screenWidth", (float)1.0f);
     mShader.uniform("colorBase", mColor);
-    mShader.uniform("gain", audioInputHandler.getGain());
+    mShader.uniform("gain", audioInputHandler.getGain() * mAlphaGain);
     mShader.uniform("audioReactive", mAudioReactive);
     mShader.uniform("useColorMap", mUseColorMap);
     

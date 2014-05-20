@@ -27,6 +27,7 @@ protected:
     // params
     float               mLineWidth;
     bool                mAudioReactive;
+    float               mAlphaGain;
     ci::gl::Texture     mColorMapTex;
     ci::ColorAf         mColor;
     bool                mUseColorMap;
