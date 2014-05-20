@@ -9,6 +9,7 @@
 #include "AudioInputHandler.h"
 #include "Interface.h"
 #include "cinder/Rand.h"
+#include "cinder/audio/Utilities.h"
 #include <sstream>
 
 using namespace ci;
@@ -30,6 +31,7 @@ void AudioInputHandler::setup(bool fboEnabled)
     // SOURCE
     mInputSource        = SOURCE_AUDIO;
     mGain               = 1.0f;
+    mLinearScale        = true; // linear or decibel scale
     
     // DISTRIBUTION
     mRandomSignal       = false;
@@ -79,6 +81,8 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     interface->addParam(CreateFloatParam("gain", &mGain)
                         .maxValue(50.0f)
                         .oscReceiver(name).sendFeedback());
+    interface->addParam(CreateBoolParam( "linear", &mLinearScale )
+                        .oscReceiver(name,"audio/linear"));
     
 //    vector<string> sourceNames;
 //#define AUDIO_SOURCE_ENTRY( nam, enm ) \
@@ -224,6 +228,10 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             float falloff = mFalloffByFreq ? (mFalloffTime * (1.0f - bandIndex / magSpectrum.size())) : mFalloffTime;
             
             float value = magSpectrum[bandIndex];
+            if (!mLinearScale)
+            {
+                value = audio::toDecibels(value) / 100.0f;
+            }
             value *= mGain;
             
             if (value > mFftFalloff[index].mValue)

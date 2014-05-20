@@ -114,6 +114,7 @@ enm,
     
     // Filtering
     float   mGain;
+    bool    mLinearScale;
     bool    mFalloffAveragesOnly;
     float   mLowPassFilter;
     float   mHighPassFilter;
