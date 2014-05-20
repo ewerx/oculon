@@ -318,6 +318,8 @@ void Polyhedron::draw()
 		gl::enableWireframe();
 	}
     
+    mAudioInputHandler.getTexture().bind(2);
+    
     // draw
     gl::pushMatrices();
     gl::setMatrices( getCamera() );
@@ -336,6 +338,7 @@ void Polyhedron::draw()
     
     gl::popMatrices();
     
+    mAudioInputHandler.getTexture().unbind();
     mDynamicTexture.unbindTexture();
     
     // restore
@@ -370,6 +373,7 @@ void Polyhedron::drawInstances( const ci::gl::VboMesh &mesh )
     mShader.uniform( "tex",				0 );
     mShader.uniform( "textureEnabled",	mTextureEnabled );
     mShader.uniform( "displacement",    1 );
+    mShader.uniform( "audioData",       2 );
 //    mShader.uniform( "dispScale",       mDisplacementScale );
     
     //TODO: texture method
