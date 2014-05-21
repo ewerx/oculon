@@ -15,6 +15,7 @@
 #include "cinder/app/Event.h"
 #include "MidiConstants.h"
 #include "MidiHub.h"
+#include "MidiOut.h"
 
 #define DEBUG_MIDI 1
 
@@ -66,7 +67,13 @@ public:
 
     void unregisterMidiCallback( ci::CallbackId id ) { mCallbacksMidi.unregisterCb( id ); }
     
-    
+    ci::midi::MidiOut* getMidiOut()
+    {
+        if (mMidiOut && mMidiOut->isOpen())
+            return mMidiOut;
+        else
+            return NULL;
+    }
 
 private:
     
@@ -76,6 +83,7 @@ private:
     
     //queue<tMidiKey*>    mLearningQueue;
     //vector<tMidiKey*>   mKnownKeys;
+    ci::midi::MidiOut* mMidiOut;
     
 };
 

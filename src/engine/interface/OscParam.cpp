@@ -28,6 +28,9 @@ OscParam::OscParam(const eType type, OscServer* server, const std::string& recvA
 , mOscRecvAddress(recvAddr)
 , mOscSendAddress(sendAddr)
 , mIsSender(sendsFeedback)
+, mMidiPort(midiPort)
+, mMidiChannel(midiChannel)
+, mMidiNote(midiNote)
 {
 }
 
@@ -83,8 +86,8 @@ void OscFloatParam::handleOscMessage( const osc::Message& message )
 
 void OscFloatParam::sendValue()
 {
-    if( mOscSendAddress.empty() )
-        return;
+    if( !mOscSendAddress.empty() )
+    {
     
     osc::Message message;
     message.setAddress( mOscSendAddress );
@@ -95,6 +98,13 @@ void OscFloatParam::sendValue()
     message.setAddress( mOscSendAddress + "/val" );
     message.addFloatArg( *(mControl->var) );
     mOscServer->sendMessage( message );
+    }
+    
+    if( mMidiChannel != -1 && mMidiNote != -1 )
+    {
+        int midiValue = (int)(mControl->getNormalizedValue() * 127);
+        mOscServer->sendMidiControlChange(mMidiChannel, mMidiNote, midiValue);
+    }
 }
 
 #pragma MARK OscIntParam
@@ -165,6 +175,12 @@ void OscIntParam::sendValue()
     message.setAddress( mOscSendAddress + "/val" );
     message.addFloatArg( *(mControl->var) );
     mOscServer->sendMessage( message );
+    
+    if( mMidiChannel != -1 && mMidiNote != -1 )
+    {
+        int midiValue = (int)(mControl->getNormalizedValue() * 127);
+        mOscServer->sendMidiControlChange(mMidiChannel, mMidiNote, midiValue);
+    }
 }
 
 #pragma MARK OscBoolParam
@@ -221,6 +237,12 @@ void OscBoolParam::sendValue()
     message.setAddress( mOscSendAddress );
     message.addIntArg( (*(mControl->var)) ? 1 : 0 );
     mOscServer->sendMessage( message );
+    
+    if( mMidiChannel != -1 && mMidiNote != -1 )
+    {
+        int midiValue = (*(mControl->var)) ? 127 : 0;
+        mOscServer->sendMidiControlChange(mMidiChannel, mMidiNote, midiValue);
+    }
 }
 
 #pragma MARK OscTriggerParam

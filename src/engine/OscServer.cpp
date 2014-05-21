@@ -9,6 +9,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/app/App.h"
 #include "OscServer.h"
+#include "MidiOut.h"
 #include <iostream>
 #include <vector>
 
@@ -22,6 +23,7 @@ OscServer::OscServer()
 , mUseThread(false)
 , mIsSending(false)
 , mDebugPrint(true)
+, mMidiInput(NULL)
 {
 }
 
@@ -329,4 +331,18 @@ bool OscServer::handleMidiMessage(MidiEvent midiEvent)
     }
     
     return false;
+}
+
+void OscServer::sendMidiControlChange(int channel, int control, int value)
+{
+    // TODO: refactor
+    if (!mMidiInput)
+        return;
+    
+    midi::MidiOut* midiOut = mMidiInput->getMidiOut();
+    if (!midiOut)
+        return;
+    
+    midiOut->sendControlChange(channel, control, value);
+    console() << "[midi] sent CC " << channel << ":" << control << ":" << value << std::endl;
 }

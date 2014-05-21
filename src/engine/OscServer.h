@@ -60,6 +60,11 @@ public:
         mCallbackMap.erase(address);
     }
     
+    // sender
+    void setDestination( const eDestination index, const std::string& host, const int port );
+    void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_QUIET );
+    
+    //TODO: refactor
     // midi listener
     template<typename T>
     void registerMidiCallback( tMidiAddress address, T* obj, void (T::*callback)(const ci::osc::Message&) )
@@ -77,10 +82,9 @@ public:
         mMidiCallbackMap.erase(address);
     }
     
-    // sender
-    void setDestination( const eDestination index, const std::string& host, const int port );
-    void sendMessage( ci::osc::Message& message, const eDestination dest =DEST_INTERFACE, const eLogLevel loglevel =LOGLEVEL_QUIET );
-    
+    // midi sender
+    void sendMidiControlChange( int channel, int control, int value );
+
     // callback from MidiInput
     bool handleMidiMessage( MidiEvent midiEvent );
     

@@ -13,10 +13,12 @@
 using namespace ci;
 using namespace ci::app;
 using namespace midi;
+using namespace std;
 
 
 MidiInput::MidiInput()
 : mMidiHub(NULL)
+, mMidiOut(NULL)
 {
 }
 
@@ -33,6 +35,19 @@ void MidiInput::setup()
     if( mMidiHub == NULL )
     {
         mMidiHub = new Hub();
+    }
+    
+    if( mMidiOut == NULL )
+    {
+        mMidiOut = new MidiOut();
+        if (mMidiOut->openPort() )
+        {
+            console() << "[midi] output port opened: " << mMidiOut->getName() << endl;
+        }
+        else
+        {
+            console() << "[midi] no output ports" << endl;
+        }
     }
 }
 
