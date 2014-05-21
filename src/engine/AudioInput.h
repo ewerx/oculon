@@ -12,6 +12,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/audio/ScopeNode.h"
+#include "cinder/audio/GainNode.h"
 #include "cinder/Vector.h"
 #include "Interface.h"
 #include "OscServer.h"
@@ -68,12 +69,16 @@ public:
     void handleMidOsc( const ci::osc::Message& message );
     void handleLowOsc( const ci::osc::Message& message );
     
+    // callbacks
+    bool onGainChanged();
+    
 private:
     ci::audio::InputDeviceNodeRef	mInputDeviceNode;
     ci::audio::ScopeNodeRef         mScopeNode;
     ci::audio::ScopeSpectralNodeRef	mScopeSpectralNode;
     
     float mGain;
+    ci::audio::GainNodeRef mGainNode;
     
     // LiveGrabber Data
     enum { NUM_TRACKS = 4 };

@@ -88,16 +88,15 @@ void OscFloatParam::sendValue()
 {
     if( !mOscSendAddress.empty() )
     {
-    
-    osc::Message message;
-    message.setAddress( mOscSendAddress );
-    message.addFloatArg( mControl->getNormalizedValue() );
-    mOscServer->sendMessage( message );
-    
-    message.clear();
-    message.setAddress( mOscSendAddress + "/val" );
-    message.addFloatArg( *(mControl->var) );
-    mOscServer->sendMessage( message );
+        osc::Message message;
+        message.setAddress( mOscSendAddress );
+        message.addFloatArg( mControl->getNormalizedValue() );
+        mOscServer->sendMessage( message );
+        
+        message.clear();
+        message.setAddress( mOscSendAddress + "/val" );
+        message.addFloatArg( *(mControl->var) );
+        mOscServer->sendMessage( message );
     }
     
     if( mMidiChannel != -1 && mMidiNote != -1 )

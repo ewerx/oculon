@@ -11,7 +11,6 @@
 #include "cinder/app/App.h"
 #include "cinder/audio/Context.h"
 #include "cinder/audio/Device.h"
-#include "cinder/audio/ScopeNode.h"
 #include "cinder/audio/Utilities.h"
 #include "AudioInput.h"
 #include <iostream>
@@ -57,13 +56,15 @@ void AudioInput::reset()
 	mScopeSpectralNode = ctx->makeNode( new audio::ScopeSpectralNode( scopeFmt ) );
     mScopeNode = ctx->makeNode( new audio::ScopeNode() );
     
-    mInputDeviceNode >> mScopeSpectralNode;
-    mInputDeviceNode >> mScopeNode;
+    mGainNode = ctx->makeNode( new audio::GainNode() );
+    mGain = 1.0f;
+    mGainNode->setValue(mGain);
+    
+    mInputDeviceNode >> mGainNode >> mScopeSpectralNode;
+    mInputDeviceNode >> mGainNode >> mScopeNode;
     
     mInputDeviceNode->enable();
 	ctx->enable();
-    
-    mGain = 1.0f;
     
     for (int i = 0; i < NUM_TRACKS; ++i)
     {
@@ -99,7 +100,13 @@ void AudioInput::setupInterface( Interface* interface )
                         .maxValue(10.0f)
                         .oscReceiver("master", "gain")
                         .sendFeedback()
-                        .midiInput(0,2,23));
+                        .midiInput(0,1,1))->registerCallback(this, &AudioInput::onGainChanged);
+}
+
+bool AudioInput::onGainChanged()
+{
+    mGainNode->setValue(mGain);
+    return true;
 }
 
 bool AudioInput::changeInput( const int index )
