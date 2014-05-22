@@ -126,7 +126,5 @@ private:
     
     bool mDrawPredators;
     
-    float mTimeScale;
-    
 };
 

@@ -44,9 +44,8 @@ Flock::~Flock()
 
 void Flock::setup()
 {
-    mDrawNebulas = false;
+    mDrawNebulas = true;
     mDrawPredators = false;
-    mTimeScale = 1.0f;
     
     ////////------------------------------------------------------
     //
@@ -81,7 +80,6 @@ void Flock::setup()
 		mP_VelocityShader	= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_VELOCITY_FRAG ) );
 		mP_PositionShader	= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_P_POSITION_FRAG ) );
 		mLanternShader		= gl::GlslProg( loadResource( RES_FLOCK_LANTERN_VERT ),	loadResource( RES_FLOCK_LANTERN_FRAG ) );
-		//mRoomShader			= gl::GlslProg( loadResource( RES_FLOCK_ROOM_VERT ),loadResource( RES_FLOCK_ROOM_FRAG ) );
 		mShader				= gl::GlslProg( loadResource( RES_FLOCK_VBOPOS_VERT ),	loadResource( RES_FLOCK_VBOPOS_FRAG ) );
 		mP_Shader			= gl::GlslProg( loadResource( RES_FLOCK_P_VBOPOS_VERT ),	loadResource( RES_FLOCK_P_VBOPOS_FRAG ) );
 		mGlowShader			= gl::GlslProg( loadResource( RES_FLOCK_PASSTHRU_VERT ),	loadResource( RES_FLOCK_GLOW_FRAG ) );
@@ -115,13 +113,14 @@ void Flock::setup()
 //
 void Flock::setupInterface()
 {
-    mInterface->gui()->addColumn();
-    
-    mCameraController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, mName);
     
     mInterface->addParam(CreateBoolParam("draw nebulas", &mDrawNebulas));
     mInterface->addParam(CreateBoolParam("draw predators", &mDrawPredators));
-    mInterface->addParam(CreateFloatParam("time scale", &mTimeScale, 0.001f, 10.0f));
+    
+    mInterface->gui()->addColumn();
+    
+    mCameraController.setupInterface(mInterface, mName);
     
     mController.setupInterface(mInterface);
 }
@@ -729,24 +728,11 @@ void Flock::draw()
     
     ////////------------------------------------------------------
     //
-	//gl::clear( ColorA( 0.1f, 0.1f, 0.1f, 0.0f ), true );
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	
-	//gl::setMatricesWindow( mApp->getViewportSize(), false );
-	//gl::setViewport( getViewportBounds() );
     
     Vec3f billboardRight;
     Vec3f billboardUp;
     getCamera().getBillboardVectors( &billboardRight, &billboardUp );
-    
-//	gl::disableDepthRead();
-//	gl::disableDepthWrite();
-//	gl::enable( GL_TEXTURE_2D );
-//	gl::enableAlphaBlending();
-	
-	// DRAW ROOM
-	//mRoomFbo.bindTexture();
-	//gl::drawSolidRect( getWindowBounds() );
 	
 	gl::setMatrices( getCamera() );
 	gl::setViewport( mApp->getViewportBounds() );
@@ -802,28 +788,31 @@ void Flock::draw()
     gl::enableAdditiveBlending();
     float c =  1.0f;
     gl::color( Color( c, c, c ) );
-    mLanternGlowTex.bind();
-    mController.drawLanternGlows( billboardRight, billboardUp );
-    
-    drawGlows( billboardRight, billboardUp );
     if( mDrawNebulas )
     {
+        mLanternGlowTex.bind();
+        mController.drawLanternGlows( billboardRight, billboardUp );
+        
+        drawGlows( billboardRight, billboardUp );
         drawNebulas( billboardRight, billboardUp );
     }
 	
 	gl::disable( GL_TEXTURE_2D );
 	gl::enableDepthWrite();
 	gl::enableAdditiveBlending();
-	gl::color( Color( 1.0f, 1.0f, 1.0f ) );
+	gl::color( Color( 1.0f, 0.0f, 0.0f ) );
 	
 	// DRAW LANTERNS
-	mLanternShader.bind();
-	mLanternShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix()  );
-	mLanternShader.uniform( "eyePos", getCamera().getEyePoint());
-	mLanternShader.uniform( "mainPower", 1.0f );
-	mLanternShader.uniform( "roomDim", Vec3f( 350.0f, 200.0f, 350.0f ) );
-	mController.drawLanterns( &mLanternShader );
-	mLanternShader.unbind();
+    if( mDrawNebulas )
+    {
+        mLanternShader.bind();
+        mLanternShader.uniform( "mvpMatrix", getCamera().getProjectionMatrix() * getCamera().getModelViewMatrix()  );
+        mLanternShader.uniform( "eyePos", getCamera().getEyePoint());
+        mLanternShader.uniform( "mainPower", 1.0f );
+        mLanternShader.uniform( "roomDim", Vec3f( 350.0f, 200.0f, 350.0f ) );
+        mController.drawLanterns( &mLanternShader );
+        mLanternShader.unbind();
+    }
 
 	//gl::disableDepthWrite();
 	gl::enableAlphaBlending();
