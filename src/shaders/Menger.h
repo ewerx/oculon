@@ -58,6 +58,7 @@ private:
         int                 mMaxSteps;
         float               mFieldOfView;
         float               mScale;
+        int                 mScaleResponseBand;
         float               mJitter;
         float               mFudgeFactor;
         float               mPerspective;
@@ -67,6 +68,7 @@ private:
         int                 mOffsetXResponseBand;
         int                 mOffsetYResponseBand;
         int                 mOffsetZResponseBand;
+        
     };
     
     class PolychoraShader : public FragShader

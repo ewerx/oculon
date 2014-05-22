@@ -63,11 +63,12 @@ void RootFract::setupInterface()
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(mName));
     mInterface->addParam(CreateColorParam("color2", &mColor3, kMinColor, kMaxColor).oscReceiver(mName));
     
+    mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "iterations", &mIterations )
                          .maxValue(120));
     mInterface->addParam(CreateFloatParam("mScale", &mScale)
-                         .minValue(-1.0f)
-                         .maxValue(1.0f)
+                         .minValue(-0.6f)
+                         .maxValue(-0.2f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("saturation", &mSaturation)
                          .maxValue(1.0f)
@@ -83,8 +84,8 @@ void RootFract::setupInterface()
                          .oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateVec2fParam("julia", &mJulia, Vec2f::zero(), Vec2f(3.0f,3.0f)));
-    mInterface->addParam(CreateVec3fParam("traps", &mOrbitTraps, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateVec2fParam("julia", &mJulia, Vec2f(0.1f,0.1f), Vec2f(2.0f,2.0f)));
+    mInterface->addParam(CreateVec3fParam("traps", &mOrbitTraps, Vec3f::zero(), Vec3f::one()));
     mInterface->addParam(CreateVec3fParam("trap_width", &mTrapWidths, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
     mInterface->addParam(CreateVec3fParam("trap_bright", &mTrapBrightness, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
     mInterface->addParam(CreateVec3fParam("trap_contrast", &mTrapContrast, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));

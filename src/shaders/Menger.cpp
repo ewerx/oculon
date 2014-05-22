@@ -185,6 +185,7 @@ Menger::MengerShader::MengerShader()
     mOffsetXResponseBand = AudioInputHandler::BAND_NONE;
     mOffsetYResponseBand = AudioInputHandler::BAND_NONE;
     mOffsetZResponseBand = AudioInputHandler::BAND_NONE;
+    mScaleResponseBand = AudioInputHandler::BAND_NONE;
 }
 
 void Menger::MengerShader::setupInterface(Interface *interface, const std::string &name)
@@ -223,6 +224,11 @@ void Menger::MengerShader::setupInterface(Interface *interface, const std::strin
                         .minValue(1.0f)
                         .maxValue(10.0f)
                         .oscReceiver(oscName));
+    interface->addEnum(CreateEnumParam( "audio-scale", &mScaleResponseBand )
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(mName)
+                       .sendFeedback(), bandNames);
     interface->addParam(CreateFloatParam("fov", &mFieldOfView)
                         .minValue(0.4f)
                         .maxValue(20.0f)
@@ -247,7 +253,6 @@ void Menger::MengerShader::setupInterface(Interface *interface, const std::strin
 void Menger::MengerShader::setCustomParams( AudioInputHandler& audioInputHandler )
 {
     mShader.uniform( "iIterations", mIterations );
-    mShader.uniform( "iScale", mScale );
     mShader.uniform( "iMaxSteps", mMaxSteps );
     mShader.uniform( "iFieldOfView", mFieldOfView );
     mShader.uniform( "iJitter", mJitter );
@@ -261,6 +266,9 @@ void Menger::MengerShader::setCustomParams( AudioInputHandler& audioInputHandler
                                    audioInputHandler.getAverageVolumeByBand(mOffsetZResponseBand));
     
     mShader.uniform( "iOffset", offset );
+    
+    float scale = mScale * audioInputHandler.getAverageVolumeByBand(mScaleResponseBand);
+    mShader.uniform( "iScale", scale );
 }
 
 #pragma mark - Polychora Shader
