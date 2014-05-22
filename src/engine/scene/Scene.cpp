@@ -85,7 +85,8 @@ void Scene::init(OculonApp* app)
     // bind to OculonApp::showInterface(0)
     mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
     // preview
-    mInterface->gui()->addParam(mName, &getFbo().getTexture())->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
+    // TODO: may have been causing crashes, removed to be safe...
+    //mInterface->gui()->addParam(mName, &getFbo().getTexture())->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
     mInterface->addParam(CreateBoolParam("active", &mIsVisible)
                          .oscReceiver(mName,"toggle").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );
     mInterface->addButton(CreateTriggerParam("reset", NULL)
