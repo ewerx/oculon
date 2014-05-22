@@ -22,13 +22,15 @@ void main(void)
 	
 	float twopi = 2.0*3.141592654;
 	float fcount = float(iPoles);
-	vec2 rot = vec2(cos(twopi*.618), sin(twopi*.618));
-	vec2 tor = vec2(-sin(twopi*.618), cos(twopi*.618));
+	vec2 rot = vec2(cos(twopi*iGlobalTime*0.01), sin(twopi*iGlobalTime*0.01));
+	vec2 tor = vec2(-sin(twopi*iGlobalTime*0.01), -cos(twopi*iGlobalTime*0.01));
     vec2 values = vec2( iDistance, iDistance );
 	for (int i = 0; i < iPoles; ++i)
 	{
 		lum += .2 * ripple(length(values - uv), -iGlobalTime + iShift);
 		values = values.x*rot + values.y*tor;
+        rot = -rot;
+        tor = -tor;
 	}
 	
     lum = 3.0*lum*lum - 2.0*lum*lum*lum;

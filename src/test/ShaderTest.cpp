@@ -216,8 +216,8 @@ void ShaderTest::shaderPreDraw()
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
     shader.uniform( "iChannelTime", (float)mTimeController.getElapsedSeconds() );
-    shader.uniform( "iChannel0", 1 );
-    shader.uniform( "iChannel1", 0 );
+    shader.uniform( "iChannel0", 0 );
+    shader.uniform( "iChannel1", 1 );
     shader.uniform( "iMouse", Vec2f::one()*0.5f );
 }
 
