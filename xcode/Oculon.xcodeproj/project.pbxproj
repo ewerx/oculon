@@ -436,6 +436,7 @@
 		7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C034183FF64C0082C322 /* simplex_frag.glsl */; };
 		7CC562621836BB3100B128D4 /* Cells.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC562601836BB3100B128D4 /* Cells.cpp */; };
 		7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */; };
+		7CD42251192E701700CCE7BF /* CloudTunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */; };
 		7CD53E88185826CE003DE35F /* hygxyz.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7CD53E87185826CE003DE35F /* hygxyz.csv */; };
 		7CD6663E1853F540004BD521 /* Parsec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD6663C1853F53F004BD521 /* Parsec.cpp */; };
 		7CD666471853F678004BD521 /* ParsecBackground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD666431853F678004BD521 /* ParsecBackground.cpp */; };
@@ -1107,6 +1108,8 @@
 		7CC562611836BB3100B128D4 /* Cells.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cells.h; sourceTree = "<group>"; };
 		7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecLabels.cpp; sourceTree = "<group>"; };
 		7CD1A840185AC930002925A0 /* ParsecLabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecLabels.h; sourceTree = "<group>"; };
+		7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloudTunnel.cpp; sourceTree = "<group>"; };
+		7CD42250192E701700CCE7BF /* CloudTunnel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudTunnel.h; sourceTree = "<group>"; };
 		7CD53E87185826CE003DE35F /* hygxyz.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hygxyz.csv; sourceTree = "<group>"; };
 		7CD6663C1853F53F004BD521 /* Parsec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parsec.cpp; sourceTree = "<group>"; };
 		7CD6663D1853F53F004BD521 /* Parsec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parsec.h; sourceTree = "<group>"; };
@@ -1734,6 +1737,8 @@
 				7C4DBFBF1928002E00FDDDC3 /* Menger.h */,
 				7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */,
 				7C4DBFC919295E3000FDDDC3 /* Cymatics.h */,
+				7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */,
+				7CD42250192E701700CCE7BF /* CloudTunnel.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -3252,6 +3257,7 @@
 				DC00126B0C514BC1A2CC6ACA /* b2Joint.cpp in Sources */,
 				7C4DBFC31929131A00FDDDC3 /* MeshInstanceRenderer.cpp in Sources */,
 				D63D9BC058C1497595C83491 /* b2MouseJoint.cpp in Sources */,
+				7CD42251192E701700CCE7BF /* CloudTunnel.cpp in Sources */,
 				6383755376B4454FB16B5F11 /* b2PrismaticJoint.cpp in Sources */,
 				7C7CDB131881F2460064999F /* Deformer.cpp in Sources */,
 				1FAD1A8E190245DE938AC3C2 /* b2PulleyJoint.cpp in Sources */,

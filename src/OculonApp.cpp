@@ -47,6 +47,7 @@
 #include "Menger.h"
 #include "EffectShaders.h"
 #include "Cymatics.h"
+#include "CloudTunnel.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -244,6 +245,10 @@ void OculonApp::setup()
     console() << "[main] vsync: " << (gl::isVerticalSyncEnabled() ? "on" : "off") << std::endl;
     
     setupScenes();
+    
+    syncInterface();
+    
+    console() << "[main] all systems go" << endl;
 }
 
 void OculonApp::shutdown()
@@ -400,6 +405,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("lines") )      addScene( new Lines() );
     if( mConfig.getBool("parsec") )     addScene( new Parsec() );
     if( mConfig.getBool("flock") )      addScene( new Flock() );
+    if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
     
     if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
     if( mConfig.getBool("catalog") )    addScene( new Catalog() );
@@ -411,11 +417,11 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
     if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
+    if( mConfig.getBool("rings") )              addScene( new CloudTunnel() );
     
-    if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
-    if( mConfig.getBool("terrain") )    addScene( new Deformer() );
+//    if( mConfig.getBool("terrain") )    addScene( new Deformer() );
     if( mConfig.getBool("geometry") )   addScene( new Geometry() );
-    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
+//    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
     
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     if( mConfig.getBool("cells") )              addScene( new Cells() );
@@ -426,9 +432,10 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
     if( mConfig.getBool("corona") )             addScene( new Corona() );
-    if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     
     if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
+    
+    if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     if( mConfig.getBool("contour") )            addScene( new Contour() );
     
     // Test Scenes
