@@ -72,7 +72,7 @@ void Graviton::setup()
     mParticleController.addRenderer( new GravitonRenderer() );
     mParticleController.addRenderer( new LinesRenderer() );
     
-    mCameraController.setup(mApp, 0, CameraController::CAM_SPIN);
+    mCameraController.setup(mApp, this, 0, CameraController::CAM_SPIN);
     mAudioInputHandler.setup(true);
     
     MirrorBounceFormation* formation = new MirrorBounceFormation();

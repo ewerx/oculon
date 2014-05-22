@@ -16,6 +16,8 @@ using namespace std;
 
 CameraController::CameraController()
 : mCamType(CAM_MANUAL)
+, mApp(NULL)
+, mParentScene(NULL)
 {
     for (int i = 0; i < CAM_COUNT; ++i)
     {
@@ -23,9 +25,10 @@ CameraController::CameraController()
     }
 }
 
-void CameraController::setup(OculonApp *app, const unsigned int camTypes, eCamType defaultCam)
+void CameraController::setup(OculonApp* app, Scene* parentScene, const unsigned int camTypes, eCamType defaultCam)
 {
     mApp = app;
+    mParentScene = parentScene;
     mAvailableCamTypes = camTypes;
     mCamType = defaultCam;
     mSplineCam.setup(5000.0f,500.0f,mApp->getViewportAspectRatio());
@@ -108,6 +111,8 @@ void CameraController::update(double dt)
 //        case CAM_STAR:
 //            mStarCam.update(dt);
             
+        case CAM_GRAVITON:
+        case CAM_LINES:
         case CAM_SPIN:
         {
             mSpinQuat *= Quatf(Vec3f::xAxis(), dt*mSpinRate.x);
@@ -138,21 +143,36 @@ const Camera& CameraController::getCamera()
 //        case CAM_STAR:
 //            return mStarCam.getCamera();
 //            
-//        case CAM_GRAVITON:
-//        {
-//            Scene* gravitonScene = mApp->getScene("graviton");
-//            
-//            if( gravitonScene && gravitonScene->isRunning() )
-//            {
-//                return gravitonScene->getCamera();
-//            }
-//            else
-//            {
-//                return mSpringCam.getCam();
-//            }
-//        }
-//            break;
-//            
+        case CAM_GRAVITON:
+        {
+            Scene* scene = mApp->getScene("graviton");
+            
+            if( scene && scene != mParentScene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSpinCam;
+            }
+        }
+            break;
+            
+        case CAM_LINES:
+        {
+            Scene* scene = mApp->getScene("lines");
+            
+            if( scene && scene != mParentScene && scene->isRunning() )
+            {
+                return scene->getCamera();
+            }
+            else
+            {
+                return mSpinCam;
+            }
+        }
+            break;
+//
 //        case CAM_ORBITER:
 //        {
 //            Scene* orbiterScene = mApp->getScene("orbiter");

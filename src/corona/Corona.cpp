@@ -193,7 +193,7 @@ void Corona::setup()
 	
 	setStage( mStage );
     
-    mCameraController.setup(mApp, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
+    mCameraController.setup(mApp, this, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
     mAudioInputHandler.setup();
     
     mTimeController.setTimeScaleMultiplier(60.0f);

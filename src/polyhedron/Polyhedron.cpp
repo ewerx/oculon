@@ -88,7 +88,7 @@ void Polyhedron::setup()
     createMeshes();
     
     // camera
-    mCameraController.setup(mApp, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
+    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
     
     // audio
     mAudioInputHandler.setup(true);
