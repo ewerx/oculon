@@ -98,7 +98,6 @@ enm,
         bool            mPowerByAudio;
         float           mPrevFrequency;
         float           mPrevPower;
-        AudioInputHandler mAudioInputHandler;
         int             mResponseBand;
         
         bool mSeparateByAudio;
@@ -110,6 +109,9 @@ enm,
     };
     enum { NUM_RING_SETS = 4 };
     tRingSetParams mRingSetParams[NUM_RING_SETS];
+    
+    AudioInputHandler mAudioInputHandler1;
+    AudioInputHandler mAudioInputHandler2;
     
     // MUTEK HACKS
     bool mSeparateByAudio;

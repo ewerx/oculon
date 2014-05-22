@@ -79,7 +79,6 @@ void Rings::setup()
         mRingSetParams[i].mPowerByAudio = false;
         mRingSetParams[i].mPrevFrequency = mRingSetParams[i].mFrequency;
         mRingSetParams[i].mPrevPower = mRingSetParams[i].mPrevPower;
-        mRingSetParams[i].mAudioInputHandler.setup(false);
         mRingSetParams[i].mActualFrequency = mRingSetParams[i].mFrequency;
         mRingSetParams[i].mActualPower = mRingSetParams[i].mPower;
         mRingSetParams[i].mActualScale = mRingSetParams[i].mScale;
@@ -93,6 +92,9 @@ void Rings::setup()
         
         mRingSetParams[i].mFormat = FORMAT_RING;
     }
+    
+    mAudioInputHandler1.setup(false);
+    mAudioInputHandler2.setup(false);
     
     reset();
 }
@@ -217,8 +219,10 @@ formatNames.push_back(nam);
     {
         std::string indexStr = std::to_string(i+1);
         std::string name("ring" + indexStr);
-        mRingSetParams[i].mAudioInputHandler.setupInterface(mInterface, name);
     }
+    
+    mAudioInputHandler1.setupInterface(mInterface, "ring12");
+    mAudioInputHandler2.setupInterface(mInterface, "ring34");
 }
 
 #pragma mark - CALLBACKS
@@ -328,9 +332,11 @@ void Rings::update(double dt)
 {
     Scene::update(dt);
     
+    mAudioInputHandler1.update(dt, mApp->getAudioInput());
+    mAudioInputHandler2.update(dt, mApp->getAudioInput());
+    
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
-        mRingSetParams[i].mAudioInputHandler.update(dt, mApp->getAudioInput());
         mRingSetParams[i].mElapsedTime += mRingSetParams[i].mTimeScale*dt;
         
         if (mRingSetParams[i].mSpin) {
@@ -341,7 +347,7 @@ void Rings::update(double dt)
             
             if (mRingSetParams[i].mSeparateByAudio)
             {
-                float audioLevel = mRingSetParams[i].mAudioInputHandler.getAverageVolumeLowFreq();
+                float audioLevel = (i < 2) ? mAudioInputHandler1.getAverageVolumeLowFreq() : mAudioInputHandler2.getAverageVolumeLowFreq();
                 r *= audioLevel;
             }
             mRingSetParams[i].mSpinTheta += dt * mRingSetParams[i].mSpinRate;
@@ -379,19 +385,7 @@ void Rings::shaderPreDraw()
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
         float audioLevel = 1.0f;
-        switch (mRingSetParams[i].mResponseBand) {
-            case 0:
-            audioLevel = mRingSetParams[i].mAudioInputHandler.getAverageVolumeLowFreq();
-            break;
-            case 1:
-            audioLevel = mRingSetParams[i].mAudioInputHandler.getAverageVolumeMidFreq();
-            break;
-            case 2:
-            audioLevel = mRingSetParams[i].mAudioInputHandler.getAverageVolumeHighFreq();
-            break;
-            default:
-            break;
-        }
+        audioLevel = (i < 2) ? mAudioInputHandler1.getAverageVolumeByBand(mRingSetParams[i].mResponseBand) : mAudioInputHandler2.getAverageVolumeByBand(mRingSetParams[i].mResponseBand);
         
         scale[i] = mRingSetParams[i].mActualScale;
         power[i] = mRingSetParams[i].mActualPower;
