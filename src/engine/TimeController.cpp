@@ -39,12 +39,13 @@ void TimeController::reset()
     mTick = false;
 }
 
-void TimeController::setupInterface(Interface *interface, const std::string &name)
+void TimeController::setupInterface(Interface *interface, const std::string &name, const int midiChannel, const int midiNote)
 {
     interface->addParam(CreateFloatParam("timescale", &mTimeScale)
                         .minValue(mMinTimeScale)
                         .maxValue(mMaxTimeScale)
-                        .oscReceiver(name));
+                        .oscReceiver(name)
+                        .midiInput(0, midiChannel, midiNote));
     interface->addParam(CreateFloatParam("time_multi", &mTimeScaleMultiplier)
                         .minValue(mMinTimeScaleMultiplier)
                         .maxValue(mMaxTimeScaleMultiplier)

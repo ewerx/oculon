@@ -27,7 +27,7 @@ public:
     TimeController();
     virtual ~TimeController();
     
-    void setupInterface( Interface* interface, const std::string& name );
+    void setupInterface( Interface* interface, const std::string& name, const int midiChannel =-1, const int midiNote =-1 );
     void reset();
     void update(double dt);
 
