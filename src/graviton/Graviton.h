@@ -93,6 +93,7 @@ enm,
 //    float mTimeStep;
     float mDamping;
     float mGravity;
+    float mGravity2;
     bool mReset;
     bool mAudioGravity;
     bool mAudioContainer;

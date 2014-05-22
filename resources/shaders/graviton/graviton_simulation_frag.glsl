@@ -19,6 +19,7 @@ uniform float eps;
 uniform float dt;
 uniform float damping;
 uniform float gravity;
+uniform float gravity2;
 uniform float containerradius;
 uniform float formationStep;
 
@@ -71,7 +72,7 @@ void main()
 //        float f4Mag = length(f4); //force magnitude
         
         vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
-        vec3 a2 = gravity * invmass * f2/(f2Mag*f2Mag + eps);
+        vec3 a2 = gravity2 * invmass * f2/(f2Mag*f2Mag + eps);
 //        vec3 a3 = vec3(0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps) * attractorMass3;
 //        vec3 a4 = vec3(0.0);//gravity * invmass * f4/(f4Mag*f4Mag + eps) * attractorMass4;
         

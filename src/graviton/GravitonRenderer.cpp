@@ -21,7 +21,7 @@ GravitonRenderer::GravitonRenderer()
     // params
     mAdditiveBlending       = true;
     mPointSize              = 0.6f;
-    mColor                  = ColorAf( 0.5f, 0.5f, 0.6f, 0.5f );
+    mColor                  = ColorAf( 0.5f, 0.5f, 0.55f, 0.5f );
     mAudioReactive          = true;
     mAlphaGain              = 5.0f;
     
@@ -58,19 +58,20 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     string oscName = prefix + "/" + mName;
     
     interface->gui()->addLabel(mName);
+    interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
+                        .minValue(0.01f)
+                        .maxValue(2.0f)
+                        .oscReceiver(oscName));
+    
     interface->addParam(CreateBoolParam("graviton/audioreactive", &mAudioReactive)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateColorParam("graviton/color", &mColor, kMinColor, kMaxColor)
                         .oscReceiver(oscName));
     interface->addParam(CreateFloatParam("graviton/alphagain", &mAlphaGain)
                         .minValue(1.0f)
                         .maxValue(20.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam( "pointsize", &mPointSize )
-                         .minValue(0.01f)
-                         .maxValue(2.0f)
-                         .oscReceiver(oscName));
     
-    interface->addParam(CreateColorParam("graviton/color", &mColor, kMinColor, kMaxColor)
-                        .oscReceiver(oscName));
     vector<string> pointTexNames;
     for( tNamedTexture namedTex : mPointTextures )
     {

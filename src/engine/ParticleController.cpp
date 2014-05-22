@@ -24,8 +24,8 @@ ParticleController::ParticleController()
 , mFormationStep(1.0f)
 , mStartAnim(false)
 {
-    mFormationAnimSelector.mDuration = 1.0f;
-    mFormationAnimSelector.mSelectedCurve = EaseCurveSelector::EASE_OUTEXPO;
+    mFormationAnimSelector.mDuration = 120.0f;
+    //mFormationAnimSelector.mSelectedCurve = EaseCurveSelector::EASE_OUTEXPO;
 }
 
 ParticleController::~ParticleController()

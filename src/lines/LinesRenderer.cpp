@@ -52,11 +52,11 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
                          .maxValue(6.0f)
                         .oscReceiver(oscName));
     
+    interface->addParam(CreateBoolParam("lines/audioreactive", &mAudioReactive)
+                        .oscReceiver(oscName));
     interface->addParam(CreateColorParam("lines/color", &mColor, kMinColor, ColorA(1.0f,1.0f,1.0f,0.5f))
                          .oscReceiver(oscName));
     
-    interface->addParam(CreateBoolParam("lines/audioreactive", &mAudioReactive)
-                        .oscReceiver(oscName));
     interface->addParam(CreateFloatParam("lines/alphagain", &mAlphaGain)
                         .minValue(1.0f)
                         .maxValue(10.0f)

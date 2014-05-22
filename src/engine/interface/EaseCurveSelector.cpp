@@ -16,7 +16,7 @@ using namespace std;
 
 EaseCurveSelector::EaseCurveSelector()
 : mSelectedCurve(EASE_LINEAR)
-, mMaxDuration(60.0f)
+, mMaxDuration(120.0f)
 , mDuration(0.0f)
 , mReverseEase(false)
 {

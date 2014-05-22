@@ -52,6 +52,7 @@ void Graviton::setup()
     
     mDamping = 0.01f;
     mGravity = 0.5f;
+    mGravity2 = mGravity;
     mEps = 0.0f;
     mConstraintSphereRadius = mFormationRadius * 1.25f;
     mNodeSpeed = 1.0f;
@@ -79,6 +80,8 @@ void Graviton::setup()
     formation->mBounceMultiplier = 50.0f;
     formation->mSpinRate = 0.3f;
     mNodeController.addFormation( formation );
+    
+    mNodeController.setFormation(1);
     
     reset();
 }
@@ -190,7 +193,7 @@ void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
     
-    mTimeContoller.setupInterface(mInterface, mName);
+    mTimeContoller.setupInterface(mInterface, mName, 1, 7);
     mInterface->gui()->addColumn();
     
 //    vector<string> nodeFormationNames;
@@ -229,8 +232,14 @@ void Graviton::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "gravity", &mGravity )
                          .minValue(0.0f)
-                         .maxValue(5.0f)
-                         .oscReceiver(getName()));
+                         .maxValue(10.0f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 1, 5));
+    mInterface->addParam(CreateFloatParam( "gravity2", &mGravity2 )
+                         .minValue(0.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 1, 6));
 //    mInterface->addParam(CreateFloatParam( "nodespeed", &mNodeSpeed )
 //                         .minValue(0.0f)
 //                         .maxValue(1000.0f)
@@ -507,15 +516,18 @@ void Graviton::update(double dt)
     mNodeController.update(dt, mAudioInputHandler);
     
     float gravity = mGravity;
+    float gravity2 = mGravity2;
     if (mAudioGravity)
     {
         if (mNodeController.getNodes().size() > 0)
         {
             gravity *= mNodeController.getNodes().front().mPosition.length() * 0.1f;
+            gravity2 *= mNodeController.getNodes().back().mPosition.length() * 0.1f;
         }
         else
         {
             gravity *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
+            gravity2 *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
         }
     }
 
@@ -548,6 +560,7 @@ void Graviton::update(double dt)
     mSimulationShader.uniform( "eps", mEps );
     mSimulationShader.uniform( "damping", mDamping );
     mSimulationShader.uniform( "gravity", gravity );
+    mSimulationShader.uniform( "gravity2", gravity2 );
     float containRadius = mConstraintSphereRadius;
     if (mAudioContainer) {
         containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;

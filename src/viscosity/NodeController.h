@@ -95,6 +95,12 @@ public:
     
     NodeFormation::tNodeList& getNodes();
     
+    void setFormation( const int index )
+    {
+        if ( index < mFormations.size() )
+            mCurrentFormationIndex = index;
+    }
+    
     // callbacks
     bool onFormationChanged();
 
