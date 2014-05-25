@@ -27,7 +27,8 @@ void CloudTunnel::setup()
     Scene::setup();
     
     // params
-    mColor1 = ColorAf(0.07f, 0.1f, 0.15f, 1.0f);
+    //mColor1 = ColorAf(0.07f, 0.1f, 0.15f, 1.0f);
+    mColor1 = ColorAf(0.1f, 0.1f, 0.1f, 1.0f);
     mColor2 = ColorAf(50.f/256.f,100.f/256.f,255.f/256.f);
     
     mIterations = 80;

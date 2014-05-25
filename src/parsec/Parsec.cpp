@@ -85,8 +85,7 @@ void Parsec::setupInterface()
                          .minValue(0.5f)
                          .maxValue(3.0f));
     mInterface->addParam(CreateFloatParam("background", &mBackground.mAlpha));
-    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha)
-                         .midiInput(0, 2, 22));
+    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha));
     mInterface->addParam(CreateBoolParam("labels-fadebydist", &mLabels.mFadeByDistance));
     mInterface->addParam(CreateBoolParam("labels-audioresponsive", &mLabels.mAudioResponsive));
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));

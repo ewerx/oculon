@@ -33,6 +33,8 @@ void Tilings::setup()
     
     mShader = loadFragShader("tilings_frag.glsl");
     
+    mBackgroundAlpha = 0.0f;
+    
     reset();
 }
 

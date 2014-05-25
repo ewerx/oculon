@@ -64,6 +64,8 @@ void Barcode::setup()
         }
     }
     
+    mIsActive = true;
+    
     reset();
 }
 
@@ -80,11 +82,13 @@ void Barcode::setupInterface()
     interface->addParam(CreateFloatParam("Base Width", &mBaseWidth)
                         .minValue(1.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(mName,"basewidth"));
+                        .oscReceiver(mName,"basewidth")
+                        .midiInput(0, 2, 6));
     interface->addParam(CreateFloatParam("Max Width", &mMaxWidth)
                         .minValue(1.0f)
                         .maxValue(50.0f)
-                        .oscReceiver(mName,"maxwidth"));
+                        .oscReceiver(mName,"maxwidth")
+                        .midiInput(0, 1, 6));
     interface->addParam(CreateFloatParam("Threshold", &mThreshold)
                         .maxValue(0.1f)
                         .oscReceiver(mName,"threshold"));
@@ -92,10 +96,13 @@ void Barcode::setupInterface()
                         .oscReceiver(mName,"color"));
     
     interface->addParam(CreateBoolParam("Vetical", &mVertical)
-                        .oscReceiver(mName,"vertical"));
+                        .oscReceiver(mName,"vertical")
+                        .sendFeedback()
+                        .midiInput(0, 2, 5));
     interface->addParam(CreateIntParam("Num Bars", &mNumBars)
                         .maxValue(MAX_BARS)
-                        .oscReceiver(mName,"numbars"));
+                        .oscReceiver(mName,"numbars")
+                        .midiInput(0, 1, 5));
     
     vector<string> posModeNames;
 #define BARCODE_POS_MODE_ENTRY( nam, enm ) \

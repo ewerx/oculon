@@ -72,15 +72,17 @@ void AudioInputHandler::setup(bool fboEnabled)
     mOSCFalloff = false;
 }
 
-void AudioInputHandler::setupInterface( Interface* interface, const std::string &name )
+void AudioInputHandler::setupInterface( Interface* interface, const std::string &name, const int midiChannel, const int midiNote, const int randomizeMidiChannel, const int randomizeMidiNote )
 {
     interface->gui()->addColumn();
     string label = name + "/audio";
     interface->gui()->addLabel(label);
     
     interface->addParam(CreateFloatParam("gain", &mGain)
+                        .minValue(0.05f)
                         .maxValue(50.0f)
-                        .oscReceiver(name).sendFeedback());
+                        .oscReceiver(name).sendFeedback()
+                        .midiInput(0, midiChannel, midiNote));
     interface->addParam(CreateBoolParam( "linear", &mLinearScale )
                         .oscReceiver(name,"audio/linear"));
     
@@ -113,7 +115,8 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
                          .oscReceiver(name,"audio/random"));
     interface->addButton(CreateTriggerParam( "randomize", NULL )
-                        .oscReceiver(name,"audio/randomize"))->registerCallback( this, &AudioInputHandler::onRandomize );
+                        .oscReceiver(name,"audio/randomize")
+                         .midiInput(0, randomizeMidiChannel, randomizeMidiNote))->registerCallback( this, &AudioInputHandler::onRandomize );
     
     interface->gui()->addLabel("falloff");
     interface->addParam(CreateFloatParam( "falloff", &mFalloffTime )

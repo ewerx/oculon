@@ -127,12 +127,14 @@ void Dust::setupInterface()
     mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
                          .minValue(0.001f)
                          .maxValue(3.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(mName)
+                         .midiInput(0, 1, 30));
     
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
                          .maxValue(1.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(mName)
+                         .midiInput(0, 2, 29));
     
     mInterface->addEnum(CreateEnumParam( "motion", &mMotion )
                         .maxValue(mMotionTypes.size())
@@ -146,7 +148,26 @@ void Dust::setupInterface()
 //    mInterface->addParam(CreateBoolParam("audioreactive", &mAudioReactive));
     //mInterface->addParam(CreateBoolParam("audiospeed", &mAudioTime));
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName, 1, 31);
+
+    // FIXME: MIDI HACK
+    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
+    hiddenPanel->enabled = false;
+    mInterface->addParam(CreateFloatParam("dust/noisex", &mDynamicTexture.mNoiseScale.x)
+                        .minValue(0.0f)
+                        .maxValue(10.0f)
+                        .oscReceiver(mName)
+                        .midiInput(0, 1, 28));
+    mInterface->addParam(CreateFloatParam("dust/noisey", &mDynamicTexture.mNoiseScale.y)
+                         .minValue(0.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(mName)
+                         .midiInput(0, 1, 29));
+    mInterface->addParam(CreateFloatParam("dust/noisez", &mDynamicTexture.mNoiseScale.z)
+                         .minValue(0.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(mName)
+                         .midiInput(0, 2, 28));
 }
 
 #pragma mark - Update

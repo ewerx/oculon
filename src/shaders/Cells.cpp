@@ -90,7 +90,7 @@ void Cells::setupInterface()
     mInterface->addParam(CreateFloatParam( "highlight", &mHighlight )
                          .maxValue(2.0f)
                          .oscReceiver(getName())
-                         .midiInput(1, 2, 17));
+                         .midiInput(0, 1, 13));
     mInterface->addParam(CreateFloatParam( "intensity", &mIntensity )
                          .minValue(1.0f)
                          .maxValue(8.0f)
@@ -101,12 +101,12 @@ void Cells::setupInterface()
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName())
-                         .midiInput(1, 2, 18));
+                         .midiInput(0, 1, 14));
     mInterface->addParam(CreateFloatParam( "TimeStep2", &mTimeStep[1] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName())
-                         .midiInput(1, 2, 19));
+                         .midiInput(0, 1, 15));
     mInterface->addParam(CreateFloatParam( "TimeStep3", &mTimeStep[2] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)

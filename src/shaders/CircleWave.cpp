@@ -40,7 +40,7 @@ void CircleWave::reset()
     mElapsedTime = 0.0f;
     
     mSeparation = 0.06f;
-    mColorSeparation = true;
+    mColorSeparation = false;
     mDetail = 0.5f;
     mStrands = 30;
     mScale = 0.75f;
@@ -51,6 +51,8 @@ void CircleWave::reset()
     
 //    mBackgroundReaction = BG_REACTION_NONE;
     mBackgroundFlash = false;
+    
+    mBackgroundAlpha = 0.0f;
 }
 
 void CircleWave::setupInterface()

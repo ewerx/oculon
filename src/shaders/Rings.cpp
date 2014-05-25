@@ -119,6 +119,8 @@ formatNames.push_back(nam);
     RINGS_FORMAT_TUPLE
 #undef  RINGS_FORMAT_ENTRY
     
+    int baseMidi = 48;
+    
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {
         std::string indexStr = std::to_string(i+1);
@@ -155,7 +157,8 @@ formatNames.push_back(nam);
         mInterface->addParam(CreateFloatParam("timescale" + indexStr, &mRingSetParams[i].mTimeScale)
                              .minValue(-30.0f)
                              .maxValue(30.0f)
-                             .oscReceiver(name));
+                             .oscReceiver(name)
+                             .midiInput(0, 1, 48+i));
         mInterface->addParam(CreateFloatParam("power" + indexStr, &mRingSetParams[i].mPower)
                              .minValue(0.1f)
                              .maxValue(1.5f)
@@ -164,16 +167,19 @@ formatNames.push_back(nam);
         mInterface->addParam(CreateFloatParam("frequency" + indexStr, &mRingSetParams[i].mFrequency)
                              .minValue(0.00001f)
                              .maxValue(200.0f)
-                             .oscReceiver(name))->registerCallback( boost::bind( &Rings::updateFreq, this, i) );
+                             .oscReceiver(name)
+                             .midiInput(0, 1, 52+i))->registerCallback( boost::bind( &Rings::updateFreq, this, i) );
         mInterface->addParam(CreateFloatParam("scale" + indexStr, &mRingSetParams[i].mScale)
                              .minValue(0.00001f)
                              .maxValue(1.0f)
-                             .oscReceiver(name))->registerCallback( boost::bind( &Rings::updateScale, this, i) );
+                             .oscReceiver(name)
+                             .midiInput(0, 1, 56+i))->registerCallback( boost::bind( &Rings::updateScale, this, i) );
 
         mInterface->addParam(CreateFloatParam("thickness" + indexStr, &mRingSetParams[i].mThickness)
                              .minValue(0.01f)
                              .maxValue(1.0f)
-                             .oscReceiver(name));
+                             .oscReceiver(name)
+                             .midiInput(0, 1, 60+i));
         mInterface->addParam(CreateVec2fParam("center" + indexStr, &mRingSetParams[i].mCenter, Vec2f::zero(), Vec2f::one())
                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::updateCenter, this, i) );
         mInterface->addParam(CreateColorParam("color" + indexStr, &mRingSetParams[i].mColor(), kMinColor, kMaxColor));
@@ -193,8 +199,14 @@ formatNames.push_back(nam);
                               .oscReceiver(name))->registerCallback( boost::bind( &Rings::zoomRestore, this, i) );
         
         // spin
-        mInterface->addParam(CreateBoolParam("spin", &mRingSetParams[i].mSpin));
-        mInterface->addParam(CreateBoolParam("sepaudio", &mRingSetParams[i].mSeparateByAudio));
+        mInterface->addParam(CreateBoolParam("spin", &mRingSetParams[i].mSpin)
+                             .oscReceiver(mName)
+                             .midiInput(0, 2, 48+i)
+                             .sendFeedback());
+        mInterface->addParam(CreateBoolParam("sepaudio", &mRingSetParams[i].mSeparateByAudio)
+                             .oscReceiver(mName)
+                             .midiInput(0, 2, 52+i)
+                             .sendFeedback());
         mInterface->addParam(CreateFloatParam("spinrate", &mRingSetParams[i].mSpinRate)
                              .minValue(-2.0f)
                              .maxValue(2.0f));
@@ -207,9 +219,13 @@ formatNames.push_back(nam);
         
         // audio
         mInterface->addParam(CreateBoolParam("power-audio" + indexStr, &mRingSetParams[i].mPowerByAudio)
-                             .oscReceiver(name));
+                             .oscReceiver(name)
+                             .midiInput(0, 2, 56+i)
+                             .sendFeedback());
         mInterface->addParam(CreateBoolParam("scale-audio" + indexStr, &mRingSetParams[i].mScaleByAudio)
-                             .oscReceiver(name));
+                             .oscReceiver(name)
+                             .midiInput(0, 2, 60+i)
+                             .sendFeedback());
         mInterface->addParam(CreateIntParam("audio-band" + indexStr, &mRingSetParams[i].mResponseBand)
                              .maxValue(2));
         

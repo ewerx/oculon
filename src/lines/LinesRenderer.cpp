@@ -18,7 +18,7 @@ LinesRenderer::LinesRenderer()
 : ParticleRenderer("lines")
 {
     // params
-    mLineWidth              = 1.25f;
+    mLineWidth              = 2.0f;
     mColor                  = ColorAf(1.0f,1.0f,1.0f,0.075f);
     mUseColorMap            = false;
     mAudioReactive          = true;
@@ -60,9 +60,18 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
     interface->addParam(CreateFloatParam("lines/alphagain", &mAlphaGain)
                         .minValue(1.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(oscName));
+                        .oscReceiver(oscName)
+                        .midiInput(0, 1, 16));
     interface->addParam(CreateBoolParam("lines/colormap", &mUseColorMap)
                         .oscReceiver(oscName));
+    
+    // FIXME: MIDI HACK
+    mowa::sgui::PanelControl* hiddenPanel = interface->gui()->addPanel();
+    hiddenPanel->enabled = false;
+    interface->addParam(CreateFloatParam("lines/alpha", &mColor.a)
+                        .minValue(0.0f)
+                        .maxValue(0.5f)
+                        .midiInput(0, 2, 16));
 }
 
 void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )

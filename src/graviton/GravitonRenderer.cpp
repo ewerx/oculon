@@ -21,7 +21,7 @@ GravitonRenderer::GravitonRenderer()
     // params
     mAdditiveBlending       = true;
     mPointSize              = 0.6f;
-    mColor                  = ColorAf( 0.5f, 0.5f, 0.55f, 0.5f );
+    mColor                  = ColorAf( 0.5f, 0.5f, 0.505f, 0.5f );
     mAudioReactive          = true;
     mAlphaGain              = 5.0f;
     
@@ -70,7 +70,8 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
     interface->addParam(CreateFloatParam("graviton/alphagain", &mAlphaGain)
                         .minValue(1.0f)
                         .maxValue(20.0f)
-                        .oscReceiver(oscName));
+                        .oscReceiver(oscName)
+                        .midiInput(0, 1, 20));
     
     vector<string> pointTexNames;
     for( tNamedTexture namedTex : mPointTextures )
@@ -81,6 +82,15 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
                        .maxValue(pointTexNames.size())
                        .oscReceiver(oscName)
                        .isVertical(), pointTexNames);
+    
+    // FIXME: MIDI HACK
+    mowa::sgui::PanelControl* hiddenPanel = interface->gui()->addPanel();
+    hiddenPanel->enabled = false;
+    interface->addParam(CreateFloatParam("graviton/alpha", &mColor.a)
+                        .minValue(0.0f)
+                        .maxValue(1.0f)
+                        .oscReceiver(oscName)
+                        .midiInput(0, 2, 20));
 }
 
 void GravitonRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize, const ci::Camera& cam, AudioInputHandler& audioInputHandler )

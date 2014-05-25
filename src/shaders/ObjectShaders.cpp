@@ -64,6 +64,8 @@ void ObjectShaders::setup()
     
     mTimeScale = 1.0f;
     
+    mBackgroundAlpha = 0.0f;
+    
     reset();
 }
 

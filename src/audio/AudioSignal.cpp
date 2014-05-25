@@ -88,7 +88,7 @@ void AudioSignal::setupInterface()
 		ss->setupInterface();
 	}
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName, 1, 7, 2, 7);
 }
 
 //void AudioSignal::setupDebugInterface()

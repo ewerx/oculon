@@ -177,11 +177,15 @@ void MirrorBounceFormation::setupInterface(Interface *interface, const std::stri
     
     interface->addParam(CreateFloatParam("radius", &mRadius)
                         .minValue(1.0f)
-                        .maxValue(1000.0f));
+                        .maxValue(1000.0f)
+                        .oscReceiver(name)
+                        .midiInput(0, 1, 24));
     
     interface->addParam(CreateFloatParam("bounce_multi", &mBounceMultiplier)
                         .minValue(1.0f)
-                        .maxValue(100.0f));
+                        .maxValue(100.0f)
+                        .oscReceiver(name)
+                        .midiInput(0, 2, 24));
     
     // TODO: control radius externally?
 }

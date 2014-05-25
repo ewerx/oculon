@@ -66,6 +66,10 @@ public:
     ValueChangedSignal& getFormationChangedSignal() { return mFormationChangedSignal; }
     float getFormationStep() { return mFormationStep; }
     
+    // FIXME: MIDI HACK
+    bool setFormation(const int formationIndex);
+    float* getAnimTimePtr() { return &mFormationAnimSelector.mDuration; }
+    
     // renderer
     ParticleRenderer& getRenderer();
     void addRenderer(ParticleRenderer* renderer);

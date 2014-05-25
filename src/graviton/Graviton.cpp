@@ -70,7 +70,7 @@ void Graviton::setup()
     
     // rendering
     mParticleController.addRenderer( new GravitonRenderer() );
-    mParticleController.addRenderer( new LinesRenderer() );
+//    mParticleController.addRenderer( new LinesRenderer() );
     
     mCameraController.setup(mApp, this, 0, CameraController::CAM_SPIN);
     mAudioInputHandler.setup(true);
@@ -193,7 +193,7 @@ void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
     
-    mTimeContoller.setupInterface(mInterface, mName, 1, 7);
+    mTimeContoller.setupInterface(mInterface, mName, 1, 22);
     mInterface->gui()->addColumn();
     
 //    vector<string> nodeFormationNames;
@@ -220,8 +220,9 @@ void Graviton::setupInterface()
 //                         .maxValue(5.0f)
 //                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "damping", &mDamping )
-                         .maxValue(0.5f)
-                         .oscReceiver(getName()));
+                         .maxValue(0.2f)
+                         .oscReceiver(getName())
+                         .midiInput(0, 1, 27));
     mInterface->addParam(CreateFloatParam( "eps", &mEps )
                          .minValue(0.0)
                          .maxValue(0.00001)
@@ -234,12 +235,12 @@ void Graviton::setupInterface()
                          .minValue(0.0f)
                          .maxValue(10.0f)
                          .oscReceiver(getName())
-                         .midiInput(0, 1, 5));
+                         .midiInput(0, 1, 25));
     mInterface->addParam(CreateFloatParam( "gravity2", &mGravity2 )
                          .minValue(0.0f)
                          .maxValue(10.0f)
                          .oscReceiver(getName())
-                         .midiInput(0, 1, 6));
+                         .midiInput(0, 2, 25));
 //    mInterface->addParam(CreateFloatParam( "nodespeed", &mNodeSpeed )
 //                         .minValue(0.0f)
 //                         .maxValue(1000.0f)
@@ -249,16 +250,30 @@ void Graviton::setupInterface()
 //    mInterface->addParam(CreateBoolParam( "random-mirror", &mRandomMirror )
 //                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "audio-gravity", &mAudioGravity )
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(0, 2, 27));
     mInterface->addParam(CreateBoolParam( "audio-container", &mAudioContainer )
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(0, 2, 26));
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
     mParticleController.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName, 1, 23);
+    
+    // FIXME: MIDI HACK
+    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
+    hiddenPanel->enabled = false;
+    mInterface->addButton(CreateTriggerParam("formation0", NULL)
+                          .midiInput(0, 2, 21))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 0) );
+    mInterface->addButton(CreateTriggerParam("formation1", NULL)
+                          .midiInput(0, 2, 22))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 1) );
+    mInterface->addParam(CreateFloatParam("anim_time", mParticleController.getAnimTimePtr())
+                         .minValue(0.0f)
+                         .maxValue(120.0f)
+                         .midiInput(0, 1, 21));
 }
 
 void Graviton::reset()
@@ -521,8 +536,8 @@ void Graviton::update(double dt)
     {
         if (mNodeController.getNodes().size() > 0)
         {
-            gravity *= mNodeController.getNodes().front().mPosition.length() * 0.1f;
-            gravity2 *= mNodeController.getNodes().back().mPosition.length() * 0.1f;
+            gravity *= mNodeController.getNodes().front().mPosition.length() * 0.25f;
+            gravity2 *= mNodeController.getNodes().back().mPosition.length() * 0.25f;
         }
         else
         {

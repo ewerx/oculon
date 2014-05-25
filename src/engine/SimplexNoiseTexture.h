@@ -25,7 +25,7 @@ public:
     void configShader(double dt);
     void setupInterface( Interface* interface, const std::string& name );
     
-private:
+public:
     float       mNoiseSpeed;
 	float       mNoiseTheta;
     ci::Vec3f   mNoiseScale;

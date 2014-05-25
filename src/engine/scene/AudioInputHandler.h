@@ -25,7 +25,7 @@ public:
     virtual ~AudioInputHandler();
     
     void setup(bool fboEnabled =false);
-    void setupInterface( Interface *interface, const std::string &name );
+    void setupInterface( Interface *interface, const std::string &name, const int midiChannel =-1, const int midiNote =-1, const int randomizeMidiChannel =-1, const int randomizeMidiNote =-1 );
     void update(double dt, AudioInput& audioInput);
     
     void drawDebug(const ci::Vec2f& size);

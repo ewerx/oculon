@@ -53,7 +53,7 @@ void Lines::setup()
     
     // rendering
     mParticleController.addRenderer( new LinesRenderer() );
-    mParticleController.addRenderer( new GravitonRenderer() );
+//    mParticleController.addRenderer( new GravitonRenderer() );
 //    mParticleController.addRenderer( new DustRenderer() );
     
     mDynamicTexture.setup(bufSize, bufSize);
@@ -234,7 +234,24 @@ void Lines::setupParticles(const int bufSize)
     }
     
     {
-        // connected lines
+        // connecting points on a sphere
+        int numPoints = 64;
+        vector<Vec3f> connectors;
+        
+        float radius = r;
+        
+        for (int i = 0; i < numPoints; ++i)
+        {
+            float rho = Rand::randFloat() * (M_PI * 2.0);
+            float theta = Rand::randFloat() * (M_PI * 2.0);
+            
+            float x = radius * cos(rho) * sin(theta);
+            float y = radius * sin(rho) * sin(theta);
+            float z = radius * cos(theta);
+            
+            connectors.push_back(Vec3f(x,y,z));
+        }
+        
         bool pair = false;
         float x = 0.0f;
         float y = 0.0f;
@@ -245,17 +262,12 @@ void Lines::setupParticles(const int bufSize)
         
         for (int i = 0; i < numParticles; ++i)
         {
-            if (!pair)
-            {
-                x = r * Rand::randFloat(-1.0f,1.0f);
-                y = r * Rand::randFloat(-1.0f,1.0f);
-                z = r * Rand::randFloat(-1.0f,1.0f);
-            }
-            
+            Vec3f pos = connectors[Rand::randInt(connectors.size())];
+        
             float mass = Rand::randFloat(0.01f,1.0f);
-            
+        
             // position + mass
-            positions.push_back(Vec4f(x,y,z,mass));
+            positions.push_back(Vec4f(pos.x,pos.y,pos.z,mass));
             
             pair = !pair;
         }
@@ -264,55 +276,86 @@ void Lines::setupParticles(const int bufSize)
         positions.clear();
     }
     
-    // square snake
-    {
-        bool pair = false;
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
-        
-        int axis = 0;
-        
-        // start
-        positions.push_back(Vec4f(x,y,z,0.0f));
-        
-        for (int i = 0; i < numParticles; ++i)
-        {
-            if (pair)
-            {
-                axis = (axis + 1) % 3;
-            }
-            else
-            {
-                axis = Rand::randInt(3); // x=0,y=1,z=2
-            }
-            
-            switch(axis)
-            {
-                case 0:
-                    x = r * Rand::randFloat(-1.0f,1.0f);
-                    break;
-                case 1:
-                    y = r * Rand::randFloat(-1.0f,1.0f);
-                    break;
-                case 2:
-                    z = r * Rand::randFloat(-1.0f,1.0f);
-                    break;
-                default:
-                    break;
-            }
-            
-            float mass = Rand::randFloat(0.01f,1.0f);
-            
-            // position + mass
-            positions.push_back(Vec4f(x,y,z,mass));
-            
-            pair = !pair;
-        }
-        
-        mParticleController.addFormation(new ParticleFormation("snake", bufSize, positions, velocities, data));
-        positions.clear();
-    }
+//    {
+//        // connected lines
+//        bool pair = false;
+//        float x = 0.0f;
+//        float y = 0.0f;
+//        float z = 0.0f;
+//        
+//        // start
+//        positions.push_back(Vec4f(x,y,z,0.0f));
+//        
+//        for (int i = 0; i < numParticles; ++i)
+//        {
+//            if (!pair)
+//            {
+//                x = r * Rand::randFloat(-1.0f,1.0f);
+//                y = r * Rand::randFloat(-1.0f,1.0f);
+//                z = r * Rand::randFloat(-1.0f,1.0f);
+//            }
+//            
+//            float mass = Rand::randFloat(0.01f,1.0f);
+//            
+//            // position + mass
+//            positions.push_back(Vec4f(x,y,z,mass));
+//            
+//            pair = !pair;
+//        }
+//        
+//        mParticleController.addFormation(new ParticleFormation("connected", bufSize, positions, velocities, data));
+//        positions.clear();
+//    }
+//    
+//    // square snake
+//    {
+//        bool pair = false;
+//        float x = 0.0f;
+//        float y = 0.0f;
+//        float z = 0.0f;
+//        
+//        int axis = 0;
+//        
+//        // start
+//        positions.push_back(Vec4f(x,y,z,0.0f));
+//        
+//        for (int i = 0; i < numParticles; ++i)
+//        {
+//            if (pair)
+//            {
+//                axis = (axis + 1) % 3;
+//            }
+//            else
+//            {
+//                axis = Rand::randInt(3); // x=0,y=1,z=2
+//            }
+//            
+//            switch(axis)
+//            {
+//                case 0:
+//                    x = r * Rand::randFloat(-1.0f,1.0f);
+//                    break;
+//                case 1:
+//                    y = r * Rand::randFloat(-1.0f,1.0f);
+//                    break;
+//                case 2:
+//                    z = r * Rand::randFloat(-1.0f,1.0f);
+//                    break;
+//                default:
+//                    break;
+//            }
+//            
+//            float mass = Rand::randFloat(0.01f,1.0f);
+//            
+//            // position + mass
+//            positions.push_back(Vec4f(x,y,z,mass));
+//            
+//            pair = !pair;
+//        }
+//        
+//        mParticleController.addFormation(new ParticleFormation("snake", bufSize, positions, velocities, data));
+//        positions.clear();
+//    }
 
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
@@ -329,7 +372,7 @@ void Lines::reset()
 
 void Lines::setupInterface()
 {
-    mTimeContoller.setupInterface(mInterface, mName);
+    mTimeContoller.setupInterface(mInterface, mName, 1, 18);
     
     mInterface->gui()->addColumn();
     vector<string> motionNames;
@@ -354,7 +397,19 @@ void Lines::setupInterface()
     mParticleController.setupInterface(mInterface, mName);
     
     mCameraController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName, 1, 19, 2, 19);
+    
+    // FIXME: MIDI HACK
+    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
+    hiddenPanel->enabled = false;
+    mInterface->addButton(CreateTriggerParam("formation0", NULL)
+                          .midiInput(0, 2, 17))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 0) );
+    mInterface->addButton(CreateTriggerParam("formation1", NULL)
+                          .midiInput(0, 2, 18))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 1) );
+    mInterface->addParam(CreateFloatParam("anim_time", mParticleController.getAnimTimePtr())
+                                          .minValue(0.0f)
+                                          .maxValue(120.0f)
+                                          .midiInput(0, 1, 17));
 }
 
 #pragma mark - Update

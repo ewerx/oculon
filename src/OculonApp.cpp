@@ -431,9 +431,9 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
-    if( mConfig.getBool("corona") )             addScene( new Corona() );
+//    if( mConfig.getBool("corona") )             addScene( new Corona() );
     
-    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
+//    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
     
     if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     if( mConfig.getBool("contour") )            addScene( new Contour() );

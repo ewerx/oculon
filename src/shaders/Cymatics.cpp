@@ -64,30 +64,36 @@ void Cymatics::setupInterface()
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "poles", &mPoles )
                          .minValue(2)
-                         .maxValue(300));
+                         .maxValue(300)
+                         .oscReceiver(mName)
+                         .midiInput(0, 1, 32));
     mInterface->addEnum(CreateEnumParam( "audio-poles", (int*)(&mPolesResponseBand) )
                         .maxValue(bandNames.size())
                         .isVertical()
                         .oscReceiver(mName)
+                        .midiInput(0, 2, 32)
                         .sendFeedback(), bandNames);
 
     mInterface->addParam(CreateFloatParam("distance", &mDistance)
                          .minValue(0.0f)
                          .maxValue(2.0f)
+                         .midiInput(0, 1, 33)
                          .oscReceiver(getName()));
     
     mInterface->addEnum(CreateEnumParam( "audio-distance", (int*)(&mDistanceResponseBand) )
                         .maxValue(bandNames.size())
                         .isVertical()
                         .oscReceiver(mName)
+                        .midiInput(0, 2, 33)
                         .sendFeedback(), bandNames);
     
     mInterface->addParam(CreateFloatParam("shift", &mShift)
                          .minValue(-100.0f)
                          .maxValue(100.0f)
-                         .oscReceiver(getName()));
+                         .oscReceiver(getName())
+                         .midiInput(0, 1, 34));
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, mName, 1, 35);
 }
 
 void Cymatics::update(double dt)

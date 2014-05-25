@@ -159,6 +159,13 @@ bool ParticleController::onFormationChanged()
     return true;
 }
 
+bool ParticleController::setFormation(const int formationIndex)
+{
+    mCurrentFormationIndex = formationIndex;
+    onFormationChanged();
+    return true;
+}
+
 #pragma mark - Renderers
 
 ParticleRenderer& ParticleController::getRenderer()
