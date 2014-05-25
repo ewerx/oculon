@@ -140,7 +140,7 @@ protected:
 class OscEnumParam : public OscParam
 {
 public:
-    OscEnumParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isVertical);
+    OscEnumParam(OscServer* server, mowa::sgui::IntVarControl* guiControl, const CreateEnumParam& param);
     
     mowa::sgui::Control* getControl()   { return mControl; }
     

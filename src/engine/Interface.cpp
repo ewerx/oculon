@@ -62,7 +62,7 @@ mowa::sgui::IntVarControl* Interface::addEnum( const CreateEnumParam& param )
 {
     mowa::sgui::IntVarControl* control = mGui->addParam( param._name, param._var, param._min, param._max-1, *(param._var) );
     
-    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param );
     mParams.push_back(oscParam);
     
     return control;
@@ -72,7 +72,7 @@ mowa::sgui::EnumVarControl* Interface::addEnum( const CreateEnumParam& param, st
 {
     mowa::sgui::EnumVarControl* control = mGui->addParam( param._name, param._var, enumNames );
     
-    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param._recvAddr, param._sendAddr , param._feedback, param._altstyle );
+    OscEnumParam* oscParam = new OscEnumParam( mOsc, control, param );
     mParams.push_back(oscParam);
     
     return control;

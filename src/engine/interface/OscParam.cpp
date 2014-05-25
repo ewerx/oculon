@@ -259,7 +259,10 @@ OscTriggerParam::OscTriggerParam(OscServer* server, ButtonControl* control, cons
     {
         server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscTriggerParam::handleOscMessage );
     }
-    mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+    if (mControl)
+    {
+        mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+    }
 }
 
 void OscTriggerParam::handleOscMessage( const osc::Message& message )
@@ -303,26 +306,30 @@ void OscTriggerParam::sendValue()
 
 #pragma MARK OscEnumParam
 
-OscEnumParam::OscEnumParam(OscServer* server, IntVarControl* control, const std::string& recvAddr, const std::string& sendAddr, const bool sendsFeedback, const bool isVertical)
-: OscParam(OscParam::PARAMTYPE_ENUM, server, recvAddr, sendAddr, sendsFeedback, -1, -1, -1)
+OscEnumParam::OscEnumParam(OscServer* server, IntVarControl* control, const CreateEnumParam& param)
+: OscParam(OscParam::PARAMTYPE_TRIGGER, server, param._recvAddr, param._sendAddr, param._feedback, param._midiPort, param._midiChannel, param._midiNote)
 , mControl(control)
-, mIsVertical(isVertical)
+, mIsVertical(param._altstyle)
 {
     assert(mControl != NULL);
     
-    if( recvAddr.length() > 0 )
+    if( param._recvAddr.length() > 0 )
     {
         const int enum_count = control->max + 1; // gui max is count-1
         char buf[OSC_ADDRESS_SIZE];
         for( int i = 0; i < enum_count; ++i )
         {
             // enum index is 0-based, osc address is 1-based
-            const int row = isVertical ? (enum_count - i) : 1;
-            const int col = isVertical ? 1 : i+1;
-            snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d/%d", recvAddr.c_str(), row, col );
+            const int row = mIsVertical ? (enum_count - i) : 1;
+            const int col = mIsVertical ? 1 : i+1;
+            snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d/%d", param._recvAddr.c_str(), row, col );
             server->registerCallback( buf, std::bind( &OscEnumParam::handleOscMessage, this, std::placeholders::_1, i) );
         }
     }
+//    if( param._midiChannel != -1 && param._midiNote != -1 )
+//    {
+//        server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscEnumParam::handleOscMessage );
+//    }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
 }
 
