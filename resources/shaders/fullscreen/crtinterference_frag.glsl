@@ -1,4 +1,4 @@
-uniform vec3      iResolution;     // viewport resolution (in pixels)
+uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
@@ -116,6 +116,10 @@ vec4 vColorDrift (vec4 col, float q) {
 	return vec4 (hsv2rgb (hsv), col.w);
 }
 
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 void main(void)
 {
 	vec2 cRes = iResolution.xy;
@@ -125,6 +129,10 @@ void main(void)
 	vec4 cCol = vec4(1.0);
 	vec2 bPos = vec2(1.0);
 	float qNoise = q1DNoiseSample(0.01,0.01);
+    
+    float iPowerBandThickness = 0.1; // percentage of v-size
+    float iPowerBandSpeed = -0.2;
+    float iPowerBandIntensity = 4.0;
 	
 	cPos = vScanShift (cPos, 0.02, 0.1, 0.1);			// snaline shift
 	cPos = vCrtCurvature (cPos, 0.3);					// crt curving of coords
@@ -133,7 +141,7 @@ void main(void)
 	cCol = vColorDrift (cCol, 1.0 - qNoise);
 	cCol = vRGBWithShift (cPos, 100.0, 0.01); 			// sample signal color
 	cCol = cSignalNoise (cCol, qNoise * 0.8, gPos);				// add signal noise
-	cCol = vPowerNoise (cCol, bPos, 4.0, -0.2, 0.1); 	// power line noize
+	cCol = vPowerNoise (cCol, bPos, 4.0, -0.2, iPowerBandThickness); 	// power line noize
 	cCol = vRGBTint (cCol, vec3 (0.9, 0.7, 1.2), 1.0);	// gamma tint
 	cCol = cCol * qScanLine (gPos, 120.0); 				// add scanlines
 	cCol = cCol * qVignete (gPos, 1.5, 3.0); 			// add edge darkening

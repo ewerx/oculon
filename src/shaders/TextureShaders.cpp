@@ -332,7 +332,7 @@ void TextureShaders::shaderPreDraw()
     gl::GlslProg shader = mShaders[mShaderType];
     shader.bind();
     
-    Vec3f resolution( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
+    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mElapsedTime );

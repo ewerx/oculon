@@ -70,7 +70,7 @@ void FractalShaders::shaderPreDraw()
 {
     mShader.bind();
     
-    Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
+    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     mShader.uniform( "iResolution", resolution );
     mShader.uniform( "iGlobalTime", (float)mApp->getElapsedSeconds() );

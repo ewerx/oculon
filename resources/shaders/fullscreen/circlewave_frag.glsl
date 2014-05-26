@@ -1,4 +1,4 @@
-uniform vec3      iResolution;     // viewport resolution (in pixels)
+uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D audioDataTex;       // audio texture
 uniform float     iSeparation;

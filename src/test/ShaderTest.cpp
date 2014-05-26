@@ -77,22 +77,33 @@ void ShaderTest::setupShaders()
     mShaders.push_back( new FragShader( "Fire2D",    "fire2d_frag.glsl" ) );
     mShaders.push_back( new FragShader( "Circuit",    "circuit_frag.glsl" ) );
     mShaders.push_back( new FragShader( "GooSpin",    "goospin_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Urchin",    "urchin_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Urchin",    "urchin_frag.glsl" ) );
     mShaders.push_back( new FragShader( "FrameGrid",    "framegrid_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Sacred",    "sacred_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Sacred",    "sacred_frag.glsl" ) );
     mShaders.push_back( new FragShader( "FluffyCloud",    "fluffycloud_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "CloudTunnel",    "cloudtunnel_frag.glsl" ) );
 //    mShaders.push_back( new FragShader( "Cloud",    "cloud_frag.glsl" ) ); // slow
 //    mShaders.push_back( new FragShader( "Clouds",    "clouds_frag.glsl" ) ); // bad noise
     mShaders.push_back( new FragShader( "Triangle",    "triangle_frag.glsl" ) );
 //    mShaders.push_back( new FragShader( "Tripping",  "tripping_frag.glsl" ) );
     mShaders.push_back( new FragShader( "Stripes",   "stripes_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Flicker",   "energyflicker_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Inversion", "inversion_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Logistic",          "logistic_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Flicker",   "energyflicker_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Inversion", "inversion_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "Logistic",          "logistic_frag.glsl" ) );
 //    mShaders.push_back( new FragShader( "Interstellar",      "interstellar_frag.glsl" ) ); // bad noise
-    mShaders.push_back( new FragShader( "MainSequence",      "mainsequence_frag.glsl" ) );
+//    mShaders.push_back( new FragShader( "MainSequence",      "mainsequence_frag.glsl" ) );
     mShaders.push_back( new FragShader( "InfiniteFall",      "infinitefall_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "text",      "terminaltext_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "hexagons",      "hexagons_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "lissajous",      "lissajous_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "pixelwave",      "pixelweave_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "scanline",      "scanline_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "glasswalls",      "glasswalls_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "deformation",      "deformation_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "acid",      "acidcontours_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "bokeh",      "bokeh_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "water",      "watereffect_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "squarespiral",      "squarespiral_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "squarespiral",      "squarespiral_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "AfterEffect",       "aftereffect_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "Rasterizer" ) );
     //mShaders.push_back( new FragShader( "Glassfield" ) );
@@ -211,7 +222,7 @@ void ShaderTest::shaderPreDraw()
     gl::GlslProg shader = mShaders[mShaderType]->getShader();
     shader.bind();
     
-    Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
+    Vec2f resolution = mApp->getViewportSize();
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );

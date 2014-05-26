@@ -1,4 +1,4 @@
-uniform vec3      iResolution;     // viewport resolution (in pixels)
+uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform int       iIterations;
 uniform int       iAngleP;// Pi/p: angle beween reflexion planes a and b .

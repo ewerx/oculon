@@ -34,6 +34,7 @@ public:
     TriggerSignal& getTickSignal()              { return mTickSignal; }
     double getElapsedSeconds() const            { return mElapsedSeconds; }
     double getDelta() const                     { return mDelta; }
+    float getTimeScale() const                  { return mTimeScale; }
     bool getTick()                              { return mTick; }
     void setTimeScale(float scale)              { mTimeScale = scale; }
     void setTimeScaleMultiplier(float scale)    { mTimeScaleMultiplier = scale; }

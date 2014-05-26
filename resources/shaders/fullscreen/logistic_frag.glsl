@@ -1,4 +1,4 @@
-uniform vec3      iResolution;     // viewport resolution (in pixels)
+uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 //uniform float     iChannelTime[4]; // channel playback time (in seconds)
 //uniform vec4      iMouse;          // mouse pixel coords. xy: current (if MLB down), zw: click

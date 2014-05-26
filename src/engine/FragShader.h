@@ -8,11 +8,13 @@
 
 #pragma once
 
+#include "AudioInputHandler.h"
 #include "cinder/gl/GlslProg.h"
 #include "Utils.h"
 
 class Interface;
 
+/// FragShader base
 class FragShader
 {
 public:
@@ -23,8 +25,9 @@ public:
     }
     virtual ~FragShader() {}
     
-    virtual void setupInterface( Interface* interface, const std::string& name ) {};
+    virtual void setupInterface( Interface* interface, const std::string& prefix ) {}
     virtual void setCustomParams( AudioInputHandler& audioInputHandler ) {}
+    virtual void update(double dt) {}
     
     const std::string& getName()        { return mName; }
     ci::gl::GlslProg& getShader()       { return mShader; }

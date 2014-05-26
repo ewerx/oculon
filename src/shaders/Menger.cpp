@@ -126,7 +126,7 @@ void Menger::shaderPreDraw()
     gl::GlslProg shader = mShaders[mShaderIndex]->getShader();
     shader.bind();
     
-    Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
+    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );

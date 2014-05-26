@@ -65,7 +65,7 @@ void Lines::setup()
     // audio
     mAudioInputHandler.setup(true);
     
-    mTimeContoller.setTimeScale(0.01f);
+    mTimeController.setTimeScale(0.01f);
 }
 
 void Lines::setupParticles(const int bufSize)
@@ -372,7 +372,7 @@ void Lines::reset()
 
 void Lines::setupInterface()
 {
-    mTimeContoller.setupInterface(mInterface, mName, 1, 18);
+    mTimeController.setupInterface(mInterface, mName, 1, 18);
     
     mInterface->gui()->addColumn();
     vector<string> motionNames;
@@ -416,7 +416,7 @@ void Lines::setupInterface()
 
 void Lines::update(double dt)
 {
-    mTimeContoller.update(dt);
+    mTimeController.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     mCameraController.update(dt);
@@ -446,7 +446,7 @@ void Lines::update(double dt)
         mAudioInputHandler.getFbo().bindTexture(6);
     }
     
-    float simdt = mTimeContoller.getDelta();
+    float simdt = mTimeController.getDelta();
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );

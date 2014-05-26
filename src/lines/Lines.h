@@ -78,7 +78,7 @@ enm,
     CameraController mCameraController;
     
     // params
-    TimeController mTimeContoller;
+    TimeController mTimeController;
     
     bool mReset;
     

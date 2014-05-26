@@ -45,8 +45,8 @@ void Graviton::setup()
     
     // params
 //    mTimeStep = 0.01f;
-    mTimeContoller.setTimeScale(0.1f);
-    mTimeContoller.setTimeScaleMultiplier(20.0f);
+    mTimeController.setTimeScale(0.1f);
+    mTimeController.setTimeScaleMultiplier(20.0f);
     
     mFormationRadius = 80.0f;
     
@@ -193,7 +193,7 @@ void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
     
-    mTimeContoller.setupInterface(mInterface, mName, 1, 22);
+    mTimeController.setupInterface(mInterface, mName, 1, 22);
     mInterface->gui()->addColumn();
     
 //    vector<string> nodeFormationNames;
@@ -522,7 +522,7 @@ void Graviton::updateGravityNodes(const double dt)
 
 void Graviton::update(double dt)
 {
-    mTimeContoller.update(dt);
+    mTimeController.update(dt);
     
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
@@ -571,7 +571,7 @@ void Graviton::update(double dt)
 	mSimulationShader.uniform( "oPositions", 3);
     mSimulationShader.uniform( "oVelocities", 4);
     mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "dt", (float)mTimeContoller.getDelta() );
+    mSimulationShader.uniform( "dt", (float)mTimeController.getDelta() );
     mSimulationShader.uniform( "eps", mEps );
     mSimulationShader.uniform( "damping", mDamping );
     mSimulationShader.uniform( "gravity", gravity );

@@ -159,7 +159,7 @@ void Tilings::shaderPreDraw()
 {
     mShader.bind();
     
-    Vec3f resolution = Vec3f( mApp->getViewportWidth(), mApp->getViewportHeight(), 0.0f );
+    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     int angleP = mAngleP;
     if (mAnglePResponse > 0) {

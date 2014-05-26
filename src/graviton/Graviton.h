@@ -116,6 +116,6 @@ enm,
     // camera
     CameraController    mCameraController;
     
-    TimeController      mTimeContoller;
+    TimeController      mTimeController;
 };
 

@@ -6,7 +6,7 @@
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
-uniform vec3        iResolution;     // viewport resolution (in pixels)
+uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float       iGlobalTime;     // shader playback time (in seconds)
 uniform float       iBackgroundAlpha;
 uniform float       iRotationSpeed;
