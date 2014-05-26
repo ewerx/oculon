@@ -17,6 +17,8 @@
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
 #include "AudioInputHandler.h"
+#include "FragShader.h"
+#include "TimeController.h"
 
 #include "OscMessage.h"
 
@@ -53,12 +55,12 @@ private:
     
 private:
     
+    TimeController      mTimeController;
+    
     // global params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
     ci::ColorAf         mColor3;
-    float               mTimeScale;
-    double              mElapsedTime;
     
     float               mAudioResponseFreqMin;
     float               mAudioResponseFreqMax;
@@ -71,6 +73,11 @@ private:
     // noise texture
     ci::gl::Texture     mNoiseTexture;
     
+    
+    
+    std::vector<FragShader*> mShaders;
+    int mShaderType;
+    
     // shaders
 #define OS_SHADERS_TUPLE \
 OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
@@ -80,19 +87,6 @@ OS_SHADERS_ENTRY( "TEST-Clouds", "clouds_frag.glsl", SHADER_CLOUDS ) \
 OS_SHADERS_ENTRY( "TEST-Fireball", "fireball_frag.glsl", SHADER_FIREBALL ) \
 OS_SHADERS_ENTRY( "OLD-Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
 //end tuple
-    
-    enum eShaderType
-    {
-#define OS_SHADERS_ENTRY( nam, glsl, enm ) \
-enm,
-        OS_SHADERS_TUPLE
-#undef  OS_SHADERS_ENTRY
-        
-        SHADERS_COUNT
-    };
-    eShaderType   mShaderType;
-    
-    std::vector<ci::gl::GlslProg> mShaders;
     
     // rendering
     bool mDrawOnSphere;

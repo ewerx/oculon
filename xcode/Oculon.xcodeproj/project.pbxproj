@@ -447,6 +447,7 @@
 		7CE8AFB6186FAD150087AC7A /* graviton_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB2186FAD150087AC7A /* graviton_render_frag.glsl */; };
 		7CE8AFB7186FAD150087AC7A /* graviton_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB3186FAD150087AC7A /* graviton_render_vert.glsl */; };
 		7CE8AFB9186FAD150087AC7A /* graviton_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */; };
+		7CEB1ADE1932587A0044A346 /* lissajous_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1ADD1932587A0044A346 /* lissajous_frag.glsl */; };
 		7CEB1AE019325A360044A346 /* deformation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1ADF19325A360044A346 /* deformation_frag.glsl */; };
 		7CEB1AE219325BAF0044A346 /* terminaltext_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1AE119325BAF0044A346 /* terminaltext_frag.glsl */; };
 		7CEB1AE419325EB70044A346 /* waveform1_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1AE319325EB70044A346 /* waveform1_frag.glsl */; };
@@ -1133,12 +1134,15 @@
 		7CE8AFB2186FAD150087AC7A /* graviton_render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_render_frag.glsl; sourceTree = "<group>"; };
 		7CE8AFB3186FAD150087AC7A /* graviton_render_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_render_vert.glsl; sourceTree = "<group>"; };
 		7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_simulation_frag.glsl; sourceTree = "<group>"; };
+		7CEB1ADD1932587A0044A346 /* lissajous_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lissajous_frag.glsl; sourceTree = "<group>"; };
 		7CEB1ADF19325A360044A346 /* deformation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = deformation_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE119325BAF0044A346 /* terminaltext_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terminaltext_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE319325EB70044A346 /* waveform1_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = waveform1_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE519325F220044A346 /* cairo_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cairo_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE71932633A0044A346 /* bokeh_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bokeh_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE9193265C20044A346 /* watereffect_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = watereffect_frag.glsl; sourceTree = "<group>"; };
+		7CEB1AEB1932B41F0044A346 /* LissajousShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LissajousShader.cpp; sourceTree = "<group>"; };
+		7CEB1AEC1932B41F0044A346 /* LissajousShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LissajousShader.h; sourceTree = "<group>"; };
 		7CF04609188639FE00150FD3 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
 		7CF0460A188639FE00150FD3 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
 		7CF0460C188645D300150FD3 /* oscillator_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oscillator_frag.glsl; sourceTree = "<group>"; };
@@ -1601,6 +1605,7 @@
 				7C06A8C31853D4ED00D1C8A3 /* inversion_frag.glsl */,
 				7C06A8C41853D4ED00D1C8A3 /* kifs_frag.glsl */,
 				7C06A8C51853D4ED00D1C8A3 /* lightglow_frag.glsl */,
+				7CEB1ADD1932587A0044A346 /* lissajous_frag.glsl */,
 				7C06A8C61853D4ED00D1C8A3 /* livingkifs_frag.glsl */,
 				7C06A8C71853D4ED00D1C8A3 /* logistic_frag.glsl */,
 				7C06A8C81853D4ED00D1C8A3 /* mainsequence_frag.glsl */,
@@ -1761,6 +1766,8 @@
 				7C4DBFC919295E3000FDDDC3 /* Cymatics.h */,
 				7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */,
 				7CD42250192E701700CCE7BF /* CloudTunnel.h */,
+				7CEB1AEB1932B41F0044A346 /* LissajousShader.cpp */,
+				7CEB1AEC1932B41F0044A346 /* LissajousShader.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -3084,6 +3091,7 @@
 				7C6CB4481925DAA900D83614 /* menger_frag.glsl in Resources */,
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
 				7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */,
+				7CEB1ADE1932587A0044A346 /* lissajous_frag.glsl in Resources */,
 				7C79C8F517650F8F00E71F9D /* colortex3.jpg in Resources */,
 				7C06A8E51853D4ED00D1C8A3 /* circlewave_frag.glsl in Resources */,
 				7C83B3AB1856BF3800EB22F8 /* parsec-nova.png in Resources */,
@@ -3427,6 +3435,7 @@
 				7C79CA6017650FD800E71F9D /* Quake.cpp in Sources */,
 				7C79CA6117650FD800E71F9D /* QuakeData.cpp in Sources */,
 				7C79CA6217650FD800E71F9D /* Tectonic.cpp in Sources */,
+				7CEB1AED1932B41F0044A346 /* LissajousShader.cpp in Sources */,
 				7C79CA6317650FD800E71F9D /* RDiffusion.cpp in Sources */,
 				7C79CA6417650FD800E71F9D /* Terrain.cpp in Sources */,
 				7C79CA6517650FD800E71F9D /* Tube.cpp in Sources */,
