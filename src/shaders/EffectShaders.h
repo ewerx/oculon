@@ -12,6 +12,7 @@
 #include "TimeController.h"
 #include "AudioInputHandler.h"
 #include "SimplexNoiseTexture.h"
+#include "FragShader.h"
 
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
@@ -35,24 +36,6 @@ private:
     void shaderPreDraw();
     void shaderPostDraw();
     
-protected:
-    class Effect
-    {
-    public:
-        Effect(const std::string& name, const std::string& fragShader);
-        ~Effect() {}
-        
-//        virtual void update(const ci::Vec2i& viewportSize, TimeController& timeController, AudioInputHandler& audioInputHandler);
-        void draw(const ci::Vec2i& viewportSize, ci::gl::Texture& inputTexture, TimeController& timeController, AudioInputHandler& audioInputHandler);
-        virtual void setupInterface( Interface* interface, const std::string& name );
-        
-        const std::string& getName() { return mName; }
-        
-    protected:
-        std::string mName;
-        ci::gl::GlslProg mShader;
-    };
-    
 private:
     // control
     TimeController      mTimeController;
@@ -62,7 +45,7 @@ private:
     SimplexNoiseTexture mNoiseTexture;
     
     // effects
-    std::vector<Effect*> mEffects;
+    std::vector<FragShader*> mEffects;
     int mCurrentEffect;
     
     // inputs
@@ -70,3 +53,18 @@ private:
     std::vector<tNamedTexture> mInputTextures;
     int mCurrentInputTexture;
 };
+
+#pragma mark - Effects
+
+class TelevisionEffect : public FragShader
+{
+public:
+    TelevisionEffect();
+    void setupInterface( Interface* interface, const std::string& prefix );
+    void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    int                 mIterations;
+};
+
+

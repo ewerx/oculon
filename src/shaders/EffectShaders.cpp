@@ -32,7 +32,7 @@ void EffectShaders::setup()
     mAudioInputHandler.setup(true);
     
     // effects
-    mEffects.push_back( new Effect("interference", "crtinterference_frag.glsl") );
+    mEffects.push_back( new FragShader("interference", "crtinterference_frag.glsl") );
     
     // inputs
     vector<Scene*> scenes;
@@ -40,9 +40,11 @@ void EffectShaders::setup()
     scenes.push_back( mApp->getScene("rings") );
     scenes.push_back( mApp->getScene("textureshaders") );
     scenes.push_back( mApp->getScene("audio") );
-    scenes.push_back( mApp->getScene("rootfract") );
+    scenes.push_back( mApp->getScene("objectshaders") );
     scenes.push_back( mApp->getScene("tilings") );
     scenes.push_back( mApp->getScene("graviton") );
+    scenes.push_back( mApp->getScene("shadertest") );
+    scenes.push_back( mApp->getScene("circlewave") );
     
     for (Scene* scene : scenes )
     {
@@ -71,7 +73,7 @@ void EffectShaders::setupInterface()
     
     // effects
     vector<string> effectNames;
-    for( Effect* effect : mEffects )
+    for( FragShader* effect : mEffects )
     {
         if (effect)
         {
@@ -96,6 +98,14 @@ void EffectShaders::setupInterface()
     
     mNoiseTexture.setupInterface(mInterface, mName);
     
+    for( FragShader* effect : mEffects )
+    {
+        if (effect)
+        {
+            effect->setupInterface(mInterface, mName);
+        }
+    }
+    
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
 
@@ -115,6 +125,7 @@ void EffectShaders::draw()
     glPushAttrib( GL_ALL_ATTRIB_BITS );
     gl::pushMatrices();
     
+    // pre-draw
     gl::enableAlphaBlending();
     
     gl::disableDepthWrite();
@@ -125,7 +136,23 @@ void EffectShaders::draw()
     mInputTextures[mCurrentInputTexture].second.bind(0);
     mNoiseTexture.bindTexture(1);
     
-    mEffects[mCurrentEffect]->draw( mApp->getViewportSize(), mInputTextures[mCurrentInputTexture].second, mTimeController, mAudioInputHandler );
+    gl::GlslProg shader = mEffects[mCurrentEffect]->getShader();
+    shader.bind();
+    
+    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
+    
+    shader.uniform( "iResolution", resolution );
+    shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
+    shader.uniform( "iChannel0", 0 );
+    shader.uniform( "iChannel1", 1 );
+    
+    mEffects[mCurrentEffect]->setCustomParams( mAudioInputHandler );
+    
+    // draw
+    Utils::drawTexturedRect( mApp->getViewportBounds() );
+
+    // post-draw
+    shader.unbind();
     
     mNoiseTexture.unbindTexture();
     mInputTextures[mCurrentInputTexture].second.unbind();
@@ -136,31 +163,20 @@ void EffectShaders::draw()
 
 #pragma mark  - Effects
 
-EffectShaders::Effect::Effect(const std::string& name, const std::string& fragShader)
-: mName(name)
+TelevisionEffect::TelevisionEffect()
+: FragShader("television", "crtinterference_frag.glsl")
 {
-    mShader = Utils::loadFragShader( fragShader );
+    
 }
 
-void EffectShaders::Effect::setupInterface( Interface* interface, const std::string& name )
+void TelevisionEffect::setupInterface(Interface *interface, const std::string &prefix)
 {
+    string oscName = prefix + "/" + mName;
+    
+    
 }
 
-//void EffectShaders::Effect::update(const ci::Vec2i& viewportSize, )
-//{
-//}
-
-void EffectShaders::Effect::draw(const ci::Vec2i& viewportSize, ci::gl::Texture& inputTexture, TimeController& timeController, AudioInputHandler& audioInputHandler)
+void TelevisionEffect::setCustomParams(AudioInputHandler &audioInputHandler)
 {
-    Vec3f resolution = Vec3f( viewportSize.x, viewportSize.y, 0.0f );
     
-    mShader.bind();
-    mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iGlobalTime", (float)timeController.getElapsedSeconds() );
-    mShader.uniform( "iChannel0", 0 );
-    mShader.uniform( "iChannel1", 1 );
-    
-    Utils::drawTexturedRect( Area( 0, 0, viewportSize.x, viewportSize.y ) );
-    
-    mShader.unbind();
 }
