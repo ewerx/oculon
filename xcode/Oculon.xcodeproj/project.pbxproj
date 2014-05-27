@@ -463,6 +463,8 @@
 		7CF612C7193410FC00030E26 /* cavething_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C6193410FC00030E26 /* cavething_frag.glsl */; };
 		7CF612C91934125300030E26 /* warping_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C81934125300030E26 /* warping_frag.glsl */; };
 		7CF612CB193412BF00030E26 /* bezier_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612CA193412BF00030E26 /* bezier_frag.glsl */; };
+		7CF612CF193436F400030E26 /* PlanetObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF612CD193436F400030E26 /* PlanetObject.cpp */; };
+		7CF612D21934370800030E26 /* PlanetScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF612D01934370800030E26 /* PlanetScene.cpp */; };
 		7CF612D419343F1500030E26 /* noisesphere_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612D319343F1500030E26 /* noisesphere_frag.glsl */; };
 		7CF612D619343F7C00030E26 /* polyterrain_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612D519343F7C00030E26 /* polyterrain_frag.glsl */; };
 		7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */; };
@@ -1158,6 +1160,10 @@
 		7CF612C6193410FC00030E26 /* cavething_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cavething_frag.glsl; sourceTree = "<group>"; };
 		7CF612C81934125300030E26 /* warping_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = warping_frag.glsl; sourceTree = "<group>"; };
 		7CF612CA193412BF00030E26 /* bezier_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bezier_frag.glsl; sourceTree = "<group>"; };
+		7CF612CD193436F400030E26 /* PlanetObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetObject.cpp; sourceTree = "<group>"; };
+		7CF612CE193436F400030E26 /* PlanetObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetObject.h; sourceTree = "<group>"; };
+		7CF612D01934370800030E26 /* PlanetScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetScene.cpp; sourceTree = "<group>"; };
+		7CF612D11934370800030E26 /* PlanetScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlanetScene.h; sourceTree = "<group>"; };
 		7CF612D319343F1500030E26 /* noisesphere_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = noisesphere_frag.glsl; sourceTree = "<group>"; };
 		7CF612D519343F7C00030E26 /* polyterrain_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyterrain_frag.glsl; sourceTree = "<group>"; };
 		7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
@@ -2682,6 +2688,7 @@
 				7C892490189C7C7A00AF4698 /* lines */,
 				7C79CA0D17650FD700E71F9D /* orbiter */,
 				7CD666401853F55A004BD521 /* parsec */,
+				7CF612CC193436E700030E26 /* planet */,
 				7C79C9DC17650FD700E71F9D /* polyhedron */,
 				7C5B69741819745800AB2C8D /* shaders */,
 				7C79CA0817650FD700E71F9D /* sol */,
@@ -2706,6 +2713,18 @@
 				7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */,
 			);
 			path = graviton;
+			sourceTree = "<group>";
+		};
+		7CF612CC193436E700030E26 /* planet */ = {
+			isa = PBXGroup;
+			children = (
+				7CF612CD193436F400030E26 /* PlanetObject.cpp */,
+				7CF612CE193436F400030E26 /* PlanetObject.h */,
+				7CF612D01934370800030E26 /* PlanetScene.cpp */,
+				7CF612D11934370800030E26 /* PlanetScene.h */,
+			);
+			name = planet;
+			path = ../src/planet;
 			sourceTree = "<group>";
 		};
 		7CF6AD4918A9E3E100FA795A /* render */ = {
@@ -3277,6 +3296,7 @@
 				132BB54FEA9541A79DD9CB6F /* b2CollidePolygon.cpp in Sources */,
 				3902F9C6F061427CB3811E92 /* b2Collision.cpp in Sources */,
 				144F584BD9494F3C80D366D9 /* b2Distance.cpp in Sources */,
+				7CF612D21934370800030E26 /* PlanetScene.cpp in Sources */,
 				CDAA9EEFFFFD4DB39BB0BA93 /* b2DynamicTree.cpp in Sources */,
 				3F195DD00DEE43BE87A5B516 /* b2TimeOfImpact.cpp in Sources */,
 				2AE65599EB844A56A8FD913D /* b2ChainShape.cpp in Sources */,
@@ -3422,6 +3442,7 @@
 				7C79CA3C17650FD800E71F9D /* StarCam.cpp in Sources */,
 				7CF6AD5518A9E68600FA795A /* ParticleController.cpp in Sources */,
 				7C4DBFC01928002E00FDDDC3 /* Menger.cpp in Sources */,
+				7CF612CF193436F400030E26 /* PlanetObject.cpp in Sources */,
 				7C06A90D1853D4ED00D1C8A3 /* brightStars.vert in Sources */,
 				7C79CA3D17650FD800E71F9D /* TunnelCam.cpp in Sources */,
 				7C79CA3E17650FD800E71F9D /* Config.cpp in Sources */,
