@@ -13,8 +13,6 @@
 #include <boost/format.hpp>
 #include "Interface.h"
 #include "Utils.h"
-#include "LissajousShader.h"
-
 
 using namespace ci;
 using namespace ci::app;
