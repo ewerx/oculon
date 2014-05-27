@@ -45,7 +45,7 @@ void AudioInputHandler::setup(bool fboEnabled)
     
     // FILTER
     mLowPassFilter      = 0.18f;
-    mHighPassFilter     = 0.3earth5f;
+    mHighPassFilter     = 0.35f;
     mAvgVolume[BAND_LOW].mValue      = 0.0f;
     mAvgVolume[BAND_MID].mValue      = 0.0f;
     mAvgVolume[BAND_HIGH].mValue     = 0.0f;
