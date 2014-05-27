@@ -244,11 +244,16 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
                 // fade in (10ms)
                 //timeline().apply( &mFftFalloff[index].mValue, value, 0.001f, EaseNone() );
                 mFftFalloff[index].mValue = value;
-            } else if (!mFftFalloff[index].mFalling && value < (mFftFalloff[index].mValue*0.5f)) {
-                // fade out
-                mFftFalloff[index].mFalling = true;
+                //ci::Anim<float>& valueAnim = mFftFalloff[index].mValue; // for debuggin
                 timeline().apply( &mFftFalloff[index].mValue, 0.0f, falloff, getFalloffFunction() );
             }
+//            else if (!mFftFalloff[index].mFalling && value < (mFftFalloff[index].mValue*0.95f))
+//            {
+//                // fade out
+//                mFftFalloff[index].mFalling = true;
+//                ci::Anim<float>& valueAnim = mFftFalloff[index].mValue;
+//                timeline().apply( &mFftFalloff[index].mValue, 0.0f, falloff, getFalloffFunction() );
+//            }
         }
     }
     
