@@ -463,6 +463,8 @@
 		7CF612C7193410FC00030E26 /* cavething_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C6193410FC00030E26 /* cavething_frag.glsl */; };
 		7CF612C91934125300030E26 /* warping_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C81934125300030E26 /* warping_frag.glsl */; };
 		7CF612CB193412BF00030E26 /* bezier_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612CA193412BF00030E26 /* bezier_frag.glsl */; };
+		7CF612D419343F1500030E26 /* noisesphere_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612D319343F1500030E26 /* noisesphere_frag.glsl */; };
+		7CF612D619343F7C00030E26 /* polyterrain_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612D519343F7C00030E26 /* polyterrain_frag.glsl */; };
 		7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */; };
 		7CF6AD5118A9E3E100FA795A /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */; };
 		7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */; };
@@ -1156,6 +1158,8 @@
 		7CF612C6193410FC00030E26 /* cavething_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cavething_frag.glsl; sourceTree = "<group>"; };
 		7CF612C81934125300030E26 /* warping_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = warping_frag.glsl; sourceTree = "<group>"; };
 		7CF612CA193412BF00030E26 /* bezier_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bezier_frag.glsl; sourceTree = "<group>"; };
+		7CF612D319343F1500030E26 /* noisesphere_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = noisesphere_frag.glsl; sourceTree = "<group>"; };
+		7CF612D519343F7C00030E26 /* polyterrain_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polyterrain_frag.glsl; sourceTree = "<group>"; };
 		7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
 		7CF6AD4B18A9E3E100FA795A /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
 		7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
@@ -1641,6 +1645,8 @@
 				7C6CB43D1925DAA900D83614 /* terminal_frag.glsl */,
 				7CEB1AE119325BAF0044A346 /* terminaltext_frag.glsl */,
 				7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */,
+				7CF612D519343F7C00030E26 /* polyterrain_frag.glsl */,
+				7CF612D319343F1500030E26 /* noisesphere_frag.glsl */,
 				7CF612CA193412BF00030E26 /* bezier_frag.glsl */,
 				7CF612C81934125300030E26 /* warping_frag.glsl */,
 				7CF612C6193410FC00030E26 /* cavething_frag.glsl */,
@@ -3064,6 +3070,7 @@
 				7C06A9031853D4ED00D1C8A3 /* squarenoise_frag.glsl in Resources */,
 				7C79CB281765288500E71F9D /* Velocity.frag in Resources */,
 				7C79CB291765288500E71F9D /* motionBlur.frag in Resources */,
+				7CF612D619343F7C00030E26 /* polyterrain_frag.glsl in Resources */,
 				7C8CBB30192A835B00588689 /* cloudtunnel_frag.glsl in Resources */,
 				7C06A9051853D4ED00D1C8A3 /* stripey_frag.glsl in Resources */,
 				7C06A8F91853D4ED00D1C8A3 /* metahex_frag.glsl in Resources */,
@@ -3233,6 +3240,7 @@
 				7C06A8E71853D4ED00D1C8A3 /* clouds_frag.glsl in Resources */,
 				7C06A8F51853D4ED00D1C8A3 /* livingkifs_frag.glsl in Resources */,
 				7C83B3A01856BE5900EB22F8 /* parsec_stars_vert.glsl in Resources */,
+				7CF612D419343F1500030E26 /* noisesphere_frag.glsl in Resources */,
 				7C79C95C17650F8F00E71F9D /* terrain_texture.jpg in Resources */,
 				7C06A8E31853D4ED00D1C8A3 /* aftereffect_frag.glsl in Resources */,
 				7C79C95D17650F8F00E71F9D /* terrain_vtf_frag.glsl in Resources */,

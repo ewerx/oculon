@@ -107,6 +107,8 @@ void ShaderTest::setupShaders()
     mShaders.push_back( new FragShader( "juliaspiral",      "juliaspiral_frag.glsl" ) );
     mShaders.push_back( new FragShader( "bezier",      "bezier_frag.glsl" ) );
     mShaders.push_back( new FragShader( "warping",      "warping_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "polyterrain",      "polyterrain_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "noisesphere",      "noisesphere_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "AfterEffect",       "aftereffect_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "Rasterizer" ) );
     //mShaders.push_back( new FragShader( "Glassfield" ) );
