@@ -418,8 +418,8 @@ void LissajousShader::setCustomParams( AudioInputHandler& audioInputHandler )
     
     mShader.uniform("iColor", mColor);
     
-    float frequencyX = (mFrequencyX + mFrequencyXShift) * audioInputHandler.getAverageVolumeByBand(mResponseBandX);
-    float frequencyY = (mFrequencyY + mFrequencyYShift) * audioInputHandler.getAverageVolumeByBand(mResponseBandY);
+    float frequencyX = (int)(mFrequencyX * audioInputHandler.getAverageVolumeByBand(mResponseBandX)) + mFrequencyXShift;
+    float frequencyY = (int)(mFrequencyY * audioInputHandler.getAverageVolumeByBand(mResponseBandY)) + mFrequencyYShift;
     
     mShader.uniform("iFrequencyX", frequencyX);
     mShader.uniform("iFrequencyY", frequencyY);
