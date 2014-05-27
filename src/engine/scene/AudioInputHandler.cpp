@@ -44,8 +44,8 @@ void AudioInputHandler::setup(bool fboEnabled)
     mFalloffByFreq      = false;
     
     // FILTER
-    mLowPassFilter      = 0.25f;
-    mHighPassFilter     = 0.5f;
+    mLowPassFilter      = 0.18f;
+    mHighPassFilter     = 0.3earth5f;
     mAvgVolume[BAND_LOW].mValue      = 0.0f;
     mAvgVolume[BAND_MID].mValue      = 0.0f;
     mAvgVolume[BAND_HIGH].mValue     = 0.0f;
