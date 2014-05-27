@@ -167,3 +167,26 @@ private:
     bool        mCycleJulia;
     bool        mCycleRotation;
 };
+
+#pragma mark - Gyroid
+
+class GyroidShader : public FragShader
+{
+public:
+    GyroidShader();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    int                 mMaxSteps;
+    float               mFieldOfView;
+    float               mScale;
+    int                 mScaleResponseBand;
+    float               mAmbientLight;
+    float               mDiffuseLight;
+    float               mSpecularLight;
+    ci::Vec3f           mLight1Dir;
+    ci::Vec3f           mLight2Dir;
+    bool                mInverted;
+};

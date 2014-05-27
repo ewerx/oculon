@@ -70,6 +70,7 @@ void ObjectShaders::setupShaders()
     
     mShaders.push_back( new MetaballsShader() );
     mShaders.push_back( new LissajousShader() );
+    mShaders.push_back( new GyroidShader() );
     mShaders.push_back( new BioFractalShader() );
     mShaders.push_back( new RetinaShader() );
 }
@@ -545,4 +546,24 @@ void BioFractalShader::setCustomParams(AudioInputHandler &audioInputHandler)
     mShader.uniform( "iAmplitude", mAmplitude );
     mShader.uniform( "iLightDir", mLightDir );
     mShader.uniform( "iDetail", mDetail );
+}
+
+#pragma mark - Gyroid
+
+GyroidShader::GyroidShader()
+: FragShader("gyroid", "gyroid_frag.glsl")
+{
+}
+
+void GyroidShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    
+}
+
+void GyroidShader::setCustomParams(AudioInputHandler &audioInputHandler)
+{
 }
