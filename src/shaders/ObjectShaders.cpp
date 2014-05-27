@@ -40,7 +40,7 @@ void ObjectShaders::setup()
     format.setCoverageSamples(8);
     format.setSamples(4); // 4x AA
 	//format.setColorInternalFormat( GL_RGB32F_ARB );
-    mShaderFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
+//    mShaderFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
     
     setupShaders();
     
@@ -55,10 +55,7 @@ void ObjectShaders::setup()
     
     mShaderType = 0;
 
-    mDrawOnSphere = false;
-    
-    mAudioResponseFreqMin = 0.0f;
-    mAudioResponseFreqMax = 1.0f;
+//    mDrawOnSphere = false;
     
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
@@ -73,42 +70,10 @@ void ObjectShaders::setupShaders()
 {
     mShaderType = 0;
     
-    mShaders.push_back( new FragShader( "Test",      "test_frag.glsl" ) );
+    mShaders.push_back( new MetaballsShader() );
     mShaders.push_back( new LissajousShader() );
-    
-    // metahex
-    mMetaHexParams.mQuality = 4;
-    mMetaHexParams.mRenderSteps = 33;
-    mMetaHexParams.mLightSpeed = 1.0f;
-    mMetaHexParams.mSpeed = 1.0f;
-    mMetaHexParams.mNumObjects = 9;
-    mMetaHexParams.mCoeffecients = Vec3f(0.967f,0.423f,0.76321f);
-    mMetaHexParams.mAudioCoeffs = false;
-    mMetaHexParams.mObjTime = 0.0f;
-    mMetaHexParams.mLightTime = 0.0f;
-    
-    // retina
-    mRetinaParams.mDialation = 0.2f;
-    mRetinaParams.mDialationScale = 1.0f;
-    mRetinaParams.mPatternAmp = 0.05f;
-    mRetinaParams.mPatternFreq = 20.0f;
-    mRetinaParams.mAudioPattern = false;
-    mRetinaParams.mScale = 1.0f;
-    
-    // biofractal
-    mBioFractalParams.mIterations = 25;
-    mBioFractalParams.mJulia = Vec3f(-2.f,-1.5f,-.5f);
-    mBioFractalParams.mRotation = Vec3f(0.5f,-0.05f,-0.5f);
-    mBioFractalParams.mLightDir = Vec3f(0.5f,1.f,0.5f);
-    mBioFractalParams.mScale = 1.27f;
-    mBioFractalParams.mRotAngle = 40.0f;
-    mBioFractalParams.mAmplitude = 0.45f;
-    mBioFractalParams.mDetail = 0.025f;
-    
-    
-    // fireball
-    mFireballParams.mRotationSpeed = 1.0f;
-    mFireballParams.mDensity = 1.0f;
+    mShaders.push_back( new BioFractalShader() );
+    mShaders.push_back( new RetinaShader() );
 }
 
 void ObjectShaders::reset()
@@ -138,110 +103,15 @@ void ObjectShaders::setupInterface()
                          .maxValue(MAX_COLORMAPS-1)
                          .oscReceiver(getName()));
     
-    mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
-                         .oscReceiver(getName()));
-    
     // custom params
-    mInterface->gui()->addColumn();
     for( FragShader* shader : mShaders )
     {
         if (shader)
         {
+            mInterface->gui()->addColumn();
             shader->setupInterface(mInterface, mName);
         }
     }
-    
-    // TODO: refactor
-    // SHADER_METAHEX
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("metahex");
-    mInterface->addParam(CreateIntParam( "metahex/objects", &mMetaHexParams.mNumObjects )
-                         .maxValue(24)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "metahex/steps", &mMetaHexParams.mRenderSteps )
-                         .maxValue(128)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateIntParam( "metahex/quality", &mMetaHexParams.mQuality )
-                         .maxValue(16)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "metahex/speed", &mMetaHexParams.mSpeed )
-                         .maxValue(10.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "metahex/lightspeed", &mMetaHexParams.mLightSpeed )
-                         .maxValue(10.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec3fParam("metahex/coeffs", &mMetaHexParams.mCoeffecients, Vec3f::zero(), Vec3f(1.0f,1.0f,1.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateBoolParam("metahex/audiocoeffs", &mMetaHexParams.mAudioCoeffs )
-                         .oscReceiver(mName));
-    
-    // retina
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("retina");
-    mInterface->addParam(CreateFloatParam("retina/scale", &mRetinaParams.mScale)
-                         .maxValue(4.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateBoolParam("retina/audiodialation", &mRetinaParams.mAudioDialation )
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("retina/dialation", &mRetinaParams.mDialation)
-                         .maxValue(4.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("retina/dialationscale", &mRetinaParams.mDialationScale)
-                         .minValue(1.0f)
-                         .maxValue(4.0f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("retina/pattamp", &mRetinaParams.mPatternAmp)
-                         .minValue(0.001f)
-                         .maxValue(0.5f)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("retina/pattfreq", &mRetinaParams.mPatternFreq)
-                         .minValue(1.0f)
-                         .maxValue(40.0f)
-                         .oscReceiver(mName));
-    
-    mInterface->addParam(CreateBoolParam("retina/audiopattern", &mRetinaParams.mAudioPattern )
-                         .oscReceiver(mName));
-    
-    // SHADER_BIOFRACTAL
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("biofractal");
-    mInterface->addParam(CreateIntParam( "biofractal/iterations", &mBioFractalParams.mIterations )
-                         .minValue(1)
-                         .maxValue(100)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec3fParam("biofractal/rotation", mBioFractalParams.mRotation.ptr(), Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateVec3fParam("biofractal/julia", mBioFractalParams.mJulia.ptr(), Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateVec3fParam("biofractal/lightdir", &mBioFractalParams.mLightDir, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "biofractal/scale", &mBioFractalParams.mScale )
-                         .minValue(0.0f)
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "biofractal/angle", &mBioFractalParams.mRotAngle )
-                         .minValue(0.0f)
-                         .maxValue(90.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "biofractal/amplitude", &mBioFractalParams.mAmplitude )
-                         .minValue(0.0f)
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "biofractal/detail", &mBioFractalParams.mDetail )
-                         .minValue(0.0f)
-                         .maxValue(0.1f));
-    
-    // fireball
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("fireball");
-    mInterface->addParam(CreateBoolParam("fireball/audiodensity", &mFireballParams.mAudioRotation )
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("fireball/density", &mFireballParams.mDensity)
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam("fireball/rotationspeed", &mFireballParams.mRotationSpeed)
-                         .oscReceiver(mName));
     
     // audio input
     mApp->getAudioInputHandler().setupInterface(mInterface, "global");
@@ -261,54 +131,21 @@ void ObjectShaders::update(double dt)
         }
     }
     
-//    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq();
-//    const float mids = mApp->getAudioInputHandler().getAverageVolumeMidFreq();
-//    const float highs = mApp->getAudioInputHandler().getAverageVolumeHighFreq();
-    
-    // TODO: refactor
-//    switch (mShaderType)
-//    {
-//        case SHADER_METAHEX:
-//            mMetaHexParams.mLightTime += dt * mMetaHexParams.mLightSpeed;
-//            mMetaHexParams.mObjTime += dt * mMetaHexParams.mSpeed;
-//            if (mMetaHexParams.mAudioCoeffs)
-//            {
-//                mMetaHexParams.mCoeffecients.z = 0.5f + lows;
-//                mMetaHexParams.mCoeffecients.y = 0.5f + mids*3.0f;
-//                mMetaHexParams.mCoeffecients.x = 0.5f + highs*2.0f;
-//            }
-//            break;
-//        
-//        case SHADER_RETINA:
-//            if (mRetinaParams.mAudioPattern)
-//            {
-//                mRetinaParams.mPatternAmp = 0.01f + 0.25f*mids;
-//                mRetinaParams.mPatternFreq = 5.0f + 10.0f*highs;
-//            }
-//            break;
-//        
-//        case SHADER_BIOFRACTAL:
-//            break;
-//        
-//        default:
-//        break;
-//    }
-    
     // TODO: resolume can do this, maybe vdmx too, is it useful?
-    if (mDrawOnSphere)
-    {
-        gl::pushMatrices();
-        mShaderFbo.bindFramebuffer();
-        gl::setMatricesWindow( mShaderFbo.getSize(), false );
-        gl::setViewport( mShaderFbo.getBounds() );
-        gl::enableDepthWrite();
-        shaderPreDraw();
-        Utils::drawTexturedRect( mApp->getViewportBounds() );
-        shaderPostDraw();
-        mShaderFbo.unbindFramebuffer();
-        mShaderFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
-        gl::popMatrices();
-    }
+//    if (mDrawOnSphere)
+//    {
+//        gl::pushMatrices();
+//        mShaderFbo.bindFramebuffer();
+//        gl::setMatricesWindow( mShaderFbo.getSize(), false );
+//        gl::setViewport( mShaderFbo.getBounds() );
+//        gl::enableDepthWrite();
+//        shaderPreDraw();
+//        Utils::drawTexturedRect( mApp->getViewportBounds() );
+//        shaderPostDraw();
+//        mShaderFbo.unbindFramebuffer();
+//        mShaderFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
+//        gl::popMatrices();
+//    }
 }
 
 void ObjectShaders::draw()
@@ -336,62 +173,47 @@ void ObjectShaders::shaderPreDraw()
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
-//    shader.uniform( "iColor1", mColor1);
-//    shader.uniform( "iColor2", mColor2);
-//    shader.uniform( "iColor3", mColor3);
-//    shader.uniform( "iBackgroundAlpha", mBackgroundAlpha);
-//    shader.uniform( "iTimeScale", mTimeController.getTimeScale() );
+    shader.uniform( "iColor1", mColor1);
+    shader.uniform( "iColor2", mColor2);
+    shader.uniform( "iColor3", mColor3);
+    shader.uniform( "iBackgroundAlpha", mBackgroundAlpha);
+    shader.uniform( "iTimeScale", mTimeController.getTimeScale() );
     
     mShaders[mShaderType]->setCustomParams( mApp->getAudioInputHandler() );
     
 //    const float lows = mApp->getAudioInputHandler().getAverageVolumeLowFreq();
     
 //    switch (mShaderType) {
-//        case SHADER_METAHEX:
-//            shader.uniform( "iObjTime", mMetaHexParams.mObjTime );
-//            shader.uniform( "iLightTime", mMetaHexParams.mLightTime );
-//            shader.uniform( "iNumObjects", mMetaHexParams.mNumObjects );
-//            shader.uniform( "iRenderSteps", mMetaHexParams.mRenderSteps );
-//            shader.uniform( "iQuality", mMetaHexParams.mQuality );
-//            shader.uniform( "iCoefficients", mMetaHexParams.mCoeffecients );
-//            break;
 //            
 //        case SHADER_BIOFRACTAL:
-//            shader.uniform( "iIterations", mBioFractalParams.mIterations );
-//            shader.uniform( "iJulia", mBioFractalParams.mJulia );
-//            shader.uniform( "iRotation", mBioFractalParams.mRotation );
-//            shader.uniform( "iScale", mBioFractalParams.mScale );
-//            shader.uniform( "iRotAngle", mBioFractalParams.mRotAngle );
-//            shader.uniform( "iAmplitude", mBioFractalParams.mAmplitude );
-//            shader.uniform( "iLightDir", mBioFractalParams.mLightDir );
-//            shader.uniform( "iDetail", mBioFractalParams.mDetail );
+//
 //            break;
 //            
 //        case SHADER_RETINA:
 //        {
-//            float dialation = mRetinaParams.mDialation * mRetinaParams.mDialationScale;
+//            float dialation = mDialation * mDialationScale;
 //            
-//            if (mRetinaParams.mAudioDialation)
+//            if (mAudioDialation)
 //            {
-//                dialation = mRetinaParams.mDialation + lows * mRetinaParams.mDialationScale;
+//                dialation = mDialation + lows * mDialationScale;
 //            }
 //        
-//            shader.uniform( "iDialation", dialation );
-//            shader.uniform( "iDialationScale", mRetinaParams.mDialationScale );
-//            shader.uniform( "iPatternAmp", mRetinaParams.mPatternAmp );
-//            shader.uniform( "iPatternFreq", mRetinaParams.mPatternFreq );
-//            shader.uniform( "iScale", mRetinaParams.mScale );
+//            mShader.uniform( "iDialation", dialation );
+//            mShader.uniform( "iDialationScale", mDialationScale );
+//            mShader.uniform( "iPatternAmp", mPatternAmp );
+//            mShader.uniform( "iPatternFreq", mPatternFreq );
+//            mShader.uniform( "iScale", mScale );
 //        }
 //            break;
 //            
 //        case SHADER_FIREBALL:
-//            shader.uniform( "iRotationSpeed", mFireballParams.mRotationSpeed );
-//            shader.uniform( "iDensity", mFireballParams.mDensity );
-//            shader.uniform( "iChannel0", 2 );
+//            mShader.uniform( "iRotationSpeed", mFireballParams.mRotationSpeed );
+//            mShader.uniform( "iDensity", mFireballParams.mDensity );
+//            mShader.uniform( "iChannel0", 2 );
 //            break;
 //            
 //        case SHADER_CLOUDS:
-//            shader.uniform( "iChannel0", 2 );
+//            mShader.uniform( "iChannel0", 2 );
 //            break;
 //            
 //        default:
@@ -422,33 +244,33 @@ void ObjectShaders::drawScene()
     gl::pushMatrices();
     gl::setMatricesWindow( mApp->getViewportSize() );
     
-    if (mDrawOnSphere)
-    {
-        gl::enableAlphaBlending();
-        //gl::enable( GL_TEXTURE_2D );
-        gl::enableDepthRead();
-        gl::enableDepthWrite();
-        gl::setMatrices( getCamera() );
-        gl::setViewport( mApp->getViewportBounds() );
-        gl::color( ColorA::white() );
-        mShaderFbo.bindTexture();
-        
-        glEnable( GL_POLYGON_SMOOTH );
-        //glEnable( GL_LIGHTING );
-        //glEnable( GL_LIGHT0 );
-        
-        //GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        //glLightfv( GL_LIGHT0, GL_POSITION, light_position );
-        
-        gl::drawSphere(Vec3f::zero(), 640.0f, 64);
-        //gl::drawSolidRect(mApp->getViewportBounds());
-        
-        mShaderFbo.unbindTexture();
-        
-        //glDisable( GL_LIGHT0 );
-        //glDisable( GL_LIGHTING );
-    }
-    else
+//    if (mDrawOnSphere)
+//    {
+//        gl::enableAlphaBlending();
+//        //gl::enable( GL_TEXTURE_2D );
+//        gl::enableDepthRead();
+//        gl::enableDepthWrite();
+//        gl::setMatrices( getCamera() );
+//        gl::setViewport( mApp->getViewportBounds() );
+//        gl::color( ColorA::white() );
+//        mShaderFbo.bindTexture();
+//        
+//        glEnable( GL_POLYGON_SMOOTH );
+//        //glEnable( GL_LIGHTING );
+//        //glEnable( GL_LIGHT0 );
+//        
+//        //GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//        //glLightfv( GL_LIGHT0, GL_POSITION, light_position );
+//        
+//        gl::drawSphere(Vec3f::zero(), 640.0f, 64);
+//        //gl::drawSolidRect(mApp->getViewportBounds());
+//        
+//        mShaderFbo.unbindTexture();
+//        
+//        //glDisable( GL_LIGHT0 );
+//        //glDisable( GL_LIGHTING );
+//    }
+//    else
     {
         shaderPreDraw();
         Utils::drawTexturedRect( mApp->getViewportBounds() );
@@ -462,12 +284,267 @@ void ObjectShaders::drawDebug()
 {
     //mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
     
-    gl::enable( GL_TEXTURE_2D );
-    gl::setMatricesWindow( mApp->getWindowSize() );
+//    gl::enable( GL_TEXTURE_2D );
+//    gl::setMatricesWindow( mApp->getWindowSize() );
+//    
+//    const Vec2f size(128,72);
+//    Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );
+//    gl::draw( mShaderFbo.getTexture(), mShaderFbo.getBounds(), preview );
+//    
+//    gl::disable( GL_TEXTURE_2D );
+}
+
+#pragma mark - Hexballs
+
+MetaballsShader::MetaballsShader()
+: FragShader("metaballs", "metahex_frag.glsl")
+, mQuality(4.0f)
+, mRenderSteps(33)
+, mLightSpeed(1.0f)
+, mSpeed(1.0f)
+, mNumObjects(9)
+, mCoeffecients(Vec3f(0.967f,0.423f,0.76321f))
+, mResponseBand(AudioInputHandler::BAND_NONE)
+, mObjTime(0.0f)
+, mLightTime(0.0f)
+{
     
-    const Vec2f size(128,72);
-    Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );
-    gl::draw( mShaderFbo.getTexture(), mShaderFbo.getBounds(), preview );
+}
+
+void MetaballsShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    gl::disable( GL_TEXTURE_2D );
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateIntParam( "metahex/objects", &mNumObjects )
+                        .maxValue(24)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "metahex/steps", &mRenderSteps )
+                        .maxValue(128)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "metahex/quality", &mQuality )
+                        .maxValue(16)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "metahex/speed", &mSpeed )
+                        .maxValue(10.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "metahex/lightspeed", &mLightSpeed )
+                        .maxValue(10.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateVec3fParam("metahex/coeffs", &mCoeffecients, Vec3f::zero(), Vec3f(1.0f,1.0f,1.0f))
+                        .oscReceiver(mName));
+    interface->addEnum(CreateEnumParam("response-band", &mResponseBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+}
+
+void MetaballsShader::update(double dt)
+{
+    mLightTime += dt * mLightSpeed;
+    mObjTime += dt * mSpeed;
+}
+
+void MetaballsShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    Vec3f coeffs = mCoeffecients;
+    coeffs *= audioInputHandler.getAverageVolumeByBand(mResponseBand);
+    
+    mShader.uniform( "iObjTime", mObjTime );
+    mShader.uniform( "iLightTime", mLightTime );
+    mShader.uniform( "iNumObjects", mNumObjects );
+    mShader.uniform( "iRenderSteps", mRenderSteps );
+    mShader.uniform( "iQuality", mQuality );
+    mShader.uniform( "iCoefficients", coeffs );
+}
+
+#pragma mark - Lissajous
+
+LissajousShader::LissajousShader()
+: FragShader("lissajous", "lissajous_frag.glsl")
+, mFrequencyX(2.0f)
+, mFrequencyY(3.0f)
+, mFrequencyXShift(0.0f)
+, mFrequencyYShift(0.0f)
+, mScale(0.8f)
+, mResponseBandX(AudioInputHandler::BAND_NONE)
+, mResponseBandY(AudioInputHandler::BAND_NONE)
+, mColor(ColorAf(0.2f, 1.0f, 0.1f, 1.0f))
+{
+    
+}
+
+void LissajousShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateIntParam( "frequency-x", &mFrequencyX )
+                        .minValue(1)
+                        .maxValue(32)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "frequency-y", &mFrequencyY )
+                        .minValue(1)
+                        .maxValue(32)
+                        .oscReceiver(oscName));
+    
+    interface->addParam(CreateFloatParam( "frequency-x-shift", &mFrequencyXShift )
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "frequency-y-shift", &mFrequencyYShift )
+                        .oscReceiver(oscName));
+    
+    interface->addEnum(CreateEnumParam("x-band", &mResponseBandX)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addEnum(CreateEnumParam("y-band", &mResponseBandY)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam("scale", &mScale)
+                        .minValue(0.05f)
+                        .maxValue(2.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
+                        .oscReceiver(oscName));
+}
+
+void LissajousShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform("iScale", mScale);
+    
+    mShader.uniform("iColor", mColor);
+    
+    float frequencyX = (mFrequencyX + mFrequencyXShift) * audioInputHandler.getAverageVolumeByBand(mResponseBandX);
+    float frequencyY = (mFrequencyY + mFrequencyYShift) * audioInputHandler.getAverageVolumeByBand(mResponseBandY);
+    
+    mShader.uniform("iFrequencyX", frequencyX);
+    mShader.uniform("iFrequencyY", frequencyY);
+}
+
+#pragma mark - Retina
+
+RetinaShader::RetinaShader()
+: FragShader("retina", "retina_frag.glsl")
+{
+    mDialation = 0.2f;
+    mDialationScale = 1.0f;
+    mPatternAmp = 0.05f;
+    mPatternFreq = 20.0f;
+    mDialationBand = AudioInputHandler::BAND_NONE;
+    mPatternBand = AudioInputHandler::BAND_NONE;
+    mScale = 1.0f;
+}
+
+void RetinaShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateFloatParam("retina/scale", &mScale)
+                         .maxValue(4.0f)
+                         .oscReceiver(mName));
+    interface->addParam(CreateFloatParam("retina/dialation", &mDialation)
+                         .maxValue(4.0f)
+                         .oscReceiver(mName));
+    interface->addParam(CreateFloatParam("retina/dialationscale", &mDialationScale)
+                         .minValue(1.0f)
+                         .maxValue(4.0f)
+                         .oscReceiver(mName));
+    interface->addParam(CreateFloatParam("retina/pattamp", &mPatternAmp)
+                         .minValue(0.001f)
+                         .maxValue(0.5f)
+                         .oscReceiver(mName));
+    interface->addParam(CreateFloatParam("retina/pattfreq", &mPatternFreq)
+                         .minValue(1.0f)
+                         .maxValue(40.0f)
+                         .oscReceiver(mName));
+    
+    interface->addEnum(CreateEnumParam("retain/dialation-band", &mDialationBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+//    interface->addEnum(CreateEnumParam("retain/pattern-band", &mPatternBand)
+//                       .maxValue(bandNames.size())
+//                       .isVertical()
+//                       .oscReceiver(oscName)
+//                       .sendFeedback(), bandNames);
+}
+
+void RetinaShader::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+    float dialation = mDialation + mDialationScale * audioInputHandler.getAverageVolumeByBand(mDialationBand);
+    
+    mShader.uniform( "iDialation", dialation );
+    mShader.uniform( "iDialationScale", mDialationScale );
+    mShader.uniform( "iPatternAmp", mPatternAmp );
+    mShader.uniform( "iPatternFreq", mPatternFreq );
+    mShader.uniform( "iScale", mScale );
+}
+
+#pragma mark - BioFractal
+
+BioFractalShader::BioFractalShader()
+: FragShader("biofractal", "livingkifs_frag.glsl")
+{
+    mIterations = 25;
+    mJulia = Vec3f(-2.f,-1.5f,-.5f);
+    mRotation = Vec3f(0.5f,-0.05f,-0.5f);
+    mLightDir = Vec3f(0.5f,1.f,0.5f);
+    mScale = 1.27f;
+    mRotAngle = 40.0f;
+    mAmplitude = 0.45f;
+    mDetail = 0.025f;
+}
+
+void BioFractalShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateIntParam( "biofractal/iterations", &mIterations )
+                         .minValue(1)
+                         .maxValue(100)
+                         .oscReceiver(getName()));
+    interface->addParam(CreateVec3fParam("biofractal/rotation", mRotation.ptr(), Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
+                         .oscReceiver(mName));
+    interface->addParam(CreateVec3fParam("biofractal/julia", mJulia.ptr(), Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
+                         .oscReceiver(mName));
+    interface->addParam(CreateVec3fParam("biofractal/lightdir", &mLightDir, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
+                         .oscReceiver(mName));
+    interface->addParam(CreateFloatParam( "biofractal/scale", &mScale )
+                         .minValue(0.0f)
+                         .maxValue(3.0f)
+                         .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam( "biofractal/angle", &mRotAngle )
+                         .minValue(0.0f)
+                         .maxValue(90.0f)
+                         .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam( "biofractal/amplitude", &mAmplitude )
+                         .minValue(0.0f)
+                         .maxValue(1.0f)
+                         .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam( "biofractal/detail", &mDetail )
+                         .minValue(0.0f)
+                         .maxValue(0.1f));
+}
+
+void BioFractalShader::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+    mShader.uniform( "iIterations", mIterations );
+    mShader.uniform( "iJulia", mJulia );
+    mShader.uniform( "iRotation", mRotation );
+    mShader.uniform( "iScale", mScale );
+    mShader.uniform( "iRotAngle", mRotAngle );
+    mShader.uniform( "iAmplitude", mAmplitude );
+    mShader.uniform( "iLightDir", mLightDir );
+    mShader.uniform( "iDetail", mDetail );
 }

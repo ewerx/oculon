@@ -103,7 +103,10 @@ void ShaderTest::setupShaders()
     mShaders.push_back( new FragShader( "bokeh",      "bokeh_frag.glsl" ) );
     mShaders.push_back( new FragShader( "water",      "watereffect_frag.glsl" ) );
     mShaders.push_back( new FragShader( "squarespiral",      "squarespiral_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "squarespiral",      "squarespiral_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "mobius",      "mobius_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "juliaspiral",      "juliaspiral_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "bezier",      "bezier_frag.glsl" ) );
+    mShaders.push_back( new FragShader( "warping",      "warping_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "AfterEffect",       "aftereffect_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "Rasterizer" ) );
     //mShaders.push_back( new FragShader( "Glassfield" ) );

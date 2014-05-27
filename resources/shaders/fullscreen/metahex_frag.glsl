@@ -32,11 +32,11 @@ uniform vec3      iCoefficients;
 #define noise_use_smoothstep
 
 //#define light_color vec3(0.1,0.4,0.6)
-#define light_color iColor1.xyz
+#define light_color iColor2.xyz
 #define light_direction normalize(vec3(.2,1.0,-0.2))
 
 //#define object_color vec3(0.9,0.1,0.1)
-#define object_color iColor2.xyz
+#define object_color iColor1.xyz
 #define MAX_OBJECTS 24
 #define object_count iNumObjects
 

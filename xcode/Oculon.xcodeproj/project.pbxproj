@@ -454,11 +454,15 @@
 		7CEB1AE619325F220044A346 /* cairo_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1AE519325F220044A346 /* cairo_frag.glsl */; };
 		7CEB1AE81932633A0044A346 /* bokeh_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1AE71932633A0044A346 /* bokeh_frag.glsl */; };
 		7CEB1AEA193265C20044A346 /* watereffect_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CEB1AE9193265C20044A346 /* watereffect_frag.glsl */; };
-		7CEB1AED1932B41F0044A346 /* LissajousShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB1AEB1932B41F0044A346 /* LissajousShader.cpp */; };
 		7CF0460B188639FE00150FD3 /* Oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF04609188639FE00150FD3 /* Oscillator.cpp */; };
 		7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF0460C188645D300150FD3 /* oscillator_frag.glsl */; };
 		7CF1002318ED0C05002876A1 /* DustRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF1002118ED0C05002876A1 /* DustRenderer.cpp */; };
 		7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */; };
+		7CF612C319340F6300030E26 /* mobius_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C219340F6300030E26 /* mobius_frag.glsl */; };
+		7CF612C51934101500030E26 /* juliaspiral_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C41934101500030E26 /* juliaspiral_frag.glsl */; };
+		7CF612C7193410FC00030E26 /* cavething_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C6193410FC00030E26 /* cavething_frag.glsl */; };
+		7CF612C91934125300030E26 /* warping_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612C81934125300030E26 /* warping_frag.glsl */; };
+		7CF612CB193412BF00030E26 /* bezier_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CF612CA193412BF00030E26 /* bezier_frag.glsl */; };
 		7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */; };
 		7CF6AD5118A9E3E100FA795A /* FisheyeRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */; };
 		7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CF6AD4E18A9E3E100FA795A /* MotionBlurRenderer.cpp */; };
@@ -1141,14 +1145,17 @@
 		7CEB1AE519325F220044A346 /* cairo_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cairo_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE71932633A0044A346 /* bokeh_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bokeh_frag.glsl; sourceTree = "<group>"; };
 		7CEB1AE9193265C20044A346 /* watereffect_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = watereffect_frag.glsl; sourceTree = "<group>"; };
-		7CEB1AEB1932B41F0044A346 /* LissajousShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LissajousShader.cpp; sourceTree = "<group>"; };
-		7CEB1AEC1932B41F0044A346 /* LissajousShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LissajousShader.h; sourceTree = "<group>"; };
 		7CF04609188639FE00150FD3 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
 		7CF0460A188639FE00150FD3 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
 		7CF0460C188645D300150FD3 /* oscillator_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oscillator_frag.glsl; sourceTree = "<group>"; };
 		7CF1002118ED0C05002876A1 /* DustRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DustRenderer.cpp; path = ../src/dust/DustRenderer.cpp; sourceTree = "<group>"; };
 		7CF1002218ED0C05002876A1 /* DustRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DustRenderer.h; path = ../src/dust/DustRenderer.h; sourceTree = "<group>"; };
 		7CF251FE182F397F0005227C /* gaussian_noise_256_3c.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gaussian_noise_256_3c.png; sourceTree = "<group>"; };
+		7CF612C219340F6300030E26 /* mobius_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mobius_frag.glsl; sourceTree = "<group>"; };
+		7CF612C41934101500030E26 /* juliaspiral_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = juliaspiral_frag.glsl; sourceTree = "<group>"; };
+		7CF612C6193410FC00030E26 /* cavething_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cavething_frag.glsl; sourceTree = "<group>"; };
+		7CF612C81934125300030E26 /* warping_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = warping_frag.glsl; sourceTree = "<group>"; };
+		7CF612CA193412BF00030E26 /* bezier_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bezier_frag.glsl; sourceTree = "<group>"; };
 		7CF6AD4A18A9E3E100FA795A /* DomeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DomeRenderer.cpp; sourceTree = "<group>"; };
 		7CF6AD4B18A9E3E100FA795A /* DomeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DomeRenderer.h; sourceTree = "<group>"; };
 		7CF6AD4C18A9E3E100FA795A /* FisheyeRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FisheyeRender.cpp; sourceTree = "<group>"; };
@@ -1634,6 +1641,11 @@
 				7C6CB43D1925DAA900D83614 /* terminal_frag.glsl */,
 				7CEB1AE119325BAF0044A346 /* terminaltext_frag.glsl */,
 				7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */,
+				7CF612CA193412BF00030E26 /* bezier_frag.glsl */,
+				7CF612C81934125300030E26 /* warping_frag.glsl */,
+				7CF612C6193410FC00030E26 /* cavething_frag.glsl */,
+				7CF612C41934101500030E26 /* juliaspiral_frag.glsl */,
+				7CF612C219340F6300030E26 /* mobius_frag.glsl */,
 				7C06A8D71853D4ED00D1C8A3 /* tilings_frag.glsl */,
 				7C8DA8681921B4A200FCD9A2 /* triangle_frag.glsl */,
 				7C06A8D81853D4ED00D1C8A3 /* tripping_frag.glsl */,
@@ -1766,8 +1778,6 @@
 				7C4DBFC919295E3000FDDDC3 /* Cymatics.h */,
 				7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */,
 				7CD42250192E701700CCE7BF /* CloudTunnel.h */,
-				7CEB1AEB1932B41F0044A346 /* LissajousShader.cpp */,
-				7CEB1AEC1932B41F0044A346 /* LissajousShader.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -3032,6 +3042,7 @@
 				7C79CB1C1765288500E71F9D /* lantern.vert in Resources */,
 				7C79CB1D1765288500E71F9D /* nebula.frag in Resources */,
 				7C7CDB151881F2AD0064999F /* wireframe_geom.glsl in Resources */,
+				7CF612C7193410FC00030E26 /* cavething_frag.glsl in Resources */,
 				7C79CB1E1765288500E71F9D /* P_Position.frag in Resources */,
 				7C79CB1F1765288500E71F9D /* P_VboPos.frag in Resources */,
 				7C79CB201765288500E71F9D /* P_VboPos.vert in Resources */,
@@ -3077,7 +3088,9 @@
 				7C83B3AF1856BF3800EB22F8 /* parsec-sun.png in Resources */,
 				7C06A9091853D4ED00D1C8A3 /* volumetriclines_frag.glsl in Resources */,
 				7C79C8EC17650F8F00E71F9D /* contour_tex_vert.glsl in Resources */,
+				7CF612C91934125300030E26 /* warping_frag.glsl in Resources */,
 				7C79C8ED17650F8F00E71F9D /* bump.png in Resources */,
+				7CF612C51934101500030E26 /* juliaspiral_frag.glsl in Resources */,
 				7C79C8EE17650F8F00E71F9D /* darkStar.png in Resources */,
 				7C79C8EF17650F8F00E71F9D /* milkyWay.jpg in Resources */,
 				7C79C8F017650F8F00E71F9D /* spectrum.png in Resources */,
@@ -3136,6 +3149,7 @@
 				7CAD1B7C18839A9800512843 /* frag_addsource.glsl in Resources */,
 				7C79C90617650F8F00E71F9D /* emitter.png in Resources */,
 				7C79C90717650F8F00E71F9D /* glow.png in Resources */,
+				7CF612CB193412BF00030E26 /* bezier_frag.glsl in Resources */,
 				7C06A9001853D4ED00D1C8A3 /* rings_frag.glsl in Resources */,
 				7C79C90817650F8F00E71F9D /* lanternGlow.png in Resources */,
 				7C79C90917650F8F00E71F9D /* nebula.png in Resources */,
@@ -3214,6 +3228,7 @@
 				7C79C95A17650F8F00E71F9D /* terrain_tex_frag.glsl in Resources */,
 				7C06A8ED1853D4ED00D1C8A3 /* glassfield_frag.glsl in Resources */,
 				7C8CBB38192BE24900588689 /* polychora_frag.glsl in Resources */,
+				7CF612C319340F6300030E26 /* mobius_frag.glsl in Resources */,
 				7C79C95B17650F8F00E71F9D /* terrain_tex_vert.glsl in Resources */,
 				7C06A8E71853D4ED00D1C8A3 /* clouds_frag.glsl in Resources */,
 				7C06A8F51853D4ED00D1C8A3 /* livingkifs_frag.glsl in Resources */,
@@ -3435,7 +3450,6 @@
 				7C79CA6017650FD800E71F9D /* Quake.cpp in Sources */,
 				7C79CA6117650FD800E71F9D /* QuakeData.cpp in Sources */,
 				7C79CA6217650FD800E71F9D /* Tectonic.cpp in Sources */,
-				7CEB1AED1932B41F0044A346 /* LissajousShader.cpp in Sources */,
 				7C79CA6317650FD800E71F9D /* RDiffusion.cpp in Sources */,
 				7C79CA6417650FD800E71F9D /* Terrain.cpp in Sources */,
 				7C79CA6517650FD800E71F9D /* Tube.cpp in Sources */,

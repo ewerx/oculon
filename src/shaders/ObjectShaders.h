@@ -20,10 +20,8 @@
 #include "FragShader.h"
 #include "TimeController.h"
 
-#include "OscMessage.h"
-
 //
-// Audio input tests
+// Object Shaders
 //
 class ObjectShaders : public Scene
 {
@@ -62,9 +60,6 @@ private:
     ci::ColorAf         mColor2;
     ci::ColorAf         mColor3;
     
-    float               mAudioResponseFreqMin;
-    float               mAudioResponseFreqMax;
-    
     // color maps
     enum { MAX_COLORMAPS = 4 };
     ci::gl::Texture     mColorMapTexture[MAX_COLORMAPS];
@@ -73,76 +68,102 @@ private:
     // noise texture
     ci::gl::Texture     mNoiseTexture;
     
-    
-    
     std::vector<FragShader*> mShaders;
     int mShaderType;
     
-    // shaders
-#define OS_SHADERS_TUPLE \
-OS_SHADERS_ENTRY( "MetaHex", "metahex_frag.glsl", SHADER_METAHEX ) \
-OS_SHADERS_ENTRY( "Retina", "retina_frag.glsl", SHADER_RETINA ) \
-OS_SHADERS_ENTRY( "BioFractal", "livingkifs_frag.glsl", SHADER_BIOFRACTAL ) \
-OS_SHADERS_ENTRY( "TEST-Clouds", "clouds_frag.glsl", SHADER_CLOUDS ) \
-OS_SHADERS_ENTRY( "TEST-Fireball", "fireball_frag.glsl", SHADER_FIREBALL ) \
-OS_SHADERS_ENTRY( "OLD-Tilings", "tilings_frag.glsl", SHADER_TILINGS ) \
-//end tuple
-    
     // rendering
-    bool mDrawOnSphere;
-    ci::gl::Fbo mShaderFbo;
-    
-    // shader params
-    struct tMetaHexParams
-    {
-        float mSpeed;
-        float mLightSpeed;
-        float mObjTime;
-        float mLightTime;
-        int mNumObjects;
-        int mRenderSteps;
-        int mQuality;
-        ci::Vec3f mCoeffecients;
-        bool mAudioCoeffs;
-    };
-    tMetaHexParams mMetaHexParams;
-    
-    struct tRetinaParams
-    {
-        bool                mAudioDialation;
-        float               mScale;
-        float               mDialation;
-        float               mDialationScale;
-        float               mPatternAmp;
-        float               mPatternFreq;
-        bool                mAudioPattern;
-    };
-    tRetinaParams mRetinaParams;
-    
-    struct tFireballParams
-    {
-        float               mRotationSpeed;
-        float               mDensity;
-        bool                mAudioDensity;
-        bool                mAudioRotation;
-    };
-    tFireballParams mFireballParams;
-    
-    struct tBioFractalParams
-    {
-        int         mIterations;
-        ci::Anim<ci::Vec3f>  mJulia;
-        ci::Anim<ci::Vec3f>  mRotation;
-        ci::Vec3f   mLightDir;
-        float       mScale;
-        float       mRotAngle;
-        float       mAmplitude;
-        float       mDetail;
-        float       mAnimTime;
-        bool        mCycleJulia;
-        bool        mCycleRotation;
-        
-    };
-    tBioFractalParams mBioFractalParams;
+    //    bool mDrawOnSphere;
+    //    ci::gl::Fbo mShaderFbo;
 };
 
+#pragma mark - Hexballs
+
+class MetaballsShader : public FragShader
+{
+public:
+    MetaballsShader();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void update(double dt);
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    float mSpeed;
+    float mLightSpeed;
+    float mObjTime;
+    float mLightTime;
+    int mNumObjects;
+    int mRenderSteps;
+    int mQuality;
+    ci::Vec3f mCoeffecients;
+    int mResponseBand;
+};
+
+#pragma mark - Lissajous
+
+class LissajousShader : public FragShader
+{
+public:
+    LissajousShader();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    float mScale;
+    int mFrequencyX;
+    int mFrequencyY;
+    
+    float mFrequencyXShift;
+    float mFrequencyYShift;
+    
+    int mResponseBandX;
+    int mResponseBandY;
+    
+    ci::ColorAf mColor;
+};
+
+
+#pragma mark - Retina
+
+class RetinaShader : public FragShader
+{
+public:
+    RetinaShader();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    float               mScale;
+    float               mDialation;
+    float               mDialationScale;
+    float               mPatternAmp;
+    float               mPatternFreq;
+    int                 mDialationBand;
+    int                 mPatternBand;
+};
+
+#pragma mark - BioFractal
+
+class BioFractalShader : public FragShader
+{
+public:
+    BioFractalShader();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    int         mIterations;
+    ci::Anim<ci::Vec3f>  mJulia;
+    ci::Anim<ci::Vec3f>  mRotation;
+    ci::Vec3f   mLightDir;
+    float       mScale;
+    float       mRotAngle;
+    float       mAmplitude;
+    float       mDetail;
+    float       mAnimTime;
+    bool        mCycleJulia;
+    bool        mCycleRotation;
+};
