@@ -43,10 +43,10 @@ void ObjectShaders::setup()
     setupShaders();
     
     // color maps
-    mColorMapTexture[0] = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) );
-    mColorMapTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) );
-    mColorMapTexture[2] = gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ) );
-    mColorMapTexture[3] = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ) ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) ) ) );
     mColorMapIndex = 0;
     
     mNoiseTexture = gl::Texture( loadImage( loadResource( "gaussian_noise_256_3c.png" ) ) );
@@ -98,9 +98,15 @@ void ObjectShaders::setupInterface()
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color3", &mColor3, kMinColor, kMaxColor));
     
-    mInterface->addParam(CreateIntParam( "colormap", &mColorMapIndex )
-                         .maxValue(MAX_COLORMAPS-1)
-                         .oscReceiver(getName()));
+    vector<string> colorMapNames;
+    for( tNamedTexture namedTex : mColorMaps )
+    {
+        colorMapNames.push_back(namedTex.first);
+    }
+    mInterface->addEnum(CreateEnumParam( "colormap", (int*)(&mColorMapIndex) )
+                        .maxValue(colorMapNames.size())
+                        .oscReceiver(mName)
+                        .isVertical(), colorMapNames);
     
     // custom params
     for( FragShader* shader : mShaders )
@@ -158,7 +164,7 @@ void ObjectShaders::draw()
 
 void ObjectShaders::shaderPreDraw()
 {
-    mColorMapTexture[mColorMapIndex].bind(0);
+    mColorMaps[mColorMapIndex].second.bind(0);
     if( mApp->getAudioInputHandler().hasTexture() )
     {
         mApp->getAudioInputHandler().getFbo().bindTexture(1);
@@ -230,7 +236,7 @@ void ObjectShaders::shaderPostDraw()
     {
         mApp->getAudioInputHandler().getFbo().unbindTexture();
     }
-    mColorMapTexture[mColorMapIndex].unbind();
+    mColorMaps[mColorMapIndex].second.unbind();
 }
 
 void ObjectShaders::drawScene()

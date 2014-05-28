@@ -90,6 +90,20 @@ private:
         float               mNormalDistance;
     };
     
+    class JuliaSpiralShader : public FragShader
+    {
+    public:
+        JuliaSpiralShader();
+        void setupInterface( Interface* interface, const std::string& name );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        ci::ColorAf         mColor3;
+        ci::Vec2f           mOffset;
+        float               mScale;
+        float               mFrequency;
+    };
+    
     // control
     TimeController      mTimeController;
     AudioInputHandler   mAudioInputHandler;

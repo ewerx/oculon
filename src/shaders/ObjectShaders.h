@@ -12,7 +12,6 @@
 #include "cinder/Cinder.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/Texture.h"
-#include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
@@ -41,7 +40,7 @@ public:
     
 protected:// from Scene
     void setupInterface();
-    ////void setupDebugInterface();
+    //void setupDebugInterface();
     
 private:
     void setupShaders();
@@ -61,9 +60,9 @@ private:
     ci::ColorAf         mColor3;
     
     // color maps
-    enum { MAX_COLORMAPS = 4 };
-    ci::gl::Texture     mColorMapTexture[MAX_COLORMAPS];
-    int                 mColorMapIndex;
+    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
+    std::vector<tNamedTexture> mColorMaps;
+    int mColorMapIndex;
     
     // noise texture
     ci::gl::Texture     mNoiseTexture;

@@ -1,9 +1,12 @@
 #version 120
 uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
-//uniform sampler2D iChannel0;
-//uniform sampler2D iChannel1;
-uniform vec2      iMouse;
+uniform vec3      iColor1;
+uniform vec3      iColor2;
+uniform vec3      iColor3;
+uniform vec2      iOffset;
+uniform float     iScale;
+uniform float     iFrequency;
 
 #define time iGlobalTime
 #define resolution iResolution
@@ -16,22 +19,21 @@ uniform vec2      iMouse;
 #define ITERS 192
 #define CYCL 5
 #define CYCH 8
-#define A_SPEED 1.0
 
 void main(void)
 {
 	vec2 z0 = gl_FragCoord.xy / (iResolution.xy / 4.0) - 2.0;
 	z0.x *= iResolution.x / iResolution.y;
-	vec2 z = z0;
+	vec2 z = z0 / iScale;
 	
-	vec2 c = iMouse.xy / (iResolution.xy / 4.0) - 2.0;
+	vec2 c = iOffset.xy;
 	c.x *= iResolution.x / iResolution.y;
-	c += 0.01 * vec2(sin(iGlobalTime), sin(iGlobalTime * M_PHI));
+	c += iFrequency * vec2(sin(iGlobalTime), sin(iGlobalTime * M_PHI));
 	
     
-	vec3 col0 = vec3(0.6, 0.4, 0.0);
-	vec3 col1 = vec3(0.0, 0.6, 0.8);
-	vec3 col2 = vec3(0.4, 0.0, 0.2);
+	vec3 col0 = iColor1.rgb;//vec3(0.6, 0.4, 0.0);
+	vec3 col1 = iColor2.rgb;//vec3(0.0, 0.6, 0.8);
+	vec3 col2 = iColor3.rgb;//vec3(0.4, 0.0, 0.2);
 	
 	vec2 acc = vec2(0.0, 0.0);
 	vec2 last[CYCH];
@@ -45,9 +47,9 @@ void main(void)
 		if (ITERS - i <= CYCH)
 			last[ITERS - i - 1] = z / zm2;
 		if (zm2 > 1e6) {
-			col0 = vec3(0.8, 0.4, 0.0);
-			col1 = vec3(0.0, 0.4, 0.8);
-			col2 = vec3(0.2, 0.2, 0.2);
+			col0 = iColor1.rgb;//vec3(0.8, 0.4, 0.0);
+			col1 = iColor2.rgb;//vec3(0.0, 0.4, 0.8);
+			col2 = iColor3.rgb;//vec3(0.2, 0.2, 0.2);
 			break;
 		}
 		z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y);

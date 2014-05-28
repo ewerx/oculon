@@ -43,6 +43,7 @@ void Menger::setup()
     
     mShaders.push_back( new MengerShader() );
     mShaders.push_back( new PolychoraShader() );
+    mShaders.push_back( new JuliaSpiralShader() );
     
     reset();
 }
@@ -337,4 +338,49 @@ void Menger::PolychoraShader::setCustomParams( AudioInputHandler& audioInputHand
     mShader.uniform( "iAngle", mAngle * audioInputHandler.getAverageVolumeByBand(mAngleResponseBand) );
     mShader.uniform( "iMinDistance", mMinDistance );
     mShader.uniform( "iNormalDistance", mNormalDistance );
+}
+
+#pragma mark - JuliaSpiralShader
+
+Menger::JuliaSpiralShader::JuliaSpiralShader()
+: FragShader("juliaspiral", "juliaspiral_frag.glsl")
+{
+    mScale = 1.0f;
+    mFrequency = 0.01f;
+    mOffset = Vec2f::zero();
+//    mColor1 = ColorAf(0.6, 0.4, 0.0);
+//    mColor2 = ColorAf(0.0, 0.6, 0.8);
+    mColor3 = ColorAf(0.4f, 0.0f, 0.2f, 1.0f);
+}
+
+void Menger::JuliaSpiralShader::setupInterface(Interface *interface, const std::string &name)
+{
+    string oscName = name + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->addParam(CreateColorParam("color3", &mColor3, kMinColor, kMaxColor).oscReceiver(mName));
+    interface->addParam(CreateVec2fParam("offset", &mOffset, Vec2f::zero(), Vec2f::one()*3.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("scale", &mScale)
+                        .minValue(0.001f)
+                        .maxValue(2.0f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("frequency", &mFrequency)
+                        .minValue(0.001f)
+                        .maxValue(5.0f)
+                        .oscReceiver(oscName));
+//    interface->addEnum(CreateEnumParam( "audio-angle", &mAngleResponseBand )
+//                       .maxValue(bandNames.size())
+//                       .isVertical()
+//                       .oscReceiver(mName)
+//                       .sendFeedback(), bandNames);
+    
+}
+
+void Menger::JuliaSpiralShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "iColor3", Color(mColor3) );
+    mShader.uniform( "iOffset", mOffset );
+    mShader.uniform( "iScale", mScale );
+    mShader.uniform( "iFrequency", mFrequency );
 }
