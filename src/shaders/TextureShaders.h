@@ -17,11 +17,11 @@
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
 #include "AudioInputHandler.h"
-
-#include "OscMessage.h"
+#include "TimeController.h"
+#include "FragShader.h"
 
 //
-// Audio input tests
+// TextureShaders
 //
 class TextureShaders : public Scene
 {
@@ -34,11 +34,11 @@ public:
     void reset();
     void update(double dt);
     void draw();
-    void drawDebug();
+    //void drawDebug();
     
 protected:// from Scene
     void setupInterface();
-    ////void setupDebugInterface();
+    //void setupDebugInterface();
     
 private:
     void setupShaders();
@@ -53,73 +53,30 @@ private:
     // global params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
-    float               mTimeScale;
-    double              mElapsedTime;
     
+    TimeController      mTimeController;
     AudioInputHandler   mAudioInputHandler;
     
-    float               mAudioResponseFreqMin;
-    float               mAudioResponseFreqMax;
-    
     // color maps
-    enum { MAX_COLORMAPS = 4 };
-    ci::gl::Texture     mColorMapTexture[MAX_COLORMAPS];
-    int                 mColorMapIndex;
+    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
+    std::vector<tNamedTexture> mColorMaps;
+    int mColorMapIndex;
     
     // shaders
-#define TS_SHADERS_TUPLE \
-TS_SHADERS_ENTRY( "Kali", "kifs_frag.glsl", SHADER_KALI ) \
-TS_SHADERS_ENTRY( "Simplicity", "simplicity_frag.glsl", SHADER_SIMPLICITY ) \
-TS_SHADERS_ENTRY( "Contour", "contour_tex_frag.glsl", SHADER_NOISE ) \
-//end tuple
+    std::vector<FragShader*> mShaders;
+    int mShaderType;
     
-    enum eShaderType
+    
+    class KifsShader : public FragShader
     {
-#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
-enm,
-        TS_SHADERS_TUPLE
-#undef  TS_SHADERS_ENTRY
+    public:
+        KifsShader();
         
-        SHADERS_COUNT
-    };
-    eShaderType   mShaderType;
-    
-    std::vector<ci::gl::GlslProg> mShaders;
-    
-    // rendering
-    bool mDrawOnSphere;
-    ci::gl::Fbo mShaderFbo;
-    
-    // shader params
-    struct tNoiseParams
-    {
-        float       mDisplacementSpeed;
-        ci::Vec3f   mNoiseScale;
-        float       mLevels;
-        float       mEdgeThickness;
-        float       mBrightness;
-    };
-    tNoiseParams        mNoiseParams;
-    
-    // audio respons types
-#define AUDIO_RESPONSE_TYPE_TUPLE \
-AUDIO_RESPONSE_TYPE_ENTRY( "None", AUDIO_RESPONSE_NONE ) \
-AUDIO_RESPONSE_TYPE_ENTRY( "SingleBand", AUDIO_RESPONSE_SINGLE ) \
-AUDIO_RESPONSE_TYPE_ENTRY( "MultiBand", AUDIO_RESPONSE_MULTI ) \
-//end tuple
-    
-    enum eAudioRessponseType
-    {
-#define AUDIO_RESPONSE_TYPE_ENTRY( nam, enm ) \
-enm,
-        AUDIO_RESPONSE_TYPE_TUPLE
-#undef  AUDIO_RESPONSE_TYPE_ENTRY
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
-        AUDIO_RESPONSE_TYPE_COUNT
-    };
-    
-    struct tKaliParams
-    {
+    private:
         int iterations;
         float scale;
         ci::Vec2f fold;
@@ -142,10 +99,18 @@ enm,
         bool mAudioTranslate;
         bool mAudioRot;
     };
-    tKaliParams mKaliParams;
     
-    struct tSimplicityParams
+    class SimplicityShader : public FragShader
     {
+    public:
+        SimplicityShader();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
         ci::Vec3f           mColorScale;
         int                 mRedPower;
         int                 mGreenPower;
@@ -167,6 +132,5 @@ enm,
         bool                mAudioHighlight;
         bool                mAudioShift;
     };
-    tSimplicityParams mSimplicityParams;
 };
 

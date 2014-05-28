@@ -34,29 +34,14 @@ void TextureShaders::setup()
     
     mAudioInputHandler.setup(false);
     
-    gl::Fbo::Format format;
-    format.enableMipmapping(false);
-    format.enableDepthBuffer(false);
-    format.setCoverageSamples(8);
-    format.setSamples(4); // 4x AA
-	//format.setColorInternalFormat( GL_RGB32F_ARB );
-    mShaderFbo = gl::Fbo( mApp->getViewportWidth(), mApp->getViewportHeight(), format );
-    
     setupShaders();
     
     // color maps
-    mColorMapTexture[0] = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) );
-    mColorMapTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) );
-    mColorMapTexture[2] = gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ) );
-    mColorMapTexture[3] = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ) ) ) );
+    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) ) ) );
     mColorMapIndex = 0;
-    
-    mShaderType = SHADER_KALI;
-
-    mDrawOnSphere = false;
-    
-    mAudioResponseFreqMin = 0.0f;
-    mAudioResponseFreqMax = 1.0f;
     
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
@@ -66,209 +51,53 @@ void TextureShaders::setup()
 
 void TextureShaders::setupShaders()
 {
-#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
-    mShaders.push_back( loadFragShader( glsl ) );
-TS_SHADERS_TUPLE
-#undef TS_SHADERS_ENTRY
+    mShaderType = 0;
     
-    // noise
-    mNoiseParams.mNoiseScale            = Vec3f(1.0f,1.0f,0.25f);
-    mNoiseParams.mDisplacementSpeed     = 1.0f;
-    mNoiseParams.mLevels                = 64.0f;
-    mNoiseParams.mEdgeThickness         = 0.0f;
-    mNoiseParams.mBrightness            = 1.0f;
-    
-    // kali
-    mKaliParams.iterations=20;
-    mKaliParams.scale=1.35f;
-    mKaliParams.fold= Vec2f(0.5f,0.5f);
-    mKaliParams.translate= Vec2f(1.5f,1.5f);
-    mKaliParams.zoom=0.17f;
-    mKaliParams.brightness=7.f;
-    mKaliParams.saturation=0.2f;
-    mKaliParams.texturescale=0.15f;
-    mKaliParams.rotspeed=0.005f;
-    mKaliParams.colspeed=0.05f;
-    mKaliParams.antialias=2.f;
-    mKaliParams.mRotationOffset = 0.0f;
-    mKaliParams.mRotation = 0.0f;
-    mKaliParams.mColorOffset = 0.0f;
-    mKaliParams.mAudioFold = false;
-    mKaliParams.mAudioTranslate = false;
-    mKaliParams.mAudioRot = false;
-    
-    // simplicity
-    mSimplicityParams.mRedPower = 2;
-    mSimplicityParams.mGreenPower = 1;
-    mSimplicityParams.mBluePower = 0;
-    mSimplicityParams.mColorScale = Vec3f(1.8f, 1.4f, 1.0f);
-    mSimplicityParams.mStrengthFactor = 0.03f;
-    mSimplicityParams.mStrengthMin = 7.0f;
-    mSimplicityParams.mStrengthConst = 4373.11f;
-    mSimplicityParams.mIterations = 32;
-    mSimplicityParams.mAccumPower = 2.3f;
-    mSimplicityParams.mMagnitude = Vec3f(-0.5f, -0.4f, -1.5f);
-    mSimplicityParams.mFieldScale = 5.0f;
-    mSimplicityParams.mFieldSubtract = 0.7f;
-    mSimplicityParams.mTimeScale = 1.0f;
-    mSimplicityParams.mPanSpeed = Vec3f(0.0f, 0.0f, 0.01f);
-    mSimplicityParams.mPanPos = Vec3f(0.0625f, 0.0833f, 0.0078f);
-    mSimplicityParams.mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
-    mSimplicityParams.mUVScale = 0.25f;
-    mSimplicityParams.mAudioHighlight = false;
-    mSimplicityParams.mAudioShift = false;
+    mShaders.push_back( new SimplicityShader() );
+    mShaders.push_back( new KifsShader() );
 }
 
 void TextureShaders::reset()
 {
-    mElapsedTime = 0.0f;
-    mKaliParams.mColorOffset = 0.0f;
-    mKaliParams.mRotation = 0.0f;
 }
 
 void TextureShaders::setupInterface()
 {
     vector<string> shaderNames;
-#define TS_SHADERS_ENTRY( nam, glsl, enm ) \
-    shaderNames.push_back(nam);
-TS_SHADERS_TUPLE
-#undef  TS_SHADERS_ENTRY
-    mInterface->addEnum(CreateEnumParam( "Shader", (int*)(&mShaderType) )
-                        .maxValue(SHADERS_COUNT)
+    for( FragShader* shader : mShaders )
+    {
+        shaderNames.push_back(shader->getName());
+    }
+    mInterface->addEnum(CreateEnumParam( "shader", (int*)(&mShaderType) )
+                        .maxValue(shaderNames.size())
                         .oscReceiver(getName(), "shader")
                         .isVertical(), shaderNames);
     
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
+    mTimeController.setupInterface(mInterface, mName);
+    
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
-    mInterface->addParam(CreateIntParam( "colormap", &mColorMapIndex )
-                         .maxValue(MAX_COLORMAPS-1)
-                         .oscReceiver(getName()));
+    vector<string> colorMapNames;
+    for( tNamedTexture namedTex : mColorMaps )
+    {
+        colorMapNames.push_back(namedTex.first);
+    }
+    mInterface->addEnum(CreateEnumParam( "colormap", (int*)(&mColorMapIndex) )
+                        .maxValue(colorMapNames.size())
+                        .oscReceiver(mName)
+                        .isVertical(), colorMapNames);
     
-    mInterface->addParam(CreateFloatParam("color1alpha", &(mColor1.a))
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
-                         .oscReceiver(getName()));
-    
-    // SHADER_KALI
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Kali");
-    mInterface->addParam(CreateIntParam( "kali/iterations", &mKaliParams.iterations )
-                         .maxValue(64)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec2fParam("kali/fold", &mKaliParams.fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateVec2fParam("kali/translate", &mKaliParams.translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "kali/scale", &mKaliParams.scale )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/zoom", &mKaliParams.zoom )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    //.midiInput(0, 2, 19));
-    mInterface->addParam(CreateFloatParam( "kali/brightness", &mKaliParams.brightness )
-                         .maxValue(20.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/saturation", &mKaliParams.saturation )
-                         .maxValue(2.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/texturescale", &mKaliParams.texturescale )
-                         .maxValue(0.2f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/rotspeed", &mKaliParams.rotspeed )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/rotoffset", &mKaliParams.mRotationOffset )
-                         .maxValue(5.0f)
-                         .oscReceiver(getName()));
-    //.midiInput(0, 2, 20));
-    mInterface->addParam(CreateFloatParam( "kali/colspeed", &mKaliParams.colspeed )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "kali/antialias", &mKaliParams.antialias )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    
-    mInterface->addParam(CreateBoolParam("kali/audiofold", &mKaliParams.mAudioFold)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam("kali/audiotrans", &mKaliParams.mAudioTranslate)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateBoolParam("kali/audiorot", &mKaliParams.mAudioRot)
-                         .oscReceiver(getName()));
-    
+    // custom params
+    for( FragShader* shader : mShaders )
+    {
+        if (shader)
+        {
+            mInterface->gui()->addColumn();
+            shader->setupInterface(mInterface, mName);
+        }
+    }
 
-    // SHADER_SIMPLICITY
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Simplicity");
-    mInterface->addParam(CreateIntParam( "Red Power", &mSimplicityParams.mRedPower )
-                         .minValue(0)
-                         .maxValue(2));
-    mInterface->addParam(CreateIntParam( "Green Power", &mSimplicityParams.mGreenPower )
-                         .minValue(0)
-                         .maxValue(2)
-                         .oscReceiver("/1/fader2"));
-    mInterface->addParam(CreateIntParam( "Blue Power", &mSimplicityParams.mBluePower )
-                         .minValue(0)
-                         .maxValue(2)
-                         .oscReceiver("/1/fader2"));
-    mInterface->addParam(CreateIntParam( "Iterations", &mSimplicityParams.mIterations )
-                         .minValue(0)
-                         .maxValue(64));
-    mInterface->addParam(CreateFloatParam( "StrengthFactor", &mSimplicityParams.mStrengthFactor )
-                         .minValue(0.0f)
-                         .maxValue(1.0f));
-    mInterface->addParam(CreateFloatParam( "StrengthMin", &mSimplicityParams.mStrengthMin )
-                         .minValue(0.0f)
-                         .maxValue(20.0f));
-    mInterface->addParam(CreateFloatParam( "StrengthConst", &mSimplicityParams.mStrengthConst )
-                         .minValue(4000.0f)
-                         .maxValue(5000.0f));
-    mInterface->addParam(CreateFloatParam( "AccumPower", &mSimplicityParams.mAccumPower )
-                         .minValue(1.0f)
-                         .maxValue(4.0f));
-    mInterface->addParam(CreateFloatParam( "FieldScale", &mSimplicityParams.mFieldScale )
-                         .minValue(1.0f)
-                         .maxValue(10.0f));
-    mInterface->addParam(CreateFloatParam( "FieldSubtract", &mSimplicityParams.mFieldSubtract )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
-    mInterface->addParam(CreateFloatParam( "TimeScale", &mSimplicityParams.mTimeScale )
-                         .minValue(0.0f)
-                         .maxValue(2.0f));
-    mInterface->addParam(CreateVec3fParam("magnitude", &mSimplicityParams.mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
-    mInterface->addParam(CreateVec3fParam("color_scale", &mSimplicityParams.mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateVec3fParam("PanSpeed", &mSimplicityParams.mPanSpeed, Vec3f(-0.2f,-0.2f,-0.2f), Vec3f(0.2f,0.2f,0.2f)));
-    mInterface->addParam(CreateVec3fParam("UVOffset", &mSimplicityParams.mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
-    mInterface->addParam(CreateFloatParam( "UVScale", mSimplicityParams.mUVScale.ptr() )
-                         .minValue(0.01f)
-                         .maxValue(4.0f));
-    
-    // SHADER_NOISE
-    mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("Noise");
-    mInterface->addParam(CreateFloatParam( "noise/speed", &mNoiseParams.mDisplacementSpeed )
-                         .maxValue(3.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateVec3fParam("noise/noise", &mNoiseParams.mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,5.0f))
-                         .oscReceiver(mName));
-    mInterface->addParam(CreateFloatParam( "levels", &mNoiseParams.mLevels )
-                         .maxValue(128.0f)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "brightness", &mNoiseParams.mBrightness )
-                         .oscReceiver(getName()));
-    //.midiInput(0,2,16));
-    
-    mInterface->addParam(CreateFloatParam( "edgeThickness", &mNoiseParams.mEdgeThickness )
-                         .maxValue(1.0f)
-                         .oscReceiver(getName()));
-
-    
     // audio input
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
@@ -277,38 +106,15 @@ void TextureShaders::update(double dt)
 {
     Scene::update(dt);
     
+    mTimeController.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
-    mElapsedTime += dt;
-    
-    switch (mShaderType)
+    for( FragShader* shader : mShaders )
     {
-        case SHADER_KALI:
-            mKaliParams.mRotation += mKaliParams.rotspeed * dt;
-            mKaliParams.mColorOffset += mKaliParams.colspeed * dt;
-        break;
-        
-        case SHADER_SIMPLICITY:
-        mSimplicityParams.mPanPos = mSimplicityParams.mPanPos() + (dt * mSimplicityParams.mPanSpeed);
-        break;
-            
-        default:
-            break;
-    }
-    
-    if (mDrawOnSphere)
-    {
-        gl::pushMatrices();
-        mShaderFbo.bindFramebuffer();
-        gl::setMatricesWindow( mShaderFbo.getSize(), false );
-        gl::setViewport( mShaderFbo.getBounds() );
-        gl::enableDepthWrite();
-        shaderPreDraw();
-        Utils::drawTexturedRect( mApp->getViewportBounds() );
-        shaderPostDraw();
-        mShaderFbo.unbindFramebuffer();
-        mShaderFbo.getTexture().setWrap( GL_REPEAT, GL_REPEAT );
-        gl::popMatrices();
+        if (shader)
+        {
+            shader->update(mTimeController.getDelta());
+        }
     }
 }
 
@@ -323,102 +129,35 @@ void TextureShaders::draw()
 
 void TextureShaders::shaderPreDraw()
 {
-    mColorMapTexture[mColorMapIndex].bind(0);
-//    if( mAudioInputHandler.hasTexture() )
-//    {
-//        mAudioInputHandler.getFbo().bindTexture(1);
-//    }
+    mColorMaps[mColorMapIndex].second.bind(0);
+    if( mAudioInputHandler.hasTexture() )
+    {
+        mAudioInputHandler.getFbo().bindTexture(1);
+    }
     
-    gl::GlslProg shader = mShaders[mShaderType];
+    gl::GlslProg shader = mShaders[mShaderType]->getShader();
     shader.bind();
     
     Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
     shader.uniform( "iResolution", resolution );
-    shader.uniform( "iGlobalTime", (float)mElapsedTime );
+    shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
     shader.uniform( "iColor1", mColor1);
     shader.uniform( "iColor2", mColor2);
     
-    switch (mShaderType) {
-        case SHADER_KALI:
-        {
-            Vec2f fold = mKaliParams.fold;
-            if (mKaliParams.mAudioFold)
-            {
-                fold.x *= mAudioInputHandler.getAverageVolumeMidFreq() * 5.0f;
-                fold.y *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
-            }
-            
-            Vec2f translate = mKaliParams.translate;
-            if (mKaliParams.mAudioFold)
-            {
-                translate.x *= mAudioInputHandler.getAverageVolumeMidFreq() * 5.0f;
-                translate.y *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
-            }
-            
-            float rotationOffset = mKaliParams.mRotationOffset;
-            if (mKaliParams.mAudioRot)
-            {
-                rotationOffset *= mAudioInputHandler.getAverageVolumeHighFreq() * 5.0f;
-            }
-            
-            shader.uniform( "iChannel0", 0 );
-            shader.uniform( "iterations", mKaliParams.iterations );
-            shader.uniform( "scale", mKaliParams.scale );
-            shader.uniform( "fold", fold );
-            shader.uniform( "translate", translate );
-            shader.uniform( "zoom", mKaliParams.zoom );
-            shader.uniform( "brightness", mKaliParams.brightness );
-            shader.uniform( "saturation", mKaliParams.saturation );
-            shader.uniform( "texturescale", mKaliParams.texturescale );
-            shader.uniform( "rotation", mKaliParams.mRotation + rotationOffset );
-            shader.uniform( "coloroffset", mKaliParams.mColorOffset );
-            shader.uniform( "antialias", mKaliParams.antialias );
-        }
-            break;
-            
-        case SHADER_NOISE:
-            shader.uniform( "theta", (float)(mElapsedTime * mNoiseParams.mDisplacementSpeed) );
-            shader.uniform( "scale", mNoiseParams.mNoiseScale );
-            shader.uniform( "colorScale", mColor1 );
-            shader.uniform( "alpha", mNoiseParams.mBrightness );
-            shader.uniform( "levels", mNoiseParams.mLevels );
-            shader.uniform( "edgeThickness", mNoiseParams.mEdgeThickness );
-            break;
-            
-        case SHADER_SIMPLICITY:
-            shader.uniform( "colorScale", mSimplicityParams.mColorScale );
-            shader.uniform( "rPower", mSimplicityParams.mRedPower );
-            shader.uniform( "gPower", mSimplicityParams.mGreenPower );
-            shader.uniform( "bPower", mSimplicityParams.mBluePower );
-            shader.uniform( "strengthFactor", mSimplicityParams.mStrengthFactor );
-            shader.uniform( "strengthMin", mSimplicityParams.mStrengthMin );
-            shader.uniform( "strengthConst", mSimplicityParams.mStrengthConst );
-            shader.uniform( "iterations", mSimplicityParams.mIterations );
-            shader.uniform( "accumPower", mSimplicityParams.mAccumPower );
-            shader.uniform( "magnitude", mSimplicityParams.mMagnitude );
-            shader.uniform( "fieldScale", mSimplicityParams.mFieldScale );
-            shader.uniform( "fieldSubtract", mSimplicityParams.mFieldSubtract );
-            shader.uniform( "timeScale", mSimplicityParams.mTimeScale );
-            shader.uniform( "panPos", mSimplicityParams.mPanPos() );
-            shader.uniform( "uvOffset", mSimplicityParams.mUVOffset );
-            shader.uniform( "uvScale", mSimplicityParams.mUVScale );
-            break;
-            
-        default:
-            break;
-    }
+    mShaders[mShaderType]->setCustomParams( mApp->getAudioInputHandler() );
 }
 
 void TextureShaders::shaderPostDraw()
 {
-    mShaders[mShaderType].unbind();
+    gl::GlslProg shader = mShaders[mShaderType]->getShader();
+    shader.unbind();
     
-//    if( mAudioInputHandler.hasTexture() )
-//    {
-//        mAudioInputHandler.getFbo().unbindTexture();
-//    }
-    mColorMapTexture[mColorMapIndex].unbind();
+    if( mApp->getAudioInputHandler().hasTexture() )
+    {
+        mApp->getAudioInputHandler().getFbo().unbindTexture();
+    }
+    mColorMaps[mColorMapIndex].second.unbind();
 }
 
 void TextureShaders::drawScene()
@@ -431,52 +170,241 @@ void TextureShaders::drawScene()
     gl::pushMatrices();
     gl::setMatricesWindow( mApp->getViewportSize() );
     
-    if (mDrawOnSphere)
-    {
-        gl::enableAlphaBlending();
-        //gl::enable( GL_TEXTURE_2D );
-        gl::enableDepthRead();
-        gl::enableDepthWrite();
-        gl::setMatrices( getCamera() );
-        gl::setViewport( mApp->getViewportBounds() );
-        gl::color( ColorA::white() );
-        mShaderFbo.bindTexture();
-        
-        glEnable( GL_POLYGON_SMOOTH );
-        //glEnable( GL_LIGHTING );
-        //glEnable( GL_LIGHT0 );
-        
-        //GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        //glLightfv( GL_LIGHT0, GL_POSITION, light_position );
-        
-        gl::drawSphere(Vec3f::zero(), 640.0f, 64);
-        //gl::drawSolidRect(mApp->getViewportBounds());
-        
-        mShaderFbo.unbindTexture();
-        
-        //glDisable( GL_LIGHT0 );
-        //glDisable( GL_LIGHTING );
-    }
-    else
-    {
-        shaderPreDraw();
-        Utils::drawTexturedRect( mApp->getViewportBounds() );
-        shaderPostDraw();
-    }
+    shaderPreDraw();
+    Utils::drawTexturedRect( mApp->getViewportBounds() );
+    shaderPostDraw();
     
     gl::popMatrices();
 }
 
-void TextureShaders::drawDebug()
+//void TextureShaders::drawDebug()
+//{
+//    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
+//    
+//    gl::enable( GL_TEXTURE_2D );
+//    gl::setMatricesWindow( mApp->getWindowSize() );
+//    
+//    const Vec2f size(128,72);
+//    Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );
+//    gl::draw( mShaderFbo.getTexture(), mShaderFbo.getBounds(), preview );
+//    
+//    gl::disable( GL_TEXTURE_2D );
+//}
+
+#pragma mark - KIFS
+
+TextureShaders::KifsShader::KifsShader()
+: FragShader("kifs", "kifs_frag.glsl")
 {
-    //mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    iterations=20;
+    scale=1.35f;
+    fold= Vec2f(0.5f,0.5f);
+    translate= Vec2f(1.5f,1.5f);
+    zoom=0.17f;
+    brightness=7.f;
+    saturation=0.2f;
+    texturescale=0.15f;
+    rotspeed=0.005f;
+    colspeed=0.05f;
+    antialias=2.f;
+    mRotationOffset = 0.0f;
+    mRotation = 0.0f;
+    mColorOffset = 0.0f;
+    mAudioFold = false;
+    mAudioTranslate = false;
+    mAudioRot = false;
+}
+
+void TextureShaders::KifsShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    gl::enable( GL_TEXTURE_2D );
-    gl::setMatricesWindow( mApp->getWindowSize() );
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateIntParam( "kali/iterations", &iterations )
+                         .maxValue(64)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateVec2fParam("kali/fold", &fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
+                         .oscReceiver(mName));
+    interface->addParam(CreateVec2fParam("kali/translate", &translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
+                         .oscReceiver(mName));
+    interface->addParam(CreateFloatParam( "kali/scale", &scale )
+                         .maxValue(3.0f)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "kali/zoom", &zoom )
+                         .maxValue(1.0f)
+                         .oscReceiver(oscName));
+    //.midiInput(0, 2, 19));
+    interface->addParam(CreateFloatParam( "kali/brightness", &brightness )
+                         .maxValue(20.0f)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "kali/saturation", &saturation )
+                         .maxValue(2.0f)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "kali/texturescale", &texturescale )
+                         .maxValue(0.2f)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "kali/rotspeed", &rotspeed )
+                         .maxValue(1.0f)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "kali/rotoffset", &mRotationOffset )
+                         .maxValue(5.0f)
+                         .oscReceiver(oscName));
+    //.midiInput(0, 2, 20));
+    interface->addParam(CreateFloatParam( "kali/colspeed", &colspeed )
+                         .maxValue(1.0f)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam( "kali/antialias", &antialias )
+                         .maxValue(3.0f)
+                         .oscReceiver(oscName));
     
-    const Vec2f size(128,72);
-    Rectf preview( 100.0f, size.y - 200.0f, 180.0f, size.y - 120.0f );
-    gl::draw( mShaderFbo.getTexture(), mShaderFbo.getBounds(), preview );
+    interface->addParam(CreateBoolParam("kali/audiofold", &mAudioFold)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateBoolParam("kali/audiotrans", &mAudioTranslate)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateBoolParam("kali/audiorot", &mAudioRot)
+                         .oscReceiver(oscName));
+}
+
+void TextureShaders::KifsShader::update(double dt)
+{
+    mRotation += rotspeed * dt;
+    mColorOffset += colspeed * dt;
+}
+
+void TextureShaders::KifsShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    Vec2f fold = fold;
+    if (mAudioFold)
+    {
+        fold.x *= audioInputHandler.getAverageVolumeMidFreq() * 5.0f;
+        fold.y *= audioInputHandler.getAverageVolumeLowFreq() * 5.0f;
+    }
     
-    gl::disable( GL_TEXTURE_2D );
+    Vec2f translate = translate;
+    if (mAudioFold)
+    {
+        translate.x *= audioInputHandler.getAverageVolumeMidFreq() * 5.0f;
+        translate.y *= audioInputHandler.getAverageVolumeLowFreq() * 5.0f;
+    }
+    
+    float rotationOffset = mRotationOffset;
+    if (mAudioRot)
+    {
+        rotationOffset *= audioInputHandler.getAverageVolumeHighFreq() * 5.0f;
+    }
+    
+    mShader.uniform( "iChannel0", 0 );
+    mShader.uniform( "iterations", iterations );
+    mShader.uniform( "scale", scale );
+    mShader.uniform( "fold", fold );
+    mShader.uniform( "translate", translate );
+    mShader.uniform( "zoom", zoom );
+    mShader.uniform( "brightness", brightness );
+    mShader.uniform( "saturation", saturation );
+    mShader.uniform( "texturescale", texturescale );
+    mShader.uniform( "rotation", mRotation + rotationOffset );
+    mShader.uniform( "coloroffset", mColorOffset );
+    mShader.uniform( "antialias", antialias );
+}
+
+#pragma mark - Simplicity
+
+TextureShaders::SimplicityShader::SimplicityShader()
+: FragShader("simplicity", "simplicity_frag.glsl")
+{
+    mRedPower = 2;
+    mGreenPower = 1;
+    mBluePower = 0;
+    mColorScale = Vec3f(1.8f, 1.4f, 1.0f);
+    mStrengthFactor = 0.03f;
+    mStrengthMin = 7.0f;
+    mStrengthConst = 4373.11f;
+    mIterations = 32;
+    mAccumPower = 2.3f;
+    mMagnitude = Vec3f(-0.5f, -0.4f, -1.5f);
+    mFieldScale = 5.0f;
+    mFieldSubtract = 0.7f;
+    mTimeScale = 1.0f;
+    mPanSpeed = Vec3f(0.0f, 0.0f, 0.01f);
+    mPanPos = Vec3f(0.0625f, 0.0833f, 0.0078f);
+    mUVOffset = Vec3f(1.0f, -1.3f, 0.0f);
+    mUVScale = 0.25f;
+    mAudioHighlight = false;
+    mAudioShift = false;
+}
+
+void TextureShaders::SimplicityShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    interface->addParam(CreateIntParam( "Red Power", &mRedPower )
+                         .minValue(0)
+                         .maxValue(2));
+    interface->addParam(CreateIntParam( "Green Power", &mGreenPower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "Blue Power", &mBluePower )
+                         .minValue(0)
+                         .maxValue(2)
+                         .oscReceiver(oscName));
+    interface->addParam(CreateIntParam( "Iterations", &mIterations )
+                         .minValue(0)
+                         .maxValue(64));
+    interface->addParam(CreateFloatParam( "StrengthFactor", &mStrengthFactor )
+                         .minValue(0.0f)
+                         .maxValue(1.0f));
+    interface->addParam(CreateFloatParam( "StrengthMin", &mStrengthMin )
+                         .minValue(0.0f)
+                         .maxValue(20.0f));
+    interface->addParam(CreateFloatParam( "StrengthConst", &mStrengthConst )
+                         .minValue(4000.0f)
+                         .maxValue(5000.0f));
+    interface->addParam(CreateFloatParam( "AccumPower", &mAccumPower )
+                         .minValue(1.0f)
+                         .maxValue(4.0f));
+    interface->addParam(CreateFloatParam( "FieldScale", &mFieldScale )
+                         .minValue(1.0f)
+                         .maxValue(10.0f));
+    interface->addParam(CreateFloatParam( "FieldSubtract", &mFieldSubtract )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    interface->addParam(CreateFloatParam( "TimeScale", &mTimeScale )
+                         .minValue(0.0f)
+                         .maxValue(2.0f));
+    interface->addParam(CreateVec3fParam("magnitude", &mMagnitude, Vec3f(-1.0f,-1.0f,-2.0f), Vec3f::zero()));
+    interface->addParam(CreateVec3fParam("color_scale", &mColorScale, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    interface->addParam(CreateVec3fParam("PanSpeed", &mPanSpeed, Vec3f(-0.2f,-0.2f,-0.2f), Vec3f(0.2f,0.2f,0.2f)));
+    interface->addParam(CreateVec3fParam("UVOffset", &mUVOffset, Vec3f(-4.0f,-4.0f,-4.0f), Vec3f(4.0f,4.0f,4.0f)));
+    interface->addParam(CreateFloatParam( "UVScale", mUVScale.ptr() )
+                         .minValue(0.01f)
+                         .maxValue(4.0f));
+}
+
+void TextureShaders::SimplicityShader::update(double dt)
+{
+    mPanPos = mPanPos() + (dt * mPanSpeed);
+}
+
+void TextureShaders::SimplicityShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "colorScale", mColorScale );
+    mShader.uniform( "rPower", mRedPower );
+    mShader.uniform( "gPower", mGreenPower );
+    mShader.uniform( "bPower", mBluePower );
+    mShader.uniform( "strengthFactor", mStrengthFactor );
+    mShader.uniform( "strengthMin", mStrengthMin );
+    mShader.uniform( "strengthConst", mStrengthConst );
+    mShader.uniform( "iterations", mIterations );
+    mShader.uniform( "accumPower", mAccumPower );
+    mShader.uniform( "magnitude", mMagnitude );
+    mShader.uniform( "fieldScale", mFieldScale );
+    mShader.uniform( "fieldSubtract", mFieldSubtract );
+    mShader.uniform( "timeScale", mTimeScale );
+    mShader.uniform( "panPos", mPanPos() );
+    mShader.uniform( "uvOffset", mUVOffset );
+    mShader.uniform( "uvScale", mUVScale );
 }

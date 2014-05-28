@@ -50,8 +50,6 @@ void ObjectShaders::setup()
     mColorMapIndex = 0;
     
     mNoiseTexture = gl::Texture( loadImage( loadResource( "gaussian_noise_256_3c.png" ) ) );
-    
-    mShaderType = 0;
 
 //    mDrawOnSphere = false;
     
