@@ -1,7 +1,5 @@
 #version 110
 
-uniform float counter;
-
 uniform sampler2D texDiffuse;
 uniform sampler2D texNormal;
 uniform sampler2D texMask;
@@ -19,10 +17,10 @@ void main()
 	
 	
 	// use green channel for land elevation data
-	float landValue			= texSample.g;
+	float landValue			= 1.0;//texSample.g;
 
 	// use blue channel for ocean elevation data
-	float oceanValue		= texSample.b;
+	float oceanValue		= 0.0;//texSample.b;
 
 	
 	vec3 ppNormal			= normalize( normal + normalSample );
@@ -33,7 +31,7 @@ void main()
 	
 	
 	// use red channel for nighttime city lights
-	float electrictyValue	= ( texSample.r ) * ( 1.0 - ppDiffuse );
+	//float electrictyValue	= ( texSample.r ) * ( 1.0 - ppDiffuse );
 
 	vec3 landFinal			= diffuseSample * landValue + ppSpecularBright * landValue;
 	vec3 oceanFinal			= diffuseSample * ppSpecular * oceanValue + oceanValue * ppSpecularBright + oceanValue * ppFresnel * 15.0;

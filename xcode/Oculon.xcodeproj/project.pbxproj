@@ -427,6 +427,9 @@
 		7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7918839A9800512843 /* frag_project3.glsl */; };
 		7CAD1B8318839A9800512843 /* frag_setbnd.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */; };
 		7CAE28BA18B8A2CD0069AF35 /* LinesRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */; };
+		7CAEE429193654F9004294C1 /* moon_hypsometric.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CAEE426193654F9004294C1 /* moon_hypsometric.jpg */; };
+		7CAEE42A193654F9004294C1 /* moon_normalmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CAEE427193654F9004294C1 /* moon_normalmap.jpg */; };
+		7CAEE42C19365577004294C1 /* moon_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CAEE42B19365577004294C1 /* moon_diffuse.jpg */; };
 		7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */; };
 		7CC3C026183ED0330082C322 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C024183ED0330082C322 /* Dust.cpp */; };
 		7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */; };
@@ -1111,6 +1114,9 @@
 		7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag_setbnd.glsl; sourceTree = "<group>"; };
 		7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinesRenderer.cpp; sourceTree = "<group>"; };
 		7CAE28B918B8A2CD0069AF35 /* LinesRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinesRenderer.h; sourceTree = "<group>"; };
+		7CAEE426193654F9004294C1 /* moon_hypsometric.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_hypsometric.jpg; sourceTree = "<group>"; };
+		7CAEE427193654F9004294C1 /* moon_normalmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_normalmap.jpg; sourceTree = "<group>"; };
+		7CAEE42B19365577004294C1 /* moon_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_diffuse.jpg; sourceTree = "<group>"; };
 		7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EaseCurveSelector.cpp; sourceTree = "<group>"; };
 		7CC3AF1018A37C0500E6CA78 /* EaseCurveSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EaseCurveSelector.h; sourceTree = "<group>"; };
 		7CC3C024183ED0330082C322 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../src/dust/Dust.cpp; sourceTree = "<group>"; };
@@ -2032,6 +2038,9 @@
 		7C79C89117650F8F00E71F9D /* tectonic */ = {
 			isa = PBXGroup;
 			children = (
+				7CAEE42B19365577004294C1 /* moon_diffuse.jpg */,
+				7CAEE426193654F9004294C1 /* moon_hypsometric.jpg */,
+				7CAEE427193654F9004294C1 /* moon_normalmap.jpg */,
 				7C79C89217650F8F00E71F9D /* earthDiffuse.png */,
 				7C79C89317650F8F00E71F9D /* earthGray.png */,
 				7C79C89417650F8F00E71F9D /* earthMask.png */,
@@ -3104,9 +3113,11 @@
 				7C79CB2C1765288500E71F9D /* passThruNormals.vert in Resources */,
 				7C8DA8671921B43200FCD9A2 /* hexagons_frag.glsl in Resources */,
 				7C8DA8651921AB9300FCD9A2 /* test_frag.glsl in Resources */,
+				7CAEE42A193654F9004294C1 /* moon_normalmap.jpg in Resources */,
 				7C06A8EB1853D4ED00D1C8A3 /* fireball_frag.glsl in Resources */,
 				7C79CB2D1765288500E71F9D /* shader.fsh in Resources */,
 				7C79C91F17650F8F00E71F9D /* blur2_frag.glsl in Resources */,
+				7CAEE429193654F9004294C1 /* moon_hypsometric.jpg in Resources */,
 				7C79C92017650F8F00E71F9D /* blur2_vert.glsl in Resources */,
 				7CEB1AE019325A360044A346 /* deformation_frag.glsl in Resources */,
 				7C79C85817650F1700E71F9D /* Oculon.icns in Resources */,
@@ -3247,6 +3258,7 @@
 				7CF6AD5818AB55A000FA795A /* parsec_simulation_vert.glsl in Resources */,
 				7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */,
 				7C79C95817650F8F00E71F9D /* terrain_shader_frag.glsl in Resources */,
+				7CAEE42C19365577004294C1 /* moon_diffuse.jpg in Resources */,
 				7C06A8EF1853D4ED00D1C8A3 /* hypnorings_frag.glsl in Resources */,
 				7CEB1AE219325BAF0044A346 /* terminaltext_frag.glsl in Resources */,
 				7C97D24318B00F0500BB63A1 /* graviton_formation_frag.glsl in Resources */,
