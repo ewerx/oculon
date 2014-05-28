@@ -53,6 +53,7 @@ void TextureShaders::setupShaders()
 {
     mShaderType = 0;
     
+    mShaders.push_back( new BezierShader() );
     mShaders.push_back( new SimplicityShader() );
     mShaders.push_back( new KifsShader() );
 }
@@ -145,7 +146,7 @@ void TextureShaders::shaderPreDraw()
     shader.uniform( "iColor1", mColor1);
     shader.uniform( "iColor2", mColor2);
     
-    mShaders[mShaderType]->setCustomParams( mApp->getAudioInputHandler() );
+    mShaders[mShaderType]->setCustomParams( mAudioInputHandler );
 }
 
 void TextureShaders::shaderPostDraw()
@@ -153,9 +154,9 @@ void TextureShaders::shaderPostDraw()
     gl::GlslProg shader = mShaders[mShaderType]->getShader();
     shader.unbind();
     
-    if( mApp->getAudioInputHandler().hasTexture() )
+    if( mAudioInputHandler.hasTexture() )
     {
-        mApp->getAudioInputHandler().getFbo().unbindTexture();
+        mAudioInputHandler.getFbo().unbindTexture();
     }
     mColorMaps[mColorMapIndex].second.unbind();
 }
@@ -407,4 +408,65 @@ void TextureShaders::SimplicityShader::setCustomParams( AudioInputHandler& audio
     mShader.uniform( "panPos", mPanPos() );
     mShader.uniform( "uvOffset", mUVOffset );
     mShader.uniform( "uvScale", mUVScale );
+}
+
+#pragma mark - Simplicity
+
+TextureShaders::BezierShader::BezierShader()
+: FragShader("bezier", "bezier_frag.glsl")
+{
+    mSamples = 200;
+    mThickness = 0.1f;
+    mBlur = 20.0f;
+    mFrequency = 200.0f;
+    mPoint1Range = 0.5f;
+    mPoint2Range = 0.5f;
+    mBlurResponseBand = AudioInputHandler::BAND_NONE;
+}
+
+void TextureShaders::BezierShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    
+    interface->addParam(CreateIntParam( "samples", &mSamples )
+                        .minValue(0)
+                        .maxValue(512));
+    interface->addParam(CreateFloatParam( "thickness", &mThickness )
+                        .minValue(0.01f)
+                        .maxValue(5.0f));
+    interface->addParam(CreateFloatParam( "blur", &mBlur )
+                        .minValue(0.01f)
+                        .maxValue(100.0f));
+    interface->addEnum(CreateEnumParam("blur-response", &mBlurResponseBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam( "frequency", &mFrequency )
+                        .minValue(1.0f)
+                        .maxValue(2000.0f));
+    interface->addParam(CreateFloatParam( "point1-range", &mPoint1Range )
+                        .minValue(0.01f)
+                        .maxValue(5.0f));
+    interface->addParam(CreateFloatParam( "point2-range", &mPoint2Range )
+                        .minValue(0.01f)
+                        .maxValue(5.0f));
+}
+
+void TextureShaders::BezierShader::update(double dt)
+{
+}
+
+void TextureShaders::BezierShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    float blur = (mBlur * 0.5f) + mBlur * audioInputHandler.getAverageVolumeByBand(mBlurResponseBand);
+    mShader.uniform( "iSamples", mSamples );
+    mShader.uniform( "iThickness", mThickness );
+    mShader.uniform( "iBlur", blur );
+    mShader.uniform( "iFrequency", mFrequency );
+    mShader.uniform( "iPoint1Range", mPoint1Range );
+    mShader.uniform( "iPoint2Range", mPoint2Range );
 }

@@ -132,5 +132,25 @@ private:
         bool                mAudioHighlight;
         bool                mAudioShift;
     };
+    
+    class BezierShader : public FragShader
+    {
+    public:
+        BezierShader();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        float   mThickness;
+        float   mBlur;
+        float   mFrequency;
+        int     mSamples;
+        float   mPoint1Range;
+        float   mPoint2Range;
+        
+        int     mBlurResponseBand;
+    };
 };
 
