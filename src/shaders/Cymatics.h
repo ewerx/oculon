@@ -43,6 +43,7 @@ private:
     int                 mPoles;
     float               mDistance;
     float               mShift;
+    float               mBlur;
     int                 mDistanceResponseBand;
     int                 mPolesResponseBand;
     

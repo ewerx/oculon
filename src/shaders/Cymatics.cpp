@@ -33,6 +33,7 @@ void Cymatics::setup()
     mPoles = 50;
     mDistance = 0.25f;
     mShift = 0.0f;
+    mBlur = 1.0f;
     
     mPolesResponseBand = AudioInputHandler::BAND_MID;
     mDistanceResponseBand = AudioInputHandler::BAND_LOW;
@@ -93,6 +94,10 @@ void Cymatics::setupInterface()
                          .oscReceiver(getName())
                          .midiInput(0, 1, 34));
     
+    mInterface->addParam(CreateFloatParam("blur", &mBlur)
+                         .maxValue(10.0f)
+                         .oscReceiver(getName()));
+    
     mAudioInputHandler.setupInterface(mInterface, mName, 1, 35);
 }
 
@@ -138,6 +143,7 @@ void Cymatics::shaderPreDraw()
     mShader.uniform( "iColor1", Color(mColor1) );
     mShader.uniform( "iColor2", Color(mColor2) );
     mShader.uniform( "iShift", mShift );
+    mShader.uniform( "iBlur", mBlur );
     
     int poles = mPoles;
     if (mPolesResponseBand != AudioInputHandler::BAND_NONE)
@@ -149,7 +155,7 @@ void Cymatics::shaderPreDraw()
     float distance = mDistance;
     if (mDistanceResponseBand != AudioInputHandler::BAND_NONE)
     {
-        distance = mDistance * mAudioInputHandler.getAverageVolumeByBand(mDistanceResponseBand);
+        distance = mDistance * (0.5f + mAudioInputHandler.getAverageVolumeByBand(mDistanceResponseBand));
     }
     mShader.uniform( "iDistance", distance );
 }

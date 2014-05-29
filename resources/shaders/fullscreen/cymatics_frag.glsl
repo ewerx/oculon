@@ -1,27 +1,26 @@
-uniform vec2 iResolution;     
-uniform float     iGlobalTime;
-uniform vec4      iColor1;
-uniform vec4      iColor2;
-uniform int iPoles;
-uniform float iDistance;
-uniform float iShift;
+uniform vec2    iResolution;
+uniform float   iGlobalTime;
+uniform vec4    iColor1;
+uniform vec4    iColor2;
+uniform int     iPoles;
+uniform float   iDistance;
+uniform float   iShift;
+uniform float   iBlur;
 
 //
 float ripple(float dist, float shift)
 {
-	return cos(64.0 * dist + shift) / (1.0 + 1.0 * dist);
+	return cos(64.0 * dist + shift) / (0.1 + iBlur * dist);
 }
 
 void main(void)
 {
 	float larger = max(iResolution.x, iResolution.y);
 	vec2 uv = (gl_FragCoord.xy - .5*iResolution.xy) / larger;
-	vec2 uvflip = vec2(uv.x, -uv.y);
 	
 	float lum = .5;
 	
 	float twopi = 2.0*3.141592654;
-	float fcount = float(iPoles);
 	vec2 rot = vec2(cos(twopi*iGlobalTime*0.01), sin(twopi*iGlobalTime*0.01));
 	vec2 tor = vec2(-sin(twopi*iGlobalTime*0.01), -cos(twopi*iGlobalTime*0.01));
     vec2 values = vec2( iDistance, iDistance );
@@ -73,6 +72,7 @@ void main(void)
      .5+.5*cos(2872.0*iGlobalTime+iResolution.y*8721.0), 1.0);*/
 }
 
+// https://www.shadertoy.com/view/4dSGRR
 // colourised variation on "SoundSelf: Cymati.." by Cellulose, https://www.shadertoy.com/view/4dfGDs
 
 //#define POLES 250.0
