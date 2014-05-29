@@ -42,6 +42,8 @@ void Graviton::setup()
     Scene::setup();
     
     mReset = false;
+    mDrawMoon = false;
+    mGravitySync = false;
     
     // params
 //    mTimeStep = 0.01f;
@@ -236,6 +238,8 @@ void Graviton::setupInterface()
                          .maxValue(10.0f)
                          .oscReceiver(getName())
                          .midiInput(0, 1, 25));
+    mInterface->addParam(CreateBoolParam( "sync-gravity", &mGravitySync )
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "gravity2", &mGravity2 )
                          .minValue(0.0f)
                          .maxValue(10.0f)
@@ -274,6 +278,9 @@ void Graviton::setupInterface()
                          .minValue(0.0f)
                          .maxValue(120.0f)
                          .midiInput(0, 1, 21));
+    
+    mInterface->addParam(CreateBoolParam( "moon", &mDrawMoon )
+                         .oscReceiver(getName()));
 }
 
 void Graviton::reset()
@@ -531,7 +538,7 @@ void Graviton::update(double dt)
     mNodeController.update(dt, mAudioInputHandler);
     
     float gravity = mGravity;
-    float gravity2 = mGravity2;
+    float gravity2 = mGravitySync ? mGravity : mGravity2;
     if (mAudioGravity)
     {
         if (mNodeController.getNodes().size() > 0)
@@ -672,6 +679,36 @@ void Graviton::draw()
     else
     {
         mParticleController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
+        
+        
+        // draw moon
+//        glPushAttrib( GL_ALL_ATTRIB_BITS );
+//        
+//        glShadeModel( GL_SMOOTH );
+//        gl::enable( GL_POLYGON_SMOOTH );
+//        glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+//        gl::enable( GL_NORMALIZE );
+//        gl::enableAlphaBlending();
+//        gl::enableDepthRead();
+//        gl::enableDepthWrite();
+//        
+//        glDepthFunc( GL_LESS );
+//        glEnable( GL_DEPTH_TEST );
+//        
+//        glCullFace( GL_BACK );
+//        glEnable( GL_CULL_FACE );
+        
+        if (mDrawMoon)
+        {
+        gl::pushMatrices();
+        // Set up window
+        gl::setViewport( mApp->getViewportBounds() );
+        gl::setMatrices( getCamera() );
+        mMoon.draw();
+        gl::popMatrices();
+//        glPopAttrib();
+        }
+        
     }
     gl::popMatrices();
 }

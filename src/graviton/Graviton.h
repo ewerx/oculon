@@ -23,6 +23,7 @@
 #include "ParticleController.h"
 #include "NodeController.h"
 #include "TimeController.h"
+#include "PlanetObject.h"
 
 
 /// Graviton
@@ -117,5 +118,10 @@ enm,
     CameraController    mCameraController;
     
     TimeController      mTimeController;
+    
+    PlanetObject        mMoon;
+    bool                mDrawMoon;
+    
+    bool                mGravitySync;
 };
 
