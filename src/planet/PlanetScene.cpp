@@ -37,7 +37,9 @@ void PlanetScene::setup()
     
 //    mDynamicTexture.setup(mMeshResolution.x, mMeshResolution.y);
     
-    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
+    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_GRAVITON);
+    
+    mBackgroundAlpha = 0.0f;
 }
 
 // ----------------------------------------------------------------
@@ -77,7 +79,7 @@ const Camera& PlanetScene::getCamera()
 
 void PlanetScene::draw()
 {
-    glPushAttrib( GL_ENABLE_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT | GL_VIEWPORT_BIT );
+    glPushAttrib( GL_ALL_ATTRIB_BITS );
     
     glShadeModel( GL_SMOOTH );
 	gl::enable( GL_POLYGON_SMOOTH );

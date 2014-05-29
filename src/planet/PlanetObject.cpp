@@ -21,9 +21,13 @@ PlanetObject::PlanetObject()
 {
     mShader = Utils::loadFragShader("earth_frag.glsl");
     
-    mTexDiffuse = gl::Texture( loadImage( loadResource( "moon_diffuse.jpg" ) ) );
-    mTexMask = gl::Texture( loadImage( loadResource( "moon_hypsometric.jpg" ) ) );
-    mTexNormal = gl::Texture( loadImage( loadResource( "moon_normalmap.jpg" ) ) );
+    gl::Texture::Format format;
+	//format.setColorInternalFormat( GL_RGBA32F_ARB );
+	format.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    mTexDiffuse = gl::Texture( loadImage( loadResource( "moon_diffuse.jpg" ) ), format );
+    mTexMask = gl::Texture( loadImage( loadResource( "moon_hypsometric.jpg" ) ), format );
+    mTexNormal = gl::Texture( loadImage( loadResource( "moon_normalmap.jpg" ) ), format );
     
     mLightDir		= Vec3f( 0.025f, 0.25f, 1.0f );
 	mLightDir.normalize();
@@ -42,7 +46,7 @@ void PlanetObject::draw()
     gl::enableAlphaBlending();
 	gl::enableDepthRead( true );
 	gl::enableDepthWrite( true );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	glEnable( GL_TEXTURE_2D );
 	glDisable( GL_TEXTURE_RECTANGLE_ARB );
