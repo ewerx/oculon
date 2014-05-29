@@ -12,6 +12,7 @@
 #include "cinder/Quaternion.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 CameraController::CameraController()
@@ -40,6 +41,8 @@ void CameraController::setup(OculonApp* app, Scene* parentScene, const unsigned 
     mSpinRate = Vec3f::yAxis()*0.01f;
     //mSpinAxis = Vec3f::xAxis();
     mSpinDistance = 100.0f;
+    mTargetSpinDistance = mSpinDistance;
+    mTransitionTime = 1.0f;
     mSpinUp = Vec3f::yAxis();
 }
 
@@ -68,8 +71,11 @@ void CameraController::setupInterface(Interface *interface, const std::string& s
     interface->gui()->addLabel("spin cam");
 //    interface->addParam(CreateFloatParam("spin_rate", &mSpinRate)
 //                        .maxValue(10.0f));
-    interface->addParam(CreateFloatParam("spin_dist", &mSpinDistance)
-                        .maxValue(2000.f));
+    interface->addParam(CreateFloatParam("spin_dist", &mTargetSpinDistance)
+                        .maxValue(1000.f))->registerCallback(this, &CameraController::onSpinDistanceChanged);
+    interface->addParam(CreateFloatParam("transition", &mTransitionTime)
+                        .minValue(0.0f)
+                        .maxValue(60.0f));
     interface->addParam(CreateVec3fParam("spin_axis", &mSpinRate, Vec3f::zero(), Vec3f::one()*1.f));
     interface->addParam(CreateVec3fParam("spin_up", &mSpinUp, Vec3f::zero(), Vec3f::one()));
     
@@ -89,6 +95,16 @@ bool CameraController::onCameraChanged()
     if (mInterfacePanels[mCamType])
     {
         mInterfacePanels[mCamType]->enabled = true;
+    }
+    
+    return true;
+}
+
+bool CameraController::onSpinDistanceChanged()
+{
+    if (mTargetSpinDistance != mSpinDistance() )
+    {
+        timeline().apply( &mSpinDistance, mTargetSpinDistance, mTransitionTime, EaseOutExpo() );
     }
     
     return true;
@@ -120,7 +136,7 @@ void CameraController::update(double dt)
             mSpinQuat *= Quatf(Vec3f::zAxis(), dt*mSpinRate.z);
             Vec3f pos = Vec3f::one() * mSpinQuat;
             pos.normalize();
-            pos *= mSpinDistance;
+            pos *= mSpinDistance();
             mSpinCam.lookAt(pos, Vec3f::zero(), mSpinUp);
         }
             break;

@@ -13,6 +13,7 @@
 #include "SpringCam.h"
 #include "StarCam.h"
 #include "cinder/Camera.h"
+#include "cinder/Timeline.h"
 
 class OculonApp;
 class Scene;
@@ -69,6 +70,7 @@ public:
     
 protected:
     bool onCameraChanged();
+    bool onSpinDistanceChanged();
     
 protected:
     OculonApp*                  mApp;
@@ -86,8 +88,11 @@ protected:
     ci::Quatf                   mSpinQuat;
     //float                       mSpinRate;
     ci::Vec3f                   mSpinRate;
+    ci::Vec3f                   mTargetSpinRate;
     ci::Vec3f                   mSpinUp;
-    float                       mSpinDistance;
+    ci::Anim<float>             mSpinDistance;
+    float                       mTargetSpinDistance;
     float                       mSpinTheta;
+    float                       mTransitionTime;
 };
 
