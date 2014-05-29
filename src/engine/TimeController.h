@@ -36,9 +36,11 @@ public:
     double getDelta() const                     { return mDelta; }
     float getTimeScale() const                  { return mTimeScale; }
     bool getTick()                              { return mTick; }
-    void setTimeScale(float scale)              { mTimeScale = scale; }
-    void setTimeScaleMultiplier(float scale)    { mTimeScaleMultiplier = scale; }
+    void setTimeScale(float scale)              { mTimeScale = scale; mTargetTimeScale = scale; }
+    void setTimeScaleMultiplier(float scale)    { mTimeScaleMultiplier = scale; mTargetTimeScaleMultiplier = scale; }
     void setTickDuration(float seconds)         { mTickDuration = seconds; }
+    
+    bool onTargetTimescaleChanged();
     
 public:
     float mMinTimeScale;
@@ -49,8 +51,11 @@ public:
 private:
     double mElapsedSeconds;
     double mDelta;
-    float mTimeScale;
-    float mTimeScaleMultiplier;
+    float mTargetTimeScale;
+    ci::Anim<float> mTimeScale;
+    float mTargetTimeScaleMultiplier;
+    ci::Anim<float> mTimeScaleMultiplier;
+    float mTransitionTime;
     
     // tick
     bool mTick;

@@ -8,6 +8,10 @@
 
 #include "TimeController.h"
 
+using namespace ci;
+using namespace ci::app;
+
+
 #pragma mark - constructor/destructor
 
 TimeController::TimeController()
@@ -15,6 +19,7 @@ TimeController::TimeController()
 , mDelta(0.0f)
 , mTimeScale(0.5f)
 , mTimeScaleMultiplier(1.0f)
+, mTransitionTime(1.0f)
 , mTick(false)
 , mTickTimer(0.0f)
 , mTickDuration(1.0f)
@@ -23,6 +28,8 @@ TimeController::TimeController()
 , mMinTimeScaleMultiplier(1.0f)
 , mMaxTimeScaleMultiplier(50.0f)
 {
+    mTargetTimeScale = mTimeScale();
+    mTargetTimeScaleMultiplier = mTimeScaleMultiplier();
 }
 
 TimeController::~TimeController()
@@ -41,22 +48,39 @@ void TimeController::reset()
 
 void TimeController::setupInterface(Interface *interface, const std::string &name, const int midiChannel, const int midiNote)
 {
-    interface->addParam(CreateFloatParam("timescale", &mTimeScale)
+    interface->addParam(CreateFloatParam("timescale", &mTargetTimeScale)
                         .minValue(mMinTimeScale)
                         .maxValue(mMaxTimeScale)
                         .oscReceiver(name)
-                        .midiInput(0, midiChannel, midiNote));
-    interface->addParam(CreateFloatParam("time_multi", &mTimeScaleMultiplier)
+                        .midiInput(0, midiChannel, midiNote))->registerCallback(this, &TimeController::onTargetTimescaleChanged);
+    interface->addParam(CreateFloatParam("time_multi", &mTargetTimeScaleMultiplier)
                         .minValue(mMinTimeScaleMultiplier)
                         .maxValue(mMaxTimeScaleMultiplier)
-                        .oscReceiver(name));
+                        .oscReceiver(name))->registerCallback(this, &TimeController::onTargetTimescaleChanged);
+    interface->addParam(CreateFloatParam("transition", &mTransitionTime)
+                        .minValue(0.0f)
+                        .maxValue(30.0f));
+}
+
+bool TimeController::onTargetTimescaleChanged()
+{
+    if (mTargetTimeScaleMultiplier != mTimeScaleMultiplier() )
+    {
+        timeline().apply( &mTimeScaleMultiplier, mTargetTimeScaleMultiplier, mTransitionTime, EaseOutExpo() );
+    }
+    else if (mTargetTimeScale != mTimeScale())
+    {
+        timeline().apply( &mTimeScale, mTargetTimeScale, mTransitionTime, EaseOutExpo() );
+    }
+    
+    return true;
 }
 
 #pragma mark - update
 
 void TimeController::update(double dt)
 {
-    mDelta = dt * mTimeScale * mTimeScaleMultiplier;
+    mDelta = dt * mTimeScale() * mTimeScaleMultiplier();
     
     mElapsedSeconds += mDelta;
     
