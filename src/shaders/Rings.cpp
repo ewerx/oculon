@@ -119,7 +119,7 @@ formatNames.push_back(nam);
     RINGS_FORMAT_TUPLE
 #undef  RINGS_FORMAT_ENTRY
     
-    int baseMidi = 48;
+    //int baseMidi = 48;
     
     for (int i = 0; i < NUM_RING_SETS; ++i)
     {

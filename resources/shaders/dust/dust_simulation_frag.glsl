@@ -10,12 +10,11 @@ uniform float dt;
 uniform float decayRate;
 uniform vec3 constraints;
 uniform bool reset;
+uniform bool startAnim;
 uniform float formationStep;
 uniform int motion;
 
 varying vec4 texCoord;
-
-const float eps = 0.001;
 
 void main()
 {
@@ -33,7 +32,7 @@ void main()
     age += dt * decay * decayRate;
     
     // animate to formation
-    if (formationStep < 0.01)
+    if (startAnim)
     {
         startPos = pos;
     }

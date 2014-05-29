@@ -212,6 +212,7 @@ void Dust::update(double dt)
     mSimulationShader.uniform( "dt", simdt );
     mSimulationShader.uniform( "decayRate", decayRate );
     mSimulationShader.uniform( "reset", mReset );
+    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     mSimulationShader.uniform( "motion", mMotion );
     
