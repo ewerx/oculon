@@ -152,5 +152,20 @@ private:
         
         int     mBlurResponseBand;
     };
+    
+    class GravityFieldShader : public FragShader
+    {
+    public:
+        GravityFieldShader();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        int mPoints;
+        int mMode;
+        
+    };
 };
 

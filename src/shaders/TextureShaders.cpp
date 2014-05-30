@@ -56,6 +56,7 @@ void TextureShaders::setupShaders()
     mShaders.push_back( new BezierShader() );
     mShaders.push_back( new SimplicityShader() );
     mShaders.push_back( new KifsShader() );
+    mShaders.push_back( new GravityFieldShader() );
 }
 
 void TextureShaders::reset()
@@ -410,7 +411,7 @@ void TextureShaders::SimplicityShader::setCustomParams( AudioInputHandler& audio
     mShader.uniform( "uvScale", mUVScale );
 }
 
-#pragma mark - Simplicity
+#pragma mark - Bezier
 
 TextureShaders::BezierShader::BezierShader()
 : FragShader("bezier", "bezier_frag.glsl")
@@ -469,4 +470,38 @@ void TextureShaders::BezierShader::setCustomParams( AudioInputHandler& audioInpu
     mShader.uniform( "iFrequency", mFrequency );
     mShader.uniform( "iPoint1Range", mPoint1Range );
     mShader.uniform( "iPoint2Range", mPoint2Range );
+}
+
+#pragma mark - GravityField
+
+TextureShaders::GravityFieldShader::GravityFieldShader()
+: FragShader("gravityfield", "gravityfield_frag.glsl")
+{
+    mPoints = 64;
+    mMode = 0;
+}
+
+void TextureShaders::GravityFieldShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    
+    interface->addParam(CreateIntParam( "points", &mPoints )
+                        .minValue(1)
+                        .maxValue(256));
+    interface->addParam(CreateIntParam( "mode", &mMode )
+                        .minValue(0)
+                        .maxValue(2));
+}
+
+void TextureShaders::GravityFieldShader::update(double dt)
+{
+}
+
+void TextureShaders::GravityFieldShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "iMode", mMode );
+    mShader.uniform( "iPoints", mPoints );
 }
