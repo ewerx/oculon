@@ -122,7 +122,7 @@ void init() {
 			Type = 5;U = 0.; V = 0.; W = 0.; T = 1.;
 			zone = 6.0;
 		}
-		aa = iAngle*90.;
+		aa = iGlobalTime;//iAngle*90.;
 	}
 	float cospin=cos(PI/float(Type)), isinpin=1./sin(PI/float(Type));
 	float scospin=sqrt(2./3.-cospin*cospin), issinpin=1./sqrt(3.-4.*cospin*cospin);
