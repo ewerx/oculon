@@ -505,6 +505,9 @@ BioFractalShader::BioFractalShader()
     mRotAngle = 40.0f;
     mAmplitude = 0.45f;
     mDetail = 0.025f;
+    
+    mRotXBand = mRotYBand = mRotZBand = AudioInputHandler::BAND_NONE;
+    mAmplitudeBand = AudioInputHandler::BAND_NONE;
 }
 
 void BioFractalShader::setupInterface( Interface* interface, const std::string& prefix )
@@ -519,6 +522,21 @@ void BioFractalShader::setupInterface( Interface* interface, const std::string& 
                          .oscReceiver(getName()));
     interface->addParam(CreateVec3fParam("biofractal/rotation", mRotation.ptr(), Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
                          .oscReceiver(mName));
+    interface->addEnum(CreateEnumParam("biofractal/rot-x-band", &mRotXBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addEnum(CreateEnumParam("retain/dialation-band", &mRotYBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addEnum(CreateEnumParam("retain/dialation-band", &mRotZBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
     interface->addParam(CreateVec3fParam("biofractal/julia", mJulia.ptr(), Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
                          .oscReceiver(mName));
     interface->addParam(CreateVec3fParam("biofractal/lightdir", &mLightDir, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
@@ -535,6 +553,11 @@ void BioFractalShader::setupInterface( Interface* interface, const std::string& 
                          .minValue(0.0f)
                          .maxValue(1.0f)
                          .oscReceiver(getName()));
+    interface->addEnum(CreateEnumParam("retain/dialation-band", &mAmplitudeBand)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
     interface->addParam(CreateFloatParam( "biofractal/detail", &mDetail )
                          .minValue(0.0f)
                          .maxValue(0.1f));
@@ -542,12 +565,18 @@ void BioFractalShader::setupInterface( Interface* interface, const std::string& 
 
 void BioFractalShader::setCustomParams(AudioInputHandler &audioInputHandler)
 {
+    Vec3f rotation = mRotation;
+    
+    rotation.x *= (0.25f + audioInputHandler.getAverageVolumeByBand(mRotXBand));
+    rotation.y *= (0.25f + audioInputHandler.getAverageVolumeByBand(mRotYBand));
+    rotation.z *= (0.25f + audioInputHandler.getAverageVolumeByBand(mRotZBand));
+    
     mShader.uniform( "iIterations", mIterations );
     mShader.uniform( "iJulia", mJulia );
-    mShader.uniform( "iRotation", mRotation );
+    mShader.uniform( "iRotation", rotation );
     mShader.uniform( "iScale", mScale );
     mShader.uniform( "iRotAngle", mRotAngle );
-    mShader.uniform( "iAmplitude", mAmplitude );
+    mShader.uniform( "iAmplitude", mAmplitude * (0.25f + audioInputHandler.getAverageVolumeByBand(mAmplitudeBand)) );
     mShader.uniform( "iLightDir", mLightDir );
     mShader.uniform( "iDetail", mDetail );
 }
@@ -565,6 +594,7 @@ void GyroidShader::setupInterface( Interface* interface, const std::string& pref
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(mName);
+    
     
 }
 

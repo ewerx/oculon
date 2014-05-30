@@ -165,6 +165,11 @@ private:
     float       mAnimTime;
     bool        mCycleJulia;
     bool        mCycleRotation;
+    
+    int         mRotXBand;
+    int         mRotYBand;
+    int         mRotZBand;
+    int         mAmplitudeBand;
 };
 
 #pragma mark - Gyroid

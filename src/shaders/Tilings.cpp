@@ -55,7 +55,7 @@ void Tilings::reset()
     mAngleQ = 5;
     mAngleR = 2;
     mThickness = 0.03f;
-    
+     
     mOffsetResponse = AudioInputHandler::BAND_NONE;
     mAnglePResponse = AudioInputHandler::BAND_NONE;
     mAngleQResponse = AudioInputHandler::BAND_NONE;
