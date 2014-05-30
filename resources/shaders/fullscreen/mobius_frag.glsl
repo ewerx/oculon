@@ -4,6 +4,7 @@ uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 //uniform sampler2D iChannel0;
 //uniform sampler2D iChannel1;
 uniform vec2      iMouse;
+uniform float     iPhase;
 
 #define time iGlobalTime
 #define resolution iResolution
@@ -77,7 +78,7 @@ vec3 shade(vec3 p, vec3 rd, float b, mat3 m) {
 	col += vec3(1.0)*(0.4*dif*lambert + 1.4*spe*blinn + 0.1*amb);
 	
 	// rim light
-	col += 2.25*pow(clamp(1.0+dot(n, rd), 0.0, 1.0), 3.0);
+	col += 2.25*pow(clamp(0.0+dot(n, rd), 0.0, 1.0), 3.0);
 	
 	return col/(col+1.0); // reinhard
 }
@@ -100,7 +101,7 @@ void main(void)
 #ifndef HOMOTOPY
     float b = 0.01;
 #else
-    float b = animCurve(iGlobalTime);
+    float b = iPhase;//animCurve(iGlobalTime);
 #endif
 	
 #ifdef ROTATION
@@ -112,7 +113,7 @@ void main(void)
 	vec3 rd = m*normalize(vec3(uv, -1.0));
 	
 	float d = 10.0, t1 = 0.0;
-	vec3 p = ro, col = vec3(1.0);
+	vec3 p = ro, col = vec3(0.0);
 	
 	// sphere-trace to torus envelope.
 	for (int i = 0; i < STEPS; ++i) {
@@ -141,8 +142,9 @@ void main(void)
 	
 	// post-processing
 	col = smoothstep(0.0, 1.0, col);
-	col *= 0.5 + 0.5*pow(25.0*fc.x*(1.0-fc.x)*fc.y*(1.0-fc.y), 0.45);
+	//col *= 0.5 + 0.5*pow(25.0*fc.x*(1.0-fc.x)*fc.y*(1.0-fc.y), 0.45);
 	col = pow(col, vec3(1.0/2.2));
 	
-	gl_FragColor = vec4(col,1.0);
+	float alpha = (col.x+col.y+col.z);
+	gl_FragColor = vec4(col,alpha);
 }

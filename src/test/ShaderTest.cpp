@@ -46,9 +46,14 @@ void ShaderTest::setup()
     
     mDynamicTexture.setup(512, 512);
     
-    mTexture[0] = gl::Texture( loadImage( loadResource( "gaussian_noise_256_3c.png" ) ) );
-    mTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) );
-    mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ) );
+    
+    gl::Texture::Format format;
+	//format.setColorInternalFormat( GL_RGBA32F_ARB );
+	format.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    mTexture[0] = gl::Texture( loadImage( loadResource( "rgb_noise.jpg" ) ), format );
+    mTexture[1] = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ), format );
+    mTexture[2] = gl::Texture( loadImage( loadResource( RES_COLORTEX3 ) ), format );
     //mTexture[3] = gl::Texture( loadImage( loadResource( RES_COLORTEX4 ) ) );
     mTexture[3] = mDynamicTexture.getTexture();
     mTextureIndex = 0;

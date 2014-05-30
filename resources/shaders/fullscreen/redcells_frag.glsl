@@ -2,7 +2,6 @@
 uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
 uniform vec2      iMouse;
 
 // https://www.shadertoy.com/view/MsXXWH#
@@ -34,8 +33,8 @@ vec3 vRimLightColour = vLightColour * 0.5;
 vec3 vAmbientLight = vLightColour * 0.05;
 vec3 vEmissiveLight = vLightColour * 1.0;
 
-float kFogDensity = 0.0075;
-vec3 vFogColour = vec3(1.0, 0.05, 0.005) * 0.25 * 10.0;
+float kFogDensity = 0.000075;
+vec3 vFogColour = vec3(1.0, 0.05, 0.005) * 0.0025 * 10.0;
 
 float fStartTime = 90.0;
 float fGlobalTime = fStartTime;
