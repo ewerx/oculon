@@ -19,18 +19,37 @@ void main(void)
 	vec2 uv = (gl_FragCoord.xy - .5*iResolution.xy) / larger;
 	
 	float lum = .5;
-	
-	float twopi = 2.0*3.141592654;
-	vec2 rot = vec2(cos(twopi*iGlobalTime*0.01), sin(twopi*iGlobalTime*0.01));
-	vec2 tor = vec2(-sin(twopi*iGlobalTime*0.01), -cos(twopi*iGlobalTime*0.01));
-    vec2 values = vec2( iDistance, iDistance );
-	for (int i = 0; i < iPoles; ++i)
-	{
-		lum += .2 * ripple(length(values - uv), -iGlobalTime + iShift);
-		values = values.x*rot + values.y*tor;
-        rot = -rot;
-        tor = -tor;
-	}
+	bool altVersion = false;
+    
+    if (altVersion)
+    {
+        float angle = 0.0;
+        float twopi = 2.0*3.141592654;
+        float anglePer = twopi / float(iPoles);
+        vec2 values = vec2( iDistance, iDistance );
+        for (int i = 0; i < iPoles; ++i)
+        {
+            vec2 rot = vec2(cos(twopi*angle), sin(twopi*angle));
+            vec2 tor = vec2(-sin(twopi*angle), -cos(twopi*angle));
+            values = values.x*rot + values.y*tor;
+            lum += .2 * ripple(length(values - uv), -iGlobalTime + iShift);
+            angle += anglePer;
+        }
+    }
+    else
+    {
+        float twopi = 2.0*3.141592654;
+        vec2 rot = vec2(cos(twopi*iGlobalTime*0.01), sin(twopi*iGlobalTime*0.01));
+        vec2 tor = vec2(-sin(twopi*iGlobalTime*0.01), -cos(twopi*iGlobalTime*0.01));
+        vec2 values = vec2( iDistance, iDistance );
+        for (int i = 0; i < iPoles; ++i)
+        {
+            values = values.x*rot + values.y*tor;
+            rot = -rot;
+            tor = -tor;
+            lum += .2 * ripple(length(values - uv), -iGlobalTime + iShift);
+        }
+    }
 	
     lum = 3.0*lum*lum - 2.0*lum*lum*lum;
 	gl_FragColor = vec4(lum, lum, lum, 1.0);

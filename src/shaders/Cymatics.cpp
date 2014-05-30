@@ -148,7 +148,7 @@ void Cymatics::shaderPreDraw()
     int poles = mPoles;
     if (mPolesResponseBand != AudioInputHandler::BAND_NONE)
     {
-        poles = math<int>::clamp( mPoles * mAudioInputHandler.getAverageVolumeByBand(mPolesResponseBand), 2, 200 );
+        poles = math<int>::clamp( mPoles * (0.25f + mAudioInputHandler.getAverageVolumeByBand(mPolesResponseBand)), 2, 200 );
     }
     mShader.uniform( "iPoles", poles );
     
