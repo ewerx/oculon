@@ -194,59 +194,59 @@ void Menger::MengerShader::setupInterface(Interface *interface, const std::strin
     string oscName = name + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->addParam(CreateIntParam( "iterations", &mIterations )
+    interface->addParam(CreateIntParam( "menger/iterations", &mIterations )
                         .minValue(1)
                         .maxValue(12)
                         .oscReceiver(oscName));
-    interface->addParam(CreateIntParam( "max_steps", &mMaxSteps )
+    interface->addParam(CreateIntParam( "menger/max_steps", &mMaxSteps )
                         .minValue(10)
                         .maxValue(120)
                         .oscReceiver(oscName));
-    interface->addParam(CreateVec3fParam("offset", &mOffset, Vec3f::zero(), Vec3f::one()*2.0f)
+    interface->addParam(CreateVec3fParam("menger/offset", &mOffset, Vec3f::zero(), Vec3f::one()*2.0f)
                         .oscReceiver(oscName));
     
-    interface->addEnum(CreateEnumParam( "audio-offset.x", &mOffsetXResponseBand )
+    interface->addEnum(CreateEnumParam( "menger/audio-offset.x", &mOffsetXResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
                        .oscReceiver(mName)
                        .sendFeedback(), bandNames);
-    interface->addEnum(CreateEnumParam( "audio-offset.y", &mOffsetYResponseBand )
+    interface->addEnum(CreateEnumParam( "menger/audio-offset.y", &mOffsetYResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
                        .oscReceiver(mName)
                        .sendFeedback(), bandNames);
-    interface->addEnum(CreateEnumParam( "audio-offset.z", &mOffsetZResponseBand )
+    interface->addEnum(CreateEnumParam( "menger/audio-offset.z", &mOffsetZResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
                        .oscReceiver(mName)
                        .sendFeedback(), bandNames);
     
-    interface->addParam(CreateFloatParam("mScale", &mScale)
+    interface->addParam(CreateFloatParam("menger/scale", &mScale)
                         .minValue(1.0f)
                         .maxValue(10.0f)
                         .oscReceiver(oscName));
-    interface->addEnum(CreateEnumParam( "audio-scale", &mScaleResponseBand )
+    interface->addEnum(CreateEnumParam( "menger/audio-scale", &mScaleResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
                        .oscReceiver(mName)
                        .sendFeedback(), bandNames);
-    interface->addParam(CreateFloatParam("fov", &mFieldOfView)
+    interface->addParam(CreateFloatParam("menger/fov", &mFieldOfView)
                         .minValue(0.4f)
                         .maxValue(20.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("jitter", &mJitter)
+    interface->addParam(CreateFloatParam("menger/jitter", &mJitter)
                         .maxValue(0.4f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("fudge", &mFudgeFactor)
+    interface->addParam(CreateFloatParam("menger/fudge", &mFudgeFactor)
                         .maxValue(3.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("twist", &mPerspective)
+    interface->addParam(CreateFloatParam("menger/twist", &mPerspective)
                         .maxValue(10.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("min_dist", &mMinDistance)
+    interface->addParam(CreateFloatParam("menger/min_dist", &mMinDistance)
                         .maxValue(0.001f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("norm_dist", &mNormalDistance)
+    interface->addParam(CreateFloatParam("menger/norm_dist", &mNormalDistance)
                         .maxValue(0.001f)
                         .oscReceiver(oscName));
 }
@@ -262,13 +262,15 @@ void Menger::MengerShader::setCustomParams( AudioInputHandler& audioInputHandler
     mShader.uniform( "iMinDistance", mMinDistance );
     mShader.uniform( "iNormalDistance", mNormalDistance );
     
-    Vec3f offset = mOffset * Vec3f(audioInputHandler.getAverageVolumeByBand(mOffsetXResponseBand),
-                                   audioInputHandler.getAverageVolumeByBand(mOffsetYResponseBand),
-                                   audioInputHandler.getAverageVolumeByBand(mOffsetZResponseBand));
+    Vec3f offset = mOffset;
+    
+    offset.x *= 0.5f + 0.5f * audioInputHandler.getAverageVolumeByBand(mOffsetXResponseBand);
+    offset.y *= 0.5f + 0.5f * audioInputHandler.getAverageVolumeByBand(mOffsetYResponseBand);
+    offset.z *= 0.5f + 0.5f * audioInputHandler.getAverageVolumeByBand(mOffsetZResponseBand);
     
     mShader.uniform( "iOffset", offset );
     
-    float scale = mScale * audioInputHandler.getAverageVolumeByBand(mScaleResponseBand);
+    float scale = mScale * (0.5f + audioInputHandler.getAverageVolumeByBand(mScaleResponseBand));
     mShader.uniform( "iScale", scale );
 }
 
@@ -293,22 +295,22 @@ void Menger::PolychoraShader::setupInterface(Interface *interface, const std::st
     string oscName = name + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->addParam(CreateIntParam( "zone", &mZone )
+    interface->addParam(CreateIntParam( "polychora/zone", &mZone )
                         .minValue(0)
                         .maxValue(5)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("angle", &mAngle)
+    interface->addParam(CreateFloatParam("polychora/angle", &mAngle)
                         .oscReceiver(oscName));
-    interface->addEnum(CreateEnumParam( "audio-angle", &mAngleResponseBand )
+    interface->addEnum(CreateEnumParam( "polychora/audio-angle", &mAngleResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
                        .oscReceiver(mName)
                        .sendFeedback(), bandNames);
-    interface->addParam(CreateFloatParam("fov", &mFieldOfView)
+    interface->addParam(CreateFloatParam("polychora/fov", &mFieldOfView)
                         .minValue(0.4f)
                         .maxValue(20.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateIntParam( "max_steps", &mMaxSteps )
+    interface->addParam(CreateIntParam( "polychora/max_steps", &mMaxSteps )
                         .minValue(2)
                         .maxValue(50)
                         .oscReceiver(oscName));
@@ -316,7 +318,7 @@ void Menger::PolychoraShader::setupInterface(Interface *interface, const std::st
 //    interface->addParam(CreateFloatParam("jitter", &mJitter)
 //                        .maxValue(0.4f)
 //                        .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("fudge", &mFudgeFactor)
+    interface->addParam(CreateFloatParam("polychora/fudge", &mFudgeFactor)
                         .maxValue(3.0f)
                         .oscReceiver(oscName));
     
@@ -358,14 +360,14 @@ void Menger::JuliaSpiralShader::setupInterface(Interface *interface, const std::
     string oscName = name + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->addParam(CreateColorParam("color3", &mColor3, kMinColor, kMaxColor).oscReceiver(mName));
-    interface->addParam(CreateVec2fParam("offset", &mOffset, Vec2f::zero(), Vec2f::one()*3.0f)
+    interface->addParam(CreateColorParam("juliaspiral/color3", &mColor3, kMinColor, kMaxColor).oscReceiver(mName));
+    interface->addParam(CreateVec2fParam("juliaspiral/offset", &mOffset, Vec2f::zero(), Vec2f::one()*3.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("scale", &mScale)
+    interface->addParam(CreateFloatParam("juliaspiral/scale", &mScale)
                         .minValue(0.001f)
                         .maxValue(2.0f)
                         .oscReceiver(oscName));
-    interface->addParam(CreateFloatParam("frequency", &mFrequency)
+    interface->addParam(CreateFloatParam("juliaspiral/frequency", &mFrequency)
                         .minValue(0.001f)
                         .maxValue(5.0f)
                         .oscReceiver(oscName));
