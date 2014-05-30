@@ -52,9 +52,16 @@ public:
     eType getType() const                           { return mType; }
     
     bool valueChangedCallback();
+    bool midiLearnCallback();
     
     virtual mowa::sgui::Control* getControl() = 0;
     virtual void sendValue() = 0;
+    
+    void setMidiAddress( int channel, int note )
+    {
+        mMidiChannel = channel;
+        mMidiNote = note;
+    }
     
 protected:
     eType mType;

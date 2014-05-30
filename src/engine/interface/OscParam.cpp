@@ -44,6 +44,26 @@ bool OscParam::valueChangedCallback()
     return false;
 }
 
+bool OscParam::midiLearnCallback()
+{
+    ci::app::console() << "[midi] learning " << mOscRecvAddress << std::endl;
+    switch (mType)
+    {
+        case PARAMTYPE_FLOAT:
+            mOscServer->learnMidi( this, boost::bind( &OscFloatParam::handleOscMessage, (OscFloatParam*)this, boost::arg<1>() ) );
+            break;
+            
+        case PARAMTYPE_INT:
+            mOscServer->learnMidi( this, boost::bind( &OscIntParam::handleOscMessage, (OscIntParam*)this, boost::arg<1>() ) );
+            break;
+            
+        default:
+            break;
+    }
+    
+    return true;
+}
+
 #pragma MARK OscFloatParam
 
 OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const CreateFloatParam& param)
@@ -62,6 +82,7 @@ OscFloatParam::OscFloatParam(OscServer* server, FloatVarControl* control, const 
         server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscFloatParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+    mControl->registerMidiLearnCallback( (OscParam*)(this), &OscParam::midiLearnCallback );
 }
 
 void OscFloatParam::handleOscMessage( const osc::Message& message )
@@ -124,6 +145,7 @@ OscIntParam::OscIntParam(OscServer* server, IntVarControl* control, const Create
         server->registerMidiCallback( std::make_pair(param._midiChannel, param._midiNote), this, &OscIntParam::handleOscMessage );
     }
     mControl->registerCallback( (OscParam*)(this), &OscParam::valueChangedCallback );
+    mControl->registerMidiLearnCallback( (OscParam*)(this), &OscParam::midiLearnCallback );
 }
 
 void OscIntParam::handleOscMessage( const osc::Message& message )

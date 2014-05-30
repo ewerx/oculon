@@ -19,6 +19,8 @@
 #include <boost/bind.hpp>
 #include <queue>
 
+class OscParam;
+
 typedef std::function<void(const ci::osc::Message&)> tOscCallback;
 typedef boost::unordered_map<std::string, tOscCallback> tOscMap;
 typedef std::pair<int,int> tMidiAddress;
@@ -88,6 +90,13 @@ public:
     // callback from MidiInput
     bool handleMidiMessage( MidiEvent midiEvent );
     
+    void learnMidi( OscParam* target, tOscCallback callback )
+    {
+        mMidiLearning = true;
+        mMidiLearnTarget = target;
+        mMidiLearnCallback = callback;
+    }
+    
 private:
     typedef std::pair<ci::osc::Message,tOscCallback> tIncomingCommand;
     
@@ -124,6 +133,9 @@ private:
     MidiInput*              mMidiInput;
     ci::CallbackId          mCbMidiEvent;
     tMidiMap                mMidiCallbackMap;
+    bool                    mMidiLearning;
+    tOscCallback            mMidiLearnCallback;
+    OscParam*               mMidiLearnTarget;
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/app/App.h"
 #include "OscServer.h"
+#include "OscParam.h"
 #include "MidiOut.h"
 #include <iostream>
 #include <vector>
@@ -24,6 +25,8 @@ OscServer::OscServer()
 , mIsSending(false)
 , mDebugPrint(true)
 , mMidiInput(NULL)
+, mMidiLearning(false)
+, mMidiLearnTarget(NULL)
 {
 }
 
@@ -320,6 +323,29 @@ bool OscServer::handleMidiMessage(MidiEvent midiEvent)
     tMidiAddress address = std::make_pair( midiEvent.getChannel(), midiEvent.getNote() );
     
     tMidiMap::iterator it = mMidiCallbackMap.find(address);
+    
+    if (mMidiLearning)
+    {
+        if( it != mMidiCallbackMap.end() )
+        {
+            console() << "[midi] removed mapping for [" << address.first << "," << address.second << "]\n";
+            // remove old mapping
+            mMidiCallbackMap.erase(it);
+        }
+        
+        mMidiCallbackMap[address] = mMidiLearnCallback;
+        mMidiLearning = false;
+        
+        mMidiLearnTarget->setMidiAddress(address.first, address.second);
+        
+        // change color
+        sendMidiControlChange(1, address.second, 80);
+        
+        console() << "[midi] learned mapping for [" << address.first << "," << address.second << "]\n";
+        
+        return true;
+    }
+    
     if( it != mMidiCallbackMap.end() )
     {
         tOscCallback callback = it->second;
