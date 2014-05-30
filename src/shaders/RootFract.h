@@ -43,16 +43,24 @@ private:
   
     int                 mIterations;
     float               mScale;
+    float               mZoom;
+    ci::Vec2f           mJulia;
+    ci::Vec3f           mOrbitTraps;
+    ci::Vec3f           mFrequency;
+    ci::Vec3f           mAmplitude;
+    ci::Vec3f           mSpeed;
+    
+    
     float               mSaturation;
     float               mBrightness;
     float               mContrast;
     float               mMinBrightness;
-    ci::Vec2f           mJulia;
-    ci::Vec3f           mOrbitTraps;
     ci::Vec3f           mTrapWidths;
     ci::Vec3f           mTrapBrightness;
     ci::Vec3f           mTrapContrast;
     
+    int                 mAmpResponseBand;
+    int                 mFreqResponseBand;
     
     // control
     TimeController      mTimeController;

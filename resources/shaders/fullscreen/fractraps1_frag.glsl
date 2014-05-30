@@ -1,42 +1,55 @@
 #version 120
 uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
-uniform vec2      iMouse;
+uniform vec3      iColor1;
+uniform vec3      iColor2;
+uniform vec3      iColor3;
+uniform int       iIterations;
+uniform float     iScale;
+uniform float     iZoom;
+uniform float     iSaturation;
+uniform float     iBrightness;
+uniform float     iContrast;
+uniform float     iMinBrightness;
+uniform vec2      iJulia;
+uniform vec3      iOrbitTraps;
+uniform vec3      iTrapWidths;
+uniform vec3      iTrapBrightness;
+uniform vec3      iTrapContrast;
+uniform vec3      iFrequency;
+uniform vec3      iAmplitude;
+uniform vec3      iSpeed;
 
 //orbit traps from julia version of fractal formula z=(z+1/z+c)*-scale;
 
-#define zoom 5.
+#define zoom iZoom
 #define offset vec2(0.3,0.2)
 
-#define iterations 27
-#define scale -.4
-#define julia vec2(2.2,0.75)
+#define iterations iIterations
+#define scale iScale
+#define julia iJulia
 
-#define orbittraps vec3(.8,.5,-.01)
-#define trapswidths vec3(.2,.2,.3)
+#define trap1color iColor1
+#define trap2color iColor2
+#define trap3color iColor3
 
-#define trap1color vec3(1.00,0.30,0.10)
-#define trap2color vec3(1.00,0.50,0.10)
-#define trap3color vec3(0.10,0.20,1.00)
+#define trapsbright iTrapBrightness
+#define trapscontrast iTrapContrast
 
-#define trapsbright vec3(1.,.8,.7)
-#define trapscontrast vec3(5.,10.,5.)
+#define trapsfreq iFrequency
+#define trapsamp iAmplitude
+#define trapspeeds iSpeed
 
-#define trapsfreq vec3(5.,8.,20.)
-#define trapsamp vec3(.03,.03,.01)
-#define trapspeeds vec3(20.,20.,40.)
-
-#define saturation .5
-#define brightness .9
-#define contrast 1.35
-#define minbright .3
+#define saturation iSaturation
+#define brightness iBrightness
+#define contrast iContrast
+#define minbright iMinBrightness
 
 #define antialias 3. //max 4
 
 
-vec2 rotate(vec2 p, float angle) {
+vec2 rotate(vec2 p, float angle)
+{
     return p*mat2(cos(angle),sin(angle),-sin(angle),cos(angle));
 }
 
@@ -66,7 +79,7 @@ void main(void)
 				z=z+cz/dot(z,z)+julia;
 				z=z*scale;
 				float l=length(z);
-				vec3 ot=abs(vec3(l)-orbittraps+
+				vec3 ot=abs(vec3(l)-iOrbitTraps+
                             (sin(pos.x*trapsfreq/zoo+t*trapspeeds)+
                              sin(pos.y*trapsfreq/zoo+trapspeeds))*trapsamp);
 				if (ot.x<otrap.x) {
@@ -83,7 +96,7 @@ void main(void)
 				}
 			}
 		}
-		otrap=pow(max(vec3(0.),trapswidths-otrap)/trapswidths,trapscontrast);
+		otrap=pow(max(vec3(0.),iTrapWidths-otrap)/iTrapWidths,trapscontrast);
 		its=its/float(iterations);
 		vec3 otcol1=otrap.x*pow(trap1color,3.5-vec3(its.x*3.))*max(minbright,its.x)*trapsbright.x;
 		vec3 otcol2=otrap.y*pow(trap2color,3.5-vec3(its.y*3.))*max(minbright,its.y)*trapsbright.y;

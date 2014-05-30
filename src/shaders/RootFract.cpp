@@ -11,6 +11,7 @@
 #include "Utils.h"
 
 using namespace ci;
+using namespace std;
 
 RootFract::RootFract()
 : Scene("rootfract")
@@ -26,26 +27,34 @@ void RootFract::setup()
     Scene::setup();
     
     // params
-    mColor1 = ColorAf(255.f/256.f,30.f/256.f,10.f/256.f);
-    mColor2 = ColorAf(50.f/256.f,100.f/256.f,255.f/256.f);
-    mColor3 = ColorAf(1.f/256.f,.9f/256.f,.75f/256.f);
+    mColor1 = ColorAf(0.0f,0.3f,1.0f);
+    mColor2 = ColorAf(0.0f,0.5f,1.0f);
+    mColor3 = ColorAf(1.0f,0.2f,0.0f);
     
-    mIterations         = 60;
-    mScale              = -0.3f;
+    mIterations         = 27;
+    mScale              = -0.4f;
+    mZoom               = 5.0f;
+    mJulia              = Vec2f(2.2f, 0.75f);
+    mOrbitTraps         = Vec3f(0.8f, 0.5f, -0.01f);//mOrbitTraps         = Vec3f(.155f, .144f, 0.015f);
+    mFrequency          = Vec3f(5.f,8.f,20.f);
+    mAmplitude          = Vec3f(.03f,.03f,.01f);
+    mSpeed              = Vec3f(20.f,20.f,40.f);
+    
     mSaturation         = 0.35f;
     mBrightness         = 0.9f;
-    mContrast           = 4.0f;
-    mMinBrightness      = 0.7f;
-    mJulia              = Vec2f(1.8f, 0.26f);;
-    mOrbitTraps         = Vec3f(.155f, .144f, 0.015f);
-    mTrapWidths         = Vec3f(.01f, .03f, .3f);
-    mTrapBrightness     = Vec3f(2.2f, 1.7f, 1.0f);
-    mTrapContrast       = Vec3f(0.25f, 2.0f, 5.0f);
+    mContrast           = 1.35f;
+    mMinBrightness      = 0.3f;
+    mTrapWidths         = Vec3f(.2f, .2f, .3f);
+    mTrapBrightness     = Vec3f(1.0f, 0.8f, 0.7f);//mTrapBrightness     = Vec3f(2.2f, 1.7f, 1.0f);
+    mTrapContrast       = Vec3f(5.0f, 10.0f, 5.0f);//Vec3f(0.25f, 2.0f, 5.0f);
     
+    mFreqResponseBand   = AudioInputHandler::BAND_NONE;
+    mAmpResponseBand    = AudioInputHandler::BAND_NONE;
     
     mAudioInputHandler.setup(false);
     
-    mShader = loadFragShader("rootfract_frag.glsl");
+    //mShader = loadFragShader("rootfract_frag.glsl");
+    mShader = loadFragShader("fractraps1_frag.glsl");
     
     reset();
 }
@@ -57,6 +66,8 @@ void RootFract::reset()
 
 void RootFract::setupInterface()
 {
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
     mTimeController.setupInterface(mInterface, mName);
     
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(mName));
@@ -66,10 +77,33 @@ void RootFract::setupInterface()
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "iterations", &mIterations )
                          .maxValue(120));
-    mInterface->addParam(CreateFloatParam("mScale", &mScale)
+    mInterface->addParam(CreateFloatParam("scale", &mScale)
                          .minValue(-0.6f)
                          .maxValue(-0.2f)
                          .oscReceiver(getName()));
+    mInterface->addParam(CreateFloatParam("zoom", &mZoom)
+                         .minValue(1.0f)
+                         .maxValue(10.0f)
+                         .oscReceiver(getName()));
+    
+    mInterface->addParam(CreateVec2fParam("julia", &mJulia, Vec2f(0.1f,0.1f), Vec2f(10.0f,10.0f)));
+    mInterface->addParam(CreateVec3fParam("traps", &mOrbitTraps, Vec3f::zero(), Vec3f::one()));
+    mInterface->addParam(CreateVec3fParam("freq", &mFrequency, Vec3f::zero(), Vec3f::one()*20.0f));
+    mInterface->addEnum(CreateEnumParam( "audio-freq", &mFreqResponseBand )
+                        .maxValue(bandNames.size())
+                        .isVertical()
+                        .oscReceiver(mName)
+                        .sendFeedback(), bandNames);
+    
+    mInterface->addParam(CreateVec3fParam("amp", &mAmplitude, Vec3f::zero(), Vec3f::one()));
+    mInterface->addEnum(CreateEnumParam( "audio-amp", &mAmpResponseBand )
+                        .maxValue(bandNames.size())
+                        .isVertical()
+                        .oscReceiver(mName)
+                        .sendFeedback(), bandNames);
+    mInterface->addParam(CreateVec3fParam("speed", &mSpeed, Vec3f::zero(), Vec3f::one()*40.0f));
+    
+    mInterface->gui()->addColumn();
     mInterface->addParam(CreateFloatParam("saturation", &mSaturation)
                          .maxValue(1.0f)
                          .oscReceiver(getName()));
@@ -83,12 +117,9 @@ void RootFract::setupInterface()
                          .maxValue(1.0f)
                          .oscReceiver(getName()));
     
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateVec2fParam("julia", &mJulia, Vec2f(0.1f,0.1f), Vec2f(2.0f,2.0f)));
-    mInterface->addParam(CreateVec3fParam("traps", &mOrbitTraps, Vec3f::zero(), Vec3f::one()));
     mInterface->addParam(CreateVec3fParam("trap_width", &mTrapWidths, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
     mInterface->addParam(CreateVec3fParam("trap_bright", &mTrapBrightness, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
-    mInterface->addParam(CreateVec3fParam("trap_contrast", &mTrapContrast, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
+    mInterface->addParam(CreateVec3fParam("trap_contrast", &mTrapContrast, Vec3f::zero(), Vec3f(13.0f,13.0f,13.0f)));
     
     mAudioInputHandler.setupInterface(mInterface, mName);
 }
@@ -130,19 +161,47 @@ void RootFract::shaderPreDraw()
     
     Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
     
+    Vec3f freq = mFrequency;
+    Vec3f amp = mAmplitude;
+    
+    if (mFreqResponseBand != AudioInputHandler::BAND_NONE)
+    {
+        int band = mFreqResponseBand;
+        freq.x = freq.x * (0.5f + 0.5f * mAudioInputHandler.getAverageVolumeByBand(band));
+        band = (band + 1) % AudioInputHandler::BAND_COUNT;
+        freq.y = freq.y * (0.5f + 0.5f * mAudioInputHandler.getAverageVolumeByBand(band));
+        band = (band + 1) % AudioInputHandler::BAND_COUNT;
+        freq.z = freq.z * (0.5f + 0.5f * mAudioInputHandler.getAverageVolumeByBand(band));
+    }
+    
+    if (mAmpResponseBand != AudioInputHandler::BAND_NONE)
+    {
+        int band = mAmpResponseBand;
+        amp.x = amp.x * (0.5f + 0.5f * mAudioInputHandler.getAverageVolumeByBand(band));
+        band = (band + 1) % AudioInputHandler::BAND_COUNT;
+        amp.y = amp.y * (0.5f + 0.5f * mAudioInputHandler.getAverageVolumeByBand(band));
+        band = (band + 1) % AudioInputHandler::BAND_COUNT;
+        amp.z = amp.z * (0.5f + 0.5f * mAudioInputHandler.getAverageVolumeByBand(band));
+    }
+    
     mShader.uniform( "iResolution", resolution );
     mShader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
-    mShader.uniform( "iColor1", mColor1);
-    mShader.uniform( "iColor2", mColor2);
-    mShader.uniform( "iColor3", mColor3);
+    mShader.uniform( "iColor1", Colorf(mColor1));
+    mShader.uniform( "iColor2", Colorf(mColor2));
+    mShader.uniform( "iColor3", Colorf(mColor3));
     mShader.uniform( "iIterations", mIterations );
     mShader.uniform( "iScale", mScale );
+    mShader.uniform( "iZoom", mZoom );
+    mShader.uniform( "iJulia", mJulia );
+    mShader.uniform( "iOrbitTraps", mOrbitTraps );
+    mShader.uniform( "iFrequency", freq );
+    mShader.uniform( "iAmplitude", amp );
+    mShader.uniform( "iSpeed", mSpeed );
+    
     mShader.uniform( "iSaturation", mSaturation );
     mShader.uniform( "iBrightness", mBrightness );
     mShader.uniform( "iContrast", mContrast );
     mShader.uniform( "iMinBrightness", mMinBrightness );
-    mShader.uniform( "iJulia", mJulia );
-    mShader.uniform( "iOrbitTraps", mOrbitTraps );
     mShader.uniform( "iTrapWidths", mTrapWidths );
     mShader.uniform( "iTrapBrightness", mTrapBrightness );
     mShader.uniform( "iTrapContrast", mTrapContrast );
