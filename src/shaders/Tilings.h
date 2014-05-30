@@ -15,9 +15,8 @@
 #include "Scene.h"
 #include "MotionBlurRenderer.h"
 #include "GridRenderer.h"
+#include "TimeController.h"
 #include "AudioInputHandler.h"
-
-#include "OscMessage.h"
 
 //
 // Audio input tests
@@ -45,11 +44,11 @@ private:
     void shaderPreDraw();
     void shaderPostDraw();
     
-    float getAudioLevelForBand(int bandIndex);
-    
 private:
 
     ci::gl::GlslProg    mShader;
+    
+    TimeController      mTimeController;
     
     // audio
     AudioInputHandler   mAudioInputHandler;
@@ -61,8 +60,6 @@ private:
     // params
     ci::ColorAf         mColor1;
     ci::ColorAf         mColor2;
-    float               mTimeScale;
-    double              mElapsedTime;
     
     int                 mIterations;
     int                 mAngleP;
