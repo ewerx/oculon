@@ -57,6 +57,7 @@ void TextureShaders::setupShaders()
     mShaders.push_back( new SimplicityShader() );
     mShaders.push_back( new KifsShader() );
     mShaders.push_back( new GravityFieldShader() );
+    mShaders.push_back( new PixelWeaveShader() );
 }
 
 void TextureShaders::reset()
@@ -504,4 +505,34 @@ void TextureShaders::GravityFieldShader::setCustomParams( AudioInputHandler& aud
 {
     mShader.uniform( "iMode", mMode );
     mShader.uniform( "iPoints", mPoints );
+}
+
+#pragma mark - PixelWeave
+
+TextureShaders::PixelWeaveShader::PixelWeaveShader()
+: FragShader("pixelweave", "pixelweave_frag.glsl")
+{
+    mBokeh = 1;
+    mSpacing = 1;
+}
+
+void TextureShaders::PixelWeaveShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    
+    interface->addParam(CreateIntParam( "bokeh", &mBokeh )
+                        .minValue(1)
+                        .maxValue(8));
+    interface->addParam(CreateIntParam( "spacing", &mSpacing )
+                        .minValue(0)
+                        .maxValue(8));
+}
+
+void TextureShaders::PixelWeaveShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "iBokehRad", mBokeh );
+    mShader.uniform( "iTapSpacing", mSpacing );
 }

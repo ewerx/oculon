@@ -1,17 +1,16 @@
 #version 120
-uniform vec2 iResolution;     // viewport resolution (in pixels)
+uniform vec2    iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
-uniform vec2      iMouse;
+uniform int     iBokehRad;
+uniform int     iTapSpacing;
 
 // https://www.shadertoy.com/view/4dB3RK
 // radius of the blur
-const int bokehRad = 1;
+#define bokehRad iBokehRad
 
 // tweak this to get bigger bokeh by dithering
 // this should be an integer
-const float tapSpacing = 1.0;
+#define tapSpacing float(iTapSpacing)
 
 
 vec3 hsv(float h, float s, float v)
@@ -38,12 +37,13 @@ vec3 weave( vec2 pos )
 
 void main()
 {
-	vec2 pos = gl_FragCoord.xy-iResolution.xy*.5-iMouse.xy;
+	vec2 pos = gl_FragCoord.xy-iResolution.xy*.5;
 	
 	// I've written this so the compiler can, hopefully unroll all the integer maths to consts.
 	vec3 col = vec3(0);
 	int count = 0;
-	const int h = ((bokehRad+1)*15)/13; // compiler won't let me cast to floats and do *2/sqrt(3) in a const
+	int h = ((bokehRad+1)*15)/13; // compiler won't let me cast to floats and do *2/sqrt(3) in a const
+    //int h = int(float(bokehRad) * 2.0 / sqrt(3.0));
 	for ( int i=-bokehRad; i <= bokehRad; i++ )
 	{
 		int ai = (i>0)?i:-i; // seriously? no int abs?

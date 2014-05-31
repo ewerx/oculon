@@ -167,5 +167,20 @@ private:
         int mMode;
         
     };
+    
+    class PixelWeaveShader : public FragShader
+    {
+    public:
+        PixelWeaveShader();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        //virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        int mBokeh;
+        int mSpacing;
+        
+    };
 };
 
