@@ -1,8 +1,13 @@
 uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
-uniform vec2      iMouse;
+uniform sampler2D inputTex;
+uniform sampler2D noiseTex;
+uniform float     iPowerBandThickness;
+uniform float     iPowerBandIntensity;
+uniform float     iPowerBandSpeed;
+uniform float     iSignalNoise;
+uniform vec4      iColor1;
+uniform float     iScanlines;
 
 // https://www.shadertoy.com/view/lsfXzM#
 #define M_PI (3.1415926535897932384626433832795)
@@ -28,11 +33,11 @@ vec4 v2DNoiseSample (vec2 gPos) {
                      mod (gPos.x+iGlobalTime*9.66,1.0),
                      mod (gPos.y+iGlobalTime*7.77,1.0)
                      );
-	return texture2D (iChannel1, nPos);
+	return texture2D (noiseTex, nPos);
 }
 
 vec4 v1DNoiseSample (float idx, float s) {
-	return texture2D (iChannel1, vec2 (
+	return texture2D (noiseTex, vec2 (
                                        mod (idx, 1.0),
                                        mod (iGlobalTime*s, 1.0))
                       );
@@ -71,9 +76,9 @@ vec4 vRGBWithShift (vec2 uv, float angle, float q) {
 	vec2 rPos = vDirShift (uv, angle, q);
 	vec2 gPos = uv;
 	vec2 bPos = vDirShift (uv, -angle, q);
-	vec4 rPix = texture2D (iChannel0, rPos);
-	vec4 gPix = texture2D (iChannel0, gPos);
-	vec4 bPix = texture2D (iChannel0, bPos);
+	vec4 rPix = texture2D (inputTex, rPos);
+	vec4 gPix = texture2D (inputTex, gPos);
+	vec4 bPix = texture2D (inputTex, bPos);
 	return vec4 (rPix.x, gPix.y, bPix.z, 1.0);
 }
 
@@ -129,21 +134,17 @@ void main(void)
 	vec4 cCol = vec4(1.0);
 	vec2 bPos = vec2(1.0);
 	float qNoise = q1DNoiseSample(0.01,0.01);
-    
-    float iPowerBandThickness = 0.1; // percentage of v-size
-    float iPowerBandSpeed = -0.2;
-    float iPowerBandIntensity = 4.0;
 	
-	cPos = vScanShift (cPos, 0.02, 0.1, 0.1);			// snaline shift
+	cPos = vScanShift (cPos, 0.02, 0.1, 0.1);			// scanline shift
 	cPos = vCrtCurvature (cPos, 0.3);					// crt curving of coords
 	bPos = vCrtCurvature (gPos, 0.3);					// curvature for the noize bar
 	cPos = vFrameShift (cPos, 0.01, 0.001);				// frame shift
 	cCol = vColorDrift (cCol, 1.0 - qNoise);
 	cCol = vRGBWithShift (cPos, 100.0, 0.01); 			// sample signal color
-	cCol = cSignalNoise (cCol, qNoise * 0.8, gPos);				// add signal noise
-	cCol = vPowerNoise (cCol, bPos, 4.0, -0.2, iPowerBandThickness); 	// power line noize
-	cCol = vRGBTint (cCol, vec3 (0.9, 0.7, 1.2), 1.0);	// gamma tint
-	cCol = cCol * qScanLine (gPos, 120.0); 				// add scanlines
+	cCol = cSignalNoise (cCol, qNoise * iSignalNoise, gPos);				// add signal noise
+	cCol = vPowerNoise (cCol, bPos, iPowerBandIntensity, iPowerBandSpeed, iPowerBandThickness); 	// power line noize
+	cCol = vRGBTint (cCol, iColor1.rgb, iColor1.a);	// gamma tint
+	cCol = cCol * qScanLine (gPos, iScanlines); 				// add scanlines
 	cCol = cCol * qVignete (gPos, 1.5, 3.0); 			// add edge darkening
 	gl_FragColor = cCol;
     

@@ -37,19 +37,24 @@ private:
     void shaderPostDraw();
     
 private:
+    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
+    
     // control
     TimeController      mTimeController;
     AudioInputHandler   mAudioInputHandler;
     
     // noise
     SimplexNoiseTexture mNoiseTexture;
+    ci::gl::Texture mStaticNoiseTexture;
+    
+    std::vector<tNamedTexture> mNoiseTextures;
+    int mCurrentNoiseTex;
     
     // effects
     std::vector<FragShader*> mEffects;
     int mCurrentEffect;
     
     // inputs
-    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
     std::vector<tNamedTexture> mInputTextures;
     int mCurrentInputTexture;
 };
@@ -64,7 +69,18 @@ public:
     void setCustomParams( AudioInputHandler& audioInputHandler );
     
 private:
-    int                 mIterations;
+    float   mPowerBandThickness;
+    int     mPowerBandThicknessResponse;
+    float   mPowerBandIntensity;
+    int     mPowerBandIntensityResponse;
+    float   mPowerBandSpeed;
+    int     mPowerBandSpeedResponse;
+    float   mSignalNoise;
+    int     mSignalNoiseResponse;
+    float   mScanlines;
+    
+    ci::ColorAf  mTintColor;
+    
 };
 
 

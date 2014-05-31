@@ -12,6 +12,7 @@
 #include "Utils.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 
 EffectShaders::EffectShaders()
@@ -32,7 +33,7 @@ void EffectShaders::setup()
     mAudioInputHandler.setup(true);
     
     // effects
-    mEffects.push_back( new FragShader("interference", "crtinterference_frag.glsl") );
+    mEffects.push_back( new TelevisionEffect() );
     
     // inputs
     vector<Scene*> scenes;
@@ -54,10 +55,18 @@ void EffectShaders::setup()
         }
     }
     
-    // TODO: add syphon client
+    // TODO: add syphon client as an input
     
-    // noise
+    // dynamic noise
     mNoiseTexture.setup(256, 256);
+    
+    gl::Texture::Format format;
+	format.setWrap( GL_REPEAT, GL_REPEAT );
+
+    mCurrentNoiseTex = 0;
+    mNoiseTextures.push_back( make_pair("static", gl::Texture( loadImage( loadResource( "rgb_noise256.png" ) ), format ) ));
+    mNoiseTextures.push_back( make_pair("dynamic", mNoiseTexture.getTexture() ));
+    mNoiseTextures.push_back( make_pair("audio", mAudioInputHandler.getTexture() ));
     
     reset();
 }
@@ -87,14 +96,25 @@ void EffectShaders::setupInterface()
     
     // inputs
     vector<string> inputNames;
-    for( tNamedTexture input : mInputTextures )
+    for( tNamedTexture namedTex : mInputTextures )
     {
-        inputNames.push_back(input.first);
+        inputNames.push_back(namedTex.first);
     }
     mInterface->addEnum(CreateEnumParam( "input", (int*)(&mCurrentInputTexture) )
                         .maxValue(inputNames.size())
                         .oscReceiver(getName())
                         .isVertical(), inputNames);
+    
+    // inputs
+    vector<string> noiseTexNames;
+    for( tNamedTexture namedTex : mNoiseTextures )
+    {
+        noiseTexNames.push_back(namedTex.first);
+    }
+    mInterface->addEnum(CreateEnumParam( "noise", (int*)(&mCurrentNoiseTex) )
+                        .maxValue(noiseTexNames.size())
+                        .oscReceiver(getName())
+                        .isVertical(), noiseTexNames);
     
     mNoiseTexture.setupInterface(mInterface, mName);
     
@@ -102,6 +122,7 @@ void EffectShaders::setupInterface()
     {
         if (effect)
         {
+            mInterface->gui()->addColumn();
             effect->setupInterface(mInterface, mName);
         }
     }
@@ -134,7 +155,7 @@ void EffectShaders::draw()
     gl::setMatricesWindow( mApp->getViewportSize() );
     
     mInputTextures[mCurrentInputTexture].second.bind(0);
-    mNoiseTexture.bindTexture(1);
+    mNoiseTextures[mCurrentNoiseTex].second.bind(1);
     
     gl::GlslProg shader = mEffects[mCurrentEffect]->getShader();
     shader.bind();
@@ -143,8 +164,8 @@ void EffectShaders::draw()
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
-    shader.uniform( "iChannel0", 0 );
-    shader.uniform( "iChannel1", 1 );
+    shader.uniform( "inputTex", 0 );
+    shader.uniform( "noiseTex", 1 );
     
     mEffects[mCurrentEffect]->setCustomParams( mAudioInputHandler );
     
@@ -154,7 +175,7 @@ void EffectShaders::draw()
     // post-draw
     shader.unbind();
     
-    mNoiseTexture.unbindTexture();
+    mNoiseTextures[mCurrentNoiseTex].second.unbind();
     mInputTextures[mCurrentInputTexture].second.unbind();
     
     gl::popMatrices();
@@ -166,17 +187,74 @@ void EffectShaders::draw()
 TelevisionEffect::TelevisionEffect()
 : FragShader("television", "crtinterference_frag.glsl")
 {
+    mPowerBandThickness = 0.1; // percentage of v-size
+    mPowerBandSpeed = -0.2;
+    mPowerBandIntensity = 4.0;
     
+    mPowerBandThicknessResponse = AudioInputHandler::BAND_NONE;
+    mPowerBandIntensityResponse = AudioInputHandler::BAND_NONE;
+    mPowerBandSpeedResponse = AudioInputHandler::BAND_NONE;
+    mSignalNoiseResponse = AudioInputHandler::BAND_NONE;
+    
+    mSignalNoise = 0.8f;
+    mScanlines = 120.0f;
+    
+    mTintColor = ColorAf(0.9f, 0.7f, 1.2f, 1.0f);
 }
 
 void TelevisionEffect::setupInterface(Interface *interface, const std::string &prefix)
 {
     string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    
+    interface->addParam(CreateFloatParam("powerband-thickness", &mPowerBandThickness)
+                        .minValue(0.001f)
+                        .oscReceiver(oscName));
+    interface->addEnum(CreateEnumParam("thickness-audio", &mPowerBandThicknessResponse)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam("powerband-speed", &mPowerBandSpeed)
+                        .minValue(-1.0f)
+                        .maxValue(1.0f)
+                        .oscReceiver(oscName));
+    interface->addEnum(CreateEnumParam("speed-audio", &mPowerBandSpeedResponse)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam("powerband-intensity", &mPowerBandIntensity)
+                        .maxValue(10.0f)
+                        .oscReceiver(oscName));
+    interface->addEnum(CreateEnumParam("intensity-audio", &mPowerBandIntensityResponse)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam("signalnoise", &mSignalNoise)
+                        .maxValue(2.0f)
+                        .oscReceiver(oscName));
+    interface->addEnum(CreateEnumParam("signal-audio", &mSignalNoiseResponse)
+                       .maxValue(bandNames.size())
+                       .isVertical()
+                       .oscReceiver(oscName)
+                       .sendFeedback(), bandNames);
+    interface->addParam(CreateFloatParam("scanlines", &mScanlines)
+                        .minValue(4.0f)
+                        .maxValue(300.f)
+                        .oscReceiver(oscName));
+    interface->addParam(CreateColorParam("tintcolor", &mTintColor, kMinColor, kMaxColor));
 }
 
 void TelevisionEffect::setCustomParams(AudioInputHandler &audioInputHandler)
 {
     
+    
+    mShader.uniform("iPowerBandThickness", mPowerBandThickness * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandThicknessResponse)));
+    mShader.uniform("iPowerBandIntensity", mPowerBandIntensity * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandIntensityResponse)));
+    mShader.uniform("iPowerBandSpeed", mPowerBandSpeed * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandSpeedResponse)));
+    mShader.uniform("iSignalNoise", mSignalNoise * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mSignalNoiseResponse)));
+    mShader.uniform("iScanlines", mScanlines);
+    mShader.uniform("iColor1", mTintColor);
 }
