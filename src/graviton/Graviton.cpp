@@ -157,30 +157,156 @@ void Graviton::setupParticles(const int bufSize)
     mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
     
     
+//    positions.clear();
+//    data.clear();
+//    // cube
+//    for (int i = 0; i < numParticles; ++i)
+//    {
+//        // position + mass
+//        float x = r * (Rand::randFloat()-0.5f);
+//        float y = r * (Rand::randFloat()-0.5f);
+//        float z = r * (Rand::randFloat()-0.5f);
+//        float mass = Rand::randFloat(0.01f,1.0f);
+//        positions.push_back(Vec4f(x,y,z,mass));
+//        
+////        // velocity + age
+////        //        float vx = Rand::randFloat(-.005f,.005f);
+////        //        float vy = Rand::randFloat(-.005f,.005f);
+////        //        float vz = Rand::randFloat(-.005f,.005f);
+////        float age = Rand::randFloat(.007f,0.9f);
+////        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+//        
+//        // extra info
+//        float decay = Rand::randFloat(.01f,10.00f);
+//        data.push_back(Vec4f(x,y,z,decay));
+//    }
+//    mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
+    
     positions.clear();
     data.clear();
-    // cube
+    // tight sphere
     for (int i = 0; i < numParticles; ++i)
     {
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        const float d = Rand::randFloat(10.0f, r * 0.25f);
+        
         // position + mass
-        float x = r * (Rand::randFloat()-0.5f);
-        float y = r * (Rand::randFloat()-0.5f);
-        float z = r * (Rand::randFloat()-0.5f);
+        float x = d * cos(rho) * sin(theta);
+        float y = d * sin(rho) * sin(theta);
+        float z = d * cos(theta);
         float mass = Rand::randFloat(0.01f,1.0f);
         positions.push_back(Vec4f(x,y,z,mass));
         
-//        // velocity + age
-//        //        float vx = Rand::randFloat(-.005f,.005f);
-//        //        float vy = Rand::randFloat(-.005f,.005f);
-//        //        float vz = Rand::randFloat(-.005f,.005f);
-//        float age = Rand::randFloat(.007f,0.9f);
-//        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+        // velocity + age
+        //        float vx = Rand::randFloat(-.005f,.005f);
+        //        float vy = Rand::randFloat(-.005f,.005f);
+        //        float vz = Rand::randFloat(-.005f,.005f);
+        //float age = Rand::randFloat(.007f,0.9f);
+        //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
         
         // extra info
         float decay = Rand::randFloat(.01f,10.00f);
         data.push_back(Vec4f(x,y,z,decay));
     }
-    mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
+    mParticleController.addFormation(new ParticleFormation("sphere-small", bufSize, positions, velocities, data));
+    
+    positions.clear();
+    data.clear();
+    // tight shell
+    for (int i = 0; i < numParticles; ++i)
+    {
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        // position + mass
+        float x = r*0.25f * cos(rho) * sin(theta);
+        float y = r*0.25f * sin(rho) * sin(theta);
+        float z = r*0.25f * cos(theta);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        //
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
+    }
+    mParticleController.addFormation(new ParticleFormation("shell-small", bufSize, positions, velocities, data));
+    
+    positions.clear();
+    data.clear();
+    // torus
+    for (int i = 0; i < numParticles; ++i)
+    {
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        const float r2 = r * 0.25f;
+        
+        // position + mass
+        float x = cos(theta) * (r + r2*cos(rho));
+        float y = sin(theta) * (r + r2*cos(rho));
+        float z = r2 * sin(rho);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        //
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
+    }
+    mParticleController.addFormation(new ParticleFormation("torus", bufSize, positions, velocities, data));
+    
+    positions.clear();
+    data.clear();
+    // torus2
+    for (int i = 0; i < numParticles; ++i)
+    {
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        const float r2 = r * 0.5f;
+        
+        // position + mass
+        float x = cos(theta) * (r2 + r*cos(rho));
+        float y = sin(theta) * (r2 + r*cos(rho));
+        float z = r * sin(rho);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        //
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
+    }
+    mParticleController.addFormation(new ParticleFormation("parabola", bufSize, positions, velocities, data));
+    
+    positions.clear();
+    data.clear();
+    float rho = Rand::randFloat() * (M_PI);
+    float theta = Rand::randFloat() * (M_PI * 2.0);
+    float dist = -r;
+    // lines
+    for (int i = 0; i < numParticles; ++i)
+    {
+        if (i % 512 == 0)
+        {
+            rho = Rand::randFloat() * (M_PI);
+            theta = Rand::randFloat() * (M_PI * 2.0f);
+            dist = -r;
+        }
+        
+        // position + mass
+        float x = dist * cos(rho) * sin(theta);
+        float y = dist * sin(rho) * sin(theta);
+        float z = dist * cos(theta);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        //
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
+        
+        dist += r / 512.0f;
+    }
+    mParticleController.addFormation(new ParticleFormation("lines", bufSize, positions, velocities, data));
     
     mParticleController.resetToFormation(0);
 }
