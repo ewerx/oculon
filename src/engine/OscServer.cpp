@@ -337,9 +337,10 @@ bool OscServer::handleMidiMessage(MidiEvent midiEvent)
         mMidiLearning = false;
         
         mMidiLearnTarget->setMidiAddress(address.first, address.second);
+        mMidiLearnTarget->sendValue();
         
         // change color
-        sendMidiControlChange(1, address.second, 80);
+        //sendMidiControlChange(1, address.second, 80);
         
         console() << "[midi] learned mapping for [" << address.first << "," << address.second << "]\n";
         
