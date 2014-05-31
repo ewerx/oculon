@@ -194,3 +194,18 @@ private:
     ci::Vec3f           mLight2Dir;
     bool                mInverted;
 };
+
+#pragma mark - Terminal
+
+class TerminalShader : public FragShader
+{
+public:
+    TerminalShader();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    
+};
+

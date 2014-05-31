@@ -18,7 +18,7 @@ precision mediump float;
 // Locations in 3x7 font grid, inspired by http://www.claudiocc.com/the-1k-notebook-part-i/
 // Had to edit it to remove some line doubling.
 //
-// ABC  a:GIOMJL b:AMOIG c:IGMO d:COMGI e:OMGILJ f:CBN g:OMGIUS h:AMGIO i:GHN" j:GHTS k:AMIKO l:BN m:MGHNHIO n:MGIO
+// ABC  a:GIOMJL b:AMOIG c:IGMO d:COMGI e:OMGILJ f:CBN g:OMGIUS h:AMGIO i:EEHN j:GHTS k:AMIKO l:BN m:MGHNHIO n:MGIO
 // DEF  o:GIOMG p:SGIOM q:UIGMO r:MGI s:IGJLOM t:BNO u:GMOI v:GJNLI w:GMNHNOI x:GOKMI y:GMOIUS z:GIMO
 // GHI
 // JKL
@@ -26,8 +26,10 @@ precision mediump float;
 // PQR
 // STU
 // some defaults
-#define font_size 16.
-#define font_spacing .05
+#define font_size 20.
+#define font_spacing .051
+#define STROKEWIDTH 0.04
+#define PI 3.14159265359
 
 #define A_ vec2(0.,0.)
 #define B_ vec2(1.,0.)
@@ -51,7 +53,7 @@ precision mediump float;
 
 #define P_ vec2(0.,5.)
 #define Q_ vec2(1.,5.)
-#define R_ vec2(2.,5.)
+#define R_ vec2(1.,5.)
 
 #define S_ vec2(0.,6.)
 #define T_ vec2(1.,6.)
@@ -84,8 +86,10 @@ precision mediump float;
 #define Y(p) t(G_,M_,p) + t(M_,O_,p) + t(I_,U_,p) + t(U_,S_,p)
 #define Z(p) t(G_,I_,p) + t(I_,M_,p) + t(M_,O_,p)
 #define l(p) t(H_,N_,p) + t(K_,L_,p) + t(L_,I_,p)
-vec2 caret_origin = vec2(3.0, .7);
+#define STOP(p) t(N_,N_,p)
+vec2 caret_origin = vec2(1.8, .7);
 vec2 caret;
+float time = mod(iGlobalTime, 11.0);
 
 //-----------------------------------------------------------------------------------
 float minimum_distance(vec2 v, vec2 w, vec2 p)
@@ -112,8 +116,9 @@ float minimum_distance(vec2 v, vec2 w, vec2 p)
 float textColor(vec2 from, vec2 to, vec2 p)
 {
 	p *= font_size;
-	float inkNess = 0., nearLine, strokeWidth = 0.05;
-	nearLine = minimum_distance(from,to,p +(  sin(p.x + iGlobalTime))  ); // basic distance from segment, thanks http://glsl.heroku.com/e#6140.0
+	float inkNess = 0., nearLine, strokeWidth = STROKEWIDTH;
+    nearLine = minimum_distance(from,to,p); // basic distance from segment, thanks http://glsl.heroku.com/e#6140.0
+	//nearLine = minimum_distance(from,to,p +(  sin(p.x + iGlobalTime*0.001))  );
 	inkNess += smoothstep(0., 1., 1.- 14.*(nearLine - strokeWidth)); // ugly still
 	inkNess += smoothstep(0., 2.5, 1.- (nearLine  + 5. * strokeWidth)); // glow
 	return inkNess;
@@ -166,12 +171,11 @@ void newline()
 void main(void)
 {
     vec2 resolution = iResolution;
-    float time = iGlobalTime;
     
 	float d = 0.;
-	vec3 col = vec3(0.1,0.2*(.5+sin(gl_FragCoord.y*3.1456+time*3.0)), 0.1);
+    //vec3 col = vec3(0.1,0.2*(.5+sin(gl_FragCoord.y*3.1456+time*3.0)), 0.1);
+	vec3 col = vec3(0.1, .07+0.07*(.5+sin(gl_FragCoord.y*PI*1.1+time*2.0)) + sin(gl_FragCoord.y*.01+time+2.5)*0.05, 0.1);
 	
-	caret_origin = vec2(3.2, .72);
 	caret = caret_origin;
     
 	float ti = floor(time/10.0);
@@ -182,15 +186,43 @@ void main(void)
     d += E(r()); add();
     d += L(r()); add();
     d += L(r()); add();
-    d += O(r()); add(); newline();
-    d += W(r()); add();
     d += O(r()); add();
-    d += R(r()); add();
+    newline();
+    d += M(r()); add();
+    d += Y(r()); add();
+    space();
+    d += N(r()); add();
+    d += A(r()); add();
+    d += M(r()); add();
+    d += E(r()); add();
+    space();
+    d += I(r()); add();
+    d += S(r()); add();
+    newline();
+    newline();
+    d += F(r()); add();
+    d += A(r()); add();
+    d += K(r()); add();
+    d += E(r()); add();
+    space();
+    d += E(r()); add();
     d += L(r()); add();
-    d += D(r()); add();
+    d += E(r()); add();
+    d += C(r()); add();
+    d += T(r()); add();
+    d += R(r()); add();
+    d += O(r()); add();
+    d += N(r()); add();
+    d += I(r()); add();
+    d += C(r()); add();
+    d += S(r()); add();
     
-	d = clamp(d* (.75+sin(gl_FragCoord.x*3.1456+time*1.3)*.5), 0.0, 1.0);
+    
+	//d = clamp(d* (.75+sin(gl_FragCoord.x*PI+time*1.3)*.5), 0.0, 1.0);
+    d = clamp(d* (.75+sin(gl_FragCoord.x*PI*.5-time*4.3)*.5), 0.0, 1.0);
     
     col += vec3(d*.5, d, d*.85);
+    vec2 xy = gl_FragCoord.xy / iResolution.xy;
+	col *= vec3(.4, .4, .3) + 0.5*pow(100.0*xy.x*xy.y*(1.0-xy.x)*(1.0-xy.y), .4 );
     gl_FragColor = vec4( col, 1.0 );
 }

@@ -71,6 +71,7 @@ void ObjectShaders::setupShaders()
     mShaders.push_back( new GyroidShader() );
     mShaders.push_back( new BioFractalShader() );
     mShaders.push_back( new RetinaShader() );
+    mShaders.push_back( new TerminalShader() );
 }
 
 void ObjectShaders::reset()
@@ -599,5 +600,26 @@ void GyroidShader::setupInterface( Interface* interface, const std::string& pref
 }
 
 void GyroidShader::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+}
+
+#pragma mark - Terminal
+
+TerminalShader::TerminalShader()
+: FragShader("console", "terminaltext_frag.glsl")
+{
+}
+
+void TerminalShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(mName);
+    
+    
+}
+
+void TerminalShader::setCustomParams(AudioInputHandler &audioInputHandler)
 {
 }
