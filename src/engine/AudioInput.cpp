@@ -44,7 +44,7 @@ void AudioInput::setup()
     
 	mInputDeviceNode = ctx->createInputDeviceNode();
     
-    audio::Device::printDevices();
+    console() << "[audio] devices:\n" << audio::Device::printDevicesToString();
     
 	reset();
 }
@@ -52,16 +52,16 @@ void AudioInput::setup()
 void AudioInput::reset()
 {
     auto ctx = audio::Context::master();
-    auto scopeFmt = audio::ScopeSpectralNode::Format().fftSize( 1024 ).windowSize( 1024 );
-	mScopeSpectralNode = ctx->makeNode( new audio::ScopeSpectralNode( scopeFmt ) );
-    mScopeNode = ctx->makeNode( new audio::ScopeNode() );
+    auto scopeFmt = audio::MonitorSpectralNode::Format().fftSize( 1024 ).windowSize( 1024 );
+	mMonitorSpectralNode = ctx->makeNode( new audio::MonitorSpectralNode( scopeFmt ) );
+    mMonitorNode = ctx->makeNode( new audio::MonitorNode() );
     
     mGainNode = ctx->makeNode( new audio::GainNode() );
     mGain = 1.0f;
     mGainNode->setValue(mGain);
     
-    mInputDeviceNode >> mGainNode >> mScopeSpectralNode;
-    mInputDeviceNode >> mGainNode >> mScopeNode;
+    mInputDeviceNode >> mGainNode >> mMonitorSpectralNode;
+    mInputDeviceNode >> mGainNode >> mMonitorNode;
     
     mInputDeviceNode->enable();
 	ctx->enable();
@@ -122,12 +122,12 @@ bool AudioInput::changeInput( const int index )
     console() << "[audio] switching to input " << index << ": " << devices[index]->getName() << endl;
     
     mInputDeviceNode->disable();
-    mScopeNode->disconnectAll();
-    mScopeSpectralNode->disconnectAll();
+    mMonitorNode->disconnectAll();
+    mMonitorSpectralNode->disconnectAll();
     mInputDeviceNode->disconnectAll();
 //
     mInputDeviceNode = ctx->createInputDeviceNode( devices[index] );
-//    mInputDeviceNode >> mScopeSpectralNode;
+//    mInputDeviceNode >> mMonitorSpectralNode;
 //    
 //    mInputDeviceNode->enable();
     reset();
@@ -138,8 +138,8 @@ bool AudioInput::changeInput( const int index )
 void AudioInput::shutdown()
 {
 //    mInputDeviceNode->disconnectAll();
-//    mScopeSpectralNode->disconnectAll();
-//    mScopeNode->disconnectAll();
+//    mMonitorSpectralNode->disconnectAll();
+//    mMonitorNode->disconnectAll();
     
 //    mInputDeviceNode->disable();
 }
@@ -153,7 +153,7 @@ void AudioInput::update()
 
 float AudioInput::getAverageVolumeByFrequencyRange(const float minRatio, const float maxRatio)
 {
-    return getAverageVolumeByFrequencyRange( (int)(minRatio * mScopeSpectralNode->getNumBins()), (int)(maxRatio * mScopeSpectralNode->getNumBins()) );
+    return getAverageVolumeByFrequencyRange( (int)(minRatio * mMonitorSpectralNode->getNumBins()), (int)(maxRatio * mMonitorSpectralNode->getNumBins()) );
 }
 
 float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, const int maxBand /*=256*/)
@@ -161,11 +161,11 @@ float AudioInput::getAverageVolumeByFrequencyRange(const int minBand /*=0*/, con
     float amplitude = 0.0f;
     
     int minIndex = math<int>::max( 0, minBand );
-    int maxIndex = math<int>::min( mScopeSpectralNode->getNumBins(), maxBand );
+    int maxIndex = math<int>::min( mMonitorSpectralNode->getNumBins(), maxBand );
     
     for (int32_t i = minIndex; i < maxIndex; i++)
     {
-        amplitude += mScopeSpectralNode->getMagSpectrum()[i];
+        amplitude += mMonitorSpectralNode->getMagSpectrum()[i];
     }
     
     amplitude = amplitude / (float)(maxIndex-minIndex);

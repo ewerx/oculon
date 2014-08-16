@@ -233,7 +233,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             float value = magSpectrum[bandIndex];
             if (!mLinearScale)
             {
-                value = audio::toDecibels(value) / 100.0f;
+                value = audio::linearToDecibel(value) / 100.0f;
             }
             value *= mGain;
             

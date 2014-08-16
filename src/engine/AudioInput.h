@@ -11,7 +11,8 @@
 #define __AUDIOINPUT_H__
 
 #include "cinder/Cinder.h"
-#include "cinder/audio/ScopeNode.h"
+#include "cinder/audio/InputNode.h"
+#include "cinder/audio/MonitorNode.h"
 #include "cinder/audio/GainNode.h"
 #include "cinder/Vector.h"
 #include "Interface.h"
@@ -35,10 +36,10 @@ public:
     // accessors
     
     // TODO: rename
-    unsigned int getFftBandCount() const { return mScopeSpectralNode->getNumBins(); }
+    unsigned int getFftBandCount() const { return mMonitorSpectralNode->getNumBins(); }
     
-    const std::vector<float>& getMagSpectrum()              { return mScopeSpectralNode->getMagSpectrum(); }
-    const ci::audio::Buffer& getBuffer() { return mScopeNode->getBuffer(); }
+    const std::vector<float>& getMagSpectrum()              { return mMonitorSpectralNode->getMagSpectrum(); }
+    const ci::audio::Buffer& getBuffer() { return mMonitorNode->getBuffer(); }
     
     float getAverageVolumeByFrequencyRange(const float minRatio =0.0f, const float maxRatio =1.0f);
     float getAverageVolumeByFrequencyRange(const int minBand =0, const int maxBand =DEFAULT_FREQ_BIN_SIZE);
@@ -73,9 +74,9 @@ public:
     bool onGainChanged();
     
 private:
-    ci::audio::InputDeviceNodeRef	mInputDeviceNode;
-    ci::audio::ScopeNodeRef         mScopeNode;
-    ci::audio::ScopeSpectralNodeRef	mScopeSpectralNode;
+    ci::audio::InputDeviceNodeRef       mInputDeviceNode;
+    ci::audio::MonitorNodeRef           mMonitorNode;
+    ci::audio::MonitorSpectralNodeRef	mMonitorSpectralNode;
     
     float mGain;
     ci::audio::GainNodeRef mGainNode;

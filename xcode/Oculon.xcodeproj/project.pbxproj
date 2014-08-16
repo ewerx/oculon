@@ -3584,6 +3584,7 @@
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/x86_64",
 					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Release,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
 					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Lib/MacOS/Debug/libovr.a\"",
@@ -3630,6 +3631,7 @@
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/x86_64",
 					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Release,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder.a\"",
 					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Lib/MacOS/Release/libovr.a\"",
