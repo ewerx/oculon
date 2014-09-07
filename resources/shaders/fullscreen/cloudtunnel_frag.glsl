@@ -19,7 +19,7 @@ float hash(float n)
 	return fract(sin(n)*43758.5453123);
 }
 
-float noise3(vec3 x)
+float ctnoise3(vec3 x)
 {
     vec3 p = floor(x);
     vec3 f = fract(x);
@@ -53,7 +53,7 @@ vec4 DEc4(vec3 p)
 {
     float t=DE(p);
     p.z+=speed*4.0;
-    t+=noise3(p*1.75-speed*1.5)*0.6;
+    t+=ctnoise3(p*1.75-speed*1.5)*0.6;
     
     vec4 res = vec4(  clamp( t, 0.0, 1.0 ) );
     res.xyz = mix( vec3(1.0,1.0,1.0), vec3(0.0,0.0,0.05), res.x );
