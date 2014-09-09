@@ -36,7 +36,7 @@ void AudioInputHandler::setup(bool fboEnabled)
     // DISTRIBUTION
     mRandomSignal       = false;
     mRandomize          = false;
-    mRandomSeed         = 1234;
+    mRandomSeed         = 0;
     
     // FALLOFF
     mFalloffTime        = 0.32f;
@@ -113,7 +113,7 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
 //    interface->addParam(CreateBoolParam( "texture", &mAudioFboEnabled )
 //                        .oscReceiver(name,"audio/texture"));
     interface->addParam(CreateBoolParam( "random", &mRandomSignal )
-                         .oscReceiver(name,"audio/random"));
+                         .oscReceiver(name,"audio/random"))->registerCallback( this, &AudioInputHandler::onRandomize );
     interface->addButton(CreateTriggerParam( "randomize", NULL )
                         .oscReceiver(name,"audio/randomize")
                          .midiInput(0, randomizeMidiChannel, randomizeMidiNote))->registerCallback( this, &AudioInputHandler::onRandomize );
@@ -218,7 +218,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     }
     else
     {
-        if (mRandomize)
+        if (mRandomize || mRandomSignal)
         {
             mRandomSeed = Rand::randInt();
             mRandomize = false;
