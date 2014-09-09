@@ -45,6 +45,10 @@ protected:// from Scene
 
 private:
     void setupParticles(const int bufSize);
+    void updateParticles(double dt);
+    
+    void setupNodes(const int bufSize);
+    void updateNodes(double dt);
 
 private:
     // particle system
@@ -61,6 +65,7 @@ MOTION_ENTRY( "Noise", MOTION_NOISE ) \
 MOTION_ENTRY( "Gravity", MOTION_GRAVITY ) \
 MOTION_ENTRY( "AudioWave", MOTION_AUDIO_WAVE ) \
 MOTION_ENTRY( "AudioFFT", MOTION_AUDIO_FFT ) \
+MOTION_ENTRY( "Nodes", MOTION_NODES ) \
 // end tuple
     
     enum eMotion
@@ -73,6 +78,29 @@ enm,
         MOTION_COUNT
     };
     eMotion mMotion;
+    
+    // nodes
+    int mNodeBufSize;
+    ParticleController mNodeController;
+    ci::gl::GlslProg mNodeSimShader;
+    // node motion
+#define NODE_MOTION_TUPLE \
+NODE_MOTION_ENTRY( "Static", NODE_MOTION_STATIC ) \
+NODE_MOTION_ENTRY( "Bounce", NODE_MOTION_BOUNCE ) \
+NODE_MOTION_ENTRY( "Noise", NODE_MOTION_NOISE ) \
+// end tuple
+    
+    enum eNodeMotion
+    {
+#define NODE_MOTION_ENTRY( nam, enm ) \
+enm,
+        NODE_MOTION_TUPLE
+#undef  NODE_MOTION_ENTRY
+        
+        NODE_MOTION_COUNT
+    };
+    eNodeMotion mNodeMotion;
+    std::vector<ci::Vec3f> mNodePositions;
 
     // camera
     CameraController mCameraController;

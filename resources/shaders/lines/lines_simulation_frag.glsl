@@ -14,12 +14,14 @@ uniform float formationStep;
 uniform int motion;
 uniform float containmentSize;
 
+
+uniform sampler2D nodePosTex;
+uniform float nodeBufSize;
+
 uniform sampler2D audioData;
 uniform float gain;
 
 varying vec4 texCoord;
-
-const float eps = 0.001;
 
 void main()
 {
@@ -30,7 +32,7 @@ void main()
 	float age = texture2D( velocities, texCoord.st ).a;
     
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
-	float decay = texture2D( information, texCoord.st ).a;
+	float nodeIndex = texture2D( information, texCoord.st ).a;
     
     bool doSim = true; // to skip simulation when forcing containment...
     float dist = length(pos);
@@ -94,6 +96,17 @@ void main()
             {
                 pos = texture2D(oPositions, texCoord.st).rgb + vel * texture2D( audioData, vec2(texCoord.s * texCoord.t,0.0) ).x * gain * 10.0;
             }
+            else if (motion == 5) // follow node
+            {
+                float numNodes = nodeBufSize * nodeBufSize;
+                vec2 uv;
+                uv.x = float( mod( nodeIndex, nodeBufSize ) ) / nodeBufSize;
+                uv.y = float( floor( nodeIndex / nodeBufSize ) ) / nodeBufSize;
+                
+                vec3 nodePos = texture2D( nodePosTex, uv ).rgb;
+                
+                pos = nodePos;
+            }
         }
     }
 	
@@ -106,10 +119,10 @@ void main()
 	
     //position + mass
 	gl_FragData[0] = vec4(pos, invMass);
-    //velocity + decay
+    //velocity + nodeIndex
 	gl_FragData[1] = vec4(vel, age);
     //age information
-	gl_FragData[2] = vec4(startPos, decay);
+	gl_FragData[2] = vec4(startPos, nodeIndex);
 }
 
 

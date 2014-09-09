@@ -127,7 +127,8 @@ void PingPongFbo::reset()
     gl::setMatricesWindow( getSize(), false );
     gl::setViewport( getBounds() );
     gl::clear();
-    for(int i=0; i<mAttachments.size(); ++i) {
+    for(int i=0; i<mAttachments.size(); ++i)
+    {
         glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT + i);
         
         mTextures[i].enableAndBind();
@@ -151,7 +152,8 @@ void PingPongFbo::bindUpdate()
     
     glDrawBuffers(mAttachments.size(), &mAttachments[0]);
     
-    for(int i=0; i<mAttachments.size(); ++i) {
+    for(int i=0; i<mAttachments.size(); ++i)
+    {
         mFbos[!mCurrentFbo].bindTexture(i, i);
     }
 }
@@ -166,10 +168,18 @@ void PingPongFbo::unbindUpdate()
 
 void PingPongFbo::bindTexture(int textureUnit)
 {
-    if (textureUnit < mAttachments.size()) {
-        mFbos[mCurrentFbo].bindTexture(textureUnit, textureUnit);
-    } else {
-        assert(false && "invalid textureUnit");
+    bindTexture(textureUnit, textureUnit);
+}
+
+void PingPongFbo::bindTexture(int textureUnit, int attachment)
+{
+    if (attachment < mAttachments.size())
+    {
+        mFbos[mCurrentFbo].bindTexture(textureUnit, attachment);
+    }
+    else
+    {
+        assert(false && "invalid attachment");
     }
 }
 

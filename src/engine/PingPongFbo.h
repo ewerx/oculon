@@ -38,8 +38,10 @@ public:
     //! Unbind both the source and the target texture.
     void unbindUpdate();
 	
-    //! Bind the texture of the current fbo.
+    //! Bind the texture of the current fbo to matching attachment.
     void bindTexture(int textureUnit);
+    //! Bind the texture of the current fbo.
+    void bindTexture(int textureUnit, int attachment);
     //! Unbind the texture of the current fbo.
     void unbindTexture();
 	

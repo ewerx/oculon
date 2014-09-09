@@ -106,6 +106,7 @@
 		7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C159BA618B7017E005245CB /* ParticleRenderer.cpp */; };
 		7C187E48191093D3003590EC /* SimplexNoiseTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */; };
 		7C272EC81938675B00A49E48 /* rgb_noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C272EC71938675B00A49E48 /* rgb_noise256.png */; };
+		7C29B93F19BD472E009E89F1 /* lines_nodesim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C29B93E19BD472E009E89F1 /* lines_nodesim_frag.glsl */; };
 		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
 		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
@@ -688,6 +689,7 @@
 		7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimplexNoiseTexture.cpp; sourceTree = "<group>"; };
 		7C187E47191093D3003590EC /* SimplexNoiseTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplexNoiseTexture.h; sourceTree = "<group>"; };
 		7C272EC71938675B00A49E48 /* rgb_noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rgb_noise256.png; sourceTree = "<group>"; };
+		7C29B93E19BD472E009E89F1 /* lines_nodesim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_nodesim_frag.glsl; sourceTree = "<group>"; };
 		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
 		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
@@ -2607,6 +2609,7 @@
 				7C892495189C81A900AF4698 /* lines_render_frag.glsl */,
 				7C892496189C81A900AF4698 /* lines_render_vert.glsl */,
 				7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */,
+				7C29B93E19BD472E009E89F1 /* lines_nodesim_frag.glsl */,
 				7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */,
 				7C024ED118B4770500A019E5 /* graviton_simulation_vert.glsl */,
 			);
@@ -3262,6 +3265,7 @@
 				7C79C94E17650F8F00E71F9D /* polyhedron_frag.glsl in Resources */,
 				7C79C94F17650F8F00E71F9D /* polyhedron_vert.glsl in Resources */,
 				7C79C95017650F8F00E71F9D /* process_frag.glsl in Resources */,
+				7C29B93F19BD472E009E89F1 /* lines_nodesim_frag.glsl in Resources */,
 				7C79C95117650F8F00E71F9D /* quake_frag.glsl in Resources */,
 				7C79C95217650F8F00E71F9D /* quake_vert.glsl in Resources */,
 				7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */,
