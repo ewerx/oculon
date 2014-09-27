@@ -54,7 +54,7 @@ void Lines::setup()
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     
-    const int bufSize = 96;
+    const int bufSize = 128;
     setupParticles(bufSize);
     
     // rendering
