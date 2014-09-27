@@ -113,6 +113,7 @@ void Lines::setupParticles(const int bufSize)
         }
         mParticleController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
         positions.clear();
+        data.clear();
     }
     
     // straight lines
@@ -153,6 +154,8 @@ void Lines::setupParticles(const int bufSize)
             
             // position + mass
             positions.push_back(Vec4f(x,y,z,mass));
+            
+            data.push_back(Vec4f(x,y,z,0.0f));
             
             pair = !pair;
         }
@@ -371,7 +374,7 @@ void Lines::setupParticles(const int bufSize)
 //    }
 
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
-    mParticleController.resetToFormation(3);
+    mParticleController.resetToFormation(0);
 }
 
 void Lines::reset()

@@ -1659,7 +1659,6 @@
 				7C8DA8721921D29D00FCD9A2 /* sacred_frag.glsl */,
 				7C6CB43B1925DAA900D83614 /* scanline_frag.glsl */,
 				7C06A8D21853D4ED00D1C8A3 /* shapeshifter_frag.glsl */,
-				7C6CB43F1925DAA900D83614 /* simplicity_frag.glsl */,
 				7C06A8D41853D4ED00D1C8A3 /* squarenoise_frag.glsl */,
 				7C8DA86E1921CBF000FCD9A2 /* squarespiral_frag.glsl */,
 				7C06A8D51853D4ED00D1C8A3 /* stripes_frag.glsl */,
@@ -3588,7 +3587,7 @@
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/x86_64",
 					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Release,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
 					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Lib/MacOS/Debug/libovr.a\"",
@@ -3635,7 +3634,7 @@
 					"/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/LibOVR_With_Samples.build/Release/ovr.build/Objects-normal/x86_64",
 					/Users/ehsan/dev/sdks/cinder_master/blocks/OculusRift/LibOVR/Lib/MacOS/Release,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder.a\"",
 					"\"$(SRCROOT)/../blocks/OculusRift/LibOVR/Lib/MacOS/Release/libovr.a\"",
