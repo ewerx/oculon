@@ -49,7 +49,6 @@ void Terrain::setup()
     Scene::setup();
     
     // Params
-    mCamType = CAM_STATIC;
     mDrawWireframe = true;
 	mDrawFlatShaded = true;
     mMeshFaceAlpha = 1.0f;
@@ -121,11 +120,11 @@ void Terrain::setup()
     setupDynamicTexture();
     
     // CAMERA
-    mSplineCam.setup(1000.0f, 300.0f);
-    mScale = 620.0f;
-    mTunnelDistance = -300.0f;
-    mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ), true );
-    mTunnelCam.mRadius = 200.0f;
+//    mSplineCam.setup(1000.0f, 300.0f);
+//    mScale = 620.0f;
+//    mTunnelDistance = -300.0f;
+//    mTunnelCam.setup( Vec3f( 0.0f, mTunnelDistance, 0.0f ), true );
+//    mTunnelCam.mRadius = 200.0f;
     
     edgeCamera();
 
@@ -244,7 +243,7 @@ void Terrain::setupInterface()
     mInterface->addButton(CreateTriggerParam("edge cam", NULL))->registerCallback(this, &Terrain::edgeCamera);
     mInterface->addButton(CreateTriggerParam("face cam", NULL))->registerCallback(this, &Terrain::faceCamera);
     
-    mSplineCam.setupInterface(mInterface, mName);
+//    mSplineCam.setupInterface(mInterface, mName);
     mTunnelCam.setupInterface(mInterface, mName);
 }
 
@@ -287,11 +286,6 @@ void Terrain::update(double dt)
 	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
 	mTheta = time;//math<float>::sin( time );
     drawDynamicTexture();
-    
-    if( mCamType == CAM_SPLINE )
-    {
-        mSplineCam.update(dt);
-    }
     
     //if( mCamType == CAM_TUNNEL )
     {
@@ -780,55 +774,7 @@ const Camera& Terrain::getCamera()
     {
         case CAM_STATIC:
             return mStaticCam;
-            
-        case CAM_SPLINE:
-            return mSplineCam.getCamera();
-            
-        case CAM_TUNNEL:
-            return mTunnelCam.getCamera();
-            
-        case CAM_CATALOG:
-        {
-            Scene* scene = mApp->getScene("catalog");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_GRAVITON:
-        {
-            Scene* scene = mApp->getScene("graviton");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_ORBITER:
-        {
-            Scene* scene = mApp->getScene("orbiter");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
+                        
         default:
             return mApp->getMayaCam();
     }

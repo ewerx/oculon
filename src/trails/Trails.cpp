@@ -32,8 +32,6 @@ Trails::~Trails()
 void Trails::setup()
 {
     Scene::setup();
-	
-    mSplineCam.setup();
 
 	// load texture
 	try { mTexture = gl::Texture( loadImage( loadResource("spectrum.png") ) ); }
@@ -80,8 +78,6 @@ void Trails::setup()
     mWidth = 1.0f;
     mAngleIncrement = 1.0f;
     mWireframe = false;
-    
-    mCamType = CAM_SPLINE;
 
 	// disable vertical sync, so we can see the actual frame rate
 	//gl::disableVerticalSync();
@@ -132,12 +128,6 @@ void Trails::setupInterface()
     mInterface->addParam(CreateBoolParam("Wireframe", &mWireframe)
                          .oscReceiver(mName,"wireframe"));
     
-    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camtype")
-                        .isVertical());
-    mSplineCam.setupInterface(mInterface, mName);
-    
 }
 
 //void Trails::setupDebugInterface()
@@ -186,9 +176,6 @@ void Trails::update(double dt)
 
 	// advance time
 	mTime += num_trails / mTrailsPerSecond;
-    
-    if( mCamType == CAM_SPLINE )
-        mSplineCam.update(dt);
 }
 
 void Trails::draw()
@@ -236,40 +223,5 @@ void Trails::draw()
 
 const Camera& Trails::getCamera()
 {
-    switch( mCamType )
-    {
-        case CAM_SPLINE:
-            return mSplineCam.getCamera();
-            
-        case CAM_CATALOG:
-        {
-            Scene* scene = mApp->getScene("catalog");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_ORBITER:
-        {
-            Scene* scene = mApp->getScene("orbiter");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        default:
             return mApp->getMayaCam();
-    }
 }

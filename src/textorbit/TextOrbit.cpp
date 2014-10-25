@@ -32,8 +32,6 @@ TextOrbit::~TextOrbit()
 void TextOrbit::setup()
 {
     Scene::setup();
-	
-    mSplineCam.setup();
 
 	// load texture
 //	try { mTexture = gl::Texture( loadImage( loadResource("spectrum.png") ) ); }
@@ -43,8 +41,6 @@ void TextOrbit::setup()
 	gl::TextureFont::Format f;
 	f.enableMipmapping( true );
 	mTextureFont = gl::TextureFont::create( customFont, f );
-    
-    mCamType = CAM_SPLINE;
     
     addChar('O');
     addChar('R');
@@ -57,12 +53,6 @@ void TextOrbit::setup()
 
 void TextOrbit::setupInterface()
 {
-    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camtype")
-                        .isVertical());
-    mSplineCam.setupInterface(mInterface, mName);
-    
 }
 
 //void TextOrbit::setupDebugInterface()
@@ -100,9 +90,6 @@ void TextOrbit::addChar( char c )
 
 void TextOrbit::update(double dt)
 {
-    if( mCamType == CAM_SPLINE )
-        mSplineCam.update(dt);
-    
     for( vector<Character>::iterator it = mCharacters.begin(); it != mCharacters.end(); ++it )
     {
         it->update(dt);
@@ -147,44 +134,4 @@ void TextOrbit::draw()
 	gl::disableDepthRead();
 
 	gl::disableAlphaBlending();
-}
-
-const Camera& TextOrbit::getCamera()
-{
-    switch( mCamType )
-    {
-        case CAM_SPLINE:
-            return mSplineCam.getCamera();
-            
-        case CAM_CATALOG:
-        {
-            Scene* scene = mApp->getScene("catalog");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_ORBITER:
-        {
-            Scene* scene = mApp->getScene("orbiter");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        default:
-            return mApp->getMayaCam();
-    }
 }

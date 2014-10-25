@@ -7,8 +7,10 @@
 //
 
 #include "PlanetScene.h"
-
 #include "OculonApp.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -37,7 +39,12 @@ void PlanetScene::setup()
     
 //    mDynamicTexture.setup(mMeshResolution.x, mMeshResolution.y);
     
-    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_GRAVITON);
+    mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "parsec") );
+    mCameraController.setCamIndex(3);
     
     mBackgroundAlpha = 0.0f;
 }

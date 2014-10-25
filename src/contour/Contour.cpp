@@ -33,16 +33,12 @@ Contour::~Contour()
 void Contour::setup()
 {
     Scene::setup();
-	
-    mSplineCam.setup();
 
 	// load texture
 //	try { mTexture = gl::Texture( loadImage( loadResource("spectrum.png") ) ); }
 //	catch( const std::exception &e ) { console() << e.what() << std::endl; }
 
 	mZoom = Vec2f( 13.6, 8 );
-    
-    mCamType = CAM_SPLINE;
 
 	//openFile();
     setupDynamicTexture();
@@ -157,12 +153,6 @@ void Contour::setupInterface()
                          .oscReceiver(mName)
                          .isXYPad());
     
-    mInterface->addEnum(CreateEnumParam( "Cam Type", (int*)(&mCamType) )
-                        .maxValue(CAM_COUNT)
-                        .oscReceiver(getName(), "camtype")
-                        .isVertical());
-    mSplineCam.setupInterface(mInterface, mName);
-    
     mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
@@ -192,9 +182,6 @@ void Contour::update(double dt)
 	float time = (float)getElapsedSeconds() * mDisplacementSpeed;
 	mTheta = time;//math<float>::sin( time );
     drawDynamicTexture(); // always draw to fbo from update, not draw
-    
-    if( mCamType == CAM_SPLINE )
-        mSplineCam.update(dt);
 }
 
 void Contour::draw()
@@ -359,41 +346,6 @@ void Contour::drawDebug()
 }
 
 const Camera& Contour::getCamera()
-{
-    switch( mCamType )
-    {
-        case CAM_SPLINE:
-            return mSplineCam.getCamera();
-            
-        case CAM_CATALOG:
-        {
-            Scene* scene = mApp->getScene("catalog");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        case CAM_ORBITER:
-        {
-            Scene* scene = mApp->getScene("orbiter");
-            
-            if( scene && scene->isRunning() )
-            {
-                return scene->getCamera();
-            }
-            else
-            {
-                return mSplineCam.getCamera();
-            }
-        }
-            
-        default:
-            return mApp->getMayaCam();
-    }
+{    
+    return mApp->getMayaCam();
 }

@@ -13,6 +13,9 @@
 #include "Lines.h"
 #include "OculonApp.h"
 #include "Interface.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -64,9 +67,15 @@ void Lines::setup()
     
     mDynamicTexture.setup(bufSize, bufSize);
     
-    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
+    mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "parsec") );
+    mCameraController.setCamIndex(1);
+    
+    
     mApp->setCamera(Vec3f(100.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
-    mCameraController.setCamType(CameraController::CAM_SPIN);
     
     // audio
     mAudioInputHandler.setup(true);
@@ -376,6 +385,8 @@ void Lines::setupParticles(const int bufSize)
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
 }
+
+//void Lines::addParsecFormation( )
 
 void Lines::reset()
 {

@@ -88,7 +88,7 @@ TERRAIN_CAMTYPE_ENTRY( "Spline", CAM_SPLINE ) \
     };
     eCamType                    mCamType;
     
-    SplineCam                   mSplineCam;
+//    SplineCam                   mSplineCam;
     ci::CameraPersp             mStaticCam;
     ci::Vec3f                   mStaticCamPos;
     TunnelCam                   mTunnelCam;

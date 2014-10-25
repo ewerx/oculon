@@ -16,6 +16,7 @@ using namespace ci;
 using namespace std;
 
 TunnelCam::TunnelCam()
+: SceneCam("tunnel", 0.0f) // TODO
 {
 }
 
@@ -48,7 +49,7 @@ bool TunnelCam::reset()
 
 void TunnelCam::setupInterface( Interface* interface, const std::string& name)
 {
-    //interface->gui()->addColumn();
+    mInterfacePanel = interface->gui()->addPanel();
     interface->gui()->addLabel("Tunnel Cam");
     interface->addButton(CreateTriggerParam("Reset Tunnel", NULL)
                          .oscReceiver(name,"tunnelcamreset"))->registerCallback( this, &TunnelCam::reset );

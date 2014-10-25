@@ -108,19 +108,6 @@ private:
     ci::gl::Fbo					mStripFbo;
     
     // params
-    
-    enum eCamType
-    {
-        CAM_MANUAL,
-        CAM_ORBITER,
-        CAM_CATALOG,
-        CAM_SPLINE,
-        
-        CAM_COUNT
-    };
-    eCamType            mCamType;
-    
-    SplineCam           mSplineCam;
 
 };
 

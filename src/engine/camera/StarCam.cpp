@@ -39,8 +39,8 @@ const double StarCam::LATITUDE_THRESHOLD = 89.0;
 const double StarCam::DISTANCE_MIN = 0.015;
 const double StarCam::DISTANCE_MAX = 1000.0;
 
-StarCam::StarCam()
-: mApp(NULL)
+StarCam::StarCam(const float aspectRatio)
+: SceneCam("star", aspectRatio)
 {
 	mInitialCam = mCurrentCam = CameraPersp(); 
 	mCurrentCam.setNearClip( 5.0f );//0.01f );
@@ -61,15 +61,11 @@ StarCam::StarCam()
     
     mTimeScale = 0.005f;
     mLookAt = Vec3f::zero();
-}
-
-void StarCam::setup(OculonApp* app)
-{
-    mApp = app;
-	mTimeOut = 300.0;
-	mTimeMouse = getElapsedSeconds() - mTimeOut;
+    
+    mTimeOut = 300.0;
+    mTimeMouse = getElapsedSeconds() - mTimeOut;
     mElapsedTime = 0.0f;
-    mCurrentCam.setPerspective( 65.0f, mApp->getViewportAspectRatio(), 5.0f, 200000.0f );
+    mCurrentCam.setPerspective( 65.0f, aspectRatio, 5.0f, 200000.0f );
 }
 
 bool StarCam::reset()
@@ -80,7 +76,7 @@ bool StarCam::reset()
 
 void StarCam::setupInterface( Interface* interface, const std::string& name)
 {
-    //interface->gui()->addColumn();
+    mInterfacePanel = interface->gui()->addPanel();
     interface->gui()->addLabel("Star Cam");
     interface->addParam(CreateFloatParam( "speed", &mTimeScale )
                         .oscReceiver(name, "splinecamradius"));

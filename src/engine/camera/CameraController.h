@@ -9,9 +9,7 @@
 #pragma once
 
 #include "Interface.h"
-#include "SplineCam.h"
-#include "SpringCam.h"
-#include "StarCam.h"
+#include "SceneCam.h"
 #include "cinder/Camera.h"
 #include "cinder/Timeline.h"
 
@@ -21,78 +19,28 @@ class Scene;
 class CameraController
 {
 public:
-    
-    // camera
-#define CAMCTRLR_CAMTYPE_TUPLE \
-CAMCTRLR_CAMTYPE_ENTRY( "Manual",   CAM_MANUAL,     (1u << 0) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Spline",   CAM_SPLINE,     (1u << 1) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Spin",     CAM_SPIN,       (1u << 2) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Spring",   CAM_SPRING,     (1u << 3) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Graviton", CAM_GRAVITON,   (1u << 4) ) \
-CAMCTRLR_CAMTYPE_ENTRY( "Lines",    CAM_LINES,      (1u << 5) ) \
-//CAMCTRLR_CAMTYPE_ENTRY( "Star",     CAM_STAR,       (1u << 4) ) \
-//CAMCTRLR_CAMTYPE_ENTRY( "Orbiter",  CAM_ORBITER,    (1u << 5) ) \
-//CAMCTRLR_CAMTYPE_ENTRY( "Catalog",  CAM_CATALOG,    (1u << 7) ) \
-//end tuple
-    
-    enum eCamType
-    {
-#define CAMCTRLR_CAMTYPE_ENTRY( nam, enm, val ) \
-enm,
-        CAMCTRLR_CAMTYPE_TUPLE
-#undef  CAMCTRLR_CAMTYPE_ENTRY
-        
-        CAM_COUNT
-    };
-    
-    enum eCamBitMask
-    {
-#define CAMCTRLR_CAMTYPE_ENTRY( nam, enm, val ) \
-enm##_MASK = val,
-        CAMCTRLR_CAMTYPE_TUPLE
-#undef  CAMCTRLR_CAMTYPE_ENTRY
-        
-        CAM_MASK_COUNT
-    };
-    
-public:
     CameraController();
     virtual ~CameraController() {}
     
-    void setup(OculonApp *app, Scene *parentScene, const unsigned int camTypes, eCamType defaultCam);
+    void setup(OculonApp *app);
     void setupInterface(Interface *interface, const std::string& sceneName);
     
     void update(double dt);
     
-    eCamType getCamType() const                 { return mCamType; }
-    void setCamType( const eCamType camType )   { mCamType = camType; }
+    void setCamIndex( const int index )   { mCurrentCameraIndex = index; }
     const ci::Camera& getCamera();
     
+    void addCamera( SceneCam* sceneCam );
+    
 protected:
+    const std::vector<std::string> getCameraNames();
     bool onCameraChanged();
-    bool onSpinDistanceChanged();
+    
     
 protected:
-    OculonApp*                  mApp;
-    Scene*                      mParentScene;
-    eCamType                    mCamType;
-    unsigned int                mAvailableCamTypes;
+    float                       mAspectRatio;
     
-    SplineCam                   mSplineCam;
-    SpringCam                   mSpringCam;
-    StarCam                     mStarCam;
-    
-    mowa::sgui::PanelControl*   mInterfacePanels[CAM_COUNT];
-    
-    ci::CameraPersp             mSpinCam;//TODO: refactor
-    ci::Quatf                   mSpinQuat;
-    //float                       mSpinRate;
-    ci::Vec3f                   mSpinRate;
-    ci::Vec3f                   mTargetSpinRate;
-    ci::Vec3f                   mSpinUp;
-    ci::Anim<float>             mSpinDistance;
-    float                       mTargetSpinDistance;
-    float                       mSpinTheta;
-    float                       mTransitionTime;
+    std::vector<SceneCam*>      mCameras;
+    int                         mCurrentCameraIndex;
 };
 

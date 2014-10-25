@@ -15,8 +15,10 @@
 using namespace ci;
 using namespace std;
 
-SplineCam::SplineCam()
+SplineCam::SplineCam(const float aspectRatio)
+: SceneCam("spline", aspectRatio)
 {
+    setup(5000.0f,500.0f,aspectRatio);
 }
 
 SplineCam::~SplineCam()
@@ -57,7 +59,7 @@ bool SplineCam::resetSpline()
 
 void SplineCam::setupInterface( Interface* interface, const std::string& name)
 {
-    //interface->gui()->addColumn();
+    mInterfacePanel = interface->gui()->addPanel();
     interface->gui()->addLabel("Spline Cam");
     interface->addParam(CreateBoolParam( "Look Fwd", &mLookForward )
                         .oscReceiver(name, "lookfwd"));

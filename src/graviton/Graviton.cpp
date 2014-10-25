@@ -18,6 +18,9 @@
 #include "Interface.h"
 #include "GravitonRenderer.h"
 #include "LinesRenderer.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -74,7 +77,13 @@ void Graviton::setup()
     mParticleController.addRenderer( new GravitonRenderer() );
 //    mParticleController.addRenderer( new LinesRenderer() );
     
-    mCameraController.setup(mApp, this, 0, CameraController::CAM_SPIN);
+    mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "lines") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "parsec") );
+    mCameraController.setCamIndex(1);
+    
     mAudioInputHandler.setup(true);
     
     MirrorBounceFormation* formation = new MirrorBounceFormation();

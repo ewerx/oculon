@@ -50,7 +50,7 @@ void Flock::setup()
     ////////------------------------------------------------------
     //
     // CAMERA
-	mCameraController.setup(mApp, this, 0, CameraController::CAM_MANUAL);
+	mCameraController.setup(mApp);
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );

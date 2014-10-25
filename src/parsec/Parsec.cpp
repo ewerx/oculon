@@ -9,6 +9,9 @@
 #include "OculonApp.h"
 #include "Parsec.h"
 #include "Orbiter.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -36,7 +39,7 @@ void Parsec::setup()
 	mStars.setup();
 	mStars.setAspectRatio(1.0f);// ( mIsStereoscopic ? 0.5f : 1.0f ); // TODO
     
-    mLines.setup(mStars.mBrightStars);
+    //mLines.setup(mStars.mBrightStars);
     
     if( fs::exists( getAssetPath("") / "parsec-constellations.cdb" ) )
     {
@@ -54,7 +57,12 @@ void Parsec::setup()
 	mSectionOverlap = 1.0f;
     
     // cameras
-    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_SPLINE);
+    mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "lines") );
+    mCameraController.setCamIndex(1);
     
     mAudioInputHandler.setup(false);
     mAudioInputHandler.mRandomSignal = true;
@@ -176,7 +184,7 @@ void Parsec::update(double dt)
     }
     
     mStars.update();
-    mLines.update();
+    //mLines.update();
 }
 
 #pragma mark - Draw
@@ -242,9 +250,9 @@ void Parsec::render()
 	// draw stars
 	mStars.draw();
     
-    const float scale = mApp->getViewportWidth() / 128.0f;
-    glScalef(scale, scale, scale);
-    mLines.draw();
+    //const float scale = mApp->getViewportWidth() / 128.0f;
+    //glScalef(scale, scale, scale);
+    //mLines.draw();
     
 	// draw constellations
 	if(mShowConstellations)

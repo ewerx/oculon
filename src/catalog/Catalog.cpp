@@ -35,6 +35,8 @@ const int Catalog::FBO_HEIGHT = 78;
 //
 Catalog::Catalog()
 : Scene("catalog")
+, mSpringCam(0.0f)
+, mStarCam(0.0f)
 {
     /*
     for( int i=0; i < TB_COUNT; ++i )
@@ -79,7 +81,7 @@ void Catalog::setup()
     //
     // CAMERA	
 	mSpringCam		= SpringCam( -350.0f, mApp->getViewportAspectRatio(), 200000.0f );
-    mStarCam.setup(mApp);
+    //mStarCam.setup(mApp);
     
 	// LOAD SHADERS
 	try {
@@ -1173,19 +1175,19 @@ const Camera& Catalog::getCamera()
         case CAM_STAR:
             return mStarCam.getCamera();
             
-        case CAM_ORBITER:
-        {
-            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
-            
-            if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
-            {
-                return orbiterScene->getCamera();
-            }
-            else
-            {
-                return mSpringCam.getCam();
-            }
-        }
+//        case CAM_ORBITER:
+//        {
+//            Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
+//            
+//            if( orbiterScene && orbiterScene->isRunning() && orbiterScene->getCamType() != Orbiter::CAM_CATALOG )
+//            {
+//                return orbiterScene->getCamera();
+//            }
+//            else
+//            {
+//                return mSpringCam.getCam();
+//            }
+//        }
         
         default:
             return mSpringCam.getCam();

@@ -4,19 +4,19 @@
 #include "cinder/Camera.h"
 #include "cinder/Timeline.h"
 #include "cinder/app/AppBasic.h"
-
+#include "SceneCam.h"
 #include "Interface.h"
 
 #include <deque>
 
 class OculonApp;
 
-class StarCam {
+class StarCam : public SceneCam
+{
 public:
-	StarCam();
-	StarCam( const ci::CameraPersp &aInitialCam ) { mInitialCam = mCurrentCam = aInitialCam; }
+	StarCam(const float aspectRatio);
+	//StarCam( const ci::CameraPersp &aInitialCam ) { mInitialCam = mCurrentCam = aInitialCam; }
 
-	void		setup(OculonApp* scene);
     bool        reset();
     void        setupInterface(Interface* interface, const std::string& name);
 	void		update(double elapsed);
@@ -88,6 +88,4 @@ private:
     
     // params
     float                   mTimeScale;
-    
-    OculonApp*              mApp;
 };

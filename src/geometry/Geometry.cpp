@@ -40,7 +40,7 @@ void Geometry::setup()
     mDrawWireframe = true;
     
     // camera
-    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
+    mCameraController.setup(mApp);
     mApp->setCamera(Vec3f(480.0f, 0.0f, 0.0f), Vec3f(-1.0f, 0.0f, 0.0f), Vec3f(0.0f,1.0f,0.0f));
     
     // objects

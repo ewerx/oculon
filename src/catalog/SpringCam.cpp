@@ -10,11 +10,13 @@
 
 using namespace ci;
 
-SpringCam::SpringCam()
+SpringCam::SpringCam( const float aspectRatio )
+: SpringCam( -420.0f, aspectRatio, 3000.0f )
 {
 }
 
 SpringCam::SpringCam( float camDist, float aspectRatio, float farPlane )
+: SceneCam("spring", aspectRatio)
 {
 	mCamDist		= camDist;
 	
@@ -30,7 +32,9 @@ SpringCam::SpringCam( float camDist, float aspectRatio, float farPlane )
 }
 
 void SpringCam::update( float timeDelta )
-{	
+{
+    timeDelta = 0.3f; // HACK
+    
 	mEyeNode.apply();
 	mCenNode.apply();
 	

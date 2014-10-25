@@ -13,10 +13,11 @@
 #include "cinder/Camera.h"
 #include "cinder/Timeline.h"
 #include "cinder/Bspline.h"
+#include "SceneCam.h"
 
 class Interface;
 
-class TunnelCam
+class TunnelCam : public SceneCam
 {
 public:
     TunnelCam();

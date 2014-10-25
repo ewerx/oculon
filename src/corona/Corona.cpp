@@ -14,6 +14,9 @@
 #include "OculonApp.h"
 #include "Interface.h"
 #include "Resources.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -193,7 +196,14 @@ void Corona::setup()
 	
 	setStage( mStage );
     
-    mCameraController.setup(mApp, this, CameraController::CAM_SPRING, CameraController::CAM_SPRING);
+    // cameras
+    mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "parsec") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
+    mCameraController.setCamIndex(1);
+    
     mAudioInputHandler.setup();
     
     mTimeController.setTimeScaleMultiplier(60.0f);

@@ -1,19 +1,19 @@
-/*
- *  Orbiter.h
- *  Oculon
- *
- *  Created by Ehsan on 11-10-19.
- *  Copyright 2011 ewerx. All rights reserved.
- *
- */
+//
+// Orbiter.h
+// Oculon
+//
+// Created by Ehsan on 11-10-19.
+// Copyright 2011 ewerx. All rights reserved.
+//
 
-#ifndef __ORBITER_H__
-#define __ORBITER_H__
+#pragma once
 
 #include "Scene.h"
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
 #include "cinder/gl/TextureFont.h"
+#include "CameraController.h"
+#include "TimeController.h"
 #include <vector>
 
 class Body;
@@ -58,17 +58,16 @@ public:
     };
     eCamType getCamType() { return mCamType; }
     
-    
-    bool isDrawLabelsEnabled()      { return mDrawLabels; }
+    bool isDrawLabelsEnabled()              { return mDrawLabels; }
     ci::gl::TextureFontRef getLabelFont()   { return mTextureFontLabel; }
     ci::gl::TextureFontRef getHudFont()     { return mTextureFontHud; }
    
     Star* getExoStar() { return mExoStar; }
     
-    float getMinRadiusMultiplier() const      { return mMinRadiusMultiplier; }
-    float getMaxRadiusMultiplier() const      { return mMaxRadiusMultiplier; }
-    float getFalloff() const                { return mFalloff; }
-    float getLabelBrightnessByAudio() const { return mLabelBrightnessByAudio; }
+    float getMinRadiusMultiplier() const        { return mMinRadiusMultiplier; }
+    float getMaxRadiusMultiplier() const        { return mMaxRadiusMultiplier; }
+    float getFalloff() const                    { return mFalloff; }
+    float getLabelBrightnessByAudio() const     { return mLabelBrightnessByAudio; }
 protected:// from Scene
     void setupInterface();
     //void setupDebugInterface();
@@ -138,6 +137,15 @@ private:
     
     Star*           mExoStar;
     
+    // NEW
+    
+    AudioInputHandler   mAudioInputHandler;
+    
+    // camera
+    CameraController    mCameraController;
+    
+    TimeController      mTimeController;
+    
 public:
     static double   sDefaultTimeScale;
     static double   sDefaultGravityConstant;
@@ -150,4 +158,3 @@ public:
     static float    sPlanetGrayScale;
 };
 
-#endif // __ORBITER_H__

@@ -14,8 +14,10 @@
 
 #include "cinder/Camera.h"
 #include "cinder/Vector.h"
+#include "SceneCam.h"
 
-class SpringCam {
+class SpringCam : public SceneCam
+{
   public:
 	struct SpringNode {
 		SpringNode() {}
@@ -50,7 +52,7 @@ class SpringCam {
 	
 	
 	
-	SpringCam();
+	SpringCam( const float aspectRatio );
 	SpringCam( float camDist, float aspectRatio, float farPlane );
 	void apply( float timeDelta );
 	void update( float timeDelta );

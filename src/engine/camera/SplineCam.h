@@ -13,17 +13,20 @@
 #include "cinder/Camera.h"
 #include "cinder/Timeline.h"
 #include "cinder/Bspline.h"
+#include "SceneCam.h"
 
 class Interface;
 
-class SplineCam
+class SplineCam : public SceneCam
 {
 public:
-    SplineCam();
+    SplineCam(const float viewportAspectRatio);
     ~SplineCam();
 
     void setup(const float maxDistance = 1000.0f, const float radius = 100.0f, const float aspectRatio = (16.f/9.f));
     bool resetSpline();
+    
+    // from SceneCam
     void setupInterface(Interface* interface, const std::string& name);
     void update(double dt);
 
@@ -37,8 +40,6 @@ public:
     void setLookForward( bool lookForward )     { mLookForward = lookForward; }
 
 private:
-    
-    ci::CameraPersp     mCam;
     ci::BSpline3f       mSpline;
     float               mSplineValue;
     float               mRadius;

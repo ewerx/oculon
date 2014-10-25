@@ -131,6 +131,10 @@
 		7C5165EB191709D2003E94F8 /* Pentagon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E9191709D2003E94F8 /* Pentagon.cpp */; };
 		7C54CD311938665A0049B3FC /* rgb_noise.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C54CD301938665A0049B3FC /* rgb_noise.jpg */; };
 		7C54CD33193866B80049B3FC /* rgb_noise800.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C54CD32193866B80049B3FC /* rgb_noise800.png */; };
+		7C584D7F19FC390400EB9609 /* SceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D7D19FC390400EB9609 /* SceneCam.cpp */; };
+		7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8019FC3DA000EB9609 /* SpinCam.cpp */; };
+		7C584D8519FC441800EB9609 /* OtherSceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */; };
+		7C584D8819FC471400EB9609 /* ManualCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8619FC471400EB9609 /* ManualCam.cpp */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
 		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
@@ -727,6 +731,14 @@
 		7C5165EA191709D2003E94F8 /* Pentagon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pentagon.h; sourceTree = "<group>"; };
 		7C54CD301938665A0049B3FC /* rgb_noise.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rgb_noise.jpg; sourceTree = "<group>"; };
 		7C54CD32193866B80049B3FC /* rgb_noise800.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rgb_noise800.png; sourceTree = "<group>"; };
+		7C584D7D19FC390400EB9609 /* SceneCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneCam.cpp; sourceTree = "<group>"; };
+		7C584D7E19FC390400EB9609 /* SceneCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneCam.h; sourceTree = "<group>"; };
+		7C584D8019FC3DA000EB9609 /* SpinCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinCam.cpp; sourceTree = "<group>"; };
+		7C584D8119FC3DA000EB9609 /* SpinCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinCam.h; sourceTree = "<group>"; };
+		7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OtherSceneCam.cpp; sourceTree = "<group>"; };
+		7C584D8419FC441800EB9609 /* OtherSceneCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSceneCam.h; sourceTree = "<group>"; };
+		7C584D8619FC471400EB9609 /* ManualCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManualCam.cpp; sourceTree = "<group>"; };
+		7C584D8719FC471400EB9609 /* ManualCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManualCam.h; sourceTree = "<group>"; };
 		7C5B69751819745800AB2C8D /* Tilings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tilings.cpp; sourceTree = "<group>"; };
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
@@ -2312,6 +2324,14 @@
 				7C0E673F18BAC88700C387FC /* OculusCam.h */,
 				7CD826D218E1071A00C66D8D /* DomeCam.cpp */,
 				7CD826D318E1071A00C66D8D /* DomeCam.h */,
+				7C584D7D19FC390400EB9609 /* SceneCam.cpp */,
+				7C584D7E19FC390400EB9609 /* SceneCam.h */,
+				7C584D8019FC3DA000EB9609 /* SpinCam.cpp */,
+				7C584D8119FC3DA000EB9609 /* SpinCam.h */,
+				7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */,
+				7C584D8419FC441800EB9609 /* OtherSceneCam.h */,
+				7C584D8619FC471400EB9609 /* ManualCam.cpp */,
+				7C584D8719FC471400EB9609 /* ManualCam.h */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -3353,6 +3373,7 @@
 				A3E8C26688F3438799B73D6B /* b2WorldCallbacks.cpp in Sources */,
 				58C1E7660C8C4ADE8A6AC0F8 /* b2ChainAndCircleContact.cpp in Sources */,
 				415417A81EF3456D96BDDB7D /* b2ChainAndPolygonContact.cpp in Sources */,
+				7C584D7F19FC390400EB9609 /* SceneCam.cpp in Sources */,
 				7C409E6D185C0CB50028934D /* ConstellationArt.cpp in Sources */,
 				D67989397E0742E2B973CD13 /* b2CircleContact.cpp in Sources */,
 				1F9825AA0956484BA51D6DA0 /* b2Contact.cpp in Sources */,
@@ -3362,6 +3383,7 @@
 				370F10F29A5647C5B6950952 /* b2EdgeAndPolygonContact.cpp in Sources */,
 				325CAE9BD7B24E55A56D1D36 /* b2PolygonAndCircleContact.cpp in Sources */,
 				DE69656EC1CD4BBA9396D9AD /* b2PolygonContact.cpp in Sources */,
+				7C584D8819FC471400EB9609 /* ManualCam.cpp in Sources */,
 				D0682DAB71184AB3A848E94B /* b2DistanceJoint.cpp in Sources */,
 				35BA0CE1837A40E3B97C2F04 /* b2FrictionJoint.cpp in Sources */,
 				1E7A1087105A4B578A6C442A /* b2GearJoint.cpp in Sources */,
@@ -3521,6 +3543,7 @@
 				7C79CA6D17650FD800E71F9D /* TextOrbit.cpp in Sources */,
 				7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */,
 				7CF6AD5018A9E3E100FA795A /* DomeRenderer.cpp in Sources */,
+				7C584D8519FC441800EB9609 /* OtherSceneCam.cpp in Sources */,
 				7C79CA6E17650FD800E71F9D /* Catalog.cpp in Sources */,
 				7C79CA6F17650FD800E71F9D /* Planet.cpp in Sources */,
 				7C79CA7017650FD800E71F9D /* SpringCam.cpp in Sources */,
@@ -3530,6 +3553,7 @@
 				7C79CA7417650FD800E71F9D /* Body.cpp in Sources */,
 				7C79CA7517650FD800E71F9D /* Orbiter.cpp in Sources */,
 				7C79CA7617650FD800E71F9D /* Sun.cpp in Sources */,
+				7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */,
 				7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */,
 				7C6CB4371925AFDD00D83614 /* EffectShaders.cpp in Sources */,
 				7CC3C026183ED0330082C322 /* Dust.cpp in Sources */,

@@ -14,6 +14,9 @@
 #include "OculonApp.h"
 #include "Polyhedron.h"
 #include "Resources.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 #include "Utils.h"
 #include "cinder/CinderMath.h"
 #include "cinder/Easing.h"
@@ -88,7 +91,12 @@ void Polyhedron::setup()
     createMeshes();
     
     // camera
-    mCameraController.setup(mApp, this, CameraController::CAM_MANUAL|CameraController::CAM_SPLINE, CameraController::CAM_MANUAL);
+    mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "lines") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
+    mCameraController.setCamIndex(1);
     
     // audio
     mAudioInputHandler.setup(true);
