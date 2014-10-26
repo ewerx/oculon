@@ -125,6 +125,7 @@ protected:
     bool        mIsDebug;
     
     bool        mEnableFrustumCulling;
+    bool        mEnableDepthBuffer;
     
     float       mBackgroundAlpha;
     

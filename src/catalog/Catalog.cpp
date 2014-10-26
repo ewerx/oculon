@@ -1095,19 +1095,19 @@ void Catalog::setDestStar( Star* target )
     mDestStar = target;
     mDestStar->mIsSelected = true;
     
-    Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
-    
-    if( orbiterScene && orbiterScene->isRunning() )
-    {
-        if( target == mSol )
-        {
-            orbiterScene->createSystem(NULL);
-        }
-        else
-        {
-            orbiterScene->createSystem(target);
-        }
-    }
+//    Orbiter* orbiterScene = static_cast<Orbiter*>(mApp->getScene("orbiter"));
+//    
+//    if( orbiterScene && orbiterScene->isRunning() )
+//    {
+//        if( target == mSol )
+//        {
+//            orbiterScene->createSystem(NULL);
+//        }
+//        else
+//        {
+//            orbiterScene->createSystem(target);
+//        }
+//    }
 }
 
 bool Catalog::setRandomHome()

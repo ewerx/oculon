@@ -8,7 +8,6 @@
 
 #include "OculonApp.h"
 #include "Parsec.h"
-#include "Orbiter.h"
 #include "SpinCam.h"
 #include "SplineCam.h"
 #include "OtherSceneCam.h"

@@ -135,6 +135,43 @@
 		7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8019FC3DA000EB9609 /* SpinCam.cpp */; };
 		7C584D8519FC441800EB9609 /* OtherSceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */; };
 		7C584D8819FC471400EB9609 /* ManualCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8619FC471400EB9609 /* ManualCam.cpp */; };
+		7C584D8B19FC8BAE00EB9609 /* Orbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8919FC8BAE00EB9609 /* Orbiter.cpp */; };
+		7C584D8E19FC922700EB9609 /* OrbiterSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8C19FC922700EB9609 /* OrbiterSystem.cpp */; };
+		7C584D9019FCA8DA00EB9609 /* orbiter_body_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D8F19FCA8DA00EB9609 /* orbiter_body_frag.glsl */; };
+		7C584D9219FCA99E00EB9609 /* orbiter_body_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9119FCA99E00EB9609 /* orbiter_body_vert.glsl */; };
+		7C584D9519FD51F600EB9609 /* moon_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9319FD51F600EB9609 /* moon_diffuse.jpg */; };
+		7C584D9619FD51F600EB9609 /* moon_normalmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9419FD51F600EB9609 /* moon_normalmap.jpg */; };
+		7C584DB619FD5C8200EB9609 /* earth_diffuse_desat.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9719FD5C8200EB9609 /* earth_diffuse_desat.png */; };
+		7C584DB719FD5C8200EB9609 /* mars_diffuse_desat.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9819FD5C8200EB9609 /* mars_diffuse_desat.png */; };
+		7C584DB819FD5C8200EB9609 /* venus_diffuse_desat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9919FD5C8200EB9609 /* venus_diffuse_desat.jpg */; };
+		7C584DB919FD5C8200EB9609 /* saturn_diffuse_desat.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9A19FD5C8200EB9609 /* saturn_diffuse_desat.png */; };
+		7C584DBA19FD5C8200EB9609 /* jupiter_diffuse_desat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9B19FD5C8200EB9609 /* jupiter_diffuse_desat.jpg */; };
+		7C584DBB19FD5C8200EB9609 /* uranus_diffuse_desat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9C19FD5C8200EB9609 /* uranus_diffuse_desat.jpg */; };
+		7C584DBC19FD5C8200EB9609 /* neptune_diffuse_desat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9D19FD5C8200EB9609 /* neptune_diffuse_desat.jpeg */; };
+		7C584DBD19FD5C8200EB9609 /* moon_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9E19FD5C8200EB9609 /* moon_diffuse.jpg */; };
+		7C584DBE19FD5C8200EB9609 /* moon_normalmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584D9F19FD5C8200EB9609 /* moon_normalmap.jpg */; };
+		7C584DBF19FD5C8200EB9609 /* neptune_bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA019FD5C8200EB9609 /* neptune_bump.png */; };
+		7C584DC019FD5C8200EB9609 /* earthmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA119FD5C8200EB9609 /* earthmap1k.jpg */; };
+		7C584DC119FD5C8200EB9609 /* jupitermap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA219FD5C8200EB9609 /* jupitermap.jpg */; };
+		7C584DC219FD5C8200EB9609 /* marsmap1k.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA319FD5C8200EB9609 /* marsmap1k.jpg */; };
+		7C584DC319FD5C8200EB9609 /* mercurymap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA419FD5C8200EB9609 /* mercurymap.jpg */; };
+		7C584DC419FD5C8200EB9609 /* neptunemap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA519FD5C8200EB9609 /* neptunemap.jpg */; };
+		7C584DC519FD5C8200EB9609 /* saturnmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA619FD5C8200EB9609 /* saturnmap.jpg */; };
+		7C584DC619FD5C8200EB9609 /* sunmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA719FD5C8200EB9609 /* sunmap.jpg */; };
+		7C584DC719FD5C8200EB9609 /* uranusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA819FD5C8200EB9609 /* uranusmap.jpg */; };
+		7C584DC819FD5C8200EB9609 /* venusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA919FD5C8200EB9609 /* venusmap.jpg */; };
+		7C584DC919FD5C8200EB9609 /* earth_bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAA19FD5C8200EB9609 /* earth_bump.png */; };
+		7C584DCA19FD5C8200EB9609 /* earth_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAB19FD5C8200EB9609 /* earth_diffuse.png */; };
+		7C584DCB19FD5C8200EB9609 /* uranus_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAC19FD5C8200EB9609 /* uranus_diffuse.jpg */; };
+		7C584DCC19FD5C8200EB9609 /* satturn_bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAD19FD5C8200EB9609 /* satturn_bump.png */; };
+		7C584DCD19FD5C8200EB9609 /* saturn_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAE19FD5C8200EB9609 /* saturn_diffuse.png */; };
+		7C584DCE19FD5C8200EB9609 /* mercury_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAF19FD5C8200EB9609 /* mercury_diffuse.jpg */; };
+		7C584DCF19FD5C8200EB9609 /* venus_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB019FD5C8200EB9609 /* venus_diffuse.jpg */; };
+		7C584DD019FD5C8200EB9609 /* mars_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB119FD5C8200EB9609 /* mars_diffuse.png */; };
+		7C584DD119FD5C8200EB9609 /* mars_bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB219FD5C8200EB9609 /* mars_bump.png */; };
+		7C584DD219FD5C8200EB9609 /* neptune_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB319FD5C8200EB9609 /* neptune_diffuse.jpg */; };
+		7C584DD319FD5C8200EB9609 /* venus_bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB419FD5C8200EB9609 /* venus_bump.png */; };
+		7C584DD419FD5C8200EB9609 /* jupiter_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB519FD5C8200EB9609 /* jupiter_diffuse.jpg */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
 		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
@@ -328,9 +365,6 @@
 		7C79CA6F17650FD800E71F9D /* Planet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA0217650FD700E71F9D /* Planet.cpp */; };
 		7C79CA7017650FD800E71F9D /* SpringCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA0417650FD700E71F9D /* SpringCam.cpp */; };
 		7C79CA7117650FD800E71F9D /* Star.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA0617650FD700E71F9D /* Star.cpp */; };
-		7C79CA7417650FD800E71F9D /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA0E17650FD700E71F9D /* Body.cpp */; };
-		7C79CA7517650FD800E71F9D /* Orbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1017650FD700E71F9D /* Orbiter.cpp */; };
-		7C79CA7617650FD800E71F9D /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1217650FD700E71F9D /* Sun.cpp */; };
 		7C79CA7817650FD800E71F9D /* Trails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1817650FD700E71F9D /* Trails.cpp */; };
 		7C79CA7917650FD800E71F9D /* Corona.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1B17650FD800E71F9D /* Corona.cpp */; };
 		7C79CA7A17650FD800E71F9D /* CoronaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79CA1D17650FD800E71F9D /* CoronaController.cpp */; };
@@ -436,8 +470,6 @@
 		7CAD1B8318839A9800512843 /* frag_setbnd.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CAD1B7A18839A9800512843 /* frag_setbnd.glsl */; };
 		7CAE28BA18B8A2CD0069AF35 /* LinesRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */; };
 		7CAEE429193654F9004294C1 /* moon_hypsometric.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CAEE426193654F9004294C1 /* moon_hypsometric.jpg */; };
-		7CAEE42A193654F9004294C1 /* moon_normalmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CAEE427193654F9004294C1 /* moon_normalmap.jpg */; };
-		7CAEE42C19365577004294C1 /* moon_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CAEE42B19365577004294C1 /* moon_diffuse.jpg */; };
 		7CC3AF1118A37C0500E6CA78 /* EaseCurveSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */; };
 		7CC3C026183ED0330082C322 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C024183ED0330082C322 /* Dust.cpp */; };
 		7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */; };
@@ -739,6 +771,45 @@
 		7C584D8419FC441800EB9609 /* OtherSceneCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSceneCam.h; sourceTree = "<group>"; };
 		7C584D8619FC471400EB9609 /* ManualCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManualCam.cpp; sourceTree = "<group>"; };
 		7C584D8719FC471400EB9609 /* ManualCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManualCam.h; sourceTree = "<group>"; };
+		7C584D8919FC8BAE00EB9609 /* Orbiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Orbiter.cpp; sourceTree = "<group>"; };
+		7C584D8A19FC8BAE00EB9609 /* Orbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Orbiter.h; sourceTree = "<group>"; };
+		7C584D8C19FC922700EB9609 /* OrbiterSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrbiterSystem.cpp; sourceTree = "<group>"; };
+		7C584D8D19FC922700EB9609 /* OrbiterSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrbiterSystem.h; sourceTree = "<group>"; };
+		7C584D8F19FCA8DA00EB9609 /* orbiter_body_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = orbiter_body_frag.glsl; sourceTree = "<group>"; };
+		7C584D9119FCA99E00EB9609 /* orbiter_body_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = orbiter_body_vert.glsl; sourceTree = "<group>"; };
+		7C584D9319FD51F600EB9609 /* moon_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_diffuse.jpg; sourceTree = "<group>"; };
+		7C584D9419FD51F600EB9609 /* moon_normalmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_normalmap.jpg; sourceTree = "<group>"; };
+		7C584D9719FD5C8200EB9609 /* earth_diffuse_desat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earth_diffuse_desat.png; sourceTree = "<group>"; };
+		7C584D9819FD5C8200EB9609 /* mars_diffuse_desat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mars_diffuse_desat.png; sourceTree = "<group>"; };
+		7C584D9919FD5C8200EB9609 /* venus_diffuse_desat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = venus_diffuse_desat.jpg; sourceTree = "<group>"; };
+		7C584D9A19FD5C8200EB9609 /* saturn_diffuse_desat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = saturn_diffuse_desat.png; sourceTree = "<group>"; };
+		7C584D9B19FD5C8200EB9609 /* jupiter_diffuse_desat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupiter_diffuse_desat.jpg; sourceTree = "<group>"; };
+		7C584D9C19FD5C8200EB9609 /* uranus_diffuse_desat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = uranus_diffuse_desat.jpg; sourceTree = "<group>"; };
+		7C584D9D19FD5C8200EB9609 /* neptune_diffuse_desat.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = neptune_diffuse_desat.jpeg; sourceTree = "<group>"; };
+		7C584D9E19FD5C8200EB9609 /* moon_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_diffuse.jpg; sourceTree = "<group>"; };
+		7C584D9F19FD5C8200EB9609 /* moon_normalmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_normalmap.jpg; sourceTree = "<group>"; };
+		7C584DA019FD5C8200EB9609 /* neptune_bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = neptune_bump.png; sourceTree = "<group>"; };
+		7C584DA119FD5C8200EB9609 /* earthmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earthmap1k.jpg; sourceTree = "<group>"; };
+		7C584DA219FD5C8200EB9609 /* jupitermap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupitermap.jpg; sourceTree = "<group>"; };
+		7C584DA319FD5C8200EB9609 /* marsmap1k.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marsmap1k.jpg; sourceTree = "<group>"; };
+		7C584DA419FD5C8200EB9609 /* mercurymap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mercurymap.jpg; sourceTree = "<group>"; };
+		7C584DA519FD5C8200EB9609 /* neptunemap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = neptunemap.jpg; sourceTree = "<group>"; };
+		7C584DA619FD5C8200EB9609 /* saturnmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = saturnmap.jpg; sourceTree = "<group>"; };
+		7C584DA719FD5C8200EB9609 /* sunmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sunmap.jpg; sourceTree = "<group>"; };
+		7C584DA819FD5C8200EB9609 /* uranusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = uranusmap.jpg; sourceTree = "<group>"; };
+		7C584DA919FD5C8200EB9609 /* venusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = venusmap.jpg; sourceTree = "<group>"; };
+		7C584DAA19FD5C8200EB9609 /* earth_bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earth_bump.png; sourceTree = "<group>"; };
+		7C584DAB19FD5C8200EB9609 /* earth_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earth_diffuse.png; sourceTree = "<group>"; };
+		7C584DAC19FD5C8200EB9609 /* uranus_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = uranus_diffuse.jpg; sourceTree = "<group>"; };
+		7C584DAD19FD5C8200EB9609 /* satturn_bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = satturn_bump.png; sourceTree = "<group>"; };
+		7C584DAE19FD5C8200EB9609 /* saturn_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = saturn_diffuse.png; sourceTree = "<group>"; };
+		7C584DAF19FD5C8200EB9609 /* mercury_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mercury_diffuse.jpg; sourceTree = "<group>"; };
+		7C584DB019FD5C8200EB9609 /* venus_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = venus_diffuse.jpg; sourceTree = "<group>"; };
+		7C584DB119FD5C8200EB9609 /* mars_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mars_diffuse.png; sourceTree = "<group>"; };
+		7C584DB219FD5C8200EB9609 /* mars_bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mars_bump.png; sourceTree = "<group>"; };
+		7C584DB319FD5C8200EB9609 /* neptune_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = neptune_diffuse.jpg; sourceTree = "<group>"; };
+		7C584DB419FD5C8200EB9609 /* venus_bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = venus_bump.png; sourceTree = "<group>"; };
+		7C584DB519FD5C8200EB9609 /* jupiter_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jupiter_diffuse.jpg; sourceTree = "<group>"; };
 		7C5B69751819745800AB2C8D /* Tilings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tilings.cpp; sourceTree = "<group>"; };
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
@@ -1031,10 +1102,10 @@
 		7C79CA0A17650FD700E71F9D /* Sol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sol.h; sourceTree = "<group>"; };
 		7C79CA0B17650FD700E71F9D /* SolFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SolFrame.cpp; sourceTree = "<group>"; };
 		7C79CA0C17650FD700E71F9D /* SolFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SolFrame.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		7C79CA0E17650FD700E71F9D /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Body.cpp; sourceTree = "<group>"; };
-		7C79CA0F17650FD700E71F9D /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Body.h; sourceTree = "<group>"; };
-		7C79CA1017650FD700E71F9D /* Orbiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Orbiter.cpp; sourceTree = "<group>"; };
-		7C79CA1117650FD700E71F9D /* Orbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Orbiter.h; sourceTree = "<group>"; };
+		7C79CA0E17650FD700E71F9D /* OldBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OldBody.cpp; sourceTree = "<group>"; };
+		7C79CA0F17650FD700E71F9D /* OldBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldBody.h; sourceTree = "<group>"; };
+		7C79CA1017650FD700E71F9D /* OldOrbiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OldOrbiter.cpp; sourceTree = "<group>"; };
+		7C79CA1117650FD700E71F9D /* OldOrbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldOrbiter.h; sourceTree = "<group>"; };
 		7C79CA1217650FD700E71F9D /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sun.cpp; sourceTree = "<group>"; };
 		7C79CA1317650FD700E71F9D /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sun.h; sourceTree = "<group>"; };
 		7C79CA1817650FD700E71F9D /* Trails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trails.cpp; sourceTree = "<group>"; };
@@ -1136,8 +1207,6 @@
 		7CAE28B818B8A2CD0069AF35 /* LinesRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinesRenderer.cpp; sourceTree = "<group>"; };
 		7CAE28B918B8A2CD0069AF35 /* LinesRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinesRenderer.h; sourceTree = "<group>"; };
 		7CAEE426193654F9004294C1 /* moon_hypsometric.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_hypsometric.jpg; sourceTree = "<group>"; };
-		7CAEE427193654F9004294C1 /* moon_normalmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_normalmap.jpg; sourceTree = "<group>"; };
-		7CAEE42B19365577004294C1 /* moon_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_diffuse.jpg; sourceTree = "<group>"; };
 		7CC3AF0F18A37C0500E6CA78 /* EaseCurveSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EaseCurveSelector.cpp; sourceTree = "<group>"; };
 		7CC3AF1018A37C0500E6CA78 /* EaseCurveSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EaseCurveSelector.h; sourceTree = "<group>"; };
 		7CC3C024183ED0330082C322 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../src/dust/Dust.cpp; sourceTree = "<group>"; };
@@ -2039,6 +2108,39 @@
 		7C79C88117650F8F00E71F9D /* orbiter */ = {
 			isa = PBXGroup;
 			children = (
+				7C584DAA19FD5C8200EB9609 /* earth_bump.png */,
+				7C584D9719FD5C8200EB9609 /* earth_diffuse_desat.png */,
+				7C584DAB19FD5C8200EB9609 /* earth_diffuse.png */,
+				7C584DA119FD5C8200EB9609 /* earthmap1k.jpg */,
+				7C584D9B19FD5C8200EB9609 /* jupiter_diffuse_desat.jpg */,
+				7C584DB519FD5C8200EB9609 /* jupiter_diffuse.jpg */,
+				7C584DA219FD5C8200EB9609 /* jupitermap.jpg */,
+				7C584DB219FD5C8200EB9609 /* mars_bump.png */,
+				7C584D9819FD5C8200EB9609 /* mars_diffuse_desat.png */,
+				7C584DB119FD5C8200EB9609 /* mars_diffuse.png */,
+				7C584DA319FD5C8200EB9609 /* marsmap1k.jpg */,
+				7C584DAF19FD5C8200EB9609 /* mercury_diffuse.jpg */,
+				7C584DA419FD5C8200EB9609 /* mercurymap.jpg */,
+				7C584D9E19FD5C8200EB9609 /* moon_diffuse.jpg */,
+				7C584D9F19FD5C8200EB9609 /* moon_normalmap.jpg */,
+				7C584DA019FD5C8200EB9609 /* neptune_bump.png */,
+				7C584D9D19FD5C8200EB9609 /* neptune_diffuse_desat.jpeg */,
+				7C584DB319FD5C8200EB9609 /* neptune_diffuse.jpg */,
+				7C584DA519FD5C8200EB9609 /* neptunemap.jpg */,
+				7C584DAD19FD5C8200EB9609 /* satturn_bump.png */,
+				7C584D9A19FD5C8200EB9609 /* saturn_diffuse_desat.png */,
+				7C584DAE19FD5C8200EB9609 /* saturn_diffuse.png */,
+				7C584DA619FD5C8200EB9609 /* saturnmap.jpg */,
+				7C79C88817650F8F00E71F9D /* sunmap.jpg */,
+				7C584D9C19FD5C8200EB9609 /* uranus_diffuse_desat.jpg */,
+				7C584DAC19FD5C8200EB9609 /* uranus_diffuse.jpg */,
+				7C584DA819FD5C8200EB9609 /* uranusmap.jpg */,
+				7C584DB419FD5C8200EB9609 /* venus_bump.png */,
+				7C584D9919FD5C8200EB9609 /* venus_diffuse_desat.jpg */,
+				7C584DB019FD5C8200EB9609 /* venus_diffuse.jpg */,
+				7C584DA919FD5C8200EB9609 /* venusmap.jpg */,
+				7C584D9319FD51F600EB9609 /* moon_diffuse.jpg */,
+				7C584D9419FD51F600EB9609 /* moon_normalmap.jpg */,
 				7C79C88217650F8F00E71F9D /* earthmap1k.jpg */,
 				7C79C88317650F8F00E71F9D /* jupitermap.jpg */,
 				7C79C88417650F8F00E71F9D /* marsmap1k.jpg */,
@@ -2063,9 +2165,7 @@
 		7C79C89117650F8F00E71F9D /* tectonic */ = {
 			isa = PBXGroup;
 			children = (
-				7CAEE42B19365577004294C1 /* moon_diffuse.jpg */,
 				7CAEE426193654F9004294C1 /* moon_hypsometric.jpg */,
-				7CAEE427193654F9004294C1 /* moon_normalmap.jpg */,
 				7C79C89217650F8F00E71F9D /* earthDiffuse.png */,
 				7C79C89317650F8F00E71F9D /* earthGray.png */,
 				7C79C89417650F8F00E71F9D /* earthMask.png */,
@@ -2077,36 +2177,38 @@
 		7C79C89717650F8F00E71F9D /* shaders */ = {
 			isa = PBXGroup;
 			children = (
-				7C79C8C117650F8F00E71F9D /* motionBlur.frag */,
-				7C79C8D017650F8F00E71F9D /* shader.fsh */,
 				7C79C89817650F8F00E71F9D /* blur2_frag.glsl */,
 				7C79C89917650F8F00E71F9D /* blur2_vert.glsl */,
+				7C06A8DD1853D4ED00D1C8A3 /* catalog */,
+				7C79C89C17650F8F00E71F9D /* corona */,
+				7CC3C028183EE3B50082C322 /* dust */,
 				7C79C8A817650F8F00E71F9D /* earth_frag.glsl */,
 				7C79C8A917650F8F00E71F9D /* emitter_frag.glsl */,
 				7C79C8AA17650F8F00E71F9D /* emitter_vert.glsl */,
 				7C79C8AD17650F8F00E71F9D /* fisheye_vert.glsl */,
+				7C79C8AE17650F8F00E71F9D /* flock */,
+				7CAD1B7118839A9800512843 /* fluid */,
+				7C06A8B21853D4ED00D1C8A3 /* fullscreen */,
 				7C79C8BE17650F8F00E71F9D /* gaussianBlur_frag.glsl */,
+				7CE8AFB1186FAD150087AC7A /* graviton */,
+				7C892494189C81A900AF4698 /* lines */,
+				7C79C8C117650F8F00E71F9D /* motionBlur.frag */,
+				7C584D8F19FCA8DA00EB9609 /* orbiter_body_frag.glsl */,
+				7C584D9119FCA99E00EB9609 /* orbiter_body_vert.glsl */,
+				7C83B3981856BE5900EB22F8 /* parsec */,
 				7C79C8C517650F8F00E71F9D /* passThru_vert.glsl */,
+				7C79C8C317650F8F00E71F9D /* passThru.vert */,
+				7C79C8C417650F8F00E71F9D /* passthru.vsh */,
+				7C79C8C617650F8F00E71F9D /* passThruNormals.vert */,
 				7C79C8C717650F8F00E71F9D /* pixelate_frag.glsl */,
+				7C79C8C917650F8F00E71F9D /* polyhedron */,
 				7C79C8CC17650F8F00E71F9D /* process_frag.glsl */,
 				7C79C8CD17650F8F00E71F9D /* quake_frag.glsl */,
 				7C79C8CE17650F8F00E71F9D /* quake_vert.glsl */,
 				7C79C8CF17650F8F00E71F9D /* render_frag.glsl */,
+				7C79C8D017650F8F00E71F9D /* shader.fsh */,
 				7CC3C034183FF64C0082C322 /* simplex_frag.glsl */,
-				7C79C8C317650F8F00E71F9D /* passThru.vert */,
-				7C79C8C617650F8F00E71F9D /* passThruNormals.vert */,
-				7C79C8C417650F8F00E71F9D /* passthru.vsh */,
 				7C159BA418B6FCD3005245CB /* static_sim_frag.glsl */,
-				7C83B3981856BE5900EB22F8 /* parsec */,
-				7C06A8DD1853D4ED00D1C8A3 /* catalog */,
-				7C79C89C17650F8F00E71F9D /* corona */,
-				7C892494189C81A900AF4698 /* lines */,
-				7CC3C028183EE3B50082C322 /* dust */,
-				7C79C8AE17650F8F00E71F9D /* flock */,
-				7CAD1B7118839A9800512843 /* fluid */,
-				7C06A8B21853D4ED00D1C8A3 /* fullscreen */,
-				7CE8AFB1186FAD150087AC7A /* graviton */,
-				7C79C8C917650F8F00E71F9D /* polyhedron */,
 			);
 			name = shaders;
 			path = ../resources/shaders;
@@ -2518,12 +2620,16 @@
 		7C79CA0D17650FD700E71F9D /* orbiter */ = {
 			isa = PBXGroup;
 			children = (
-				7C79CA0E17650FD700E71F9D /* Body.cpp */,
-				7C79CA0F17650FD700E71F9D /* Body.h */,
-				7C79CA1017650FD700E71F9D /* Orbiter.cpp */,
-				7C79CA1117650FD700E71F9D /* Orbiter.h */,
+				7C79CA0E17650FD700E71F9D /* OldBody.cpp */,
+				7C79CA0F17650FD700E71F9D /* OldBody.h */,
+				7C79CA1017650FD700E71F9D /* OldOrbiter.cpp */,
+				7C79CA1117650FD700E71F9D /* OldOrbiter.h */,
 				7C79CA1217650FD700E71F9D /* Sun.cpp */,
 				7C79CA1317650FD700E71F9D /* Sun.h */,
+				7C584D8919FC8BAE00EB9609 /* Orbiter.cpp */,
+				7C584D8A19FC8BAE00EB9609 /* Orbiter.h */,
+				7C584D8C19FC922700EB9609 /* OrbiterSystem.cpp */,
+				7C584D8D19FC922700EB9609 /* OrbiterSystem.h */,
 			);
 			name = orbiter;
 			path = ../src/orbiter;
@@ -3082,8 +3188,10 @@
 				7C79CB0E1765288500E71F9D /* dustCorona.frag in Resources */,
 				7C79CB0F1765288500E71F9D /* glowCorona.frag in Resources */,
 				7CE8AFB6186FAD150087AC7A /* graviton_render_frag.glsl in Resources */,
+				7C584DCB19FD5C8200EB9609 /* uranus_diffuse.jpg in Resources */,
 				7C79CB101765288500E71F9D /* gradient.frag in Resources */,
 				7C06A8FA1853D4ED00D1C8A3 /* metahexballs_frag.glsl in Resources */,
+				7C584DBD19FD5C8200EB9609 /* moon_diffuse.jpg in Resources */,
 				7C06A8E41853D4ED00D1C8A3 /* cells_frag.glsl in Resources */,
 				7C79CB111765288500E71F9D /* nebulaCorona.frag in Resources */,
 				7C79CB121765288500E71F9D /* passThruColorCorona.vert in Resources */,
@@ -3092,6 +3200,7 @@
 				7C06A8EA1853D4ED00D1C8A3 /* energyflicker_frag.glsl in Resources */,
 				7C79CB131765288500E71F9D /* passThruCorona.vert in Resources */,
 				7CE8AFB7186FAD150087AC7A /* graviton_render_vert.glsl in Resources */,
+				7C584DCE19FD5C8200EB9609 /* mercury_diffuse.jpg in Resources */,
 				7C79CB141765288500E71F9D /* passThruNormalsCorona.vert in Resources */,
 				7CEB1AEA193265C20044A346 /* watereffect_frag.glsl in Resources */,
 				7C06A8F31853D4ED00D1C8A3 /* kifs_frag.glsl in Resources */,
@@ -3103,12 +3212,15 @@
 				7CAD1B7D18839A9800512843 /* frag_addvect.glsl in Resources */,
 				7C83B3AA1856BF3800EB22F8 /* parsec-corona.png in Resources */,
 				7C4DBFC71929141300FDDDC3 /* meshinstance_render_frag.glsl in Resources */,
+				7C584DB619FD5C8200EB9609 /* earth_diffuse_desat.png in Resources */,
+				7C584DB819FD5C8200EB9609 /* venus_diffuse_desat.jpg in Resources */,
 				7C79CB1B1765288500E71F9D /* lantern.frag in Resources */,
 				7C06A8F61853D4ED00D1C8A3 /* logistic_frag.glsl in Resources */,
 				7C06A8FC1853D4ED00D1C8A3 /* paint_frag.glsl in Resources */,
 				7C83B39E1856BE5900EB22F8 /* parsec_cylindrical_vert.glsl in Resources */,
 				7C8DA86F1921CBF000FCD9A2 /* squarespiral_frag.glsl in Resources */,
 				7C79CB1C1765288500E71F9D /* lantern.vert in Resources */,
+				7C584DD419FD5C8200EB9609 /* jupiter_diffuse.jpg in Resources */,
 				7C79CB1D1765288500E71F9D /* nebula.frag in Resources */,
 				7C7CDB151881F2AD0064999F /* wireframe_geom.glsl in Resources */,
 				7CF612C7193410FC00030E26 /* cavething_frag.glsl in Resources */,
@@ -3118,6 +3230,7 @@
 				7C54CD33193866B80049B3FC /* rgb_noise800.png in Resources */,
 				7C6CB4451925DAA900D83614 /* terminal_frag.glsl in Resources */,
 				7C79CB211765288500E71F9D /* P_Velocity.frag in Resources */,
+				7C584DC219FD5C8200EB9609 /* marsmap1k.jpg in Resources */,
 				7C79CB221765288500E71F9D /* passThruFlock.vert in Resources */,
 				7C6CB4441925DAA900D83614 /* fire2d_frag.glsl in Resources */,
 				7C83B3A91856BF3800EB22F8 /* parsec-background.jpg in Resources */,
@@ -3132,6 +3245,7 @@
 				7C06A9071853D4ED00D1C8A3 /* tripping_frag.glsl in Resources */,
 				7C79CB271765288500E71F9D /* VboPos.vert in Resources */,
 				7C06A9031853D4ED00D1C8A3 /* squarenoise_frag.glsl in Resources */,
+				7C584D9219FCA99E00EB9609 /* orbiter_body_vert.glsl in Resources */,
 				7C79CB281765288500E71F9D /* Velocity.frag in Resources */,
 				7C79CB291765288500E71F9D /* motionBlur.frag in Resources */,
 				7CF612D619343F7C00030E26 /* polyterrain_frag.glsl in Resources */,
@@ -3140,16 +3254,18 @@
 				7C06A8F91853D4ED00D1C8A3 /* metahex_frag.glsl in Resources */,
 				7C06A8EC1853D4ED00D1C8A3 /* furry_frag.glsl in Resources */,
 				7C06A9011853D4ED00D1C8A3 /* shapeshifter_frag.glsl in Resources */,
+				7C584DB719FD5C8200EB9609 /* mars_diffuse_desat.png in Resources */,
 				7C79CB2A1765288500E71F9D /* passThru.vert in Resources */,
 				7C06A8F81853D4ED00D1C8A3 /* menger_frag.glsl in Resources */,
 				7C0D6F7619231FE2008F56CB /* rootfract_frag.glsl in Resources */,
+				7C584DC619FD5C8200EB9609 /* sunmap.jpg in Resources */,
 				7C79CB2B1765288500E71F9D /* passthru.vsh in Resources */,
 				7C6CB4471925DAA900D83614 /* simplicity_frag.glsl in Resources */,
+				7C584DC519FD5C8200EB9609 /* saturnmap.jpg in Resources */,
 				7C8DA8731921D29D00FCD9A2 /* sacred_frag.glsl in Resources */,
 				7C79CB2C1765288500E71F9D /* passThruNormals.vert in Resources */,
 				7C8DA8671921B43200FCD9A2 /* hexagons_frag.glsl in Resources */,
 				7C8DA8651921AB9300FCD9A2 /* test_frag.glsl in Resources */,
-				7CAEE42A193654F9004294C1 /* moon_normalmap.jpg in Resources */,
 				7C06A8EB1853D4ED00D1C8A3 /* fireball_frag.glsl in Resources */,
 				7C79CB2D1765288500E71F9D /* shader.fsh in Resources */,
 				7C79C91F17650F8F00E71F9D /* blur2_frag.glsl in Resources */,
@@ -3159,6 +3275,7 @@
 				7C79C85817650F1700E71F9D /* Oculon.icns in Resources */,
 				7C79C8EB17650F8F00E71F9D /* contour_tex_frag.glsl in Resources */,
 				7C83B3AF1856BF3800EB22F8 /* parsec-sun.png in Resources */,
+				7C584DBF19FD5C8200EB9609 /* neptune_bump.png in Resources */,
 				7C06A9091853D4ED00D1C8A3 /* volumetriclines_frag.glsl in Resources */,
 				7C79C8EC17650F8F00E71F9D /* contour_tex_vert.glsl in Resources */,
 				7CF612C91934125300030E26 /* warping_frag.glsl in Resources */,
@@ -3175,16 +3292,20 @@
 				7C79C8F317650F8F00E71F9D /* colortex1.jpg in Resources */,
 				7C06A8F21853D4ED00D1C8A3 /* inversion_frag.glsl in Resources */,
 				7C6CB4481925DAA900D83614 /* menger_frag.glsl in Resources */,
+				7C584DBA19FD5C8200EB9609 /* jupiter_diffuse_desat.jpg in Resources */,
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
 				7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */,
 				7CEB1ADE1932587A0044A346 /* lissajous_frag.glsl in Resources */,
 				7C79C8F517650F8F00E71F9D /* colortex3.jpg in Resources */,
+				7C584DC119FD5C8200EB9609 /* jupitermap.jpg in Resources */,
 				7C06A8E51853D4ED00D1C8A3 /* circlewave_frag.glsl in Resources */,
+				7C584DC819FD5C8200EB9609 /* venusmap.jpg in Resources */,
 				7C83B3AB1856BF3800EB22F8 /* parsec-nova.png in Resources */,
 				7C79C8F617650F8F00E71F9D /* colortex4.jpg in Resources */,
 				7C79C8F717650F8F00E71F9D /* bigGlow0.png in Resources */,
 				7C83B3B11856C4EB00EB22F8 /* parsec-stars.cdb in Resources */,
 				7C8DA8711921CF2700FCD9A2 /* framegrid_frag.glsl in Resources */,
+				7C584DC019FD5C8200EB9609 /* earthmap1k.jpg in Resources */,
 				7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */,
 				7C79C8F817650F8F00E71F9D /* bigGlow1.png in Resources */,
 				7C06A9041853D4ED00D1C8A3 /* stripes_frag.glsl in Resources */,
@@ -3194,17 +3315,24 @@
 				7C97D24018AF14E400BB63A1 /* parsec_lines_frag.glsl in Resources */,
 				7C79C8FB17650F8F00E71F9D /* cubeNegY.jpg in Resources */,
 				7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */,
+				7C584DD219FD5C8200EB9609 /* neptune_diffuse.jpg in Resources */,
 				7CAD1B7F18839A9800512843 /* frag_linsolve.glsl in Resources */,
 				7C06A90A1853D4ED00D1C8A3 /* voronoi_frag.glsl in Resources */,
 				7C79C8FC17650F8F00E71F9D /* cubeNegZ.jpg in Resources */,
+				7C584DD019FD5C8200EB9609 /* mars_diffuse.png in Resources */,
+				7C584D9519FD51F600EB9609 /* moon_diffuse.jpg in Resources */,
+				7C584DBB19FD5C8200EB9609 /* uranus_diffuse_desat.jpg in Resources */,
 				7CC3C02D183EE3B50082C322 /* dust_render_frag.glsl in Resources */,
 				7C6CB4421925DAA900D83614 /* tvsnow_frag.glsl in Resources */,
+				7C584DCF19FD5C8200EB9609 /* venus_diffuse.jpg in Resources */,
+				7C584DC419FD5C8200EB9609 /* neptunemap.jpg in Resources */,
 				7CEB1AE81932633A0044A346 /* bokeh_frag.glsl in Resources */,
 				7C06A8EE1853D4ED00D1C8A3 /* glasswalls_frag.glsl in Resources */,
 				7C159BA518B6FCD3005245CB /* static_sim_frag.glsl in Resources */,
 				7C06A8F71853D4ED00D1C8A3 /* mainsequence_frag.glsl in Resources */,
 				7C79C8FD17650F8F00E71F9D /* cubePosX.jpg in Resources */,
 				7C8CBB32192A9EB100588689 /* fractraps1_frag.glsl in Resources */,
+				7C584DD319FD5C8200EB9609 /* venus_bump.png in Resources */,
 				7C79C8FE17650F8F00E71F9D /* cubePosY.jpg in Resources */,
 				7C79C8FF17650F8F00E71F9D /* cubePosZ.jpg in Resources */,
 				7C79C90017650F8F00E71F9D /* glowCorona.png in Resources */,
@@ -3232,10 +3360,15 @@
 				7CAD1B7B18839A9800512843 /* frag_addforcearea_circular.glsl in Resources */,
 				7C79C90C17650F8F00E71F9D /* earthmap1k.jpg in Resources */,
 				7C79C90D17650F8F00E71F9D /* jupitermap.jpg in Resources */,
+				7C584DCA19FD5C8200EB9609 /* earth_diffuse.png in Resources */,
+				7C584DC919FD5C8200EB9609 /* earth_bump.png in Resources */,
 				7C79C90E17650F8F00E71F9D /* marsmap1k.jpg in Resources */,
+				7C584DBE19FD5C8200EB9609 /* moon_normalmap.jpg in Resources */,
 				7C06A8E91853D4ED00D1C8A3 /* cymatics_frag.glsl in Resources */,
 				7C024ED218B4770500A019E5 /* graviton_simulation_vert.glsl in Resources */,
+				7C584DD119FD5C8200EB9609 /* mars_bump.png in Resources */,
 				7C06A8FF1853D4ED00D1C8A3 /* retina_frag.glsl in Resources */,
+				7C584DBC19FD5C8200EB9609 /* neptune_diffuse_desat.jpeg in Resources */,
 				7C79C90F17650F8F00E71F9D /* mercurymap.jpg in Resources */,
 				7C83B39D1856BE5900EB22F8 /* parsec_cylindrical_frag.glsl in Resources */,
 				7C79C91017650F8F00E71F9D /* neptunemap.jpg in Resources */,
@@ -3243,9 +3376,11 @@
 				7C06A8F41853D4ED00D1C8A3 /* lightglow_frag.glsl in Resources */,
 				7C79C91117650F8F00E71F9D /* saturnmap.jpg in Resources */,
 				7C79C91217650F8F00E71F9D /* sunmap.jpg in Resources */,
+				7C584DC319FD5C8200EB9609 /* mercurymap.jpg in Resources */,
 				7C4C672F181B6405003049AA /* noise256.png in Resources */,
 				7C06A8FE1853D4ED00D1C8A3 /* rasterizer_frag.glsl in Resources */,
 				7C6CB4431925DAA900D83614 /* scanline_frag.glsl in Resources */,
+				7C584DC719FD5C8200EB9609 /* uranusmap.jpg in Resources */,
 				7C8DA86B1921CA7D00FCD9A2 /* weather_frag.glsl in Resources */,
 				7C6CB4491925DAA900D83614 /* circuit_frag.glsl in Resources */,
 				7C06A9081853D4ED00D1C8A3 /* truchets_frag.glsl in Resources */,
@@ -3257,11 +3392,13 @@
 				7C79C91817650F8F00E71F9D /* solmask.png in Resources */,
 				7C8DA87B1921D8E700FCD9A2 /* cloudlight_frag.glsl in Resources */,
 				7C79C91917650F8F00E71F9D /* specExponent.png in Resources */,
+				7C584DB919FD5C8200EB9609 /* saturn_diffuse_desat.png in Resources */,
 				7C79C91A17650F8F00E71F9D /* earthDiffuse.png in Resources */,
 				7C89249B189C81A900AF4698 /* lines_simulation_frag.glsl in Resources */,
 				7C8DA8771921D77100FCD9A2 /* urchin_frag.glsl in Resources */,
 				7C79C91B17650F8F00E71F9D /* earthGray.png in Resources */,
 				7C79C91C17650F8F00E71F9D /* earthMask.png in Resources */,
+				7C584D9619FD51F600EB9609 /* moon_normalmap.jpg in Resources */,
 				7C54CD311938665A0049B3FC /* rgb_noise.jpg in Resources */,
 				7C79C91D17650F8F00E71F9D /* earthNormal.png in Resources */,
 				7C06A8F01853D4ED00D1C8A3 /* infinitefall_frag.glsl in Resources */,
@@ -3296,7 +3433,6 @@
 				7CF6AD5818AB55A000FA795A /* parsec_simulation_vert.glsl in Resources */,
 				7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */,
 				7C79C95817650F8F00E71F9D /* terrain_shader_frag.glsl in Resources */,
-				7CAEE42C19365577004294C1 /* moon_diffuse.jpg in Resources */,
 				7C06A8EF1853D4ED00D1C8A3 /* hypnorings_frag.glsl in Resources */,
 				7CEB1AE219325BAF0044A346 /* terminaltext_frag.glsl in Resources */,
 				7C97D24318B00F0500BB63A1 /* graviton_formation_frag.glsl in Resources */,
@@ -3309,14 +3445,17 @@
 				7C06A8E71853D4ED00D1C8A3 /* clouds_frag.glsl in Resources */,
 				7C272EC81938675B00A49E48 /* rgb_noise256.png in Resources */,
 				7C06A8F51853D4ED00D1C8A3 /* livingkifs_frag.glsl in Resources */,
+				7C584DCD19FD5C8200EB9609 /* saturn_diffuse.png in Resources */,
 				7C83B3A01856BE5900EB22F8 /* parsec_stars_vert.glsl in Resources */,
 				7CF612D419343F1500030E26 /* noisesphere_frag.glsl in Resources */,
 				7C79C95C17650F8F00E71F9D /* terrain_texture.jpg in Resources */,
+				7C584DCC19FD5C8200EB9609 /* satturn_bump.png in Resources */,
 				7C06A8E31853D4ED00D1C8A3 /* aftereffect_frag.glsl in Resources */,
 				7C79C95D17650F8F00E71F9D /* terrain_vtf_frag.glsl in Resources */,
 				7C8DA86D1921CB2100FCD9A2 /* fluffycloud_frag.glsl in Resources */,
 				7C79C95E17650F8F00E71F9D /* terrain_vtf_vert.glsl in Resources */,
 				7C79C96217650F8F00E71F9D /* ExoplanetArchive.csv in Resources */,
+				7C584D9019FCA8DA00EB9609 /* orbiter_body_frag.glsl in Resources */,
 				7C83B3AC1856BF3800EB22F8 /* parsec-particle.png in Resources */,
 				7C79C96317650F8F00E71F9D /* nukes.csv in Resources */,
 				7C79C96417650F8F00E71F9D /* starData.csv in Resources */,
@@ -3457,6 +3596,7 @@
 				7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */,
 				7C79C93A17650F8F00E71F9D /* P_VboPos.vert in Sources */,
 				7C79C93B17650F8F00E71F9D /* P_Velocity.frag in Sources */,
+				7C584D8E19FC922700EB9609 /* OrbiterSystem.cpp in Sources */,
 				7C79C93C17650F8F00E71F9D /* passThruFlock.vert in Sources */,
 				7C79C93D17650F8F00E71F9D /* Position.frag in Sources */,
 				7C79C93E17650F8F00E71F9D /* room.frag in Sources */,
@@ -3527,6 +3667,7 @@
 				7C79CA5B17650FD800E71F9D /* Nebula.cpp in Sources */,
 				7C06A90E1853D4ED00D1C8A3 /* faintStars.frag in Sources */,
 				7C79CA5C17650FD800E71F9D /* Predator.cpp in Sources */,
+				7C584D8B19FC8BAE00EB9609 /* Orbiter.cpp in Sources */,
 				7C79CA5E17650FD800E71F9D /* Grid.cpp in Sources */,
 				7C79CA5F17650FD800E71F9D /* Polyhedron.cpp in Sources */,
 				7C79CA6017650FD800E71F9D /* Quake.cpp in Sources */,
@@ -3550,9 +3691,6 @@
 				7C0E674018BAC88700C387FC /* OculusCam.cpp in Sources */,
 				7C8CBB3C192C1FAD00588689 /* RtMidi.cpp in Sources */,
 				7C79CA7117650FD800E71F9D /* Star.cpp in Sources */,
-				7C79CA7417650FD800E71F9D /* Body.cpp in Sources */,
-				7C79CA7517650FD800E71F9D /* Orbiter.cpp in Sources */,
-				7C79CA7617650FD800E71F9D /* Sun.cpp in Sources */,
 				7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */,
 				7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */,
 				7C6CB4371925AFDD00D83614 /* EffectShaders.cpp in Sources */,

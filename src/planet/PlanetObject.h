@@ -26,8 +26,10 @@ public:
     
     void draw();
     
-private:
+public:
     ci::Vec3f           mPosition;
+    
+private:
 	float               mRadius;
     
     // mesh
@@ -42,4 +44,11 @@ private:
     
     ci::Vec3f			mLightDir;
     
+    static GLfloat no_mat[];
+    static GLfloat mat_ambient[];
+    static GLfloat mat_diffuse[];
+    static GLfloat mat_specular[];
+    static GLfloat mat_emission[];
+    static GLfloat mat_shininess[];
+    static GLfloat no_shininess[];
 };

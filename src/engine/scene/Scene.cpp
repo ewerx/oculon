@@ -34,6 +34,7 @@ Scene::Scene(const std::string& name)
 , mIsVisible(false)
 , mIsDebug(false)
 , mEnableFrustumCulling(false)
+, mEnableDepthBuffer(false)
 , mInterface(NULL)
 , mParamsInterface(NULL)
 , mLoadParamsInterface(NULL)
@@ -129,7 +130,7 @@ void Scene::setupFbo()
 {
     gl::Fbo::Format format;
     format.enableMipmapping(false);
-    format.enableDepthBuffer(false);
+    format.enableDepthBuffer(mEnableDepthBuffer);
     format.setCoverageSamples(8);
     format.setSamples(4); // 4x AA
     
