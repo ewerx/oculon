@@ -157,7 +157,6 @@
 		7C584DC319FD5C8200EB9609 /* mercurymap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA419FD5C8200EB9609 /* mercurymap.jpg */; };
 		7C584DC419FD5C8200EB9609 /* neptunemap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA519FD5C8200EB9609 /* neptunemap.jpg */; };
 		7C584DC519FD5C8200EB9609 /* saturnmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA619FD5C8200EB9609 /* saturnmap.jpg */; };
-		7C584DC619FD5C8200EB9609 /* sunmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA719FD5C8200EB9609 /* sunmap.jpg */; };
 		7C584DC719FD5C8200EB9609 /* uranusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA819FD5C8200EB9609 /* uranusmap.jpg */; };
 		7C584DC819FD5C8200EB9609 /* venusmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DA919FD5C8200EB9609 /* venusmap.jpg */; };
 		7C584DC919FD5C8200EB9609 /* earth_bump.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DAA19FD5C8200EB9609 /* earth_bump.png */; };
@@ -795,7 +794,6 @@
 		7C584DA419FD5C8200EB9609 /* mercurymap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mercurymap.jpg; sourceTree = "<group>"; };
 		7C584DA519FD5C8200EB9609 /* neptunemap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = neptunemap.jpg; sourceTree = "<group>"; };
 		7C584DA619FD5C8200EB9609 /* saturnmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = saturnmap.jpg; sourceTree = "<group>"; };
-		7C584DA719FD5C8200EB9609 /* sunmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sunmap.jpg; sourceTree = "<group>"; };
 		7C584DA819FD5C8200EB9609 /* uranusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = uranusmap.jpg; sourceTree = "<group>"; };
 		7C584DA919FD5C8200EB9609 /* venusmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = venusmap.jpg; sourceTree = "<group>"; };
 		7C584DAA19FD5C8200EB9609 /* earth_bump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earth_bump.png; sourceTree = "<group>"; };
@@ -2131,7 +2129,6 @@
 				7C584D9A19FD5C8200EB9609 /* saturn_diffuse_desat.png */,
 				7C584DAE19FD5C8200EB9609 /* saturn_diffuse.png */,
 				7C584DA619FD5C8200EB9609 /* saturnmap.jpg */,
-				7C79C88817650F8F00E71F9D /* sunmap.jpg */,
 				7C584D9C19FD5C8200EB9609 /* uranus_diffuse_desat.jpg */,
 				7C584DAC19FD5C8200EB9609 /* uranus_diffuse.jpg */,
 				7C584DA819FD5C8200EB9609 /* uranusmap.jpg */,
@@ -3258,7 +3255,6 @@
 				7C79CB2A1765288500E71F9D /* passThru.vert in Resources */,
 				7C06A8F81853D4ED00D1C8A3 /* menger_frag.glsl in Resources */,
 				7C0D6F7619231FE2008F56CB /* rootfract_frag.glsl in Resources */,
-				7C584DC619FD5C8200EB9609 /* sunmap.jpg in Resources */,
 				7C79CB2B1765288500E71F9D /* passthru.vsh in Resources */,
 				7C6CB4471925DAA900D83614 /* simplicity_frag.glsl in Resources */,
 				7C584DC519FD5C8200EB9609 /* saturnmap.jpg in Resources */,

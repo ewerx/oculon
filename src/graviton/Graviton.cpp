@@ -249,7 +249,7 @@ void Graviton::setupParticles(const int bufSize)
         const float rho = Rand::randFloat() * (M_PI * 2.0);
         const float theta = Rand::randFloat() * (M_PI * 2.0);
         
-        const float r2 = r * 0.25f;
+        const float r2 = r * (0.25f + Rand::randFloat()*0.5f);
         
         // position + mass
         float x = cos(theta) * (r + r2*cos(rho));
@@ -264,29 +264,64 @@ void Graviton::setupParticles(const int bufSize)
     }
     mParticleController.addFormation(new ParticleFormation("torus", bufSize, positions, velocities, data));
     
+//    positions.clear();
+//    data.clear();
+//    // parabola?
+//    for (int i = 0; i < numParticles; ++i)
+//    {
+//        const float rho = Rand::randFloat() * (M_PI * 2.0);
+//        const float theta = Rand::randFloat() * (M_PI * 2.0);
+//        
+//        const float r2 = r * 0.5f;
+//        
+//        // position + mass
+//        float x = cos(theta) * (r2 + r*cos(rho));
+//        float y = sin(theta) * (r2 + r*cos(rho));
+//        float z = r * sin(rho);
+//        float mass = Rand::randFloat(0.01f,1.0f);
+//        positions.push_back(Vec4f(x,y,z,mass));
+//        //
+//        // extra info
+//        float decay = Rand::randFloat(.01f,10.00f);
+//        data.push_back(Vec4f(x,y,z,decay));
+//    }
+//    mParticleController.addFormation(new ParticleFormation("parabola", bufSize, positions, velocities, data));
+    
     positions.clear();
     data.clear();
-    // torus2
+    // concentrics
+    const int NUM_CONCENTRIC = 5;
+    const float multiplier = 1.0f / NUM_CONCENTRIC;
+    float radii[NUM_CONCENTRIC];
+    for (int j = 0; j < NUM_CONCENTRIC; ++j)
+    {
+        radii[j] = r * (1.0f - multiplier * j);
+    }
     for (int i = 0; i < numParticles; ++i)
     {
         const float rho = Rand::randFloat() * (M_PI * 2.0);
         const float theta = Rand::randFloat() * (M_PI * 2.0);
-        
-        const float r2 = r * 0.5f;
+
+        const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
         
         // position + mass
-        float x = cos(theta) * (r2 + r*cos(rho));
-        float y = sin(theta) * (r2 + r*cos(rho));
-        float z = r * sin(rho);
-        float mass = Rand::randFloat(0.01f,1.0f);
+        float x = radii[concentricIndex] * cos(rho) * sin(theta);
+        float y = radii[concentricIndex] * sin(rho) * sin(theta);
+        float z = radii[concentricIndex] * cos(theta);
+        float mass = 0.1f + multiplier * concentricIndex;
         positions.push_back(Vec4f(x,y,z,mass));
         //
         // extra info
         float decay = Rand::randFloat(.01f,10.00f);
         data.push_back(Vec4f(x,y,z,decay));
     }
-    mParticleController.addFormation(new ParticleFormation("parabola", bufSize, positions, velocities, data));
+    mParticleController.addFormation(new ParticleFormation("concentrics", bufSize, positions, velocities, data));
     
+    // lines
+    const int NUM_LINES = 512;
+    const int POINTS_PER_LINE = numParticles / NUM_LINES;
+    const float CENTER_RADIUS = 2.0f;
+    const float POINT_SPACING = r / POINTS_PER_LINE;
     positions.clear();
     data.clear();
     float rho = Rand::randFloat() * (M_PI);
@@ -295,7 +330,7 @@ void Graviton::setupParticles(const int bufSize)
     // lines
     for (int i = 0; i < numParticles; ++i)
     {
-        if (i % 512 == 0)
+        if (i % POINTS_PER_LINE == 0)
         {
             rho = Rand::randFloat() * (M_PI);
             theta = Rand::randFloat() * (M_PI * 2.0f);
@@ -313,7 +348,8 @@ void Graviton::setupParticles(const int bufSize)
         float decay = Rand::randFloat(.01f,10.00f);
         data.push_back(Vec4f(x,y,z,decay));
         
-        dist += r / 512.0f;
+        dist += Rand::randFloat(POINT_SPACING*0.9f, POINT_SPACING*1.1f);
+        dist = MIN(dist, -Rand::randFloat(CENTER_RADIUS*0.9f, CENTER_RADIUS*1.5f));
     }
     mParticleController.addFormation(new ParticleFormation("lines", bufSize, positions, velocities, data));
     
