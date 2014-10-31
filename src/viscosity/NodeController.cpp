@@ -146,8 +146,8 @@ MirrorBounceFormation::MirrorBounceFormation()
     mNodes.push_back( NodeFormation::Node( Vec3f::zero(), mMirrorAxis ) );
     mNodes.push_back( NodeFormation::Node( Vec3f::zero(), -mMirrorAxis ) );
     
-//    mNodes.push_back( NodeFormation::Node( Vec3f::zero(), Vec3f::yAxis() ) );
-//    mNodes.push_back( NodeFormation::Node( Vec3f::zero(), -Vec3f::yAxis() ) );
+    mNodes.push_back( NodeFormation::Node( Vec3f::zero(), Vec3f( -mMirrorAxis.x, mMirrorAxis.y, mMirrorAxis.z) ) );
+    mNodes.push_back( NodeFormation::Node( Vec3f::zero(), -Vec3f( -mMirrorAxis.x, mMirrorAxis.y, mMirrorAxis.z) ) );
     
     mAudioReactive = true;
 }
@@ -194,8 +194,8 @@ bool MirrorBounceFormation::onMirrorAxisChanged()
 {
     mNodes[0].mVelocity = mMirrorAxis;
     mNodes[1].mVelocity = -mMirrorAxis;
-//    mNodes[2].mVelocity = mMirrorAxis.cross(-mMirrorAxis);
-//    mNodes[3].mVelocity = -mNodes[2].mVelocity;
+    mNodes[2].mVelocity = Vec3f( -mMirrorAxis.x, mMirrorAxis.y, mMirrorAxis.z);
+    mNodes[3].mVelocity = -Vec3f( -mMirrorAxis.x, mMirrorAxis.y, mMirrorAxis.z);
     return true;
 }
 
@@ -231,28 +231,36 @@ void MirrorBounceFormation::update(double dt, AudioInputHandler &audioInputHandl
         
         if (mRandomizeDirection)
         {
-            if (mRandomizeNext && distance < 0.1f)
+            if (mRandomizeNext && radius < (0.25f * mRadius * mBounceMultiplier))
             {
                 mNodes[0].mVelocity = Rand::randVec3f().normalized();
                 mNodes[1].mVelocity = mNodes[0].mVelocity * -1.0f;
+                mNodes[2].mVelocity = Vec3f( -mNodes[0].mVelocity.x, -mNodes[0].mVelocity.y, mNodes[0].mVelocity.z * (Rand::randBool() ? 1.0f : -1.0f));
+                mNodes[3].mVelocity = Vec3f( -mNodes[1].mVelocity.x, -mNodes[1].mVelocity.y, mNodes[1].mVelocity.z * (Rand::randBool() ? 1.0f : -1.0f));
                 mRandomizeNext = false;
             }
-            else if (radius > (0.5f * mRadius))
+            else if (radius > (0.5f * mRadius * mBounceMultiplier))
             {
                 mRandomizeNext = true;
             }
         }
         
         float mirror = 1.0f;
+        float mirror2 = 1.0f;
         for ( tNodeList::reference node : mNodes )
         {
             if ( mSpinRate > 0.0f )
             {
-                node.mPosition.x = mSpinCenter.x + cos( mSpinRho ) * sin( mSpinTheta ) * radius * mirror;
-                node.mPosition.y = mSpinCenter.y + sin( mSpinRho ) * sin( mSpinTheta ) * radius * mirror;
-                node.mPosition.z = mSpinCenter.z + cos( mSpinTheta ) * radius * mirror;
+                node.mPosition.x = mSpinCenter.x + cos( mSpinRho * mirror2 ) * sin( mSpinTheta ) * radius * mirror;
+                node.mPosition.y = mSpinCenter.y + sin( mSpinRho * mirror2 ) * sin( mSpinTheta ) * radius * mirror;
+                node.mPosition.z = mSpinCenter.z + cos( mSpinTheta * mirror2 ) * radius * mirror;
                 node.mVelocity = node.mPosition;
+                
                 mirror *= -1.0f;
+                if (mirror > 0.0f)
+                {
+                    mirror2 *= -1.0f;
+                }
             }
             else
             {

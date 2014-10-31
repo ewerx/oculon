@@ -23,6 +23,7 @@ uniform float gravity2;
 uniform float containerradius;
 uniform float formationStep;
 
+uniform bool spin;
 uniform bool reset;
 uniform bool startAnim;
 
@@ -48,7 +49,7 @@ void main()
     if (formationStep < 1.0)
     {
         // animate to formation
-        vel = vec3(0.0,0.0,0.0);
+        vel = texture2D(oVelocities, texCoord.st).rgb;
         vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
         
         pos = mix(startPos,targetPos,formationStep);
@@ -59,6 +60,28 @@ void main()
         pos = texture2D(oPositions, texCoord.st).rgb;
         vel = texture2D(oVelocities, texCoord.st).rgb;
     }
+    else if( spin )
+    {
+        vec3 oVel = texture2D(oVelocities, texCoord.st).rgb;
+        vec3 oPos = texture2D(oPositions, texCoord.st).rgb;
+        // vel.x = rho
+        // vel.y = theta
+        // vel.z = 1.0 for animate rho, 0.0 for animate theta
+        // vel.a (age) = speed
+        if (oVel.z > 0.5)
+        {
+            vel.x = vel.x + dt * age;
+        }
+        else
+        {
+            vel.y = vel.y + dt * age;
+        }
+        
+        float dist = length(oPos);
+        pos.x = dist * cos(vel.x) * sin(vel.y);
+        pos.y = dist * sin(vel.x) * sin(vel.y);
+        pos.z = dist * cos(vel.y);
+    }
     else
     {
         // gravity simulation
@@ -66,17 +89,17 @@ void main()
         float f1Mag = length(f1); //force magnitude
         vec3 f2 = attractorPos2 - pos; //force
         float f2Mag = length(f2); //force magnitude
-//        vec3 f3 = attractorPos3 - pos; //force
-//        float f3Mag = length(f3); //force magnitude
-//        vec3 f4 = attractorPos4 - pos; //force
-//        float f4Mag = length(f4); //force magnitude
+        vec3 f3 = attractorPos3 - pos; //force
+        float f3Mag = length(f3); //force magnitude
+        vec3 f4 = attractorPos4 - pos; //force
+        float f4Mag = length(f4); //force magnitude
         
         vec3 a1 = gravity * invmass * f1/(f1Mag*f1Mag + eps);
         vec3 a2 = gravity2 * invmass * f2/(f2Mag*f2Mag + eps);
-//        vec3 a3 = vec3(0.0);//gravity * invmass * f3/(f3Mag*f3Mag + eps) * attractorMass3;
-//        vec3 a4 = vec3(0.0);//gravity * invmass * f4/(f4Mag*f4Mag + eps) * attractorMass4;
+        vec3 a3 = gravity * invmass * f3/(f3Mag*f3Mag + eps);
+        vec3 a4 = gravity2 * invmass * f4/(f4Mag*f4Mag + eps);
         
-        vel = vel + dt * (a1 + a2); //velocity update
+        vel = vel + dt * (a1 + a2 + a3 + a4); //velocity update
         vel = vel - damping * vel; //friction/damping
         pos	= pos + dt * vel; //(symplectic euler) position update
         
