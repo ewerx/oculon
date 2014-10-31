@@ -89,7 +89,7 @@ void Parsec::setupInterface()
     mInterface->addParam(CreateBoolParam("grid", &mShowGrid));
     
     mInterface->addParam(CreateFloatParam("star-scale", &mStars.mScale)
-                         .minValue(0.5f)
+                         .minValue(0.0f)
                          .maxValue(3.0f));
     mInterface->addParam(CreateFloatParam("background", &mBackground.mAlpha));
     mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha));
