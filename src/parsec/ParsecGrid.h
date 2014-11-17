@@ -34,6 +34,10 @@ public:
 	void draw();
 
 	void setLineWidth( float width ) { mLineWidth = width; }
+    
+public:
+    // params
+    float               mAlpha;
 private:
 	ci::gl::VboMesh		mVboMesh;
 

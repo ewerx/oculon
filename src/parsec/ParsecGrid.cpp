@@ -27,6 +27,7 @@ using namespace std;
 
 ParsecGrid::ParsecGrid(void)
 	: mLineWidth(1.5f)
+    , mAlpha(1.0f)
 {
 }
 
@@ -109,7 +110,9 @@ void ParsecGrid::draw()
 	glPushAttrib( GL_CURRENT_BIT | GL_LINE_BIT | GL_ENABLE_BIT );
 	
 	glLineWidth( mLineWidth );
-	gl::color( Color(0.5f, 0.6f, 0.8f) * 0.25f );
+    ColorA color = ColorA(0.5f, 0.6f, 0.8f, 1.0f) * 0.25f;
+    color.a = mAlpha;
+	gl::color( color );
 
 	gl::enableAdditiveBlending();
 	gl::draw( mVboMesh );

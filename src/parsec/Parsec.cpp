@@ -67,7 +67,6 @@ void Parsec::setup()
     mAudioInputHandler.mRandomSignal = true;
     
     // params
-    mShowGrid = false;
     mShowConstellations = false;
     mShowConstellationArt = false;
     mConstellationAudio = false;
@@ -77,6 +76,7 @@ void Parsec::setup()
     mLabels.mFadeByDistance = true;
     mLabels.mAudioResponsive = true;
     mBackground.mAlpha = 0.75f;
+    mGrid.mAlpha = 0.75f;
     
 }
 
@@ -86,13 +86,13 @@ void Parsec::reset()
 
 void Parsec::setupInterface()
 {
-    mInterface->addParam(CreateBoolParam("grid", &mShowGrid));
-    
     mInterface->addParam(CreateFloatParam("star-scale", &mStars.mScale)
                          .minValue(0.0f)
                          .maxValue(3.0f));
     mInterface->addParam(CreateFloatParam("background", &mBackground.mAlpha));
-    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha));
+    mInterface->addParam(CreateFloatParam("grid", &mGrid.mAlpha));
+    mInterface->addParam(CreateFloatParam("labels-alpha", &mLabels.mAlpha)
+                         .maxValue(0.1f));
     mInterface->addParam(CreateBoolParam("labels-fadebydist", &mLabels.mFadeByDistance));
     mInterface->addParam(CreateBoolParam("labels-audioresponsive", &mLabels.mAudioResponsive));
     mInterface->addParam(CreateBoolParam("constellations", &mShowConstellations));
@@ -237,17 +237,11 @@ void Parsec::draw()
 
 void Parsec::render()
 {
-    // draw background
 	mBackground.draw();
-    
-	// draw grid
-	if(mShowGrid)
-    {
-		mGrid.draw();
-    }
-    
-	// draw stars
-	mStars.draw();
+	
+    mGrid.draw();
+	
+    mStars.draw();
     
     //const float scale = mApp->getViewportWidth() / 128.0f;
     //glScalef(scale, scale, scale);

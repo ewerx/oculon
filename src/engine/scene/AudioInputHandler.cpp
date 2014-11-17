@@ -80,7 +80,7 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     
     interface->addParam(CreateFloatParam("gain", &mGain)
                         .minValue(0.05f)
-                        .maxValue(50.0f)
+                        .maxValue(20.0f)
                         .oscReceiver(name).sendFeedback()
                         .midiInput(0, midiChannel, midiNote));
     interface->addParam(CreateBoolParam( "linear", &mLinearScale )

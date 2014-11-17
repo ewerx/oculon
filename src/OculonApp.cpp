@@ -451,6 +451,7 @@ void OculonApp::setupScenes()
 
 void OculonApp::addScene(Scene* scene, bool autoStart)
 {
+    assert(scene && "OculonApp::addScene: scene is null");
     console() << (mScenes.size()+1) << ": " << scene->getName() << std::endl;
     
     scene->init(this);
