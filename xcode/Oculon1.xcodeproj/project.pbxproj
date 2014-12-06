@@ -2816,9 +2816,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* Oculon */ = {
+		8D1107260486CEB800E47090 /* Oculon1 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Oculon" */;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Oculon1" */;
 			buildPhases = (
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -2831,7 +2831,7 @@
 			);
 			dependencies = (
 			);
-			name = Oculon;
+			name = Oculon1;
 			productInstallPath = "$(HOME)/Applications";
 			productName = Oculon;
 			productReference = 8D1107320486CEB800E47090 /* Oculon.app */;
@@ -2844,7 +2844,7 @@
 			isa = PBXProject;
 			attributes = {
 			};
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon1" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -2858,7 +2858,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* Oculon */,
+				8D1107260486CEB800E47090 /* Oculon1 */,
 			);
 		};
 /* End PBXProject section */
@@ -3493,7 +3493,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Oculon" */ = {
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Oculon1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
@@ -3502,7 +3502,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Oculon1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
