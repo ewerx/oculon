@@ -91,12 +91,13 @@ using namespace std;
 /*static*/ time_t Utils::toEpochSeconds(boost::posix_time::ptime& t)
 {
     using namespace boost::posix_time;
-    ptime epoch(boost::gregorian::date(1970,1,1));
-    time_duration::sec_type x = (t - epoch).total_seconds();
+    //ptime epoch(boost::gregorian::date(1970,1,1));
+    //time_duration::sec_type x = (t - epoch).total_seconds();
     
     //TODO: check overflow
     
-    return time_t(x);
+    //return time_t(x);
+    return 0;
 }
 
 /*static*/ Color Utils::toColor(uint32_t hex)
