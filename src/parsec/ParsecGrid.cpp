@@ -100,7 +100,8 @@ void ParsecGrid::setup()
 	layout.setStaticPositions();
 
 	mVboMesh = gl::VboMesh(vertices.size(), 0, layout, GL_LINES);
-	mVboMesh.bufferPositions( &(vertices.front()), vertices.size() );	
+	mVboMesh.bufferPositions( &(vertices.front()), vertices.size() );
+    mVboMesh.unbindBuffers();
 }
 
 void ParsecGrid::draw()

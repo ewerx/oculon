@@ -153,6 +153,7 @@ void ParsecBackground::create()
 	mVboMesh.bufferTexCoords2d( 0, texCoords );
 	mVboMesh.bufferPositions( positions );
 	mVboMesh.bufferIndices( indices );
+    mVboMesh.unbindBuffers();
 }
 
 void ParsecBackground::setCameraDistance( float distance )
