@@ -105,6 +105,12 @@
 		7C5165EB191709D2003E94F8 /* Pentagon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E9191709D2003E94F8 /* Pentagon.cpp */; };
 		7C54CD311938665A0049B3FC /* rgb_noise.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C54CD301938665A0049B3FC /* rgb_noise.jpg */; };
 		7C54CD33193866B80049B3FC /* rgb_noise800.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C54CD32193866B80049B3FC /* rgb_noise800.png */; };
+		7C5517A41A5CD0E8000C7703 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C5517A31A5CD0E8000C7703 /* config.json */; };
+		7C5517AA1A5CD0FC000C7703 /* RenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517A71A5CD0FC000C7703 /* RenderTarget.cpp */; };
+		7C5517AB1A5CD0FC000C7703 /* ConfigFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517A81A5CD0FC000C7703 /* ConfigFile.cpp */; };
+		7C5517AE1A5CD9BF000C7703 /* OutputChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517AC1A5CD9BF000C7703 /* OutputChannel.cpp */; };
+		7C5517B01A5CDF2A000C7703 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517AF1A5CDF2A000C7703 /* SceneController.cpp */; };
+		7C5517B31A5CE239000C7703 /* OutputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517B11A5CE239000C7703 /* OutputController.cpp */; };
 		7C584D7F19FC390400EB9609 /* SceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D7D19FC390400EB9609 /* SceneCam.cpp */; };
 		7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8019FC3DA000EB9609 /* SpinCam.cpp */; };
 		7C584D8519FC441800EB9609 /* OtherSceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */; };
@@ -671,6 +677,18 @@
 		7C5165EA191709D2003E94F8 /* Pentagon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pentagon.h; sourceTree = "<group>"; };
 		7C54CD301938665A0049B3FC /* rgb_noise.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rgb_noise.jpg; sourceTree = "<group>"; };
 		7C54CD32193866B80049B3FC /* rgb_noise800.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rgb_noise800.png; sourceTree = "<group>"; };
+		7C5517A31A5CD0E8000C7703 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = ../resources/config.json; sourceTree = "<group>"; };
+		7C5517A51A5CD0FC000C7703 /* RenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTarget.h; sourceTree = "<group>"; };
+		7C5517A61A5CD0FC000C7703 /* SceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneController.h; sourceTree = "<group>"; };
+		7C5517A71A5CD0FC000C7703 /* RenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTarget.cpp; sourceTree = "<group>"; };
+		7C5517A81A5CD0FC000C7703 /* ConfigFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigFile.cpp; sourceTree = "<group>"; };
+		7C5517A91A5CD0FC000C7703 /* ConfigFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigFile.h; sourceTree = "<group>"; };
+		7C5517AC1A5CD9BF000C7703 /* OutputChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputChannel.cpp; sourceTree = "<group>"; };
+		7C5517AD1A5CD9BF000C7703 /* OutputChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputChannel.h; sourceTree = "<group>"; };
+		7C5517AF1A5CDF2A000C7703 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneController.cpp; sourceTree = "<group>"; };
+		7C5517B11A5CE239000C7703 /* OutputController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputController.cpp; sourceTree = "<group>"; };
+		7C5517B21A5CE239000C7703 /* OutputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputController.h; sourceTree = "<group>"; };
+		7C5517B51A5CF472000C7703 /* NamedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamedObject.h; sourceTree = "<group>"; };
 		7C584D7D19FC390400EB9609 /* SceneCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneCam.cpp; sourceTree = "<group>"; };
 		7C584D7E19FC390400EB9609 /* SceneCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneCam.h; sourceTree = "<group>"; };
 		7C584D8019FC3DA000EB9609 /* SpinCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinCam.cpp; sourceTree = "<group>"; };
@@ -1411,6 +1429,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7C5517A31A5CD0E8000C7703 /* config.json */,
 				7C79C8EA17650F8F00E71F9D /* ThinkGear.bundle */,
 				7C79C89617650F8F00E71F9D /* Oculon.icns */,
 				DB646F6BD6F74F4E86E05965 /* Info.plist */,
@@ -1632,6 +1651,24 @@
 			);
 			name = geometry;
 			path = ../src/geometry;
+			sourceTree = "<group>";
+		};
+		7C5517B41A5CE482000C7703 /* refactor */ = {
+			isa = PBXGroup;
+			children = (
+				7C5517A81A5CD0FC000C7703 /* ConfigFile.cpp */,
+				7C5517A91A5CD0FC000C7703 /* ConfigFile.h */,
+				7C5517AC1A5CD9BF000C7703 /* OutputChannel.cpp */,
+				7C5517AD1A5CD9BF000C7703 /* OutputChannel.h */,
+				7C5517B11A5CE239000C7703 /* OutputController.cpp */,
+				7C5517B21A5CE239000C7703 /* OutputController.h */,
+				7C5517A71A5CD0FC000C7703 /* RenderTarget.cpp */,
+				7C5517A51A5CD0FC000C7703 /* RenderTarget.h */,
+				7C5517AF1A5CDF2A000C7703 /* SceneController.cpp */,
+				7C5517A61A5CD0FC000C7703 /* SceneController.h */,
+				7C5517B51A5CF472000C7703 /* NamedObject.h */,
+			);
+			name = refactor;
 			sourceTree = "<group>";
 		};
 		7C5B69741819745800AB2C8D /* shaders */ = {
@@ -2141,8 +2178,8 @@
 		7C79C98517650FD700E71F9D /* engine */ = {
 			isa = PBXGroup;
 			children = (
-				7C4DBFBB1927F19300FDDDC3 /* AudioDrawUtils.h */,
 				7C4DBFBC1927F19300FDDDC3 /* AudioDrawUtils.cpp */,
+				7C4DBFBB1927F19300FDDDC3 /* AudioDrawUtils.h */,
 				7C79C98617650FD700E71F9D /* AudioInput.cpp */,
 				7C79C98717650FD700E71F9D /* AudioInput.h */,
 				7C79C98817650FD700E71F9D /* BlobTracker.cpp */,
@@ -2150,9 +2187,11 @@
 				7C79C98A17650FD700E71F9D /* camera */,
 				7C79C99317650FD700E71F9D /* Config.cpp */,
 				7C79C99417650FD700E71F9D /* Config.h */,
+				7C5517B41A5CE482000C7703 /* refactor */,
 				7C79C99517650FD700E71F9D /* Constants.h */,
 				7C06A8AE1853B00800D1C8A3 /* Conversions.cpp */,
 				7C06A8AF1853B00800D1C8A3 /* Conversions.h */,
+				7C8CBB291929AA1600588689 /* FragShader.h */,
 				7C79C99A17650FD700E71F9D /* InfoPanel.cpp */,
 				7C79C99B17650FD700E71F9D /* InfoPanel.h */,
 				7C79C99C17650FD700E71F9D /* interface */,
@@ -2172,17 +2211,16 @@
 				7C62765C1824A92E00724B87 /* PingPongFbo.h */,
 				7CF6AD4918A9E3E100FA795A /* render */,
 				7C79C9AF17650FD700E71F9D /* scene */,
-				7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */,
-				7CC3C032183FECCE0082C322 /* TextureGenerator.h */,
-				7C79C9C617650FD700E71F9D /* Utils.cpp */,
-				7C79C9C717650FD700E71F9D /* Utils.h */,
 				7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */,
 				7C187E47191093D3003590EC /* SimplexNoiseTexture.h */,
-				7C47F0551920355500244E5F /* TimeController.cpp */,
-				7C47F0561920355500244E5F /* TimeController.h */,
-				7C8CBB291929AA1600588689 /* FragShader.h */,
+				7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */,
+				7CC3C032183FECCE0082C322 /* TextureGenerator.h */,
 				7C8CBB33192AF7B100588689 /* TextureSelector.cpp */,
 				7C8CBB34192AF7B100588689 /* TextureSelector.h */,
+				7C47F0551920355500244E5F /* TimeController.cpp */,
+				7C47F0561920355500244E5F /* TimeController.h */,
+				7C79C9C617650FD700E71F9D /* Utils.cpp */,
+				7C79C9C717650FD700E71F9D /* Utils.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -3005,6 +3043,7 @@
 				7C79C8FB17650F8F00E71F9D /* cubeNegY.jpg in Resources */,
 				7C83B39F1856BE5900EB22F8 /* parsec_stars_frag.glsl in Resources */,
 				7C584DD219FD5C8200EB9609 /* neptune_diffuse.jpg in Resources */,
+				7C5517A41A5CD0E8000C7703 /* config.json in Resources */,
 				7CAD1B7F18839A9800512843 /* frag_linsolve.glsl in Resources */,
 				7C06A90A1853D4ED00D1C8A3 /* voronoi_frag.glsl in Resources */,
 				7C79C8FC17650F8F00E71F9D /* cubeNegZ.jpg in Resources */,
@@ -3222,6 +3261,7 @@
 				7C79C92617650F8F00E71F9D /* gradient.frag in Sources */,
 				7C79C92717650F8F00E71F9D /* nebulaCorona.frag in Sources */,
 				7C79C92817650F8F00E71F9D /* passThruColorCorona.vert in Sources */,
+				7C5517AB1A5CD0FC000C7703 /* ConfigFile.cpp in Sources */,
 				7C79C92917650F8F00E71F9D /* passThruCorona.vert in Sources */,
 				7C62765D1824A92E00724B87 /* PingPongFbo.cpp in Sources */,
 				7C79C92A17650F8F00E71F9D /* passThruNormalsCorona.vert in Sources */,
@@ -3244,6 +3284,7 @@
 				7C79C93C17650F8F00E71F9D /* passThruFlock.vert in Sources */,
 				7C79C93D17650F8F00E71F9D /* Position.frag in Sources */,
 				7C79C93E17650F8F00E71F9D /* room.frag in Sources */,
+				7C5517AE1A5CD9BF000C7703 /* OutputChannel.cpp in Sources */,
 				7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */,
 				7C79C93F17650F8F00E71F9D /* room.vert in Sources */,
 				7C79C94017650F8F00E71F9D /* VboPos.frag in Sources */,
@@ -3259,8 +3300,10 @@
 				7C79C94B17650F8F00E71F9D /* passThruNormals.vert in Sources */,
 				7C79C95417650F8F00E71F9D /* shader.fsh in Sources */,
 				7C79CA2D17650FD800E71F9D /* AudioSignal.cpp in Sources */,
+				7C5517AA1A5CD0FC000C7703 /* RenderTarget.cpp in Sources */,
 				7C79CA2E17650FD800E71F9D /* Barcode.cpp in Sources */,
 				7C79CA2F17650FD800E71F9D /* Circles.cpp in Sources */,
+				7C5517B01A5CDF2A000C7703 /* SceneController.cpp in Sources */,
 				7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */,
 				7C0E673318BABE9C00C387FC /* CameraStereoHMD.cpp in Sources */,
 				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
@@ -3295,6 +3338,7 @@
 				7C79CA4A17650FD800E71F9D /* OscServer.cpp in Sources */,
 				7C79CA4B17650FD800E71F9D /* AudioInputHandler.cpp in Sources */,
 				7C79CA4C17650FD800E71F9D /* Behavior.cpp in Sources */,
+				7C5517B31A5CE239000C7703 /* OutputController.cpp in Sources */,
 				7C79CA4D17650FD800E71F9D /* Entity.cpp in Sources */,
 				7C79CA4E17650FD800E71F9D /* GridRenderer.cpp in Sources */,
 				7C79CA5317650FD800E71F9D /* Scene.cpp in Sources */,

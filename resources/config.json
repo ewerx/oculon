@@ -1,0 +1,26 @@
+{
+    "settings": {
+
+      "render": {
+        "window": {
+          "width": 1280,
+          "height": 720
+        },
+        "output": {
+          "width": 1280,
+          "height": 720
+        }
+      },
+
+      "midi": {
+        "enabled": 0
+      },
+
+      "osc": {
+        "enabled": 0
+      }
+    },
+
+    "scenes": {
+    }
+}
