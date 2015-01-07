@@ -66,7 +66,7 @@ void Tilings::setupInterface()
 {
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
@@ -90,7 +90,7 @@ void Tilings::setupInterface()
     mInterface->addEnum(CreateEnumParam("p-response", &mAnglePResponse)
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     mInterface->addParam(CreateIntParam( "angleq", &mAngleQ )
                          .minValue(2)
@@ -99,7 +99,7 @@ void Tilings::setupInterface()
     mInterface->addEnum(CreateEnumParam("q-response", &mAngleQResponse)
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     mInterface->addParam(CreateIntParam( "angler", &mAngleR )
                          .minValue(1)
@@ -108,20 +108,20 @@ void Tilings::setupInterface()
     mInterface->addEnum(CreateEnumParam("r-response", &mAngleRResponse)
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     
     mInterface->addEnum(CreateEnumParam("offset-response", &mOffsetResponse)
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     
     mInterface->addParam(CreateFloatParam( "Thickness", &mThickness )
                          .minValue(0.0f)
                          .maxValue(1.0f));
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Tilings::update(double dt)

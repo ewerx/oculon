@@ -282,9 +282,9 @@ void Binned::setupInterface()
     // appearance
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
                          .minValue(1).maxValue(64)
-                         .oscReceiver(mName,"kparticles"));
+                         .oscReceiver(getName(),"kparticles"));
     mInterface->addParam(CreateBoolParam("Mouse Input", &mHandleMouseInput)
-                         .oscReceiver(mName,"mouseinput"));
+                         .oscReceiver(getName(),"mouseinput"));
     
     vector<string> formationNames;
 #define BINNED_FORMATION_ENTRY( nam, enm ) \
@@ -294,13 +294,13 @@ formationNames.push_back(nam);
     mInterface->addEnum(CreateEnumParam("Initial Formation", &mInitialFormation)
                         .maxValue(FORMATION_COUNT)
                         .isVertical()
-                        .oscReceiver(mName,"formation"), formationNames);
+                        .oscReceiver(getName(),"formation"), formationNames);
     
     mInterface->addParam(CreateColorParam("Point Color", &mPointColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName,"pointcolor"));
+                         .oscReceiver(getName(),"pointcolor"));
     
     mInterface->addParam(CreateColorParam("Force Color", &mForceColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName,"forcecolor")
+                         .oscReceiver(getName(),"forcecolor")
                          .isGrouped());
     mInterface->addParam(CreateFloatParam("Point Size", &mPointSize)
                          .minValue(1.0f).maxValue(10.0f));
@@ -310,41 +310,41 @@ formationNames.push_back(nam);
     mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
                          .maxValue(0.01f)
                          .minValue(0.0001f)
-                         .oscReceiver(mName,"timestep"));
+                         .oscReceiver(getName(),"timestep"));
     
     mInterface->addParam(CreateFloatParam("Neighborhood", &mParticleNeighborhood)
                          .maxValue(64.0f)
-                         .oscReceiver(mName,"neighborhood"));
+                         .oscReceiver(getName(),"neighborhood"));
     
     mInterface->addParam(CreateFloatParam("Center Attraction", &mCenterAttraction)
                          .maxValue(10.0f)
-                         .oscReceiver(mName,"centerattract"));
+                         .oscReceiver(getName(),"centerattract"));
     
     mInterface->addParam(CreateFloatParam("Force Scale X", &mForceScaleX)
-                         .oscReceiver(mName,"forcescalex"));    
+                         .oscReceiver(getName(),"forcescalex"));    
     mInterface->addParam(CreateFloatParam("Force Scale Y", &mForceScaleY)
-                         .oscReceiver(mName,"forcescaley"));
+                         .oscReceiver(getName(),"forcescaley"));
     mInterface->addParam(CreateFloatParam("Min Force", &mMinForce)
                          .maxValue(100.0f)
-                         .oscReceiver(mName,"minforce"));
+                         .oscReceiver(getName(),"minforce"));
     mInterface->addParam(CreateFloatParam("Max Force", &mMaxForce)
                          .maxValue(500.0f)
-                         .oscReceiver(mName,"maxforce"));
+                         .oscReceiver(getName(),"maxforce"));
     mInterface->addParam(CreateFloatParam("Min Radius", &mMinRadius)
                          .maxValue(100.0f)
-                         .oscReceiver(mName,"minradius"));
+                         .oscReceiver(getName(),"minradius"));
     mInterface->addParam(CreateFloatParam("Max Radius", &mMaxRadius)
                          .maxValue(300.0f)
-                         .oscReceiver(mName,"maxradius")
+                         .oscReceiver(getName(),"maxradius")
                          .isEncoder(1.0f));
     mInterface->addParam(CreateFloatParam("Damping", &mDamping)
                          .maxValue(0.1f)
-                         .oscReceiver(mName,"damping"));
+                         .oscReceiver(getName(),"damping"));
                                               
     mInterface->addParam(CreateBoolParam("Wall Bounce", &mBounceOffWalls)
-                         .oscReceiver(mName,"wallbounce"));
+                         .oscReceiver(getName(),"wallbounce"));
     mInterface->addParam(CreateFloatParam("Wall Damping", &mWallDamping)
-                         .oscReceiver(mName,"walldamping"));
+                         .oscReceiver(getName(),"walldamping"));
     mInterface->addParam(CreateFloatParam("Wall Padding", &mWallPadding)
                          .minValue(-10.0f).maxValue(50.0f));
     mInterface->addParam(CreateFloatParam("Wall Damping", &mWallDamping));
@@ -353,7 +353,7 @@ formationNames.push_back(nam);
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
                          .maxValue(2.0f)
-                         .oscReceiver(mName,"audiolevel"));
+                         .oscReceiver(getName(),"audiolevel"));
     
     // TODO: refactor "Mode"
     mInterface->addEnum(CreateEnumParam("Mode", &mRepulsionMode)
@@ -366,18 +366,18 @@ audioPatternNames.push_back(nam);
 #undef  BINNED_AUDIO_PATTERN_ENTRY
     mInterface->addEnum(CreateEnumParam("Reaction Style", &mAudioPattern)
                         .maxValue(AUDIO_PATTERN_COUNT)
-                        .oscReceiver(mName,"audioreaction")
+                        .oscReceiver(getName(),"audioreaction")
                         .isVertical(), audioPatternNames);
     
     mInterface->addParam(CreateBoolParam("Show Indicators", &mShowForceIndicators)
-                         .oscReceiver(mName,"indicatorshow"));
+                         .oscReceiver(getName(),"indicatorshow"));
     mInterface->addParam(CreateFloatParam("Indicator Scale", &mForceIndicatorScale)
-                         .oscReceiver(mName,"indicatorscale"));
+                         .oscReceiver(getName(),"indicatorscale"));
     mInterface->addParam(CreateColorParam("Indicator Color", &mForceIndicatorColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName,"indicatorcolor"));
+                         .oscReceiver(getName(),"indicatorcolor"));
     
     mInterface->addParam(CreateBoolParam("InvBassTime", &mInverseBassTime)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     // TouchOSC XY-pad
     const int maxTouches = 5;

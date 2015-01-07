@@ -399,7 +399,7 @@ void Lines::reset()
 
 void Lines::setupInterface()
 {
-    mTimeController.setupInterface(mInterface, mName, 1, 18);
+    mTimeController.setupInterface(mInterface, getName(), 1, 18);
     
     mInterface->gui()->addColumn();
     vector<string> motionNames;
@@ -410,14 +410,14 @@ void Lines::setupInterface()
     mInterface->addEnum(CreateEnumParam( "behavior", (int*)(&mMotion) )
                         .maxValue(MOTION_COUNT)
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), motionNames);
     
-    mDynamicTexture.setupInterface(mInterface, mName);
+    mDynamicTexture.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateFloatParam( "contain_radius", &mContainmentRadius )
                          .maxValue(10000.0f)
-                         .oscReceiver(mName)
+                         .oscReceiver(getName())
                          .sendFeedback());
     
     mInterface->gui()->addColumn();
@@ -430,15 +430,15 @@ nodeMotionNames.push_back(nam);
     mInterface->addEnum(CreateEnumParam( "behavior", (int*)(&mNodeMotion) )
                         .maxValue(NODE_MOTION_COUNT)
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), nodeMotionNames);
-    mNodeController.setupInterface(mInterface, mName);
+    mNodeController.setupInterface(mInterface, getName());
     
     mInterface->gui()->addColumn();
-    mParticleController.setupInterface(mInterface, mName);
+    mParticleController.setupInterface(mInterface, getName());
     
-    mCameraController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName, 1, 19, 2, 19);
+    mCameraController.setupInterface(mInterface, getName());
+    mAudioInputHandler.setupInterface(mInterface, getName(), 1, 19, 2, 19);
     
     // FIXME: MIDI HACK
     mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();

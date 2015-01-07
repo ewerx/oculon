@@ -17,6 +17,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
+using namespace oculon;
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -27,7 +28,7 @@ using namespace mowa::sgui;
 /*static*/const int         Scene::kIniDigits = 2;
 
 Scene::Scene(const std::string& name)
-: mName(name)
+: NamedObject(name)
 , mApp(NULL)
 , mIsSetup(false)
 , mIsRunning(false)
@@ -58,7 +59,7 @@ Scene::Scene(const std::string& name)
 
 Scene::~Scene()
 {
-    console() << "[" << mName << "] destructor" << std::endl;
+    console() << "[" << getName() << "] destructor" << std::endl;
     delete mParamsInterface;
     mParamsInterface = NULL;
     delete mLoadParamsInterface;
@@ -76,7 +77,7 @@ void Scene::init(OculonApp* app)
     if( mApp->getOutputMode() == OculonApp::OUTPUT_MULTIFBO )
     {
         setupFbo();
-        mSyphon->setName(mName);
+        mSyphon->setName(getName());
     }
     
     // setup master interface
@@ -84,28 +85,28 @@ void Scene::init(OculonApp* app)
     mInterface = mParamsInterface;
     mInterface->gui()->addColumn();
     // bind to OculonApp::showInterface(0)
-    mInterface->gui()->addButton(mName)->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
+    mInterface->gui()->addButton(getName())->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
     // preview
     // TODO: may have been causing crashes, removed to be safe...
-    //mInterface->gui()->addParam(mName, &getFbo().getTexture())->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
+    //mInterface->gui()->addParam(getName(), &getFbo().getTexture())->registerCallback( boost::bind(&OculonApp::showInterface, mApp, OculonApp::INTERFACE_MAIN) );
     mInterface->addParam(CreateBoolParam("active", &mIsVisible)
-                         .oscReceiver(mName,"toggle").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );
+                         .oscReceiver(getName(),"toggle").sendFeedback())->registerCallback( this, &Scene::setRunningByVisibleState );
     mInterface->addButton(CreateTriggerParam("reset", NULL)
-                          .oscReceiver(mName))->registerCallback( this, &Scene::onReset );
+                          .oscReceiver(getName()))->registerCallback( this, &Scene::onReset );
     mInterface->addParam(CreateBoolParam("visible", &mIsVisible)
-                         .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onVisibleChanged );
+                         .oscReceiver(getName()).sendFeedback())->registerCallback( this, &Scene::onVisibleChanged );
     mInterface->addParam(CreateBoolParam("running", &mIsRunning)
-                         .oscReceiver(mName).sendFeedback())->registerCallback( this, &Scene::onRunningChanged );
+                         .oscReceiver(getName()).sendFeedback())->registerCallback( this, &Scene::onRunningChanged );
 //    mInterface->addParam(CreateIntParam("layer", &mLayerIndex)
 //                         .minValue(0)
 //                         .maxValue(OculonApp::MAX_LAYERS-1)
-//                         .oscReceiver(mName).sendFeedback());
+//                         .oscReceiver(getName()).sendFeedback());
     mInterface->addParam(CreateBoolParam("debug", &mIsDebug))->registerCallback( this, &Scene::onDebugChanged );
     mInterface->gui()->addButton("LOAD")->registerCallback( this, &Scene::showLoadParamsInterface );
     mInterface->gui()->addButton("SAVE")->registerCallback( this, &Scene::saveInterfaceParams );
     mInterface->gui()->addSeparator();
     mInterface->addParam(CreateFloatParam("bg_alpha", &mBackgroundAlpha)
-                         .oscReceiver(mName).sendFeedback());
+                         .oscReceiver(getName()).sendFeedback());
     mInterface->gui()->addSeparator();
     mInterface->gui()->setEnabled(false); // always start hidden
     
@@ -218,7 +219,7 @@ void Scene::setupLoadParamsInterface()
             if ( fs::is_regular_file( *it ) )
             {
                 string filename = it->path().filename().string();
-                if( boost::starts_with(filename, mName) )
+                if( boost::starts_with(filename, getName()) )
                 {
                     mLoadParamsInterface->gui()->addButton(filename)->registerCallback( boost::bind(&Scene::loadInterfaceParams, this, mIniFilenames.size()) );
                     mIniFilenames.push_back(it->path().string());
@@ -352,7 +353,7 @@ void Scene::showInterface(bool show)
     mInterface->gui()->setEnabled(show);
     if( show )
     {
-        //mInterface->createControlInterface(mName);
+        //mInterface->createControlInterface(getName());
     }
 }
 

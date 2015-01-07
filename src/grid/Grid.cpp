@@ -120,7 +120,7 @@ colorSchemeNames.push_back(nam);
                          .oscReceiver(getName())
                          .midiInput(2, 1, 20));
 //    mInterface->addParam(CreateColorParam("Color 1", &mColor1(), kMinColor, kMaxColor)
-//                        .oscReceiver(mName,"color1"));
+//                        .oscReceiver(getName(),"color1"));
     mInterface->addParam(CreateFloatParam( "color1_r", &(mColor1().r) )
                          .oscReceiver(getName())
                          .midiInput(1,2,0));
@@ -135,7 +135,7 @@ colorSchemeNames.push_back(nam);
                          .midiInput(1,2,3));
 
 //    mInterface->addParam(CreateColorParam("Color 2", &mColor2(), kMinColor, kMaxColor)
-//                        .oscReceiver(mName,"color2"));
+//                        .oscReceiver(getName(),"color2"));
     mInterface->addParam(CreateFloatParam( "color2_r", &(mColor2().r) )
                          .oscReceiver(getName())
                          .midiInput(1,2,4));
@@ -149,7 +149,7 @@ colorSchemeNames.push_back(nam);
                          .oscReceiver(getName())
                          .midiInput(1,2,7));
 //    mInterface->addParam(CreateColorParam("Color 3", &mColor3(), kMinColor, kMaxColor)
-//                        .oscReceiver(mName,"color3"));
+//                        .oscReceiver(getName(),"color3"));
     
     //mAudioInputHandler.setupInterface( mInterface );
     

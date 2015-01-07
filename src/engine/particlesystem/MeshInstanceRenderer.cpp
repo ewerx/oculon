@@ -75,7 +75,7 @@ void MeshInstanceRenderer::setupInterface( Interface* interface, const std::stri
 {
     string oscName = prefix + "/" + mName;
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateBoolParam("meshes/audioreactive", &mAudioReactive)
                         .oscReceiver(oscName));
     

@@ -140,7 +140,7 @@ void ShaderTest::setupInterface()
                         .isVertical(), shaderNames);
     
     mInterface->gui()->addColumn();
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mMotionBlur ));
     mInterface->addParam(CreateBoolParam( "Grid Render", &mGrid ));
@@ -149,7 +149,7 @@ void ShaderTest::setupInterface()
                          .maxValue(MAX_TEXTURES-1)
                          .oscReceiver(getName()));
     
-    mDynamicTexture.setupInterface(mInterface, mName);
+    mDynamicTexture.setupInterface(mInterface, getName());
     
     // SHADER_STRIPES
     mInterface->gui()->addColumn();

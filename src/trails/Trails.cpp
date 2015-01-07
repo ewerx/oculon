@@ -88,45 +88,45 @@ void Trails::setupInterface()
     mInterface->addParam(CreateFloatParam("Trails/s", &mTrailsPerSecond)
                          .minValue(100.0f)
                          .maxValue(5000.0f)
-                         .oscReceiver(mName,"trailspersec")
+                         .oscReceiver(getName(),"trailspersec")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Phi Scale", &mPhiScale)
                          .minValue(0.0f)
                          .maxValue(0.1f)
-                         .oscReceiver(mName,"phiscale")
+                         .oscReceiver(getName(),"phiscale")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Phi Offset", &mPhiOffset)
                          .minValue(0.0f)
                          .maxValue(0.1f)
-                         .oscReceiver(mName,"phioffset")
+                         .oscReceiver(getName(),"phioffset")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Theta Scale", &mThetaScale)
                          .minValue(0.0f)
                          .maxValue(0.1f)
-                         .oscReceiver(mName,"thetascale")
+                         .oscReceiver(getName(),"thetascale")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Radius", &mRadius)
                          .minValue(1.0f)
                          .maxValue(100.0f)
-                         .oscReceiver(mName,"radius")
+                         .oscReceiver(getName(),"radius")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Twist", &mTwist)
                          .minValue(0.0f)
                          .maxValue(100.0f)
-                         .oscReceiver(mName,"twist")
+                         .oscReceiver(getName(),"twist")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Width", &mWidth)
                          .minValue(0.0f)
                          .maxValue(5.0f)
-                         .oscReceiver(mName,"width")
+                         .oscReceiver(getName(),"width")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("Angle Incr", &mAngleIncrement)
                          .minValue(0.0f)
                          .maxValue(10.0f)
-                         .oscReceiver(mName,"angleincr")
+                         .oscReceiver(getName(),"angleincr")
                          .sendFeedback());
     mInterface->addParam(CreateBoolParam("Wireframe", &mWireframe)
-                         .oscReceiver(mName,"wireframe"));
+                         .oscReceiver(getName(),"wireframe"));
     
 }
 

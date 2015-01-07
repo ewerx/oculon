@@ -145,9 +145,9 @@ void Orbiter::setupInterface()
                         .isVertical());
     
     mInterface->addButton(CreateTriggerParam("Next Target", NULL)
-                          .oscReceiver(mName,"nexttarget"))->registerCallback( this, &Orbiter::nextTarget );
+                          .oscReceiver(getName(),"nexttarget"))->registerCallback( this, &Orbiter::nextTarget );
     mInterface->addButton(CreateTriggerParam("Prev Target", NULL)
-                          .oscReceiver(mName,"prevtarget"))->registerCallback( this, &Orbiter::prevTarget );
+                          .oscReceiver(getName(),"prevtarget"))->registerCallback( this, &Orbiter::prevTarget );
     
     mInterface->addParam(CreateBoolParam("Show Hud", &mDrawHud)
                          .oscReceiver(getName(), "showhud"));
@@ -159,21 +159,21 @@ void Orbiter::setupInterface()
     mInterface->addParam(CreateIntParam("Freq Spread", &mFrequencySpread)
                          .minValue(1)
                          .maxValue(512)
-                         .oscReceiver(mName,"freqspread"));
+                         .oscReceiver(getName(),"freqspread"));
     mInterface->addParam(CreateFloatParam("Min Rad Mult", &mMinRadiusMultiplier)
                          .minValue(1.0f)
                          .maxValue(3.0f)
-                         .oscReceiver(mName,"minradmult"));
+                         .oscReceiver(getName(),"minradmult"));
     mInterface->addParam(CreateFloatParam("Max Rad Mult", &mMaxRadiusMultiplier)
                          .minValue(1.0f)
                          .maxValue(20.0f)
-                         .oscReceiver(mName,"maxradmult"));
+                         .oscReceiver(getName(),"maxradmult"));
     mInterface->addParam(CreateFloatParam("Falloff", &mFalloff)
                          .maxValue(1.0f)
-                         .oscReceiver(mName,"falloff"));
+                         .oscReceiver(getName(),"falloff"));
     
     mInterface->addParam(CreateFloatParam("Label FFT", &mLabelBrightnessByAudio)
-                         .oscReceiver(mName,"labelfft"));
+                         .oscReceiver(getName(),"labelfft"));
 }
 
 

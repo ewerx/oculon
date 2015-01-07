@@ -129,7 +129,7 @@ formatNames.push_back(nam);
         mInterface->gui()->addColumn();
         mInterface->gui()->addLabel(name);
         
-        name = std::string(mName + "/ring" + indexStr);
+        name = std::string(getName() + "/ring" + indexStr);
         
         // all param names must be unique for load/save to work!
         if (i == 0) {
@@ -200,11 +200,11 @@ formatNames.push_back(nam);
         
         // spin
         mInterface->addParam(CreateBoolParam("spin", &mRingSetParams[i].mSpin)
-                             .oscReceiver(mName)
+                             .oscReceiver(getName())
                              .midiInput(0, 2, 48+i)
                              .sendFeedback());
         mInterface->addParam(CreateBoolParam("sepaudio", &mRingSetParams[i].mSeparateByAudio)
-                             .oscReceiver(mName)
+                             .oscReceiver(getName())
                              .midiInput(0, 2, 52+i)
                              .sendFeedback());
         mInterface->addParam(CreateFloatParam("spinrate", &mRingSetParams[i].mSpinRate)

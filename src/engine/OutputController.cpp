@@ -14,7 +14,7 @@ using namespace ci::app;
 
 OutputController::OutputController()
 {
-    mChannels["window"] = OutputChannelRef(new WindowOutputChannel("window", getWindowWidth(), getWindowHeight()));
+    mChannels["window"] = OutputChannel::Ref(new WindowOutputChannel("window", getWindowWidth(), getWindowHeight()));
     
     // syphon servers
     
@@ -31,7 +31,7 @@ void OutputController::outputFrame(ci::gl::TextureRef tex)
 {
     for( const auto& pair : mChannels )
     {
-        OutputChannelRef outputChannel = pair.second;
+        OutputChannel::Ref outputChannel = pair.second;
         
         if (outputChannel->isActive())
         {

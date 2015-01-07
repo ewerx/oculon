@@ -68,11 +68,11 @@ void RootFract::setupInterface()
 {
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(mName));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(mName));
-    mInterface->addParam(CreateColorParam("color2", &mColor3, kMinColor, kMaxColor).oscReceiver(mName));
+    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(getName()));
+    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(getName()));
+    mInterface->addParam(CreateColorParam("color2", &mColor3, kMinColor, kMaxColor).oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "iterations", &mIterations )
@@ -92,14 +92,14 @@ void RootFract::setupInterface()
     mInterface->addEnum(CreateEnumParam( "audio-freq", &mFreqResponseBand )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     
     mInterface->addParam(CreateVec3fParam("amp", &mAmplitude, Vec3f::zero(), Vec3f::one()));
     mInterface->addEnum(CreateEnumParam( "audio-amp", &mAmpResponseBand )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     mInterface->addParam(CreateVec3fParam("speed", &mSpeed, Vec3f::zero(), Vec3f::one()*40.0f));
     
@@ -121,7 +121,7 @@ void RootFract::setupInterface()
     mInterface->addParam(CreateVec3fParam("trap_bright", &mTrapBrightness, Vec3f::zero(), Vec3f(3.0f,3.0f,3.0f)));
     mInterface->addParam(CreateVec3fParam("trap_contrast", &mTrapContrast, Vec3f::zero(), Vec3f(13.0f,13.0f,13.0f)));
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void RootFract::update(double dt)

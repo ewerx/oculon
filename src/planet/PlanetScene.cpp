@@ -53,9 +53,9 @@ void PlanetScene::setup()
 //
 void PlanetScene::setupInterface()
 {
-//    mDynamicTexture.setupInterface(mInterface, mName);
+//    mDynamicTexture.setupInterface(mInterface, getName());
     
-    mCameraController.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, getName());
 }
 
 // ----------------------------------------------------------------

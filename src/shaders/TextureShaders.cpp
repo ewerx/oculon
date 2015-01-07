@@ -76,7 +76,7 @@ void TextureShaders::setupInterface()
                         .oscReceiver(getName(), "shader")
                         .isVertical(), shaderNames);
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
@@ -88,7 +88,7 @@ void TextureShaders::setupInterface()
     }
     mInterface->addEnum(CreateEnumParam( "colormap", (int*)(&mColorMapIndex) )
                         .maxValue(colorMapNames.size())
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .isVertical(), colorMapNames);
     
     // custom params
@@ -97,12 +97,12 @@ void TextureShaders::setupInterface()
         if (shader)
         {
             mInterface->gui()->addColumn();
-            shader->setupInterface(mInterface, mName);
+            shader->setupInterface(mInterface, getName());
         }
     }
 
     // audio input
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void TextureShaders::update(double dt)
@@ -220,17 +220,17 @@ TextureShaders::KifsShader::KifsShader()
 
 void TextureShaders::KifsShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateIntParam( "kali/iterations", &iterations )
                          .maxValue(64)
                          .oscReceiver(oscName));
     interface->addParam(CreateVec2fParam("kali/fold", &fold, Vec2f::zero(), Vec2f(1.0f,1.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateVec2fParam("kali/translate", &translate, Vec2f::zero(), Vec2f(5.0f,5.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateFloatParam( "kali/scale", &scale )
                          .maxValue(3.0f)
                          .oscReceiver(oscName));
@@ -339,10 +339,10 @@ TextureShaders::SimplicityShader::SimplicityShader()
 
 void TextureShaders::SimplicityShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateIntParam( "Red Power", &mRedPower )
                          .minValue(0)
                          .maxValue(2));
@@ -428,10 +428,10 @@ TextureShaders::BezierShader::BezierShader()
 
 void TextureShaders::BezierShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     
     interface->addParam(CreateIntParam( "samples", &mSamples )
                         .minValue(0)
@@ -484,10 +484,10 @@ TextureShaders::GravityFieldShader::GravityFieldShader()
 
 void TextureShaders::GravityFieldShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     
     interface->addParam(CreateIntParam( "points", &mPoints )
                         .minValue(1)
@@ -518,10 +518,10 @@ TextureShaders::PixelWeaveShader::PixelWeaveShader()
 
 void TextureShaders::PixelWeaveShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     
     interface->addParam(CreateIntParam( "bokeh", &mBokeh )
                         .minValue(1)

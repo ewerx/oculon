@@ -83,9 +83,9 @@ void Cells::setupInterface()
                          .oscReceiver(getName()));
     
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam( "highlight", &mHighlight )
                          .maxValue(2.0f)
@@ -168,7 +168,7 @@ audioResponseTypeNames.push_back(nam);
     mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
                          .oscReceiver(getName()));
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 #pragma mark - CALLBACKS

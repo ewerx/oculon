@@ -76,32 +76,32 @@ void Barcode::setupInterface()
     Interface* interface = mParentScene->getInterface();
     
     interface->addParam(CreateBoolParam("Width By Audio", &mWidthByFft)
-                        .oscReceiver(mName,"widthaudio"));
+                        .oscReceiver(getName(),"widthaudio"));
     interface->addParam(CreateBoolParam("Alpha By Audio", &mAlphaByFft)
-                        .oscReceiver(mName,"alphaaudio"));
+                        .oscReceiver(getName(),"alphaaudio"));
     interface->addParam(CreateFloatParam("Base Width", &mBaseWidth)
                         .minValue(1.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(mName,"basewidth")
+                        .oscReceiver(getName(),"basewidth")
                         .midiInput(0, 2, 6));
     interface->addParam(CreateFloatParam("Max Width", &mMaxWidth)
                         .minValue(1.0f)
                         .maxValue(50.0f)
-                        .oscReceiver(mName,"maxwidth")
+                        .oscReceiver(getName(),"maxwidth")
                         .midiInput(0, 1, 6));
     interface->addParam(CreateFloatParam("Threshold", &mThreshold)
                         .maxValue(0.1f)
-                        .oscReceiver(mName,"threshold"));
+                        .oscReceiver(getName(),"threshold"));
     interface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                        .oscReceiver(mName,"color"));
+                        .oscReceiver(getName(),"color"));
     
     interface->addParam(CreateBoolParam("Vetical", &mVertical)
-                        .oscReceiver(mName,"vertical")
+                        .oscReceiver(getName(),"vertical")
                         .sendFeedback()
                         .midiInput(0, 2, 5));
     interface->addParam(CreateIntParam("Num Bars", &mNumBars)
                         .maxValue(MAX_BARS)
-                        .oscReceiver(mName,"numbars")
+                        .oscReceiver(getName(),"numbars")
                         .midiInput(0, 1, 5));
     
     vector<string> posModeNames;
@@ -111,7 +111,7 @@ posModeNames.push_back(nam);
 #undef  BARCODE_POS_MODE_ENTRY
     interface->addEnum(CreateEnumParam("Position Mode", (int*)&mPositionMode)
                        .maxValue(POSITION_COUNT)
-                       .oscReceiver(mName,"posmode")
+                       .oscReceiver(getName(),"posmode")
                        .isVertical(), posModeNames);
     
     vector<string> widthModeNames;
@@ -121,7 +121,7 @@ widthModeNames.push_back(nam);
 #undef  BARCODE_WIDTH_MODE_ENTRY
     interface->addEnum(CreateEnumParam("Width Mode", (int*)&mWidthMode)
                        .maxValue(WIDTH_MODE_COUNT)
-                       .oscReceiver(mName,"widthmode")
+                       .oscReceiver(getName(),"widthmode")
                        .isVertical(), widthModeNames);
 }
 

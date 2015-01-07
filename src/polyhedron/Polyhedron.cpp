@@ -149,23 +149,23 @@ void Polyhedron::setupInterface()
     mInterface->addParam(CreateFloatParam("scale", &mObjectScale)
                          .minValue(0.0f)
                          .maxValue(100.0f)
-                         .oscReceiver(mName)
+                         .oscReceiver(getName())
                          .sendFeedback());
     
     mInterface->addParam(CreateIntParam("count x", &mGridSize.x)
                          .minValue(0)
                          .maxValue(100)
-                         .oscReceiver(mName, "countx")
+                         .oscReceiver(getName(), "countx")
                          .sendFeedback())->registerCallback(this, &Polyhedron::onGridSizeChange);
     mInterface->addParam(CreateIntParam("count y", &mGridSize.y)
                          .minValue(0)
                          .maxValue(100)
-                         .oscReceiver(mName, "county")
+                         .oscReceiver(getName(), "county")
                          .sendFeedback())->registerCallback(this, &Polyhedron::onGridSizeChange);
     mInterface->addParam(CreateIntParam("count z", &mGridSize.z)
                          .minValue(0)
                          .maxValue(100)
-                         .oscReceiver(mName, "countz")
+                         .oscReceiver(getName(), "countz")
                          .sendFeedback())->registerCallback(this, &Polyhedron::onGridSizeChange);
     
 //    mInterface->addParam(CreateIntParam("total objects", &mNumObjects)
@@ -175,23 +175,23 @@ void Polyhedron::setupInterface()
     mInterface->addParam(CreateFloatParam("spacing x", &mGridSpacing.x)
                          .minValue(0.0f)
                          .maxValue(10.0f)
-                         .oscReceiver(mName, "spacingx")
+                         .oscReceiver(getName(), "spacingx")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("spacing y", &mGridSpacing.y)
                          .minValue(0.0f)
                          .maxValue(10.0f)
-                         .oscReceiver(mName, "spacingy")
+                         .oscReceiver(getName(), "spacingy")
                          .sendFeedback());
     mInterface->addParam(CreateFloatParam("spacing z", &mGridSpacing.z)
                          .minValue(0.0f)
                          .maxValue(10.0f)
-                         .oscReceiver(mName, "spacingz")
+                         .oscReceiver(getName(), "spacingz")
                          .sendFeedback());
     
     mInterface->addParam(CreateIntParam("line width", &mLineWidth)
                          .minValue(1)
                          .maxValue(8)
-                         .oscReceiver(mName, "linewidth")
+                         .oscReceiver(getName(), "linewidth")
                          .sendFeedback());
     
     mInterface->gui()->addColumn();
@@ -206,23 +206,23 @@ void Polyhedron::setupInterface()
                         .isVertical(), meshTypeNames);
     
     mInterface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                        .oscReceiver(mName,"color"));
+                        .oscReceiver(getName(),"color"));
     
 //    mInterface->addParam(CreateIntParam("division", &mDivision)
 //                         .minValue(1)
 //                         .maxValue(100)
-//                         .oscReceiver(mName, "division")
+//                         .oscReceiver(getName(), "division")
 //                         .sendFeedback());
 //
 //    mInterface->addParam(CreateIntParam("resolution", &mResolution)
 //                         .minValue(1)
 //                         .maxValue(100)
-//                         .oscReceiver(mName, "resolution")
+//                         .oscReceiver(getName(), "resolution")
 //                         .sendFeedback());
-    mDynamicTexture.setupInterface(mInterface, mName);
+    mDynamicTexture.setupInterface(mInterface, getName());
     
-    mCameraController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, getName());
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 // ----------------------------------------------------------------

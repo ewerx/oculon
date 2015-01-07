@@ -16,15 +16,15 @@
 
 using namespace ci;
 using namespace std;
-
+using namespace oculon;
 
 //
 // SubScene
 // 
 
 SubScene::SubScene(Scene* scene, const std::string& name)
-: mParentScene(scene)
-, mName(name)
+: NamedObject(name)
+, mParentScene(scene)
 , mIsActive(false)
 {
 }
@@ -37,9 +37,9 @@ void SubScene::setupInterface()
 {
     Interface* interface = mParentScene->getInterface();
     interface->gui()->addColumn();
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateBoolParam( "Active", &mIsActive )
-                         .oscReceiver(mName,"active"));
+                         .oscReceiver(getName(),"active"));
     
     
 }

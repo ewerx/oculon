@@ -150,7 +150,7 @@ void Contour::openFile()
 void Contour::setupInterface()
 {
     mInterface->addParam(CreateVec2fParam("zoom", &mZoom, Vec2f::zero(), Vec2f(100.0f,100.0f))
-                         .oscReceiver(mName)
+                         .oscReceiver(getName())
                          .isXYPad());
     
     mInterface->addParam(CreateFloatParam( "disp_speed", &mDisplacementSpeed )
@@ -160,7 +160,7 @@ void Contour::setupInterface()
                          .maxValue(20.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
 }
 

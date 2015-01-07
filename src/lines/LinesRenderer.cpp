@@ -46,7 +46,7 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
 {
     string oscName = prefix + "/" + mName;
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateFloatParam( "lines/line_width", &mLineWidth )
                          .minValue(0.01f)
                          .maxValue(6.0f)

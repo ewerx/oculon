@@ -84,44 +84,44 @@ void Circles::setupInterface()
     interface->addParam(CreateIntParam("Rows", &mRows)
                         .minValue(1)
                         .maxValue(MAX_Y)
-                        .oscReceiver(mName,"rows")
+                        .oscReceiver(getName(),"rows")
                         .sendFeedback());
     interface->addParam(CreateIntParam("Cols", &mCols)
                         .minValue(1)
                         .maxValue(MAX_X)
-                        .oscReceiver(mName,"cols")
+                        .oscReceiver(getName(),"cols")
                         .sendFeedback());
     interface->addParam(CreateFloatParam("Base Radius", &mBaseRadius)
                         .minValue(1.0f)
                         .maxValue(200.0f)
-                        .oscReceiver(mName,"radius"))->registerCallback( this, &Circles::baseRadiusChanged );
+                        .oscReceiver(getName(),"radius"))->registerCallback( this, &Circles::baseRadiusChanged );
     interface->addEnum(CreateEnumParam("Shape", (int*)&mShape)
                        .maxValue(SHAPE_COUNT)
-                       .oscReceiver(mName,"shape")
+                       .oscReceiver(getName(),"shape")
                        .isVertical());
 //    interface->addParam(CreateFloatParam("Base Alpha", &mBaseAlpha)
-//                        .oscReceiver(mName,"alpha"));
+//                        .oscReceiver(getName(),"alpha"));
     interface->addParam(CreateFloatParam("Falloff", &mFalloff)
                         .minValue(0.0f)
                         .maxValue(20.0f));
     interface->addParam(CreateBoolParam("FFT Falloff", &mFftFalloff));
     interface->addEnum(CreateEnumParam("Falloff Mode", (int*)&mFalloffMode)
                        .maxValue(FALLOFF_COUNT)
-                       .oscReceiver(mName,"falloffmode")
+                       .oscReceiver(getName(),"falloffmode")
                        .isVertical());
     interface->addParam(CreateIntParam("Spacing", &mSpacing)
                         .minValue(0)
                         .maxValue(100)
-                        .oscReceiver(mName,"spacing"))->registerCallback( this, &Circles::baseRadiusChanged );
+                        .oscReceiver(getName(),"spacing"))->registerCallback( this, &Circles::baseRadiusChanged );
     interface->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                         .minValue(0.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(mName,"signalscale")
+                        .oscReceiver(getName(),"signalscale")
                         .sendFeedback());
     interface->addParam(CreateColorParam("Color 1", &mColorPrimary, kMinColor, kMaxColor)
-                        .oscReceiver(mName,"color1"));
+                        .oscReceiver(getName(),"color1"));
     interface->addParam(CreateColorParam("Color 2", &mColorSecondary, kMinColor, kMaxColor)
-                        .oscReceiver(mName,"color2"));
+                        .oscReceiver(getName(),"color2"));
     
     // shift speed
     // TODO: XY pad
@@ -129,12 +129,12 @@ void Circles::setupInterface()
     interface->addParam(CreateFloatParam("Shift X", &mShiftSpeedX)
                         .minValue(-10.0f)
                         .maxValue(10.0f)
-                        .oscReceiver(mName,"shiftx")
+                        .oscReceiver(getName(),"shiftx")
                         .sendFeedback());
     interface->addParam(CreateFloatParam("Shift Y", &mShiftSpeedY)
                         .minValue(-1.0f)
                         .maxValue(1.0f)
-                        .oscReceiver(mName,"shifty")
+                        .oscReceiver(getName(),"shifty")
                         .sendFeedback());
     interface->addParam(CreateBoolParam("Alt Shift X", &mShiftAlternateX));
     interface->addParam(CreateBoolParam("Alt Shift Y", &mShiftAlternateY));

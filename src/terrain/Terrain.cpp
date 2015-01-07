@@ -182,7 +182,7 @@ void Terrain::setupInterface()
                          .maxValue(20.0f)
                          .oscReceiver(getName()));
     mInterface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(50.0f,50.0f,50.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
 //    mInterface->addParam(CreateBoolParam( "shadow map", &mDrawShadowMap )
 //                         .oscReceiver(getName()));
 
@@ -214,7 +214,7 @@ void Terrain::setupInterface()
                         .maxValue(20.0f));
     mInterface->addEnum(CreateEnumParam("Falloff Mode", (int*)&mFalloffMode)
                        .maxValue(FALLOFF_COUNT)
-                       .oscReceiver(mName,"falloffmode")
+                       .oscReceiver(getName(),"falloffmode")
                        .isVertical());
     mInterface->addParam(CreateFloatParam("Shift Delay", &mAudioRowShiftDelay)
                          .minValue(0.0f)
@@ -243,8 +243,8 @@ void Terrain::setupInterface()
     mInterface->addButton(CreateTriggerParam("edge cam", NULL))->registerCallback(this, &Terrain::edgeCamera);
     mInterface->addButton(CreateTriggerParam("face cam", NULL))->registerCallback(this, &Terrain::faceCamera);
     
-//    mSplineCam.setupInterface(mInterface, mName);
-    mTunnelCam.setupInterface(mInterface, mName);
+//    mSplineCam.setupInterface(mInterface, getName());
+    mTunnelCam.setupInterface(mInterface, getName());
 }
 
 // ----------------------------------------------------------------

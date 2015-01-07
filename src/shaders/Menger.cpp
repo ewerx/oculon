@@ -65,11 +65,11 @@ void Menger::setupInterface()
                         .oscReceiver(getName())
                         .isVertical(), names);
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(mName));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(mName));
+    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(getName()));
+    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(getName()));
     
     mInterface->addParam(CreateVec3fParam("light1_dir", &mLight1Dir, Vec3f::one()*-1.0f, Vec3f::one()));
     mInterface->addParam(CreateVec3fParam("light2_dir", &mLight2Dir, Vec3f::one()*-1.0f, Vec3f::one()));
@@ -85,10 +85,10 @@ void Menger::setupInterface()
     {
         mInterface->gui()->addColumn();
         mInterface->gui()->addLabel( shader->getName() );
-        shader->setupInterface(mInterface, mName);
+        shader->setupInterface(mInterface, getName());
     }
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Menger::update(double dt)
@@ -208,17 +208,17 @@ void Menger::MengerShader::setupInterface(Interface *interface, const std::strin
     interface->addEnum(CreateEnumParam( "menger/audio-offset.x", &mOffsetXResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
-                       .oscReceiver(mName)
+                       .oscReceiver(getName())
                        .sendFeedback(), bandNames);
     interface->addEnum(CreateEnumParam( "menger/audio-offset.y", &mOffsetYResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
-                       .oscReceiver(mName)
+                       .oscReceiver(getName())
                        .sendFeedback(), bandNames);
     interface->addEnum(CreateEnumParam( "menger/audio-offset.z", &mOffsetZResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
-                       .oscReceiver(mName)
+                       .oscReceiver(getName())
                        .sendFeedback(), bandNames);
     
     interface->addParam(CreateFloatParam("menger/scale", &mScale)
@@ -228,7 +228,7 @@ void Menger::MengerShader::setupInterface(Interface *interface, const std::strin
     interface->addEnum(CreateEnumParam( "menger/audio-scale", &mScaleResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
-                       .oscReceiver(mName)
+                       .oscReceiver(getName())
                        .sendFeedback(), bandNames);
     interface->addParam(CreateFloatParam("menger/fov", &mFieldOfView)
                         .minValue(0.4f)
@@ -304,7 +304,7 @@ void Menger::PolychoraShader::setupInterface(Interface *interface, const std::st
     interface->addEnum(CreateEnumParam( "polychora/audio-angle", &mAngleResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
-                       .oscReceiver(mName)
+                       .oscReceiver(getName())
                        .sendFeedback(), bandNames);
     interface->addParam(CreateFloatParam("polychora/fov", &mFieldOfView)
                         .minValue(0.4f)
@@ -360,7 +360,7 @@ void Menger::JuliaSpiralShader::setupInterface(Interface *interface, const std::
     string oscName = name + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->addParam(CreateColorParam("juliaspiral/color3", &mColor3, kMinColor, kMaxColor).oscReceiver(mName));
+    interface->addParam(CreateColorParam("juliaspiral/color3", &mColor3, kMinColor, kMaxColor).oscReceiver(getName()));
     interface->addParam(CreateVec2fParam("juliaspiral/offset", &mOffset, Vec2f::zero(), Vec2f::one()*3.0f)
                         .oscReceiver(oscName));
     interface->addParam(CreateFloatParam("juliaspiral/scale", &mScale)
@@ -374,7 +374,7 @@ void Menger::JuliaSpiralShader::setupInterface(Interface *interface, const std::
 //    interface->addEnum(CreateEnumParam( "audio-angle", &mAngleResponseBand )
 //                       .maxValue(bandNames.size())
 //                       .isVertical()
-//                       .oscReceiver(mName)
+//                       .oscReceiver(getName())
 //                       .sendFeedback(), bandNames);
     
 }

@@ -66,7 +66,7 @@ void DustRenderer::setupInterface( Interface* interface, const std::string& pref
 {
     string oscName = prefix + "/" + mName;
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     
     // point sprite
     interface->addParam(CreateFloatParam( "dust/point_size", &mPointSize )

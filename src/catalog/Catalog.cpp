@@ -184,54 +184,54 @@ camTypeNames.push_back(nam);
     mInterface->addParam(CreateFloatParam("BPM", &mBpm)
                          .minValue(60.0f)
                          .maxValue(150.0f)
-                         .oscReceiver(mName,"bpm")
+                         .oscReceiver(getName(),"bpm")
                          .sendFeedback());
     */
     mInterface->addButton(CreateTriggerParam("Random Home", NULL)
-                          .oscReceiver(mName,"randhome"))->registerCallback( this, &Catalog::setRandomHome );
+                          .oscReceiver(getName(),"randhome"))->registerCallback( this, &Catalog::setRandomHome );
     mInterface->addButton(CreateTriggerParam("Random Dest", NULL)
-                          .oscReceiver(mName,"randdest"))->registerCallback( this, &Catalog::setRandomDest );
+                          .oscReceiver(getName(),"randdest"))->registerCallback( this, &Catalog::setRandomDest );
     mInterface->addButton(CreateTriggerParam("Sol Home", NULL)
-                          .oscReceiver(mName,"solhome"))->registerCallback( this, &Catalog::setSolHome );
+                          .oscReceiver(getName(),"solhome"))->registerCallback( this, &Catalog::setSolHome );
     mInterface->addButton(CreateTriggerParam("Sol Dest", NULL)
-                          .oscReceiver(mName,"soldest"))->registerCallback( this, &Catalog::setSolDest );
+                          .oscReceiver(getName(),"soldest"))->registerCallback( this, &Catalog::setSolDest );
     mInterface->addButton(CreateTriggerParam("Next Kepler Star", NULL)
-                          .oscReceiver(mName,"nextkepler"))->registerCallback( this, &Catalog::setNextKeplerStar );
+                          .oscReceiver(getName(),"nextkepler"))->registerCallback( this, &Catalog::setNextKeplerStar );
     mInterface->addButton(CreateTriggerParam("Prev Kepler Star", NULL)
-                          .oscReceiver(mName,"prevkepler"))->registerCallback( this, &Catalog::setPrevKeplerStar );
+                          .oscReceiver(getName(),"prevkepler"))->registerCallback( this, &Catalog::setPrevKeplerStar );
     
     mInterface->addParam(CreateIntParam("Kepler Star Index", &mNextKeplerIndex)
                          .maxValue( mStarsWithPlanets.size() )
-                         .oscReceiver(mName,"keplerindex")
+                         .oscReceiver(getName(),"keplerindex")
                          .sendFeedback())->registerCallback( this, &Catalog::setKeplerStar );
     
     mInterface->addParam(CreateFloatParam("Audio Label Multi", &mLabelBrightnessByAudio)
                          .minValue(0.0f)
                          .maxValue(1.0f)
-                         .oscReceiver(mName,"audiolabelmulti")
+                         .oscReceiver(getName(),"audiolabelmulti")
                          .sendFeedback());
     
     mInterface->addParam(CreateFloatParam("Star Cam Time Scale", &mStarCamTimeScale)
                          .minValue(0.0f)
                          .maxValue(0.01f)
-                         .oscReceiver(mName,"starcamtimescale")
+                         .oscReceiver(getName(),"starcamtimescale")
                          .sendFeedback());
     
     mInterface->addParam(CreateFloatParam("Star Cam Time x100", &mStarCamTimeScale)
                          .minValue(0.0f)
                          .maxValue(1.0f)
-                         .oscReceiver(mName,"starcamtimescale100"));
+                         .oscReceiver(getName(),"starcamtimescale100"));
     
     mInterface->addParam(CreateFloatParam("Starfield Alpha", &mStarfieldAlpha)
                          .minValue(0.0f)
                          .maxValue(1.0f)
-                         .oscReceiver(mName,"starfieldalpha")
+                         .oscReceiver(getName(),"starfieldalpha")
                          .sendFeedback());
     
     mInterface->addParam(CreateFloatParam("Names Alpha", &mNamesAlpha)
                          .minValue(0.0f)
                          .maxValue(1.0f)
-                         .oscReceiver(mName,"namesalpha")
+                         .oscReceiver(getName(),"namesalpha")
                          .sendFeedback());
 }
 

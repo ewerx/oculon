@@ -10,10 +10,11 @@
 #pragma once
 
 #include <string>
+#include "NamedObject.h"
 
 class Scene;
 
-class SubScene
+class SubScene : public oculon::NamedObject<SubScene>
 {
 public:
     SubScene(Scene* scene, const std::string& name);
@@ -31,6 +32,5 @@ public:
     
 protected:
     Scene*      mParentScene;
-    std::string mName;
     bool        mIsActive;
 };

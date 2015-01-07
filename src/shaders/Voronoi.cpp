@@ -103,7 +103,7 @@ void Voronoi::setupInterface()
     mInterface->addParam(CreateIntParam( "audioband", &mResponseBand )
                          .maxValue(2));
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Voronoi::update(double dt)

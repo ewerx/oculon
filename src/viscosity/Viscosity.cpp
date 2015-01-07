@@ -92,24 +92,24 @@ void Viscosity::reset()
 void Viscosity::setupInterface()
 {
     mInterface->addParam(CreateColorParam("color", &mColor, kMinColor, kMaxColor)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("velocity_scale", &mVelocityScale)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("density_scale", &mDensityScale)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     mInterface->addParam(CreateBoolParam("buoyancy", mFluid2D.enableBuoyancyAddr())
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("temperature", mFluid2D.ambientTemperatureAddr())
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("buoyancy_amt", mFluid2D.materialBuoyancyAddr())
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("material_wt", mFluid2D.materialWeightAddr())
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     
-    mSplatNodeController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mSplatNodeController.setupInterface(mInterface, getName());
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Viscosity::handleMouseDown(const ci::app::MouseEvent &event)

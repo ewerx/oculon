@@ -56,22 +56,22 @@ void Cymatics::setupInterface()
 {
     vector<string> bandNames = mAudioInputHandler.getBandNames();
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(mName));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(mName));
+    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(getName()));
+    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateIntParam( "poles", &mPoles )
                          .minValue(2)
                          .maxValue(300)
-                         .oscReceiver(mName)
+                         .oscReceiver(getName())
                          .midiInput(0, 1, 32));
     mInterface->addEnum(CreateEnumParam( "audio-poles", (int*)(&mPolesResponseBand) )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .midiInput(0, 2, 32)
                         .sendFeedback(), bandNames);
 
@@ -84,7 +84,7 @@ void Cymatics::setupInterface()
     mInterface->addEnum(CreateEnumParam( "audio-distance", (int*)(&mDistanceResponseBand) )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .midiInput(0, 2, 33)
                         .sendFeedback(), bandNames);
     
@@ -98,7 +98,7 @@ void Cymatics::setupInterface()
                          .maxValue(10.0f)
                          .oscReceiver(getName()));
     
-    mAudioInputHandler.setupInterface(mInterface, mName, 1, 35);
+    mAudioInputHandler.setupInterface(mInterface, getName(), 1, 35);
 }
 
 void Cymatics::update(double dt)

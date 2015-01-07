@@ -57,7 +57,7 @@ void GravitonRenderer::setupInterface( Interface* interface, const std::string& 
 {
     string oscName = prefix + "/" + mName;
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateFloatParam( "graviton/pointsize", &mPointSize )
                         .minValue(0.01f)
                         .maxValue(2.0f)

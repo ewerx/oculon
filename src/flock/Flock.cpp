@@ -113,14 +113,14 @@ void Flock::setup()
 //
 void Flock::setupInterface()
 {
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateBoolParam("draw nebulas", &mDrawNebulas));
     mInterface->addParam(CreateBoolParam("draw predators", &mDrawPredators));
     
     mInterface->gui()->addColumn();
     
-    mCameraController.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, getName());
     
     mController.setupInterface(mInterface);
 }

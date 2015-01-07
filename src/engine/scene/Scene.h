@@ -22,12 +22,14 @@
 #include "cinderSyphon.h"
 #include "AudioInputHandler.h"
 
+#include "NamedObject.h"
+
 // fwd decl
 class OculonApp;
 class Interface;
 
 
-class Scene
+class Scene : public oculon::NamedObject<Scene>
 {
 public:
     Scene(const std::string& name);
@@ -62,7 +64,6 @@ public:
     ci::gl::Texture getFboTexture()         { return mFbo.getTexture(); }
     
     OculonApp* getApp() const               { return mApp; }
-    const std::string& getName() const      { return mName; }
     
     Interface* getInterface()                       { return mInterface; }
 //    ci::params::InterfaceGl* getDebugInterface()    { return &mDebugParams; }
@@ -116,8 +117,6 @@ protected:
 protected:
     friend class OculonApp;
     OculonApp* mApp;
-    
-    std::string mName;
     
     bool        mIsSetup;
     bool        mIsRunning;

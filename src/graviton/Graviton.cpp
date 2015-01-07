@@ -514,7 +514,7 @@ void Graviton::setupInterface()
 {
     mInterface->gui()->addSeparator();
     
-    mTimeController.setupInterface(mInterface, mName, 1, 22);
+    mTimeController.setupInterface(mInterface, getName(), 1, 22);
     mInterface->gui()->addColumn();
     
 //    vector<string> nodeFormationNames;
@@ -527,7 +527,7 @@ void Graviton::setupInterface()
 //                        .oscReceiver(getName(), "nformation")
 //                        .isVertical(), nodeFormationNames)->registerCallback(this, &Graviton::resetGravityNodes);
     
-    mNodeController.setupInterface(mInterface, mName);
+    mNodeController.setupInterface(mInterface, getName());
     
 //    mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
 //                         .minValue(10.0f)
@@ -583,10 +583,10 @@ void Graviton::setupInterface()
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("display");
-    mParticleController.setupInterface(mInterface, mName);
+    mParticleController.setupInterface(mInterface, getName());
     
-    mCameraController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName, 1, 23);
+    mCameraController.setupInterface(mInterface, getName());
+    mAudioInputHandler.setupInterface(mInterface, getName(), 1, 23);
     
     // FIXME: MIDI HACK
     mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();

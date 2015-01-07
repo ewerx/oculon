@@ -78,7 +78,7 @@ void EffectShaders::reset()
 
 void EffectShaders::setupInterface()
 {
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     // effects
     vector<string> effectNames;
@@ -116,18 +116,18 @@ void EffectShaders::setupInterface()
                         .oscReceiver(getName())
                         .isVertical(), noiseTexNames);
     
-    mNoiseTexture.setupInterface(mInterface, mName);
+    mNoiseTexture.setupInterface(mInterface, getName());
     
     for( FragShader* effect : mEffects )
     {
         if (effect)
         {
             mInterface->gui()->addColumn();
-            effect->setupInterface(mInterface, mName);
+            effect->setupInterface(mInterface, getName());
         }
     }
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void EffectShaders::update(double dt)

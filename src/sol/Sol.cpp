@@ -128,24 +128,24 @@ void Sol::setupInterface()
     //                     .defaultValue(mUseMotionBlur));
     mInterface->addEnum(CreateEnumParam("Source", &mCurrentSource)
                         .maxValue(SolFrame::SOURCE_COUNT)
-                        .oscReceiver(mName,"source"));
+                        .oscReceiver(getName(),"source"));
     
     mInterface->addButton(CreateTriggerParam("Next Source", NULL)
-                          .oscReceiver(mName,"nextsource"))->registerCallback( this, &Sol::nextSource );
+                          .oscReceiver(getName(),"nextsource"))->registerCallback( this, &Sol::nextSource );
     
     mInterface->addEnum(CreateEnumParam("PlaybackMode", (int*)(&mPlaybackMode))
                         .maxValue(PLAYBACK_COUNT)
-                        .oscReceiver(mName,"playback"));
+                        .oscReceiver(getName(),"playback"));
     
     mInterface->addParam(CreateBoolParam("PingPong", &mPingPong)
-                         .oscReceiver(mName,"pingpong"));
+                         .oscReceiver(getName(),"pingpong"));
     
     mInterface->addParam(CreateFloatParam("Framerate", &mFrameRate)
                          .maxValue(60.0f)
-                         .oscReceiver(mName,"framerate"));
+                         .oscReceiver(getName(),"framerate"));
     
     mInterface->addParam(CreateBoolParam("Multisource", &mMultiSource)
-                         .oscReceiver(mName,"multisource"));
+                         .oscReceiver(getName(),"multisource"));
 }
 
 // ----------------------------------------------------------------

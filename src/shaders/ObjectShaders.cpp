@@ -91,7 +91,7 @@ void ObjectShaders::setupInterface()
                         .oscReceiver(getName(), "shader")
                         .isVertical(), shaderNames);
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
@@ -104,7 +104,7 @@ void ObjectShaders::setupInterface()
     }
     mInterface->addEnum(CreateEnumParam( "colormap", (int*)(&mColorMapIndex) )
                         .maxValue(colorMapNames.size())
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .isVertical(), colorMapNames);
     
     // custom params
@@ -113,7 +113,7 @@ void ObjectShaders::setupInterface()
         if (shader)
         {
             mInterface->gui()->addColumn();
-            shader->setupInterface(mInterface, mName);
+            shader->setupInterface(mInterface, getName());
         }
     }
     
@@ -320,7 +320,7 @@ void MetaballsShader::setupInterface( Interface* interface, const std::string& p
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateIntParam( "metahex/objects", &mNumObjects )
                         .maxValue(24)
                         .oscReceiver(oscName));
@@ -337,7 +337,7 @@ void MetaballsShader::setupInterface( Interface* interface, const std::string& p
                         .maxValue(10.0f)
                         .oscReceiver(oscName));
     interface->addParam(CreateVec3fParam("metahex/coeffs", &mCoeffecients, Vec3f::zero(), Vec3f(1.0f,1.0f,1.0f))
-                        .oscReceiver(mName));
+                        .oscReceiver(getName()));
     interface->addEnum(CreateEnumParam("response-band", &mResponseBand)
                        .maxValue(bandNames.size())
                        .isVertical()
@@ -385,7 +385,7 @@ void LissajousShader::setupInterface( Interface* interface, const std::string& p
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateIntParam( "frequency-x", &mFrequencyX )
                         .minValue(1)
                         .maxValue(32)
@@ -450,25 +450,25 @@ void RetinaShader::setupInterface( Interface* interface, const std::string& pref
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateFloatParam("retina/scale", &mScale)
                          .maxValue(4.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateFloatParam("retina/dialation", &mDialation)
                          .maxValue(4.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateFloatParam("retina/dialationscale", &mDialationScale)
                          .minValue(1.0f)
                          .maxValue(4.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateFloatParam("retina/pattamp", &mPatternAmp)
                          .minValue(0.001f)
                          .maxValue(0.5f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateFloatParam("retina/pattfreq", &mPatternFreq)
                          .minValue(1.0f)
                          .maxValue(40.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     interface->addEnum(CreateEnumParam("retain/dialation-band", &mDialationBand)
                        .maxValue(bandNames.size())
@@ -516,13 +516,13 @@ void BioFractalShader::setupInterface( Interface* interface, const std::string& 
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     interface->addParam(CreateIntParam( "biofractal/iterations", &mIterations )
                          .minValue(1)
                          .maxValue(100)
                          .oscReceiver(getName()));
     interface->addParam(CreateVec3fParam("biofractal/rotation", mRotation.ptr(), Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addEnum(CreateEnumParam("biofractal/rot-x-band", &mRotXBand)
                        .maxValue(bandNames.size())
                        .isVertical()
@@ -539,9 +539,9 @@ void BioFractalShader::setupInterface( Interface* interface, const std::string& 
                        .oscReceiver(oscName)
                        .sendFeedback(), bandNames);
     interface->addParam(CreateVec3fParam("biofractal/julia", mJulia.ptr(), Vec3f(-5.0f,-5.0f,-5.0f), Vec3f(5.0f,5.0f,5.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateVec3fParam("biofractal/lightdir", &mLightDir, Vec3f(-1.0f,-1.0f,-1.0f), Vec3f(1.0f,1.0f,1.0f))
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     interface->addParam(CreateFloatParam( "biofractal/scale", &mScale )
                          .minValue(0.0f)
                          .maxValue(3.0f)
@@ -594,7 +594,7 @@ void GyroidShader::setupInterface( Interface* interface, const std::string& pref
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     
     
 }
@@ -615,7 +615,7 @@ void TerminalShader::setupInterface( Interface* interface, const std::string& pr
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(mName);
+    interface->gui()->addLabel(getName());
     
     
 }

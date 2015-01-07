@@ -96,19 +96,19 @@ void Deformer::createMesh()
 void Deformer::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "wireframe", &mWireframe )
-                        .oscReceiver(mName));
+                        .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "texture", &mMeshTextureEnabled )
-                        .oscReceiver(mName));
+                        .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam( "lighting", &mLightEnabled )
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     mInterface->addParam(CreateFloatParam( "disp_height", &mDisplacementHeight )
                          .maxValue(10.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
-    mDynamicTexture.setupInterface(mInterface, mName);
+    mDynamicTexture.setupInterface(mInterface, getName());
     
-    mCameraController.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, getName());
 }
 
 // ----------------------------------------------------------------

@@ -6,6 +6,8 @@
 //
 //
 
+#pragma once
+
 #include <stdio.h>
 #include <unordered_map>
 

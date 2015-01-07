@@ -106,7 +106,7 @@ void Fluid::setupInterface()
 {
     
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Fluid::handleMouseDown(const ci::app::MouseEvent &event)

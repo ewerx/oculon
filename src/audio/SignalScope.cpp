@@ -65,38 +65,38 @@ void SignalScope::setupInterface()
     Interface* interface = mParentScene->getInterface();
     
     interface->addParam(CreateBoolParam("Randomize", &mRandomizeSignal)
-                                           .oscReceiver(mName,"randomize"));
+                                           .oscReceiver(getName(),"randomize"));
     interface->addParam(CreateFloatParam("Signal Scale", &mSignalScale)
                                            .minValue(0.0f)
                                            .maxValue(10.0f)
-                                           .oscReceiver(mName,"scale")
+                                           .oscReceiver(getName(),"scale")
                                            .sendFeedback());
     interface->addParam(CreateFloatParam("Signal Cap", &mSignalMaxRatio)
                                            .minValue(1.0f)
                                            .maxValue(10.0f)
-                                           .oscReceiver(mName,"cap")
+                                           .oscReceiver(getName(),"cap")
                                            .sendFeedback());
     interface->addParam(CreateIntParam("Center Bias Range", &mCenterBiasRange)
                                            .minValue(1)
                                            .maxValue(NUM_POINTS/4)
-                                           .oscReceiver(mName,"biasrange")
+                                           .oscReceiver(getName(),"biasrange")
                                            .sendFeedback());
     interface->addParam(CreateFloatParam("Smoothing Min", &mHorizSmoothingMin)
-                                           .oscReceiver(mName,"smoothingmin"));
+                                           .oscReceiver(getName(),"smoothingmin"));
     interface->addParam(CreateFloatParam("Smoothing Max", &mHorizSmoothingMax)
-                                           .oscReceiver(mName,"smoothingmax"));
+                                           .oscReceiver(getName(),"smoothingmax"));
     interface->addParam(CreateFloatParam("Falloff Min", &mFallOffMin)
-                                           .oscReceiver(mName,"falloffmin"));
+                                           .oscReceiver(getName(),"falloffmin"));
     interface->addParam(CreateFloatParam("Falloff Max", &mFallOffMax)
-                                           .oscReceiver(mName,"falloffmax"));
+                                           .oscReceiver(getName(),"falloffmax"));
     interface->addParam(CreateBoolParam("Render Smooth", &mSmoothLines)
-                                           .oscReceiver(mName,"rendersmooth"));
+                                           .oscReceiver(getName(),"rendersmooth"));
     interface->addParam(CreateFloatParam("Thickness", &mThickness)
                                            .minValue(1.0f)
                                            .maxValue(6.0f)
-                                           .oscReceiver(mName,"thickness"));
+                                           .oscReceiver(getName(),"thickness"));
     interface->addParam(CreateColorParam("Color", &mColor, kMinColor, kMaxColor)
-                                           .oscReceiver(mName,"color"));
+                                           .oscReceiver(getName(),"color"));
 }
 
 //void SignalScope::setupDebugInterface()

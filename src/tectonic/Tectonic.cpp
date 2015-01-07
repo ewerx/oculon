@@ -147,22 +147,22 @@ void Tectonic::setupInterface()
     mInterface->addEnum(CreateEnumParam( "Data Source", (int*)(&mTriggerMode) )
                         .maxValue(DATASOURCE_COUNT)
                         .isVertical()
-                        .oscReceiver(mName,"datasource"))->registerCallback( this, &Tectonic::changeDataSource );
+                        .oscReceiver(getName(),"datasource"))->registerCallback( this, &Tectonic::changeDataSource );
     mInterface->addEnum(CreateEnumParam( "Trigger Mode", (int*)(&mTriggerMode) )
                         .maxValue(TRIGGER_COUNT)
                         .isVertical()
-                        .oscReceiver(mName,"triggermode"));
+                        .oscReceiver(getName(),"triggermode"));
     mInterface->addParam(CreateFloatParam("BPM", &mBpm)
                          .minValue(20.0f)
                          .maxValue(600.0f)
-                         .oscReceiver(mName,"bpm")
+                         .oscReceiver(getName(),"bpm")
                          .sendFeedback());    
     mInterface->addButton(CreateTriggerParam("Trigger Quake", NULL)
-                          .oscReceiver(mName,"quaketrigger"))->registerCallback( this, &Tectonic::triggerNextQuake );
+                          .oscReceiver(getName(),"quaketrigger"))->registerCallback( this, &Tectonic::triggerNextQuake );
     mInterface->addButton(CreateTriggerParam("BPM Tap", NULL)
-                          .oscReceiver(mName,"bpmtap"))->registerCallback( this, &Tectonic::bpmTap );
+                          .oscReceiver(getName(),"bpmtap"))->registerCallback( this, &Tectonic::bpmTap );
     mInterface->addParam(CreateFloatParam("Earth Alpha", &mEarthAlpha)
-                         .oscReceiver(mName,"earthalpha"));
+                         .oscReceiver(getName(),"earthalpha"));
     mInterface->addParam(CreateFloatParam( "Time Scale", &mTimeScale )
                          .minValue(1.0f)
                          .maxValue(30.0f)

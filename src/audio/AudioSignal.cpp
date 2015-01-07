@@ -71,24 +71,24 @@ void AudioSignal::reset()
 void AudioSignal::setupInterface()
 {
     mInterface->addParam(CreateBoolParam( "Motion Blur", &mUseMotionBlur )
-                         .oscReceiver(mName,"blur"));
+                         .oscReceiver(getName(),"blur"));
     
     //TODO: audio2 cleanup
     mInterface->addParam(CreateFloatParam( "Filter Freq", &mFilterFrequency )
-                         .oscReceiver(mName,"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );
+                         .oscReceiver(getName(),"filterfreq"))->registerCallback( this, &AudioSignal::setFilter );
 //    mInterface->addEnum(CreateEnumParam("Filter", &mFilter)
 //                        .maxValue(Kiss::Filter::NOTCH+1)
 //                        .isVertical()
-//                        .oscReceiver(mName,"filter"))->registerCallback( this, &AudioSignal::setFilter );
+//                        .oscReceiver(getName(),"filter"))->registerCallback( this, &AudioSignal::setFilter );
     mInterface->addButton(CreateTriggerParam("Remove Filter", NULL)
-                          .oscReceiver(mName,"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
+                          .oscReceiver(getName(),"revemofilter"))->registerCallback( this, &AudioSignal::removeFilter );
     
     BOOST_FOREACH( SubScene* &ss, mSubScenes )
     {
 		ss->setupInterface();
 	}
     
-    mAudioInputHandler.setupInterface(mInterface, mName, 1, 7, 2, 7);
+    mAudioInputHandler.setupInterface(mInterface, getName(), 1, 7, 2, 7);
 }
 
 //void AudioSignal::setupDebugInterface()

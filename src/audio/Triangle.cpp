@@ -56,7 +56,7 @@ void Triangle::setupInterface()
 //    interface->addParam(CreateFloatParam("Scale", &mBaseRadius)
 //                        .minValue(1.0f)
 //                        .maxValue(200.0f)
-//                        .oscReceiver(mName,"scale"));//->registerCallback( this, &Triangle::baseRadiusChanged );
+//                        .oscReceiver(getName(),"scale"));//->registerCallback( this, &Triangle::baseRadiusChanged );
 //
 //    interface->addParam(CreateFloatParam("left", &mLeft.x)
 //                        .minValue(-mApp->getWindowWidth())

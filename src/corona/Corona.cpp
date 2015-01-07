@@ -213,19 +213,19 @@ void Corona::setup()
 //
 void Corona::setupInterface()
 {
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     vector<string> bandNames = mAudioInputHandler.getBandNames();
     mInterface->addEnum(CreateEnumParam( "audio-radius", (int*)(&mRadiusAudioResponseBand) )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     mInterface->addParam(CreateFloatParam("min_radius_ratio", &mMinAudioRadius)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam("radius", &mStar.mRadiusDest)
                          .maxValue(mStar.mMaxRadius)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     // TODO: refactor
     mInterface->addParam(CreateIntParam("stage", &mStage)
@@ -233,33 +233,33 @@ void Corona::setupInterface()
     
     mInterface->addParam(CreateIntParam("star_type", &mStarTypeIndex)
                          .maxValue(mNumStarTypes)
-                         .oscReceiver(mName))->registerCallback(this, &Corona::onStarTypeChanged);
+                         .oscReceiver(getName()))->registerCallback(this, &Corona::onStarTypeChanged);
     mInterface->addParam(CreateFloatParam("radius", &mStar.mRadiusDest)
                          .maxValue(mStar.mMaxRadius)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("-rendering-");
     mInterface->addParam(CreateBoolParam("billboard", &mBillboard)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("glows", &mRenderGlows)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("nebulas", &mRenderNebulas)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("sphere", &mRenderSphere)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("texture", &mRenderTexture)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("dust", &mRenderDusts)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("corona", &mRenderCorona)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addParam(CreateBoolParam("canismajoris", &mRenderCanisMajoris)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
-    mCameraController.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, getName());
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 bool Corona::onStarTypeChanged()

@@ -191,12 +191,12 @@ void Orbiter::reset()
 
 void Orbiter::setupInterface()
 {
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->gui()->addColumn();
     
-    mCameraController.setupInterface(mInterface, mName);
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mCameraController.setupInterface(mInterface, getName());
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 #pragma mark - Update

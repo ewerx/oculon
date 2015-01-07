@@ -58,60 +58,60 @@ void CloudTunnel::setupInterface()
 {
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    mTimeController.setupInterface(mInterface, mName);
+    mTimeController.setupInterface(mInterface, getName());
     
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(mName));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(mName));
+    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor).oscReceiver(getName()));
+    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor).oscReceiver(getName()));
     
     mInterface->addParam(CreateIntParam("iterations", &mIterations)
                          .minValue(10)
                          .maxValue(200)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     
     mInterface->gui()->addColumn();
     mInterface->addParam(CreateFloatParam("density", &mDensity)
                          .minValue(0.02f)
                          .maxValue(2.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addEnum(CreateEnumParam( "audio-density", &mDensityResponseBand )
                        .maxValue(bandNames.size())
                        .isVertical()
-                       .oscReceiver(mName)
+                       .oscReceiver(getName())
                        .sendFeedback(), bandNames);
     
     mInterface->addParam(CreateFloatParam("fov", &mFieldOfView)
                          .minValue(1.0f)
                          .maxValue(15.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addEnum(CreateEnumParam( "audio-fov", &mFOVResponseBand )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     
     mInterface->addParam(CreateFloatParam("noiselevel", &mNoiseLevel)
                          .minValue(2.0f)
                          .maxValue(10.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addEnum(CreateEnumParam( "audio-noise", &mNoiseLevelResponseBand )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     
     mInterface->addParam(CreateFloatParam("tunnelwidth", &mTunnelWidth)
                          .minValue(0.5f)
                          .maxValue(4.0f)
-                         .oscReceiver(mName));
+                         .oscReceiver(getName()));
     mInterface->addEnum(CreateEnumParam( "audio-width", &mTunnelWidthResponseBand )
                         .maxValue(bandNames.size())
                         .isVertical()
-                        .oscReceiver(mName)
+                        .oscReceiver(getName())
                         .sendFeedback(), bandNames);
     
     mInterface->gui()->addColumn();
     
-    mAudioInputHandler.setupInterface(mInterface, mName);
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void CloudTunnel::update(double dt)
