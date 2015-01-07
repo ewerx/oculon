@@ -418,7 +418,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
     if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
-    if( mConfig.getBool("rings") )              addScene( new CloudTunnel() );
+//    if( mConfig.getBool("textureshaders") )              addScene( new CloudTunnel() );
     if( mConfig.getBool("rings") )              addScene( new PlanetScene() );
     
 //    if( mConfig.getBool("terrain") )    addScene( new Deformer() );
@@ -427,7 +427,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     if( mConfig.getBool("cells") )              addScene( new Cells() );
-    if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
+//    if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     
     
