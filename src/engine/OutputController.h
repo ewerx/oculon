@@ -18,17 +18,23 @@ class OutputController
 public:
     OutputController();
     
-    void outputFrame( ci::gl::TextureRef tex );
+    bool assignChannelToScene( const std::string channelName, const Scene::Ref scene );
+    bool unassignChannelFromScene( const std::string channelName, const Scene::Ref scene );
+    
+    bool assignSceneToSyphonChannel( Scene::Ref scene );
+    
+    bool removeChannel( const std::string channelName );
+    
+    void outputScenesToAllChannels();
     
     
     
 private:
     typedef std::vector<OutputChannel::Ref> OutputChannelList;
-    typedef std::vector<Scene::Ref> SceneList;
     typedef std::unordered_map<Scene::Ref, OutputChannelList> SceneOutputMap;
     
     OutputChannel::NamedObjectMap mChannels;
-    
+    SceneOutputMap mSceneOutputChannels;
 };
     
 }

@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <unordered_map>
+#include <algorithm>
 
 namespace oculon
 {
@@ -29,4 +30,16 @@ namespace oculon
     private:
         std::string mName;
     };
+    
+    template <typename T>
+    bool vectorContains( const std::vector<T>& vec, const T& element )
+    {
+        return (std::find(vec.begin(), vec.end(), element) != vec.end());
+    }
+    
+    template <typename T>
+    void vectorRemove( std::vector<T>& vec, const T& element )
+    {
+        vec.erase(std::remove(vec.begin, vec.end, element));
+    }
 }

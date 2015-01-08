@@ -21,11 +21,10 @@ public:
     
     
 private:
-    typedef std::vector<SceneRef> SceneList;
-    typedef std::unordered_map<std::string, SceneRef> SceneMap;
+    typedef std::vector<Scene::Ref> SceneList;
     
-    SceneList   mSceneList;
-    SceneMap    mSceneMap;
+    SceneList               mSceneList;
+    Scene::NamedObjectMap   mSceneMap;
 };
     
 }
