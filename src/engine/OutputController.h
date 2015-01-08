@@ -18,22 +18,21 @@ class OutputController
 public:
     OutputController();
     
-    bool assignChannelToScene( const std::string channelName, const Scene::Ref scene );
-    bool unassignChannelFromScene( const std::string channelName, const Scene::Ref scene );
+    bool assignSceneToOutput( const Scene::Ref scene, const std::string channelName );
+    bool unassignSceneFromOutput( const std::string channelName );
+    bool unassignSceneFromAllOutputs( const Scene::Ref scene );
     
-    bool assignSceneToSyphonChannel( Scene::Ref scene );
-    
-    bool removeChannel( const std::string channelName );
+    bool assignSceneToSyphon( Scene::Ref scene );
     
     void outputScenesToAllChannels();
-    
-    
     
 private:
     typedef std::vector<OutputChannel::Ref> OutputChannelList;
     typedef std::unordered_map<Scene::Ref, OutputChannelList> SceneOutputMap;
     
-    OutputChannel::NamedObjectMap mChannels;
+    OutputChannel::NamedObjectMap mChannelsByName;
+    Scene::NamedObjectMap mScenesByChannelName;
+    
     SceneOutputMap mSceneOutputChannels;
 };
     

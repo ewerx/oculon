@@ -40,6 +40,6 @@ namespace oculon
     template <typename T>
     void vectorRemove( std::vector<T>& vec, const T& element )
     {
-        vec.erase(std::remove(vec.begin, vec.end, element));
+        vec.erase(std::remove(vec.begin(), vec.end(), element));
     }
 }

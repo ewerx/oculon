@@ -16,7 +16,7 @@ using namespace std;
 
 OutputController::OutputController()
 {
-    mChannels.emplace(make_pair("window", OutputChannel::Ref(new WindowOutputChannel("window", getWindowWidth(), getWindowHeight()))));
+    mChannelsByName.emplace(make_pair("window", OutputChannel::Ref(new WindowOutputChannel("window", getWindowWidth(), getWindowHeight()))));
 
     // syphon servers
 
@@ -27,55 +27,48 @@ OutputController::OutputController()
     // oculus rift
 }
 
-bool OutputController::assignChannelToScene(const std::string channelName, const Scene::Ref scene)
+#pragma mark - Assignment
+
+bool OutputController::assignSceneToOutput(const Scene::Ref scene, const std::string channelName)
 {
     bool result = false;
-
-    if (mChannels.find(channelName) != mChannels.end())
+    
+    if (mChannelsByName.find(channelName) != mChannelsByName.end())
     {
-        if (mSceneOutputChannels.find(scene) != mSceneOutputChannels.end())
-        {
-            const OutputChannelList &channels = mSceneOutputChannels[scene];
-            if (!vectorContains(channels, mChannels[channelName]))
-            {
-                mSceneOutputChannels[scene].push_back(mChannels[channelName]);
-            }
-        }
-        else
-        {
-            mSceneOutputChannels.emplace(make_pair(scene, mChannels[channelName]));
-        }
-        result = true;
+        mScenesByChannelName[channelName] = scene;
     }
     else
     {
         assert(false && "assignSceneToChannel: invalid channel");
     }
-
+    
     return result;
 }
 
-bool OutputController::unassignChannelFromScene(const std::string channelName, const Scene::Ref scene)
+bool OutputController::unassignSceneFromAllOutputs(const Scene::Ref scene)
 {
     bool result = false;
     
-    if (mChannels.find(channelName) != mChannels.end())
+    for (auto &channelNameScenePair : mScenesByChannelName)
     {
-        //SceneOutputMap::iterator sceneMapIter = mSceneOutputChannels.find(scene);
-        
-        if (mSceneOutputChannels.find(scene) != mSceneOutputChannels.end() &&
-            vectorContains(mSceneOutputChannels[scene], mChannels[channelName]))
+        const string& channelName = channelNameScenePair.first;
+        if (mScenesByChannelName[channelName] == channelNameScenePair.second)
         {
-            //OutputChannelList &channels = mSceneOutputChannels[scene];
-            //OutputChannelList::iterator channelIter = find(channels.begin(), channels.end(), mChannels[channelName]);
-            vectorRemove(mSceneOutputChannels[scene], mChannels[channelName]);
-            //mSceneOutputChannels[scene].erase(remove(channels.begin(), channels.end(), mChannels[channelName]));
+            mScenesByChannelName[channelName] = nullptr;
             result = true;
         }
-        else
-        {
-            assert(false && "assignSceneToChannel: channel not assigned to scene");
-        }
+    }
+    
+    return result;
+}
+
+bool OutputController::unassignSceneFromOutput(const std::string channelName)
+{
+    bool result = false;
+    
+    if (mScenesByChannelName.find(channelName) != mScenesByChannelName.end())
+    {
+        mScenesByChannelName[channelName] = nullptr;
     }
     else
     {
@@ -85,7 +78,7 @@ bool OutputController::unassignChannelFromScene(const std::string channelName, c
     return result;
 }
 
-bool OutputController::assignSceneToSyphonChannel(Scene::Ref scene)
+bool OutputController::assignSceneToSyphon(Scene::Ref scene)
 {
     // TODO
     assert(false && "not implemented");
@@ -93,20 +86,19 @@ bool OutputController::assignSceneToSyphonChannel(Scene::Ref scene)
     return false;
 }
 
-// MARK: output
+#pragma mark - Output
 
 void OutputController::outputScenesToAllChannels()
 {
     // order is undefined
-    for (const auto& sceneChannelsPair : mSceneOutputChannels)
+    for (auto &channelNameScenePair : mScenesByChannelName)
     {
-        const Scene::Ref& scene = sceneChannelsPair.first;
-        const OutputChannelList& channels = sceneChannelsPair.second;
+        const string& channelName = channelNameScenePair.first;
+        const Scene::Ref& scene = channelNameScenePair.second;
         
-        for (const auto& channel : channels)
-        {
-            channel->outputFrame(make_shared<Texture>(scene->getFboTexture()));
-        }
+        assert(mChannelsByName.find(channelName) != mChannelsByName.end());
+        
+        mChannelsByName[channelName]->outputFrame(make_shared<Texture>(scene->getFboTexture()));
     }
 }
 
