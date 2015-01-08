@@ -18,13 +18,16 @@ namespace oculon
 class SceneController
 {
 public:
+    SceneController();
+    ~SceneController();
     
+    void addScene( Scene::Ref scene );
     
 private:
     typedef std::vector<Scene::Ref> SceneList;
     
-    SceneList               mSceneList;
-    Scene::NamedObjectMap   mSceneMap;
+    SceneList               mScenes;
+    Scene::NamedObjectMap   mScenesByName;
 };
     
 }
