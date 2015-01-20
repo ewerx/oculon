@@ -18,8 +18,8 @@ namespace oculon
     class NamedObject
     {
     public:
-        typedef std::shared_ptr<T> Ref;
-        typedef std::unordered_map<std::string, Ref> NamedObjectMap;
+        using Ref = std::shared_ptr<T>;
+        using NamedObjectMap = std::unordered_map<std::string, Ref>;
         
         NamedObject( const std::string& name ) : mName(name)
         {

@@ -24,7 +24,7 @@ public:
     void addScene( Scene::Ref scene );
     
 private:
-    typedef std::vector<Scene::Ref> SceneList;
+    using SceneList = std::vector<Scene::Ref>;
     
     SceneList               mScenes;
     Scene::NamedObjectMap   mScenesByName;
