@@ -30,22 +30,24 @@ DustRenderer::DustRenderer()
     format.setWrap( GL_REPEAT, GL_REPEAT );
     
     mCurPointTexture = 0;
-    tex = gl::Texture( loadImage( loadResource( "particle_white.png" ) ), format );
-    mPointTextures.push_back( make_pair("glow", tex) );
-    tex = gl::Texture( loadImage( loadResource( "glitter.png" ) ), format );
-    mPointTextures.push_back( make_pair("solid", tex) );
-    tex = gl::Texture( loadImage( loadResource( "parsec-sparkle.png" ) ), format );
-    mPointTextures.push_back( make_pair("sparkle", tex) );
+    mPointTextures.push_back( make_pair("glow", gl::Texture( loadImage( loadResource( "particle_white.png" ) ), format )) );
+    mPointTextures.push_back( make_pair("glow2", gl::Texture( loadImage( loadResource( "particle_white2.png" ) ), format )) );
+    mPointTextures.push_back( make_pair("solid", gl::Texture( loadImage( loadResource( "glitter.png" ) ), format )) );
+    mPointTextures.push_back( make_pair("donut", gl::Texture( loadImage( loadResource( "donut64.png" ) ), format )) );
+    mPointTextures.push_back( make_pair("sparkle", gl::Texture( loadImage( loadResource( "parsec-sparkle.png" ) ), format )) );
     
     mCurColorMap = 0;
-    tex = gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ), format );
-    mColorMaps.push_back( make_pair("colormap1", tex) );
-    tex = gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ), format );
-    mColorMaps.push_back( make_pair("colormap1", tex) );
-    tex = gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ), format );
-    mColorMaps.push_back( make_pair("colormap1", tex) );
-    tex = gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ), format );
-    mColorMaps.push_back( make_pair("colormap1", tex) );
+    
+    mColorMaps.push_back( make_pair("none", gl::Texture( loadImage( loadResource( "blank-8.png" ) ), format )) );
+    tex = gl::Texture( loadImage( loadResource( "colortex1-256.png" ) ), format );
+    mColorMaps.push_back( make_pair("fire", tex) );
+    tex = gl::Texture( loadImage( loadResource( "colortex2-256.png" ) ), format );
+    mColorMaps.push_back( make_pair("ice", tex) );
+    tex = gl::Texture( loadImage( loadResource( "colortex3-256.png" ) ), format );
+    mColorMaps.push_back( make_pair("red-blue", tex) );
+    tex = gl::Texture( loadImage( loadResource( "colortex4-256.png" ) ), format );
+    mColorMaps.push_back( make_pair("golden", tex) );
+    
 }
 
 DustRenderer::~DustRenderer()
@@ -137,7 +139,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     particlesFbo.bindTexture(2);//info
     
     mPointTextures[mCurPointTexture].second.bind(3);
-    //mColorMapTex.bind(4);
+    mColorMaps[mCurColorMap].second.bind(5);
     
     if (audioInputHandler.hasTexture())
     {
@@ -150,7 +152,7 @@ void DustRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize,
     mShader.uniform("velMap", 1);
     mShader.uniform("information", 2);
     mShader.uniform("spriteTex", 3);
-    //mShader.uniform("colorMap", 3);
+    mShader.uniform("colorMap", 5);
     mShader.uniform("intensityMap", 4);
     mShader.uniform("spriteWidth", mPointSize);
     mShader.uniform("gain", audioInputHandler.getGain());

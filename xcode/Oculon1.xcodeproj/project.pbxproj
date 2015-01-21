@@ -458,6 +458,18 @@
 		7CC3C033183FECCE0082C322 /* TextureGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */; };
 		7CC3C035183FF64C0082C322 /* simplex_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7CC3C034183FF64C0082C322 /* simplex_frag.glsl */; };
 		7CC562621836BB3100B128D4 /* Cells.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC562601836BB3100B128D4 /* Cells.cpp */; };
+		7CCC2F251A6F39F1002AE354 /* vertical_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F241A6F39F1002AE354 /* vertical_line.png */; };
+		7CCC2F271A6F3D61002AE354 /* particle_white2.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F261A6F3D61002AE354 /* particle_white2.png */; };
+		7CCC2F291A6F3F18002AE354 /* donut1.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F281A6F3F18002AE354 /* donut1.png */; };
+		7CCC2F2B1A6F3FA4002AE354 /* donut64.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F2A1A6F3FA4002AE354 /* donut64.png */; };
+		7CCC2F2F1A6F4AA6002AE354 /* colortex2-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F2C1A6F4AA6002AE354 /* colortex2-256.png */; };
+		7CCC2F301A6F4AA6002AE354 /* colortex3-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F2D1A6F4AA6002AE354 /* colortex3-256.png */; };
+		7CCC2F311A6F4AA6002AE354 /* colortex4-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F2E1A6F4AA6002AE354 /* colortex4-256.png */; };
+		7CCC2F331A6F4ADD002AE354 /* colortex1-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F321A6F4ADD002AE354 /* colortex1-256.png */; };
+		7CCC2F351A6F4DF8002AE354 /* blank-8.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCC2F341A6F4DF8002AE354 /* blank-8.png */; };
+		7CCEBD8B1A6DF94500D653A7 /* bullet-particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCEBD881A6DF94500D653A7 /* bullet-particle.png */; };
+		7CCEBD8C1A6DF94500D653A7 /* cloudparticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCEBD891A6DF94500D653A7 /* cloudparticle.png */; };
+		7CCEBD8D1A6DF94500D653A7 /* smokeparticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCEBD8A1A6DF94500D653A7 /* smokeparticle.png */; };
 		7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */; };
 		7CD42251192E701700CCE7BF /* CloudTunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */; };
 		7CD53E88185826CE003DE35F /* hygxyz.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7CD53E87185826CE003DE35F /* hygxyz.csv */; };
@@ -1145,6 +1157,18 @@
 		7CC3C034183FF64C0082C322 /* simplex_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simplex_frag.glsl; sourceTree = "<group>"; };
 		7CC562601836BB3100B128D4 /* Cells.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cells.cpp; sourceTree = "<group>"; };
 		7CC562611836BB3100B128D4 /* Cells.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cells.h; sourceTree = "<group>"; };
+		7CCC2F241A6F39F1002AE354 /* vertical_line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vertical_line.png; sourceTree = "<group>"; };
+		7CCC2F261A6F3D61002AE354 /* particle_white2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_white2.png; sourceTree = "<group>"; };
+		7CCC2F281A6F3F18002AE354 /* donut1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = donut1.png; sourceTree = "<group>"; };
+		7CCC2F2A1A6F3FA4002AE354 /* donut64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = donut64.png; sourceTree = "<group>"; };
+		7CCC2F2C1A6F4AA6002AE354 /* colortex2-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "colortex2-256.png"; sourceTree = "<group>"; };
+		7CCC2F2D1A6F4AA6002AE354 /* colortex3-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "colortex3-256.png"; sourceTree = "<group>"; };
+		7CCC2F2E1A6F4AA6002AE354 /* colortex4-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "colortex4-256.png"; sourceTree = "<group>"; };
+		7CCC2F321A6F4ADD002AE354 /* colortex1-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "colortex1-256.png"; sourceTree = "<group>"; };
+		7CCC2F341A6F4DF8002AE354 /* blank-8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blank-8.png"; sourceTree = "<group>"; };
+		7CCEBD881A6DF94500D653A7 /* bullet-particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bullet-particle.png"; sourceTree = "<group>"; };
+		7CCEBD891A6DF94500D653A7 /* cloudparticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cloudparticle.png; sourceTree = "<group>"; };
+		7CCEBD8A1A6DF94500D653A7 /* smokeparticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smokeparticle.png; sourceTree = "<group>"; };
 		7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecLabels.cpp; sourceTree = "<group>"; };
 		7CD1A840185AC930002925A0 /* ParsecLabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecLabels.h; sourceTree = "<group>"; };
 		7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloudTunnel.cpp; sourceTree = "<group>"; };
@@ -1846,6 +1870,7 @@
 		7C79C85E17650F8F00E71F9D /* images */ = {
 			isa = PBXGroup;
 			children = (
+				7CCEBD871A6DF94500D653A7 /* textures */,
 				7C7CDB161881F3730064999F /* black_grid_2level.jpg */,
 				7C83B3A11856BF3800EB22F8 /* parsec */,
 				7C79C85F17650F8F00E71F9D /* bump.png */,
@@ -1995,7 +2020,6 @@
 				7C79C89917650F8F00E71F9D /* blur2_vert.glsl */,
 				7C06A8DD1853D4ED00D1C8A3 /* catalog */,
 				7C79C89C17650F8F00E71F9D /* corona */,
-				7CC3C028183EE3B50082C322 /* dust */,
 				7C79C8A817650F8F00E71F9D /* earth_frag.glsl */,
 				7C79C8A917650F8F00E71F9D /* emitter_frag.glsl */,
 				7C79C8AA17650F8F00E71F9D /* emitter_vert.glsl */,
@@ -2591,6 +2615,7 @@
 		7CC3C027183ED0370082C322 /* dust */ = {
 			isa = PBXGroup;
 			children = (
+				7CC3C028183EE3B50082C322 /* shaders */,
 				7CC3C024183ED0330082C322 /* Dust.cpp */,
 				7CC3C025183ED0330082C322 /* Dust.h */,
 				7CF1002118ED0C05002876A1 /* DustRenderer.cpp */,
@@ -2599,7 +2624,7 @@
 			name = dust;
 			sourceTree = "<group>";
 		};
-		7CC3C028183EE3B50082C322 /* dust */ = {
+		7CC3C028183EE3B50082C322 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
 				7CC3C029183EE3B50082C322 /* dust_render_frag.glsl */,
@@ -2607,7 +2632,27 @@
 				7CC3C02B183EE3B50082C322 /* dust_simulation_frag.glsl */,
 				7CC3C02C183EE3B50082C322 /* dust_simulation_vert.glsl */,
 			);
-			path = dust;
+			name = shaders;
+			path = ../resources/shaders/dust;
+			sourceTree = "<group>";
+		};
+		7CCEBD871A6DF94500D653A7 /* textures */ = {
+			isa = PBXGroup;
+			children = (
+				7CCC2F341A6F4DF8002AE354 /* blank-8.png */,
+				7CCC2F321A6F4ADD002AE354 /* colortex1-256.png */,
+				7CCC2F2C1A6F4AA6002AE354 /* colortex2-256.png */,
+				7CCC2F2D1A6F4AA6002AE354 /* colortex3-256.png */,
+				7CCC2F2E1A6F4AA6002AE354 /* colortex4-256.png */,
+				7CCC2F2A1A6F3FA4002AE354 /* donut64.png */,
+				7CCC2F281A6F3F18002AE354 /* donut1.png */,
+				7CCC2F241A6F39F1002AE354 /* vertical_line.png */,
+				7CCEBD881A6DF94500D653A7 /* bullet-particle.png */,
+				7CCEBD891A6DF94500D653A7 /* cloudparticle.png */,
+				7CCEBD8A1A6DF94500D653A7 /* smokeparticle.png */,
+				7CCC2F261A6F3D61002AE354 /* particle_white2.png */,
+			);
+			path = textures;
 			sourceTree = "<group>";
 		};
 		7CD666401853F55A004BD521 /* parsec */ = {
@@ -2968,10 +3013,12 @@
 				7C79CB241765288500E71F9D /* room.frag in Resources */,
 				7C79CB251765288500E71F9D /* room.vert in Resources */,
 				7C79CB261765288500E71F9D /* VboPos.frag in Resources */,
+				7CCC2F291A6F3F18002AE354 /* donut1.png in Resources */,
 				7C83B3AE1856BF3800EB22F8 /* parsec-sparkle.png in Resources */,
 				7C83B3AD1856BF3800EB22F8 /* particle_old.png in Resources */,
 				7C06A9071853D4ED00D1C8A3 /* tripping_frag.glsl in Resources */,
 				7C79CB271765288500E71F9D /* VboPos.vert in Resources */,
+				7CCC2F351A6F4DF8002AE354 /* blank-8.png in Resources */,
 				7C06A9031853D4ED00D1C8A3 /* squarenoise_frag.glsl in Resources */,
 				7C584D9219FCA99E00EB9609 /* orbiter_body_vert.glsl in Resources */,
 				7C79CB281765288500E71F9D /* Velocity.frag in Resources */,
@@ -2992,6 +3039,7 @@
 				7C8DA8731921D29D00FCD9A2 /* sacred_frag.glsl in Resources */,
 				7C79CB2C1765288500E71F9D /* passThruNormals.vert in Resources */,
 				7C8DA8671921B43200FCD9A2 /* hexagons_frag.glsl in Resources */,
+				7CCEBD8D1A6DF94500D653A7 /* smokeparticle.png in Resources */,
 				7C8DA8651921AB9300FCD9A2 /* test_frag.glsl in Resources */,
 				7C06A8EB1853D4ED00D1C8A3 /* fireball_frag.glsl in Resources */,
 				7C79CB2D1765288500E71F9D /* shader.fsh in Resources */,
@@ -3002,6 +3050,7 @@
 				7C79C85817650F1700E71F9D /* Oculon.icns in Resources */,
 				7C79C8EB17650F8F00E71F9D /* contour_tex_frag.glsl in Resources */,
 				7C83B3AF1856BF3800EB22F8 /* parsec-sun.png in Resources */,
+				7CCC2F311A6F4AA6002AE354 /* colortex4-256.png in Resources */,
 				7C584DBF19FD5C8200EB9609 /* neptune_bump.png in Resources */,
 				7C06A9091853D4ED00D1C8A3 /* volumetriclines_frag.glsl in Resources */,
 				7C79C8EC17650F8F00E71F9D /* contour_tex_vert.glsl in Resources */,
@@ -3065,6 +3114,7 @@
 				7C79C8FF17650F8F00E71F9D /* cubePosZ.jpg in Resources */,
 				7C79C90017650F8F00E71F9D /* glowCorona.png in Resources */,
 				7C79C90117650F8F00E71F9D /* grid.png in Resources */,
+				7CCC2F331A6F4ADD002AE354 /* colortex1-256.png in Resources */,
 				7C79C90217650F8F00E71F9D /* nebulaCorona.png in Resources */,
 				7CC3C030183EE3B50082C322 /* dust_simulation_vert.glsl in Resources */,
 				7C06A8E81853D4ED00D1C8A3 /* cosmos_frag.glsl in Resources */,
@@ -3080,6 +3130,7 @@
 				7C79C90717650F8F00E71F9D /* glow.png in Resources */,
 				7CF612CB193412BF00030E26 /* bezier_frag.glsl in Resources */,
 				7C06A9001853D4ED00D1C8A3 /* rings_frag.glsl in Resources */,
+				7CCEBD8B1A6DF94500D653A7 /* bullet-particle.png in Resources */,
 				7C79C90817650F8F00E71F9D /* lanternGlow.png in Resources */,
 				7C79C90917650F8F00E71F9D /* nebula.png in Resources */,
 				7C79C90A17650F8F00E71F9D /* glitter.png in Resources */,
@@ -3153,7 +3204,10 @@
 				7C79C95117650F8F00E71F9D /* quake_frag.glsl in Resources */,
 				7C79C95217650F8F00E71F9D /* quake_vert.glsl in Resources */,
 				7CF251FF182F397F0005227C /* gaussian_noise_256_3c.png in Resources */,
+				7CCC2F251A6F39F1002AE354 /* vertical_line.png in Resources */,
 				7C8CBB2C1929B4DF00588689 /* organism_frag.glsl in Resources */,
+				7CCC2F271A6F3D61002AE354 /* particle_white2.png in Resources */,
+				7CCEBD8C1A6DF94500D653A7 /* cloudparticle.png in Resources */,
 				7CEB1AE619325F220044A346 /* cairo_frag.glsl in Resources */,
 				7C892499189C81A900AF4698 /* lines_render_frag.glsl in Resources */,
 				7C79C95317650F8F00E71F9D /* render_frag.glsl in Resources */,
@@ -3161,6 +3215,7 @@
 				7CF6AD5818AB55A000FA795A /* parsec_simulation_vert.glsl in Resources */,
 				7CAD1B8218839A9800512843 /* frag_project3.glsl in Resources */,
 				7C79C95817650F8F00E71F9D /* terrain_shader_frag.glsl in Resources */,
+				7CCC2F2B1A6F3FA4002AE354 /* donut64.png in Resources */,
 				7C06A8EF1853D4ED00D1C8A3 /* hypnorings_frag.glsl in Resources */,
 				7CEB1AE219325BAF0044A346 /* terminaltext_frag.glsl in Resources */,
 				7C97D24318B00F0500BB63A1 /* graviton_formation_frag.glsl in Resources */,
@@ -3171,9 +3226,11 @@
 				7CF612C319340F6300030E26 /* mobius_frag.glsl in Resources */,
 				7C79C95B17650F8F00E71F9D /* terrain_tex_vert.glsl in Resources */,
 				7C06A8E71853D4ED00D1C8A3 /* clouds_frag.glsl in Resources */,
+				7CCC2F2F1A6F4AA6002AE354 /* colortex2-256.png in Resources */,
 				7C272EC81938675B00A49E48 /* rgb_noise256.png in Resources */,
 				7C06A8F51853D4ED00D1C8A3 /* livingkifs_frag.glsl in Resources */,
 				7C584DCD19FD5C8200EB9609 /* saturn_diffuse.png in Resources */,
+				7CCC2F301A6F4AA6002AE354 /* colortex3-256.png in Resources */,
 				7C83B3A01856BE5900EB22F8 /* parsec_stars_vert.glsl in Resources */,
 				7CF612D419343F1500030E26 /* noisesphere_frag.glsl in Resources */,
 				7C79C95C17650F8F00E71F9D /* terrain_texture.jpg in Resources */,

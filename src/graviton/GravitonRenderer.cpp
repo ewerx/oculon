@@ -37,6 +37,7 @@ GravitonRenderer::GravitonRenderer()
     mPointTextures.push_back( make_pair("solid", pointTex) );
     pointTex = gl::Texture( loadImage( loadResource( "parsec-sparkle.png" ) ), format );
     mPointTextures.push_back( make_pair("sparkle", pointTex) );
+    mPointTextures.push_back( make_pair("donut", gl::Texture( loadImage( loadResource( "donut64.png" ) ), format )) );
 }
 
 GravitonRenderer::~GravitonRenderer()
