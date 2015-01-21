@@ -143,13 +143,16 @@ bool AudioInputHandler::onRandomize()
     return true;
 }
 
-/*static*/ vector<string> AudioInputHandler::getBandNames()
+/*static*/ vector<string>& AudioInputHandler::getBandNames()
 {
-    vector<string> names;
-    names.push_back("low");
-    names.push_back("mid");
-    names.push_back("high");
-    names.push_back("none");
+    static vector<string> names;
+    if (names.empty())
+    {
+        names.push_back("low");
+        names.push_back("mid");
+        names.push_back("high");
+        names.push_back("none");
+    }
     
     return names;
 }

@@ -21,6 +21,7 @@
 #include "LinesRenderer.h"
 #include "SimplexNoiseTexture.h"
 #include "ParticleController.h"
+#include "TimeController.h"
 
 //
 // Dust
@@ -47,9 +48,11 @@ protected:// from Scene
 private:
     void setupParticles(const int bufSize);
     
-    SimplexNoiseTexture mDynamicTexture;
-    
 private:
+    SimplexNoiseTexture mDynamicTexture;
+    int mNoiseXBand;
+    int mNoiseYBand;
+    
     ParticleController mParticleController;
     
     ci::gl::GlslProg mSimulationShader;
@@ -58,7 +61,6 @@ private:
     ci::CameraOrtho mCamera;
     
     // params
-    float mTimeStep;
     float mDecayRate;
     
     bool mReset;
@@ -67,10 +69,7 @@ private:
     int mMotion;
     
     AudioInputHandler mAudioInputHandler;
-    
-    // MUTEK HACKS
-    bool mAudioReactive;
-    bool mAudioTime;
+    TimeController mTimeController;
 };
 
 

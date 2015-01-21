@@ -130,7 +130,7 @@ enm,
     };
     tFftValue   mAvgVolume[BAND_COUNT];
     
-    static std::vector<std::string> getBandNames();
+    static std::vector<std::string>& getBandNames();
     
     // OSC Tracks
 #define AUDIO_SOURCE_TUPLE \

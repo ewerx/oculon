@@ -35,35 +35,32 @@ Dust::~Dust()
 void Dust::setup()
 {
     Scene::setup();
-    
+
     mReset = false;
-    
+
     // should match simulaion shader
-    mMotionTypes.push_back( "static" );
-    mMotionTypes.push_back( "noise" );
+    mMotionTypes.push_back("static");
+    mMotionTypes.push_back("noise");
     mMotion = 1;
-    
+
     // params
-    mTimeStep = 0.1f;
     mDecayRate = 0.5f;
-    
-    mAudioReactive = false;
-    
-    mAudioTime = false;
-    
+
     // simulation
     mSimulationShader = loadVertAndFragShaders("dust_simulation_vert.glsl", "dust_simulation_frag.glsl");
-    
+
     const int bufSize = 1024;
     setupParticles(bufSize);
-    
+
     // rendering
-    mParticleController.addRenderer( new DustRenderer() );
-    
+    mParticleController.addRenderer(new DustRenderer());
+
     mDynamicTexture.setup(bufSize, bufSize);
-    
-    mCamera.setOrtho( 0, mApp->getViewportWidth(), mApp->getViewportHeight(), 0, -1, 1 );
-    
+    mNoiseXBand = AudioInputHandler::BAND_NONE;
+    mNoiseYBand = AudioInputHandler::BAND_NONE;
+
+    mCamera.setOrtho(0, mApp->getViewportWidth(), mApp->getViewportHeight(), 0, -1, 1);
+
     // audio
     mAudioInputHandler.setup(true);
 }
@@ -118,17 +115,16 @@ void Dust::setupParticles(const int bufSize)
 void Dust::reset()
 {
     mReset = true;
+    mTimeController.reset();
 }
 
 #pragma mark - Interface
 
 void Dust::setupInterface()
 {
-    mInterface->addParam(CreateFloatParam( "timestep", &mTimeStep )
-                         .minValue(0.001f)
-                         .maxValue(3.0f)
-                         .oscReceiver(getName())
-                         .midiInput(0, 1, 30));
+    vector<string>& bandNames = AudioInputHandler::getBandNames();
+    
+    mTimeController.setupInterface(mInterface, getName());
     
     mInterface->addParam(CreateFloatParam( "decay_rate", &mDecayRate )
                          .minValue(0.0f)
@@ -142,6 +138,17 @@ void Dust::setupInterface()
                         .isVertical(), mMotionTypes);
     mDynamicTexture.setupInterface(mInterface, getName());
     
+    mInterface->addEnum(CreateEnumParam( "noise-x-band", &mNoiseXBand )
+                        .maxValue(bandNames.size())
+                        .isVertical()
+                        .oscReceiver(getName())
+                        .sendFeedback(), bandNames);
+    mInterface->addEnum(CreateEnumParam( "noise-y-band", &mNoiseYBand )
+                        .maxValue(bandNames.size())
+                        .isVertical()
+                        .oscReceiver(getName())
+                        .sendFeedback(), bandNames);
+    
     mInterface->gui()->addColumn();
     mParticleController.setupInterface(mInterface, getName());
 
@@ -151,29 +158,31 @@ void Dust::setupInterface()
     mAudioInputHandler.setupInterface(mInterface, getName(), 1, 31);
 
     // FIXME: MIDI HACK
-    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
-    hiddenPanel->enabled = false;
-    mInterface->addParam(CreateFloatParam("dust/noisex", &mDynamicTexture.mNoiseScale.x)
-                        .minValue(0.0f)
-                        .maxValue(10.0f)
-                        .oscReceiver(getName())
-                        .midiInput(0, 1, 28));
-    mInterface->addParam(CreateFloatParam("dust/noisey", &mDynamicTexture.mNoiseScale.y)
-                         .minValue(0.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(getName())
-                         .midiInput(0, 1, 29));
-    mInterface->addParam(CreateFloatParam("dust/noisez", &mDynamicTexture.mNoiseScale.z)
-                         .minValue(0.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(getName())
-                         .midiInput(0, 2, 28));
+//    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
+//    hiddenPanel->enabled = false;
+//    mInterface->addParam(CreateFloatParam("dust/noisex", &mDynamicTexture.mNoiseScale.x)
+//                        .minValue(0.0f)
+//                        .maxValue(10.0f)
+//                        .oscReceiver(getName())
+//                        .midiInput(0, 1, 28));
+//    mInterface->addParam(CreateFloatParam("dust/noisey", &mDynamicTexture.mNoiseScale.y)
+//                         .minValue(0.0f)
+//                         .maxValue(10.0f)
+//                         .oscReceiver(getName())
+//                         .midiInput(0, 1, 29));
+//    mInterface->addParam(CreateFloatParam("dust/noisez", &mDynamicTexture.mNoiseScale.z)
+//                         .minValue(0.0f)
+//                         .maxValue(10.0f)
+//                         .oscReceiver(getName())
+//                         .midiInput(0, 2, 28));
+    
 }
 
 #pragma mark - Update
 
 void Dust::update(double dt)
 {
+    mTimeController.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
     
     gl::disableAlphaBlending();
@@ -181,6 +190,16 @@ void Dust::update(double dt)
     gl::disableAlphaBlending();
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
+    
+    if (mNoiseXBand != AudioInputHandler::BAND_NONE)
+    {
+        mDynamicTexture.mNoiseScaleMultiplier.x = mAudioInputHandler.getAverageVolumeByBand(mNoiseXBand);
+    }
+
+    if (mNoiseYBand != AudioInputHandler::BAND_NONE)
+    {
+        mDynamicTexture.mNoiseScaleMultiplier.y = mAudioInputHandler.getAverageVolumeByBand(mNoiseYBand);
+    }
 
     mDynamicTexture.update(dt);
     
@@ -198,10 +217,9 @@ void Dust::update(double dt)
     
     mDynamicTexture.bindTexture(5);
     
-    float simdt = (float)(dt*mTimeStep);
+    float simdt = mTimeController.getDelta();
     float decayRate = mDecayRate;
-    if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
-    if (mAudioTime) decayRate = mDecayRate + mAudioInputHandler.getAverageVolumeMidFreq();
+    
     mSimulationShader.bind();
     mSimulationShader.uniform( "positions", 0 );
     mSimulationShader.uniform( "velocities", 1 );

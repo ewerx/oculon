@@ -29,4 +29,5 @@ public:
     float       mNoiseSpeed;
 	float       mNoiseTheta;
     ci::Vec3f   mNoiseScale;
+    ci::Vec3f   mNoiseScaleMultiplier;
 };

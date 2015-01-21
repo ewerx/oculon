@@ -56,7 +56,7 @@ void CloudTunnel::reset()
 
 void CloudTunnel::setupInterface()
 {
-    vector<string> bandNames = AudioInputHandler::getBandNames();
+    vector<string>& bandNames = AudioInputHandler::getBandNames();
     
     mTimeController.setupInterface(mInterface, getName());
     

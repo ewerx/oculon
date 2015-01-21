@@ -27,6 +27,7 @@ void SimplexNoiseTexture::initShader()
     mNoiseTheta = 0.0f;
     mNoiseSpeed = 0.1f;
     mNoiseScale = Vec3f(1.0f,1.0f,0.25f);
+    mNoiseScaleMultiplier = Vec3f::one();
 }
 
 void SimplexNoiseTexture::configShader(double dt)
@@ -34,7 +35,7 @@ void SimplexNoiseTexture::configShader(double dt)
     mNoiseTheta += dt * mNoiseSpeed;
     
     mShader.uniform( "theta", mNoiseTheta );
-    mShader.uniform( "scale", mNoiseScale );
+    mShader.uniform( "scale", mNoiseScale * mNoiseScaleMultiplier );
 }
 
 void SimplexNoiseTexture::setupInterface(Interface* interface, const std::string &name)
