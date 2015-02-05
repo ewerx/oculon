@@ -153,6 +153,12 @@ formatNames.push_back(nam);
                             .maxValue(FORMAT_COUNT)
                             .oscReceiver(getName(), "format")
                             .isVertical(), formatNames);
+        mInterface->addParam(CreateColorParam("color" + indexStr, &mRingSetParams[i].mColor(), kMinColor, kMaxColor));
+        // color presets
+        mInterface->addButton(CreateTriggerParam("off", NULL)
+                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_NONE) );
+        mInterface->addButton(CreateTriggerParam("white", NULL)
+                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_WHITE) );
         
         mInterface->addParam(CreateFloatParam("timescale" + indexStr, &mRingSetParams[i].mTimeScale)
                              .minValue(-30.0f)
@@ -182,12 +188,7 @@ formatNames.push_back(nam);
                              .midiInput(0, 1, 60+i));
         mInterface->addParam(CreateVec2fParam("center" + indexStr, &mRingSetParams[i].mCenter, Vec2f::zero(), Vec2f::one())
                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::updateCenter, this, i) );
-        mInterface->addParam(CreateColorParam("color" + indexStr, &mRingSetParams[i].mColor(), kMinColor, kMaxColor));
-        // color presets
-        mInterface->addButton(CreateTriggerParam("off", NULL)
-                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_NONE) );
-        mInterface->addButton(CreateTriggerParam("white", NULL)
-                              .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_WHITE) );
+        
         mInterface->addButton(CreateTriggerParam("red", NULL)
                               .oscReceiver(name))->registerCallback( boost::bind( &Rings::setRingColor, this, i, COLOR_RED) );
         // animations

@@ -160,7 +160,7 @@ void ShaderTest::setupInterface()
     mInterface->addParam(CreateFloatParam("stripes/countscale", &mStripesParams.mCountScale)
                          .maxValue(1.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("stripes/countscalemult", &mStripesParams.mCountScale)
+    mInterface->addParam(CreateFloatParam("stripes/countscalemult", &mStripesParams.mCountScaleMult)
                          .minValue(1.0f)
                          .maxValue(1000.0f)
                          .oscReceiver(getName()));
@@ -240,6 +240,9 @@ void ShaderTest::shaderPreDraw()
     shader.uniform( "iChannel0", 0 );
     shader.uniform( "iChannel1", 1 );
     shader.uniform( "iMouse", Vec2f::one()*0.5f );
+    shader.uniform( "countScale", mStripesParams.mCountScaleMult * mStripesParams.mCountScale);
+    shader.uniform( "color1", mStripesParams.mColor1 );
+    shader.uniform( "color2", mStripesParams.mColor2 );
 }
 
 
