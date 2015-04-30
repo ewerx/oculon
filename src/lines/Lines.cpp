@@ -381,6 +381,141 @@ void Lines::setupParticles(const int bufSize)
 //        mParticleController.addFormation(new ParticleFormation("snake", bufSize, positions, velocities, data));
 //        positions.clear();
 //    }
+    
+    // cube
+    {
+        int count = 0;
+        const int d = 24;
+        positions.clear();
+        //velocities.clear();
+        data.clear();
+        float distPer = r / (d*0.5);
+        
+        float x1 = -0.5 * d * distPer;
+        float y1 = -0.5 * d * distPer;
+        float z1 = -0.5 * d * distPer;
+        
+        float x2 = 0.5 * d * distPer;
+        float y2 = 0.5 * d * distPer;
+        float z2 = 0.5 * d * distPer;
+        
+        // lines
+        for (int i = 0; i < d*0.5; ++i)
+        {
+            z1 = -0.5 * d * distPer;
+            x2 = 0.5 * d * distPer;
+            
+            for (int j = 0; j < d*0.5; ++j)
+            {
+                x1 = -0.5 * d * distPer;
+                z2 = 0.5 * d * distPer;
+                
+                for (int k = 0; k < d*0.5; ++k)
+                {
+                    float mass = Rand::randFloat(0.01f,1.0f);
+                    positions.push_back(Vec4f(x1,y1,z1,mass));
+                    
+                    // velocity + age
+                    //float age = Rand::randFloat(.000001f,0.00005f);
+                    //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+                    
+                    // extra info
+                    float decay = Rand::randFloat(.01f,10.00f);
+                    data.push_back(Vec4f(x1,y1,z1,decay));
+                    
+                    positions.push_back(Vec4f(x2,y2,z2,mass));
+                    data.push_back(Vec4f(x2,y2,z2,decay));
+                    
+                    x1 += distPer;
+                    z2 -= distPer;
+                    
+                    ++count;
+                }
+                
+                z1 += distPer;
+                x2 -= distPer;
+            }
+            
+            y1 += distPer;
+            y2 -= distPer;
+        }
+        
+        for (int i = count; i < numParticles; ++i) {
+            positions.push_back(Vec4f::zero());
+            //velocities.push_back(Vec4f::zero());
+            data.push_back(Vec4f::zero());
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
+    }
+    
+    // cube
+    {
+        int count = 0;
+        const int d = 24;
+        positions.clear();
+        //velocities.clear();
+        data.clear();
+        float distPer = r / (d*0.5);
+        
+        float x1 = -0.5 * d * distPer;
+        float y1 = -0.5 * d * distPer;
+        float z1 = -0.5 * d * distPer;
+        
+        float x2 = 0.5 * d * distPer;
+        float y2 = 0.5 * d * distPer;
+        float z2 = 0.5 * d * distPer;
+        
+        // lines
+        for (int i = 0; i < d*0.5; ++i)
+        {
+            z1 = -0.5 * d * distPer;
+            y2 = 0.5 * d * distPer;
+            
+            for (int j = 0; j < d*0.5; ++j)
+            {
+                x1 = -0.5 * d * distPer;
+                z2 = 0.5 * d * distPer;
+                
+                for (int k = 0; k < d*0.5; ++k)
+                {
+                    float mass = Rand::randFloat(0.01f,1.0f);
+                    positions.push_back(Vec4f(x1,y1,z1,mass));
+                    
+                    // velocity + age
+                    //float age = Rand::randFloat(.000001f,0.00005f);
+                    //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+                    
+                    // extra info
+                    float decay = Rand::randFloat(.01f,10.00f);
+                    data.push_back(Vec4f(x1,y1,z1,decay));
+                    
+                    positions.push_back(Vec4f(x2,y2,z2,mass));
+                    data.push_back(Vec4f(x2,y2,z2,decay));
+                    
+                    x1 += distPer;
+                    z2 -= distPer;
+                    
+                    ++count;
+                }
+                
+                z1 += distPer;
+                
+                y2 -= distPer;
+            }
+            
+            y1 += distPer;
+            x2 -= distPer;
+        }
+        
+        for (int i = count; i < numParticles; ++i) {
+            positions.push_back(Vec4f::zero());
+            //velocities.push_back(Vec4f::zero());
+            data.push_back(Vec4f::zero());
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("cube2", bufSize, positions, velocities, data));
+    }
 
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);

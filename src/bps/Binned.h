@@ -20,6 +20,8 @@
 #include "BinnedParticleSystem.h"
 #include "OscMessage.h"
 //#include "BlobTracker.h"
+#include "AudioInputHandler.h"
+#include "TimeController.h"
 
 #include "Constants.h"
 #include "cinder/Timeline.h"
@@ -63,7 +65,6 @@ private:
     ci::Vec2i mMousePos;
     bool mHandleMouseInput;
     
-    float mTimeStep;
 	float mParticleNeighborhood;
     float mParticleRepulsion;
 	float mCenterAttraction;
@@ -142,11 +143,6 @@ enm,
     
     ci::Vec2i mCrossForcePoint[4];
     
-    
-    bool mIsOrbiterModeEnabled;
-    
-    float mAudioSensitivity;
-    
     enum eRepulsionMode
     {
         MODE_RADIUS,
@@ -207,7 +203,8 @@ enm,
     tMetropolisPattern mMetropolis;
     ci::Anim<float> mTraverse;
     
-    bool mInverseBassTime;
+    TimeController mTimeController;
+    AudioInputHandler mAudioInputHandler;
     
     //TEMP
 //    bool                mEnableBlobTracker;

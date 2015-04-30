@@ -47,8 +47,7 @@ void Binned::setup()
     mPointSize = 6.0f;
     mLineWidth = 2.0f;
     
-    mTimeStep = 0.005f;// 0.05
-	mSlowMotion = false;
+    mSlowMotion = false;
     mBounceOffWalls = true;
     mCircularWall = false;
     mWallPadding = 0.01f;
@@ -67,7 +66,6 @@ void Binned::setup()
     mMinRadius = 0.0f;
     mMaxForce = 200.0f;
     mMaxRadius = 100.0f;
-    mAudioSensitivity = 1.0f;
     
     mHandleMouseInput = false;
     mIsMousePressed = false;
@@ -91,7 +89,9 @@ void Binned::setup()
     
     mParticleSystem.setForceColor( &mForceColor );
     
-    mIsOrbiterModeEnabled = false;
+    mAudioInputHandler.setup(true);
+    mTimeController.setTimeScale(0.005f);
+    mTimeController.mMaxTimeScale = 0.1f;
     
     // deepfield
     mNumSegments = 4;
@@ -279,6 +279,8 @@ void Binned::resize()
 
 void Binned::setupInterface()
 {
+    mTimeController.setupInterface(mInterface, getName());
+    
     // appearance
     mInterface->addParam(CreateIntParam("K Particles", &mKParticles)
                          .minValue(1).maxValue(64)
@@ -307,10 +309,6 @@ formationNames.push_back(nam);
     
     // simluation
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateFloatParam("Time Step", &mTimeStep)
-                         .maxValue(0.01f)
-                         .minValue(0.0001f)
-                         .oscReceiver(getName(),"timestep"));
     
     mInterface->addParam(CreateFloatParam("Neighborhood", &mParticleNeighborhood)
                          .maxValue(64.0f)
@@ -351,9 +349,6 @@ formationNames.push_back(nam);
     
     // audio patterns
     mInterface->gui()->addColumn();
-    mInterface->addParam(CreateFloatParam("Audio Sensitivity", &mAudioSensitivity)
-                         .maxValue(2.0f)
-                         .oscReceiver(getName(),"audiolevel"));
     
     // TODO: refactor "Mode"
     mInterface->addEnum(CreateEnumParam("Mode", &mRepulsionMode)
@@ -376,9 +371,6 @@ audioPatternNames.push_back(nam);
     mInterface->addParam(CreateColorParam("Indicator Color", &mForceIndicatorColor, kMinColor, kMaxColor)
                          .oscReceiver(getName(),"indicatorcolor"));
     
-    mInterface->addParam(CreateBoolParam("InvBassTime", &mInverseBassTime)
-                         .oscReceiver(getName()));
-    
     // TouchOSC XY-pad
     const int maxTouches = 5;
     char buf[OSC_ADDRESS_SIZE];
@@ -387,16 +379,15 @@ audioPatternNames.push_back(nam);
         snprintf( buf, OSC_ADDRESS_SIZE, "%s/%d", "/oculon/binned/touchforce", i );
         mApp->getOscServer().registerCallback( buf, this, &Binned::handleOscMultiTouch );
     }
+    
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 void Binned::update(double dt)
 {
-    float timeStep = mTimeStep;
-    if (mInverseBassTime)
-    {
-        timeStep *= (10.0f - 10.0f*(mApp->getAudioInputHandler().getAverageVolumeByFrequencyRange(0.0f, 0.25f)));
-    }
-	mParticleSystem.setTimeStep(timeStep);
+    mTimeController.update(dt);
+    mAudioInputHandler.update(dt, mApp->getAudioInput());
+	mParticleSystem.setTimeStep(mTimeController.getTimeScale());
     
     Scene::update(dt);
 }
@@ -680,24 +671,15 @@ void Binned::applyForcePatterns()
                 mApp->enableFrameCapture( false );
                 mApp->quit();
             }
-            else if( time > 0.5f )
-            {
-                mAudioSensitivity = math<float>::clamp( maxVal - maxVal * EaseOutInQuad()(time), 0.0f, maxVal );
-            }
-            else
-            {
-                mAudioSensitivity = math<float>::clamp( maxVal * EaseOutInQuad()(time), 0.0f, maxVal );
-            }
             
             break;
         }
             
         case PATTERN_NONE:
             applyQueuedForces();
-            if( !mIsOrbiterModeEnabled )
-            {
-                updateAudioResponse();
-            }
+            updateAudioResponse();
+            break;
+            
         default:
             break;
     }
@@ -736,19 +718,8 @@ void Binned::drawDebug()
 
 void Binned::updateAudioResponse()
 {
-    AudioInput& audioInput = mApp->getAudioInput();
-    //TODO: audio2 cleanup
-    //TODO: why is kiss null?
-    if( mAudioSensitivity == 0.0f || mApp->getElapsedSeconds() < 2.0f || mApp->getElapsedFrames() < 5 )
-    {
-        return;
-    }
-    
-    //float * freqData = audioInput.getFft()->getAmplitude();
-    //float * timeData = audioInput.getFft()->getData();
-    int32_t dataSize = audioInput.getFftBandCount();
-    
-    vector<float> freqData = audioInput.getMagSpectrum();
+    AudioInputHandler::FftValues& fftValues = getAudioInputHandler().getFftValues();
+    int32_t dataSize = fftValues.size();
     
     const float width = mApp->getViewportWidth();
     const float height = mApp->getViewportHeight();
@@ -759,11 +730,8 @@ void Binned::updateAudioResponse()
     // audio data
     for (int32_t i = 0; i < dataSize; ++i) 
     {
-        // logarithmic plotting for frequency domain
-        double logSize = log((double)dataSize);
-        const float normalizedFreq = (float)(log((double)i) / logSize);
-        const float freq = normalizedFreq * (double)dataSize;
-        const float amp = mAudioSensitivity * math<float>::clamp(freqData[i] * (freq / dataSize) * log((double)(dataSize - i)), 0.0f, 2.0f);
+        const float freq = fftValues[i].mBandIndex;
+        const float amp = fftValues[i].mValue;
         
         float radius = mMinRadius;
         float force = mMinForce;
@@ -877,13 +845,6 @@ bool Binned::handleKeyDown( const KeyEvent& event )
     
 	switch( event.getChar() )
     {
-        case 's':
-            mTimeStep *= 0.1f;
-            break;
-        case 'S':
-            mTimeStep *= 10.0f;
-            break;
-            
         case 'm':
         {
             int mode = mRepulsionMode;
@@ -905,42 +866,20 @@ bool Binned::handleKeyDown( const KeyEvent& event )
             toggleActiveVisible();
             break;
             
-        case 'o':
-            mIsOrbiterModeEnabled = !mIsOrbiterModeEnabled;
-            if( mIsOrbiterModeEnabled )
+        case 'g':
+            if( mCircularWall )
             {
-                mAudioSensitivity = 0.0f;
-                mCircularWall = true;
-                mCenterAttraction = 0.9f;
+                mMaxRadius = 80.0f;
+                mCircularWall = false;
+                mCenterAttraction = 0.0f;
             }
             else
             {
-                mAudioSensitivity = 1.0f;
-                mCircularWall = false;
-                mCenterAttraction = 0.05f;
+                mMaxRadius = 300.0f;
+                mCircularWall = true;
+                mCenterAttraction = 0.9f;
             }
             reset();
-            break;
-            
-        case 'g':
-            if( !mIsOrbiterModeEnabled )
-            {
-                if( mCircularWall )
-                {
-                    mAudioSensitivity = 0.8f;
-                    mMaxRadius = 80.0f;
-                    mCircularWall = false;
-                    mCenterAttraction = 0.0f;
-                }
-                else
-                {
-                    mMaxRadius = 300.0f;
-                    mCircularWall = true;
-                    mAudioSensitivity = 0.0f;
-                    mCenterAttraction = 0.9f;
-                }
-                reset();
-            }
             break;
             
         case 'x':

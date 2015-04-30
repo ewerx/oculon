@@ -14,6 +14,9 @@
 #include "Interface.h"
 #include "Resources.h"
 #include "Lantern.h"
+#include "SpinCam.h"
+#include "SplineCam.h"
+#include "OtherSceneCam.h"
 
 #include "cinder/Utilities.h"
 #include "cinder/ImageIo.h"
@@ -51,6 +54,10 @@ void Flock::setup()
     //
     // CAMERA
 	mCameraController.setup(mApp);
+    mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
+    mCameraController.addCamera( new OtherSceneCam(mApp, "lines") );
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );
@@ -99,6 +106,8 @@ void Flock::setup()
 	mMousePressed		= false;
 
 	mInitUpdateCalled	= false;
+    
+    mAudioInputHandler.setup();
 	
 	initialize();
 
@@ -123,6 +132,8 @@ void Flock::setupInterface()
     mCameraController.setupInterface(mInterface, getName());
     
     mController.setupInterface(mInterface);
+    
+    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
 // ----------------------------------------------------------------

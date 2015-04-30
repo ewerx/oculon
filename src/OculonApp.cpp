@@ -419,7 +419,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
 //    if( mConfig.getBool("textureshaders") )              addScene( new CloudTunnel() );
-    if( mConfig.getBool("rings") )              addScene( new PlanetScene() );
+    if( mConfig.getBool("parsec") )             addScene( new PlanetScene() );
     
 //    if( mConfig.getBool("terrain") )    addScene( new Deformer() );
     if( mConfig.getBool("geometry") )   addScene( new Geometry() );

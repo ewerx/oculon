@@ -409,7 +409,7 @@ void Graviton::setupParticles(const int bufSize)
     data.clear();
     float rho = Rand::randFloat() * (M_PI);
     float theta = Rand::randFloat() * (M_PI * 2.0);
-        float distPer = r / NUM_RINGS;
+    float distPer = r / NUM_RINGS;
     float dist = distPer;
     // lines
     for (int i = 0; i < numParticles; ++i)
@@ -499,6 +499,50 @@ void Graviton::setupParticles(const int bufSize)
             data.push_back(Vec4f(x,y,z,decay));
         }
         mParticleController.addFormation(new ParticleFormation("rings2", bufSize, positions, velocities, data));
+    }
+    
+    // cube
+    {
+        const int d = 64;
+        positions.clear();
+        velocities.clear();
+        data.clear();
+        float distPer = r / (d*0.5);
+        
+        float x = -0.5 * d * distPer;
+        float y = -0.5 * d * distPer;
+        float z = -0.5 * d * distPer;
+        
+        // lines
+        for (int i = 0; i < d; ++i)
+        {
+            z = -0.5 * d * distPer;
+            for (int j = 0; j < d; ++j)
+            {
+                x = -0.5 * d * distPer;
+                for (int k = 0; k < d; ++k)
+                {
+                    
+                    float mass = Rand::randFloat(0.01f,1.0f);
+                    positions.push_back(Vec4f(x,y,z,mass));
+                    
+                    // velocity + age
+                    float age = Rand::randFloat(.000001f,0.00005f);
+                    velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+                    
+                    // extra info
+                    float decay = Rand::randFloat(.01f,10.00f);
+                    data.push_back(Vec4f(x,y,z,decay));
+                    
+                    x += distPer;
+                }
+                
+                z += distPer;
+            }
+            
+            y += distPer;
+        }
+        mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
     }
     
     mParticleController.resetToFormation(0);
