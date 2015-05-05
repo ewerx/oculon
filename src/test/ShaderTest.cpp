@@ -73,13 +73,24 @@ void ShaderTest::setupShaders()
     mShaderType = 0;
     
     mShaders.push_back( new FragShader( "Test",      "test_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Organism",    "organism_frag.glsl" ) );
+    
+    mShaders.push_back( new FragShader( "trapezium",      "trapezium.frag" ) );
+    mShaders.push_back( new FragShader( "blue-cells",      "bluecells.frag" ) );
+    mShaders.push_back( new FragShader( "shockwave",      "shockwave.frag" ) );
+    mShaders.push_back( new FragShader( "circlewave2",      "circlewave2.frag" ) );
+    mShaders.push_back( new FragShader( "sines",        "sines.frag" ) );
+    mShaders.push_back( new FragShader( "audiosignal",      "audiosignal.frag" ) );
+    mShaders.push_back( new FragShader( "marble",      "marble.frag" ) );
+    mShaders.push_back( new FragShader( "soundwave",      "soundwave.frag" ) );
+    
+    
+    //mShaders.push_back( new FragShader( "Organism",    "organism_frag.glsl" ) );
     mShaders.push_back( new FragShader( "fractraps1",    "fractraps1_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Truchets",    "truchets_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "Truchets",    "truchets_frag.glsl" ) );
     mShaders.push_back( new FragShader( "Shapeshifter",    "shapeshifter_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Gyroid",    "gyroid_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Blood",    "redcells_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "Fire2D",    "fire2d_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "Gyroid",    "gyroid_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "Blood",    "redcells_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "Fire2D",    "fire2d_frag.glsl" ) );
     mShaders.push_back( new FragShader( "Circuit",    "circuit_frag.glsl" ) );
     mShaders.push_back( new FragShader( "GooSpin",    "goospin_frag.glsl" ) );
 //    mShaders.push_back( new FragShader( "Urchin",    "urchin_frag.glsl" ) );
@@ -104,11 +115,11 @@ void ShaderTest::setupShaders()
     mShaders.push_back( new FragShader( "scanline",      "scanline_frag.glsl" ) );
     mShaders.push_back( new FragShader( "glasswalls",      "glasswalls_frag.glsl" ) );
     mShaders.push_back( new FragShader( "deformation",      "deformation_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "acid",      "acidcontours_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "acid",      "acidcontours_frag.glsl" ) );
     mShaders.push_back( new FragShader( "bokeh",      "bokeh_frag.glsl" ) );
     mShaders.push_back( new FragShader( "water",      "watereffect_frag.glsl" ) );
     mShaders.push_back( new FragShader( "squarespiral",      "squarespiral_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "mobius",      "mobius_frag.glsl" ) );
+    //mShaders.push_back( new FragShader( "mobius",      "mobius_frag.glsl" ) );
     mShaders.push_back( new FragShader( "juliaspiral",      "juliaspiral_frag.glsl" ) );
     mShaders.push_back( new FragShader( "bezier",      "bezier_frag.glsl" ) );
     mShaders.push_back( new FragShader( "warping",      "warping_frag.glsl" ) );

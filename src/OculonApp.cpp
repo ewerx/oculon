@@ -397,53 +397,56 @@ void OculonApp::setupScenes()
     
     mScenes.clear();
     
-    if( mConfig.getBool("audio") )      addScene( new AudioSignal() );
-    if( mConfig.getBool("binned") )     addScene( new Binned() );
-    if( mConfig.getBool("dust") )       addScene( new Dust() );
-    if( mConfig.getBool("tectonic") )   addScene( new Tectonic() );
-    
-    if( mConfig.getBool("graviton") )   addScene( new Graviton() );
-    if( mConfig.getBool("lines") )      addScene( new Lines() );
-    if( mConfig.getBool("parsec") )     addScene( new Parsec() );
-    if( mConfig.getBool("flock") )      addScene( new Flock() );
-    if( mConfig.getBool("polyhedron") ) addScene( new Polyhedron() );
-    
-    if( mConfig.getBool("orbiter") )    addScene( new Orbiter() );
-    if( mConfig.getBool("catalog") )    addScene( new Catalog() );
-//    if( mConfig.getBool("grid") )       addScene( new Grid() );
-//    if( mConfig.getBool("textorbit") )  addScene( new TextOrbit() );
-    if( mConfig.getBool("trails") )     addScene( new Trails() );
+    if( mConfig.getBool("audio") )              addScene( new AudioSignal() );
+//    if( mConfig.getBool("binned") )           addScene( new Binned() );
+//    if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
     
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
-    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+//    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
-//    if( mConfig.getBool("textureshaders") )              addScene( new CloudTunnel() );
-    if( mConfig.getBool("parsec") )             addScene( new PlanetScene() );
-    
-//    if( mConfig.getBool("terrain") )    addScene( new Deformer() );
-    if( mConfig.getBool("geometry") )   addScene( new Geometry() );
-//    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
+    if( mConfig.getBool("textureshaders") )     addScene( new CloudTunnel() );
+
     
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     if( mConfig.getBool("cells") )              addScene( new Cells() );
 //    if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     
-    
-    if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
-    if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
-//    if( mConfig.getBool("corona") )             addScene( new Corona() );
-    
-//    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
-    
     if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     if( mConfig.getBool("contour") )            addScene( new Contour() );
     
-    // Test Scenes
+    if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
+    if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
+    
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
+    
+    if( mConfig.getBool("dust") )               addScene( new Dust() );
+    
+    if( mConfig.getBool("graviton") )           addScene( new Graviton() );
+    if( mConfig.getBool("lines") )              addScene( new Lines() );
+//    if( mConfig.getBool("parsec") )           addScene( new Parsec() );
+//    if( mConfig.getBool("flock") )            addScene( new Flock() );
+//    if( mConfig.getBool("polyhedron") )       addScene( new Polyhedron() );
+
+//    if( mConfig.getBool("orbiter") )          addScene( new Orbiter() );
+//    if( mConfig.getBool("catalog") )          addScene( new Catalog() );
+//    if( mConfig.getBool("parsec") )             addScene( new PlanetScene() );
+
+// Test Scenes
+//    if( mConfig.getBool("grid") )             addScene( new Grid() );
+//    if( mConfig.getBool("textorbit") )        addScene( new TextOrbit() );
+
+//    if( mConfig.getBool("terrain") )          addScene( new Deformer() );
+//    if( mConfig.getBool("geometry") )   addScene( new Geometry() );
+//    if( mConfig.getBool("corona") )             addScene( new Corona() );
+//    if( mConfig.getBool("trails") )     addScene( new Trails() );
+
+//    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
+    
     //addScene( new MovieTest() );
     if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
-    if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
+//    if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
     //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     //if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
     if( mEnableMindWave && mConfig.getBool("mindwave_test") ) addScene( new MindWaveTest() );

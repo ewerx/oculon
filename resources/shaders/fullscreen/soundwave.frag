@@ -4,6 +4,8 @@ uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 uniform vec3      iMouse;
 
+// https://www.shadertoy.com/view/4ljGD1
+
 float squared(float value) { return value * value; }
 
 float getAmp(float frequency) { return texture2D(iChannel0, vec2(frequency / 512.0, 0)).x; }
@@ -34,4 +36,6 @@ void main()
     
     gl_FragColor = vec4(color, 1.0);
 }
+
+
 
