@@ -72,8 +72,6 @@ public:
     // Texture
     bool                mAudioFboEnabled;
     int                 mAudioFboDim;
-    ci::Vec2f           mAudioFboSize;
-    ci::Area            mAudioFboBounds;
     ci::gl::Fbo         mAudioFbo;
     
     // Distribution

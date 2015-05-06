@@ -40,15 +40,15 @@ protected:// from Scene
     void setupInterface();
     //void setupDebugInterface();
     
-private:
-    void setupShaders();
+protected:
+    virtual void setupShaders();
     
     void drawScene();
     
     void shaderPreDraw();
     void shaderPostDraw();
     
-private:
+protected:
     
     // global params
     ci::ColorAf         mColor1;
@@ -66,7 +66,7 @@ private:
     std::vector<FragShader*> mShaders;
     int mShaderType;
     
-    
+private:
     class KifsShader : public FragShader
     {
     public:

@@ -8,11 +8,11 @@
 
 #include "OculonApp.h"
 #include "TextureShaders.h"
-#include "cinder/Utilities.h"
-#include "cinder/Rand.h"
-#include <boost/format.hpp>
 #include "Interface.h"
 #include "Utils.h"
+
+#include "cinder/Utilities.h"
+#include "cinder/Rand.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -21,7 +21,6 @@ using namespace std;
 TextureShaders::TextureShaders(const std::string& name)
 : Scene(name)
 {
-    //mAudioInputHandler.setup(true);
 }
 
 TextureShaders::~TextureShaders()
@@ -32,7 +31,7 @@ void TextureShaders::setup()
 {
     Scene::setup();
     
-    mAudioInputHandler.setup(false);
+    mAudioInputHandler.setup(true);
     
     setupShaders();
     
@@ -147,6 +146,8 @@ void TextureShaders::shaderPreDraw()
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
     shader.uniform( "iColor1", mColor1);
     shader.uniform( "iColor2", mColor2);
+    shader.uniform( "iChannel0", 0 );
+    shader.uniform( "iChannel1", 1 );
     
     mShaders[mShaderType]->setCustomParams( mAudioInputHandler );
 }
@@ -297,7 +298,6 @@ void TextureShaders::KifsShader::setCustomParams( AudioInputHandler& audioInputH
         rotationOffset *= audioInputHandler.getAverageVolumeHighFreq() * 5.0f;
     }
     
-    mShader.uniform( "iChannel0", 0 );
     mShader.uniform( "iterations", iterations );
     mShader.uniform( "scale", scale );
     mShader.uniform( "fold", fold );

@@ -49,6 +49,7 @@
 #include "EffectShaders.h"
 #include "Cymatics.h"
 #include "CloudTunnel.h"
+#include "Waves.h"
 // test scenes
 #include "AudioSignal.h"
 #include "MindWaveTest.h"
@@ -412,6 +413,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("cells") )              addScene( new Cells() );
 //    if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
+    if( mConfig.getBool("textureshaders") )     addScene( new Waves() );
     
     if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     if( mConfig.getBool("contour") )            addScene( new Contour() );

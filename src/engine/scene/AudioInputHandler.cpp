@@ -57,8 +57,6 @@ void AudioInputHandler::setup(bool fboEnabled)
     const int audioFboHeight = 2;
     if (mAudioFboEnabled)
     {
-        mAudioFboSize   = ci::Vec2f( mAudioFboDim, audioFboHeight );
-        mAudioFboBounds = ci::Area( 0, 0, mAudioFboDim, audioFboHeight );
         gl::Fbo::Format audioFboFormat;
         audioFboFormat.setColorInternalFormat( GL_RGB32F_ARB );
         mAudioFbo       = gl::Fbo( mAudioFboDim, audioFboHeight, audioFboFormat );
@@ -299,8 +297,8 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
         gl::pushMatrices();
         gl::Texture fftTexture( fftSurface );
         mAudioFbo.bindFramebuffer();
-        gl::setMatricesWindow( mAudioFboSize, false );
-        gl::setViewport( mAudioFboBounds );
+        gl::setMatricesWindow( mAudioFbo.getSize(), false );
+        gl::setViewport( mAudioFbo.getBounds() );
         gl::color(ColorA::white());
         gl::clear();
         gl::draw( fftTexture );
