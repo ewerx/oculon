@@ -36,6 +36,7 @@ void CircleWave::setupShaders()
     
     mShaders.push_back( new Circle() );
     mShaders.push_back( new Spark() );
+    mShaders.push_back( new Trapezium() );
 }
 
 #pragma mark - Circle
@@ -125,6 +126,31 @@ void CircleWave::Spark::update(double dt)
 }
 
 void CircleWave::Spark::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    
+}
+
+#pragma mark - Trapezium
+
+CircleWave::Trapezium::Trapezium()
+: FragShader("trapezium", "trapezium.frag")
+{
+}
+
+void CircleWave::Trapezium::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void CircleWave::Trapezium::update(double dt)
+{
+    
+}
+
+void CircleWave::Trapezium::setCustomParams( AudioInputHandler& audioInputHandler )
 {
     
 }

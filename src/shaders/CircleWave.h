@@ -79,5 +79,17 @@ private:
         
     private:
     };
+    
+    class Trapezium: public FragShader
+    {
+    public:
+        Trapezium();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+    };
 };
 
