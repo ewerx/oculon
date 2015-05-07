@@ -14,9 +14,6 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/GlslProg.h"
 #include "TextureShaders.h"
-#include "MotionBlurRenderer.h"
-#include "AudioInputHandler.h"
-#include "TimeController.h"
 #include "FragShader.h"
 
 //
@@ -27,7 +24,6 @@ class Waves : public TextureShaders
 public:
     Waves();
     virtual ~Waves();
-    
     
 private:
     void setupShaders() override;

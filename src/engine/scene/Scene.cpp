@@ -117,7 +117,6 @@ void Scene::init(OculonApp* app)
 void Scene::setup()
 {
     mIsSetup = true;
-    mBackgroundAlpha = 1.0f;
     mLayerIndex = 0;
 }
 

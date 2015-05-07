@@ -15,30 +15,34 @@
 #include "Utils.h"
 
 using namespace ci;
+using namespace ci::app;
+using namespace std;
 
 CircleWave::CircleWave()
-: Scene("circlewave")
+: TextureShaders("circlewave")
 {
-    //mAudioInputHandler.setup(this, true);
+    mColor1 = ColorA::white();
+    mColor2 = ColorA::black();
+    mBackgroundAlpha = 0.0f;
 }
 
 CircleWave::~CircleWave()
 {
 }
 
-void CircleWave::setup()
+void CircleWave::setupShaders()
 {
-    Scene::setup();
+    mShaderType = 0;
     
-    mShader = loadFragShader("circlewave_frag.glsl");
-    
-    reset();
+    mShaders.push_back( new Circle() );
+    mShaders.push_back( new Spark() );
 }
 
-void CircleWave::reset()
+#pragma mark - Circle
+
+CircleWave::Circle::Circle()
+: FragShader("circle", "circlewave_frag.glsl")
 {
-    mElapsedTime = 0.0f;
-    
     mSeparation = 0.06f;
     mColorSeparation = false;
     mDetail = 0.5f;
@@ -46,86 +50,50 @@ void CircleWave::reset()
     mScale = 0.75f;
     mThickness = 0.0625f;
     
-    mColor1 = ColorA::white();
-    mColor2 = ColorA::black();
-    
-//    mBackgroundReaction = BG_REACTION_NONE;
+    //    mBackgroundReaction = BG_REACTION_NONE;
     mBackgroundFlash = false;
-    
-    mBackgroundAlpha = 0.0f;
 }
 
-void CircleWave::setupInterface()
+void CircleWave::Circle::setupInterface( Interface* interface, const std::string& prefix )
 {
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateFloatParam( "Separation", &mSeparation )
+    interface->gui()->addLabel(getName());
+    interface->addParam(CreateFloatParam( "Separation", &mSeparation )
                          .minValue(0.0f)
                          .maxValue(2.0f));
-    mInterface->addParam(CreateFloatParam( "Detail", &mDetail ));
-    mInterface->addParam(CreateIntParam( "Strands", &mStrands )
+    interface->addParam(CreateFloatParam( "Detail", &mDetail ));
+    interface->addParam(CreateIntParam( "Strands", &mStrands )
                          .minValue(1)
                          .maxValue(50));
-    mInterface->addParam(CreateFloatParam( "Scale", &mScale )
+    interface->addParam(CreateFloatParam( "Scale", &mScale )
                          .minValue(0.0f)
                          .maxValue(10.0f));
-    mInterface->addParam(CreateFloatParam( "Thickness", &mThickness )
+    interface->addParam(CreateFloatParam( "Thickness", &mThickness )
                          .minValue(0.001f));
-    mInterface->addParam(CreateBoolParam( "ColorSep", &mColorSeparation ));
-    mInterface->addParam(CreateBoolParam( "BackgroundFlash", &mBackgroundFlash ));
+    interface->addParam(CreateBoolParam( "ColorSep", &mColorSeparation ));
+    interface->addParam(CreateBoolParam( "BackgroundFlash", &mBackgroundFlash ));
     
-//    mInterface->gui()->addColumn();
-//    vector<string> bgReactionNames;
-//#define CIRCLEWAVE_BG_REACTION_ENTRY( nam, enm ) \
-//bgReactionNames.push_back(nam);
-//    CIRCLEWAVE_BG_REACTION_TUPLE
-//#undef  CIRCLEWAVE_BG_REACTION_ENTRY
-//    interface->addEnum(CreateEnumParam( "bg_reaction", (int*)(&mBackgroundReaction) )
-//                       .maxValue(BG_REACTION_COUNT)
-//                       .oscReceiver(name)
-//                       .isVertical(), bgReactionNames);
-    
-    mApp->getAudioInputHandler().setupInterface(mInterface, "global");
+    //    interface->gui()->addColumn();
+    //    vector<string> bgReactionNames;
+    //#define CIRCLEWAVE_BG_REACTION_ENTRY( nam, enm ) \
+    //bgReactionNames.push_back(nam);
+    //    CIRCLEWAVE_BG_REACTION_TUPLE
+    //#undef  CIRCLEWAVE_BG_REACTION_ENTRY
+    //    interface->addEnum(CreateEnumParam( "bg_reaction", (int*)(&mBackgroundReaction) )
+    //                       .maxValue(BG_REACTION_COUNT)
+    //                       .oscReceiver(name)
+    //                       .isVertical(), bgReactionNames);
 }
 
-void CircleWave::update(double dt)
+void CircleWave::Circle::update(double dt)
 {
-    Scene::update(dt);
     
-    //mAudioInputHandler.update(dt, mApp->getAudioInput());
-    
-    mElapsedTime += dt;
 }
 
-void CircleWave::draw()
+void CircleWave::Circle::setCustomParams( AudioInputHandler& audioInputHandler )
 {
-    gl::pushMatrices();
-
-    drawScene();
-    
-    gl::popMatrices();
-}
-
-void CircleWave::shaderPreDraw()
-{
-    // audio texture
-    if( mApp->getAudioInputHandler().hasTexture() )
-    {
-        mApp->getAudioInputHandler().getFbo().bindTexture(1);
-    }
-    
-    mShader.bind();
-    
-    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
-    
-    mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iGlobalTime", (float)mElapsedTime );
-    mShader.uniform( "audioDataTex", 1 );
-    mShader.uniform( "iColor1", mColor1 );
-    mShader.uniform( "iColor2", mColor2 );
-    
     mShader.uniform( "iSeparation", mSeparation );
     mShader.uniform( "iDetail", mDetail );
     mShader.uniform( "iStrands", mStrands );
@@ -136,36 +104,27 @@ void CircleWave::shaderPreDraw()
     //mShader.unfirom( "iBgReaction", (int)mBackgroundReaction );
 }
 
-void CircleWave::shaderPostDraw()
+#pragma mark - SparkWave
+
+CircleWave::Spark::Spark()
+: FragShader("spark", "sparkwave.frag")
 {
-    mShader.unbind();
-    
-    if( mApp->getAudioInputHandler().hasTexture() )
-    {
-        mApp->getAudioInputHandler().getFbo().unbindTexture();
-    }
 }
 
-void CircleWave::drawScene()
+void CircleWave::Spark::setupInterface( Interface* interface, const std::string& prefix )
 {
-    gl::enableAlphaBlending();
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    gl::disableDepthWrite();
-    gl::disableDepthRead();
-    
-    gl::pushMatrices();
-    gl::setMatricesWindow( mApp->getViewportSize() );
-    
-    shaderPreDraw();
-    
-    Utils::drawTexturedRect( mApp->getViewportBounds() );
-    
-    shaderPostDraw();
-    
-    gl::popMatrices();
+    interface->gui()->addLabel(getName());
 }
 
-void CircleWave::drawDebug()
+void CircleWave::Spark::update(double dt)
 {
-    mApp->getAudioInputHandler().drawDebug(mApp->getViewportSize());
+    
+}
+
+void CircleWave::Spark::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    
 }

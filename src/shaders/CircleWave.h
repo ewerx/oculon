@@ -13,76 +13,71 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/gl/GlslProg.h"
 #include "Scene.h"
-#include "MotionBlurRenderer.h"
-#include "GridRenderer.h"
-#include "AudioInputHandler.h"
-
-#include "OscMessage.h"
+#include "TextureShaders.h"
+#include "FragShader.h"
 
 //
-// Audio input tests
+// CircleWave
 //
-class CircleWave : public Scene
+class CircleWave : public TextureShaders
 {
 public:
     CircleWave();
     virtual ~CircleWave();
     
-    // inherited from Scene
-    void setup();
-    void reset();
-    void update(double dt);
-    void draw();
-    void drawDebug();
-    
-protected:// from Scene
-    void setupInterface();
-    ////void setupDebugInterface();
-    
 private:
-    void drawScene();
-    
-    void shaderPreDraw();
-    void shaderPostDraw();
+    void setupShaders() override;
     
 private:
 
-    ci::gl::GlslProg    mShader;
-    
-    // audio
-    //AudioInputHandler   mAudioInputHandler;
-    
-    // params
-    ci::ColorAf         mColor1;
-    ci::ColorAf         mColor2;
-    float               mTimeScale;
-    double              mElapsedTime;
-    
-    float               mSeparation;
-    float               mDetail;
-    int                 mStrands;
-    float               mScale;
-    bool                mColorSeparation;
-    float               mThickness;
-    
-    // background
+    class Circle: public FragShader
+    {
+    public:
+        Circle();
+
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+
+    private:
+        float mSeparation;
+        float mDetail;
+        int mStrands;
+        float mScale;
+        bool mColorSeparation;
+        float mThickness;
+
+        // background
 //#define CIRCLEWAVE_BG_REACTION_TUPLE \
-//CIRCLEWAVE_BG_REACTION_ENTRY( "None", BG_REACTION_NONE ) \
-//CIRCLEWAVE_BG_REACTION_ENTRY( "White", BG_REACTION_WHITE ) \
-//CIRCLEWAVE_BG_REACTION_ENTRY( "Color", BG_REACTION_COLOR ) \
-////end tuple
-//    
+// //CIRCLEWAVE_BG_REACTION_ENTRY( "None", BG_REACTION_NONE ) \
+// //CIRCLEWAVE_BG_REACTION_ENTRY( "White", BG_REACTION_WHITE ) \
+// //CIRCLEWAVE_BG_REACTION_ENTRY( "Color", BG_REACTION_COLOR ) \
+// ////end tuple
+//
 //    enum eBackgroundReaction
 //    {
 //#define CIRCLEWAVE_BG_REACTION_ENTRY( nam, enm ) \
-//enm,
+// //enm,
 //        CIRCLEWAVE_BG_REACTION_TUPLE
 //#undef  CIRCLEWAVE_BG_REACTION_ENTRY
-//        
+//
 //        BG_REACTION_COUNT
 //    };
 //    eBackgroundReaction mBackgroundReaction;
+
+        bool mBackgroundFlash;
+    };
     
-    bool                mBackgroundFlash;
+    class Spark: public FragShader
+    {
+    public:
+        Spark();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+    };
 };
 

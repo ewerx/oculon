@@ -38,8 +38,8 @@ void main()
         lineIntensity = 0.4 + squared(1.6 * abs(mod(uvTrue.x + i / 1.3 + iGlobalTime, 2.0) - 1.0));
         glowWidth = abs(lineIntensity / ( 150.0 * Y ));
         color += vec3(glowWidth * ( 2.0 + sin(iGlobalTime * 0.13)),
-                glowWidth * ( 2.0 - sin(iGlobalTime * 0.23)),
-                glowWidth * ( 2.0 - cos(iGlobalTime * 0.19)));
+                      glowWidth * ( 2.0 - sin(iGlobalTime * 0.23)),
+                      glowWidth * ( 2.0 - cos(iGlobalTime * 0.19)));
     }
 
     gl_FragColor = vec4(color, 1.0);

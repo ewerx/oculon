@@ -63,6 +63,7 @@ void Waves::MultiWave::setCustomParams( AudioInputHandler& audioInputHandler )
 {
 }
 
+
 #pragma mark - SparkWave
 
 Waves::SparkWave::SparkWave()
