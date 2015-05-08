@@ -55,7 +55,6 @@ void TextureShaders::setupShaders()
     mShaders.push_back( new BezierShader() );
     mShaders.push_back( new SimplicityShader() );
     mShaders.push_back( new KifsShader() );
-    mShaders.push_back( new GravityFieldShader() );
     mShaders.push_back( new PixelWeaveShader() );
 }
 

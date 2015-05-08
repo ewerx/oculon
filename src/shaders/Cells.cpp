@@ -13,32 +13,36 @@
 #include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
-#include <boost/format.hpp>
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
 Cells::Cells()
-: Scene("cells")
+: TextureShaders("cells")
 {
+    mColor1 = ColorA::white();
+    mColor2 = ColorA::black();
 }
 
 Cells::~Cells()
 {
 }
 
-void Cells::setup()
+void Cells::setupShaders()
 {
-    Scene::setup();
+    mShaderType = 0;
     
-    mAudioInputHandler.setup(false);
-    
-    mShader = loadFragShader("cells_frag.glsl");
-    
-    mColor1 = ColorA::white();
-    mColor2 = ColorA::black();
-    
+    mShaders.push_back( new MultiLayer() );
+    mShaders.push_back( new Bubbles() );
+    mShaders.push_back( new GravityFieldShader() );
+}
+
+#pragma mark - Circle
+
+Cells::MultiLayer::MultiLayer()
+: FragShader("multilayer", "cells_frag.glsl")
+{
     mAudioResponseFreqMin = 0.0f;
     mAudioResponseFreqMax = 1.0f;
     
@@ -63,156 +67,115 @@ void Cells::setup()
     mFrequency[5] = 64.0f;
     mFrequency[6] = 128.0f;
     
-    reset();
-}
-
-void Cells::reset()
-{
     for (int i = 0; i < CELLS_NUM_LAYERS; ++i)
     {
         mTime[i] = 0.0f;
     }
 }
 
-void Cells::setupInterface()
+void Cells::MultiLayer::setupInterface( Interface* interface, const std::string& prefix )
 {
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateFloatParam( "Zoom", &mZoom )
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    interface->addParam(CreateFloatParam( "Zoom", &mZoom )
                          .minValue(0.01f)
                          .maxValue(3.0f)
                          .oscReceiver(getName()));
     
-    mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor)
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor)
-                         .oscReceiver(getName()));
-    
-    mInterface->addParam(CreateFloatParam( "highlight", &mHighlight )
+    interface->addParam(CreateFloatParam( "highlight", &mHighlight )
                          .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(0, 1, 13));
-    mInterface->addParam(CreateFloatParam( "intensity", &mIntensity )
+    interface->addParam(CreateFloatParam( "intensity", &mIntensity )
                          .minValue(1.0f)
                          .maxValue(8.0f)
                          .oscReceiver(getName()));
     
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateFloatParam( "TimeStep1", &mTimeStep[0] )
+    interface->gui()->addColumn();
+    interface->addParam(CreateFloatParam( "TimeStep1", &mTimeStep[0] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(0, 1, 14));
-    mInterface->addParam(CreateFloatParam( "TimeStep2", &mTimeStep[1] )
+    interface->addParam(CreateFloatParam( "TimeStep2", &mTimeStep[1] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName())
                          .midiInput(0, 1, 15));
-    mInterface->addParam(CreateFloatParam( "TimeStep3", &mTimeStep[2] )
+    interface->addParam(CreateFloatParam( "TimeStep3", &mTimeStep[2] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep4", &mTimeStep[3] )
+    interface->addParam(CreateFloatParam( "TimeStep4", &mTimeStep[3] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep5", &mTimeStep[4] )
+    interface->addParam(CreateFloatParam( "TimeStep5", &mTimeStep[4] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep6", &mTimeStep[5] )
+    interface->addParam(CreateFloatParam( "TimeStep6", &mTimeStep[5] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "TimeStep7", &mTimeStep[6] )
+    interface->addParam(CreateFloatParam( "TimeStep7", &mTimeStep[6] )
                          .minValue(-2.0f)
                          .maxValue(2.0f)
                          .oscReceiver(getName()));
     
-    mInterface->gui()->addColumn();
-    mInterface->addParam(CreateFloatParam( "Frequency1", &mFrequency[0] )
+    interface->gui()->addColumn();
+    interface->addParam(CreateFloatParam( "Frequency1", &mFrequency[0] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency2", &mFrequency[1] )
+    interface->addParam(CreateFloatParam( "Frequency2", &mFrequency[1] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency3", &mFrequency[2] )
+    interface->addParam(CreateFloatParam( "Frequency3", &mFrequency[2] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency4", &mFrequency[3] )
+    interface->addParam(CreateFloatParam( "Frequency4", &mFrequency[3] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency5", &mFrequency[4] )
+    interface->addParam(CreateFloatParam( "Frequency5", &mFrequency[4] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency6", &mFrequency[5] )
+    interface->addParam(CreateFloatParam( "Frequency6", &mFrequency[5] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "Frequency7", &mFrequency[6] )
+    interface->addParam(CreateFloatParam( "Frequency7", &mFrequency[6] )
                          .maxValue(128.0f)
                          .oscReceiver(getName()));
     
     // audio params
-    mInterface->gui()->addColumn();
+    interface->gui()->addColumn();
     vector<string> audioResponseTypeNames;
 #define AUDIO_RESPONSE_TYPE_ENTRY( nam, enm ) \
 audioResponseTypeNames.push_back(nam);
     AUDIO_RESPONSE_TYPE_TUPLE
 #undef  AUDIO_RESPONSE_TYPE_ENTRY
-    mInterface->addEnum(CreateEnumParam( "AudioResponse", (int*)(&mAudioResponseType) )
+    interface->addEnum(CreateEnumParam( "AudioResponse", (int*)(&mAudioResponseType) )
                         .maxValue(AUDIO_RESPONSE_TYPE_COUNT)
                         .oscReceiver(getName())
                         .isVertical(), audioResponseTypeNames);
     
-    mInterface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
+    interface->addParam(CreateFloatParam("freqmin", &mAudioResponseFreqMin)
                          .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
+    interface->addParam(CreateFloatParam("freqmax", &mAudioResponseFreqMax)
                          .oscReceiver(getName()));
-    
-    mAudioInputHandler.setupInterface(mInterface, getName());
 }
 
-#pragma mark - CALLBACKS
-
-#pragma mark - UPDATE/DRAW
-
-void Cells::update(double dt)
+void Cells::MultiLayer::update(double dt)
 {
-    Scene::update(dt);
-    
-    mAudioInputHandler.update(dt, mApp->getAudioInput());
-    
     for (int i = 0; i < CELLS_NUM_LAYERS; ++i)
     {
         mTime[i] += dt * mTimeStep[i];
     }
 }
 
-void Cells::draw()
+void Cells::MultiLayer::setCustomParams( AudioInputHandler& audioInputHandler )
 {
-    gl::pushMatrices();
-
-    drawScene();
-    
-    gl::popMatrices();
-}
-
-void Cells::shaderPreDraw()
-{
-    // audio texture
-//    if( mAudioInputHandler.hasTexture() )
-//    {
-//        mAudioInputHandler.getFbo().bindTexture(1);
-//    }
-//
-    
-    mShader.bind();
-    
-    Vec2f resolution = Vec2f( mApp->getViewportWidth(), mApp->getViewportHeight() );
-    
-    mShader.uniform( "iResolution", resolution );
-    mShader.uniform( "iColor1", mColor1);
-    mShader.uniform( "iColor2", mColor2);
-    
     mShader.uniform("iZoom", mZoom);
     mShader.uniform("iHighlight", mHighlight);
     
@@ -235,7 +198,7 @@ void Cells::shaderPreDraw()
     
     if (mAudioResponseType == AUDIO_RESPONSE_MULTI)
     {
-        AudioInputHandler &aih = mAudioInputHandler;
+        AudioInputHandler &aih = audioInputHandler;
         mShader.uniform("iBrightness1", mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * 10.0f);
         mShader.uniform("iBrightness2", mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * 10.0f);
         mShader.uniform("iBrightness3", mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * 10.0f);
@@ -250,7 +213,7 @@ void Cells::shaderPreDraw()
         
         if (mAudioResponseType == AUDIO_RESPONSE_SINGLE)
         {
-            brightness *= 100.0f * mAudioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
+            brightness *= 100.0f * audioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
         }
         
         mShader.uniform("iBrightness1", brightness);
@@ -263,37 +226,27 @@ void Cells::shaderPreDraw()
     }
 }
 
-void Cells::shaderPostDraw()
+#pragma mark - Bubbles
+
+Cells::Bubbles::Bubbles()
+: FragShader("Bubbles", "bluecells.frag")
 {
-    mShader.unbind();
     
-    // audio texture
-//    if( mAudioInputHandler.hasTexture() )
-//    {
-//        mAudioInputHandler.getFbo().unbindTexture();
-//    }
 }
 
-void Cells::drawScene()
+void Cells::Bubbles::setupInterface( Interface* interface, const std::string& prefix )
 {
-    gl::enableAlphaBlending();
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    gl::disableDepthWrite();
-    gl::disableDepthRead();
-    
-    gl::pushMatrices();
-    gl::setMatricesWindow( mApp->getViewportSize() );
-    
-    shaderPreDraw();
-    
-    Utils::drawTexturedRect( mApp->getViewportBounds() );
-    
-    shaderPostDraw();
-    
-    gl::popMatrices();
+    interface->gui()->addLabel(getName());
 }
 
-void Cells::drawDebug()
+void Cells::Bubbles::update(double dt)
 {
-    mAudioInputHandler.drawDebug(mApp->getViewportSize());
+    
+}
+
+void Cells::Bubbles::setCustomParams( AudioInputHandler& audioInputHandler )
+{
 }

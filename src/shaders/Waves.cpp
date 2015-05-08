@@ -33,8 +33,7 @@ void Waves::setupShaders()
     mShaderType = 0;
     
     mShaders.push_back( new MultiWave() );
-    mShaders.push_back( new SparkWave() );
-//    mShaders.push_back( new SineWave() );
+    mShaders.push_back( new SineWave() );
 //    mShaders.push_back( new Oscilloscope() );
 }
 
@@ -64,15 +63,15 @@ void Waves::MultiWave::setCustomParams( AudioInputHandler& audioInputHandler )
 }
 
 
-#pragma mark - SparkWave
+#pragma mark - SineWave
 
-Waves::SparkWave::SparkWave()
-: FragShader("SparkWave", "sparkwave.frag")
+Waves::SineWave::SineWave()
+: FragShader("SineWave", "sines.frag")
 {
     
 }
 
-void Waves::SparkWave::setupInterface( Interface* interface, const std::string& prefix )
+void Waves::SineWave::setupInterface( Interface* interface, const std::string& prefix )
 {
     string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
@@ -80,11 +79,11 @@ void Waves::SparkWave::setupInterface( Interface* interface, const std::string& 
     interface->gui()->addLabel(getName());
 }
 
-void Waves::SparkWave::update(double dt)
+void Waves::SineWave::update(double dt)
 {
     
 }
 
-void Waves::SparkWave::setCustomParams( AudioInputHandler& audioInputHandler )
+void Waves::SineWave::setCustomParams( AudioInputHandler& audioInputHandler )
 {
 }

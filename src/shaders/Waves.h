@@ -43,19 +43,6 @@ private:
         
     };
     
-    class SparkWave : public FragShader
-    {
-    public:
-        SparkWave();
-        
-        virtual void setupInterface( Interface* interface, const std::string& name );
-        virtual void update(double dt);
-        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
-        
-    private:
-        
-    };
-    
     class SineWave : public FragShader
     {
     public:

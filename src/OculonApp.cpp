@@ -411,7 +411,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
     if( mConfig.getBool("cells") )              addScene( new Cells() );
-//    if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
+    if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     if( mConfig.getBool("textureshaders") )     addScene( new Waves() );
     

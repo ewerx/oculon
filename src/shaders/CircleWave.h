@@ -8,10 +8,7 @@
 
 #pragma once
 
-#include <vector>
 #include "cinder/Cinder.h"
-#include "cinder/gl/Fbo.h"
-#include "cinder/gl/GlslProg.h"
 #include "Scene.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
