@@ -68,4 +68,35 @@ private:
     private:
         
     };
+    
+    class Oscillator : public FragShader
+    {
+    public:
+        Oscillator();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        struct tWaveParams
+        {
+            ci::Anim<ci::ColorAf>   mColor;
+            float                   mElapsedTime;
+            float                   mTimeScale;
+            float                   mOffset;
+            ci::Anim<float>         mAmplitude;
+            ci::Anim<float>         mFrequency;
+            bool                    mAudioPhase;
+            bool                    mAudioAmp;
+        };
+        enum { MAX_WAVES = 1 };
+        tWaveParams mWaveParams[MAX_WAVES];
+        
+        float         mTimeScale;
+        float         mAmplitude;
+        float         mFrequency;
+        bool          mAudioPhase;
+        bool          mAudioAmp;
+    };
 };

@@ -472,40 +472,6 @@ void TextureShaders::BezierShader::setCustomParams( AudioInputHandler& audioInpu
     mShader.uniform( "iPoint2Range", mPoint2Range );
 }
 
-#pragma mark - GravityField
-
-TextureShaders::GravityFieldShader::GravityFieldShader()
-: FragShader("gravityfield", "gravityfield_frag.glsl")
-{
-    mPoints = 64;
-    mMode = 0;
-}
-
-void TextureShaders::GravityFieldShader::setupInterface( Interface* interface, const std::string& prefix )
-{
-    string oscName = prefix + "/" + getName();
-    vector<string> bandNames = AudioInputHandler::getBandNames();
-    
-    interface->gui()->addLabel(getName());
-    
-    interface->addParam(CreateIntParam( "points", &mPoints )
-                        .minValue(1)
-                        .maxValue(256));
-    interface->addParam(CreateIntParam( "mode", &mMode )
-                        .minValue(0)
-                        .maxValue(2));
-}
-
-void TextureShaders::GravityFieldShader::update(double dt)
-{
-}
-
-void TextureShaders::GravityFieldShader::setCustomParams( AudioInputHandler& audioInputHandler )
-{
-    mShader.uniform( "iMode", mMode );
-    mShader.uniform( "iPoints", mPoints );
-}
-
 #pragma mark - PixelWeave
 
 TextureShaders::PixelWeaveShader::PixelWeaveShader()

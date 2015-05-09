@@ -43,7 +43,6 @@
 #include "ObjectShaders.h"
 #include "TextureShaders.h"
 #include "Voronoi.h"
-#include "Oscillator.h"
 #include "RootFract.h"
 #include "Menger.h"
 #include "EffectShaders.h"
@@ -415,7 +414,6 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     if( mConfig.getBool("textureshaders") )     addScene( new Waves() );
     
-    if( mConfig.getBool("oscillator") )         addScene( new Oscillator() );
     if( mConfig.getBool("contour") )            addScene( new Contour() );
     
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );

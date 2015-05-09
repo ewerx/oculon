@@ -250,3 +250,38 @@ void Cells::Bubbles::update(double dt)
 void Cells::Bubbles::setCustomParams( AudioInputHandler& audioInputHandler )
 {
 }
+
+
+#pragma mark - GravityField
+
+Cells::GravityFieldShader::GravityFieldShader()
+: FragShader("gravityfield", "gravityfield_frag.glsl")
+{
+    mPoints = 64;
+    mMode = 0;
+}
+
+void Cells::GravityFieldShader::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateIntParam( "points", &mPoints )
+                        .minValue(1)
+                        .maxValue(256));
+    interface->addParam(CreateIntParam( "mode", &mMode )
+                        .minValue(0)
+                        .maxValue(2));
+}
+
+void Cells::GravityFieldShader::update(double dt)
+{
+}
+
+void Cells::GravityFieldShader::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform( "iMode", mMode );
+    mShader.uniform( "iPoints", mPoints );
+}

@@ -64,10 +64,10 @@ void main(void)
 	// Sin waves
 	for(float i=0.0 ; i<nSin ; i++)
 	{
-		float amplitude = iAmplitude*1.0*noise(i*0.2454)*sin(iGlobalTime+noise(i)*100.0);
-		float offset = iOffset;
+		float amplitude = iAmplitude*iResolution.y*1.0*noise(i*0.2454)*sin(iGlobalTime+noise(i)*100.0);
+		float offset = iOffset * iResolution.y;
 		float frequency = 0.1*noise(i*10.2454);
-		float phase = noise(i*10.2454)*1.0*iGlobalTime*iPhase/iResolution.x;
+		float phase = noise(i*10.2454)*1.0*iGlobalTime*iPhase*iResolution.y/iResolution.x;
 		float line = wave(amplitude,offset,frequency,phase,gl_FragCoord.x);
 		colorSin += 0.5/abs(line-gl_FragCoord.y);
 	}
