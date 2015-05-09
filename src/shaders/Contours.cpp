@@ -16,7 +16,7 @@ using namespace ci::app;
 using namespace std;
 
 Contours::Contours()
-: TextureShaders("Contours")
+: TextureShaders("contours")
 {
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();

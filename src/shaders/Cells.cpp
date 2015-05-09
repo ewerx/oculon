@@ -34,7 +34,7 @@ void Cells::setupShaders()
     mShaderType = 0;
     
     mShaders.push_back( new MultiLayer() );
-    mShaders.push_back( new Bubbles() );
+    mShaders.push_back( new Worley() );
     mShaders.push_back( new GravityFieldShader() );
 }
 
@@ -226,15 +226,15 @@ void Cells::MultiLayer::setCustomParams( AudioInputHandler& audioInputHandler )
     }
 }
 
-#pragma mark - Bubbles
+#pragma mark - Worley
 
-Cells::Bubbles::Bubbles()
-: FragShader("Bubbles", "bluecells.frag")
+Cells::Worley::Worley()
+: FragShader("worley", "bluecells.frag")
 {
     
 }
 
-void Cells::Bubbles::setupInterface( Interface* interface, const std::string& prefix )
+void Cells::Worley::setupInterface( Interface* interface, const std::string& prefix )
 {
     string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
@@ -242,12 +242,12 @@ void Cells::Bubbles::setupInterface( Interface* interface, const std::string& pr
     interface->gui()->addLabel(getName());
 }
 
-void Cells::Bubbles::update(double dt)
+void Cells::Worley::update(double dt)
 {
     
 }
 
-void Cells::Bubbles::setCustomParams( AudioInputHandler& audioInputHandler )
+void Cells::Worley::setCustomParams( AudioInputHandler& audioInputHandler )
 {
 }
 

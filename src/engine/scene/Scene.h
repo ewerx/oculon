@@ -61,7 +61,7 @@ public:
     void drawToFbo();
     void publishToSyphon();
     ci::gl::Fbo& getFbo()                   { return mFbo; }
-    ci::gl::Texture getFboTexture()         { return mFbo.getTexture(); }
+    ci::gl::Texture& getFboTexture()        { return mFbo.getTexture(); }
     
     OculonApp* getApp() const               { return mApp; }
     

@@ -33,6 +33,7 @@ void CircleWave::setupShaders()
     mShaders.push_back( new Circle() );
     mShaders.push_back( new Spark() );
     mShaders.push_back( new Trapezium() );
+    mShaders.push_back( new Ether() );
 }
 
 #pragma mark - Circle
@@ -147,6 +148,31 @@ void CircleWave::Trapezium::update(double dt)
 }
 
 void CircleWave::Trapezium::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    
+}
+
+#pragma mark - Ether
+
+CircleWave::Ether::Ether()
+: FragShader("ether", "ether.frag")
+{
+}
+
+void CircleWave::Ether::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void CircleWave::Ether::update(double dt)
+{
+    
+}
+
+void CircleWave::Ether::setCustomParams( AudioInputHandler& audioInputHandler )
 {
     
 }

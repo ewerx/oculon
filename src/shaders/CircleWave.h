@@ -90,5 +90,18 @@ private:
         
     private:
     };
+    
+#pragma mark -
+    class Ether: public FragShader
+    {
+    public:
+        Ether();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+    };
 };
 

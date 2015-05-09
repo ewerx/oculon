@@ -69,10 +69,10 @@ enm,
         float mIntensity;
     };
 
-    class Bubbles: public FragShader
+    class Worley: public FragShader
     {
     public:
-        Bubbles();
+        Worley();
         
         virtual void setupInterface( Interface* interface, const std::string& name );
         virtual void update(double dt);

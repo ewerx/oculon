@@ -57,30 +57,57 @@ private:
     // inputs
     std::vector<tNamedTexture> mInputTextures;
     int mCurrentInputTexture;
-};
-
-#pragma mark - Effects
-
-class TelevisionEffect : public FragShader
-{
+    
 public:
-    TelevisionEffect();
-    void setupInterface( Interface* interface, const std::string& prefix );
-    void setCustomParams( AudioInputHandler& audioInputHandler );
+#pragma mark -
     
-private:
-    float   mPowerBandThickness;
-    int     mPowerBandThicknessResponse;
-    float   mPowerBandIntensity;
-    int     mPowerBandIntensityResponse;
-    float   mPowerBandSpeed;
-    int     mPowerBandSpeedResponse;
-    float   mSignalNoise;
-    int     mSignalNoiseResponse;
-    float   mScanlines;
+    class CathodeRay : public FragShader
+    {
+    public:
+        CathodeRay();
+        void setupInterface( Interface* interface, const std::string& prefix );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        float   mPowerBandThickness;
+        int     mPowerBandThicknessResponse;
+        float   mPowerBandIntensity;
+        int     mPowerBandIntensityResponse;
+        float   mPowerBandSpeed;
+        int     mPowerBandSpeedResponse;
+        float   mSignalNoise;
+        int     mSignalNoiseResponse;
+        float   mScanlines;
+        
+        ci::ColorAf  mTintColor;
+        
+    };
     
-    ci::ColorAf  mTintColor;
+    #pragma mark -
+    class VideoTape : public FragShader
+    {
+    public:
+        VideoTape();
+        void setupInterface( Interface* interface, const std::string& prefix );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
     
+    #pragma mark -
+    class Television : public FragShader
+    {
+    public:
+        Television();
+        void setupInterface( Interface* interface, const std::string& prefix );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
 };
+
+
 
 

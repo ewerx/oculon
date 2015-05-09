@@ -33,7 +33,9 @@ void EffectShaders::setup()
     mAudioInputHandler.setup(true);
     
     // effects
-    mEffects.push_back( new TelevisionEffect() );
+    mEffects.push_back( new CathodeRay() );
+    mEffects.push_back( new Television() );
+    mEffects.push_back( new VideoTape() );
     
     // inputs
     vector<Scene*> scenes;
@@ -43,9 +45,13 @@ void EffectShaders::setup()
     scenes.push_back( mApp->getScene("audio") );
     scenes.push_back( mApp->getScene("objectshaders") );
     scenes.push_back( mApp->getScene("tilings") );
-    scenes.push_back( mApp->getScene("graviton") );
-    scenes.push_back( mApp->getScene("shadertest") );
+//    scenes.push_back( mApp->getScene("graviton") );
+//    scenes.push_back( mApp->getScene("shadertest") );
     scenes.push_back( mApp->getScene("circlewave") );
+    scenes.push_back( mApp->getScene("waves") );
+    scenes.push_back( mApp->getScene("contours") );
+    scenes.push_back( mApp->getScene("cells") );
+    scenes.push_back( mApp->getScene("tilings") );
     
     for (Scene* scene : scenes )
     {
@@ -182,10 +188,10 @@ void EffectShaders::draw()
     glPopAttrib();
 }
 
-#pragma mark  - Effects
+#pragma mark - CRT
 
-TelevisionEffect::TelevisionEffect()
-: FragShader("television", "crtinterference_frag.glsl")
+EffectShaders::CathodeRay::CathodeRay()
+: FragShader("crt", "effect_crt.frag")
 {
     mPowerBandThickness = 0.1; // percentage of v-size
     mPowerBandSpeed = -0.2;
@@ -202,7 +208,7 @@ TelevisionEffect::TelevisionEffect()
     mTintColor = ColorAf(0.9f, 0.7f, 1.2f, 1.0f);
 }
 
-void TelevisionEffect::setupInterface(Interface *interface, const std::string &prefix)
+void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::string &prefix)
 {
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
@@ -247,14 +253,52 @@ void TelevisionEffect::setupInterface(Interface *interface, const std::string &p
     interface->addParam(CreateColorParam("tintcolor", &mTintColor, kMinColor, kMaxColor));
 }
 
-void TelevisionEffect::setCustomParams(AudioInputHandler &audioInputHandler)
+void EffectShaders::CathodeRay::setCustomParams(AudioInputHandler &audioInputHandler)
 {
-    
-    
     mShader.uniform("iPowerBandThickness", mPowerBandThickness * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandThicknessResponse)));
     mShader.uniform("iPowerBandIntensity", mPowerBandIntensity * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandIntensityResponse)));
     mShader.uniform("iPowerBandSpeed", mPowerBandSpeed * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandSpeedResponse)));
     mShader.uniform("iSignalNoise", mSignalNoise * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mSignalNoiseResponse)));
     mShader.uniform("iScanlines", mScanlines);
     mShader.uniform("iColor1", mTintColor);
+}
+
+#pragma mark - Television
+
+EffectShaders::Television::Television()
+: FragShader("television", "effect_tv.frag")
+{
+    
+}
+
+void EffectShaders::Television::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void EffectShaders::Television::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+}
+
+#pragma mark - VCR
+
+EffectShaders::VideoTape::VideoTape()
+: FragShader("vcr", "effect_vcr.frag")
+{
+    
+}
+
+void EffectShaders::VideoTape::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void EffectShaders::VideoTape::setCustomParams( AudioInputHandler& audioInputHandler )
+{
 }
