@@ -42,7 +42,6 @@
 #include "Tilings.h"
 #include "ObjectShaders.h"
 #include "TextureShaders.h"
-#include "Voronoi.h"
 #include "RootFract.h"
 #include "Menger.h"
 #include "EffectShaders.h"
@@ -403,7 +402,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
-//    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
     if( mConfig.getBool("textureshaders") )     addScene( new CloudTunnel() );
 
@@ -417,7 +416,6 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("contour") )            addScene( new Contour() );
     
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
-    if( mConfig.getBool("voronoi") )            addScene( new Voronoi() );
     
     if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
     

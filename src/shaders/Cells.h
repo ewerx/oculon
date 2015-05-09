@@ -14,7 +14,7 @@
 #include "FragShader.h"
 
 //
-// Cells
+// Cellular Noise
 //
 class Cells : public TextureShaders
 {

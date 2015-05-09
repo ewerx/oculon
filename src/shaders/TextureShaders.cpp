@@ -143,6 +143,7 @@ void TextureShaders::shaderPreDraw()
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
+    shader.uniform( "iTimeScale", mTimeController.getTimeScale() );
     shader.uniform( "iColor1", mColor1);
     shader.uniform( "iColor2", mColor2);
     shader.uniform( "iChannel0", 0 );

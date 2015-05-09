@@ -156,7 +156,6 @@
 		7C584DD419FD5C8200EB9609 /* jupiter_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C584DB519FD5C8200EB9609 /* jupiter_diffuse.jpg */; };
 		7C5B69771819745800AB2C8D /* Tilings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B69751819745800AB2C8D /* Tilings.cpp */; };
 		7C5B697A18197A7F00AB2C8D /* Rings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B697818197A7F00AB2C8D /* Rings.cpp */; };
-		7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60384E18417A910068F4C1 /* Voronoi.cpp */; };
 		7C62765D1824A92E00724B87 /* PingPongFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C62765B1824A92E00724B87 /* PingPongFbo.cpp */; };
 		7C6276651824B29500724B87 /* Graviton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C9D617650FD700E71F9D /* Graviton.cpp */; };
 		7C6B241418B87815007BA146 /* GravitonRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241218B87815007BA146 /* GravitonRenderer.cpp */; };
@@ -763,8 +762,6 @@
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
 		7C5B697918197A7F00AB2C8D /* Rings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rings.h; sourceTree = "<group>"; };
-		7C60384E18417A910068F4C1 /* Voronoi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Voronoi.cpp; sourceTree = "<group>"; };
-		7C60384F18417A910068F4C1 /* Voronoi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voronoi.h; sourceTree = "<group>"; };
 		7C6276581824780000724B87 /* FractalShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractalShaders.cpp; sourceTree = "<group>"; };
 		7C6276591824780000724B87 /* FractalShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractalShaders.h; sourceTree = "<group>"; };
 		7C62765B1824A92E00724B87 /* PingPongFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingPongFbo.cpp; sourceTree = "<group>"; };
@@ -1699,37 +1696,43 @@
 			name = refactor;
 			sourceTree = "<group>";
 		};
-		7C5B69741819745800AB2C8D /* shaders */ = {
+		7C5760A61AFD8ECB00423BF6 /* refactored */ = {
 			isa = PBXGroup;
 			children = (
 				7CC562601836BB3100B128D4 /* Cells.cpp */,
 				7CC562611836BB3100B128D4 /* Cells.h */,
 				7C4C6744181CCD78003049AA /* CircleWave.cpp */,
 				7C4C6745181CCD78003049AA /* CircleWave.h */,
-				7C6276581824780000724B87 /* FractalShaders.cpp */,
-				7C6276591824780000724B87 /* FractalShaders.h */,
-				7CA78BF41825988100505794 /* ObjectShaders.cpp */,
-				7CA78BF51825988100505794 /* ObjectShaders.h */,
-				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
-				7C5B697918197A7F00AB2C8D /* Rings.h */,
 				7C4C6740181C9928003049AA /* TextureShaders.cpp */,
 				7C4C6741181C9928003049AA /* TextureShaders.h */,
-				7C5B69751819745800AB2C8D /* Tilings.cpp */,
-				7C5B69761819745800AB2C8D /* Tilings.h */,
-				7C60384E18417A910068F4C1 /* Voronoi.cpp */,
-				7C60384F18417A910068F4C1 /* Voronoi.h */,
-				7C0D6F7219231D74008F56CB /* RootFract.cpp */,
-				7C0D6F7319231D74008F56CB /* RootFract.h */,
 				7C6CB4351925AFDD00D83614 /* EffectShaders.cpp */,
 				7C6CB4361925AFDD00D83614 /* EffectShaders.h */,
 				7C4DBFBE1928002E00FDDDC3 /* Menger.cpp */,
 				7C4DBFBF1928002E00FDDDC3 /* Menger.h */,
+				7C4E0F311AF9B86E00EB54C3 /* Waves.cpp */,
+				7C4E0F321AF9B86E00EB54C3 /* Waves.h */,
+			);
+			name = refactored;
+			sourceTree = "<group>";
+		};
+		7C5B69741819745800AB2C8D /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
+				7C5B697918197A7F00AB2C8D /* Rings.h */,
+				7C5760A61AFD8ECB00423BF6 /* refactored */,
+				7C6276581824780000724B87 /* FractalShaders.cpp */,
+				7C6276591824780000724B87 /* FractalShaders.h */,
+				7CA78BF41825988100505794 /* ObjectShaders.cpp */,
+				7CA78BF51825988100505794 /* ObjectShaders.h */,
+				7C5B69751819745800AB2C8D /* Tilings.cpp */,
+				7C5B69761819745800AB2C8D /* Tilings.h */,
+				7C0D6F7219231D74008F56CB /* RootFract.cpp */,
+				7C0D6F7319231D74008F56CB /* RootFract.h */,
 				7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */,
 				7C4DBFC919295E3000FDDDC3 /* Cymatics.h */,
 				7CD4224F192E701700CCE7BF /* CloudTunnel.cpp */,
 				7CD42250192E701700CCE7BF /* CloudTunnel.h */,
-				7C4E0F311AF9B86E00EB54C3 /* Waves.cpp */,
-				7C4E0F321AF9B86E00EB54C3 /* Waves.h */,
 			);
 			name = shaders;
 			path = ../src/shaders;
@@ -3390,7 +3393,6 @@
 				7C79C94617650F8F00E71F9D /* motionBlur.frag in Sources */,
 				7C187E48191093D3003590EC /* SimplexNoiseTexture.cpp in Sources */,
 				7C79C94817650F8F00E71F9D /* passThru.vert in Sources */,
-				7C60385018417A910068F4C1 /* Voronoi.cpp in Sources */,
 				7C159BA818B7017E005245CB /* ParticleRenderer.cpp in Sources */,
 				7C79C94917650F8F00E71F9D /* passthru.vsh in Sources */,
 				7C79C94B17650F8F00E71F9D /* passThruNormals.vert in Sources */,

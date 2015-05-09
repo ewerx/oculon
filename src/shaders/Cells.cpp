@@ -6,13 +6,13 @@
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
-#include "OculonApp.h"
-#include "Interface.h"
 #include "Cells.h"
+#include "Interface.h"
+#include "OculonApp.h"
 #include "Utils.h"
-#include "cinder/Utilities.h"
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
+#include "cinder/Utilities.h"
 
 using namespace ci;
 using namespace ci::app;
