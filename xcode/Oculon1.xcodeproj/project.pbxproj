@@ -114,6 +114,8 @@
 		7C5517AE1A5CD9BF000C7703 /* OutputChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517AC1A5CD9BF000C7703 /* OutputChannel.cpp */; };
 		7C5517B01A5CDF2A000C7703 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517AF1A5CDF2A000C7703 /* SceneController.cpp */; };
 		7C5517B31A5CE239000C7703 /* OutputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5517B11A5CE239000C7703 /* OutputController.cpp */; };
+		7C5760A81AFD97BC00423BF6 /* elevation.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C5760A71AFD97BC00423BF6 /* elevation.frag */; };
+		7C5760AB1AFD983A00423BF6 /* Contours.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5760A91AFD983A00423BF6 /* Contours.cpp */; };
 		7C584D7F19FC390400EB9609 /* SceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D7D19FC390400EB9609 /* SceneCam.cpp */; };
 		7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8019FC3DA000EB9609 /* SpinCam.cpp */; };
 		7C584D8519FC441800EB9609 /* OtherSceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */; };
@@ -300,8 +302,6 @@
 		7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97817650FD700E71F9D /* Triangle.cpp */; };
 		7C79CA3417650FD800E71F9D /* Binned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97B17650FD700E71F9D /* Binned.cpp */; };
 		7C79CA3517650FD800E71F9D /* BinnedParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C97E17650FD700E71F9D /* BinnedParticleSystem.cpp */; };
-		7C79CA3617650FD800E71F9D /* Contour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C98117650FD700E71F9D /* Contour.cpp */; };
-		7C79CA3717650FD800E71F9D /* contours.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C98317650FD700E71F9D /* contours.cpp */; };
 		7C79CA3817650FD800E71F9D /* AudioInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C98617650FD700E71F9D /* AudioInput.cpp */; };
 		7C79CA3A17650FD800E71F9D /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C98B17650FD700E71F9D /* CameraController.cpp */; };
 		7C79CA3B17650FD800E71F9D /* SplineCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C79C98D17650FD700E71F9D /* SplineCam.cpp */; };
@@ -712,6 +712,9 @@
 		7C5517B11A5CE239000C7703 /* OutputController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputController.cpp; sourceTree = "<group>"; };
 		7C5517B21A5CE239000C7703 /* OutputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputController.h; sourceTree = "<group>"; };
 		7C5517B51A5CF472000C7703 /* NamedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamedObject.h; sourceTree = "<group>"; };
+		7C5760A71AFD97BC00423BF6 /* elevation.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = elevation.frag; sourceTree = "<group>"; };
+		7C5760A91AFD983A00423BF6 /* Contours.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Contours.cpp; sourceTree = "<group>"; };
+		7C5760AA1AFD983A00423BF6 /* Contours.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contours.h; sourceTree = "<group>"; };
 		7C584D7D19FC390400EB9609 /* SceneCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneCam.cpp; sourceTree = "<group>"; };
 		7C584D7E19FC390400EB9609 /* SceneCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneCam.h; sourceTree = "<group>"; };
 		7C584D8019FC3DA000EB9609 /* SpinCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinCam.cpp; sourceTree = "<group>"; };
@@ -762,8 +765,6 @@
 		7C5B69761819745800AB2C8D /* Tilings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tilings.h; sourceTree = "<group>"; };
 		7C5B697818197A7F00AB2C8D /* Rings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rings.cpp; sourceTree = "<group>"; };
 		7C5B697918197A7F00AB2C8D /* Rings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rings.h; sourceTree = "<group>"; };
-		7C6276581824780000724B87 /* FractalShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractalShaders.cpp; sourceTree = "<group>"; };
-		7C6276591824780000724B87 /* FractalShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractalShaders.h; sourceTree = "<group>"; };
 		7C62765B1824A92E00724B87 /* PingPongFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingPongFbo.cpp; sourceTree = "<group>"; };
 		7C62765C1824A92E00724B87 /* PingPongFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingPongFbo.h; sourceTree = "<group>"; };
 		7C6B241218B87815007BA146 /* GravitonRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonRenderer.cpp; sourceTree = "<group>"; };
@@ -936,10 +937,6 @@
 		7C79C97D17650FD700E71F9D /* BinnedParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticle.h; sourceTree = "<group>"; };
 		7C79C97E17650FD700E71F9D /* BinnedParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinnedParticleSystem.cpp; sourceTree = "<group>"; };
 		7C79C97F17650FD700E71F9D /* BinnedParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinnedParticleSystem.h; sourceTree = "<group>"; };
-		7C79C98117650FD700E71F9D /* Contour.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Contour.cpp; sourceTree = "<group>"; };
-		7C79C98217650FD700E71F9D /* Contour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contour.h; sourceTree = "<group>"; };
-		7C79C98317650FD700E71F9D /* contours.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = contours.cpp; sourceTree = "<group>"; };
-		7C79C98417650FD700E71F9D /* contours.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = contours.h; sourceTree = "<group>"; };
 		7C79C98617650FD700E71F9D /* AudioInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioInput.cpp; sourceTree = "<group>"; };
 		7C79C98717650FD700E71F9D /* AudioInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioInput.h; sourceTree = "<group>"; };
 		7C79C98817650FD700E71F9D /* BlobTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobTracker.cpp; sourceTree = "<group>"; };
@@ -1699,6 +1696,8 @@
 		7C5760A61AFD8ECB00423BF6 /* refactored */ = {
 			isa = PBXGroup;
 			children = (
+				7C5B69751819745800AB2C8D /* Tilings.cpp */,
+				7C5B69761819745800AB2C8D /* Tilings.h */,
 				7CC562601836BB3100B128D4 /* Cells.cpp */,
 				7CC562611836BB3100B128D4 /* Cells.h */,
 				7C4C6744181CCD78003049AA /* CircleWave.cpp */,
@@ -1711,6 +1710,8 @@
 				7C4DBFBF1928002E00FDDDC3 /* Menger.h */,
 				7C4E0F311AF9B86E00EB54C3 /* Waves.cpp */,
 				7C4E0F321AF9B86E00EB54C3 /* Waves.h */,
+				7C5760A91AFD983A00423BF6 /* Contours.cpp */,
+				7C5760AA1AFD983A00423BF6 /* Contours.h */,
 			);
 			name = refactored;
 			sourceTree = "<group>";
@@ -1721,12 +1722,8 @@
 				7C5B697818197A7F00AB2C8D /* Rings.cpp */,
 				7C5B697918197A7F00AB2C8D /* Rings.h */,
 				7C5760A61AFD8ECB00423BF6 /* refactored */,
-				7C6276581824780000724B87 /* FractalShaders.cpp */,
-				7C6276591824780000724B87 /* FractalShaders.h */,
 				7CA78BF41825988100505794 /* ObjectShaders.cpp */,
 				7CA78BF51825988100505794 /* ObjectShaders.h */,
-				7C5B69751819745800AB2C8D /* Tilings.cpp */,
-				7C5B69761819745800AB2C8D /* Tilings.h */,
 				7C0D6F7219231D74008F56CB /* RootFract.cpp */,
 				7C0D6F7319231D74008F56CB /* RootFract.h */,
 				7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */,
@@ -2192,18 +2189,6 @@
 			);
 			name = binned;
 			path = ../src/bps;
-			sourceTree = "<group>";
-		};
-		7C79C98017650FD700E71F9D /* contour */ = {
-			isa = PBXGroup;
-			children = (
-				7C79C98117650FD700E71F9D /* Contour.cpp */,
-				7C79C98217650FD700E71F9D /* Contour.h */,
-				7C79C98317650FD700E71F9D /* contours.cpp */,
-				7C79C98417650FD700E71F9D /* contours.h */,
-			);
-			name = contour;
-			path = ../src/contour;
 			sourceTree = "<group>";
 		};
 		7C79C98517650FD700E71F9D /* engine */ = {
@@ -2692,7 +2677,6 @@
 				7C79C96B17650FD700E71F9D /* audio */,
 				7C79C97A17650FD700E71F9D /* binned */,
 				7C79C9FF17650FD700E71F9D /* catalog */,
-				7C79C98017650FD700E71F9D /* contour */,
 				7C79CA1A17650FD700E71F9D /* corona */,
 				7C7CDB101881F2460064999F /* deformer */,
 				7CC3C027183ED0370082C322 /* dust */,
@@ -2721,6 +2705,7 @@
 		7CE5468B1AF45A0D006E0CF9 /* fakeelec */ = {
 			isa = PBXGroup;
 			children = (
+				7C5760A71AFD97BC00423BF6 /* elevation.frag */,
 				7C06A8B31853D4ED00D1C8A3 /* acidcontours_frag.glsl */,
 				7CE5468C1AF45A8F006E0CF9 /* audiosignal.frag */,
 				7C178FCA1AF4580B002681A1 /* bluecells.frag */,
@@ -3060,6 +3045,7 @@
 				7C79CB281765288500E71F9D /* Velocity.frag in Resources */,
 				7C79CB291765288500E71F9D /* motionBlur.frag in Resources */,
 				7CF612D619343F7C00030E26 /* polyterrain_frag.glsl in Resources */,
+				7C5760A81AFD97BC00423BF6 /* elevation.frag in Resources */,
 				7C8CBB30192A835B00588689 /* cloudtunnel_frag.glsl in Resources */,
 				7C06A9051853D4ED00D1C8A3 /* stripey_frag.glsl in Resources */,
 				7C06A8F91853D4ED00D1C8A3 /* metahex_frag.glsl in Resources */,
@@ -3386,6 +3372,7 @@
 				7C79C93E17650F8F00E71F9D /* room.frag in Sources */,
 				7C5517AE1A5CD9BF000C7703 /* OutputChannel.cpp in Sources */,
 				7C06A90F1853D4ED00D1C8A3 /* faintStars.vert in Sources */,
+				7C5760AB1AFD983A00423BF6 /* Contours.cpp in Sources */,
 				7C79C93F17650F8F00E71F9D /* room.vert in Sources */,
 				7C79C94017650F8F00E71F9D /* VboPos.frag in Sources */,
 				7C79C94117650F8F00E71F9D /* VboPos.vert in Sources */,
@@ -3411,8 +3398,6 @@
 				7CF6AD5218A9E3E100FA795A /* MotionBlurRenderer.cpp in Sources */,
 				7CC3C033183FECCE0082C322 /* TextureGenerator.cpp in Sources */,
 				7C79CA3517650FD800E71F9D /* BinnedParticleSystem.cpp in Sources */,
-				7C79CA3617650FD800E71F9D /* Contour.cpp in Sources */,
-				7C79CA3717650FD800E71F9D /* contours.cpp in Sources */,
 				7C47F051191F31C500244E5F /* Viscosity.cpp in Sources */,
 				7C79CA3817650FD800E71F9D /* AudioInput.cpp in Sources */,
 				7C79CA3A17650FD800E71F9D /* CameraController.cpp in Sources */,

@@ -9,7 +9,6 @@
 #pragma once
 
 #include "cinder/Cinder.h"
-#include "Scene.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
 
@@ -27,6 +26,7 @@ private:
     
 private:
 
+    #pragma mark -
     class Circle: public FragShader
     {
     public:
@@ -65,6 +65,7 @@ private:
         bool mBackgroundFlash;
     };
     
+    #pragma mark -
     class Spark: public FragShader
     {
     public:
@@ -77,6 +78,7 @@ private:
     private:
     };
     
+    #pragma mark -
     class Trapezium: public FragShader
     {
     public:

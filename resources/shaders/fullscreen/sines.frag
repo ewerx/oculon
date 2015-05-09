@@ -2,7 +2,8 @@ uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
-uniform vec3      iMouse;
+uniform vec4      iColor1;
+uniform vec4      iColor2;
 
 // https://www.shadertoy.com/view/Xlj3Rm
 

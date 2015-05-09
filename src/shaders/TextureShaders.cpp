@@ -224,8 +224,7 @@ void TextureShaders::KifsShader::setupInterface( Interface* interface, const std
     string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->gui()->addLabel(getName());
-    interface->addParam(CreateIntParam( "kali/iterations", &iterations )
+        interface->addParam(CreateIntParam( "kali/iterations", &iterations )
                          .maxValue(64)
                          .oscReceiver(oscName));
     interface->addParam(CreateVec2fParam("kali/fold", &fold, Vec2f::zero(), Vec2f(1.0f,1.0f))

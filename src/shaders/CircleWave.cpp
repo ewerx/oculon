@@ -6,13 +6,9 @@
 //  Copyright 2013 ewerx. All rights reserved.
 //
 
-#include "OculonApp.h"
 #include "CircleWave.h"
-#include "cinder/Utilities.h"
-#include "cinder/Rand.h"
-#include <boost/format.hpp>
 #include "Interface.h"
-#include "Utils.h"
+#include "cinder/Rand.h"
 
 using namespace ci;
 using namespace ci::app;

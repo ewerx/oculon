@@ -16,8 +16,7 @@
 #include "Interface.h"
 #include "Utils.h"
 
-#include "Contour.h"
-
+using namespace std;
 using namespace ci;
 using namespace ci::app;
 
@@ -77,11 +76,8 @@ void ShaderTest::setupShaders()
     mShaders.push_back( new FragShader( "trapezium",      "trapezium.frag" ) );
     mShaders.push_back( new FragShader( "blue-cells",      "bluecells.frag" ) );
     mShaders.push_back( new FragShader( "shockwave",      "shockwave.frag" ) );
-    mShaders.push_back( new FragShader( "circlewave2",      "circlewave2.frag" ) );
-    mShaders.push_back( new FragShader( "sines",        "sines.frag" ) );
+    mShaders.push_back( new FragShader( "sines",            "sines.frag" ) );
     mShaders.push_back( new FragShader( "audiosignal",      "audiosignal.frag" ) );
-    mShaders.push_back( new FragShader( "marble",      "marble.frag" ) );
-    mShaders.push_back( new FragShader( "soundwave",      "soundwave.frag" ) );
     
     
     //mShaders.push_back( new FragShader( "Organism",    "organism_frag.glsl" ) );
@@ -118,7 +114,6 @@ void ShaderTest::setupShaders()
     mShaders.push_back( new FragShader( "squarespiral",      "squarespiral_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "mobius",      "mobius_frag.glsl" ) );
     mShaders.push_back( new FragShader( "juliaspiral",      "juliaspiral_frag.glsl" ) );
-    mShaders.push_back( new FragShader( "warping",      "warping_frag.glsl" ) );
     mShaders.push_back( new FragShader( "polyterrain",      "polyterrain_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "noisesphere",      "noisesphere_frag.glsl" ) );
     //mShaders.push_back( new FragShader( "AfterEffect",       "aftereffect_frag.glsl" ) );

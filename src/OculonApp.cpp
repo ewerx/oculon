@@ -23,7 +23,6 @@
 #include "Flock.h"
 #include "Corona.h"
 #include "Trails.h"
-#include "Contour.h"
 //#include "Grid.h"
 #include "Parsec.h"
 #include "TextOrbit.h"
@@ -42,6 +41,7 @@
 #include "Tilings.h"
 #include "ObjectShaders.h"
 #include "TextureShaders.h"
+#include "Contours.h"
 #include "RootFract.h"
 #include "Menger.h"
 #include "EffectShaders.h"
@@ -412,8 +412,7 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("textureshaders") )     addScene( new Menger() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     if( mConfig.getBool("textureshaders") )     addScene( new Waves() );
-    
-    if( mConfig.getBool("contour") )            addScene( new Contour() );
+    if( mConfig.getBool("textureshaders") )     addScene( new Contours() );
     
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     
