@@ -13,6 +13,7 @@
 #include "AudioInputHandler.h"
 #include "SimplexNoiseTexture.h"
 #include "FragShader.h"
+#include "TextureSelector.h"
 
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
@@ -37,26 +38,23 @@ private:
     void shaderPostDraw();
     
 private:
-    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
     
     // control
     TimeController      mTimeController;
     AudioInputHandler   mAudioInputHandler;
     
     // noise
-    SimplexNoiseTexture mNoiseTexture;
+    SimplexNoiseTexture mDynamicNoiseTexture;
     ci::gl::Texture mStaticNoiseTexture;
     
-    std::vector<tNamedTexture> mNoiseTextures;
-    int mCurrentNoiseTex;
+    TextureSelector mNoiseTextures;
     
     // effects
     std::vector<FragShader*> mEffects;
     int mCurrentEffect;
     
     // inputs
-    std::vector<tNamedTexture> mInputTextures;
-    int mCurrentInputTexture;
+    TextureSelector mInputTextures;
     
 public:
 #pragma mark -

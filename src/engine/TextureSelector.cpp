@@ -13,9 +13,13 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+
 void TextureSelector::addTexture(const std::string &name, const std::string &filename)
 {
-    mTextures.push_back( make_pair( name, gl::Texture( loadImage( loadResource( filename ) ) ) ) );
+    gl::Texture::Format format;
+    format.setWrap( GL_REPEAT, GL_REPEAT );
+    
+    addTexture(name, filename, format);
 }
 
 void TextureSelector::addTexture(const std::string &name, const std::string &filename, ci::gl::Texture::Format format)

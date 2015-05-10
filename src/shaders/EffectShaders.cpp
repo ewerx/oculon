@@ -18,7 +18,6 @@ using namespace std;
 EffectShaders::EffectShaders()
 : Scene("effects")
 , mCurrentEffect(0)
-, mCurrentInputTexture(0)
 {
 }
 
@@ -57,22 +56,18 @@ void EffectShaders::setup()
     {
         if (scene)
         {
-            mInputTextures.push_back( make_pair( scene->getName(), scene->getFboTexture() ) );
+            mInputTextures.addTexture( scene->getName(), scene->getFboTexture() );
         }
     }
     
     // TODO: add syphon client as an input
     
     // dynamic noise
-    mNoiseTexture.setup(256, 256);
-    
-    gl::Texture::Format format;
-	format.setWrap( GL_REPEAT, GL_REPEAT );
+    mDynamicNoiseTexture.setup(256, 256);
 
-    mCurrentNoiseTex = 0;
-    mNoiseTextures.push_back( make_pair("static", gl::Texture( loadImage( loadResource( "rgb_noise256.png" ) ), format ) ));
-    mNoiseTextures.push_back( make_pair("dynamic", mNoiseTexture.getTexture() ));
-    mNoiseTextures.push_back( make_pair("audio", mAudioInputHandler.getTexture() ));
+    mNoiseTextures.addTexture( "static", "rgb_noise256.png" );
+    mNoiseTextures.addTexture( "dynamic", mDynamicNoiseTexture.getTexture() );
+    mNoiseTextures.addTexture( "audio", mAudioInputHandler.getTexture() );
     
     reset();
 }
@@ -101,28 +96,12 @@ void EffectShaders::setupInterface()
                         .isVertical(), effectNames);
     
     // inputs
-    vector<string> inputNames;
-    for( tNamedTexture namedTex : mInputTextures )
-    {
-        inputNames.push_back(namedTex.first);
-    }
-    mInterface->addEnum(CreateEnumParam( "input", (int*)(&mCurrentInputTexture) )
-                        .maxValue(inputNames.size())
-                        .oscReceiver(getName())
-                        .isVertical(), inputNames);
+    mInputTextures.setupInterface( mInterface, getName(), "input" );
     
-    // inputs
-    vector<string> noiseTexNames;
-    for( tNamedTexture namedTex : mNoiseTextures )
-    {
-        noiseTexNames.push_back(namedTex.first);
-    }
-    mInterface->addEnum(CreateEnumParam( "noise", (int*)(&mCurrentNoiseTex) )
-                        .maxValue(noiseTexNames.size())
-                        .oscReceiver(getName())
-                        .isVertical(), noiseTexNames);
+    // noise
+    mNoiseTextures.setupInterface( mInterface, getName(), "noise" );
     
-    mNoiseTexture.setupInterface(mInterface, getName());
+    mDynamicNoiseTexture.setupInterface(mInterface, getName());
     
     for( FragShader* effect : mEffects )
     {
@@ -142,7 +121,7 @@ void EffectShaders::update(double dt)
     
     mTimeController.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
-    mNoiseTexture.update(dt);
+    mDynamicNoiseTexture.update(dt);
     
     // update effect
 }
@@ -160,8 +139,8 @@ void EffectShaders::draw()
     
     gl::setMatricesWindow( mApp->getViewportSize() );
     
-    mInputTextures[mCurrentInputTexture].second.bind(0);
-    mNoiseTextures[mCurrentNoiseTex].second.bind(1);
+    mInputTextures.getTexture().bind(0);
+    mNoiseTextures.getTexture().bind(1);
     
     gl::GlslProg shader = mEffects[mCurrentEffect]->getShader();
     shader.bind();
@@ -181,8 +160,8 @@ void EffectShaders::draw()
     // post-draw
     shader.unbind();
     
-    mNoiseTextures[mCurrentNoiseTex].second.unbind();
-    mInputTextures[mCurrentInputTexture].second.unbind();
+    mNoiseTextures.getTexture().unbind();
+    mInputTextures.getTexture().unbind();
     
     gl::popMatrices();
     glPopAttrib();
