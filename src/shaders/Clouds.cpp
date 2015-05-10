@@ -17,7 +17,7 @@ using namespace std;
 Clouds::Clouds()
 : TextureShaders("clouds")
 {
-
+    
 }
 
 Clouds::~Clouds()
@@ -34,6 +34,28 @@ void Clouds::setupShaders()
     
     mShaders.push_back( new CloudTunnel() );
     mShaders.push_back( new PlasmaFog() );
+    
+    // noise
+    mDynamicNoiseTexture.setup(256, 256);
+    
+    mNoiseTextures.addTexture( "static", "rgb_noise256.png" );
+    mNoiseTextures.addTexture( "dynamic", mDynamicNoiseTexture.getTexture() );
+    mNoiseTextures.addTexture( "audio", mAudioInputHandler.getTexture() );
+}
+
+void Clouds::setupInterface()
+{
+    mNoiseTextures.setupInterface(mInterface, getName(), "noise");
+    mDynamicNoiseTexture.setupInterface(mInterface, getName());
+    
+    TextureShaders::setupInterface();
+}
+
+void Clouds::update(double dt)
+{
+    setInputTexture(make_shared<gl::Texture>(mNoiseTextures.getTexture()));
+    
+    TextureShaders::update(dt);
 }
 
 #pragma mark - CloudTunnel

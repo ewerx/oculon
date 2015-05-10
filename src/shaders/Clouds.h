@@ -11,6 +11,8 @@
 #include "cinder/Cinder.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
+#include "SimplexNoiseTexture.h"
+#include "TextureSelector.h"
 
 //
 // Clouds
@@ -21,10 +23,18 @@ public:
     Clouds();
     virtual ~Clouds();
     
+    void setupInterface() override;
+    void update(double dt) override;
+    
 private:
     void setupShaders() override;
     
 private:
+    // noise
+    TextureSelector mNoiseTextures;
+    ci::gl::Texture mStaticNoiseTexture;
+    SimplexNoiseTexture mDynamicNoiseTexture;
+    
     
 #pragma mark-
     class CloudTunnel : public FragShader

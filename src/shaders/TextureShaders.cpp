@@ -41,6 +41,7 @@ void TextureShaders::setup()
     mColorMaps.addTexture("colormap1", "colortex2.jpg");
     mColorMaps.addTexture("colormap1", "colortex3.jpg");
     mColorMaps.addTexture("colormap1", "colortex4.jpg");
+    mInputTexture = make_shared<gl::Texture>(mColorMaps.getTexture());
     
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
@@ -122,7 +123,15 @@ void TextureShaders::draw()
 
 void TextureShaders::shaderPreDraw()
 {
-    mColorMaps.getTexture().bind(0);
+    if (mInputTexture)
+    {
+        mInputTexture->bind(0);
+    }
+    else
+    {
+        mColorMaps.getTexture().bind(0);
+    }
+    
     if( mAudioInputHandler.hasTexture() )
     {
         mAudioInputHandler.getFbo().bindTexture(1);
@@ -153,7 +162,15 @@ void TextureShaders::shaderPostDraw()
     {
         mAudioInputHandler.getFbo().unbindTexture();
     }
-    mColorMaps.getTexture().unbind();
+    
+    if (mInputTexture)
+    {
+        mInputTexture->unbind();
+    }
+    else
+    {
+        mColorMaps.getTexture().unbind();
+    }
 }
 
 void TextureShaders::drawScene()

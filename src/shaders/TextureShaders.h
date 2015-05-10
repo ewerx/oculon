@@ -33,9 +33,11 @@ public:
     // inherited from Scene
     void setup();
     void reset();
-    void update(double dt);
+    virtual void update(double dt);
     void draw();
     //void drawDebug();
+    
+    void setInputTexture( ci::gl::TextureRef texture ) { mInputTexture = texture; }
     
 protected:// from Scene
     void setupInterface();
@@ -58,12 +60,17 @@ protected:
     TimeController      mTimeController;
     AudioInputHandler   mAudioInputHandler;
     
+    // WTF, if mInputTexture is decalered here there are runtime bad access errors?!
+    
     // color maps
     TextureSelector     mColorMaps;
     
     // shaders
     std::vector<FragShader*> mShaders;
     int mShaderType;
+    
+
+    ci::gl::TextureRef  mInputTexture;
     
 private:
     class KifsShader : public FragShader
