@@ -45,7 +45,6 @@ private:
     
     // noise
     SimplexNoiseTexture mDynamicNoiseTexture;
-    ci::gl::Texture mStaticNoiseTexture;
     
     TextureSelector mNoiseTextures;
     

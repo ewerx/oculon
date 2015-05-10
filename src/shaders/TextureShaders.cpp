@@ -36,11 +36,11 @@ void TextureShaders::setup()
     setupShaders();
     
     // color maps
-    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex1.jpg" ) ) ) ) );
-    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex2.jpg" ) ) ) ) );
-    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex3.jpg" ) ) ) ) );
-    mColorMaps.push_back(make_pair("colormap1", gl::Texture( loadImage( loadResource( "colortex4.jpg" ) ) ) ) );
-    mColorMapIndex = 0;
+    mColorMaps.addTexture("none", "white8.jpg");
+    mColorMaps.addTexture("colormap1", "colortex1.jpg");
+    mColorMaps.addTexture("colormap1", "colortex2.jpg");
+    mColorMaps.addTexture("colormap1", "colortex3.jpg");
+    mColorMaps.addTexture("colormap1", "colortex4.jpg");
     
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
@@ -79,15 +79,7 @@ void TextureShaders::setupInterface()
     mInterface->addParam(CreateColorParam("color1", &mColor1, kMinColor, kMaxColor));
     mInterface->addParam(CreateColorParam("color2", &mColor2, kMinColor, kMaxColor));
     
-    vector<string> colorMapNames;
-    for( tNamedTexture namedTex : mColorMaps )
-    {
-        colorMapNames.push_back(namedTex.first);
-    }
-    mInterface->addEnum(CreateEnumParam( "colormap", (int*)(&mColorMapIndex) )
-                        .maxValue(colorMapNames.size())
-                        .oscReceiver(getName())
-                        .isVertical(), colorMapNames);
+    mColorMaps.setupInterface(mInterface, getName(), "colormap");
     
     // custom params
     for( FragShader* shader : mShaders )
@@ -130,7 +122,7 @@ void TextureShaders::draw()
 
 void TextureShaders::shaderPreDraw()
 {
-    mColorMaps[mColorMapIndex].second.bind(0);
+    mColorMaps.getTexture().bind(0);
     if( mAudioInputHandler.hasTexture() )
     {
         mAudioInputHandler.getFbo().bindTexture(1);
@@ -161,7 +153,7 @@ void TextureShaders::shaderPostDraw()
     {
         mAudioInputHandler.getFbo().unbindTexture();
     }
-    mColorMaps[mColorMapIndex].second.unbind();
+    mColorMaps.getTexture().unbind();
 }
 
 void TextureShaders::drawScene()

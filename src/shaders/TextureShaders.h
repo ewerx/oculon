@@ -19,6 +19,7 @@
 #include "AudioInputHandler.h"
 #include "TimeController.h"
 #include "FragShader.h"
+#include "TextureSelector.h"
 
 //
 // TextureShaders
@@ -58,9 +59,7 @@ protected:
     AudioInputHandler   mAudioInputHandler;
     
     // color maps
-    typedef std::pair<std::string, ci::gl::Texture> tNamedTexture;
-    std::vector<tNamedTexture> mColorMaps;
-    int mColorMapIndex;
+    TextureSelector     mColorMaps;
     
     // shaders
     std::vector<FragShader*> mShaders;

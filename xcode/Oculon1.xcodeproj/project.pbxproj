@@ -120,6 +120,7 @@
 		7C5760AF1AFDB00100423BF6 /* effect_vcr.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C5760AD1AFDB00100423BF6 /* effect_vcr.frag */; };
 		7C5760B11AFDB7FE00423BF6 /* plasmafog.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C5760B01AFDB7FE00423BF6 /* plasmafog.frag */; };
 		7C5760B31AFDBC6A00423BF6 /* ether.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C5760B21AFDBC6A00423BF6 /* ether.frag */; };
+		7C5760B51B001E7C00423BF6 /* white8.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7C5760B41B001E7C00423BF6 /* white8.jpg */; };
 		7C584D7F19FC390400EB9609 /* SceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D7D19FC390400EB9609 /* SceneCam.cpp */; };
 		7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8019FC3DA000EB9609 /* SpinCam.cpp */; };
 		7C584D8519FC441800EB9609 /* OtherSceneCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C584D8319FC441800EB9609 /* OtherSceneCam.cpp */; };
@@ -723,6 +724,7 @@
 		7C5760AD1AFDB00100423BF6 /* effect_vcr.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = effect_vcr.frag; sourceTree = "<group>"; };
 		7C5760B01AFDB7FE00423BF6 /* plasmafog.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = plasmafog.frag; sourceTree = "<group>"; };
 		7C5760B21AFDBC6A00423BF6 /* ether.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ether.frag; sourceTree = "<group>"; };
+		7C5760B41B001E7C00423BF6 /* white8.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = white8.jpg; path = catalog/white8.jpg; sourceTree = "<group>"; };
 		7C584D7D19FC390400EB9609 /* SceneCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneCam.cpp; sourceTree = "<group>"; };
 		7C584D7E19FC390400EB9609 /* SceneCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneCam.h; sourceTree = "<group>"; };
 		7C584D8019FC3DA000EB9609 /* SpinCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinCam.cpp; sourceTree = "<group>"; };
@@ -1888,6 +1890,7 @@
 				7C79C85F17650F8F00E71F9D /* bump.png */,
 				7C79C86017650F8F00E71F9D /* catalog */,
 				7C79C86617650F8F00E71F9D /* colortex1.jpg */,
+				7C5760B41B001E7C00423BF6 /* white8.jpg */,
 				7C79C86717650F8F00E71F9D /* colortex2.jpg */,
 				7C79C86817650F8F00E71F9D /* colortex3.jpg */,
 				7C79C86917650F8F00E71F9D /* colortex4.jpg */,
@@ -3173,6 +3176,7 @@
 				7CF612CB193412BF00030E26 /* bezier_frag.glsl in Resources */,
 				7C06A9001853D4ED00D1C8A3 /* rings_frag.glsl in Resources */,
 				7CCEBD8B1A6DF94500D653A7 /* bullet-particle.png in Resources */,
+				7C5760B51B001E7C00423BF6 /* white8.jpg in Resources */,
 				7C79C90817650F8F00E71F9D /* lanternGlow.png in Resources */,
 				7C79C90917650F8F00E71F9D /* nebula.png in Resources */,
 				7C79C90A17650F8F00E71F9D /* glitter.png in Resources */,
