@@ -2,7 +2,10 @@ uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
+uniform vec4      iColor1;
+uniform vec4      iColor2;
 uniform vec3      iMouse;
+uniform float     iDensity;
 
 // https://www.shadertoy.com/view/4tBGWR
 
@@ -25,12 +28,12 @@ float noise( in vec2 p )
     vec2 i = floor( p );
     vec2 f = fract( p );
     
-    vec2 u = f*f*(3.0-2.0*f);
+    vec2 u = f*f*(iDensity-(iDensity-1.0)*f);
     
     return mix( mix( hash( i + vec2(0.0,0.0) ),
                     hash( i + vec2(1.0,0.0) ), u.x),
-               mix( hash( i + vec2(0.0,1.0) ),
-                   hash( i + vec2(1.0,1.0) ), u.x), u.y);
+                mix( hash( i + vec2(0.0,1.0) ),
+                    hash( i + vec2(1.0,1.0) ), u.x), u.y);
 }
 
 float t( in vec2 coord )
@@ -58,5 +61,5 @@ void main()
 #endif
     vec2 zoomCoord = gl_FragCoord.xy * .1;
     float v=0.5+0.5*sin(zoomCoord.x+zoomCoord.y+t(zoomCoord+iGlobalTime*timeScale));
-    gl_FragColor = vec4(v+.1,v,v,1.0);
+    gl_FragColor = vec4(v * iColor1.xyz, 1.0) + (iColor2 * 0.1);//vec4(v+.1,v,v,1.0);
 }

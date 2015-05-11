@@ -63,6 +63,7 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
+        float   mDensity;
     };
     
 };
