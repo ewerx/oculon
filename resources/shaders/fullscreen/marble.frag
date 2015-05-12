@@ -1,26 +1,20 @@
 uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
-uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
+//uniform sampler2D iChannel0;
+//uniform sampler2D iChannel1;
 uniform vec4      iColor1;
 uniform vec4      iColor2;
-uniform vec3      iMouse;
 uniform float     iDensity;
+uniform float     iZoom;
+uniform vec2      iNoiseMap;
 
 // https://www.shadertoy.com/view/4tBGWR
-
-//#define SLOWMOTION
-//#define MOD_KazimirO
 
 float hash( vec2 p )
 {
     float h = dot(p,vec2(127.1,311.7));
     
-#ifdef MOD_KazimirO
-    return -1.0 + 2.0*fract(sin(h)*0.0437585453123*iGlobalTime);
-#else
     return -1.0 + 2.0*fract(sin(h)*43758.5453123);
-#endif
 }
 
 float noise( in vec2 p )
@@ -53,13 +47,7 @@ float t( in vec2 coord )
 
 void main()
 {
-    float timeScale=
-#ifdef SLOWMOTION
-    0.1;
-#else
-    1.0;
-#endif
-    vec2 zoomCoord = gl_FragCoord.xy * .1;
-    float v=0.5+0.5*sin(zoomCoord.x+zoomCoord.y+t(zoomCoord+iGlobalTime*timeScale));
-    gl_FragColor = vec4(v * iColor1.xyz, 1.0) + (iColor2 * 0.1);//vec4(v+.1,v,v,1.0);
+    vec2 zoomCoord = gl_FragCoord.xy * iZoom;
+    float v = 0.5 + 0.5 * sin(zoomCoord.x + zoomCoord.y + t(zoomCoord+iGlobalTime));
+    gl_FragColor = vec4(v * iColor1.xyz, 1.0) + (iColor2 * 0.25);//vec4(v+.1,v,v,1.0);
 }

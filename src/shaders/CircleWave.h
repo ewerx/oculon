@@ -102,6 +102,11 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
+        float   mMaxGlow;
+        float   mDepth;
+        int     mLayers;
+        float   mIntensity;
+        float   mDeformation;
     };
 };
 

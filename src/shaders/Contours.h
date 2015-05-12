@@ -63,7 +63,9 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        float   mDensity;
+        float       mDensity;
+        float       mZoom;
+//        ci::Vec2f   mNoiseMap;
     };
     
 };

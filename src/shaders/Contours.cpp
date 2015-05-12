@@ -41,6 +41,7 @@ void Contours::setupShaders()
 Contours::Marble::Marble()
 : FragShader("marble", "marble.frag")
 , mDensity(3.0f)
+, mZoom(0.1f)
 {
 
 }
@@ -51,9 +52,12 @@ void Contours::Marble::setupInterface( Interface* interface, const std::string& 
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
-    interface->addParam(CreateFloatParam( "scale", &mDensity )
-                        .minValue(1.1f)
-                        .maxValue(16.0f));
+//    interface->addParam(CreateFloatParam( "scale", &mDensity )
+//                        .minValue(1.1f)
+//                        .maxValue(16.0f));
+    interface->addParam(CreateFloatParam( "zoom", &mZoom )
+                        .minValue(0.001f)
+                        .maxValue(0.5f));
 }
 
 void Contours::Marble::update(double dt)
@@ -63,7 +67,8 @@ void Contours::Marble::update(double dt)
 
 void Contours::Marble::setCustomParams( AudioInputHandler& audioInputHandler )
 {
-    mShader.uniform("iScale", mDensity);
+    mShader.uniform("iDensity", mDensity);
+    mShader.uniform("iZoom", mZoom);
 }
 
 #pragma mark - Elevation

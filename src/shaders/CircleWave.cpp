@@ -156,6 +156,11 @@ void CircleWave::Trapezium::setCustomParams( AudioInputHandler& audioInputHandle
 
 CircleWave::Ether::Ether()
 : FragShader("ether", "ether.frag")
+, mMaxGlow(2.5f)
+, mDepth(5.0f)
+, mLayers(5)
+, mIntensity(5.0f)
+, mDeformation(2.0f);
 {
 }
 
@@ -165,6 +170,22 @@ void CircleWave::Ether::setupInterface( Interface* interface, const std::string&
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam("glow", &mMaxGlow)
+                        .minValue(0.1f)
+                        .maxValue(5.0f));
+    interface->addParam(CreateFloatParam("depth", &mDepth)
+                        .minValue(mLayers)
+                        .maxValue(mLayers + 4.0f));
+//    interface->addParam(CreateIntParam("layers", &mLayers)
+//                        .minValue(1)
+//                        .maxValue(10));
+    interface->addParam(CreateFloatParam("intensity", &mIntensity)
+                        .minValue(1.0f)
+                        .maxValue(6.0f));
+    interface->addParam(CreateFloatParam("deformation", &mDeformation)
+                        .minValue(0.0f)
+                        .maxValue(5.0f));
 }
 
 void CircleWave::Ether::update(double dt)
@@ -174,5 +195,9 @@ void CircleWave::Ether::update(double dt)
 
 void CircleWave::Ether::setCustomParams( AudioInputHandler& audioInputHandler )
 {
-    
+    mShader.uniform( "iMaxGlow", mMaxGlow );
+    mShader.uniform( "iDepth", mDepth );
+    mShader.uniform( "iLayers", mLayers );
+    mShader.uniform( "iIntensity", mIntensity );
+    mShader.uniform( "iDeformation", mDeformation );
 }
