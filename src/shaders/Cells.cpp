@@ -259,6 +259,7 @@ Cells::GravityFieldShader::GravityFieldShader()
 {
     mPoints = 64;
     mMode = 0;
+    mPhase = 0.000001f;
 }
 
 void Cells::GravityFieldShader::setupInterface( Interface* interface, const std::string& prefix )
@@ -274,6 +275,9 @@ void Cells::GravityFieldShader::setupInterface( Interface* interface, const std:
     interface->addParam(CreateIntParam( "mode", &mMode )
                         .minValue(0)
                         .maxValue(2));
+    interface->addParam(CreateFloatParam( "phase", &mPhase )
+                        .minValue(0.0f)
+                        .maxValue(1.0f));
 }
 
 void Cells::GravityFieldShader::update(double dt)
@@ -284,4 +288,5 @@ void Cells::GravityFieldShader::setCustomParams( AudioInputHandler& audioInputHa
 {
     mShader.uniform( "iMode", mMode );
     mShader.uniform( "iPoints", mPoints );
+    mShader.uniform( "iPhase", mPhase );
 }

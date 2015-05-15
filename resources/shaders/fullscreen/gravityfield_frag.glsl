@@ -3,6 +3,7 @@ uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform int       iMode;
 uniform int       iPoints;
+uniform float     iPhase;
 
 #define POINTS iPoints 		 // number of stars
 
@@ -39,14 +40,16 @@ vec2 P(float i) {
 void main(void)
 {
 	vec2 uv    = 2.*(gl_FragCoord.xy / iResolution.y - vec2(.8,.5));
-	float m = .1*t/6.283;
-	float my = .5*pow(.5*(1.-cos(.1*t)),3.);
+    //float m = .1*t/6.283;
+    float my = .5*pow((.5*iPhase),3.);//.5*pow(.5*(1.-cos(.1*t)),3.);
 	int MODE = iMode;//int(mod( (iMouse.z<=0.) ? 100.*m : 6.*m ,3.));
-	float fMODE = (1.-cos(6.283*m))/2.;
+    float fMODE = iPhase;//(1.-cos(6.283*m))/2.;
     
 	const int R = 1;
 	
-	float v=0.; vec2 V=vec2(0.);
+	float v=0.;
+    vec2 V=vec2(0.);
+    
 	for (int i=1; i<POINTS; i++) { // sums stars
 		vec2 p = P(float(i));
 		for (int y=-R; y<=R; y++)  // ghost echos in cycling universe
@@ -60,7 +63,7 @@ void main(void)
 	
 	v = length(V);
 	v *= 1./(9.*float(POINTS));
-	//v = clamp(v,0.,.1);
+    ///v = clamp(v,0.,.1);
 	
 	v *= 2.+100.*fMODE;
 	if (MODE==0) gl_FragColor = vec4(.2*v)+smoothstep(.05,.0,abs(v-5.*my))*vec4(1,0,0,0);

@@ -93,6 +93,7 @@ enm,
     private:
         int mPoints;
         int mMode;
+        float mPhase;
         
     };
     
