@@ -173,6 +173,19 @@ private:
         int mSpacing;
         
     };
+    
+    class InfiniteFall : public FragShader
+    {
+    public:
+        InfiniteFall();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        //virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
 
 };
 

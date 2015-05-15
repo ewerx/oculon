@@ -160,7 +160,7 @@ CircleWave::Ether::Ether()
 , mDepth(5.0f)
 , mLayers(5)
 , mIntensity(5.0f)
-, mDeformation(2.0f);
+, mDeformation(2.0f)
 {
 }
 

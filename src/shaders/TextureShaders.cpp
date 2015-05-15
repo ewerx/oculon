@@ -53,10 +53,11 @@ void TextureShaders::setupShaders()
 {
     mShaderType = 0;
     
+    mShaders.push_back( new InfiniteFall() );
     mShaders.push_back( new BezierShader() );
+    mShaders.push_back( new PixelWeaveShader() );
     mShaders.push_back( new SimplicityShader() );
     mShaders.push_back( new KifsShader() );
-    mShaders.push_back( new PixelWeaveShader() );
 }
 
 void TextureShaders::reset()
@@ -510,3 +511,23 @@ void TextureShaders::PixelWeaveShader::setCustomParams( AudioInputHandler& audio
     mShader.uniform( "iBokehRad", mBokeh );
     mShader.uniform( "iTapSpacing", mSpacing );
 }
+
+#pragma mark - InfiniteFall
+
+TextureShaders::InfiniteFall::InfiniteFall()
+: FragShader("infinite-fall", "infinitefall_frag.glsl")
+{
+}
+
+void TextureShaders::InfiniteFall::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void TextureShaders::InfiniteFall::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+}
+
