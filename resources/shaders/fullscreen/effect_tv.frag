@@ -3,15 +3,14 @@ uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D inputTex;
 uniform sampler2D noiseTex;
 uniform vec4      iColor1;
+uniform float     iVerticalJerk;
+uniform float     iVerticalShift;
+uniform float     iBottomStatic;
+uniform float     iScanlines;
+uniform float     iColorShift;
+uniform float     iHorizontalFuzz;
 
 // https://www.shadertoy.com/view/ldXGW4
-// change these values to 0.0 to turn off individual effects
-float vertJerkOpt = 1.0;
-float vertMovementOpt = 1.0;
-float bottomStaticOpt = 1.0;
-float scalinesOpt = 1.0;
-float rgbOffsetOpt = 1.0;
-float horzFuzzOpt = 1.0;
 
 // Noise generation functions borrowed from:
 // https://github.com/ashima/webgl-noise/blob/master/src/noise2D.glsl
@@ -94,14 +93,14 @@ void main()
     float fuzzOffset = snoise(vec2(iGlobalTime*15.0,uv.y*80.0))*0.003;
     float largeFuzzOffset = snoise(vec2(iGlobalTime*1.0,uv.y*25.0))*0.004;
     
-    float vertMovementOn = (1.0-step(snoise(vec2(iGlobalTime*0.2,8.0)),0.4))*vertMovementOpt;
-    float vertJerk = (1.0-step(snoise(vec2(iGlobalTime*1.5,5.0)),0.6))*vertJerkOpt;
-    float vertJerk2 = (1.0-step(snoise(vec2(iGlobalTime*5.5,5.0)),0.2))*vertJerkOpt;
+    float vertMovementOn = (1.0-step(snoise(vec2(iGlobalTime*0.2,8.0)),0.4))*iVerticalShift;
+    float vertJerk = (1.0-step(snoise(vec2(iGlobalTime*1.5,5.0)),0.6))*iVerticalJerk;
+    float vertJerk2 = (1.0-step(snoise(vec2(iGlobalTime*5.5,5.0)),0.2))*iVerticalJerk;
     float yOffset = abs(sin(iGlobalTime)*4.0)*vertMovementOn+vertJerk*vertJerk2*0.3;
     float y = mod(uv.y+yOffset,1.0);
     
     
-    float xOffset = (fuzzOffset + largeFuzzOffset) * horzFuzzOpt;
+    float xOffset = (fuzzOffset + largeFuzzOffset) * iHorizontalFuzz;
     
     float staticVal = 0.0;
     
@@ -111,14 +110,14 @@ void main()
         staticVal += staticV(vec2(uv.x,uv.y+dist))*(maxDist-abs(dist))*1.5;
     }
     
-    staticVal *= bottomStaticOpt;
+    staticVal *= iBottomStatic;
     
-    float red 	=   texture2D(	inputTex, 	vec2(uv.x + xOffset -0.01*rgbOffsetOpt,y)).r+staticVal;
+    float red 	=   texture2D(	inputTex, 	vec2(uv.x + xOffset -0.01*iColorShift,y)).r+staticVal;
     float green = 	texture2D(	inputTex, 	vec2(uv.x + xOffset,	  y)).g+staticVal;
-    float blue 	=	texture2D(	inputTex, 	vec2(uv.x + xOffset +0.01*rgbOffsetOpt,y)).b+staticVal;
+    float blue 	=	texture2D(	inputTex, 	vec2(uv.x + xOffset +0.01*iColorShift,y)).b+staticVal;
     
     vec3 color = vec3(red,green,blue);
-    float scanline = sin(uv.y*800.0)*0.04*scalinesOpt;
+    float scanline = sin(uv.y*800.0)*0.04*iScanlines;
     color -= scanline;
     
     gl_FragColor = vec4(color,1.0);

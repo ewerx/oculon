@@ -80,23 +80,28 @@ public:
         
     };
     
-    #pragma mark -
-    class VideoTape : public FragShader
-    {
-    public:
-        VideoTape();
-        void setupInterface( Interface* interface, const std::string& prefix );
-        void setCustomParams( AudioInputHandler& audioInputHandler );
-        
-    private:
-        
-    };
-    
-    #pragma mark -
+#pragma mark -
     class Television : public FragShader
     {
     public:
         Television();
+        void setupInterface( Interface* interface, const std::string& prefix );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        float mVerticalJerk;
+        float mVerticalShift;
+        float mBottomStatic;
+        float mScanlines;
+        float mColorShift;
+        float mHorizontalFuzz;
+    };
+    
+#pragma mark -
+    class VideoTape : public FragShader
+    {
+    public:
+        VideoTape();
         void setupInterface( Interface* interface, const std::string& prefix );
         void setCustomParams( AudioInputHandler& audioInputHandler );
         

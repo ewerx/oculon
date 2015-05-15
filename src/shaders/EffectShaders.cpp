@@ -247,7 +247,12 @@ void EffectShaders::CathodeRay::setCustomParams(AudioInputHandler &audioInputHan
 EffectShaders::Television::Television()
 : FragShader("television", "effect_tv.frag")
 {
-    
+    mVerticalJerk       = 1.0f;
+    mVerticalShift      = 1.0f;
+    mBottomStatic       = 1.0f;
+    mScanlines          = 1.0f;
+    mColorShift         = 1.0f;
+    mHorizontalFuzz     = 1.0f;
 }
 
 void EffectShaders::Television::setupInterface( Interface* interface, const std::string& prefix )
@@ -256,10 +261,23 @@ void EffectShaders::Television::setupInterface( Interface* interface, const std:
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam("VerticalJerk", &mVerticalJerk));
+    interface->addParam(CreateFloatParam("VerticalShift", &mVerticalShift));
+    interface->addParam(CreateFloatParam("BottomStatic", &mBottomStatic));
+    interface->addParam(CreateFloatParam("Scanlines", &mScanlines));
+    interface->addParam(CreateFloatParam("ColorShift", &mColorShift));
+    interface->addParam(CreateFloatParam("HorizontalFuzz", &mHorizontalFuzz));
 }
 
 void EffectShaders::Television::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+    mShader.uniform("iVerticalJerk", mVerticalJerk);
+    mShader.uniform("iVerticalShift", mVerticalShift);
+    mShader.uniform("iBottomStatic", mBottomStatic);
+    mShader.uniform("iScanlines", mScanlines);
+    mShader.uniform("iColorShift", mColorShift);
+    mShader.uniform("iHorizontalFuzz", mHorizontalFuzz);
 }
 
 #pragma mark - VCR
