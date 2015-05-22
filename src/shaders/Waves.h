@@ -36,7 +36,13 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        
+        int mNumBands;
+        float mGlowWidth;
+        float mGlowLength;
+        float mIntensity;
+        float mWaveRate;
+        float mCurvature;
+        float mSeparation;
     };
     
     class SineWave : public FragShader

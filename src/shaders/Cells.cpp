@@ -18,8 +18,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-Cells::Cells()
-: TextureShaders("cells")
+Cells::Cells(const std::string& name)
+: TextureShaders(name)
 {
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();

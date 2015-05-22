@@ -22,7 +22,7 @@
 class EffectShaders : public Scene
 {
 public:
-    EffectShaders();
+    EffectShaders(const std::string& name = "effects");
     virtual ~EffectShaders();
     
     // inherited from Scene

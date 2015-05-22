@@ -43,7 +43,13 @@ void Waves::setupShaders()
 Waves::MultiWave::MultiWave()
 : FragShader("multiwave", "multiwave.frag")
 {
-    
+    mNumBands = 8;
+    mGlowWidth = 0.33333;
+    mGlowLength = 0.7692;
+    mIntensity = 1.6;
+    mWaveRate = 0.6;
+    mCurvature = 0.14286;
+    mSeparation = 0.2;
 }
 
 void Waves::MultiWave::setupInterface( Interface* interface, const std::string& prefix )
@@ -52,6 +58,22 @@ void Waves::MultiWave::setupInterface( Interface* interface, const std::string& 
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateIntParam("bands", &mNumBands)
+                        .minValue(1)
+                        .maxValue(64));
+    
+    interface->addParam(CreateFloatParam("GlowWidth", &mGlowWidth));
+    
+    interface->addParam(CreateFloatParam("GlowLength", &mGlowLength)
+                        .maxValue(3.0));
+    interface->addParam(CreateFloatParam("Intensity", &mIntensity)
+                        .maxValue(3.0));
+    interface->addParam(CreateFloatParam("WaveRate", &mWaveRate)
+                        .maxValue(2.0));
+    interface->addParam(CreateFloatParam("Curvature", &mCurvature)
+                        .maxValue(1.0));
+    interface->addParam(CreateFloatParam("Separation", &mSeparation));
 }
 
 void Waves::MultiWave::update(double dt)
@@ -61,6 +83,13 @@ void Waves::MultiWave::update(double dt)
 
 void Waves::MultiWave::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+    mShader.uniform("iNumBands", mNumBands);
+    mShader.uniform("iGlowWidth", mGlowWidth);
+    mShader.uniform("iGlowLength", mGlowLength);
+    mShader.uniform("iIntensity", mIntensity);
+    mShader.uniform("iWaveRate", mWaveRate);
+    mShader.uniform("iCurvature", mCurvature);
+    mShader.uniform("iSeparation", mSeparation);
 }
 
 

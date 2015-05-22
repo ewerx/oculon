@@ -15,8 +15,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-EffectShaders::EffectShaders()
-: Scene("effects")
+EffectShaders::EffectShaders(const std::string& name)
+: Scene(name)
 , mCurrentEffect(0)
 {
 }
@@ -54,7 +54,7 @@ void EffectShaders::setup()
     
     for (Scene* scene : mApp->getScenes() )
     {
-        if (scene)
+        if (scene && scene != this)
         {
             mInputTextures.addTexture( scene->getName(), scene->getFboTexture() );
         }
@@ -99,7 +99,7 @@ void EffectShaders::setupInterface()
     mInputTextures.setupInterface( mInterface, getName(), "input" );
     
     // noise
-    mNoiseTextures.setupInterface( mInterface, getName(), "noise" );
+    mNoiseTextures.setupInterface( mInterface, getName(), "noise-type" );
     
     mDynamicNoiseTexture.setupInterface(mInterface, getName());
     

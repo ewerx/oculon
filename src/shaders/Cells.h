@@ -20,7 +20,7 @@
 class Cells : public TextureShaders
 {
 public:
-    Cells();
+    Cells(const std::string& name ="cells");
     virtual ~Cells();
     
 private:

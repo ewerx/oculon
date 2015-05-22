@@ -402,12 +402,13 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
-    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+//    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
 
     
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
-    if( mConfig.getBool("cells") )              addScene( new Cells() );
+    if( mConfig.getBool("cells") )              addScene( new Cells("gravity-cells") );
+    if( mConfig.getBool("cells") )              addScene( new Cells("layer-cells") );
     if( mConfig.getBool("menger") )             addScene( new Menger() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     if( mConfig.getBool("textureshaders") )     addScene( new Waves() );
@@ -416,12 +417,15 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     
-    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders() );
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects1") );
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects2") );
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
     
-    if( mConfig.getBool("dust") )               addScene( new Dust() );
     
-    if( mConfig.getBool("graviton") )           addScene( new Graviton() );
-    if( mConfig.getBool("lines") )              addScene( new Lines() );
+//    if( mConfig.getBool("dust") )               addScene( new Dust() );
+//    
+//    if( mConfig.getBool("graviton") )           addScene( new Graviton() );
+//    if( mConfig.getBool("lines") )              addScene( new Lines() );
 //    if( mConfig.getBool("parsec") )           addScene( new Parsec() );
 //    if( mConfig.getBool("flock") )            addScene( new Flock() );
 //    if( mConfig.getBool("polyhedron") )       addScene( new Polyhedron() );

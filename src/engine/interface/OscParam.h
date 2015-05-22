@@ -241,7 +241,7 @@ public:
     , _max(1)
     , _sendAddr("")
     , _recvAddr("")
-    , _feedback(false)
+    , _feedback(true)
     , _altstyle(false)
     , _step(0)
     , _midiPort(-1)

@@ -44,6 +44,6 @@ void SimplexNoiseTexture::setupInterface(Interface* interface, const std::string
     interface->addParam(CreateFloatParam("noise_speed", &mNoiseSpeed )
                        .maxValue(1.0f)
                        .oscReceiver(name));
-    interface->addParam(CreateVec3fParam("noise", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
+    interface->addParam(CreateVec3fParam("noise_scale", &mNoiseScale, Vec3f::zero(), Vec3f(10.0f,10.0f,1.0f))
                        .oscReceiver(name));
 }

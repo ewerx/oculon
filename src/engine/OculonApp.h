@@ -76,6 +76,9 @@ enm,
         OUTPUT_COUNT
     };
     
+    typedef boost::unordered_map<std::string, Scene*> tSceneMap;
+    typedef std::vector<Scene*>  tSceneList;
+    
 public: // cinder interface
     void prepareSettings( Settings *settings );
 	void setup();
@@ -125,6 +128,7 @@ public: // new
     //TODO: hack
     Scene* getScene(const int index)                    { return ( index < mScenes.size() ) ? mScenes[index] : NULL ; }
     Scene* getScene(const std::string& name);
+    const tSceneList& getScenes()                       { return mScenes; }
     
     void enableFrameCapture( const bool enable );
     void setCaptureDuration( const float duration ) { mCaptureDuration = duration; }
@@ -209,9 +213,6 @@ private: // members
     DomeRenderer            mDomeRenderer;
     
     // scenes
-    typedef boost::unordered_map<std::string, Scene*> tSceneMap;
-    typedef std::vector<Scene*>  tSceneList;
-    
     tSceneList              mScenes;
     tSceneMap               mSceneMap;
     bool                    mDrawToScreen;
