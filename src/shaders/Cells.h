@@ -12,6 +12,7 @@
 #include "Scene.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
+#include "AudioBandSelector.h"
 
 //
 // Cellular Noise
@@ -94,7 +95,12 @@ enm,
         int mPoints;
         int mMode;
         float mPhase;
+        float mField;
+        float mSpan;
         
+        AudioBandSelector mPhaseBand;
+        AudioBandSelector mFieldBand;
+        AudioBandSelector mSpanBand;
     };
     
 };

@@ -8,6 +8,7 @@ uniform float     iPowerBandSpeed;
 uniform float     iSignalNoise;
 uniform vec4      iColor1;
 uniform float     iScanlines;
+uniform float     iColorShift;
 
 // https://www.shadertoy.com/view/lsfXzM#
 #define M_PI (3.1415926535897932384626433832795)
@@ -140,7 +141,7 @@ void main(void)
 	bPos = vCrtCurvature (gPos, 0.3);					// curvature for the noize bar
 	cPos = vFrameShift (cPos, 0.01, 0.001);				// frame shift
 	cCol = vColorDrift (cCol, 1.0 - qNoise);
-	cCol = vRGBWithShift (cPos, 100.0, 0.01); 			// sample signal color
+	cCol = vRGBWithShift (cPos, 100.0, iColorShift); 			// sample signal color
 	cCol = cSignalNoise (cCol, qNoise * iSignalNoise, gPos);				// add signal noise
 	cCol = vPowerNoise (cCol, bPos, iPowerBandIntensity, iPowerBandSpeed, iPowerBandThickness); 	// power line noize
 	cCol = vRGBTint (cCol, iColor1.rgb, iColor1.a);	// gamma tint

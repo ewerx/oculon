@@ -198,22 +198,24 @@ void Cells::MultiLayer::setCustomParams( AudioInputHandler& audioInputHandler )
     
     if (mAudioResponseType == AUDIO_RESPONSE_MULTI)
     {
+        float brightness = mHighlight * 100.0f;
+        
         AudioInputHandler &aih = audioInputHandler;
-        mShader.uniform("iBrightness1", mHighlight * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) * 10.0f);
-        mShader.uniform("iBrightness2", mHighlight * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) * 10.0f);
-        mShader.uniform("iBrightness3", mHighlight * aih.getAverageVolumeByFrequencyRange(0.2f, 0.3f) * 10.0f);
-        mShader.uniform("iBrightness4", mHighlight * aih.getAverageVolumeByFrequencyRange(0.3f, 0.4f) * 10.0f);
-        mShader.uniform("iBrightness5", mHighlight * aih.getAverageVolumeByFrequencyRange(0.4f, 0.5f) * 10.0f);
-        mShader.uniform("iBrightness6", mHighlight * aih.getAverageVolumeByFrequencyRange(0.6f, 0.7f) * 10.0f);
-        mShader.uniform("iBrightness7", mHighlight * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) * 10.0f);
+        mShader.uniform("iBrightness1", brightness * aih.getAverageVolumeByFrequencyRange(0.0f, 0.1f) );
+        mShader.uniform("iBrightness2", brightness * aih.getAverageVolumeByFrequencyRange(0.1f, 0.2f) );
+        mShader.uniform("iBrightness3", brightness * aih.getAverageVolumeByFrequencyRange(0.2f, 0.35f));
+        mShader.uniform("iBrightness4", brightness * aih.getAverageVolumeByFrequencyRange(0.35f, 0.5f));
+        mShader.uniform("iBrightness5", brightness * aih.getAverageVolumeByFrequencyRange(0.5f, 0.65f));
+        mShader.uniform("iBrightness6", brightness * aih.getAverageVolumeByFrequencyRange(0.65f, 0.8f));
+        mShader.uniform("iBrightness7", brightness * aih.getAverageVolumeByFrequencyRange(0.8f, 1.0f) );
     }
     else
     {
-        float brightness = mHighlight;
+        float brightness = mHighlight * 100.0f;
         
         if (mAudioResponseType == AUDIO_RESPONSE_SINGLE)
         {
-            brightness *= 100.0f * audioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
+            brightness *= audioInputHandler.getAverageVolumeByFrequencyRange(mAudioResponseFreqMin, mAudioResponseFreqMax);
         }
         
         mShader.uniform("iBrightness1", brightness);
@@ -260,6 +262,8 @@ Cells::GravityFieldShader::GravityFieldShader()
     mPoints = 64;
     mMode = 0;
     mPhase = 0.000001f;
+    mField = 0.1f;
+    mSpan = (1.0f/1.5f);
 }
 
 void Cells::GravityFieldShader::setupInterface( Interface* interface, const std::string& prefix )
@@ -278,6 +282,17 @@ void Cells::GravityFieldShader::setupInterface( Interface* interface, const std:
     interface->addParam(CreateFloatParam( "phase", &mPhase )
                         .minValue(0.0f)
                         .maxValue(1.0f));
+    mPhaseBand.setupInterface(interface, "phase-band");
+    
+    interface->addParam(CreateFloatParam( "field", &mField )
+                        .minValue(0.0f)
+                        .maxValue(0.5f));
+    mFieldBand.setupInterface(interface, "field-band");
+    
+    interface->addParam(CreateFloatParam( "span", &mSpan )
+                        .minValue(0.0f)
+                        .maxValue(1.0f));
+    mSpanBand.setupInterface(interface, "span-band");
 }
 
 void Cells::GravityFieldShader::update(double dt)
@@ -286,7 +301,13 @@ void Cells::GravityFieldShader::update(double dt)
 
 void Cells::GravityFieldShader::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+    const float phase = mPhase * audioInputHandler.getAverageVolumeByBand(mPhaseBand());
+    const float field = mField * audioInputHandler.getAverageVolumeByBand(mFieldBand());
+    const float span = mSpan * audioInputHandler.getAverageVolumeByBand(mSpanBand());
+    
     mShader.uniform( "iMode", mMode );
     mShader.uniform( "iPoints", mPoints );
-    mShader.uniform( "iPhase", mPhase );
+    mShader.uniform( "iPhase", phase );
+    mShader.uniform( "iField", field );
+    mShader.uniform( "iSpan", span );
 }

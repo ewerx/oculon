@@ -477,6 +477,8 @@
 		7CCEBD8B1A6DF94500D653A7 /* bullet-particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCEBD881A6DF94500D653A7 /* bullet-particle.png */; };
 		7CCEBD8C1A6DF94500D653A7 /* cloudparticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCEBD891A6DF94500D653A7 /* cloudparticle.png */; };
 		7CCEBD8D1A6DF94500D653A7 /* smokeparticle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7CCEBD8A1A6DF94500D653A7 /* smokeparticle.png */; };
+		7CD0FF631B0D6BFE00D24572 /* AudioBandSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */; };
+		7CD0FF661B0D6C8600D24572 /* EnumSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */; };
 		7CD1A841185AC930002925A0 /* ParsecLabels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */; };
 		7CD42251192E701700CCE7BF /* Clouds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD4224F192E701700CCE7BF /* Clouds.cpp */; };
 		7CD53E88185826CE003DE35F /* hygxyz.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7CD53E87185826CE003DE35F /* hygxyz.csv */; };
@@ -1185,6 +1187,10 @@
 		7CCEBD881A6DF94500D653A7 /* bullet-particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bullet-particle.png"; sourceTree = "<group>"; };
 		7CCEBD891A6DF94500D653A7 /* cloudparticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cloudparticle.png; sourceTree = "<group>"; };
 		7CCEBD8A1A6DF94500D653A7 /* smokeparticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smokeparticle.png; sourceTree = "<group>"; };
+		7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBandSelector.cpp; sourceTree = "<group>"; };
+		7CD0FF621B0D6BFE00D24572 /* AudioBandSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBandSelector.h; sourceTree = "<group>"; };
+		7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumSelector.cpp; sourceTree = "<group>"; };
+		7CD0FF651B0D6C8600D24572 /* EnumSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumSelector.h; sourceTree = "<group>"; };
 		7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecLabels.cpp; sourceTree = "<group>"; };
 		7CD1A840185AC930002925A0 /* ParsecLabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecLabels.h; sourceTree = "<group>"; };
 		7CD4224F192E701700CCE7BF /* Clouds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clouds.cpp; sourceTree = "<group>"; };
@@ -2248,6 +2254,10 @@
 				7C47F0561920355500244E5F /* TimeController.h */,
 				7C79C9C617650FD700E71F9D /* Utils.cpp */,
 				7C79C9C717650FD700E71F9D /* Utils.h */,
+				7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */,
+				7CD0FF621B0D6BFE00D24572 /* AudioBandSelector.h */,
+				7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */,
+				7CD0FF651B0D6C8600D24572 /* EnumSelector.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -3411,6 +3421,7 @@
 				7C5517B01A5CDF2A000C7703 /* SceneController.cpp in Sources */,
 				7C79CA3217650FD800E71F9D /* SignalScope.cpp in Sources */,
 				7C0E673318BABE9C00C387FC /* CameraStereoHMD.cpp in Sources */,
+				7CD0FF661B0D6C8600D24572 /* EnumSelector.cpp in Sources */,
 				7CF735AE181F69CC00B21DE9 /* Eclipse.cpp in Sources */,
 				7C47F04A191F2B0000244E5F /* Fluid2D.cpp in Sources */,
 				7C79CA3317650FD800E71F9D /* Triangle.cpp in Sources */,
@@ -3485,6 +3496,7 @@
 				7C79CA7117650FD800E71F9D /* Star.cpp in Sources */,
 				7C584D8219FC3DA000EB9609 /* SpinCam.cpp in Sources */,
 				7CD6664B1853F770004BD521 /* ParsecGrid.cpp in Sources */,
+				7CD0FF631B0D6BFE00D24572 /* AudioBandSelector.cpp in Sources */,
 				7C6CB4371925AFDD00D83614 /* EffectShaders.cpp in Sources */,
 				7CC3C026183ED0330082C322 /* Dust.cpp in Sources */,
 				7C79CA7817650FD800E71F9D /* Trails.cpp in Sources */,

@@ -14,6 +14,7 @@
 #include "SimplexNoiseTexture.h"
 #include "FragShader.h"
 #include "TextureSelector.h"
+#include "AudioBandSelector.h"
 
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
@@ -75,6 +76,9 @@ public:
         float   mSignalNoise;
         int     mSignalNoiseResponse;
         float   mScanlines;
+        int     mScanlinesBand;
+        float   mColorShift;
+        AudioBandSelector     mColorShiftBand;
         
         ci::ColorAf  mTintColor;
         

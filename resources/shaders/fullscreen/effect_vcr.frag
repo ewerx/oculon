@@ -3,6 +3,7 @@ uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D inputTex;
 uniform sampler2D noiseTex;
 uniform vec4      iColor1;
+uniform float     iVignette;
 
 // https://www.shadertoy.com/view/ldjGzV
 
@@ -45,6 +46,7 @@ vec3 getVideo(vec2 uv)
     return video;
 }
 
+// TODO: param
 vec2 screenDistort(vec2 uv)
 {
     uv -= vec2(.5,.5);
@@ -58,7 +60,7 @@ void main()
     vec2 uv = gl_FragCoord.xy / iResolution.xy;
     uv = screenDistort(uv);
     vec3 video = getVideo(uv);
-    float vigAmt = 3.+.3*sin(iGlobalTime + 5.*cos(iGlobalTime*5.));
+    float vigAmt = iVignette + iVignette*0.1*sin(iGlobalTime + 5.*cos(iGlobalTime*5.));
     float vignette = (1.-vigAmt*(uv.y-.5)*(uv.y-.5))*(1.-vigAmt*(uv.x-.5)*(uv.x-.5));
     
     video += stripes(uv);

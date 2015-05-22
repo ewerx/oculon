@@ -4,6 +4,9 @@ uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform int       iMode;
 uniform int       iPoints;
 uniform float     iPhase;
+uniform float     iField;
+uniform float     iSpan;
+uniform float     iBrightness;
 
 #define POINTS iPoints 		 // number of stars
 
@@ -31,19 +34,18 @@ vec4  hash4(float i) { return vec4(hash(i),hash(i-.1),hash(i-.3),hash(i+.1)); }
 // motion of stars
 vec2 P(float i) {
 	vec4 c = hash4(i);
-	return vec2(   cos(t*c.x-c.z)+.5*cos(2.765*t*c.y+c.w),
-                ( sin(t*c.y-c.w)+.5*sin(1.893*t*c.x+c.z) )/1.5	 );
+	return vec2(  cos(t*c.x-c.z)+.5*cos(2.765*t*c.y+c.w),
+                ( sin(t*c.y-c.w)+.5*sin(1.893*t*c.x+c.z) )*iSpan	 );
 }
 
 // ---
 
 void main(void)
 {
-	vec2 uv    = 2.*(gl_FragCoord.xy / iResolution.y - vec2(.8,.5));
-    //float m = .1*t/6.283;
-    float my = .5*pow((.5*iPhase),3.);//.5*pow(.5*(1.-cos(.1*t)),3.);
-	int MODE = iMode;//int(mod( (iMouse.z<=0.) ? 100.*m : 6.*m ,3.));
-    float fMODE = iPhase;//(1.-cos(6.283*m))/2.;
+	vec2 uv    = 2.*((gl_FragCoord.xy / iResolution.y) - vec2(.8,.5));
+    float my = .5*(pow(iField,3.));
+	int MODE = iMode;
+    float fMODE = iPhase;
     
 	const int R = 1;
 	
@@ -66,8 +68,8 @@ void main(void)
     ///v = clamp(v,0.,.1);
 	
 	v *= 2.+100.*fMODE;
-	if (MODE==0) gl_FragColor = vec4(.2*v)+smoothstep(.05,.0,abs(v-5.*my))*vec4(1,0,0,0);
-	if (MODE==1) gl_FragColor = vec4(.5+.5*sin(2.*v));
+	if (MODE==0) gl_FragColor = vec4(.2*v)+smoothstep(.05,.0,abs(v-5.*my))*vec4(sin(v));
+	if (MODE==1) gl_FragColor = vec4(0.5 + 0.5*sin(2.*v));
 	if (MODE==2) gl_FragColor = vec4(sin(v),sin(v/2.),sin(v/4.),1.);
     
     

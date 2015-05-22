@@ -2,7 +2,14 @@ uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
-uniform vec3      iMouse;
+uniform vec4      iColor1;
+uniform vec4      iColor2;
+uniform float     iInnerRadius;
+uniform float     iOuterRadius;
+uniform float     iSheetThickness;
+uniform float     iNoisiness;
+uniform int       iSteps;
+uniform float     iTimeScale;
 
 // https://www.shadertoy.com/view/4tB3zD
 
@@ -10,15 +17,15 @@ uniform vec3      iMouse;
 // Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Australia license.
 // http://creativecommons.org/licenses/by-nc-sa/3.0/au
 
-#define INNER_RADIUS 0.75
-#define OUTER_RADIUS 0.9
-#define SHEET_THICKNESS 0.012
-#define NOISINESS 10.0
+#define INNER_RADIUS iInnerRadius   //0.75
+#define OUTER_RADIUS iOuterRadius   //0.9
+#define SHEET_THICKNESS iSheetThickness //0.012
+#define NOISINESS iNoisiness    //10.0
 
-#define INNER_COLOR vec4(0.0, 30.0, 30.0, 1.0)
-#define OUTER_COLOR vec4(20.0, 20.0, 30.0, 1.0)
+#define INNER_COLOR iColor1 //vec4(0.0, 30.0, 30.0, 1.0)
+#define OUTER_COLOR iColor2 //vec4(20.0, 20.0, 30.0, 1.0)
 
-#define NUM_STEPS 20
+#define NUM_STEPS iSteps    //20
 #define TIME_SCALE 5.0
 
 float trapezium(float x)
@@ -175,13 +182,6 @@ vec4 raymarch_ball(vec2 coord)
     vec4 backPart = raymarch(vec3(coord, innerEndZ), vec3(coord, outerEndZ));
     vec4 final = frontPart + backPart;
     return final;
-}
-
-
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec2 uv = (fragCoord.xy / min(iResolution.x, iResolution.y)) * 2.0 - vec2(iResolution.x / iResolution.y, 1.0);
-    fragColor = merge_colours(raymarch_ball(uv), vec4(0.0, 0.0, 0.0, 1.0));
 }
 
 void main(void)

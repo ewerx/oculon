@@ -11,6 +11,7 @@
 #include "cinder/Cinder.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
+#include "AudioBandSelector.h"
 
 //
 // CircleWave
@@ -65,7 +66,7 @@ private:
         bool mBackgroundFlash;
     };
     
-    #pragma mark -
+#pragma mark -
     class Spark: public FragShader
     {
     public:
@@ -78,7 +79,7 @@ private:
     private:
     };
     
-    #pragma mark -
+#pragma mark -
     class Trapezium: public FragShader
     {
     public:
@@ -89,6 +90,16 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
+        float mInnerRadius;
+        float mOuterRadius;
+        float mSheetThickness;
+        float mNoisiness;
+        int mSteps;
+        
+        AudioBandSelector mInnerRadiusBand;
+        AudioBandSelector mOuterRadiusBand;
+        AudioBandSelector mSheetThicknessBand;
+        AudioBandSelector mNoisinessBand;
     };
     
 #pragma mark -
@@ -107,6 +118,11 @@ private:
         int     mLayers;
         float   mIntensity;
         float   mDeformation;
+        
+        AudioBandSelector mDepthBand;
+        AudioBandSelector mIntensityBand;
+        AudioBandSelector mGlowBand;
+        AudioBandSelector mDeformationBand;
     };
 };
 

@@ -66,7 +66,7 @@ void main() {
 }
 
 // Simplicity Galaxy (audio reactive)
-
+// https://www.shadertoy.com/view/MslGWN
 //CBS
 //Parallax scrolling fractal galaxy.
 //Inspired by JoshP's Simplicity shader: https://www.shadertoy.com/view/lslGWr

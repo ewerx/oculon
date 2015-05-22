@@ -37,22 +37,22 @@ void EffectShaders::setup()
     mEffects.push_back( new VideoTape() );
     
     // inputs
-    vector<Scene*> scenes;
-    scenes.push_back( mApp->getScene("lines") );
-    scenes.push_back( mApp->getScene("rings") );
-    scenes.push_back( mApp->getScene("textureshaders") );
-    scenes.push_back( mApp->getScene("audio") );
-    scenes.push_back( mApp->getScene("objectshaders") );
-    scenes.push_back( mApp->getScene("tilings") );
-//    scenes.push_back( mApp->getScene("graviton") );
-//    scenes.push_back( mApp->getScene("shadertest") );
-    scenes.push_back( mApp->getScene("circlewave") );
-    scenes.push_back( mApp->getScene("waves") );
-    scenes.push_back( mApp->getScene("contours") );
-    scenes.push_back( mApp->getScene("cells") );
-    scenes.push_back( mApp->getScene("tilings") );
+//    vector<Scene*> scenes;
+//    scenes.push_back( mApp->getScene("lines") );
+//    scenes.push_back( mApp->getScene("rings") );
+//    scenes.push_back( mApp->getScene("textureshaders") );
+//    scenes.push_back( mApp->getScene("audio") );
+//    scenes.push_back( mApp->getScene("objectshaders") );
+//    scenes.push_back( mApp->getScene("tilings") );
+////    scenes.push_back( mApp->getScene("graviton") );
+////    scenes.push_back( mApp->getScene("shadertest") );
+//    scenes.push_back( mApp->getScene("circlewave") );
+//    scenes.push_back( mApp->getScene("waves") );
+//    scenes.push_back( mApp->getScene("contours") );
+//    scenes.push_back( mApp->getScene("cells") );
+//    scenes.push_back( mApp->getScene("tilings") );
     
-    for (Scene* scene : scenes )
+    for (Scene* scene : mApp->getScenes() )
     {
         if (scene)
         {
@@ -185,6 +185,8 @@ EffectShaders::CathodeRay::CathodeRay()
     mScanlines = 120.0f;
     
     mTintColor = ColorAf(0.9f, 0.7f, 1.2f, 1.0f);
+    
+    mColorShift = 0.01f;
 }
 
 void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::string &prefix)
@@ -229,6 +231,11 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
                         .minValue(4.0f)
                         .maxValue(300.f)
                         .oscReceiver(oscName));
+    interface->addParam(CreateFloatParam("color-shift", &mColorShift)
+                        .minValue(0.0f)
+                        .maxValue(0.02f));
+    mColorShiftBand.setupInterface(interface, "color-shift-band");
+    
     interface->addParam(CreateColorParam("tintcolor", &mTintColor, kMinColor, kMaxColor));
 }
 
@@ -240,6 +247,7 @@ void EffectShaders::CathodeRay::setCustomParams(AudioInputHandler &audioInputHan
     mShader.uniform("iSignalNoise", mSignalNoise * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mSignalNoiseResponse)));
     mShader.uniform("iScanlines", mScanlines);
     mShader.uniform("iColor1", mTintColor);
+    mShader.uniform("iColorShift", mColorShift * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mColorShiftBand())));
 }
 
 #pragma mark - Television
