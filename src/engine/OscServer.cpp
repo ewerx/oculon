@@ -334,7 +334,7 @@ bool OscServer::handleMidiMessage(MidiEvent midiEvent)
         }
         
         mMidiCallbackMap[address] = mMidiLearnCallback;
-        mMidiLearning = false;
+        //mMidiLearning = false;
         
         mMidiLearnTarget->setMidiAddress(address.first, address.second);
         mMidiLearnTarget->sendValue();
@@ -355,6 +355,7 @@ bool OscServer::handleMidiMessage(MidiEvent midiEvent)
         message.addFloatArg( midiEvent.getValueRatio() );
         
         callback(message);
+        return true;
     }
     
     return false;

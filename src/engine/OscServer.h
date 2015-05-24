@@ -96,6 +96,9 @@ public:
         mMidiLearnTarget = target;
         mMidiLearnCallback = callback;
     }
+    void stopLearning() { mMidiLearning = false; };
+    
+    bool                    mMidiLearning;
     
 private:
     typedef std::pair<ci::osc::Message,tOscCallback> tIncomingCommand;
@@ -133,7 +136,6 @@ private:
     MidiInput*              mMidiInput;
     ci::CallbackId          mCbMidiEvent;
     tMidiMap                mMidiCallbackMap;
-    bool                    mMidiLearning;
     tOscCallback            mMidiLearnCallback;
     OscParam*               mMidiLearnTarget;
 };

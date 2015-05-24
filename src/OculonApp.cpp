@@ -335,6 +335,7 @@ outputModeNames.push_back(nam);
 
 bool OculonApp::syncInterface()
 {
+    mOscServer.stopLearning();
     mInterface->sendAll();
     for (tSceneList::iterator sceneIt = mScenes.begin();
          sceneIt != mScenes.end();
@@ -822,6 +823,11 @@ void OculonApp::update()
             fpsColor = Color(0.85f, 0.75f, 0.05f);
         }
         mInfoPanel.addLine(buf, fpsColor);
+        
+        if (mOscServer.mMidiLearning)
+        {
+            mInfoPanel.addLine("MIDI-LEARN", Color(0.9f, 0.3f, 1.0f));
+        }
 
         if (!mIsPresentationMode)
         {
