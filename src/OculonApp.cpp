@@ -88,7 +88,7 @@ void OculonApp::prepareSettings( Settings *settings )
     settings->setTitle("Oculon");
     
     mSetupScenesOnStart = true;
-    mIsPresentationMode = false;
+    mIsPresentationMode = true;
     mIsSendingFps       = true;
     
     mUseMayaCam         = true;
@@ -417,9 +417,9 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     
-    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects1") );
-    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects2") );
-    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt") );
+    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-tv") );
+//    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
     
     
 //    if( mConfig.getBool("dust") )               addScene( new Dust() );
@@ -758,6 +758,11 @@ void OculonApp::keyDown( KeyEvent event )
         case KeyEvent::KEY_ESCAPE:
             quit();
             break;
+            
+        case KeyEvent::KEY_z:
+            syncInterface();
+            break;
+            
         default:
             passToScenes = true;
             break;
@@ -808,68 +813,75 @@ void OculonApp::update()
     {
         Color defaultColor(0.5f, 0.5f, 0.5f);
         Color fpsColor(0.5f, 0.5f, 0.5f);
-        if( fps < 20.0f )
+        if (fps < 20.0f)
         {
             fpsColor = Color(1.0f, 0.25f, 0.25f);
         }
-        else if( fps < 30.0f )
+        else if (fps < 30.0f)
         {
             fpsColor = Color(0.85f, 0.75f, 0.05f);
         }
-        mInfoPanel.addLine( buf, fpsColor );
-        snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
-        mInfoPanel.addLine( buf, Color(0.5f, 0.5f, 0.5f) );
-        switch( mOutputMode )
+        mInfoPanel.addLine(buf, fpsColor);
+
+        if (!mIsPresentationMode)
         {
-            case OUTPUT_DIRECT:
-                mInfoPanel.addLine( "DIRECT", defaultColor );
-                break;
-            case OUTPUT_FBO:
-                mInfoPanel.addLine( "FBO", defaultColor );
-                break;
-            case OUTPUT_MULTIFBO:
-                mInfoPanel.addLine( "MULTI-FBO", defaultColor );
-                break;
-            default:
-                break;
-        }
-        snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
-        mInfoPanel.addLine( buf, Color(0.4f, 0.5f, 1.0f) );
-        snprintf(buf, BUFSIZE, "%d x %d", getWindowWidth(), getWindowHeight());
-        mInfoPanel.addLine( buf, defaultColor );
-        
-        if( mEnableSyphonServer )
-        {
-            mInfoPanel.addLine( "SYPHON", Color(0.3f, 0.3f, 1.0f) );
-        }
-        
-        if( mIsCapturingVideo )
-        {
-            mInfoPanel.addLine( "RECORDING", Color(0.9f,0.5f,0.5f) );
-        }
-        
-        if( mIsCapturingFrames )
-        {
-            snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
-            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
-        }
-        
-        if( mIsCapturingVideo || mIsCapturingFrames )
-        {
-            snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount/kCaptureFramerate, mCaptureDuration);
-            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
-            
-            float time = (mCaptureDuration*kCaptureFramerate - mFrameCaptureCount) * mElapsedSecondsThisFrame;
-            if( time > 60.f )
+            snprintf(buf, BUFSIZE, "%.1fs", mLastElapsedSeconds);
+            mInfoPanel.addLine(buf, Color(0.5f, 0.5f, 0.5f));
+            switch (mOutputMode)
             {
-                const int min = time / 60;
-                snprintf(buf, BUFSIZE, "-- finish in %dm%f.0s", min, fmod(time,60.0f));
+                case OUTPUT_DIRECT:
+                    mInfoPanel.addLine("DIRECT", defaultColor);
+                    break;
+
+                case OUTPUT_FBO:
+                    mInfoPanel.addLine("FBO", defaultColor);
+                    break;
+
+                case OUTPUT_MULTIFBO:
+                    mInfoPanel.addLine("MULTI-FBO", defaultColor);
+                    break;
+
+                default:
+                    break;
             }
-            else
+            snprintf(buf, BUFSIZE, "%d x %d", getViewportWidth(), getViewportHeight());
+            mInfoPanel.addLine(buf, Color(0.4f, 0.5f, 1.0f));
+            snprintf(buf, BUFSIZE, "%d x %d", getWindowWidth(), getWindowHeight());
+            mInfoPanel.addLine(buf, defaultColor);
+
+            if (mEnableSyphonServer)
             {
-                snprintf(buf, BUFSIZE, "-- finish in %.0fs", time);
+                mInfoPanel.addLine("SYPHON", Color(0.3f, 0.3f, 1.0f));
             }
-            mInfoPanel.addLine( buf, Color(0.9f,0.5f,0.5f) );
+
+            if (mIsCapturingVideo)
+            {
+                mInfoPanel.addLine("RECORDING", Color(0.9f, 0.5f, 0.5f));
+            }
+
+            if (mIsCapturingFrames)
+            {
+                snprintf(buf, BUFSIZE, "CAPTURING #%d", mFrameCaptureCount);
+                mInfoPanel.addLine(buf, Color(0.9f, 0.5f, 0.5f));
+            }
+
+            if (mIsCapturingVideo || mIsCapturingFrames)
+            {
+                snprintf(buf, BUFSIZE, "-- duration: %.1fs / %.1fs", mFrameCaptureCount / kCaptureFramerate, mCaptureDuration);
+                mInfoPanel.addLine(buf, Color(0.9f, 0.5f, 0.5f));
+
+                float time = ( mCaptureDuration * kCaptureFramerate - mFrameCaptureCount ) * mElapsedSecondsThisFrame;
+                if (time > 60.f)
+                {
+                    const int min = time / 60;
+                    snprintf(buf, BUFSIZE, "-- finish in %dm%f.0s", min, fmod(time, 60.0f));
+                }
+                else
+                {
+                    snprintf(buf, BUFSIZE, "-- finish in %.0fs", time);
+                }
+                mInfoPanel.addLine(buf, Color(0.9f, 0.5f, 0.5f));
+            }
         }
     }
     
@@ -940,7 +952,11 @@ void OculonApp::update()
                 scene->update(dt);
                 labelColor = Color(0.75f, 0.4f, 0.4f);
             }
-            mInfoPanel.addLine(scene->getName(), labelColor);
+            
+            if (!mIsPresentationMode)
+            {
+                mInfoPanel.addLine(scene->getName(), labelColor);
+            }
         }
     }
     
@@ -1185,7 +1201,7 @@ void OculonApp::draw()
         if( mOutputMode == OUTPUT_MULTIFBO && mLastActiveScene >= 0 && mLastActiveScene < mScenes.size() )
         {
             gl::Texture& tex = mScenes[mLastActiveScene]->getFbo().getTexture();
-            tex.setFlipped();
+//            tex.setFlipped();
             Surface surface = Surface(tex);
             mMovieWriter.addFrame( surface );
             // not sure why but copyWindowSurface is faster...
@@ -1286,7 +1302,7 @@ void OculonApp::drawDebug()
         mInfoPanel.render( Vec2f( getWindowWidth(), getWindowHeight() ) );
     }
     
-    if( !mIsPresentationMode )
+    //if( !mIsPresentationMode )
     {
         mInterface->draw();
 //        mParams->draw();
@@ -1342,7 +1358,7 @@ void OculonApp::setPresentationMode( bool enabled )
 {
     //mInfoPanel.setVisible(!enabled);
     mIsPresentationMode = enabled;
-    showInterface( mIsPresentationMode ? INTERFACE_NONE : INTERFACE_MAIN );
+    //showInterface( mIsPresentationMode ? INTERFACE_NONE : INTERFACE_MAIN );
 }
 
 void OculonApp::toggleFullscreen()
