@@ -51,7 +51,7 @@ void OscServer::setup( Config& config, MidiInput* midiInput )
         return;
     }
     
-    mIsListening = false;//true;
+    mIsListening = true;
     console() << "[osc] listening on port " << mListenPort << std::endl;
     
     if( mUseThread )
@@ -59,8 +59,8 @@ void OscServer::setup( Config& config, MidiInput* midiInput )
         mThread = std::thread(&OscServer::threadLoop, this);
     }
     
-    //setDestination( DEST_INTERFACE, config.getString("osc_interface_ip"), config.getInt("osc_interface_port") );
-    //setDestination( DEST_RESOLUME, config.getString("osc_resolume_ip"), config.getInt("osc_resolume_port") );
+    setDestination( DEST_INTERFACE, config.getString("osc_interface_ip"), config.getInt("osc_interface_port") );
+    setDestination( DEST_RESOLUME, config.getString("osc_resolume_ip"), config.getInt("osc_resolume_port") );
     
     mMidiInput = midiInput;
     if( mMidiInput && mMidiInput->isEnabled() )
