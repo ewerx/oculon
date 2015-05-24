@@ -71,6 +71,20 @@ private:
         
     };
     
+    class AudioGraph : public FragShader
+    {
+    public:
+        AudioGraph();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+//        virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        float mSmoothness;
+        float mLength;
+    };
+    
     class Oscillator : public FragShader
     {
     public:

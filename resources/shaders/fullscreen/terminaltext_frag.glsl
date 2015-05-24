@@ -86,10 +86,11 @@ precision mediump float;
 #define Y(p) t(G_,M_,p) + t(M_,O_,p) + t(I_,U_,p) + t(U_,S_,p)
 #define Z(p) t(G_,I_,p) + t(I_,M_,p) + t(M_,O_,p)
 #define l(p) t(H_,N_,p) + t(K_,L_,p) + t(L_,I_,p)
+#define un(p) t(M_,O_,p)
 #define STOP(p) t(N_,N_,p)
-vec2 caret_origin = vec2(1.8, .7);
+vec2 caret_origin = vec2(1.72, .7);
 vec2 caret;
-float time = mod(iGlobalTime, 11.0);
+float time = mod(iGlobalTime, 12.0);
 
 //-----------------------------------------------------------------------------------
 float minimum_distance(vec2 v, vec2 w, vec2 p)
@@ -178,33 +179,33 @@ void main(void)
 	
 	caret = caret_origin;
     
-	float ti = floor(time/10.0);
+	float ti = floor(time/12.0);
 	// the quick brown fox jumps over the lazy dog...
     //asdf
     
-    d += H(r()); add();
-    d += E(r()); add();
-    d += L(r()); add();
-    d += L(r()); add();
-    d += O(r()); add();
-    newline();
-    d += M(r()); add();
-    d += Y(r()); add();
-    space();
-    d += N(r()); add();
-    d += A(r()); add();
-    d += M(r()); add();
-    d += E(r()); add();
-    space();
-    d += I(r()); add();
-    d += S(r()); add();
+//    d += H(r()); add();
+//    d += E(r()); add();
+//    d += L(r()); add();
+//    d += L(r()); add();
+//    d += O(r()); add();
+//    newline();
+//    d += M(r()); add();
+//    d += Y(r()); add();
+//    space();
+//    d += N(r()); add();
+//    d += A(r()); add();
+//    d += M(r()); add();
+//    d += E(r()); add();
+//    space();
+//    d += I(r()); add();
+//    d += S(r()); add();
     newline();
     newline();
     d += F(r()); add();
     d += A(r()); add();
     d += K(r()); add();
     d += E(r()); add();
-    space();
+    d += un(r()); add();//space();
     d += E(r()); add();
     d += L(r()); add();
     d += E(r()); add();
@@ -218,7 +219,7 @@ void main(void)
     d += S(r()); add();
     
     
-	//d = clamp(d* (.75+sin(gl_FragCoord.x*PI+time*1.3)*.5), 0.0, 1.0);
+    //d = clamp(d* (.75+sin(gl_FragCoord.x*PI+time*1.3)*.5), 0.0, 1.0);
     d = clamp(d* (.75+sin(gl_FragCoord.x*PI*.5-time*4.3)*.5), 0.0, 1.0);
     
     col += vec3(d*.5, d, d*.85);

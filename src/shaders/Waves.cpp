@@ -35,7 +35,8 @@ void Waves::setupShaders()
     mShaders.push_back( new MultiWave() );
     mShaders.push_back( new SineWave() );
     mShaders.push_back( new Oscilloscope() );
-    mShaders.push_back( new Oscillator() );
+    mShaders.push_back( new AudioGraph() );
+//    mShaders.push_back( new Oscillator() );
 }
 
 #pragma mark - MultiWave
@@ -141,6 +142,37 @@ void Waves::Oscilloscope::update(double dt)
 
 void Waves::Oscilloscope::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+}
+
+
+#pragma mark - AudioGraph
+
+Waves::AudioGraph::AudioGraph()
+: FragShader("graph", "audiograph.frag")
+{
+    mSmoothness = 1.6f;
+    mLength = 7.0f;
+}
+
+void Waves::AudioGraph::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam("smoothness", &mSmoothness)
+                        .minValue(0.1f)
+                        .maxValue(9.0f));
+    interface->addParam(CreateFloatParam("length", &mLength)
+                        .minValue(1.0f)
+                        .maxValue(10.0f));
+}
+
+void Waves::AudioGraph::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform("iSmoothness", mSmoothness);
+    mShader.uniform("iLength", mLength);
 }
 
 #pragma mark - Oscillator

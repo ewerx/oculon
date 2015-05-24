@@ -3,7 +3,19 @@ uniform vec2 iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
-uniform vec2      iMouse;
+uniform float       iZoom;
+uniform float       iDisturbance;
+uniform float iTimeScale1;
+uniform float iTimeScale2;
+uniform float iTimeScale3;
+uniform float iTimeScale4;
+uniform float iTimeScale5;
+uniform float iFrequency1;
+uniform float iFrequency2;
+uniform float iFrequency3;
+uniform float iFrequency4;
+uniform float iFrequency5;
+
 
 // https://www.shadertoy.com/view/Md23Wc
 //http://mrl.nyu.edu/~perlin/flownoise-talk/#17
@@ -30,7 +42,7 @@ vec4 FlowNoise(vec3 uvw, vec2 uv)
 	float f = 1.;
 	float a = 1.;
     
-	float lac = 2.13;
+	float lac = 1.0 + iDisturbance;
 	
 #if 0
 	for (int i=0; i<5; i++)
@@ -60,7 +72,7 @@ vec4 FlowNoise(vec3 uvw, vec2 uv)
 	float e = 0.1;//*f;
 	float ang;
 	vec4 dn;
-    ang = iGlobalTime*.4+uv.y*0.5;
+    ang = iGlobalTime*iTimeScale1+uv.y*iFrequency1;
     quat = quat_rotation( ang*2.*f, normalize(ax) );
     dn = dnoise(uvw);
     uvw -= 0.01*dn.xyz;
@@ -69,7 +81,7 @@ vec4 FlowNoise(vec3 uvw, vec2 uv)
     f *= lac;
     a *= (1./lac);
 	
-    ang = iGlobalTime*.4+uv.y*0.5;
+    ang = iGlobalTime*iTimeScale2+uv.y*iFrequency2;
     quat = quat_rotation( ang*2.*f, normalize(ax) );
     dn = dnoise(uvw);
     uvw -= 0.01*dn.xyz;
@@ -78,7 +90,7 @@ vec4 FlowNoise(vec3 uvw, vec2 uv)
     f *= lac;
     a *= (1./lac);
     
-    ang = iGlobalTime*.4+uv.y*0.5;
+    ang = iGlobalTime*iTimeScale3+uv.y*iFrequency3;
     quat = quat_rotation( ang*2.*f, normalize(ax) );
     dn = dnoise(uvw);
     uvw -= 0.01*dn.xyz;
@@ -87,7 +99,7 @@ vec4 FlowNoise(vec3 uvw, vec2 uv)
     f *= lac;
     a *= (1./lac);
     
-    ang = iGlobalTime*.4+uv.y*0.5;
+    ang = iGlobalTime*iTimeScale4+uv.y*iFrequency4;
     quat = quat_rotation( ang*2.*f, normalize(ax) );
     dn = dnoise(uvw);
     uvw -= 0.01*dn.xyz;
@@ -96,7 +108,7 @@ vec4 FlowNoise(vec3 uvw, vec2 uv)
     f *= lac;
     a *= (1./lac);
     
-    ang = iGlobalTime*.4+uv.y*0.5;
+    ang = iGlobalTime*iTimeScale5+uv.y*iFrequency5;
     quat = quat_rotation( ang*2.*f, normalize(ax) );
     dn = dnoise(uvw);
     uvw -= 0.01*dn.xyz;
@@ -149,7 +161,7 @@ void main(void)
 	screen_uv = uv;
 	
 	float t = iGlobalTime*0.8;
-	vec3 uvw = vec3(uv*1.15+vec2(0.,t),t*0.5);
+	vec3 uvw = vec3(uv*iZoom+vec2(0.,t),t*0.5);
     
     
 	vec4 d = FlowNoise(uvw,uv);

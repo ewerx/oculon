@@ -12,7 +12,7 @@ void main()
     vec2 uv = gl_FragCoord.xy / iResolution.xy;
     
     // first texture row is frequency data
-    float fft  = texture2D( iChannel1, vec2(uv.x,0.25) ).x;
+    float fft  = 0.0;//texture2D( iChannel1, vec2(uv.x,0.25) ).x;
     
     // second texture row is the sound wave
     float wave = texture2D( iChannel1, vec2(uv.x,0.75) ).x;

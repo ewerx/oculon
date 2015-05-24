@@ -58,6 +58,8 @@ void AudioSignal::setup()
     {
 		ss->setup();
 	}
+    
+    mSpectrumPlot.enableScaleDecibels();
 }
 
 void AudioSignal::reset()
@@ -157,7 +159,25 @@ void AudioSignal::drawDebug()
     gl::setMatricesWindow( mApp->getWindowSize() );
     
     //drawWaveform( mApp->getAudioInput().getPcmBuffer() );
-    drawSpectrum( mApp->getAudioInput().getMagSpectrum() );
+    //drawSpectrum( mApp->getAudioInput().getMagSpectrum() );
+    
+    float height = mApp->getWindowHeight() / 3.0f;
+    float bottom = mApp->getWindowHeight() - 80.f;
+    float left = 80.0f;
+    float width = mApp->getWindowWidth() - left*2.0f;
+    
+    gl::pushMatrices();
+    
+    //gl::setMatricesWindow( getWindowSize() );
+    Rectf bounds = Rectf( left, height, width, bottom );
+    mSpectrumPlot.setBounds( bounds );
+    mSpectrumPlot.draw( mApp->getAudioInput().getMagSpectrum() );
+    
+//    mWaveformPlot.load( shared_ptr<Buffer>(&(mApp->getAudioInput().getBuffer())), bounds );
+//    mWaveformPlot.draw();
+    
+    gl::popMatrices();
+    
     
     mAudioInputHandler.drawDebug(mApp->getWindowSize());
     
@@ -284,18 +304,7 @@ void AudioSignal::drawDebug()
 
 void AudioSignal::drawSpectrum( const vector<float>& magSpectrum )
 {
-	float height = mApp->getWindowHeight() / 3.0f;
-	float bottom = mApp->getWindowHeight() - 80.f;
-    float left = 80.0f;
-    float width = mApp->getWindowWidth() - left*2.0f;
-    
-    gl::pushMatrices();
-    
-    //gl::setMatricesWindow( getWindowSize() );
-    mSpectrumPlot.setBounds( Rectf( left, height, width, bottom ) );
-    mSpectrumPlot.draw( magSpectrum );
-    
-    gl::popMatrices();
+	
 }
 
 bool AudioSignal::setFilter()

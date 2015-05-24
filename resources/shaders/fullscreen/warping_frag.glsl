@@ -4,6 +4,9 @@ uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 uniform vec2      iMouse;
+uniform float       iLevels;
+uniform float       iZoom;
+uniform float       iRefraction;
 
 #define time iGlobalTime
 #define resolution iResolution
@@ -36,7 +39,7 @@ float noise( in vec2 p )
 float fbm( in vec2 x )
 {
 	float m = 0.0;
-	vec2 p = 6.0*x;
+	vec2 p = iZoom*x;
     
 	float w = 0.5;
 	float s = 1.0;
@@ -45,10 +48,10 @@ float fbm( in vec2 x )
 		float n = noise( p*s );
 		m += w*n;
         
-        p.y -= 1.25*(-1.0+2.0*n) - 0.1*iGlobalTime*w; // warp
+        p.y -= iLevels*(-1.0+2.0*n) - 0.1*iGlobalTime*w; // warp
 		
 		w *= 0.5;
-		s *= 2.0;
+		s *= iRefraction;
         
 	}
 	

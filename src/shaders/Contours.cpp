@@ -103,7 +103,9 @@ void Contours::Elevation::setCustomParams( AudioInputHandler& audioInputHandler 
 Contours::Warping::Warping()
 : FragShader("warping", "warping_frag.glsl")
 {
-    
+    mLevels = 1.25f;
+    mZoom = 6.0f;
+    mRefraction = 2.0f;
 }
 
 void Contours::Warping::setupInterface( Interface* interface, const std::string& prefix )
@@ -112,6 +114,16 @@ void Contours::Warping::setupInterface( Interface* interface, const std::string&
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam("Levels", &mLevels)
+                        .minValue(0.0f)
+                        .maxValue(20.0f));
+    interface->addParam(CreateFloatParam("Zoom", &mZoom)
+                        .minValue(1.0f)
+                        .maxValue(24.0f));
+    interface->addParam(CreateFloatParam("Refraction", &mRefraction)
+                        .minValue(1.5f)
+                        .maxValue(9.0f));
     
 }
 
@@ -122,6 +134,8 @@ void Contours::Warping::update(double dt)
 
 void Contours::Warping::setCustomParams( AudioInputHandler& audioInputHandler )
 {
-    
+    mShader.uniform("iLevels", mLevels);
+    mShader.uniform("iZoom", mZoom);
+    mShader.uniform("iRefraction", mRefraction);
 }
 

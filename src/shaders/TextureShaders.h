@@ -186,6 +186,25 @@ private:
     private:
         
     };
+    
+    class FlowNoise : public FragShader
+    {
+    public:
+        FlowNoise();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        //virtual void update(double dt);
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        float mZoom;
+        float mDisturbance;
+        
+        enum { NUM_LAYERS = 5 };
+        
+        float mTimeScale[NUM_LAYERS];
+        float mFrequency[NUM_LAYERS];
+    };
 
 };
 

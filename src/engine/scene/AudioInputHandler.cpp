@@ -77,8 +77,8 @@ void AudioInputHandler::setupInterface( Interface* interface, const std::string 
     interface->gui()->addLabel(label);
     
     interface->addParam(CreateFloatParam("gain", &mGain)
-                        .minValue(0.05f)
-                        .maxValue(20.0f)
+                        .minValue(0.01f)
+                        .maxValue(6.0f)
                         .oscReceiver(name).sendFeedback()
                         .midiInput(0, midiChannel, midiNote));
     interface->addParam(CreateBoolParam( "linear", &mLinearScale )
@@ -260,7 +260,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     
     if (mAudioFboEnabled)
     {
-        audio::Buffer buffer = audioInput.getBuffer();
+        const audio::Buffer& buffer = audioInput.getBuffer();
         Surface32f fftSurface = Surface32f( mAudioFbo.getTexture() );
         
         Surface32f::Iter it = fftSurface.getIter();

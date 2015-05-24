@@ -50,6 +50,9 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
+        float       mLevels;
+        float       mZoom;
+        float       mRefraction;
     };
     
 #pragma mark -

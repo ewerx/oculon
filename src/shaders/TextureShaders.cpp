@@ -54,6 +54,7 @@ void TextureShaders::setupShaders()
     mShaderType = 0;
     
     mShaders.push_back( new InfiniteFall() );
+    mShaders.push_back( new FlowNoise() );
     mShaders.push_back( new BezierShader() );
     mShaders.push_back( new PixelWeaveShader() );
     mShaders.push_back( new SimplicityShader() );
@@ -529,5 +530,61 @@ void TextureShaders::InfiniteFall::setupInterface( Interface* interface, const s
 
 void TextureShaders::InfiniteFall::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+}
+
+#pragma mark - FlowNoise
+
+TextureShaders::FlowNoise::FlowNoise()
+: FragShader("flow-noise", "flownoise_frag.glsl")
+{
+    mZoom = 1.15f;
+    mDisturbance = 2.13;
+    
+    for (int i = 0; i < NUM_LAYERS; ++i)
+    {
+        mTimeScale[i] = 0.4f;
+        mFrequency[i] = 0.5f;
+    }
+}
+
+void TextureShaders::FlowNoise::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam( "zoom", &mZoom )
+                        .minValue(0.1f)
+                        .maxValue(5.0f));
+    interface->addParam(CreateFloatParam( "disturbance", &mDisturbance )
+                        .minValue(0.0f)
+                        .maxValue(8.0f));
+    
+    for (int i = 0; i < NUM_LAYERS; ++i)
+    {
+        string paramName = "timescale" + toString(i);
+        interface->addParam(CreateFloatParam( paramName, &mTimeScale[i] )
+                            .minValue(0.01f)
+                            .maxValue(2.0f));
+        paramName = "frequency" + toString(i);
+        interface->addParam(CreateFloatParam( paramName, &mFrequency[i] )
+                            .minValue(0.01f)
+                            .maxValue(2.0f));
+    }
+}
+
+void TextureShaders::FlowNoise::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform("iZoom", mZoom);
+    mShader.uniform("iDisturbance", mDisturbance);
+    
+    for (int i = 0; i < NUM_LAYERS; ++i)
+    {
+        string paramName = "iTimeScale" + toString(i);
+        mShader.uniform(paramName, mTimeScale[i]);
+        paramName = "iFrequency" + toString(i);
+        mShader.uniform(paramName, mFrequency[i]);
+    }
 }
 

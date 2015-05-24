@@ -194,7 +194,7 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->addParam(CreateFloatParam("powerband-thickness", &mPowerBandThickness)
+    interface->addParam(CreateFloatParam("band-thickness", &mPowerBandThickness)
                         .minValue(0.001f)
                         .oscReceiver(oscName));
     interface->addEnum(CreateEnumParam("thickness-audio", &mPowerBandThicknessResponse)
@@ -202,7 +202,7 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
                        .isVertical()
                        .oscReceiver(oscName)
                        .sendFeedback(), bandNames);
-    interface->addParam(CreateFloatParam("powerband-speed", &mPowerBandSpeed)
+    interface->addParam(CreateFloatParam("band-speed", &mPowerBandSpeed)
                         .minValue(-1.0f)
                         .maxValue(1.0f)
                         .oscReceiver(oscName));
@@ -211,7 +211,7 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
                        .isVertical()
                        .oscReceiver(oscName)
                        .sendFeedback(), bandNames);
-    interface->addParam(CreateFloatParam("powerband-intensity", &mPowerBandIntensity)
+    interface->addParam(CreateFloatParam("band-intensity", &mPowerBandIntensity)
                         .maxValue(10.0f)
                         .oscReceiver(oscName));
     interface->addEnum(CreateEnumParam("intensity-audio", &mPowerBandIntensityResponse)

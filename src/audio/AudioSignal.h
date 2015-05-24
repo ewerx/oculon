@@ -65,5 +65,6 @@ private:
     AudioInputHandler mAudioInputHandler;
     
     SpectrumPlot mSpectrumPlot;
+    WaveformPlot mWaveformPlot;
 };
 

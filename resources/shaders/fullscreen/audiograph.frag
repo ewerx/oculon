@@ -4,6 +4,8 @@ uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 uniform vec3      iMouse;
+uniform float     iSmoothness;
+uniform float     iLength;
 
 /*by musk License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
  
@@ -11,9 +13,9 @@ uniform vec3      iMouse;
  
  */
 
-#define quality 8
-#define smoothness 1.6
-#define grid
+#define quality 60
+#define smoothness iSmoothness
+//#define grid
 //#define subpixel
 //#define reverseLCD
 
@@ -23,15 +25,15 @@ float f(float x)
     
     if (x<0.0)
     {
-        x = x/7.0+1.0;
-        q = texture2D(iChannel1,vec2(x,1.0)).y-.5;
+        x = x/iLength+1.0;
+        q = texture2D(iChannel1,vec2(x,1.0)).y-.666;
         q*= texture2D(iChannel1,vec2(0.0,0.0)).y*2.0;
     }
     else
     {
-        x=x/7.0;
+        x=x/iLength;
         x=pow(x*.82+.18,4.0);
-        q = texture2D(iChannel1,vec2(x,0.0)).y-.5;
+        q = texture2D(iChannel1,vec2(x,0.0)).y-.333;
     }
     q*=4.0;
     return q;
