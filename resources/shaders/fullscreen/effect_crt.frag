@@ -4,11 +4,12 @@ uniform sampler2D inputTex;
 uniform sampler2D noiseTex;
 uniform float     iPowerBandThickness;
 uniform float     iPowerBandIntensity;
-uniform float     iPowerBandSpeed;
+uniform float     iPowerBandTime;
 uniform float     iSignalNoise;
 uniform vec4      iColor1;
 uniform float     iScanlines;
 uniform float     iColorShift;
+uniform float     iInputAlpha;
 
 // https://www.shadertoy.com/view/lsfXzM#
 #define M_PI (3.1415926535897932384626433832795)
@@ -80,12 +81,12 @@ vec4 vRGBWithShift (vec2 uv, float angle, float q) {
 	vec4 rPix = texture2D (inputTex, rPos);
 	vec4 gPix = texture2D (inputTex, gPos);
 	vec4 bPix = texture2D (inputTex, bPos);
-	return vec4 (rPix.x, gPix.y, bPix.z, 1.0);
+	return vec4 (rPix.x, gPix.y, bPix.z, iInputAlpha);
 }
 
 vec4 vPowerNoise (vec4 col, vec2 uv, float b, float dt, float w) {
 	float s = q1DNoiseSample (0.0, 0.001)/500.0;
-	float y = mod (iGlobalTime * (dt + s) , 1.0);
+	float y = mod (iPowerBandTime * (dt + s) , 1.0);
 	float d = 1.0 - clamp (abs (uv.y - y), 0.0, w)/w;
 	return pow (col,vec4(1.0/(1.0 + b*d)) ) ;
 }
@@ -143,7 +144,7 @@ void main(void)
 	cCol = vColorDrift (cCol, 1.0 - qNoise);
 	cCol = vRGBWithShift (cPos, 100.0, iColorShift); 			// sample signal color
 	cCol = cSignalNoise (cCol, qNoise * iSignalNoise, gPos);				// add signal noise
-	cCol = vPowerNoise (cCol, bPos, iPowerBandIntensity, iPowerBandSpeed, iPowerBandThickness); 	// power line noize
+	cCol = vPowerNoise (cCol, bPos, iPowerBandIntensity, 0.2, iPowerBandThickness); 	// power line noize
 	cCol = vRGBTint (cCol, iColor1.rgb, iColor1.a);	// gamma tint
 	cCol = cCol * qScanLine (gPos, iScanlines); 				// add scanlines
 	cCol = cCol * qVignete (gPos, 1.5, 3.0); 			// add edge darkening

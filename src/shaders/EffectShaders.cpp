@@ -63,10 +63,10 @@ void EffectShaders::setup()
     // TODO: add syphon client as an input
     
     // dynamic noise
-    mDynamicNoiseTexture.setup(256, 256);
+//    mDynamicNoiseTexture.setup(256, 256);
 
     mNoiseTextures.addTexture( "static", "rgb_noise256.png" );
-    mNoiseTextures.addTexture( "dynamic", mDynamicNoiseTexture.getTexture() );
+//    mNoiseTextures.addTexture( "dynamic", mDynamicNoiseTexture.getTexture() );
     mNoiseTextures.addTexture( "audio", mAudioInputHandler.getTexture() );
     
     reset();
@@ -101,7 +101,7 @@ void EffectShaders::setupInterface()
     // noise
     mNoiseTextures.setupInterface( mInterface, getName(), "noise-type" );
     
-    mDynamicNoiseTexture.setupInterface(mInterface, getName());
+//    mDynamicNoiseTexture.setupInterface(mInterface, getName());
     
     for( FragShader* effect : mEffects )
     {
@@ -121,9 +121,13 @@ void EffectShaders::update(double dt)
     
     mTimeController.update(dt);
     mAudioInputHandler.update(dt, mApp->getAudioInput());
-    mDynamicNoiseTexture.update(dt);
+    //mDynamicNoiseTexture.update(dt);
     
     // update effect
+    for( FragShader* effect : mEffects )
+    {
+        effect->update(dt);
+    }
 }
 
 void EffectShaders::draw()
@@ -173,12 +177,10 @@ EffectShaders::CathodeRay::CathodeRay()
 : FragShader("crt", "effect_crt.frag")
 {
     mPowerBandThickness = 0.1; // percentage of v-size
-    mPowerBandSpeed = -0.2;
     mPowerBandIntensity = 4.0;
     
     mPowerBandThicknessResponse = AudioInputHandler::BAND_NONE;
     mPowerBandIntensityResponse = AudioInputHandler::BAND_NONE;
-    mPowerBandSpeedResponse = AudioInputHandler::BAND_NONE;
     mSignalNoiseResponse = AudioInputHandler::BAND_NONE;
     
     mSignalNoise = 0.8f;
@@ -187,6 +189,7 @@ EffectShaders::CathodeRay::CathodeRay()
     mTintColor = ColorAf(0.9f, 0.7f, 1.2f, 1.0f);
     
     mColorShift = 0.01f;
+    mInputAlpha = 1.0f;
 }
 
 void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::string &prefix)
@@ -194,6 +197,7 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
+    interface->addParam(CreateFloatParam("input-alpha", &mInputAlpha));
     interface->addParam(CreateFloatParam("band-thickness", &mPowerBandThickness)
                         .minValue(0.001f)
                         .oscReceiver(oscName));
@@ -202,15 +206,7 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
                        .isVertical()
                        .oscReceiver(oscName)
                        .sendFeedback(), bandNames);
-    interface->addParam(CreateFloatParam("band-speed", &mPowerBandSpeed)
-                        .minValue(-1.0f)
-                        .maxValue(1.0f)
-                        .oscReceiver(oscName));
-    interface->addEnum(CreateEnumParam("speed-audio", &mPowerBandSpeedResponse)
-                       .maxValue(bandNames.size())
-                       .isVertical()
-                       .oscReceiver(oscName)
-                       .sendFeedback(), bandNames);
+    mPowerBandTime.setupInterface(interface, "band-speed");
     interface->addParam(CreateFloatParam("band-intensity", &mPowerBandIntensity)
                         .maxValue(10.0f)
                         .oscReceiver(oscName));
@@ -239,15 +235,21 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
     interface->addParam(CreateColorParam("tintcolor", &mTintColor, kMinColor, kMaxColor));
 }
 
+void EffectShaders::CathodeRay::update(double dt)
+{
+    mPowerBandTime.update(dt);
+}
+
 void EffectShaders::CathodeRay::setCustomParams(AudioInputHandler &audioInputHandler)
 {
     mShader.uniform("iPowerBandThickness", mPowerBandThickness * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandThicknessResponse)));
     mShader.uniform("iPowerBandIntensity", mPowerBandIntensity * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandIntensityResponse)));
-    mShader.uniform("iPowerBandSpeed", mPowerBandSpeed * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mPowerBandSpeedResponse)));
+    mShader.uniform("iPowerBandTime", (float)(mPowerBandTime.getElapsedSeconds()));
     mShader.uniform("iSignalNoise", mSignalNoise * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mSignalNoiseResponse)));
     mShader.uniform("iScanlines", mScanlines);
     mShader.uniform("iColor1", mTintColor);
     mShader.uniform("iColorShift", mColorShift * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mColorShiftBand())));
+    mShader.uniform("iInputAlpha", mInputAlpha);
 }
 
 #pragma mark - Television

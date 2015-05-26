@@ -65,20 +65,21 @@ public:
         CathodeRay();
         void setupInterface( Interface* interface, const std::string& prefix );
         void setCustomParams( AudioInputHandler& audioInputHandler );
+        void update(double dt);
         
     private:
         float   mPowerBandThickness;
         int     mPowerBandThicknessResponse;
         float   mPowerBandIntensity;
         int     mPowerBandIntensityResponse;
-        float   mPowerBandSpeed;
-        int     mPowerBandSpeedResponse;
+        TimeController mPowerBandTime;
         float   mSignalNoise;
         int     mSignalNoiseResponse;
         float   mScanlines;
         int     mScanlinesBand;
         float   mColorShift;
         AudioBandSelector     mColorShiftBand;
+        float   mInputAlpha;
         
         ci::ColorAf  mTintColor;
         
