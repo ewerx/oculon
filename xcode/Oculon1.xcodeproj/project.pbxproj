@@ -1115,8 +1115,8 @@
 		7C8CBB2D1929B64700588689 /* gyroid_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gyroid_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB2F192A835B00588689 /* cloudtunnel_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cloudtunnel_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB31192A9EB100588689 /* fractraps1_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fractraps1_frag.glsl; sourceTree = "<group>"; };
-		7C8CBB33192AF7B100588689 /* TextureSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureSelector.cpp; sourceTree = "<group>"; };
-		7C8CBB34192AF7B100588689 /* TextureSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureSelector.h; sourceTree = "<group>"; };
+		7C8CBB33192AF7B100588689 /* TextureSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureSelector.cpp; path = ../TextureSelector.cpp; sourceTree = "<group>"; };
+		7C8CBB34192AF7B100588689 /* TextureSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureSelector.h; path = ../TextureSelector.h; sourceTree = "<group>"; };
 		7C8CBB37192BE24900588689 /* polychora_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polychora_frag.glsl; sourceTree = "<group>"; };
 		7C8CBB39192C1FAD00588689 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtError.h; sourceTree = "<group>"; };
 		7C8CBB3A192C1FAD00588689 /* RtMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtMidi.h; sourceTree = "<group>"; };
@@ -1189,10 +1189,10 @@
 		7CCEBD881A6DF94500D653A7 /* bullet-particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bullet-particle.png"; sourceTree = "<group>"; };
 		7CCEBD891A6DF94500D653A7 /* cloudparticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cloudparticle.png; sourceTree = "<group>"; };
 		7CCEBD8A1A6DF94500D653A7 /* smokeparticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smokeparticle.png; sourceTree = "<group>"; };
-		7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBandSelector.cpp; sourceTree = "<group>"; };
-		7CD0FF621B0D6BFE00D24572 /* AudioBandSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBandSelector.h; sourceTree = "<group>"; };
-		7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumSelector.cpp; sourceTree = "<group>"; };
-		7CD0FF651B0D6C8600D24572 /* EnumSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumSelector.h; sourceTree = "<group>"; };
+		7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioBandSelector.cpp; path = ../AudioBandSelector.cpp; sourceTree = "<group>"; };
+		7CD0FF621B0D6BFE00D24572 /* AudioBandSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioBandSelector.h; path = ../AudioBandSelector.h; sourceTree = "<group>"; };
+		7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnumSelector.cpp; path = ../EnumSelector.cpp; sourceTree = "<group>"; };
+		7CD0FF651B0D6C8600D24572 /* EnumSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnumSelector.h; path = ../EnumSelector.h; sourceTree = "<group>"; };
 		7CD1A83F185AC930002925A0 /* ParsecLabels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsecLabels.cpp; sourceTree = "<group>"; };
 		7CD1A840185AC930002925A0 /* ParsecLabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsecLabels.h; sourceTree = "<group>"; };
 		7CD4224F192E701700CCE7BF /* Clouds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clouds.cpp; sourceTree = "<group>"; };
@@ -2250,16 +2250,10 @@
 				7C187E47191093D3003590EC /* SimplexNoiseTexture.h */,
 				7CC3C031183FECCE0082C322 /* TextureGenerator.cpp */,
 				7CC3C032183FECCE0082C322 /* TextureGenerator.h */,
-				7C8CBB33192AF7B100588689 /* TextureSelector.cpp */,
-				7C8CBB34192AF7B100588689 /* TextureSelector.h */,
 				7C47F0551920355500244E5F /* TimeController.cpp */,
 				7C47F0561920355500244E5F /* TimeController.h */,
 				7C79C9C617650FD700E71F9D /* Utils.cpp */,
 				7C79C9C717650FD700E71F9D /* Utils.h */,
-				7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */,
-				7CD0FF621B0D6BFE00D24572 /* AudioBandSelector.h */,
-				7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */,
-				7CD0FF651B0D6C8600D24572 /* EnumSelector.h */,
 			);
 			name = engine;
 			path = ../src/engine;
@@ -2295,6 +2289,12 @@
 		7C79C99C17650FD700E71F9D /* interface */ = {
 			isa = PBXGroup;
 			children = (
+				7C8CBB33192AF7B100588689 /* TextureSelector.cpp */,
+				7C8CBB34192AF7B100588689 /* TextureSelector.h */,
+				7CD0FF611B0D6BFE00D24572 /* AudioBandSelector.cpp */,
+				7CD0FF621B0D6BFE00D24572 /* AudioBandSelector.h */,
+				7CD0FF641B0D6C8600D24572 /* EnumSelector.cpp */,
+				7CD0FF651B0D6C8600D24572 /* EnumSelector.h */,
 				7C79C99D17650FD700E71F9D /* Interface.h */,
 				7C79C99E17650FD700E71F9D /* OscParam.cpp */,
 				7C79C99F17650FD700E71F9D /* OscParam.h */,

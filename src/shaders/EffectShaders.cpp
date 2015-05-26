@@ -175,6 +175,7 @@ void EffectShaders::draw()
 
 EffectShaders::CathodeRay::CathodeRay()
 : FragShader("crt", "effect_crt.frag")
+, mFrameShift("frameshift", 0.01f, 0.0f, 2.0f, true)
 {
     mPowerBandThickness = 0.1; // percentage of v-size
     mPowerBandIntensity = 4.0;
@@ -186,9 +187,9 @@ EffectShaders::CathodeRay::CathodeRay()
     mSignalNoise = 0.8f;
     mScanlines = 120.0f;
     
-    mTintColor = ColorAf(0.9f, 0.7f, 1.2f, 1.0f);
+    mTintColor = ColorAf(0.88f, 0.776f, 1.0f, 1.0f);
     
-    mColorShift = 0.01f;
+    mColorShift = 0.00176f;
     mInputAlpha = 1.0f;
 }
 
@@ -215,8 +216,11 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
                        .isVertical()
                        .oscReceiver(oscName)
                        .sendFeedback(), bandNames);
+    
+    interface->gui()->addColumn();
+    mFrameShift.setupInterface(interface, "frameshift");
     interface->addParam(CreateFloatParam("signalnoise", &mSignalNoise)
-                        .maxValue(2.0f)
+                        .maxValue(3.0f)
                         .oscReceiver(oscName));
     interface->addEnum(CreateEnumParam("signal-audio", &mSignalNoiseResponse)
                        .maxValue(bandNames.size())
@@ -224,9 +228,11 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
                        .oscReceiver(oscName)
                        .sendFeedback(), bandNames);
     interface->addParam(CreateFloatParam("scanlines", &mScanlines)
-                        .minValue(4.0f)
+                        .minValue(64.0f)
                         .maxValue(300.f)
                         .oscReceiver(oscName));
+    
+    interface->gui()->addColumn();
     interface->addParam(CreateFloatParam("color-shift", &mColorShift)
                         .minValue(0.0f)
                         .maxValue(0.02f));
@@ -250,6 +256,7 @@ void EffectShaders::CathodeRay::setCustomParams(AudioInputHandler &audioInputHan
     mShader.uniform("iColor1", mTintColor);
     mShader.uniform("iColorShift", mColorShift * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mColorShiftBand())));
     mShader.uniform("iInputAlpha", mInputAlpha);
+    mShader.uniform("iFrameShift", mFrameShift(audioInputHandler));
 }
 
 #pragma mark - Television

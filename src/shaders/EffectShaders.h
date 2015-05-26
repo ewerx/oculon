@@ -80,6 +80,7 @@ public:
         float   mColorShift;
         AudioBandSelector     mColorShiftBand;
         float   mInputAlpha;
+        AudioFloatParam mFrameShift;
         
         ci::ColorAf  mTintColor;
         

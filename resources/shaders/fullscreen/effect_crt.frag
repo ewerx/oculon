@@ -10,6 +10,7 @@ uniform vec4      iColor1;
 uniform float     iScanlines;
 uniform float     iColorShift;
 uniform float     iInputAlpha;
+uniform float     iFrameShift;
 
 // https://www.shadertoy.com/view/lsfXzM#
 #define M_PI (3.1415926535897932384626433832795)
@@ -78,10 +79,10 @@ vec4 vRGBWithShift (vec2 uv, float angle, float q) {
 	vec2 rPos = vDirShift (uv, angle, q);
 	vec2 gPos = uv;
 	vec2 bPos = vDirShift (uv, -angle, q);
-	vec4 rPix = texture2D (inputTex, rPos);
-	vec4 gPix = texture2D (inputTex, gPos);
-	vec4 bPix = texture2D (inputTex, bPos);
-	return vec4 (rPix.x, gPix.y, bPix.z, iInputAlpha);
+	vec4 rPix = texture2D (inputTex, rPos) * iInputAlpha;
+	vec4 gPix = texture2D (inputTex, gPos) * iInputAlpha;
+	vec4 bPix = texture2D (inputTex, bPos) * iInputAlpha;
+	return vec4 (rPix.x, gPix.y, bPix.z, 1.0);
 }
 
 vec4 vPowerNoise (vec4 col, vec2 uv, float b, float dt, float w) {
@@ -138,9 +139,9 @@ void main(void)
 	float qNoise = q1DNoiseSample(0.01,0.01);
 	
 	cPos = vScanShift (cPos, 0.02, 0.1, 0.1);			// scanline shift
-	cPos = vCrtCurvature (cPos, 0.3);					// crt curving of coords
-	bPos = vCrtCurvature (gPos, 0.3);					// curvature for the noize bar
-	cPos = vFrameShift (cPos, 0.01, 0.001);				// frame shift
+	cPos = vCrtCurvature (cPos, 0.25);					// crt curving of coords
+	bPos = vCrtCurvature (gPos, 0.25);					// curvature for the noize bar
+	cPos = vFrameShift (cPos, iFrameShift, 0.001);				// frame shift
 	cCol = vColorDrift (cCol, 1.0 - qNoise);
 	cCol = vRGBWithShift (cPos, 100.0, iColorShift); 			// sample signal color
 	cCol = cSignalNoise (cCol, qNoise * iSignalNoise, gPos);				// add signal noise
