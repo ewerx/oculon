@@ -10,6 +10,7 @@
 
 #include "TextureGenerator.h"
 #include "Interface.h"
+#include "TimeController.h"
 
 //
 // Simple Noise Dynamic Texture
@@ -30,4 +31,21 @@ public:
 	float       mNoiseTheta;
     ci::Vec3f   mNoiseScale;
     ci::Vec3f   mNoiseScaleMultiplier;
+};
+
+//
+// Infinite Fall Noise
+//
+class InfiniteFallTexture : public TextureGenerator
+{
+public:
+    InfiniteFallTexture() {}
+    
+    // TextureGenerator
+    void initShader();
+    void configShader(double dt);
+    void setupInterface( Interface* interface, const std::string& name );
+    
+public:
+    TimeController mTimeController;
 };
