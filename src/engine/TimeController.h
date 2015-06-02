@@ -42,6 +42,8 @@ public:
     
     bool onTargetTimescaleChanged();
     
+    float getTransitionTime() const { return mTransitionTime; }
+    
 public:
     float mMinTimeScale;
     float mMaxTimeScale;

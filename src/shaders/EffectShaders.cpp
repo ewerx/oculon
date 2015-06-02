@@ -18,6 +18,8 @@ using namespace std;
 EffectShaders::EffectShaders(const std::string& name)
 : Scene(name)
 , mCurrentEffect(0)
+, mInput1Alpha("input1-alpha", 1.0f, 0.0f, 1.0f, &mTimeController)
+, mInput2Alpha("input2-alpha", 0.0f, 0.0f, 1.0f, &mTimeController)
 {
 }
 
@@ -33,8 +35,8 @@ void EffectShaders::setup()
     
     // effects
     mEffects.push_back( new CathodeRay() );
-    mEffects.push_back( new Television() );
-    mEffects.push_back( new VideoTape() );
+//    mEffects.push_back( new Television() );
+//    mEffects.push_back( new VideoTape() );
     
     // inputs
 //    vector<Scene*> scenes;
@@ -56,7 +58,8 @@ void EffectShaders::setup()
     {
         if (scene && scene != this)
         {
-            mInputTextures.addTexture( scene->getName(), scene->getFboTexture() );
+            mInput1Texture.addTexture( scene->getName(), scene->getFboTexture() );
+            mInput2Texture.addTexture( scene->getName(), scene->getFboTexture() );
         }
     }
     
@@ -95,11 +98,19 @@ void EffectShaders::setupInterface()
                         .oscReceiver(getName())
                         .isVertical(), effectNames);
     
-    // inputs
-    mInputTextures.setupInterface( mInterface, getName(), "input" );
     
     // noise
     mNoiseTextures.setupInterface( mInterface, getName(), "noise-type" );
+    
+    // inputs
+    mInterface->gui()->addColumn();
+    
+    mInput1Alpha.setupInterface(mInterface, "input1-alpha");
+    mInput1Texture.setupInterface( mInterface, getName(), "input1" );
+    
+    mInput2Alpha.setupInterface(mInterface, "input2-alpha");
+    mInput2Texture.setupInterface( mInterface, getName(), "input2" );
+    
     
 //    mDynamicNoiseTexture.setupInterface(mInterface, getName());
     
@@ -143,8 +154,9 @@ void EffectShaders::draw()
     
     gl::setMatricesWindow( mApp->getViewportSize() );
     
-    mInputTextures.getTexture().bind(0);
-    mNoiseTextures.getTexture().bind(1);
+    mInput1Texture.getTexture().bind(0);
+    mInput2Texture.getTexture().bind(1);
+    mNoiseTextures.getTexture().bind(2);
     
     gl::GlslProg shader = mEffects[mCurrentEffect]->getShader();
     shader.bind();
@@ -153,8 +165,11 @@ void EffectShaders::draw()
     
     shader.uniform( "iResolution", resolution );
     shader.uniform( "iGlobalTime", (float)mTimeController.getElapsedSeconds() );
-    shader.uniform( "inputTex", 0 );
-    shader.uniform( "noiseTex", 1 );
+    shader.uniform( "input1Tex", 0 );
+    shader.uniform( "input2Tex", 1 );
+    shader.uniform( "noiseTex", 2 );
+    shader.uniform( "iInput1Alpha", mInput1Alpha());
+    shader.uniform( "iInput2Alpha", mInput2Alpha());
     
     mEffects[mCurrentEffect]->setCustomParams( mAudioInputHandler );
     
@@ -165,7 +180,8 @@ void EffectShaders::draw()
     shader.unbind();
     
     mNoiseTextures.getTexture().unbind();
-    mInputTextures.getTexture().unbind();
+    mInput2Texture.getTexture().unbind();
+    mInput1Texture.getTexture().unbind();
     
     gl::popMatrices();
     glPopAttrib();
@@ -176,6 +192,7 @@ void EffectShaders::draw()
 EffectShaders::CathodeRay::CathodeRay()
 : FragShader("crt", "effect_crt.frag")
 , mFrameShift("frameshift", 0.01f, 0.0f, 2.0f, true)
+, mScanShift("scanshift", 0.02f, 0.0f, 0.1f, true)
 {
     mPowerBandThickness = 0.1; // percentage of v-size
     mPowerBandIntensity = 4.0;
@@ -184,13 +201,12 @@ EffectShaders::CathodeRay::CathodeRay()
     mPowerBandIntensityResponse = AudioInputHandler::BAND_NONE;
     mSignalNoiseResponse = AudioInputHandler::BAND_NONE;
     
-    mSignalNoise = 0.8f;
-    mScanlines = 120.0f;
+    mSignalNoise = 0.26f;
+    mScanlines = 180.0f;
     
     mTintColor = ColorAf(0.88f, 0.776f, 1.0f, 1.0f);
     
     mColorShift = 0.00176f;
-    mInputAlpha = 1.0f;
 }
 
 void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::string &prefix)
@@ -198,7 +214,6 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
     string oscName = prefix + "/" + mName;
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
-    interface->addParam(CreateFloatParam("input-alpha", &mInputAlpha));
     interface->addParam(CreateFloatParam("band-thickness", &mPowerBandThickness)
                         .minValue(0.001f)
                         .oscReceiver(oscName));
@@ -219,6 +234,7 @@ void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::
     
     interface->gui()->addColumn();
     mFrameShift.setupInterface(interface, "frameshift");
+    mScanShift.setupInterface(interface, "scanshift");
     interface->addParam(CreateFloatParam("signalnoise", &mSignalNoise)
                         .maxValue(3.0f)
                         .oscReceiver(oscName));
@@ -255,8 +271,9 @@ void EffectShaders::CathodeRay::setCustomParams(AudioInputHandler &audioInputHan
     mShader.uniform("iScanlines", mScanlines);
     mShader.uniform("iColor1", mTintColor);
     mShader.uniform("iColorShift", mColorShift * (0.5f + 0.5f*audioInputHandler.getAverageVolumeByBand(mColorShiftBand())));
-    mShader.uniform("iInputAlpha", mInputAlpha);
+//    mShader.uniform("iInputAlpha", mInputAlpha);
     mShader.uniform("iFrameShift", mFrameShift(audioInputHandler));
+    mShader.uniform("iScanShift", mScanShift(audioInputHandler));
 }
 
 #pragma mark - Television
@@ -300,7 +317,7 @@ void EffectShaders::Television::setCustomParams( AudioInputHandler& audioInputHa
 #pragma mark - VCR
 
 EffectShaders::VideoTape::VideoTape()
-: FragShader("vcr", "effect_vcr.frag")
+: FragShader("vcr", "shockwave.frag")
 {
     
 }

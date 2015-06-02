@@ -54,7 +54,10 @@ private:
     int mCurrentEffect;
     
     // inputs
-    TextureSelector mInputTextures;
+    TextureSelector mInput1Texture;
+    TextureSelector mInput2Texture;
+    TimelineFloatParam mInput1Alpha;
+    TimelineFloatParam mInput2Alpha;
     
 public:
 #pragma mark -
@@ -79,8 +82,9 @@ public:
         int     mScanlinesBand;
         float   mColorShift;
         AudioBandSelector     mColorShiftBand;
-        float   mInputAlpha;
+//        float   mInputAlpha;
         AudioFloatParam mFrameShift;
+        AudioFloatParam mScanShift;
         
         ci::ColorAf  mTintColor;
         
@@ -114,6 +118,7 @@ public:
     private:
         
     };
+
 };
 
 

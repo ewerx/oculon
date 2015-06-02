@@ -14,8 +14,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-CircleWave::CircleWave()
-: TextureShaders("circlewave")
+CircleWave::CircleWave(const std::string& name)
+: TextureShaders(name)
 {
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
@@ -30,10 +30,17 @@ void CircleWave::setupShaders()
 {
     mShaderType = 0;
     
-    mShaders.push_back( new Circle() );
     mShaders.push_back( new Spark() );
     mShaders.push_back( new Trapezium() );
+    mShaders.push_back( new Circle() );
     mShaders.push_back( new Ether() );
+    
+    if (getName().compare("trapz") == 0)
+    {
+        mShaderType = 1;
+    }
+    
+    mTimeController.setTimeScale(0.2894f);
 }
 
 #pragma mark - Circle
@@ -131,8 +138,8 @@ void CircleWave::Spark::setCustomParams( AudioInputHandler& audioInputHandler )
 
 CircleWave::Trapezium::Trapezium()
 : FragShader("trapezium", "trapezium.frag")
-, mInnerRadius(0.75f)
-, mOuterRadius(0.9f)
+, mInnerRadius(0.55f)
+, mOuterRadius(0.7f)
 , mSheetThickness(0.012f)
 , mNoisiness(10.0f)
 , mSteps(20)

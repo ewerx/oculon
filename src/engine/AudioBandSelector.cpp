@@ -10,6 +10,8 @@
 #include "Interface.h"
 
 using namespace std;
+using namespace ci;
+using namespace ci::app;
 
 AudioBandSelector::AudioBandSelector(bool slider)
 : EnumSelector()
@@ -47,10 +49,32 @@ void AudioBandSelector::setupInterface(Interface *interface, const std::string &
 void AudioFloatParam::setupInterface(Interface *interface, const std::string &name)
 {
     string oscName = name + "/" + getName();
-    interface->addParam(CreateFloatParam(getName(), &mValue)
+    interface->addParam(CreateFloatParam(name, &mValue)
                         .minValue(mMinValue)
                         .maxValue(mMaxValue)
-                        .oscReceiver(oscName));
-    mBand.setupInterface(interface, getName() + "-band");
-    interface->addParam(CreateBoolParam(getName() + "-median", &mMedian));
+                        .oscReceiver(name));
+    mBand.setupInterface(interface, name + "-band");
+    interface->addParam(CreateBoolParam(name + "-median", &mMedian));
+}
+
+#pragma mark - TimelineFloatParam
+
+void TimelineFloatParam::setupInterface(Interface *interface, const std::string &name)
+{
+//    string oscName = name + "/" + getName();
+    
+    interface->addParam(CreateFloatParam(name, &mTargetValue)
+                        .minValue(mMinValue)
+                        .maxValue(mMaxValue)
+                        .oscReceiver(name))->registerCallback(this, &TimelineFloatParam::onTargetValueChanged);
+}
+
+bool TimelineFloatParam::onTargetValueChanged()
+{
+    if (mTargetValue != mValue() && mTimeController)
+    {
+        timeline().apply( &mValue, mTargetValue, mTimeController->getTransitionTime(), EaseOutQuad() );
+    }
+    
+    return true;
 }

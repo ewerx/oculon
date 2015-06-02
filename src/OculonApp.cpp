@@ -397,29 +397,37 @@ void OculonApp::setupScenes()
     
     mScenes.clear();
     
-    if( mConfig.getBool("audio") )              addScene( new AudioSignal() );
+//    if( mConfig.getBool("audio") )              addScene( new AudioSignal() );
 //    if( mConfig.getBool("binned") )           addScene( new Binned() );
 //    if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
     
-    if( mConfig.getBool("rings") )              addScene( new Rings() );
-    if( mConfig.getBool("circlewave") )         addScene( new CircleWave() );
+    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("spark") );
+    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
 //    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+    if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
 
     
-    if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textureshaders") );
-    if( mConfig.getBool("cells") )              addScene( new Cells("gravity-cells") );
-    if( mConfig.getBool("cells") )              addScene( new Cells("layer-cells") );
-    if( mConfig.getBool("menger") )             addScene( new Menger() );
-    if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
-    if( mConfig.getBool("textureshaders") )     addScene( new Waves() );
-    if( mConfig.getBool("textureshaders") )     addScene( new Contours() );
-    if( mConfig.getBool("textureshaders") )     addScene( new Clouds() );
-    
+    if( mConfig.getBool("textureshaders") )     addScene( new Waves("multiwave") );
+    if( mConfig.getBool("textureshaders") )     addScene( new Waves("sinewave") );
+    if( mConfig.getBool("textureshaders") )     addScene( new Waves("audiograph") );
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     
+    if( mConfig.getBool("cells") )              addScene( new Cells("gravity-cells") );
+    if( mConfig.getBool("cells") )              addScene( new Cells("layer-cells") );
+    if( mConfig.getBool("textureshaders") )     addScene( new Clouds() );
+    if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
+    
+    
     if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt") );
-    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-tv") );
+//    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt2") );
+//    if( mConfig.getBool("menger") )             addScene( new Menger() );
+//    if( mConfig.getBool("textureshaders") )     addScene( new Contours() );
+    
+    if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("bezier") );
+    
+    
+//    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-tv") );
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
     
     
@@ -447,7 +455,7 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
     
     //addScene( new MovieTest() );
-    if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
+//    if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
 //    if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
     //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     //if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
@@ -771,6 +779,7 @@ void OculonApp::keyDown( KeyEvent event )
     
     if( passToScenes )
     {
+        BOOL handled = false;
         for (tSceneList::iterator sceneIt = mScenes.begin();
              sceneIt != mScenes.end();
              ++sceneIt )
@@ -780,10 +789,15 @@ void OculonApp::keyDown( KeyEvent event )
             {
                 if( scene->handleKeyDown(event) )
                 {
+                    handled = true;
                     break;
                 }
             }
         }
+        
+        event.setHandled(handled);
+    } else {
+        event.setHandled();
     }
 }
 

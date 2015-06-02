@@ -11,6 +11,7 @@
 #include "cinder/Cinder.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
+#include "AudioBandSelector.h"
 
 //
 // Waves
@@ -18,7 +19,7 @@
 class Waves : public TextureShaders
 {
 public:
-    Waves();
+    Waves(const std::string& name);
     virtual ~Waves();
     
 private:
@@ -55,6 +56,18 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
+        enum { NUM_WAVES = 3 };
+        
+        struct tWaveGroup
+        {
+            AudioFloatParam mAmplitude;
+            TimelineFloatParam mFrequency;
+            AudioFloatParam mPower;
+        };
+        
+        tWaveGroup mWaveGroups[NUM_WAVES];
+        
+        TimeController mTimeController;
         
     };
     

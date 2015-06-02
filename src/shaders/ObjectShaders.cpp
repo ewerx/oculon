@@ -19,7 +19,7 @@ using namespace ci::app;
 using namespace std;
 
 ObjectShaders::ObjectShaders()
-: Scene("objectshaders")
+: Scene("lissajous")
 {
     //mAudioInputHandler.setup(true);
 }
@@ -66,12 +66,12 @@ void ObjectShaders::setupShaders()
 {
     mShaderType = 0;
     
-    mShaders.push_back( new MetaballsShader() );
     mShaders.push_back( new LissajousShader() );
-    mShaders.push_back( new GyroidShader() );
-    mShaders.push_back( new BioFractalShader() );
-    mShaders.push_back( new RetinaShader() );
-    mShaders.push_back( new TerminalShader() );
+    //mShaders.push_back( new MetaballsShader() );
+    //mShaders.push_back( new GyroidShader() );
+    //mShaders.push_back( new BioFractalShader() );
+    //mShaders.push_back( new RetinaShader() );
+    //mShaders.push_back( new TerminalShader() );
 }
 
 void ObjectShaders::reset()

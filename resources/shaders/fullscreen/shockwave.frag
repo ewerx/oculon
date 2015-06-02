@@ -1,6 +1,6 @@
 uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
-uniform sampler2D iChannel0;
+uniform sampler2D inputTex;
 uniform sampler2D iChannel1;
 uniform vec3      iMouse;
 
@@ -29,7 +29,7 @@ void main()
     float Dist = distance(texCoord, WaveCentre);
     
     
-    vec4 Color = texture2D(iChannel0, texCoord);
+    vec4 Color = texture2D(inputTex, texCoord);
     
     //Only distort the pixels within the parameter distance from the centre
     if ((Dist <= ((CurrentTime) + (WaveParams.z))) &&
@@ -45,7 +45,7 @@ void main()
         
         //Perform the distortion and reduce the effect over time
         texCoord += ((DiffTexCoord * DiffTime) / (CurrentTime * Dist * 40.0));
-        Color = texture2D(iChannel0, texCoord);
+        Color = texture2D(inputTex, texCoord);
         
         //Blow out the color and reduce the effect over time
         Color += (Color * ScaleDiff) / (CurrentTime * Dist * 40.0);

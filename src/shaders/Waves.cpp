@@ -19,8 +19,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-Waves::Waves()
-: TextureShaders("waves")
+Waves::Waves(const std::string& name)
+: TextureShaders(name)
 {
 }
 
@@ -34,9 +34,16 @@ void Waves::setupShaders()
     
     mShaders.push_back( new MultiWave() );
     mShaders.push_back( new SineWave() );
-    mShaders.push_back( new Oscilloscope() );
+//    mShaders.push_back( new Oscilloscope() );
     mShaders.push_back( new AudioGraph() );
 //    mShaders.push_back( new Oscillator() );
+    
+    if (getName().compare("sinewave") == 0)
+    {
+        mShaderType = 1;
+    } else if (getName().compare("audiograph") == 0) {
+        mShaderType = 2;
+    }
 }
 
 #pragma mark - MultiWave
@@ -99,7 +106,21 @@ void Waves::MultiWave::setCustomParams( AudioInputHandler& audioInputHandler )
 Waves::SineWave::SineWave()
 : FragShader("sine", "sines.frag")
 {
+    mWaveGroups[0].mAmplitude.mValue = 0.15;
+    mWaveGroups[0].mFrequency.mValue = 0.40;
+    mWaveGroups[0].mPower.mValue = 0.85;
     
+    mWaveGroups[1].mAmplitude.mValue = 0.07;
+    mWaveGroups[1].mFrequency.mValue = 0.26;
+    mWaveGroups[2].mPower.mValue = 0.85;
+    
+    mWaveGroups[2].mAmplitude.mValue = 0.05;
+    mWaveGroups[2].mFrequency.mValue = 0.34;
+    mWaveGroups[2].mPower.mValue = 0.85;
+    
+    for (int i = 0; i < NUM_WAVES; ++i) {
+        mWaveGroups[i].mFrequency.mTimeController = &mTimeController;
+    }
 }
 
 void Waves::SineWave::setupInterface( Interface* interface, const std::string& prefix )
@@ -108,15 +129,28 @@ void Waves::SineWave::setupInterface( Interface* interface, const std::string& p
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    mTimeController.setupInterface(interface, "sinewave");
+    
+    for (int i = 0; i < NUM_WAVES; ++i) {
+        mWaveGroups[i].mFrequency.setupInterface(interface, "freq" + toString(i+1));
+        mWaveGroups[i].mAmplitude.setupInterface(interface, "amp" + toString(i+1));
+        mWaveGroups[i].mPower.setupInterface(interface, "pow" + toString(i+1));
+    }
 }
 
 void Waves::SineWave::update(double dt)
 {
-    
+    mTimeController.update(dt);
 }
 
 void Waves::SineWave::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+    for (int i = 0; i < NUM_WAVES; ++i) {
+        mShader.uniform("iFreq" + toString(i+1), mWaveGroups[i].mFrequency());
+        mShader.uniform("iAmp" + toString(i+1), mWaveGroups[i].mAmplitude(audioInputHandler));
+        mShader.uniform("iPower" + toString(i+1), mWaveGroups[i].mPower(audioInputHandler));
+    }
 }
 
 #pragma mark - Oscilloscope

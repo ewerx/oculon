@@ -52,17 +52,19 @@ void TextureShaders::setup()
 void TextureShaders::setupShaders()
 {
     mShaderType = 0;
-    
-    mShaders.push_back( new InfiniteFall() );
-    mShaders.push_back( new FlowNoise() );
+
     mShaders.push_back( new BezierShader() );
-    mShaders.push_back( new PixelWeaveShader() );
+//    mShaders.push_back( new InfiniteFall() );
+    mShaders.push_back( new FlowNoise() );
+
+//    mShaders.push_back( new PixelWeaveShader() );
     mShaders.push_back( new SimplicityShader() );
-    mShaders.push_back( new KifsShader() );
+//    mShaders.push_back( new KifsShader() );
 }
 
 void TextureShaders::reset()
 {
+    mTimeController.reset();
 }
 
 void TextureShaders::setupInterface()

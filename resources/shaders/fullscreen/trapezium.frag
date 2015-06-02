@@ -46,7 +46,7 @@ float trapezium(float x)
 vec3 colFromHue(float hue)
 {
     // https://en.wikipedia.org/wiki/Hue#/media/File:HSV-RGB-comparison.svg
-    return vec3(trapezium(hue - 1.0/3.0), trapezium(hue), trapezium(hue + 1.0/3.0));
+    return vec3(trapezium(hue));//vec3(trapezium(hue - 1.0/3.0), trapezium(hue), trapezium(hue + 1.0/3.0));
 }
 
 // Cheap noise functions. I just messed around with sin functions until
@@ -95,10 +95,10 @@ vec4 getdensity(vec3 pos)
     vec3 samplePos = normalize(pos);
     
     // The inner colour of the buble is just a random colour sampled from the cheap noise function.
-    vec4 inner_color = vec4(colFromHue(cnoise(vec4(samplePos / 5.0, time / 15.0))) * 25.0, 1.0);
+    vec4 inner_color = vec4(colFromHue(cnoise(vec4(samplePos / 5.0, time / 15.0))) * 45.0, 1.0);
     // The outer colour of the buble is a big whiter than the inside. This helps make the bubble
     // look more natural.
-    vec4 outer_color = merge_colours(vec4(25.0,25.0,25.0,0.5), inner_color);
+    vec4 outer_color = merge_colours(vec4(45.0,45.0,45.0,0.85), inner_color);
     
     // Now we're going to sample the noise function to get the radius of the bubble along this ray
     float sample = (cnoise(vec4(samplePos * NOISINESS, time)) + 1.0) / 2.0;

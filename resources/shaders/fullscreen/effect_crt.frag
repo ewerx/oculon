@@ -1,6 +1,7 @@
 uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
-uniform sampler2D inputTex;
+uniform sampler2D input1Tex;
+uniform sampler2D input2Tex;
 uniform sampler2D noiseTex;
 uniform float     iPowerBandThickness;
 uniform float     iPowerBandIntensity;
@@ -9,8 +10,10 @@ uniform float     iSignalNoise;
 uniform vec4      iColor1;
 uniform float     iScanlines;
 uniform float     iColorShift;
-uniform float     iInputAlpha;
+uniform float     iInput1Alpha;
+uniform float     iInput2Alpha;
 uniform float     iFrameShift;
+uniform float     iScanShift;
 
 // https://www.shadertoy.com/view/lsfXzM#
 #define M_PI (3.1415926535897932384626433832795)
@@ -79,9 +82,9 @@ vec4 vRGBWithShift (vec2 uv, float angle, float q) {
 	vec2 rPos = vDirShift (uv, angle, q);
 	vec2 gPos = uv;
 	vec2 bPos = vDirShift (uv, -angle, q);
-	vec4 rPix = texture2D (inputTex, rPos) * iInputAlpha;
-	vec4 gPix = texture2D (inputTex, gPos) * iInputAlpha;
-	vec4 bPix = texture2D (inputTex, bPos) * iInputAlpha;
+    vec4 rPix = texture2D (input1Tex, rPos) * iInput1Alpha + texture2D (input2Tex, rPos) * iInput2Alpha;
+	vec4 gPix = texture2D (input1Tex, gPos) * iInput1Alpha + texture2D (input2Tex, gPos) * iInput2Alpha;
+	vec4 bPix = texture2D (input1Tex, bPos) * iInput1Alpha + texture2D (input2Tex, bPos) * iInput2Alpha;
 	return vec4 (rPix.x, gPix.y, bPix.z, 1.0);
 }
 
@@ -138,7 +141,7 @@ void main(void)
 	vec2 bPos = vec2(1.0);
 	float qNoise = q1DNoiseSample(0.01,0.01);
 	
-	cPos = vScanShift (cPos, 0.02, 0.1, 0.1);			// scanline shift
+	cPos = vScanShift (cPos, iScanShift, 0.1, 0.1);			// scanline shift
 	cPos = vCrtCurvature (cPos, 0.25);					// crt curving of coords
 	bPos = vCrtCurvature (gPos, 0.25);					// curvature for the noize bar
 	cPos = vFrameShift (cPos, iFrameShift, 0.001);				// frame shift

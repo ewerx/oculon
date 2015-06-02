@@ -4,6 +4,15 @@ uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 uniform vec4      iColor1;
 uniform vec4      iColor2;
+uniform float     iFreq1;
+uniform float     iFreq2;
+uniform float     iFreq3;
+uniform float     iAmp1;
+uniform float     iAmp2;
+uniform float     iAmp3;
+uniform float     iPower1;
+uniform float     iPower2;
+uniform float     iPower3;
 
 // https://www.shadertoy.com/view/Xlj3Rm
 
@@ -28,17 +37,38 @@ void main()
     vec2 uv = gl_FragCoord.xy / iResolution.xy;
     vec3 color = vec3(0.0);
     
-    color += calcSine(uv, 0.20, 0.15, 0.0, 0.5, vec3(0.0, 0.0, 1.0), 0.2, 15.0);
-    color += calcSine(uv, 0.40, 0.15, 0.0, 0.5, vec3(0.0, 1.0, 1.0), 0.1, 17.0);
-    color += calcSine(uv, 0.60, 0.15, 0.0, 0.5, vec3(0.5, 0.8, 1.0), 0.05, 23.0);
+    float freq11 = iFreq1 * 0.5;
+    float freq12 = iFreq1 * 1.5;
     
-    color += calcSine(uv, 0.18, 0.07, 0.0, 0.7, vec3(0.0, 0.0, 0.7), 0.2, 15.0);
-    color += calcSine(uv, 0.26, 0.07, 0.0, 0.7, vec3(0.0, 0.6, 0.7), 0.1, 17.0);
-    color += calcSine(uv, 0.46, 0.07, 0.0, 0.7, vec3(0.2, 0.4, 0.7), 0.05, 23.0);
+    float freq21 = iFreq2 * 0.6666;
+    float freq22 = iFreq2 * 1.6666;
     
-    color += calcSine(uv, 0.58, 0.05, 0.0, 0.3, vec3(0.0, 0.0, 0.7), 0.2, 15.0);
-    color += calcSine(uv, 0.34, 0.05, 0.0, 0.3, vec3(0.0, 0.6, 0.7), 0.1, 17.0);
-    color += calcSine(uv, 0.52, 0.05, 0.0, 0.3, vec3(0.2, 0.4, 0.7), 0.05, 23.0);
+    float freq31 = iFreq3 * 1.7;
+    float freq32 = iFreq3 * 1.5;
+    
+    float pow10 = iPower1 * 20.0;
+    float pow11 = pow10 * 0.75;
+    float pow12 = pow10 * 1.25;
+    
+    float pow20 = iPower2 * 20.0;
+    float pow21 = pow10 * 0.75;
+    float pow22 = pow10 * 1.25;
+    
+    float pow30 = iPower3 * 20.0;
+    float pow31 = pow30 * 0.75;
+    float pow32 = pow30 * 1.25;
+    
+    color += calcSine(uv, freq11, iAmp1, 0.0, 0.5, iColor1.xyz*0.6, 0.2, pow10);
+    color += calcSine(uv, iFreq1, iAmp1, 0.0, 0.5, iColor2.xyz*0.5, 0.1, pow11);
+    color += calcSine(uv, freq12, iAmp1, 0.0, 0.5, iColor1.xyz*0.4, 0.05, pow12);
+    
+    color += calcSine(uv, freq21, iAmp2, 0.0, 0.7, iColor1.xyz*0.6, 0.2, pow20);
+    color += calcSine(uv, iFreq2, iAmp2, 0.0, 0.7, iColor2.xyz*0.5, 0.1, pow21);
+    color += calcSine(uv, freq22, iAmp2, 0.0, 0.7, iColor1.xyz*0.4, 0.05, pow22);
+    
+    color += calcSine(uv, freq31, iAmp3, 0.0, 0.3, iColor1.xyz*0.6, 0.2, pow30);
+    color += calcSine(uv, iFreq3, iAmp3, 0.0, 0.3, iColor2.xyz*0.5, 0.1, pow31);
+    color += calcSine(uv, freq32, iAmp3, 0.0, 0.3, iColor1.xyz*0.4, 0.05, pow32);
     
     gl_FragColor = vec4(color,1.0);
 }

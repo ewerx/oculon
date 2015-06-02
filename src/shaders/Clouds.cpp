@@ -32,7 +32,7 @@ void Clouds::setupShaders()
     
     mShaderType = 0;
     
-    mShaders.push_back( new CloudTunnel() );
+//    mShaders.push_back( new CloudTunnel() );
     mShaders.push_back( new PlasmaFog() );
     
     // noise

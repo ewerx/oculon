@@ -19,7 +19,7 @@
 class CircleWave : public TextureShaders
 {
 public:
-    CircleWave();
+    CircleWave(const std::string& name);
     virtual ~CircleWave();
     
 private:

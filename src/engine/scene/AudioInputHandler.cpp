@@ -272,7 +272,7 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
             {
                 if (row == 0)
                 {
-                    it.r() = mFftFalloff[col].mValue(); // falloff value
+                    it.r() = mFftFalloff[col].mValue() * mGain; // falloff value
                     it.g() = magSpectrum[col]; // raw value
                     it.b() = mFftFalloff[col].mValue() * mGain; // falloff w/gain
                     it.a() = 1.0f;
@@ -281,10 +281,13 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
                 {
                     if (col < buffer.getNumFrames())
                     {
-                        float value = buffer.getChannel(0)[col];
-                        it.r() = 0.5f + 0.5f * value * mGain;
-                        it.g() = 0.5f + 0.5f * value;
-                        it.b() = 0.5f + 0.5f * value;
+                        float value = (buffer.getChannel(0)[col] + buffer.getChannel(1)[col]) * mGain;
+                        it.r() = value;
+                        it.g() = value;
+                        it.b() = value;
+//                        it.r() = 0.5f + 0.5f * value * mGain;
+//                        it.g() = 0.5f + 0.5f * value;
+//                        it.b() = 0.5f + 0.5f * value;
                         it.a() = 1.0f;
                     }
                 }

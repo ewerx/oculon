@@ -27,7 +27,7 @@ float f(float x)
     {
         x = x/iLength+1.0;
         q = texture2D(iChannel1,vec2(x,1.0)).y-.666;
-        q*= texture2D(iChannel1,vec2(0.0,0.0)).y*2.0;
+        q*= texture2D(iChannel1,vec2(0.0,0.0)).y*8.0;
     }
     else
     {
