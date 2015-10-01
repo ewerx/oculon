@@ -86,6 +86,7 @@ void OculonApp::prepareSettings( Settings *settings )
 	settings->setFrameRate( 60.0f );
 	settings->setFullScreen( false );
     settings->setTitle("Oculon");
+    settings->enableHighDensityDisplay(false);
     
     mSetupScenesOnStart = true;
     mIsPresentationMode = true;
@@ -399,7 +400,7 @@ void OculonApp::setupScenes()
     
 //    if( mConfig.getBool("audio") )              addScene( new AudioSignal() );
 //    if( mConfig.getBool("binned") )           addScene( new Binned() );
-//    if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
+    if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
     
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave("spark") );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
@@ -433,15 +434,15 @@ void OculonApp::setupScenes()
     
 //    if( mConfig.getBool("dust") )               addScene( new Dust() );
 //    
-//    if( mConfig.getBool("graviton") )           addScene( new Graviton() );
-//    if( mConfig.getBool("lines") )              addScene( new Lines() );
-//    if( mConfig.getBool("parsec") )           addScene( new Parsec() );
+    if( mConfig.getBool("graviton") )           addScene( new Graviton() );
+    if( mConfig.getBool("lines") )              addScene( new Lines() );
+    if( mConfig.getBool("parsec") )             addScene( new Parsec() );
 //    if( mConfig.getBool("flock") )            addScene( new Flock() );
 //    if( mConfig.getBool("polyhedron") )       addScene( new Polyhedron() );
 
-//    if( mConfig.getBool("orbiter") )          addScene( new Orbiter() );
+    if( mConfig.getBool("orbiter") )            addScene( new Orbiter() );
 //    if( mConfig.getBool("catalog") )          addScene( new Catalog() );
-//    if( mConfig.getBool("parsec") )             addScene( new PlanetScene() );
+    if( mConfig.getBool("parsec") )             addScene( new PlanetScene() );
 
 // Test Scenes
 //    if( mConfig.getBool("grid") )             addScene( new Grid() );

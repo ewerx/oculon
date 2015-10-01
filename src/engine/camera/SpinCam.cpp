@@ -38,8 +38,8 @@ void SpinCam::setupInterface(Interface *interface, const std::string &name)
                         .maxValue(1000.f))->registerCallback(this, &SpinCam::onSpinDistanceChanged);
     interface->addParam(CreateFloatParam("transition", &mTransitionTime)
                         .minValue(0.0f)
-                        .maxValue(60.0f));
-    interface->addParam(CreateVec3fParam("spin_axis", &mSpinRate, Vec3f::zero(), Vec3f::one()*1.f));
+                        .maxValue(300.0f));
+    interface->addParam(CreateVec3fParam("spin_axis", &mSpinRate, Vec3f::one()*-0.5f, Vec3f::one()*0.5f));
     interface->addParam(CreateVec3fParam("spin_up", &mSpinUp, Vec3f::zero(), Vec3f::one()));
 }
 
