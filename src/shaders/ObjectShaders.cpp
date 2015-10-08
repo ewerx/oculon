@@ -623,3 +623,24 @@ void TerminalShader::setupInterface( Interface* interface, const std::string& pr
 void TerminalShader::setCustomParams(AudioInputHandler &audioInputHandler)
 {
 }
+
+#pragma mark - Liquid Cubes
+
+LiquidCubes::LiquidCubes()
+: FragShader("liquidcubes", "liquidcubes_frag.glsl")
+{
+}
+
+void LiquidCubes::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    
+}
+
+void LiquidCubes::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+}

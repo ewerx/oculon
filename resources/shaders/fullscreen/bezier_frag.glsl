@@ -57,6 +57,4 @@ void main (void)
 	float s = smoothstep (iThickness*(1.0 - iBlur), iThickness*(1.0 + iBlur), d);
 	
 	gl_FragColor = mix (iColor2, iColor1, 0.5 + 0.5*sin (s*PI*iFrequency) );
-    
-	
 }

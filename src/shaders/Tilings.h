@@ -82,5 +82,46 @@ private:
         float mDistortion;
         bool mAudioDistortion;
     };
+    
+#pragma mark - VoronoiPlasma
+    
+    class VoronoiPlasma : public FragShader
+    {
+    public:
+        VoronoiPlasma();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
+    
+#pragma mark - VoronoiFire
+    
+    class VoronoiFire : public FragShader
+    {
+    public:
+        VoronoiFire();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
+    
+#pragma mark - VoronoiCells
+    
+    class VoronoiCells : public FragShader
+    {
+    public:
+        VoronoiCells();
+        
+        virtual void setupInterface( Interface* interface, const std::string& name );
+        virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
 };
-

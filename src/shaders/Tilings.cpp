@@ -36,6 +36,9 @@ void Tilings::setupShaders()
     
     mShaders.push_back( new Tessellations() );
     mShaders.push_back( new Voronoi() );
+    mShaders.push_back( new VoronoiPlasma() );
+    mShaders.push_back( new VoronoiFire() );
+    mShaders.push_back( new VoronoiCells() );
 }
 
 #pragma mark - Tessellations
@@ -248,3 +251,63 @@ void Tilings::Voronoi::setCustomParams( AudioInputHandler& audioInputHandler )
     mShader.uniform( "distortion", distortion );
 }
 
+#pragma mark - Liquid Cubes
+
+Tilings::VoronoiPlasma::VoronoiPlasma()
+: FragShader("voronoi-plasma", "voronoi_plasma_frag.glsl")
+{
+}
+
+void Tilings::VoronoiPlasma::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    
+}
+
+void Tilings::VoronoiPlasma::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+}
+
+#pragma mark - Liquid Cubes
+
+Tilings::VoronoiFire::VoronoiFire()
+: FragShader("voronoi-fire", "voronoi_fire_frag.glsl")
+{
+}
+
+void Tilings::VoronoiFire::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    
+}
+
+void Tilings::VoronoiFire::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+}
+
+#pragma mark - Liquid Cubes
+
+Tilings::VoronoiCells::VoronoiCells()
+: FragShader("voronoi-cells", "voronoi_cells_frag.glsl")
+{
+}
+
+void Tilings::VoronoiCells::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + mName;
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void Tilings::VoronoiCells::setCustomParams(AudioInputHandler &audioInputHandler)
+{
+}

@@ -34,6 +34,8 @@ void Clouds::setupShaders()
     
 //    mShaders.push_back( new CloudTunnel() );
     mShaders.push_back( new PlasmaFog() );
+    mShaders.push_back( new FlowNoise() );
+    mShaders.push_back( new Vines() );
     
     // noise
     mDynamicNoiseTexture.setup(256, 256);
@@ -144,7 +146,7 @@ void Clouds::CloudTunnel::setCustomParams( AudioInputHandler& audioInputHandler 
     mShader.uniform( "iTunnelWidth", mTunnelWidth * audioInputHandler.getAverageVolumeByBand(mTunnelWidthResponseBand) );
 }
 
-#pragma mark - MultiWave
+#pragma mark - PlasmaFog
 
 Clouds::PlasmaFog::PlasmaFog()
 : FragShader("plasmafog", "plasmafog.frag")
@@ -166,5 +168,81 @@ void Clouds::PlasmaFog::update(double dt)
 }
 
 void Clouds::PlasmaFog::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+}
+
+#pragma mark - FlowNoise
+
+Clouds::FlowNoise::FlowNoise()
+: FragShader("flow-noise", "flownoise_frag.glsl")
+{
+    mZoom = 1.15f;
+    mDisturbance = 2.13;
+    
+    for (int i = 0; i < NUM_LAYERS; ++i)
+    {
+        mTimeScale[i] = 0.4f;
+        mFrequency[i] = 0.5f;
+    }
+}
+
+void Clouds::FlowNoise::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam( "zoom", &mZoom )
+                        .minValue(0.1f)
+                        .maxValue(5.0f));
+    interface->addParam(CreateFloatParam( "disturbance", &mDisturbance )
+                        .minValue(0.0f)
+                        .maxValue(8.0f));
+    
+    for (int i = 0; i < NUM_LAYERS; ++i)
+    {
+        string paramName = "timescale" + toString(i);
+        interface->addParam(CreateFloatParam( paramName, &mTimeScale[i] )
+                            .minValue(0.01f)
+                            .maxValue(2.0f));
+        paramName = "frequency" + toString(i);
+        interface->addParam(CreateFloatParam( paramName, &mFrequency[i] )
+                            .minValue(0.01f)
+                            .maxValue(2.0f));
+    }
+}
+
+void Clouds::FlowNoise::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+    mShader.uniform("iZoom", mZoom);
+    mShader.uniform("iDisturbance", mDisturbance);
+    
+    for (int i = 0; i < NUM_LAYERS; ++i)
+    {
+        string paramName = "iTimeScale" + toString(i);
+        mShader.uniform(paramName, mTimeScale[i]);
+        paramName = "iFrequency" + toString(i);
+        mShader.uniform(paramName, mFrequency[i]);
+    }
+}
+
+
+#pragma mark - Vines
+
+Clouds::Vines::Vines()
+: FragShader("vines", "vines_frag.glsl")
+{
+}
+
+void Clouds::Vines::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void Clouds::Vines::setCustomParams( AudioInputHandler& audioInputHandler )
 {
 }

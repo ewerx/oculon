@@ -209,3 +209,17 @@ private:
     
 };
 
+#pragma mark - LiquidCubes
+
+class LiquidCubes : public FragShader
+{
+public:
+    LiquidCubes();
+    
+    virtual void setupInterface( Interface* interface, const std::string& name );
+    virtual void setCustomParams( AudioInputHandler& audioInputHandler );
+    
+private:
+    
+};
+

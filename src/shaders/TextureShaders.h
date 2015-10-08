@@ -186,25 +186,18 @@ private:
     private:
         
     };
-    
-    class FlowNoise : public FragShader
+
+    class InfiniteVoronoi : public FragShader
     {
     public:
-        FlowNoise();
+        InfiniteVoronoi();
         
         virtual void setupInterface( Interface* interface, const std::string& name );
         //virtual void update(double dt);
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        float mZoom;
-        float mDisturbance;
         
-        enum { NUM_LAYERS = 5 };
-        
-        float mTimeScale[NUM_LAYERS];
-        float mFrequency[NUM_LAYERS];
     };
-
 };
 
