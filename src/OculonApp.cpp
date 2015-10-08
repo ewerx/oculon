@@ -404,7 +404,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave("spark") );
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
-//    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
 
@@ -422,7 +422,7 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt") );
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt2") );
-//    if( mConfig.getBool("menger") )             addScene( new Menger() );
+    if( mConfig.getBool("menger") )             addScene( new Menger() );
 //    if( mConfig.getBool("textureshaders") )     addScene( new Contours() );
     
     if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("bezier") );
@@ -432,12 +432,12 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
     
     
-//    if( mConfig.getBool("dust") )               addScene( new Dust() );
-//    
+    if( mConfig.getBool("dust") )               addScene( new Dust() );
+//
     if( mConfig.getBool("graviton") )           addScene( new Graviton() );
     if( mConfig.getBool("lines") )              addScene( new Lines() );
     if( mConfig.getBool("parsec") )             addScene( new Parsec() );
-//    if( mConfig.getBool("flock") )            addScene( new Flock() );
+    if( mConfig.getBool("flock") )            addScene( new Flock() );
 //    if( mConfig.getBool("polyhedron") )       addScene( new Polyhedron() );
 
     if( mConfig.getBool("orbiter") )            addScene( new Orbiter() );
@@ -456,7 +456,7 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("fluid") )      addScene( new Viscosity() );
     
     //addScene( new MovieTest() );
-//    if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
+    if( mConfig.getBool("shadertest") ) addScene( new ShaderTest() );
 //    if( mConfig.getBool("fisheye_test") ) addScene( new FisheyeTest() );
     //if( mConfig.getBool("kinect_test") ) addScene( new SkeletonTest() );
     //if( mEnableKinect && mConfig.getBool("kinect_test") ) addScene( new KinectTest() );
