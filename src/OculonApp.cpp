@@ -431,13 +431,13 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-tv") );
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
     
+    if( mConfig.getBool("flock") )            addScene( new Flock() );
     
     if( mConfig.getBool("dust") )               addScene( new Dust() );
 //
     if( mConfig.getBool("graviton") )           addScene( new Graviton() );
     if( mConfig.getBool("lines") )              addScene( new Lines() );
     if( mConfig.getBool("parsec") )             addScene( new Parsec() );
-    if( mConfig.getBool("flock") )            addScene( new Flock() );
 //    if( mConfig.getBool("polyhedron") )       addScene( new Polyhedron() );
 
     if( mConfig.getBool("orbiter") )            addScene( new Orbiter() );

@@ -17,6 +17,8 @@
 #include "SplineCam.h"
 #include "OtherSceneCam.h"
 
+#include "Flock.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -50,14 +52,14 @@ void Lines::setup()
     
     // nodes
     mNodeSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_nodesim_frag.glsl");
-    mNodeBufSize = 8;
+    mNodeBufSize = 48;
     setupNodes(mNodeBufSize); // 256 nodes
     mNodeMotion = NODE_MOTION_STATIC;
     
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
     
-    const int bufSize = 128;
+    const int bufSize = 64;
     setupParticles(bufSize);
     
     // rendering
@@ -634,7 +636,17 @@ void Lines::updateParticles(double dt)
     }
     
     // bind node position tex
-    mNodeController.getParticleFbo().bindTexture(6, 0);
+    bool flockPredatorNodes = true;
+    
+    Flock *flock = static_cast<Flock*>(mApp->getScene("flock"));
+    if (flockPredatorNodes && flock)
+    {
+        flock->mPositionFbos[ flock->mThisFbo ].bindTexture(6, 0);
+    }
+    else
+    {
+        mNodeController.getParticleFbo().bindTexture(6, 0);
+    }
     
     float simdt = mTimeController.getDelta();
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());

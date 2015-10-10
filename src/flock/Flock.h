@@ -65,7 +65,7 @@ protected:
     void setupInterface();
     //void setupDebugInterface();
 	
-private:
+public:
     ////////------------------------------------------------------
     //
 	// CAMERA
@@ -117,6 +117,7 @@ private:
     
     bool                mInitUpdateCalled;
     bool                mDrawNebulas;
+    bool                mDrawParticles;
     //
     ////////------------------------------------------------------
     

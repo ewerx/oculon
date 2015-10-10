@@ -28,8 +28,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define FBO_DIM			42//167
-#define P_FBO_DIM		5
+#define FBO_DIM			48//167
+#define P_FBO_DIM		8
 #define MAX_LANTERNS	5
 
 // ----------------------------------------------------------------
@@ -47,8 +47,9 @@ Flock::~Flock()
 
 void Flock::setup()
 {
-    mDrawNebulas = true;
-    mDrawPredators = false;
+    mDrawNebulas = false;
+    mDrawPredators = true;
+    mDrawParticles = true;
     
     ////////------------------------------------------------------
     //
@@ -126,6 +127,7 @@ void Flock::setupInterface()
     
     mInterface->addParam(CreateBoolParam("draw nebulas", &mDrawNebulas));
     mInterface->addParam(CreateBoolParam("draw predators", &mDrawPredators));
+    mInterface->addParam(CreateBoolParam("draw particles", &mDrawParticles));
     
     mInterface->gui()->addColumn();
     
@@ -754,23 +756,26 @@ void Flock::draw()
 	gl::enableDepthWrite();
 	
 	// DRAW PARTICLES
-	mPositionFbos[mPrevFbo].bindTexture( 0 );
-	mPositionFbos[mThisFbo].bindTexture( 1 );
-	mVelocityFbos[mThisFbo].bindTexture( 2 );
-	mLanternsFbo.bindTexture( 3 );
-	mShader.bind();
-	mShader.uniform( "prevPosition", 0 );
-	mShader.uniform( "currentPosition", 1 );
-	mShader.uniform( "currentVelocity", 2 );
-	mShader.uniform( "lightsTex", 3 );
-	mShader.uniform( "numLights", (float)mController.mNumLanterns );
-	mShader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
-	mShader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
-	mShader.uniform( "att", 1.05f );
-	mShader.uniform( "eyePos", getCamera().getEyePoint());
-	mShader.uniform( "power", 1.0f );
-	gl::draw( mVboMesh );
-	mShader.unbind();
+    if (mDrawParticles)
+    {
+        mPositionFbos[mPrevFbo].bindTexture( 0 );
+        mPositionFbos[mThisFbo].bindTexture( 1 );
+        mVelocityFbos[mThisFbo].bindTexture( 2 );
+        mLanternsFbo.bindTexture( 3 );
+        mShader.bind();
+        mShader.uniform( "prevPosition", 0 );
+        mShader.uniform( "currentPosition", 1 );
+        mShader.uniform( "currentVelocity", 2 );
+        mShader.uniform( "lightsTex", 3 );
+        mShader.uniform( "numLights", (float)mController.mNumLanterns );
+        mShader.uniform( "invNumLights", 1.0f/(float)MAX_LANTERNS );
+        mShader.uniform( "invNumLightsHalf", 1.0f/(float)MAX_LANTERNS * 0.5f );
+        mShader.uniform( "att", 1.05f );
+        mShader.uniform( "eyePos", getCamera().getEyePoint());
+        mShader.uniform( "power", 1.0f );
+        gl::draw( mVboMesh );
+        mShader.unbind();
+    }
 	
     if (mDrawPredators)
     {
