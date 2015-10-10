@@ -540,6 +540,19 @@ void TextureShaders::InfiniteFall::setCustomParams( AudioInputHandler& audioInpu
 TextureShaders::InfiniteVoronoi::InfiniteVoronoi()
 : FragShader("infinite-voronoi", "infinite_voronoi_frag.glsl")
 {
+    mAnimated = false;
+    mAltVoronoi = false;
+    mSpinRate1 = 0.1;
+    mSpinRate2 = 0.13;
+    mSpinRate3 = 4.0;
+    mLightOffset = Vec3f(0.375, 0.1, -1.);
+    mNumLayers = 8.5;
+    mZoom = 0.5;
+    mDarkness = 0.;
+    mSmoothness = 4.;
+    mBumpFactor = 0.2;
+    mFrequency = 6.283;
+    mSpecColor = Vec3f(0.5, 0.85, 1.);
 }
 
 void TextureShaders::InfiniteVoronoi::setupInterface( Interface* interface, const std::string& prefix )
@@ -548,10 +561,55 @@ void TextureShaders::InfiniteVoronoi::setupInterface( Interface* interface, cons
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateBoolParam( "Animated", &mAnimated ));
+    interface->addParam(CreateBoolParam( "AltVoronoi", &mAltVoronoi ));
+    interface->addParam(CreateFloatParam( "SpinRate1", &mSpinRate1 )
+                        .minValue(0.0f)
+                        .maxValue(1.0f));
+    interface->addParam(CreateFloatParam( "SpinRate2", &mSpinRate2 )
+                        .minValue(0.0f)
+                        .maxValue(1.0f));
+    interface->addParam(CreateFloatParam( "SpinRate3", &mSpinRate3 )
+                        .minValue(0.0f)
+                        .maxValue(8.0f));
+//    interface->addParam(CreateFloatParam( "LightOffset", &mLightOffset ));
+    interface->addParam(CreateFloatParam( "NumLayers", &mNumLayers )
+                        .minValue(2.0f)
+                        .maxValue(16.0f));
+    interface->addParam(CreateFloatParam( "Zoom", &mZoom )
+                        .minValue(0.01f)
+                        .maxValue(5.0f));
+//    interface->addParam(CreateFloatParam( "Darkness", &mDarkness )
+//                        .minValue(0.0f)
+//                        .maxValue(2.0f));
+    interface->addParam(CreateFloatParam( "Smoothness", &mSmoothness )
+                        .minValue(0.01f)
+                        .maxValue(10.0f));
+    interface->addParam(CreateFloatParam( "BumpFactor", &mBumpFactor )
+                        .minValue(0.0f)
+                        .maxValue(1.0f));
+    interface->addParam(CreateFloatParam( "Frequency", &mFrequency )
+                        .minValue(0.01f)
+                        .maxValue(18.0f));
+//    interface->addParam(CreateVec3fParam( "SpecColor", &mSpecColor ));
 }
 
 void TextureShaders::InfiniteVoronoi::setCustomParams( AudioInputHandler& audioInputHandler )
 {
+    mShader.uniform( "iAnimated", mAnimated );
+    mShader.uniform( "iAltVoronoi", mAltVoronoi );
+    mShader.uniform( "iSpinRate1", mSpinRate1 );
+    mShader.uniform( "iSpinRate2", mSpinRate2 );
+    mShader.uniform( "iSpinRate3", mSpinRate3 );
+    mShader.uniform( "iLightOffset", mLightOffset );
+    mShader.uniform( "iNumLayers", mNumLayers );
+    mShader.uniform( "iZoom", mZoom );
+//    mShader.uniform( "iDarkness", mDarkness );
+    mShader.uniform( "iSmoothness", mSmoothness );
+    mShader.uniform( "iBumpFactor", mBumpFactor );
+    mShader.uniform( "iFrequency", mFrequency );
+    mShader.uniform( "iSpecColor", mSpecColor );
 }
 
 

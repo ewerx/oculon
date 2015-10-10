@@ -197,7 +197,19 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        
+        bool mAnimated;
+        bool mAltVoronoi;
+        float mSpinRate1;
+        float mSpinRate2;
+        float mSpinRate3;
+        ci::Vec3f mLightOffset;
+        float mNumLayers;
+        float mZoom;
+        float mDarkness;
+        float mSmoothness;
+        float mBumpFactor;
+        float mFrequency;
+        ci::Vec3f mSpecColor;
     };
 };
 

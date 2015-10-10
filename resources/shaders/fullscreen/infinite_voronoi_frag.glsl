@@ -4,6 +4,19 @@ uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 uniform vec3      iMouse;
+uniform bool iAnimated;
+uniform bool iAltVoronoi;
+uniform float iSpinRate1;
+uniform float iSpinRate2;
+uniform float iSpinRate3;
+uniform vec3 iLightOffset;
+uniform float iNumLayers;
+uniform float iZoom;
+uniform float iDarkness;
+uniform float iSmoothness;
+uniform float iBumpFactor;
+uniform float iFrequency;
+uniform vec3 iSpecColor;
 
 // https://www.shadertoy.com/view/XlBXWw
 /*
@@ -55,7 +68,6 @@ uniform vec3      iMouse;
  
  */
 
-
 vec2 hash22(vec2 p) {
     
     // Faster, but doesn't disperse things quite as nicely. However, when framerate
@@ -63,12 +75,44 @@ vec2 hash22(vec2 p) {
     // amalgamation I put together, based on a couple of other random algorithms I've
     // seen around... so use it with caution, because I make a tonne of mistakes. :)
     float n = sin(dot(p, vec2(41, 289)));
-    return fract(vec2(262144, 32768)*n);
     
-    // Animated.
-    //p = fract(vec2(262144, 32768)*n);
-    //return sin( p*6.2831853 + time )*0.5 + 0.5;
+    if (iAnimated) {
+        // Animated.
+        p = fract(vec2(262144, 32768)*n);
+        return sin( p*6.2831853 + iGlobalTime )*0.5 + 0.5;
+    } else {
+        return fract(vec2(262144, 32768)*n);
+    }
     
+}
+
+
+
+// 2D 2nd-order Voronoi: Obviously, this is just a rehash of IQ's original. I've tidied
+// up those if-statements. Since there's less writing, it should go faster. That's how
+// it works, right? :)
+//
+float Voronoi2(vec2 p){
+    
+    vec2 g = floor(p), o;
+    p -= g;// p = fract(p);
+    
+    vec2 d = vec2(1); // 1.4, etc.
+    
+    for(int y = -1; y <= 1; y++){
+        for(int x = -1; x <= 1; x++){
+            
+            o = vec2(x, y);
+            o += hash22(g + o) - p;
+            
+            float h = dot(o, o);
+            d.y = max(d.x, min(d.y, h));
+            d.x = min(d.x, h);
+        }
+    }
+    
+    //return sqrt(d.y) - sqrt(d.x);
+    return (d.y - d.x); // etc.
 }
 
 // One of many 2D Voronoi algorithms getting around, but all are based on IQ's
@@ -76,6 +120,10 @@ vec2 hash22(vec2 p) {
 // explanations will be obvious to many, but not all.
 float Voronoi(vec2 p)
 {
+    if (iAltVoronoi) {
+        return Voronoi2(p);
+    }
+    
     // Partitioning the 2D space into repeat cells.
     vec2 ip = floor(p); // Analogous to the cell's unique ID.
     p = fract(p); // Fractional reference point within the cell.
@@ -114,68 +162,32 @@ float Voronoi(vec2 p)
     return sqrt(d);
 }
 
-/*
- // 2D 2nd-order Voronoi: Obviously, this is just a rehash of IQ's original. I've tidied
- // up those if-statements. Since there's less writing, it should go faster. That's how
- // it works, right? :)
- //
- float Voronoi2(vec2 p){
- 
-	vec2 g = floor(p), o;
-	p -= g;// p = fract(p);
-	
-	vec2 d = vec2(1); // 1.4, etc.
- 
-	for(int y = -1; y <= 1; y++){
- for(int x = -1; x <= 1; x++){
- 
- o = vec2(x, y);
- o += hash22(g + o) - p;
- 
- float h = dot(o, o);
- d.y = max(d.x, min(d.y, h));
- d.x = min(d.x, h);
- }
-	}
-	
-	//return sqrt(d.y) - sqrt(d.x);
- return (d.y - d.x); // etc.
- }
- */
-
-
-
 void main()
 {
-    
     // Screen coordinates.
     vec2 uv = (gl_FragCoord.xy - iResolution.xy*.5)/iResolution.y;
     
     // Variable setup, plus rotation.
     float t = iGlobalTime, s, a, b, e;
     
-    
     // Rotation the canvas back and forth.
-    float th = sin(iGlobalTime*0.1)*sin(iGlobalTime*0.13)*4.;
+    float th = sin(iGlobalTime*iSpinRate1)*sin(iGlobalTime*iSpinRate2)*iSpinRate3;
     float cs = cos(th), si = sin(th);
     uv *= mat2(cs, -si, si, cs);
-    
     
     // Setup: I find 2D bump mapping more intuitive to pretend I'm raytracing, then lighting a bump mapped plane
     // situated at the origin. Others may disagree. :)
     vec3 sp = vec3(uv, 0); // Surface posion. Hit point, if you prefer. Essentially, a screen at the origin.
     vec3 ro = vec3(0, 0, -1); // Camera position, ray origin, etc.
     vec3 rd = normalize(ro-sp); // Unit direction vector. From the origin to the screen plane.
-    vec3 lp = vec3(cos(iGlobalTime)*0.375, sin(iGlobalTime)*0.1, -1.); // Light position - Back from the screen.
-    
+    vec3 lp = vec3(cos(iGlobalTime)*iLightOffset.x, sin(iGlobalTime)*iLightOffset.y, iLightOffset.z); // Light position - Back from the screen.
     
     // The number of layers. More gives you a more continous blend, but is obviously slower.
     // If you change the layer number, you'll proably have to tweak the "gFreq" value.
-    const float L = 8.;
+    float L = iNumLayers;
     // Global layer frequency, or global zoom, if you prefer.
-    const float gFreq = 0.5;
+    float gFreq = iZoom;
     float sum = 0.; // Amplitude sum, of sorts.
-    
     
     // Setting up the layer rotation matrix, used to rotate each layer.
     // Not completely necessary, but it helps mix things up. It's standard practice, but
@@ -184,11 +196,8 @@ void main()
     cs = cos(th), si = sin(th);
     mat2 M = mat2(cs, -si, si, cs);
     
-    
     // The overall scene color. Initiated to zero.
     vec3 col = vec3(0);
-    
-    
     
     
     // Setting up the bump mapping variables and initiating them to zero.
@@ -196,7 +205,7 @@ void main()
     // fx - Change in "f" in in the X-direction.
     // fy - Change in "f" in in the Y-direction.
     float f=0., fx=0., fy=0.;
-    vec2 eps = vec2(4./iResolution.y, 0.);
+    vec2 eps = vec2(iSmoothness/iResolution.y, 0.);
     
     // I've had to off-center this just a little to avoid an annoying white speck right
     // in the middle of the canvas. If anyone knows how to get rid of it, I'm all ears. :)
@@ -231,7 +240,7 @@ void main()
         // Layer ampltude component. Inversely propotional to the frequency, which makes sense.
         // Because the layers are finite, you need to smoothly interpolate between them,
         // and the "cos" setup below is just one of many ways to do it.
-        a = (1.-cos(s*6.283))/e;  // Smooth transition.
+        a = (1.-cos(s*iFrequency))/e;  // Smooth transition.
         //a = (1. - abs(s-.5)*2.); // Alternative linear fade. Not as smooth, or accurate.
         //a *= a*(3.-2.*a)/e; // Smoothing the linear fade above, if so desired.
         
@@ -256,7 +265,6 @@ void main()
         // Rotating each successive layer is pretty standard, but this is the way Fabrice does
         // it.
         M *= M;
-        
     }
     
     // I doubt it'd happen, but just in case sum is zero.
@@ -267,24 +275,19 @@ void main()
     fx /= sum;
     fy /= sum;
     
-    
     // Common bump mapping stuff.
-    float bumpFactor = 0.2;
+    float bumpFactor = iBumpFactor;
     // Using the above to determine the dx and dy function gradients.
     fx = (fx-f)/eps.x; // Change in X
     fy = (fy-f)/eps.x; // Change in Y.
     // Using the gradient vector, "vec3(fx, fy, 0)," to perturb the XY plane normal ",vec3(0, 0, -1)."
     vec3 n = normalize( vec3(0, 0, -1) - vec3(fx, fy, 0)*bumpFactor );
     
-    
-    
-    
+
     // Determine the light direction vector, calculate its distance, then normalize it.
     vec3 ld = lp - sp;
     float lDist = max(length(ld), 0.001);
     ld /= lDist;
-    
-    
     
     // Light attenuation.
     float atten = min(1./(lDist*0.75 + lDist*lDist*0.15), 1.);
@@ -298,16 +301,14 @@ void main()
     // Specular highlighting.
     float spec = pow(max(dot( reflect(-ld, n), rd), 0.), 8.);
     
-    
+    //TODO: color tweaking
     // Using the infinite Voronoi value to produce a purplish color.
-    vec3 objCol = vec3(f, f*f*sqrt(f)*0.4, f*0.6);
+    vec3 objCol = vec3(f*0.6, f*f*sqrt(f)*0.4, f*0.6);
     // Blood... ruby red.
     //vec3 objCol = vec3(f, pow(f, 6.), pow(f, 3.)*0.5);
     
-    
-    // Using the values above to produce the final color.
-    col = (objCol * (diff + 0.5) + vec3(0.5, 0.85, 1.)*spec) * atten;
-    
+    // Using the values above to produce the final color.   
+    col = (objCol * (diff + 0.5) + iSpecColor*spec) * atten;
     
     // Done. 
     gl_FragColor = vec4(min(col, 1.), 1.);

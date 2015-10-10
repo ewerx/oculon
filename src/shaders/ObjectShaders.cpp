@@ -72,6 +72,7 @@ void ObjectShaders::setupShaders()
     //mShaders.push_back( new BioFractalShader() );
     //mShaders.push_back( new RetinaShader() );
     //mShaders.push_back( new TerminalShader() );
+    mShaders.push_back( new LiquidCubes() );
 }
 
 void ObjectShaders::reset()
