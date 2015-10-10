@@ -403,19 +403,19 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
     
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave("spark") );
-    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
+//    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
     if( mConfig.getBool("tilings") )            addScene( new Tilings() );
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
 
     
     if( mConfig.getBool("textureshaders") )     addScene( new Waves("multiwave") );
-    if( mConfig.getBool("textureshaders") )     addScene( new Waves("sinewave") );
-    if( mConfig.getBool("textureshaders") )     addScene( new Waves("audiograph") );
+//    if( mConfig.getBool("textureshaders") )     addScene( new Waves("sinewave") );
+//    if( mConfig.getBool("textureshaders") )     addScene( new Waves("audiograph") );
     if( mConfig.getBool("objshaders") )         addScene( new ObjectShaders() );
     
     if( mConfig.getBool("cells") )              addScene( new Cells("gravity-cells") );
-    if( mConfig.getBool("cells") )              addScene( new Cells("layer-cells") );
+//    if( mConfig.getBool("cells") )              addScene( new Cells("layer-cells") );
     if( mConfig.getBool("textureshaders") )     addScene( new Clouds() );
     if( mConfig.getBool("textureshaders") )     addScene( new RootFract() );
     
@@ -423,9 +423,9 @@ void OculonApp::setupScenes()
     if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt") );
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-crt2") );
     if( mConfig.getBool("menger") )             addScene( new Menger() );
-//    if( mConfig.getBool("textureshaders") )     addScene( new Contours() );
+    if( mConfig.getBool("textureshaders") )     addScene( new Contours() );
     
-    if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("bezier") );
+    if( mConfig.getBool("textureshaders") )     addScene( new TextureShaders("textures") );
     
     
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects-tv") );

@@ -19,7 +19,7 @@ using namespace ci::app;
 using namespace std;
 
 ObjectShaders::ObjectShaders()
-: Scene("lissajous")
+: Scene("obj-shaders")
 {
     //mAudioInputHandler.setup(true);
 }
