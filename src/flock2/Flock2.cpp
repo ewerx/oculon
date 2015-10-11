@@ -51,12 +51,12 @@ void Flock2::setup()
     
     // Predators
     mPredatorSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_predator_sim_frag.glsl");
-    setupPredators(16);
+    setupPredators(12);
     
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_prey_sim_frag.glsl");
     
-    const int bufSize = 64;
+    const int bufSize = 80;
     setupParticles(bufSize);
     
     // rendering
@@ -376,24 +376,24 @@ void Flock2::updatePredators(double dt)
 //    mLanternController.getParticleFbo().bindTexture(6, 0);
     
     float simdt = mTimeController.getDelta();
-    mSimulationShader.bind();
-    mSimulationShader.uniform( "positions", 0 );
-    mSimulationShader.uniform( "velocities", 1 );
-    mSimulationShader.uniform( "information", 2);
-    mSimulationShader.uniform( "oPositions", 3);
-    mSimulationShader.uniform( "oVelocities", 4);
-    mSimulationShader.uniform( "preyPositionTex", 5);
-//    mSimulationShader.uniform( "lanternsTex", 6);
-    mSimulationShader.uniform( "particleBufSize", (float)mParticleController.getFboSize());
-    mSimulationShader.uniform( "predatorBufSize", (float)mPredatorController.getFboSize());
-    mSimulationShader.uniform( "dt", (float)simdt );
-    mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
-    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
+    mPredatorSimShader.bind();
+    mPredatorSimShader.uniform( "positions", 0 );
+    mPredatorSimShader.uniform( "velocities", 1 );
+    mPredatorSimShader.uniform( "information", 2);
+    mPredatorSimShader.uniform( "oPositions", 3);
+    mPredatorSimShader.uniform( "oVelocities", 4);
+    mPredatorSimShader.uniform( "preyPositionTex", 5);
+//    mPredatorSimShader.uniform( "lanternsTex", 6);
+    mPredatorSimShader.uniform( "particleBufSize", (float)mParticleController.getFboSize());
+    mPredatorSimShader.uniform( "predatorBufSize", (float)mPredatorController.getFboSize());
+    mPredatorSimShader.uniform( "dt", (float)simdt );
+    mPredatorSimShader.uniform( "reset", mReset );
+    mPredatorSimShader.uniform( "startAnim", mParticleController.isStartingAnim() );
+    mPredatorSimShader.uniform( "formationStep", mParticleController.getFormationStep() );
     
     gl::drawSolidRect(fbo.getBounds());
     
-    mSimulationShader.unbind();
+    mPredatorSimShader.unbind();
     
 //    mLanternController.getParticleFbo().unbindTexture();
     mParticleController.getParticleFbo().unbindTexture();
