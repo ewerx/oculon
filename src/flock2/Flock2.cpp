@@ -17,6 +17,11 @@
 #include "SplineCam.h"
 #include "OtherSceneCam.h"
 
+#include "DustRenderer.h"
+#include "GravitonRenderer.h"
+#include "FlockRenderer.h"
+#include "LinesRenderer.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -45,20 +50,23 @@ void Flock2::setup()
     
     
     // Predators
-    mPredatorSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_Predatorsim_frag.glsl");
-    mPredatorBufSize = 48;
-    setupPredators(mPredatorBufSize); // 48*48 Predators
+    mPredatorSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_predator_sim_frag.glsl");
+    setupPredators(16);
     
     // simulation
-    mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
+    mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_prey_sim_frag.glsl");
     
     const int bufSize = 64;
-    setupParticles(bufSize); // 64*64 particles
+    setupParticles(bufSize);
     
     // rendering
 //    mParticleController.addRenderer( new FlockRenderer() );
     mParticleController.addRenderer( new GravitonRenderer() );
+    mParticleController.addRenderer( new LinesRenderer() );
 //    mParticleController.addRenderer( new DustRenderer() );
+    
+    mPredatorController.addRenderer( new GravitonRenderer() );
+    mPredatorController.addRenderer( new LinesRenderer() );
     
     mCameraController.setup(mApp);
     mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
@@ -79,7 +87,7 @@ void Flock2::setup()
 void Flock2::setupParticles(const int bufSize)
 {
     int numParticles = bufSize*bufSize;
-    console() << "[lines] initializing " << (numParticles/2) << " lines..." << std::endl;
+    console() << "[lines] initializing " << numParticles << " prey..." << std::endl;
     
     mParticleController.setup(bufSize);
     
@@ -99,19 +107,18 @@ void Flock2::setupParticles(const int bufSize)
             float x = r * Rand::randFloat(-1.0f,1.0f);
             float y = r * Rand::randFloat(-1.0f,1.0f);
             float z = r * Rand::randFloat(-1.0f,1.0f);
-            float mass = Rand::randFloat(0.01f,1.0f);
-            positions.push_back(Vec4f(x,y,z,mass));
+            float leadership = Rand::randFloat(0.7f,1.0f); // GENERAL EMOTIONAL STATE.
+            positions.push_back(Vec4f(x,y,z,leadership));
             
             // velocity + age
-            float vx = Rand::randFloat(-.005f,.005f);
-            float vy = Rand::randFloat(-.005f,.005f);
-            float vz = Rand::randFloat(-.005f,.005f);
-            float age = Rand::randFloat(.007f,0.9f);
-            velocities.push_back(Vec4f(vx,vy,vz,age));
+            Vec3f vel = Rand::randVec3f() * 1.0f;
+            float crowd = 1.0f;//Rand::randFloat(.007f,0.9f);
+            velocities.push_back(Vec4f(vel.x,vel.y,vel.z,crowd));
             
             // extra info
 //            float decay = Rand::randFloat(.01f,10.00f);
 //            data.push_back(Vec4f(x,y,z,(float)nodeIndex));
+            data.push_back(Vec4f::zero());
         }
         mParticleController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
         positions.clear();
@@ -139,11 +146,11 @@ void Flock2::setupInterface()
     mTimeController.setupInterface(mInterface, getName(), 1, 18);
     
     mInterface->gui()->addColumn();
-
-    mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Predators");
+    mPredatorController.setupInterface(mInterface, getName());
     
     mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("Prey");
     mParticleController.setupInterface(mInterface, getName());
     
     mCameraController.setupInterface(mInterface, getName());
@@ -186,13 +193,16 @@ void Flock2::updateParticles(double dt)
     mParticleController.getFormation().getPositionTex().bind(3);
     mParticleController.getFormation().getVelocityTex().bind(4);
     
-    if (mAudioInputHandler.hasTexture())
-    {
-        mAudioInputHandler.getFbo().bindTexture(7);
-    }
+//    if (mAudioInputHandler.hasTexture())
+//    {
+//        mAudioInputHandler.getFbo().bindTexture(7);
+//    }
     
     // bind predator position tex
-    mPredatorController.getParticleFbo().bindTexture(6, 0);
+    mPredatorController.getParticleFbo().bindTexture(5, 0);
+    
+    // bind lantern position tex
+//    mLanternController.getParticleFbo().bindTexture(6, 0);
     
     float simdt = mTimeController.getDelta();
     mSimulationShader.bind();
@@ -201,11 +211,10 @@ void Flock2::updateParticles(double dt)
     mSimulationShader.uniform( "information", 2);
     mSimulationShader.uniform( "oPositions", 3);
 	mSimulationShader.uniform( "oVelocities", 4);
-  	mSimulationShader.uniform( "noiseTex", 5);
-    mSimulationShader.uniform( "audioData", 7);
-  	mSimulationShader.uniform( "nodePosTex", 6);
-    mSimulationShader.uniform( "nodeBufSize", (float)mPredatorBufSize);
-    mSimulationShader.uniform( "gain", mAudioInputHandler.getGain());
+  	mSimulationShader.uniform( "predatorPositionTex", 5);
+//    mSimulationShader.uniform( "lanternsTex", 6);
+    mSimulationShader.uniform( "particleBufSize", (float)mParticleController.getFboSize());
+    mSimulationShader.uniform( "predatorBufSize", (float)mPredatorController.getFboSize());
     mSimulationShader.uniform( "dt", (float)simdt );
     mSimulationShader.uniform( "reset", mReset );
     mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
@@ -215,7 +224,8 @@ void Flock2::updateParticles(double dt)
     
     mSimulationShader.unbind();
     
-    mPredatorController.getFormation().getPositionTex().unbind();
+//    mLanternController.getParticleFbo().unbindTexture();
+    mPredatorController.getParticleFbo().unbindTexture();
     
     mParticleController.getFormation().getPositionTex().unbind();
     mParticleController.getFormation().getVelocityTex().unbind();
@@ -250,6 +260,7 @@ void Flock2::draw()
     else
     {
         mParticleController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
+        mPredatorController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
     }
     gl::popMatrices();
 }
@@ -296,32 +307,24 @@ void Flock2::setupPredators(const int bufSize)
     vector<Vec4f> velocities;
     vector<Vec4f> data;
     
-    const float r = 100.0f;
+    const float r = 50.0f;
     
     // random
     {
         for (int i = 0; i < numPredators; ++i)
         {
-            float rho = Rand::randFloat() * (M_PI * 2.0);
-            float theta = Rand::randFloat() * (M_PI * 2.0);
+            Vec3f pos = Rand::randVec3f() * r;
             
-            float x = r * cos(rho) * sin(theta);
-            float y = r * sin(rho) * sin(theta);
-            float z = r * cos(theta);
-            
-            float mass = Rand::randFloat(0.01f,1.0f);
-            positions.push_back(Vec4f(x,y,z,mass));
+            float leadership = Rand::randFloat( 0.7f, 1.0f );	// GENERAL EMOTIONAL STATE.
+            positions.push_back(Vec4f(pos.x,pos.y,pos.z,leadership));
             
             // velocity + age
-            float vx = Rand::randFloat(-.005f,.005f);
-            float vy = Rand::randFloat(-.005f,.005f);
-            float vz = Rand::randFloat(-.005f,.005f);
-            float age = Rand::randFloat(.007f,0.9f);
-            velocities.push_back(Vec4f(vx,vy,vz,age));
+            Vec3f vel = Rand::randVec3f() * 3.0f;
+            float crowd = 1.0f;//Rand::randFloat(.007f,0.9f);
+            velocities.push_back(Vec4f(vel.x,vel.y,vel.z,crowd));
             
             // extra info
-            float decay = Rand::randFloat(.01f,10.00f);
-            data.push_back(Vec4f(x,y,z,decay));
+            data.push_back(Vec4f::zero());
         }
         mPredatorController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
     }
@@ -360,29 +363,40 @@ void Flock2::updatePredators(double dt)
     
     mPredatorController.getFormation().getPositionTex().bind(3);
     mPredatorController.getFormation().getVelocityTex().bind(4);
-  
-    if (mAudioInputHandler.hasTexture())
-    {
-        mAudioInputHandler.getFbo().bindTexture(6);
-    }
+    
+    //    if (mAudioInputHandler.hasTexture())
+    //    {
+    //        mAudioInputHandler.getFbo().bindTexture(7);
+    //    }
+    
+    // bind prey position tex
+    mParticleController.getParticleFbo().bindTexture(5, 0);
+    
+    // bind lantern position tex
+//    mLanternController.getParticleFbo().bindTexture(6, 0);
     
     float simdt = mTimeController.getDelta();
-    mPredatorSimShader.bind();
-    mPredatorSimShader.uniform( "positions", 0 );
-    mPredatorSimShader.uniform( "velocities", 1 );
-    mPredatorSimShader.uniform( "information", 2);
-    mPredatorSimShader.uniform( "oPositions", 3);
-	mPredatorSimShader.uniform( "oVelocities", 4);
-    mPredatorSimShader.uniform( "audioData", 6);
-    mPredatorSimShader.uniform( "gain", mAudioInputHandler.getGain());
-    mPredatorSimShader.uniform( "dt", (float)simdt );
-    mPredatorSimShader.uniform( "reset", mReset );
-    mPredatorSimShader.uniform( "startAnim", mPredatorController.isStartingAnim() );
-    mPredatorSimShader.uniform( "formationStep", mPredatorController.getFormationStep() );
+    mSimulationShader.bind();
+    mSimulationShader.uniform( "positions", 0 );
+    mSimulationShader.uniform( "velocities", 1 );
+    mSimulationShader.uniform( "information", 2);
+    mSimulationShader.uniform( "oPositions", 3);
+    mSimulationShader.uniform( "oVelocities", 4);
+    mSimulationShader.uniform( "preyPositionTex", 5);
+//    mSimulationShader.uniform( "lanternsTex", 6);
+    mSimulationShader.uniform( "particleBufSize", (float)mParticleController.getFboSize());
+    mSimulationShader.uniform( "predatorBufSize", (float)mPredatorController.getFboSize());
+    mSimulationShader.uniform( "dt", (float)simdt );
+    mSimulationShader.uniform( "reset", mReset );
+    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
+    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
     
     gl::drawSolidRect(fbo.getBounds());
     
-    mPredatorSimShader.unbind();
+    mSimulationShader.unbind();
+    
+//    mLanternController.getParticleFbo().unbindTexture();
+    mParticleController.getParticleFbo().unbindTexture();
     
     mPredatorController.getFormation().getPositionTex().unbind();
     mPredatorController.getFormation().getVelocityTex().unbind();
@@ -390,3 +404,51 @@ void Flock2::updatePredators(double dt)
     fbo.unbindUpdate();
     gl::popMatrices();
 }
+
+#pragma mark - Lanterns
+
+void Flock2::setupLanterns(const int bufSize)
+{
+    int numLanterns = bufSize*bufSize;
+    console() << "[lines] initializing " << numLanterns << " lanterns..." << std::endl;
+    
+    mLanternController.setup(bufSize);
+    
+    vector<Vec4f> positions;
+    vector<Vec4f> velocities;
+    vector<Vec4f> data;
+    
+//    const float r = 100.0f;
+    
+    // random
+    {
+        for (int i = 0; i < numLanterns; ++i)
+        {
+//            float rho = Rand::randFloat() * (M_PI * 2.0);
+//            float theta = Rand::randFloat() * (M_PI * 2.0);
+//            
+//            float x = r * cos(rho) * sin(theta);
+//            float y = r * sin(rho) * sin(theta);
+//            float z = r * cos(theta);
+//            
+//            float mass = Rand::randFloat(0.01f,1.0f);
+            positions.push_back(Vec4f(0.0f,0.0f,0.0f,1.0f));
+            
+            // velocity + age
+            float vx = Rand::randFloat(-.005f,.005f);
+            float vy = Rand::randFloat(-.005f,.005f);
+            float vz = Rand::randFloat(-.005f,.005f);
+            float age = Rand::randFloat(.007f,0.9f);
+            velocities.push_back(Vec4f(vx,vy,vz,age));
+            
+            // extra info
+//            float decay = Rand::randFloat(.01f,10.00f);
+            //data.push_back(Vec4f(x,y,z,decay));
+            data.push_back(Vec4f::zero());
+        }
+        mLanternController.addFormation(new ParticleFormation("one", bufSize, positions, velocities, data));
+    }
+    
+    mPredatorController.resetToFormation(0);
+}
+

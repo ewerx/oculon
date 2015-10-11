@@ -75,6 +75,8 @@ public:
     void addRenderer(ParticleRenderer* renderer);
     const std::vector<std::string> getRendererNames();
     
+    int getFboSize() const { return mFboSize; }
+    
 private:
     void setupFBO();
     

@@ -173,7 +173,8 @@
 		7C6A21B81BC615090052A65B /* voronoi_fire_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21B71BC615090052A65B /* voronoi_fire_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C6A21BE1BC9AA6E0052A65B /* Flock2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6A21BA1BC9AA6E0052A65B /* Flock2.cpp */; settings = {ASSET_TAGS = (); }; };
 		7C6A21BF1BC9AA6E0052A65B /* FlockRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6A21BC1BC9AA6E0052A65B /* FlockRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
-		7C6A21C11BC9B23F0052A65B /* flock_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21C01BC9B23F0052A65B /* flock_simulation_frag.glsl */; settings = {ASSET_TAGS = (); }; };
+		7C6A21C11BC9B23F0052A65B /* flock_prey_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21C01BC9B23F0052A65B /* flock_prey_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
+		7C6A21C31BCAB1980052A65B /* flock_predator_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21C21BCAB1980052A65B /* flock_predator_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C6B241418B87815007BA146 /* GravitonRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241218B87815007BA146 /* GravitonRenderer.cpp */; };
 		7C6B241718B87859007BA146 /* GravitonNodesBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */; };
 		7C6CB4371925AFDD00D83614 /* EffectShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB4351925AFDD00D83614 /* EffectShaders.cpp */; };
@@ -799,7 +800,8 @@
 		7C6A21BB1BC9AA6E0052A65B /* Flock2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flock2.h; sourceTree = "<group>"; };
 		7C6A21BC1BC9AA6E0052A65B /* FlockRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlockRenderer.cpp; sourceTree = "<group>"; };
 		7C6A21BD1BC9AA6E0052A65B /* FlockRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlockRenderer.h; sourceTree = "<group>"; };
-		7C6A21C01BC9B23F0052A65B /* flock_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flock_simulation_frag.glsl; sourceTree = "<group>"; };
+		7C6A21C01BC9B23F0052A65B /* flock_prey_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flock_prey_sim_frag.glsl; sourceTree = "<group>"; };
+		7C6A21C21BCAB1980052A65B /* flock_predator_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flock_predator_sim_frag.glsl; sourceTree = "<group>"; };
 		7C6B241218B87815007BA146 /* GravitonRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonRenderer.cpp; sourceTree = "<group>"; };
 		7C6B241318B87815007BA146 /* GravitonRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GravitonRenderer.h; sourceTree = "<group>"; };
 		7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonNodesBehavior.cpp; sourceTree = "<group>"; };
@@ -2134,7 +2136,8 @@
 		7C79C8AE17650F8F00E71F9D /* flock */ = {
 			isa = PBXGroup;
 			children = (
-				7C6A21C01BC9B23F0052A65B /* flock_simulation_frag.glsl */,
+				7C6A21C01BC9B23F0052A65B /* flock_prey_sim_frag.glsl */,
+				7C6A21C21BCAB1980052A65B /* flock_predator_sim_frag.glsl */,
 				7C79C8AF17650F8F00E71F9D /* glow.frag */,
 				7C79C8B017650F8F00E71F9D /* lantern.frag */,
 				7C79C8B117650F8F00E71F9D /* lantern.vert */,
@@ -3106,6 +3109,7 @@
 				7C79CB261765288500E71F9D /* VboPos.frag in Resources */,
 				7CCC2F291A6F3F18002AE354 /* donut1.png in Resources */,
 				7C83B3AE1856BF3800EB22F8 /* parsec-sparkle.png in Resources */,
+				7C6A21C31BCAB1980052A65B /* flock_predator_sim_frag.glsl in Resources */,
 				7C83B3AD1856BF3800EB22F8 /* particle_old.png in Resources */,
 				7C06A9071853D4ED00D1C8A3 /* tripping_frag.glsl in Resources */,
 				7C79CB271765288500E71F9D /* VboPos.vert in Resources */,
@@ -3165,7 +3169,7 @@
 				7C6CB4481925DAA900D83614 /* menger_frag.glsl in Resources */,
 				7C584DBA19FD5C8200EB9609 /* jupiter_diffuse_desat.jpg in Resources */,
 				7C79C8F417650F8F00E71F9D /* colortex2.jpg in Resources */,
-				7C6A21C11BC9B23F0052A65B /* flock_simulation_frag.glsl in Resources */,
+				7C6A21C11BC9B23F0052A65B /* flock_prey_sim_frag.glsl in Resources */,
 				7C5760B31AFDBC6A00423BF6 /* ether.frag in Resources */,
 				7CF0460D188645D300150FD3 /* oscillator_frag.glsl in Resources */,
 				7CEB1ADE1932587A0044A346 /* lissajous_frag.glsl in Resources */,

@@ -21,6 +21,7 @@
 #include "Catalog.h"
 #include "Dust.h"
 #include "Flock.h"
+#include "Flock2.h"
 #include "Corona.h"
 #include "Trails.h"
 //#include "Grid.h"
@@ -432,6 +433,7 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("textureshaders") )     addScene( new EffectShaders("effects3") );
     
     if( mConfig.getBool("flock") )            addScene( new Flock() );
+    if( mConfig.getBool("flock") )            addScene( new Flock2() );
     
     if( mConfig.getBool("dust") )               addScene( new Dust() );
 //

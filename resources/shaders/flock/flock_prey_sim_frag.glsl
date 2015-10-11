@@ -6,28 +6,32 @@ uniform sampler2D information;
 uniform sampler2D oVelocities;
 uniform sampler2D oPositions;
 
+uniform sampler2D predatorPositionTex;
+
 uniform float particleBufSize;
+uniform float predatorBufSize;
+
+uniform sampler2D lanternsTex;
+uniform float numLights;
 
 uniform float dt;
 uniform bool reset;
 uniform bool startAnim;
 uniform float formationStep;
 
-uniform sampler2D predatorPositionTex;
-uniform float predatorBufSize;
 
-uniform sampler2D audioData;
-uniform float gain;
+//uniform sampler2D audioData;
+//uniform float gain;
 
 varying vec4 texCoord;
 
 void reactToLanterns( inout vec3 acc, vec3 _myPos )
 {
-    float index = invNumLightsHalf;
-    for( float i=0.0; i<numLights; i+=1.0 ){
-        vec4 LANTERN	= texture2D( lanternsTex, vec2( index, 0.25 ) );
-        vec3 pos		= LANTERN.xyz;
-        float radius	= LANTERN.w;
+    //float index = invNumLightsHalf;
+    //for( float i=0.0; i<numLights; i+=1.0 ){
+        //vec4 LANTERN	= texture2D( lanternsTex, vec2( index, 0.25 ) );
+        vec3 pos		= vec3(0.0);//LANTERN.xyz;
+        float radius	= 5.0;//LANTERN.w;
         float minRad	= ( radius + 50.0 ) * ( radius + 50.0 );
         float maxRad	= ( radius + 350.0 ) * ( radius + 350.0 );
         
@@ -44,14 +48,16 @@ void reactToLanterns( inout vec3 acc, vec3 _myPos )
         if( distToLantern < radius * 1.1 )
             acc += normalize( dirToLantern );
         
-        index			+= invNumLights;
-    }
+        //index			+= invNumLights;
+    //}
 }
 
 
 
 void reactToPredators( inout vec3 acc, inout float crowded, vec3 fishPos )
 {
+    float pInvFboDim = 1.0 / predatorBufSize;
+    int pFboDim = int(predatorBufSize);
     for( int y=0; y<pFboDim; y++ ){
         for( int x=0; x<pFboDim; x++ ){
             vec2 tc					= vec2( float(x), float(y) ) * pInvFboDim + pInvFboDim * 0.5;
@@ -90,31 +96,32 @@ void main()
     //	float maxSpeed		 = 4.1;
     //	float crowdMulti	 = 0.4;
     
-    vec4 vPos = texture2D( positions, texCoord.st )
-	vec3 pos = vPos.rgb;
+    vec4 vPos = texture2D( positions, texCoord.st );
+	vec3 myPos = vPos.rgb;
 	float leadership = vPos.a;
 
-    vec4 vVel = texture2D( velocities, texCoord.st )
-	vec3 vel = vVel.rgb;
-	float crowd = vVel.a;
+    vec4 vVel = texture2D( velocities, texCoord.st );
+	vec3 myVel = vVel.rgb;
+	float myCrowd = vVel.a;
     
     vec3 acc			= vec3( 0.0, 0.0, 0.0 );
+    float invFboDim = 1.0 / particleBufSize;
     float offset		= invFboDim * 0.5;
     
-    int myX				= int( texCoord.s * float(particleBufSize) );
-    int myY				= int( texCoord.t * float(particleBufSize) );
+    int myX				= int( texCoord.s * particleBufSize );
+    int myY				= int( texCoord.t * particleBufSize );
     float crowded		= 2.0;
     
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float nodeIndex = texture2D( information, texCoord.st ).a;
     
     bool doSim = true; // to skip simulation when forcing containment...
-    float dist = length(pos);
+    float dist = length(myPos);
     
     // animate to formation
     if (startAnim)
     {
-        startPos = pos;
+        startPos = myPos;
     }
     
     if (formationStep < 1.0)
@@ -122,10 +129,11 @@ void main()
         //vel = vec3(0.0,0.0,0.0);
         vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
         
-        pos = mix(startPos,targetPos,formationStep);
+        myPos = mix(startPos,targetPos,formationStep);
     }
     else if (doSim) // simulate motion
     {
+        int fboDim = int(particleBufSize);
         // APPLY THE ATTRACTIVE, ALIGNING, AND REPULSIVE FORCES
         for( int y=0; y<fboDim; y++ ){
             for( int x=0; x<fboDim; x++ ){
@@ -133,7 +141,7 @@ void main()
                     // Avoid comparing my sphere against my sphere
                 } else {
                     vec2 tc			= vec2( float(x), float(y) ) * invFboDim + offset;
-                    vec4 pos		= texture2D( positionTex, tc );
+                    vec4 pos		= texture2D( positions, tc );
                     vec3 dir		= myPos - pos.xyz;
                     
                     float dist		= length( dir );
@@ -156,7 +164,7 @@ void main()
                             float adjustedPercent	= ( percent - minThresh )/( threshDelta + 0.0000001 );
                             float F					= ( 1.0 - ( cos( adjustedPercent * 6.28318 ) * -0.5 + 0.5 ) );
                             
-                            acc += normalize( texture2D( velocityTex, tc ).xyz ) * F * 0.1 * dt * leadership;
+                            acc += normalize( texture2D( velocities, tc ).xyz ) * F * 0.1 * dt * leadership;
                             
                             // IF FISH IS FAR, BUT WITHIN THE ACCEPTABLE ZONE, ATTRACT
                         } else if( dist < zoneRadius ){
@@ -194,12 +202,11 @@ void main()
         // MAIN GRAVITY TO MAKE THEM FALL
         //	myVel += vec3( 0.0, -0.0025, 0.0 );
         
-        // TODO: containment/walls ?
-        /*
         vec3 tempNewPos		= myPos + myVel * dt;		// NEXT POSITION
         
         
         // AVOID WALLS
+        vec3 roomBounds = vec3(350.0, 200.0, 350.0);
         //if( power > 0.5 ){
         float xPull	= tempNewPos.x/( roomBounds.x );
         float yPull	= tempNewPos.y/( roomBounds.y );
@@ -242,20 +249,24 @@ void main()
             vec3 reflect = 2.0 * wallNormal * ( wallNormal * myVel );
             myVel -= reflect * 0.65;
         }
-         */
+         
+        
+        
+        // update position
+        myPos = myPos + ( myVel * ( myCrowd * 0.05 ) * dt );
     }
 	
     // reincarnation
 	if( reset )
     {
-        pos = texture2D(oPositions, texCoord.st).rgb;
-        vel = texture2D(oVelocities, texCoord.st).rgb;
+        myPos = texture2D(oPositions, texCoord.st).rgb;
+        myVel = texture2D(oVelocities, texCoord.st).rgb;
     }
 	
     //position + mass
-	gl_FragData[0] = vec4(pos, leadership);
+	gl_FragData[0] = vec4(myPos, leadership);
     //velocity + nodeIndex
-	gl_FragData[1] = vec4(vel, crowd);
+	gl_FragData[1] = vec4(myVel, myCrowd);
     //age information
 	gl_FragData[2] = vec4(startPos, nodeIndex);
 }

@@ -10,9 +10,6 @@
 
 #include "AudioInputHandler.h"
 #include "CameraController.h"
-#include "DustRenderer.h"
-#include "GravitonRenderer.h"
-#include "FlockRenderer.h"
 #include "ParticleController.h"
 #include "Scene.h"
 #include "SimplexNoiseTexture.h"
@@ -49,17 +46,22 @@ private:
     
     void setupPredators(const int bufSize);
     void updatePredators(double dt);
+    
+    void setupLanterns(const int bufSize);
+    void updateLanterns(double dt);
 
 private:
-    // particle system
+    // prey
     ParticleController mParticleController;
-    
     ci::gl::GlslProg mSimulationShader;
     
     // predators
-    int mPredatorBufSize;
     ParticleController mPredatorController;
     ci::gl::GlslProg mPredatorSimShader;
+    
+    // lanterns
+    ParticleController mLanternController;
+    ci::gl::GlslProg mLanternSimShader;
 
     // camera
     CameraController mCameraController;
