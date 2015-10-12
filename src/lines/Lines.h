@@ -17,6 +17,7 @@
 #include "Scene.h"
 #include "SimplexNoiseTexture.h"
 #include "TimeController.h"
+#include "EnumSelector.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/GlslProg.h"
@@ -54,52 +55,17 @@ private:
     // particle system
     ParticleController mParticleController;
     
-    ci::gl::GlslProg mSimulationShader;
+    // particle behavior
+    ShaderSelector mBehaviorSelector;
     
     SimplexNoiseTexture mDynamicTexture;
-    
-    // motion
-#define MOTION_TUPLE \
-MOTION_ENTRY( "Static", MOTION_STATIC ) \
-MOTION_ENTRY( "Noise", MOTION_NOISE ) \
-MOTION_ENTRY( "Gravity", MOTION_GRAVITY ) \
-MOTION_ENTRY( "AudioWave", MOTION_AUDIO_WAVE ) \
-MOTION_ENTRY( "AudioFFT", MOTION_AUDIO_FFT ) \
-MOTION_ENTRY( "Nodes", MOTION_NODES ) \
-// end tuple
-    
-    enum eMotion
-    {
-#define MOTION_ENTRY( nam, enm ) \
-enm,
-        MOTION_TUPLE
-#undef  MOTION_ENTRY
-        
-        MOTION_COUNT
-    };
-    eMotion mMotion;
     
     // nodes
     int mNodeBufSize;
     ParticleController mNodeController;
-    ci::gl::GlslProg mNodeSimShader;
-    // node motion
-#define NODE_MOTION_TUPLE \
-NODE_MOTION_ENTRY( "Static", NODE_MOTION_STATIC ) \
-NODE_MOTION_ENTRY( "Bounce", NODE_MOTION_BOUNCE ) \
-NODE_MOTION_ENTRY( "Noise", NODE_MOTION_NOISE ) \
-// end tuple
     
-    enum eNodeMotion
-    {
-#define NODE_MOTION_ENTRY( nam, enm ) \
-enm,
-        NODE_MOTION_TUPLE
-#undef  NODE_MOTION_ENTRY
-        
-        NODE_MOTION_COUNT
-    };
-    eNodeMotion mNodeMotion;
+    // node behavior
+    ShaderSelector mNodeBehaviorSelector;
     std::vector<ci::Vec3f> mNodePositions;
 
     // camera

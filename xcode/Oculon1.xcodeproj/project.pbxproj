@@ -176,6 +176,8 @@
 		7C6A21C11BC9B23F0052A65B /* flock_prey_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21C01BC9B23F0052A65B /* flock_prey_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C6A21C31BCAB1980052A65B /* flock_predator_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21C21BCAB1980052A65B /* flock_predator_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C6A21CA1BCB45800052A65B /* formation_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21C91BCB45800052A65B /* formation_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
+		7C6A21CC1BCC2EB60052A65B /* noise_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21CB1BCC2EB60052A65B /* noise_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
+		7C6A21CE1BCC2F840052A65B /* follownodes_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C6A21CD1BCC2F840052A65B /* follownodes_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C6B241418B87815007BA146 /* GravitonRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241218B87815007BA146 /* GravitonRenderer.cpp */; };
 		7C6B241718B87859007BA146 /* GravitonNodesBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */; };
 		7C6CB4371925AFDD00D83614 /* EffectShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CB4351925AFDD00D83614 /* EffectShaders.cpp */; };
@@ -426,7 +428,6 @@
 		7C892493189C7C7A00AF4698 /* Lines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C892491189C7C7A00AF4698 /* Lines.cpp */; };
 		7C892499189C81A900AF4698 /* lines_render_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892495189C81A900AF4698 /* lines_render_frag.glsl */; };
 		7C89249A189C81A900AF4698 /* lines_render_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892496189C81A900AF4698 /* lines_render_vert.glsl */; };
-		7C89249B189C81A900AF4698 /* lines_simulation_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */; };
 		7C89249C189C81A900AF4698 /* lines_simulation_vert.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */; };
 		7C8CBB2C1929B4DF00588689 /* organism_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2B1929B4DF00588689 /* organism_frag.glsl */; };
 		7C8CBB2E1929B64700588689 /* gyroid_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C8CBB2D1929B64700588689 /* gyroid_frag.glsl */; };
@@ -804,6 +805,8 @@
 		7C6A21C01BC9B23F0052A65B /* flock_prey_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flock_prey_sim_frag.glsl; sourceTree = "<group>"; };
 		7C6A21C21BCAB1980052A65B /* flock_predator_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flock_predator_sim_frag.glsl; sourceTree = "<group>"; };
 		7C6A21C91BCB45800052A65B /* formation_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = formation_sim_frag.glsl; sourceTree = "<group>"; };
+		7C6A21CB1BCC2EB60052A65B /* noise_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = noise_sim_frag.glsl; sourceTree = "<group>"; };
+		7C6A21CD1BCC2F840052A65B /* follownodes_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = follownodes_sim_frag.glsl; sourceTree = "<group>"; };
 		7C6B241218B87815007BA146 /* GravitonRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonRenderer.cpp; sourceTree = "<group>"; };
 		7C6B241318B87815007BA146 /* GravitonRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GravitonRenderer.h; sourceTree = "<group>"; };
 		7C6B241518B87859007BA146 /* GravitonNodesBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GravitonNodesBehavior.cpp; sourceTree = "<group>"; };
@@ -1132,7 +1135,6 @@
 		7C892492189C7C7A00AF4698 /* Lines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lines.h; sourceTree = "<group>"; };
 		7C892495189C81A900AF4698 /* lines_render_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_render_frag.glsl; sourceTree = "<group>"; };
 		7C892496189C81A900AF4698 /* lines_render_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_render_vert.glsl; sourceTree = "<group>"; };
-		7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_simulation_frag.glsl; sourceTree = "<group>"; };
 		7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_simulation_vert.glsl; sourceTree = "<group>"; };
 		7C8CBB291929AA1600588689 /* FragShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FragShader.h; sourceTree = "<group>"; };
 		7C8CBB2B1929B4DF00588689 /* organism_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = organism_frag.glsl; sourceTree = "<group>"; };
@@ -2632,7 +2634,8 @@
 			children = (
 				7C892495189C81A900AF4698 /* lines_render_frag.glsl */,
 				7C892496189C81A900AF4698 /* lines_render_vert.glsl */,
-				7C892497189C81A900AF4698 /* lines_simulation_frag.glsl */,
+				7C6A21CB1BCC2EB60052A65B /* noise_sim_frag.glsl */,
+				7C6A21CD1BCC2F840052A65B /* follownodes_sim_frag.glsl */,
 				7C29B93E19BD472E009E89F1 /* lines_nodesim_frag.glsl */,
 				7C892498189C81A900AF4698 /* lines_simulation_vert.glsl */,
 				7C024ED118B4770500A019E5 /* graviton_simulation_vert.glsl */,
@@ -3047,6 +3050,7 @@
 			files = (
 				7C409E64185C08BA0028934D /* brightStars.frag in Resources */,
 				7C178FCB1AF4580B002681A1 /* bluecells.frag in Resources */,
+				7C6A21CC1BCC2EB60052A65B /* noise_sim_frag.glsl in Resources */,
 				7C409E65185C08BA0028934D /* faintStars.frag in Resources */,
 				7C409E66185C08BA0028934D /* faintStars.vert in Resources */,
 				7C8DA8751921D61F00FCD9A2 /* effect_crt.frag in Resources */,
@@ -3094,6 +3098,7 @@
 				7C79CB1D1765288500E71F9D /* nebula.frag in Resources */,
 				7C7CDB151881F2AD0064999F /* wireframe_geom.glsl in Resources */,
 				7CF612C7193410FC00030E26 /* cavething_frag.glsl in Resources */,
+				7C6A21CE1BCC2F840052A65B /* follownodes_sim_frag.glsl in Resources */,
 				7C79CB1E1765288500E71F9D /* P_Position.frag in Resources */,
 				7C79CB1F1765288500E71F9D /* P_VboPos.frag in Resources */,
 				7C79CB201765288500E71F9D /* P_VboPos.vert in Resources */,
@@ -3289,7 +3294,6 @@
 				7C79C91917650F8F00E71F9D /* specExponent.png in Resources */,
 				7C584DB919FD5C8200EB9609 /* saturn_diffuse_desat.png in Resources */,
 				7C79C91A17650F8F00E71F9D /* earthDiffuse.png in Resources */,
-				7C89249B189C81A900AF4698 /* lines_simulation_frag.glsl in Resources */,
 				7C8DA8771921D77100FCD9A2 /* urchin_frag.glsl in Resources */,
 				7C79C91B17650F8F00E71F9D /* earthGray.png in Resources */,
 				7C79C91C17650F8F00E71F9D /* earthMask.png in Resources */,

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <vector>
+#include "FragShader.h"
 
 class EnumSelector
 {
@@ -36,3 +37,24 @@ public:
     int mIndex;
 };
 
+class ShaderSelector : public EnumSelector
+{
+public:
+    ShaderSelector(): EnumSelector() {};
+    void setupInterface(Interface *interface, const std::string& name);
+    
+    void addShader(const std::string& name, const std::string& fragShader) {
+        mShaders.push_back( new FragShader(name, fragShader) );
+        addValue(name);
+    }
+
+    ci::gl::GlslProg getSelectedShader() const {
+        if (mIndex < mShaders.size()) {
+            return mShaders[mIndex]->getShader();
+        } else {
+            return ci::gl::GlslProg();
+        }
+    }
+public:
+    std::vector<FragShader*> mShaders;
+};

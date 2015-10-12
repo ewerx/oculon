@@ -44,23 +44,23 @@ void Lines::setup()
     mReset = false;
     
     // params
-    mMotion = MOTION_NOISE;
-    
     mContainmentRadius = 0.0f;
     
     mAudioTime = false;
     
     // nodes
-    mNodeSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_nodesim_frag.glsl");
-    mNodeBufSize = 48;
-    setupNodes(mNodeBufSize); // 256 nodes
-    mNodeMotion = NODE_MOTION_STATIC;
+    mNodeBufSize = 32;
+    setupNodes(mNodeBufSize);
     
-    // simulation
-    mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "lines_simulation_frag.glsl");
+    mNodeBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
     
+    // particles
     const int bufSize = 64;
     setupParticles(bufSize);
+    
+    mBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
+    mBehaviorSelector.addShader("noise", "noise_sim_frag.glsl");
+    mBehaviorSelector.addShader("follow-nodes", "follownodes_sim_frag.glsl");
     
     // rendering
     mParticleController.addRenderer( new LinesRenderer() );
@@ -538,17 +538,11 @@ void Lines::setupInterface()
 {
     mTimeController.setupInterface(mInterface, getName(), 1, 18);
     
-    mInterface->gui()->addColumn();
-    vector<string> motionNames;
-#define MOTION_ENTRY( nam, enm ) \
-    motionNames.push_back(nam);
-    MOTION_TUPLE
-#undef  MOTION_ENTRY
-    mInterface->addEnum(CreateEnumParam( "behavior", (int*)(&mMotion) )
-                        .maxValue(MOTION_COUNT)
+    // particles
+    mInterface->addEnum(CreateEnumParam("behavior", &mBehaviorSelector.mIndex)
+                        .maxValue(mBehaviorSelector.mNames.size())
                         .isVertical()
-                        .oscReceiver(getName())
-                        .sendFeedback(), motionNames);
+                        .sendFeedback(), mBehaviorSelector.mNames)->registerCallback(&mParticleController, &ParticleController::onFormationChanged);
     
     mDynamicTexture.setupInterface(mInterface, getName());
     
@@ -558,36 +552,32 @@ void Lines::setupInterface()
                          .sendFeedback());
     
     mInterface->gui()->addColumn();
-    mInterface->gui()->addLabel("nodes");
-    vector<string> nodeMotionNames;
-#define NODE_MOTION_ENTRY( nam, enm ) \
-nodeMotionNames.push_back(nam);
-    NODE_MOTION_TUPLE
-#undef  NODE_MOTION_ENTRY
-    mInterface->addEnum(CreateEnumParam( "behavior", (int*)(&mNodeMotion) )
-                        .maxValue(NODE_MOTION_COUNT)
-                        .isVertical()
-                        .oscReceiver(getName())
-                        .sendFeedback(), nodeMotionNames);
-    mNodeController.setupInterface(mInterface, getName());
-    
-    mInterface->gui()->addColumn();
     mParticleController.setupInterface(mInterface, getName());
     
+    // nodes
+    mInterface->gui()->addColumn();
+    mInterface->gui()->addLabel("nodes");
+    mInterface->addEnum(CreateEnumParam("node-behavior", &mNodeBehaviorSelector.mIndex)
+                        .maxValue(mNodeBehaviorSelector.mNames.size())
+                        .isVertical()
+                        .sendFeedback(), mNodeBehaviorSelector.mNames)->registerCallback(&mNodeController, &ParticleController::onFormationChanged);
+    mNodeController.setupInterface(mInterface, getName());
+    
+    // misc
     mCameraController.setupInterface(mInterface, getName());
     mAudioInputHandler.setupInterface(mInterface, getName(), 1, 19, 2, 19);
     
     // FIXME: MIDI HACK
-    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
-    hiddenPanel->enabled = false;
-    mInterface->addButton(CreateTriggerParam("formation0", NULL)
-                          .midiInput(0, 2, 17))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 0) );
-    mInterface->addButton(CreateTriggerParam("formation1", NULL)
-                          .midiInput(0, 2, 18))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 1) );
-    mInterface->addParam(CreateFloatParam("anim_time", mParticleController.getAnimTimePtr())
-                                          .minValue(0.0f)
-                                          .maxValue(120.0f)
-                                          .midiInput(0, 1, 17));
+//    mowa::sgui::PanelControl* hiddenPanel = mInterface->gui()->addPanel();
+//    hiddenPanel->enabled = false;
+//    mInterface->addButton(CreateTriggerParam("formation0", NULL)
+//                          .midiInput(0, 2, 17))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 0) );
+//    mInterface->addButton(CreateTriggerParam("formation1", NULL)
+//                          .midiInput(0, 2, 18))->registerCallback( boost::bind( &ParticleController::setFormation, &mParticleController, 1) );
+//    mInterface->addParam(CreateFloatParam("anim_time", mParticleController.getAnimTimePtr())
+//                                          .minValue(0.0f)
+//                                          .maxValue(120.0f)
+//                                          .midiInput(0, 1, 17));
 }
 
 #pragma mark - Update
@@ -606,7 +596,6 @@ void Lines::update(double dt)
     mDynamicTexture.update(dt);
     
     updateNodes(dt);
-    
     updateParticles(dt);
     
     mReset = false;
@@ -639,7 +628,7 @@ void Lines::updateParticles(double dt)
     bool flockPredatorNodes = true;
     
     Flock *flock = static_cast<Flock*>(mApp->getScene("flock"));
-    if (flockPredatorNodes && flock)
+    if (flockPredatorNodes && flock && flock->isRunning())
     {
         flock->mPositionFbos[ flock->mThisFbo ].bindTexture(6, 0);
     }
@@ -648,29 +637,30 @@ void Lines::updateParticles(double dt)
         mNodeController.getParticleFbo().bindTexture(6, 0);
     }
     
+    gl::GlslProg shader = mBehaviorSelector.getSelectedShader();
+    
     float simdt = mTimeController.getDelta();
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
-    mSimulationShader.bind();
-    mSimulationShader.uniform( "positions", 0 );
-    mSimulationShader.uniform( "velocities", 1 );
-    mSimulationShader.uniform( "information", 2);
-    mSimulationShader.uniform( "oPositions", 3);
-	mSimulationShader.uniform( "oVelocities", 4);
-  	mSimulationShader.uniform( "noiseTex", 5);
-    mSimulationShader.uniform( "audioData", 7);
-  	mSimulationShader.uniform( "nodePosTex", 6);
-    mSimulationShader.uniform( "nodeBufSize", (float)mNodeBufSize);
-    mSimulationShader.uniform( "gain", mAudioInputHandler.getGain());
-    mSimulationShader.uniform( "dt", (float)simdt );
-    mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
-    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
-    mSimulationShader.uniform( "motion", mMotion );
-    mSimulationShader.uniform( "containmentSize", mContainmentRadius );
+    shader.bind();
+    shader.uniform( "positions", 0 );
+    shader.uniform( "velocities", 1 );
+    shader.uniform( "information", 2);
+    shader.uniform( "oPositions", 3);
+	shader.uniform( "oVelocities", 4);
+  	shader.uniform( "noiseTex", 5);
+    shader.uniform( "audioData", 7);
+  	shader.uniform( "nodePosTex", 6);
+    shader.uniform( "nodeBufSize", (float)mNodeBufSize);
+    shader.uniform( "gain", mAudioInputHandler.getGain());
+    shader.uniform( "dt", (float)simdt );
+    shader.uniform( "reset", mReset );
+    shader.uniform( "startAnim", mParticleController.isStartingAnim() );
+    shader.uniform( "formationStep", mParticleController.getFormationStep() );
+    shader.uniform( "containmentSize", mContainmentRadius );
     
     gl::drawSolidRect(fbo.getBounds());
     
-    mSimulationShader.unbind();
+    shader.unbind();
     
     mNodeController.getFormation().getPositionTex().unbind();
     
@@ -912,34 +902,35 @@ void Lines::updateNodes(double dt)
     mNodeController.getFormation().getPositionTex().bind(3);
     mNodeController.getFormation().getVelocityTex().bind(4);
     
-    mDynamicTexture.bindTexture(5);
-  
-    if (mAudioInputHandler.hasTexture())
-    {
-        mAudioInputHandler.getFbo().bindTexture(6);
-    }
+//    mDynamicTexture.bindTexture(5);
+//  
+//    if (mAudioInputHandler.hasTexture())
+//    {
+//        mAudioInputHandler.getFbo().bindTexture(6);
+//    }
+    
+    gl::GlslProg shader = mNodeBehaviorSelector.getSelectedShader();
     
     float simdt = mTimeController.getDelta();
     if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
-    mNodeSimShader.bind();
-    mNodeSimShader.uniform( "positions", 0 );
-    mNodeSimShader.uniform( "velocities", 1 );
-    mNodeSimShader.uniform( "information", 2);
-    mNodeSimShader.uniform( "oPositions", 3);
-	mNodeSimShader.uniform( "oVelocities", 4);
-  	mNodeSimShader.uniform( "noiseTex", 5);
-    mNodeSimShader.uniform( "audioData", 6);
-    mNodeSimShader.uniform( "gain", mAudioInputHandler.getGain());
-    mNodeSimShader.uniform( "dt", (float)simdt );
-    mNodeSimShader.uniform( "reset", mReset );
-    mNodeSimShader.uniform( "startAnim", mNodeController.isStartingAnim() );
-    mNodeSimShader.uniform( "formationStep", mNodeController.getFormationStep() );
-    mNodeSimShader.uniform( "motion", mNodeMotion );
-    mNodeSimShader.uniform( "containmentRadius", mContainmentRadius );
+    shader.bind();
+    shader.uniform( "positions", 0 );
+    shader.uniform( "velocities", 1 );
+    shader.uniform( "information", 2);
+    shader.uniform( "oPositions", 3);
+	shader.uniform( "oVelocities", 4);
+//  	shader.uniform( "noiseTex", 5);
+//    shader.uniform( "audioData", 6);
+//    shader.uniform( "gain", mAudioInputHandler.getGain());
+    shader.uniform( "dt", (float)simdt );
+    shader.uniform( "reset", mReset );
+    shader.uniform( "startAnim", mNodeController.isStartingAnim() );
+    shader.uniform( "formationStep", mNodeController.getFormationStep() );
+//    shader.uniform( "containmentRadius", mContainmentRadius );
     
     gl::drawSolidRect(fbo.getBounds());
     
-    mNodeSimShader.unbind();
+    shader.unbind();
     
     mDynamicTexture.unbindTexture();
     
