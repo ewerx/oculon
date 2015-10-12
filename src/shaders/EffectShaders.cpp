@@ -211,7 +211,7 @@ EffectShaders::CathodeRay::CathodeRay()
 
 void EffectShaders::CathodeRay::setupInterface(Interface *interface, const std::string &prefix)
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->addParam(CreateFloatParam("band-thickness", &mPowerBandThickness)

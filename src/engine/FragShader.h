@@ -11,15 +11,16 @@
 #include "AudioInputHandler.h"
 #include "cinder/gl/GlslProg.h"
 #include "Utils.h"
+#include "NamedObject.h"
 
 class Interface;
 
 /// FragShader base
-class FragShader
+class FragShader : public oculon::NamedObject<FragShader>
 {
 public:
     FragShader(const std::string& name, const std::string& fragShader)
-    : mName(name)
+    : NamedObject(name)
     {
         mShader = Utils::loadFragShader( fragShader );
     }
@@ -29,10 +30,8 @@ public:
     virtual void setCustomParams( AudioInputHandler& audioInputHandler ) {}
     virtual void update(double dt) {}
     
-    const std::string& getName()        { return mName; }
     ci::gl::GlslProg& getShader()       { return mShader; }
     
 protected:
-    std::string mName;
     ci::gl::GlslProg mShader;
 };

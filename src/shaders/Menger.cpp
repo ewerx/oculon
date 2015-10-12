@@ -191,7 +191,7 @@ Menger::MengerShader::MengerShader()
 
 void Menger::MengerShader::setupInterface(Interface *interface, const std::string &name)
 {
-    string oscName = name + "/" + mName;
+    string oscName = name + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->addParam(CreateIntParam( "menger/iterations", &mIterations )
@@ -292,7 +292,7 @@ Menger::PolychoraShader::PolychoraShader()
 
 void Menger::PolychoraShader::setupInterface(Interface *interface, const std::string &name)
 {
-    string oscName = name + "/" + mName;
+    string oscName = name + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->addParam(CreateIntParam( "polychora/zone", &mZone )
@@ -357,7 +357,7 @@ Menger::JuliaSpiralShader::JuliaSpiralShader()
 
 void Menger::JuliaSpiralShader::setupInterface(Interface *interface, const std::string &name)
 {
-    string oscName = name + "/" + mName;
+    string oscName = name + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->addParam(CreateColorParam("juliaspiral/color3", &mColor3, kMinColor, kMaxColor).oscReceiver(getName()));

@@ -260,7 +260,7 @@ Tilings::VoronoiPlasma::VoronoiPlasma()
 
 void Tilings::VoronoiPlasma::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -281,7 +281,7 @@ Tilings::VoronoiFire::VoronoiFire()
 
 void Tilings::VoronoiFire::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -302,7 +302,7 @@ Tilings::VoronoiCells::VoronoiCells()
 
 void Tilings::VoronoiCells::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());

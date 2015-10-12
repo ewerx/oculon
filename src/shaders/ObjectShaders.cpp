@@ -318,7 +318,7 @@ MetaballsShader::MetaballsShader()
 
 void MetaballsShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -383,7 +383,7 @@ LissajousShader::LissajousShader()
 
 void LissajousShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -448,7 +448,7 @@ RetinaShader::RetinaShader()
 
 void RetinaShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -514,7 +514,7 @@ BioFractalShader::BioFractalShader()
 
 void BioFractalShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -592,7 +592,7 @@ GyroidShader::GyroidShader()
 
 void GyroidShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -613,7 +613,7 @@ TerminalShader::TerminalShader()
 
 void TerminalShader::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
@@ -634,7 +634,7 @@ LiquidCubes::LiquidCubes()
 
 void LiquidCubes::setupInterface( Interface* interface, const std::string& prefix )
 {
-    string oscName = prefix + "/" + mName;
+    string oscName = prefix + "/" + getName();
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
