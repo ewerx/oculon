@@ -19,6 +19,8 @@ uniform sampler2D preyPositionTex;
 uniform float particleBufSize;
 uniform float predatorBufSize;
 
+uniform vec3 bounds;
+
 //uniform sampler2D audioData;
 //uniform float gain;
 
@@ -168,7 +170,7 @@ void main()
     vec3 tempNewPos		= myPos + myVel * dt;		// NEXT POSITION
     
     // AVOID WALLS
-    vec3 roomBounds = vec3(350.0, 200.0, 350.0);
+    vec3 roomBounds = bounds;//vec3(350.0, 200.0, 350.0);
     //if( power > 0.5 ){
     float xPull	= tempNewPos.x/( roomBounds.x );
     float yPull	= tempNewPos.y/( roomBounds.y );

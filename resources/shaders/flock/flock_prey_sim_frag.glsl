@@ -13,6 +13,7 @@ uniform float predatorBufSize;
 
 uniform sampler2D lanternsTex;
 uniform float numLights;
+uniform vec3 bounds;
 
 uniform float dt;
 uniform bool reset;
@@ -206,7 +207,7 @@ void main()
         
         
         // AVOID WALLS
-        vec3 roomBounds = vec3(350.0, 200.0, 350.0);
+        vec3 roomBounds = bounds;//vec3(350.0, 200.0, 350.0);
         //if( power > 0.5 ){
         float xPull	= tempNewPos.x/( roomBounds.x );
         float yPull	= tempNewPos.y/( roomBounds.y );

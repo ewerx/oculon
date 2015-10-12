@@ -73,6 +73,8 @@ private:
     
     // audio
     AudioInputHandler mAudioInputHandler;
+    
+    ci::Vec3f mBounds;
 };
 
 

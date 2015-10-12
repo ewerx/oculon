@@ -47,7 +47,7 @@ void Flock2::setup()
     mReset = false;
     
     // params
-    
+    mBounds = Vec3f(150.0f, 150.0f, 150.0f);
     
     // Predators
     mPredatorSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_predator_sim_frag.glsl");
@@ -95,7 +95,7 @@ void Flock2::setupParticles(const int bufSize)
     vector<Vec4f> velocities;
     vector<Vec4f> data;
     
-    const float r = 100.0f;
+    const float r = mBounds.x;//100.0f;
     
     // random
     {
@@ -144,6 +144,8 @@ void Flock2::reset()
 void Flock2::setupInterface()
 {
     mTimeController.setupInterface(mInterface, getName(), 1, 18);
+    
+    mInterface->addParam(CreateVec3fParam("bounds", &mBounds, Vec3f::one()*10.0f, Vec3f::one()*400.0f));
     
     mInterface->gui()->addColumn();
     mInterface->gui()->addLabel("Predators");
@@ -219,6 +221,7 @@ void Flock2::updateParticles(double dt)
     mSimulationShader.uniform( "reset", mReset );
     mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
     mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
+    mSimulationShader.uniform( "bounds", mBounds );
     
     gl::drawSolidRect(fbo.getBounds());
     
@@ -307,7 +310,7 @@ void Flock2::setupPredators(const int bufSize)
     vector<Vec4f> velocities;
     vector<Vec4f> data;
     
-    const float r = 50.0f;
+    const float r = mBounds.x * 0.5f;//50.0f;
     
     // random
     {
@@ -390,6 +393,7 @@ void Flock2::updatePredators(double dt)
     mPredatorSimShader.uniform( "reset", mReset );
     mPredatorSimShader.uniform( "startAnim", mParticleController.isStartingAnim() );
     mPredatorSimShader.uniform( "formationStep", mParticleController.getFormationStep() );
+    mPredatorSimShader.uniform( "bounds", mBounds );
     
     gl::drawSolidRect(fbo.getBounds());
     
