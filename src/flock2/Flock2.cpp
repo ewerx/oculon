@@ -47,17 +47,22 @@ void Flock2::setup()
     mReset = false;
     
     // params
-    mBounds = Vec3f(150.0f, 150.0f, 150.0f);
+    mBounds = Vec3f(200.0f, 150.0f, 200.0f);
     
     // Predators
     mPredatorSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_predator_sim_frag.glsl");
-    setupPredators(12);
+    setupPredators(8);
     
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_prey_sim_frag.glsl");
+    mFormationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "formation_sim_frag.glsl");
     
-    const int bufSize = 80;
+    const int bufSize = 64;
     setupParticles(bufSize);
+    
+    // behavior
+    mBehaviorSelector.addValue("take-formation");
+    mBehaviorSelector.addValue("flocking");
     
     // rendering
 //    mParticleController.addRenderer( new FlockRenderer() );
@@ -125,6 +130,36 @@ void Flock2::setupParticles(const int bufSize)
         data.clear();
     }
     
+    // shell
+    {
+        for (int i = 0; i < numParticles; ++i)
+        {
+            const float rho = Rand::randFloat() * (M_PI * 2.0);
+            const float theta = Rand::randFloat() * (M_PI * 2.0);
+            
+            // position + mass
+            float x = r * cos(rho) * sin(theta);
+            float y = r * sin(rho) * sin(theta);
+            float z = r * cos(theta);
+            float mass = Rand::randFloat(0.01f,1.0f);
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            //        // velocity + age
+            //        //        float vx = Rand::randFloat(-.005f,.005f);
+            //        //        float vy = Rand::randFloat(-.005f,.005f);
+            //        //        float vz = Rand::randFloat(-.005f,.005f);
+            //        float age = Rand::randFloat(.007f,0.9f);
+            //        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+            //
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
+        }
+        mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
+        positions.clear();
+        data.clear();
+    }
+
 
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
@@ -145,6 +180,10 @@ void Flock2::setupInterface()
 {
     mTimeController.setupInterface(mInterface, getName(), 1, 18);
     
+    mInterface->addEnum(CreateEnumParam("behavior", &mBehaviorSelector.mIndex)
+                        .maxValue(mBehaviorSelector.mNames.size())
+                        .isVertical()
+                        .sendFeedback(), mBehaviorSelector.mNames)->registerCallback(&mParticleController, &ParticleController::onFormationChanged);
     mInterface->addParam(CreateVec3fParam("bounds", &mBounds, Vec3f::one()*10.0f, Vec3f::one()*400.0f));
     
     mInterface->gui()->addColumn();
@@ -207,25 +246,35 @@ void Flock2::updateParticles(double dt)
 //    mLanternController.getParticleFbo().bindTexture(6, 0);
     
     float simdt = mTimeController.getDelta();
-    mSimulationShader.bind();
-    mSimulationShader.uniform( "positions", 0 );
-    mSimulationShader.uniform( "velocities", 1 );
-    mSimulationShader.uniform( "information", 2);
-    mSimulationShader.uniform( "oPositions", 3);
-	mSimulationShader.uniform( "oVelocities", 4);
-  	mSimulationShader.uniform( "predatorPositionTex", 5);
-//    mSimulationShader.uniform( "lanternsTex", 6);
-    mSimulationShader.uniform( "particleBufSize", (float)mParticleController.getFboSize());
-    mSimulationShader.uniform( "predatorBufSize", (float)mPredatorController.getFboSize());
-    mSimulationShader.uniform( "dt", (float)simdt );
-    mSimulationShader.uniform( "reset", mReset );
-    mSimulationShader.uniform( "startAnim", mParticleController.isStartingAnim() );
-    mSimulationShader.uniform( "formationStep", mParticleController.getFormationStep() );
-    mSimulationShader.uniform( "bounds", mBounds );
+    
+    gl::GlslProg shader;
+    if (mBehaviorSelector() == kBehaviorFormation) {
+        shader = mFormationShader;
+    } else {
+        shader = mSimulationShader;
+    }
+    
+    ////
+    shader.bind();
+    shader.uniform( "positions", 0 );
+    shader.uniform( "velocities", 1 );
+    shader.uniform( "information", 2);
+    shader.uniform( "oPositions", 3);
+	shader.uniform( "oVelocities", 4);
+  	shader.uniform( "predatorPositionTex", 5);
+//    shader.uniform( "lanternsTex", 6);
+    shader.uniform( "particleBufSize", (float)mParticleController.getFboSize());
+    shader.uniform( "predatorBufSize", (float)mPredatorController.getFboSize());
+    shader.uniform( "dt", (float)simdt );
+    shader.uniform( "reset", mReset );
+    shader.uniform( "startAnim", mParticleController.isStartingAnim() );
+    shader.uniform( "formationStep", mParticleController.getFormationStep() );
+    shader.uniform( "bounds", mBounds );
     
     gl::drawSolidRect(fbo.getBounds());
     
-    mSimulationShader.unbind();
+    shader.unbind();
+    /////
     
 //    mLanternController.getParticleFbo().unbindTexture();
     mPredatorController.getParticleFbo().unbindTexture();

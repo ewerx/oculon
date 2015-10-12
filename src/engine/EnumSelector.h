@@ -31,7 +31,7 @@ public:
         mNames.push_back(name);
     }
     
-protected:
+public:
     std::vector<std::string> mNames;
     int mIndex;
 };

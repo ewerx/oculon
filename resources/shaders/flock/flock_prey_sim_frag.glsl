@@ -11,14 +11,14 @@ uniform sampler2D predatorPositionTex;
 uniform float particleBufSize;
 uniform float predatorBufSize;
 
-uniform sampler2D lanternsTex;
-uniform float numLights;
+//uniform sampler2D lanternsTex;
+//uniform float numLights;
 uniform vec3 bounds;
 
 uniform float dt;
 uniform bool reset;
-uniform bool startAnim;
-uniform float formationStep;
+//uniform bool startAnim;
+//uniform float formationStep;
 
 
 //uniform sampler2D audioData;
@@ -115,24 +115,14 @@ void main()
     
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float nodeIndex = texture2D( information, texCoord.st ).a;
-    
-    bool doSim = true; // to skip simulation when forcing containment...
-    float dist = length(myPos);
-    
-    // animate to formation
-    if (startAnim)
+   
+    // reincarnation
+    if( reset )
     {
-        startPos = myPos;
+        myPos = texture2D(oPositions, texCoord.st).rgb;
+        myVel = texture2D(oVelocities, texCoord.st).rgb;
     }
-    
-    if (formationStep < 1.0)
-    {
-        //vel = vec3(0.0,0.0,0.0);
-        vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
-        
-        myPos = mix(startPos,targetPos,formationStep);
-    }
-    else if (doSim) // simulate motion
+    else
     {
         int fboDim = int(particleBufSize);
         // APPLY THE ATTRACTIVE, ALIGNING, AND REPULSIVE FORCES
@@ -250,18 +240,9 @@ void main()
             vec3 reflect = 2.0 * wallNormal * ( wallNormal * myVel );
             myVel -= reflect * 0.65;
         }
-         
-        
         
         // update position
         myPos = myPos + ( myVel * ( myCrowd * 0.05 ) * dt );
-    }
-	
-    // reincarnation
-	if( reset )
-    {
-        myPos = texture2D(oPositions, texCoord.st).rgb;
-        myVel = texture2D(oVelocities, texCoord.st).rgb;
     }
 	
     //position + mass
@@ -269,7 +250,7 @@ void main()
     //velocity + nodeIndex
 	gl_FragData[1] = vec4(myVel, myCrowd);
     //age information
-	gl_FragData[2] = vec4(startPos, nodeIndex);
+	gl_FragData[2] = vec4(myPos, nodeIndex);
 }
 
 

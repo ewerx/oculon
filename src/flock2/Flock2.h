@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "SimplexNoiseTexture.h"
 #include "TimeController.h"
+#include "EnumSelector.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/GlslProg.h"
@@ -54,6 +55,7 @@ private:
     // prey
     ParticleController mParticleController;
     ci::gl::GlslProg mSimulationShader;
+    ci::gl::GlslProg mFormationShader;
     
     // predators
     ParticleController mPredatorController;
@@ -62,6 +64,13 @@ private:
     // lanterns
     ParticleController mLanternController;
     ci::gl::GlslProg mLanternSimShader;
+    
+    // behavior
+    enum eBehaviors {
+        kBehaviorFormation,
+        kBehaviorFlocking
+    };
+    EnumSelector mBehaviorSelector;
 
     // camera
     CameraController mCameraController;
