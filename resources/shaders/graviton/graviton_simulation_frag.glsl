@@ -21,9 +21,7 @@ uniform float damping;
 uniform float gravity;
 uniform float gravity2;
 uniform float containerradius;
-uniform float formationStep;
 
-uniform bool spin;
 uniform bool reset;
 uniform bool startAnim;
 
@@ -41,46 +39,11 @@ void main()
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float decay = texture2D( information, texCoord.st ).a;
     
-    if (startAnim)
-    {
-        startPos = pos;
-    }
-    
-    if (formationStep < 1.0)
-    {
-        // animate to formation
-        vel = texture2D(oVelocities, texCoord.st).rgb;
-        vec3 targetPos = texture2D( oPositions, texCoord.st ).rgb;
-        
-        pos = mix(startPos,targetPos,formationStep);
-    }
-	else if( reset )
+    if( reset )
     {
         // reincarnation
         pos = texture2D(oPositions, texCoord.st).rgb;
         vel = texture2D(oVelocities, texCoord.st).rgb;
-    }
-    else if( spin )
-    {
-        vec3 oVel = texture2D(oVelocities, texCoord.st).rgb;
-        vec3 oPos = texture2D(oPositions, texCoord.st).rgb;
-        // vel.x = rho
-        // vel.y = theta
-        // vel.z = 1.0 for animate rho, 0.0 for animate theta
-        // vel.a (age) = speed
-        if (oVel.z > 0.5)
-        {
-            vel.x = vel.x + dt * age;
-        }
-        else
-        {
-            vel.y = vel.y + dt * age;
-        }
-        
-        float dist = length(oPos);
-        pos.x = dist * cos(vel.x) * sin(vel.y);
-        pos.y = dist * sin(vel.x) * sin(vel.y);
-        pos.z = dist * cos(vel.y);
     }
     else
     {

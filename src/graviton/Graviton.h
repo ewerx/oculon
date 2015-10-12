@@ -24,6 +24,7 @@
 #include "NodeController.h"
 #include "TimeController.h"
 #include "PlanetObject.h"
+#include "EnumSelector.h"
 
 
 /// Graviton
@@ -48,6 +49,7 @@ protected:// from Scene
 
 private:
     void setupParticles(const int bufSize);
+    void updateParticles(double dt);
 
 private:
     float mFormationRadius;
@@ -68,8 +70,8 @@ private:
     NodeController mNodeController;
     
     // particle system
-    ParticleController mParticleController;
-    ci::gl::GlslProg mSimulationShader;
+    ParticleController  mParticleController;
+    ShaderSelector      mBehaviorSelector;
     
     // audio
     AudioInputHandler   mAudioInputHandler;
