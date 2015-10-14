@@ -39,6 +39,10 @@ void main()
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float decay = texture2D( information, texCoord.st ).a;
     
+    if (startAnim) {
+        vel = vec3(0.0);
+    }
+    
     if( reset )
     {
         // reincarnation

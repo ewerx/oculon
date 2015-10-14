@@ -20,6 +20,7 @@ void main()
     vec4 vInfo = texture2D( information, texCoord.st );
     
     vec3 targetPos = texture2D(oPositions, texCoord.st).rgb;
+    vec3 targetVel = texture2D(oVelocities, texCoord.st).rgb;
     
     vec3 pos = vPos.xyz;
     vec3 vel = vVel.xyz;
@@ -29,21 +30,21 @@ void main()
     if (startAnim)
     {
         startPos = pos;
-    }
-    
-    if (formationStep < 1.0)
-    {
-        //vel = vec3(0.0,0.0,0.0);
-        pos = mix(startPos, targetPos, formationStep);
+        vel = targetVel;
     }
     
     // reincarnation
     if( reset )
     {
         pos = targetPos;
-        vel = texture2D(oVelocities, texCoord.st).rgb;
+        vel = targetVel;
     }
-
+    else if (formationStep < 1.0)
+    {
+        //vel = vec3(0.0,0.0,0.0);
+        pos = mix(startPos, targetPos, formationStep);
+    }
+    
     //position
 	gl_FragData[0] = vec4(pos, vPos.w);
     //velocity

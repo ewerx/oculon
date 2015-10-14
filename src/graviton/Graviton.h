@@ -85,5 +85,7 @@ private:
     bool                mDrawMoon;
     
     bool                mGravitySync;
+    
+    ci::Vec3f           mHarmonic;
 };
 

@@ -64,10 +64,13 @@ void Graviton::setup()
     mAudioContainer = false;
     mAudioGravity = false;
     
+    mHarmonic = Vec3f(2.0f, 4.0f, 8.0f);
+    
     // simulation
     mBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
     mBehaviorSelector.addShader("gravity", "graviton_simulation_frag.glsl" );
     mBehaviorSelector.addShader("spin", "graviton_spin_frag.glsl");
+    mBehaviorSelector.addShader("harmonic", "harmonic_sim_frag.glsl");
     
     const int bufSize = 512;
     setupParticles(bufSize);
@@ -287,43 +290,46 @@ void Graviton::setupParticles(const int bufSize)
 //    mParticleController.addFormation(new ParticleFormation("parabola", bufSize, positions, velocities, data));
     
     {
-    
-    // concentrics
+        
+        // concentrics
         {
             positions.clear();
             data.clear();
             velocities.clear();
-    const int NUM_CONCENTRIC = 8;
-    const float multiplier = 1.0f / NUM_CONCENTRIC;
-    float radii[NUM_CONCENTRIC];
-    for (int j = 0; j < NUM_CONCENTRIC; ++j)
-    {
-        radii[j] = r * (1.0f - multiplier * j);
-    }
-    for (int i = 0; i < numParticles; ++i)
-    {
-        const float rho = Rand::randFloat() * (M_PI * 2.0);
-        const float theta = Rand::randFloat() * (M_PI * 2.0);
-
-        const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
-        
-        // position + mass
-        float x = radii[concentricIndex] * cos(rho) * sin(theta);
-        float y = radii[concentricIndex] * sin(rho) * sin(theta);
-        float z = radii[concentricIndex] * cos(theta);
-        float mass = 0.1f + multiplier * concentricIndex;
-        positions.push_back(Vec4f(x,y,z,mass));
-        
-        // velocity + age
-        float age = Rand::randFloat(.000001f,0.00005f);
-        velocities.push_back(Vec4f(rho, theta, Rand::randBool() ? 1.0f : 0.0f, age));
-        
-        // extra info
-        float decay = Rand::randFloat(.01f,10.00f);
-        data.push_back(Vec4f(x,y,z,decay));
-    }
-    mParticleController.addFormation(new ParticleFormation("concentrics", bufSize, positions, velocities, data));
-    }
+            
+            const int NUM_CONCENTRIC = 8;
+            const float multiplier = 1.0f / NUM_CONCENTRIC;
+            float radii[NUM_CONCENTRIC];
+            
+            for (int j = 0; j < NUM_CONCENTRIC; ++j)
+            {
+                radii[j] = r * (1.0f - multiplier * j);
+            }
+            
+            for (int i = 0; i < numParticles; ++i)
+            {
+                const float rho = Rand::randFloat() * (M_PI * 2.0);
+                const float theta = Rand::randFloat() * (M_PI * 2.0);
+                
+                const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
+                
+                // position + mass
+                float x = radii[concentricIndex] * cos(rho) * sin(theta);
+                float y = radii[concentricIndex] * sin(rho) * sin(theta);
+                float z = radii[concentricIndex] * cos(theta);
+                float mass = 0.1f + multiplier * concentricIndex;
+                positions.push_back(Vec4f(x,y,z,mass));
+                
+                // velocity + age
+                float age = Rand::randFloat(.000001f,0.00005f);
+                velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+                
+                // extra info
+                float decay = Rand::randFloat(.01f,10.00f);
+                data.push_back(Vec4f(x,y,z,decay));
+            }
+            mParticleController.addFormation(new ParticleFormation("concentrics", bufSize, positions, velocities, data));
+        }
     }
     
     // concentrics2
@@ -567,6 +573,8 @@ void Graviton::setupInterface()
                         .isVertical()
                         .sendFeedback(), mBehaviorSelector.mNames)->registerCallback(&mParticleController, &ParticleController::onFormationChanged);
     
+    mInterface->addParam(CreateVec3fParam("harmonic", &mHarmonic, Vec3f::zero(), Vec3f::one() * 16.0f));
+    
     mInterface->gui()->addColumn();
     mNodeController.setupInterface(mInterface, getName());
     
@@ -718,6 +726,7 @@ void Graviton::updateParticles(double dt)
         containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;
     }
     shader.uniform( "containerradius", containRadius );
+    shader.uniform( "harmonic", mHarmonic );
     
     NodeFormation::tNodeList& nodes = mNodeController.getNodes();
     // TODO: glsl array uniform?

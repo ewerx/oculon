@@ -104,6 +104,7 @@
 		7C4DBFCA19295E3000FDDDC3 /* Cymatics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4DBFC819295E3000FDDDC3 /* Cymatics.cpp */; };
 		7C4E0F331AF9B86E00EB54C3 /* Waves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4E0F311AF9B86E00EB54C3 /* Waves.cpp */; };
 		7C4F7C291BCC7296007DCE66 /* graviton_spin_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4F7C281BCC7296007DCE66 /* graviton_spin_frag.glsl */; settings = {ASSET_TAGS = (); }; };
+		7C4F7C2B1BCDCE21007DCE66 /* harmonic_sim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C4F7C2A1BCDCE21007DCE66 /* harmonic_sim_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C5165E11915DAAF003E94F8 /* ParticleFormation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */; };
 		7C5165E81917091B003E94F8 /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E61917091B003E94F8 /* Geometry.cpp */; };
 		7C5165EB191709D2003E94F8 /* Pentagon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5165E9191709D2003E94F8 /* Pentagon.cpp */; };
@@ -714,6 +715,7 @@
 		7C4E0F311AF9B86E00EB54C3 /* Waves.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Waves.cpp; sourceTree = "<group>"; };
 		7C4E0F321AF9B86E00EB54C3 /* Waves.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Waves.h; sourceTree = "<group>"; };
 		7C4F7C281BCC7296007DCE66 /* graviton_spin_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = graviton_spin_frag.glsl; sourceTree = "<group>"; };
+		7C4F7C2A1BCDCE21007DCE66 /* harmonic_sim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = harmonic_sim_frag.glsl; sourceTree = "<group>"; };
 		7C5165DF1915DAAF003E94F8 /* ParticleFormation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleFormation.cpp; path = particlesystem/ParticleFormation.cpp; sourceTree = "<group>"; };
 		7C5165E01915DAAF003E94F8 /* ParticleFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleFormation.h; path = particlesystem/ParticleFormation.h; sourceTree = "<group>"; };
 		7C5165E61917091B003E94F8 /* Geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geometry.cpp; sourceTree = "<group>"; };
@@ -2820,6 +2822,7 @@
 				7C4DBFC4192913FC00FDDDC3 /* meshinstance_render_vert.glsl */,
 				7CE8AFB5186FAD150087AC7A /* graviton_simulation_frag.glsl */,
 				7C4F7C281BCC7296007DCE66 /* graviton_spin_frag.glsl */,
+				7C4F7C2A1BCDCE21007DCE66 /* harmonic_sim_frag.glsl */,
 			);
 			path = graviton;
 			sourceTree = "<group>";
@@ -3347,6 +3350,7 @@
 				7C97D24318B00F0500BB63A1 /* graviton_formation_frag.glsl in Resources */,
 				7C79C95917650F8F00E71F9D /* terrain_shader_vert.glsl in Resources */,
 				7C79C95A17650F8F00E71F9D /* terrain_tex_frag.glsl in Resources */,
+				7C4F7C2B1BCDCE21007DCE66 /* harmonic_sim_frag.glsl in Resources */,
 				7C06A8ED1853D4ED00D1C8A3 /* glassfield_frag.glsl in Resources */,
 				7C8CBB38192BE24900588689 /* polychora_frag.glsl in Resources */,
 				7CF612C319340F6300030E26 /* mobius_frag.glsl in Resources */,

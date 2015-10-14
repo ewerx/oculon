@@ -13,6 +13,8 @@ uniform bool reset;
 uniform bool startAnim;
 uniform float formationStep;
 
+
+
 varying vec4 texCoord;
 
 
@@ -27,50 +29,54 @@ void main()
     vec3 startPos = texture2D( information, texCoord.st ).rgb;
 	float decay = texture2D( information, texCoord.st ).a;
     
+    vec3 oVel = texture2D(oVelocities, texCoord.st).rgb;
+    vec3 oPos = texture2D(oPositions, texCoord.st).rgb;
+    
     // animate to formation
     if (startAnim)
     {
-        startPos = pos;
+        vel = oVel; // spin
+        startPos = pos; // animate from current position
     }
     
     if( reset )
     {
         // reincarnation
-        pos = texture2D(oPositions, texCoord.st).rgb;
-        vel = texture2D(oVelocities, texCoord.st).rgb;
+        pos = oPos;
+        vel = oVel;
     }
     else
     {
-        vec3 oVel = texture2D(oVelocities, texCoord.st).rgb;
-        vec3 oPos = texture2D(oPositions, texCoord.st).rgb;
+        vec3 newVel = vel;
         // vel.x = rho
         // vel.y = theta
         // vel.z = 1.0 for animate rho, 0.0 for animate theta
         // vel.a (age) = speed
         if (oVel.z > 0.5)
         {
-            vel.x = vel.x + dt * age;
+            newVel.x = newVel.x + dt * age ;
         }
         else
         {
-            vel.y = vel.y + dt * age;
+            newVel.y = newVel.y + dt * age;
         }
         
         float dist = length(oPos);
         vec3 newPos;
         
-        newPos.x = dist * cos(vel.x) * sin(vel.y);
-        newPos.y = dist * sin(vel.x) * sin(vel.y);
-        newPos.z = dist * cos(vel.y) * sin(vel.x);
+        newPos.x = dist * cos(newVel.x) * sin(newVel.y);
+        newPos.y = dist * sin(newVel.x) * sin(newVel.y);
+        newPos.z = dist * cos(newVel.y);
         
         if (formationStep < 1.0)
         {
-            //vel = vec3(0.0,0.0,0.0);
             pos = mix(startPos, newPos, formationStep);
+            vel = newVel;
         }
         else
         {
             pos = newPos;
+            vel = newVel;
         }
     }
     
