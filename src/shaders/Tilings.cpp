@@ -298,6 +298,9 @@ void Tilings::VoronoiFire::setCustomParams(AudioInputHandler &audioInputHandler)
 Tilings::VoronoiCells::VoronoiCells()
 : FragShader("voronoi-cells", "voronoi_cells_frag.glsl")
 {
+    mGap = 0.25;
+    mAgitation = 2.0;
+    mZoom = 10.0;
 }
 
 void Tilings::VoronoiCells::setupInterface( Interface* interface, const std::string& prefix )
@@ -306,8 +309,21 @@ void Tilings::VoronoiCells::setupInterface( Interface* interface, const std::str
     vector<string> bandNames = AudioInputHandler::getBandNames();
     
     interface->gui()->addLabel(getName());
+    
+    interface->addParam(CreateFloatParam("v-cells/gap", &mGap)
+                        .maxValue(0.5f)
+                        .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam("v-cells/agitation", &mAgitation)
+                        .maxValue(10.0f)
+                        .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam("v-cells/zoom", &mZoom)
+                        .maxValue(30.0f)
+                        .oscReceiver(getName()));
 }
 
 void Tilings::VoronoiCells::setCustomParams(AudioInputHandler &audioInputHandler)
 {
+    mShader.uniform( "iZoom", mZoom );
+    mShader.uniform( "iAgitation", mAgitation );
+    mShader.uniform( "iGap", mGap );
 }

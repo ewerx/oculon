@@ -122,6 +122,8 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        
+        float mGap;
+        float mAgitation;
+        float mZoom;
     };
 };

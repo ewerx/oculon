@@ -1,9 +1,9 @@
 #version 120
 uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
-uniform sampler2D iChannel0;
-uniform sampler2D iChannel1;
-uniform vec3      iMouse;
+uniform float   iGap;
+uniform float   iAgitation;
+uniform float   iZoom;
 
 // https://www.shadertoy.com/view/4tsXRH
 // Created by David Bargo - davidbargo/2015
@@ -15,25 +15,20 @@ uniform vec3      iMouse;
 void main()
 {
     vec2 q = gl_FragCoord.xy/iResolution.yy;
-    q.x += 2.0;
-    vec2 p = 10.*q*mat2(0.7071, -0.7071, 0.7071, 0.7071);
+    q.x += iAgitation;
+    vec2 p = iZoom*q*mat2(0.7071, -0.7071, 0.7071, 0.7071);
     
     vec2 pi = floor(p);
     vec4 v = vec4( pi.xy, pi.xy + 1.0);
     v -= 64.*floor(v*0.015);
-    v.xz = v.xz*1.435 + 34.423;
-    v.yw = v.yw*2.349 + 183.37;
+    v.xz = v.xz*1.435 + 34.423; // more agitation
+    v.yw = v.yw*2.349 + 183.37; // more agitation
     v = v.xzxz*v.yyww;
     v *= v;
     
-#ifdef ANIMATE
     v *= iGlobalTime*0.000004 + 0.5;
-    vec4 vx = 0.25*sin(fract(v*0.00047)*6.2831853);
-    vec4 vy = 0.25*sin(fract(v*0.00074)*6.2831853);
-#else
-    vec4 vx = 0.5*(step(0.0,fract(v*0.00047)-0.5)-0.5);
-    vec4 vy = 0.5*(step(0.0,fract(v*0.00074)-0.5)-0.5);
-#endif
+    vec4 vx = iGap*sin(fract(v*0.00047)*6.2831853);
+    vec4 vy = iGap*sin(fract(v*0.00074)*6.2831853);
     
     vec2 pf = p - pi;
     vx += vec4(0., 1., 0., 1.) - pf.xxxx;
