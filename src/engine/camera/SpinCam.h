@@ -32,5 +32,7 @@ private:
     float                       mTargetSpinDistance;
     float                       mSpinTheta;
     float                       mTransitionTime;
-
+    
+    float mOscillateDistance;
+    float mTime;
 };
