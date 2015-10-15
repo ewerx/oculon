@@ -60,7 +60,7 @@ void SpinCam::update(double dt)
     mSpinQuat *= Quatf(Vec3f::xAxis(), dt*mSpinRate.x);
     mSpinQuat *= Quatf(Vec3f::yAxis(), dt*mSpinRate.y);
     mSpinQuat *= Quatf(Vec3f::zAxis(), dt*mSpinRate.z);
-    Vec3f pos = Vec3f::one() * mSpinQuat;
+    Vec3f pos = Vec3f::xAxis() * mSpinQuat;
     pos.normalize();
     pos *= dist;
     mCam.lookAt(pos, Vec3f::zero(), mSpinUp);
