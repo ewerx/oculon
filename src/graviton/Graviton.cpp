@@ -65,6 +65,9 @@ void Graviton::setup()
     mAudioGravity = false;
     
     mHarmonic = Vec3f(2.0f, 4.0f, 8.0f);
+    mHarmonicX = 0.5f;
+    mHarmonicY = 1.0f;
+    mHarmonicRate = 0.2f;
     
     // simulation
     mBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
@@ -131,7 +134,7 @@ void Graviton::setupParticles(const int bufSize)
 //        float vy = Rand::randFloat(-.005f,.005f);
 //        float vz = Rand::randFloat(-.005f,.005f);
         float age = Rand::randFloat(.007f,0.9f);
-        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+        velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
         
         // extra info
         float decay = Rand::randFloat(.01f,10.00f);
@@ -140,6 +143,7 @@ void Graviton::setupParticles(const int bufSize)
     mParticleController.addFormation(new ParticleFormation("sphere", bufSize, positions, velocities, data));
     
     positions.clear();
+    velocities.clear();
     data.clear();
     // shell
     for (int i = 0; i < numParticles; ++i)
@@ -160,7 +164,10 @@ void Graviton::setupParticles(const int bufSize)
 //        //        float vz = Rand::randFloat(-.005f,.005f);
 //        float age = Rand::randFloat(.007f,0.9f);
 //        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
-//        
+        
+        float age = Rand::randFloat(.000001f,0.00005f);
+        velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+//
         // extra info
         float decay = Rand::randFloat(.01f,10.00f);
         data.push_back(Vec4f(x,y,z,decay));
@@ -244,6 +251,7 @@ void Graviton::setupParticles(const int bufSize)
 //    mParticleController.addFormation(new ParticleFormation("shell-small", bufSize, positions, velocities, data));
     
     positions.clear();
+    velocities.clear();
     data.clear();
     // torus
     for (int i = 0; i < numParticles; ++i)
@@ -259,6 +267,9 @@ void Graviton::setupParticles(const int bufSize)
         float z = r2 * sin(rho);
         float mass = Rand::randFloat(0.01f,1.0f);
         positions.push_back(Vec4f(x,y,z,mass));
+        
+        float age = Rand::randFloat(.000001f,0.00005f);
+        velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
         //
         // extra info
         float decay = Rand::randFloat(.01f,10.00f);
@@ -289,47 +300,44 @@ void Graviton::setupParticles(const int bufSize)
 //    }
 //    mParticleController.addFormation(new ParticleFormation("parabola", bufSize, positions, velocities, data));
     
+    // concentrics
     {
+        positions.clear();
+        data.clear();
+        velocities.clear();
         
-        // concentrics
+        const int NUM_CONCENTRIC = 8;
+        const float multiplier = 1.0f / NUM_CONCENTRIC;
+        float radii[NUM_CONCENTRIC];
+        
+        for (int j = 0; j < NUM_CONCENTRIC; ++j)
         {
-            positions.clear();
-            data.clear();
-            velocities.clear();
-            
-            const int NUM_CONCENTRIC = 8;
-            const float multiplier = 1.0f / NUM_CONCENTRIC;
-            float radii[NUM_CONCENTRIC];
-            
-            for (int j = 0; j < NUM_CONCENTRIC; ++j)
-            {
-                radii[j] = r * (1.0f - multiplier * j);
-            }
-            
-            for (int i = 0; i < numParticles; ++i)
-            {
-                const float rho = Rand::randFloat() * (M_PI * 2.0);
-                const float theta = Rand::randFloat() * (M_PI * 2.0);
-                
-                const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
-                
-                // position + mass
-                float x = radii[concentricIndex] * cos(rho) * sin(theta);
-                float y = radii[concentricIndex] * sin(rho) * sin(theta);
-                float z = radii[concentricIndex] * cos(theta);
-                float mass = 0.1f + multiplier * concentricIndex;
-                positions.push_back(Vec4f(x,y,z,mass));
-                
-                // velocity + age
-                float age = Rand::randFloat(.000001f,0.00005f);
-                velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
-                
-                // extra info
-                float decay = Rand::randFloat(.01f,10.00f);
-                data.push_back(Vec4f(x,y,z,decay));
-            }
-            mParticleController.addFormation(new ParticleFormation("concentrics", bufSize, positions, velocities, data));
+            radii[j] = r * (1.0f - multiplier * j);
         }
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            const float rho = Rand::randFloat() * (M_PI * 2.0);
+            const float theta = Rand::randFloat() * (M_PI * 2.0);
+            
+            const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
+            
+            // position + mass
+            float x = radii[concentricIndex] * cos(rho) * sin(theta);
+            float y = radii[concentricIndex] * sin(rho) * sin(theta);
+            float z = radii[concentricIndex] * cos(theta);
+            float mass = 0.1f + multiplier * concentricIndex;
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            // velocity + age
+            float age = Rand::randFloat(.000001f,0.00005f);
+            velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+            
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
+        }
+        mParticleController.addFormation(new ParticleFormation("concentrics", bufSize, positions, velocities, data));
     }
     
     // concentrics2
@@ -372,82 +380,88 @@ void Graviton::setupParticles(const int bufSize)
     
     // lines
     {
-    const int NUM_LINES = 512;
-    const int POINTS_PER_LINE = numParticles / NUM_LINES;
-    const float CENTER_RADIUS = 2.0f;
-    const float POINT_SPACING = r / POINTS_PER_LINE;
-    positions.clear();
-    data.clear();
-    float rho = Rand::randFloat() * (M_PI);
-    float theta = Rand::randFloat() * (M_PI * 2.0);
-    float dist = -r;
-    // lines
-    for (int i = 0; i < numParticles; ++i)
-    {
-        if (i % POINTS_PER_LINE == 0)
+        const int NUM_LINES = 512;
+        const int POINTS_PER_LINE = numParticles / NUM_LINES;
+        const float CENTER_RADIUS = 2.0f;
+        const float POINT_SPACING = r / POINTS_PER_LINE;
+        positions.clear();
+        velocities.clear();
+        data.clear();
+        float rho = Rand::randFloat() * (M_PI);
+        float theta = Rand::randFloat() * (M_PI * 2.0);
+        float dist = -r;
+        // lines
+        for (int i = 0; i < numParticles; ++i)
         {
-            rho = Rand::randFloat() * (M_PI);
-            theta = Rand::randFloat() * (M_PI * 2.0f);
-            dist = -r;
+            if (i % POINTS_PER_LINE == 0)
+            {
+                rho = Rand::randFloat() * (M_PI);
+                theta = Rand::randFloat() * (M_PI * 2.0f);
+                dist = -r;
+            }
+            
+            // position + mass
+            float x = dist * cos(rho) * sin(theta);
+            float y = dist * sin(rho) * sin(theta);
+            float z = dist * cos(theta);
+            float mass = Rand::randFloat(0.01f,1.0f);
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            // velocity + age
+            float age = Rand::randFloat(.000001f,0.00005f);
+            velocities.push_back(Vec4f(rho, theta, Rand::randBool() ? 1.0f : 0.0f, age));
+            
+            //
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
+            
+            dist += Rand::randFloat(POINT_SPACING*0.9f, POINT_SPACING*1.1f);
+            dist = MIN(dist, -Rand::randFloat(CENTER_RADIUS*0.9f, CENTER_RADIUS*1.5f));
         }
-        
-        // position + mass
-        float x = dist * cos(rho) * sin(theta);
-        float y = dist * sin(rho) * sin(theta);
-        float z = dist * cos(theta);
-        float mass = Rand::randFloat(0.01f,1.0f);
-        positions.push_back(Vec4f(x,y,z,mass));
-        //
-        // extra info
-        float decay = Rand::randFloat(.01f,10.00f);
-        data.push_back(Vec4f(x,y,z,decay));
-        
-        dist += Rand::randFloat(POINT_SPACING*0.9f, POINT_SPACING*1.1f);
-        dist = MIN(dist, -Rand::randFloat(CENTER_RADIUS*0.9f, CENTER_RADIUS*1.5f));
-    }
-    mParticleController.addFormation(new ParticleFormation("lines", bufSize, positions, velocities, data));
+        mParticleController.addFormation(new ParticleFormation("lines", bufSize, positions, velocities, data));
     }
     
     // rings
     {
-    const int NUM_RINGS = 128;
+        const int NUM_RINGS = 128;
         const int POINTS_PER_RING = numParticles / NUM_RINGS;
-    positions.clear();
+        positions.clear();
         velocities.clear();
-    data.clear();
-    float rho = Rand::randFloat() * (M_PI);
-    float theta = Rand::randFloat() * (M_PI * 2.0);
-    float distPer = r / NUM_RINGS;
-    float dist = distPer;
-    // lines
-    for (int i = 0; i < numParticles; ++i)
-    {
-        rho = Rand::randFloat() * (M_PI * 2.0);
-        
-        if (i % POINTS_PER_RING == 0)
+        data.clear();
+        float rho = Rand::randFloat() * (M_PI);
+        float theta = Rand::randFloat() * (M_PI * 2.0);
+        float distPer = r / NUM_RINGS;
+        float dist = distPer;
+        // lines
+        for (int i = 0; i < numParticles; ++i)
         {
-            theta = Rand::randFloat() * (M_PI * 2.0f);
-            dist += distPer;
+            rho = Rand::randFloat() * (M_PI * 2.0);
+            
+            if (i % POINTS_PER_RING == 0)
+            {
+                theta = Rand::randFloat() * (M_PI * 2.0f);
+                dist += distPer;
+            }
+            
+            float fuzzyTheta = theta * Rand::randFloat(0.95f, 1.05f);
+            
+            // position + mass
+            float x = dist * cos(rho) * sin(fuzzyTheta);
+            float y = dist * sin(rho) * sin(fuzzyTheta);
+            float z = dist * cos(fuzzyTheta);
+            float mass = Rand::randFloat(0.01f,1.0f);
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            // velocity + age
+            float age = Rand::randFloat(.000001f,0.00005f);
+            velocities.push_back(Vec4f(rho, fuzzyTheta, 1.0f, age));
+            
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
         }
-        
-        float fuzzyTheta = theta * Rand::randFloat(0.95f, 1.05f);
-        
-        // position + mass
-        float x = dist * cos(rho) * sin(fuzzyTheta);
-        float y = dist * sin(rho) * sin(fuzzyTheta);
-        float z = dist * cos(fuzzyTheta);
-        float mass = Rand::randFloat(0.01f,1.0f);
-        positions.push_back(Vec4f(x,y,z,mass));
-        
-        // velocity + age
-        float age = Rand::randFloat(.000001f,0.00005f);
-        velocities.push_back(Vec4f(rho, fuzzyTheta, 1.0f, age));
-
-        // extra info
-        float decay = Rand::randFloat(.01f,10.00f);
-        data.push_back(Vec4f(x,y,z,decay));
-    }
-    mParticleController.addFormation(new ParticleFormation("rings", bufSize, positions, velocities, data));
+        mParticleController.addFormation(new ParticleFormation("rings", bufSize, positions, velocities, data));
     }
     
     // rings2
@@ -495,7 +509,7 @@ void Graviton::setupParticles(const int bufSize)
             float x = dist * cos(finalRho) * sin(finalTheta);
             float y = dist * sin(finalRho) * sin(finalTheta);
             float z = dist * cos(finalTheta);
-            float mass = 0.0f;//Rand::randFloat(0.01f,1.0f);
+            float mass = Rand::randFloat(0.01f,1.0f);
             positions.push_back(Vec4f(x,y,z,mass));
             
             // velocity + age
@@ -536,7 +550,8 @@ void Graviton::setupParticles(const int bufSize)
                     
                     // velocity + age
                     float age = Rand::randFloat(.000001f,0.00005f);
-                    velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+                    float speed = 0.01f * (Rand::randFloat(-1.0f, 1.0f));
+                    velocities.push_back(Vec4f(x*speed, y*speed, z*speed, age));
                     
                     // extra info
                     float decay = Rand::randFloat(.01f,10.00f);
@@ -573,8 +588,15 @@ void Graviton::setupInterface()
                         .isVertical()
                         .sendFeedback(), mBehaviorSelector.mNames)->registerCallback(&mParticleController, &ParticleController::onFormationChanged);
     
-    mInterface->addParam(CreateVec3fParam("harmonic", &mHarmonic, Vec3f::zero(), Vec3f::one() * 16.0f));
-    
+    //mInterface->addParam(CreateVec3fParam("harmonic", &mHarmonic, Vec3f::zero(), Vec3f::one() * 16.0f));
+    mInterface->addParam(CreateFloatParam("harmonc-X", &mHarmonicX )
+                         .maxValue(8.0f));
+    mInterface->addParam(CreateFloatParam("harmonc-Y", &mHarmonicY )
+                         .maxValue(8.0f));
+    mInterface->addParam(CreateFloatParam("harmonc-rate", &mHarmonicRate )
+                         .minValue(5.0f)
+                         .maxValue(30.0f));
+                         
     mInterface->gui()->addColumn();
     mNodeController.setupInterface(mInterface, getName());
     
@@ -726,7 +748,10 @@ void Graviton::updateParticles(double dt)
         containRadius *= 0.25f + mAudioInputHandler.getAverageVolumeLowFreq() * 3.0f;
     }
     shader.uniform( "containerradius", containRadius );
-    shader.uniform( "harmonic", mHarmonic );
+//    shader.uniform( "harmonic", mHarmonic );
+    shader.uniform( "harmonicX", mHarmonicX );
+    shader.uniform( "harmonicY", mHarmonicY );
+    shader.uniform( "harmonicRate", mHarmonicRate );
     
     NodeFormation::tNodeList& nodes = mNodeController.getNodes();
     // TODO: glsl array uniform?

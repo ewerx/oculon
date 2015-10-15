@@ -52,7 +52,7 @@ void main()
         // vel.y = theta
         // vel.z = 1.0 for animate rho, 0.0 for animate theta
         // vel.a (age) = speed
-        if (oVel.z > 0.5)
+        if (abs(oVel.z) > 0.5)
         {
             newVel.x = newVel.x + dt * age ;
         }

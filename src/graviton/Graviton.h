@@ -87,5 +87,8 @@ private:
     bool                mGravitySync;
     
     ci::Vec3f           mHarmonic;
+    float               mHarmonicX;
+    float               mHarmonicY;
+    float               mHarmonicRate;
 };
 

@@ -13,7 +13,10 @@ uniform bool reset;
 uniform bool startAnim;
 uniform float formationStep;
 
-uniform vec3 harmonic;
+//uniform vec3 harmonic;
+uniform float harmonicX;
+uniform float harmonicY;
+uniform float harmonicRate;
 
 varying vec4 texCoord;
 
@@ -44,25 +47,6 @@ void main()
     // animate to formation
     if (startAnim)
     {
-        //vel = oVel; // spin
-        //startPos = pos; // animate from current position
-        
-        
-        // TODO: add a flatten sim that just flattens
-        // then go from formation -> flat -> formation to get weird effects
-        // or formation -> gravity -> flat -> formation ?
-        // add more interesting gravity options
-        // move nodes into a particle controller for more options?
-        
-        // flatten then animated position into information tex
-        // after animation is done, animate actual position to pos stored in information
-        
-        
-        // flatten
-        vec3 newVel = harmonic * age;
-        vec3 newPos = applyHarmonic(oPos, newVel);
-        
-        vel = newVel;
         startPos = pos;
     }
     
@@ -76,7 +60,8 @@ void main()
     {
         if (formationStep < 1.0)
         {
-            vec3 newVel = harmonic * age;
+            //vec3 newVel = harmonic * age;
+            vec3 newVel = vec3(harmonicX * age, harmonicY * age, age) * harmonicRate;
             vec3 newPos = applyHarmonic(oPos, newVel);
             
             vel = newVel;
@@ -90,14 +75,26 @@ void main()
             // vel.y = theta
             // vel.z = 1.0 for animate rho, 0.0 for animate theta
             // vel.a (age) = speed
-            if (oVel.z > 0.5)
+            if (invmass > 0.5)
             {
-                newVel.x = newVel.x + dt * age ;
+                newVel.x = newVel.x + dt * age * harmonicX;
             }
             else
             {
-                newVel.y = newVel.y + dt * age;
+                newVel.y = newVel.y + dt * age * harmonicY;
             }
+//            if (invmass > 0.666)
+//            {
+//                newVel.x = newVel.x + dt * age * harmonic.x;
+//            }
+//            else if (invmass > 0.333)
+//            {
+//                newVel.y = newVel.y + dt * age * harmonic.y;
+//            }
+//            else
+//            {
+//                newVel.z = newVel.z + dt * age * harmonic.z;
+//            }
             
             vec3 newPos = applyHarmonic(oPos, newVel);
             
