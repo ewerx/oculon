@@ -405,7 +405,8 @@ void OculonApp::setupScenes()
     
     if( mConfig.getBool("circlewave") )         addScene( new CircleWave("spark") );
 //    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
-    if( mConfig.getBool("tilings") )            addScene( new Tilings() );
+    if( mConfig.getBool("tilings") )            addScene( new Tilings("tilings") );
+    if( mConfig.getBool("tilings") )            addScene( new Tilings("voronoi-fire") );
     if( mConfig.getBool("rings") )              addScene( new Rings() );
     if( mConfig.getBool("rings") )              addScene( new Cymatics() );
 

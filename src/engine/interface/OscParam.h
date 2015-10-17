@@ -53,6 +53,7 @@ public:
     
     bool valueChangedCallback();
     bool midiLearnCallback();
+    bool midiLearnCallback(int index);
     
     virtual mowa::sgui::Control* getControl() = 0;
     virtual void sendValue() = 0;

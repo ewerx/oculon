@@ -17,8 +17,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-Tilings::Tilings()
-: TextureShaders("tilings")
+Tilings::Tilings(const std::string& name)
+: TextureShaders(name)
 {
     mBackgroundAlpha = 0.0f;
     mColor1 = ColorA::white();
@@ -39,6 +39,11 @@ void Tilings::setupShaders()
     mShaders.push_back( new VoronoiPlasma() );
     mShaders.push_back( new VoronoiFire() );
     mShaders.push_back( new VoronoiCells() );
+    
+    if (getName().compare("voronoi-fire") == 0)
+    {
+        mShaderType = 3;
+    }
 }
 
 #pragma mark - Tessellations
@@ -276,7 +281,20 @@ void Tilings::VoronoiPlasma::setCustomParams(AudioInputHandler &audioInputHandle
 
 Tilings::VoronoiFire::VoronoiFire()
 : FragShader("voronoi-fire", "voronoi_fire_frag.glsl")
+, mAmount(getName(), 2.0f, 0.001f, 8.0f, true)
+, mAmpScale(getName(), 0.5f, 0.0f, 1.0f, true)
+, mScale(getName(), 2.0f, 1.0f, 16.0f, true)
+, mContrast(getName(), 1.5f, 0.5f, 5.0f, true)
 {
+    mLayers = 5;
+//    mAmount = 2.0;
+    mTurbulence = 1.5;
+//    mAmpScale = 0.5;
+    mShiftRate = Vec2f(0.25, 0.125);
+    mSpinRate = 0.25;
+//    mScale = 2.0;
+    mNoise = 0.015;
+//    mContrast = 1.5;
 }
 
 void Tilings::VoronoiFire::setupInterface( Interface* interface, const std::string& prefix )
@@ -286,11 +304,55 @@ void Tilings::VoronoiFire::setupInterface( Interface* interface, const std::stri
     
     interface->gui()->addLabel(getName());
     
-    
+    interface->addParam(CreateIntParam("v-fire/Layers", &mLayers)
+                        .minValue(1)
+                        .maxValue(6)
+                        .oscReceiver(getName()));
+    mAmount.setupInterface(interface, "amount");
+    mAmpScale.setupInterface(interface, "amp-scale");
+    mScale.setupInterface(interface, "scale");
+//    interface->addParam(CreateFloatParam("v-fire/Amount", &mAmount)
+//                        .minValue(0.001f)
+//                        .maxValue(8.0f)
+//                        .oscReceiver(getName()));
+//    interface->addParam(CreateFloatParam("v-fire/AmpScale", &mAmpScale)
+//                        .minValue(0.0f)
+//                        .maxValue(1.0f)
+//                        .oscReceiver(getName()));
+//    interface->addParam(CreateFloatParam("v-fire/Scale", &mScale)
+//                        .minValue(1.0f)
+//                        .maxValue(16.0f)
+//                        .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam("v-fire/Turbulence", &mTurbulence)
+                        .minValue(0.0f)
+                        .maxValue(8.0f)
+                        .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam("v-fire/SpinRate", &mSpinRate)
+                        .minValue(0.0f)
+                        .maxValue(10.0f)
+                        .oscReceiver(getName()));
+    interface->addParam(CreateFloatParam("v-fire/Noise", &mNoise)
+                        .minValue(0.0f)
+                        .maxValue(0.1f)
+                        .oscReceiver(getName()));
+//    interface->addParam(CreateFloatParam("v-fire/Contrast", &mContrast)
+//                        .minValue(0.5f)
+//                        .maxValue(5.0f)
+//                        .oscReceiver(getName()));
+    mContrast.setupInterface(interface, "contrast");
 }
 
 void Tilings::VoronoiFire::setCustomParams(AudioInputHandler &audioInputHandler)
 {
+    mShader.uniform( "iLayers", mLayers );
+    mShader.uniform( "iAmount", mAmount(audioInputHandler) );
+    mShader.uniform( "iTurbulence", mTurbulence );
+    mShader.uniform( "iAmpScale", mAmpScale(audioInputHandler) );
+    mShader.uniform( "iShiftRate", mShiftRate );
+    mShader.uniform( "iSpinRate", mSpinRate );
+    mShader.uniform( "iScale", mScale(audioInputHandler) );
+    mShader.uniform( "iNoise", mNoise );
+    mShader.uniform( "iContrast", mContrast(audioInputHandler) );
 }
 
 #pragma mark - Liquid Cubes

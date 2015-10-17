@@ -11,6 +11,7 @@
 #include "cinder/Cinder.h"
 #include "TextureShaders.h"
 #include "FragShader.h"
+#include "AudioBandSelector.h"
 
 //
 // 2D Line Patterns
@@ -18,7 +19,7 @@
 class Tilings : public TextureShaders
 {
 public:
-    Tilings();
+    Tilings(const std::string& name);
     virtual ~Tilings();
     
     
@@ -108,7 +109,19 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        
+        int mLayers;
+        //float mAmount;
+        AudioFloatParam mAmount;
+        float mTurbulence;
+        //float mAmpScale;
+        AudioFloatParam mAmpScale;
+        ci::Vec2f mShiftRate;
+        float mSpinRate;
+        //float mScale;
+        AudioFloatParam mScale;
+        float mNoise;
+        //float mContrast;
+        AudioFloatParam mContrast;
     };
     
 #pragma mark - VoronoiCells

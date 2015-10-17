@@ -3,9 +3,18 @@ uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback iGlobalTime (in seconds)
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
-uniform vec3      iMouse;
+uniform int iLayers = 5;
+uniform float iAmount = 2.0;
+uniform float iTurbulence = 1.5;
+uniform float iAmpScale = 0.5;
+uniform vec2 iShiftRate = vec2(0.25, 0.125);
+uniform float iSpinRate = 0.25;
+uniform float iScale = 2.;
+uniform float iNoise = 0.015;
+uniform float iContrast = 1.5;
 
 // https://www.shadertoy.com/view/4tlSzl
+
 /*
  Combustible Voronoi Layers
 	--------------------------
@@ -88,15 +97,15 @@ float noiseLayers(in vec3 p) {
     // in there just to distort things a little more.
     vec3 t = vec3(0., 0., p.z+iGlobalTime*1.5);
     
-    const int iter = 5; // Just five layers is enough.
+    int iter = iLayers; // Just five layers is enough.
     float tot = 0., sum = 0., amp = 1.; // Total, sum, amplitude.
     
     for (int i = 0; i < iter; i++) {
         tot += voronoi(p + t) * amp; // Add the layer to the total.
-        p *= 2.0; // Position multiplied by two.
-        t *= 1.5; // Time multiplied by less than two.
+        p *= iAmount; // Position multiplied by two.
+        t *= iTurbulence; // Time multiplied by less than two.
         sum += amp; // Sum of amplitudes.
-        amp *= 0.5; // Decrease successive layer amplitude, as normal.
+        amp *= iAmpScale; // Decrease successive layer amplitude, as normal.
     }
     
     return tot/sum; // Range: [0, 1].
@@ -109,26 +118,26 @@ void main()
     
     // Shifting the central position around, just a little, to simulate a
     // moving camera, albeit a pretty lame one.
-    uv += vec2(sin(iGlobalTime*0.5)*0.25, cos(iGlobalTime*0.5)*0.125);
+    uv += vec2(sin(iGlobalTime*0.5)*iShiftRate.x, cos(iGlobalTime*0.5)*iShiftRate.y);
     
     // Constructing the unit ray.
     vec3 rd = normalize(vec3(uv.x, uv.y, 3.1415926535898/8.));
     
     // Rotating the ray about the XY plane, to simulate a rolling camera.
-    float cs = cos(iGlobalTime*0.25), si = sin(iGlobalTime*0.25);
+    float cs = cos(iGlobalTime*iSpinRate), si = sin(iGlobalTime*iSpinRate);
     rd.xy *= mat2(cs, -si, si, cs);
     
     // Passing a unit ray multiple into the Voronoi layer function, which
     // is nothing more than an fBm setup with some time dialation.
-    float c = noiseLayers(rd*2.);
+    float c = noiseLayers(rd*iScale);
     
     // Optional: Adding a bit of random noise for a subtle dust effect.
-    c = max(c + dot(hash33(rd)*2.-1., vec3(0.015)), 0.);
+    c = max(c + dot(hash33(rd)*2.-1., vec3(iNoise)), 0.);
     
     // Coloring:
     
     // Nebula.
-    c *= sqrt(c)*1.5; // Contrast.
+    c *= sqrt(c)*iContrast; // Contrast.
     vec3 col = firePalette(c); // Palettization.
     col = mix(col, col.zyx*0.1+c*0.9, (1.+rd.x+rd.y)*0.45 ); // Color dispersion.
     
