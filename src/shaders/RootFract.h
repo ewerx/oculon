@@ -66,4 +66,21 @@ private:
     TimeController      mTimeController;
     AudioInputHandler   mAudioInputHandler;
     int                 mResponseBand;
+    
+//    struct tOrbitTrap
+//    {
+//        ci::ColorAf mColor;
+//        float mTraps;
+//        float mFrequency;
+//        float mAmplitude;
+//        float mSpeed;
+//        float mWidth;
+//        float mBrightness;
+//        float mContrast;
+//    };
+//    
+//    tOrbitTrap mOrbit1;
+//    tOrbitTrap mOrbit2;
+//    tOrbitTrap mOrbit3;
+    
 };

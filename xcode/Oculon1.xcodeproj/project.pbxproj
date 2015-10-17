@@ -83,6 +83,7 @@
 		7C187E48191093D3003590EC /* SimplexNoiseTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C187E46191093D3003590EC /* SimplexNoiseTexture.cpp */; };
 		7C272EC81938675B00A49E48 /* rgb_noise256.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C272EC71938675B00A49E48 /* rgb_noise256.png */; };
 		7C29B93F19BD472E009E89F1 /* lines_nodesim_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C29B93E19BD472E009E89F1 /* lines_nodesim_frag.glsl */; };
+		7C380A931BD08BED00E220DF /* oileffect_frag.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 7C380A921BD08BED00E220DF /* oileffect_frag.glsl */; settings = {ASSET_TAGS = (); }; };
 		7C409E63185C08AE0028934D /* brightStars.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DF1853D4ED00D1C8A3 /* brightStars.vert */; };
 		7C409E64185C08BA0028934D /* brightStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8DE1853D4ED00D1C8A3 /* brightStars.frag */; };
 		7C409E65185C08BA0028934D /* faintStars.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7C06A8E01853D4ED00D1C8A3 /* faintStars.frag */; };
@@ -683,6 +684,7 @@
 		7C187E47191093D3003590EC /* SimplexNoiseTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplexNoiseTexture.h; sourceTree = "<group>"; };
 		7C272EC71938675B00A49E48 /* rgb_noise256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rgb_noise256.png; sourceTree = "<group>"; };
 		7C29B93E19BD472E009E89F1 /* lines_nodesim_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lines_nodesim_frag.glsl; sourceTree = "<group>"; };
+		7C380A921BD08BED00E220DF /* oileffect_frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oileffect_frag.glsl; sourceTree = "<group>"; };
 		7C409E68185C0CAD0028934D /* Constellations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constellations.cpp; sourceTree = "<group>"; };
 		7C409E69185C0CAD0028934D /* Constellations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constellations.h; sourceTree = "<group>"; };
 		7C409E6B185C0CB50028934D /* ConstellationArt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstellationArt.cpp; sourceTree = "<group>"; };
@@ -1624,6 +1626,7 @@
 				7C06A8D61853D4ED00D1C8A3 /* stripey_frag.glsl */,
 				7C6CB43D1925DAA900D83614 /* terminal_frag.glsl */,
 				7C8DA8641921AB9300FCD9A2 /* test_frag.glsl */,
+				7C380A921BD08BED00E220DF /* oileffect_frag.glsl */,
 				7C6A21B71BC615090052A65B /* voronoi_fire_frag.glsl */,
 				7C6A21B51BC614590052A65B /* voronoi_plasma_frag.glsl */,
 				7C6A21B31BC613860052A65B /* voronoi_cells_frag.glsl */,
@@ -3305,6 +3308,7 @@
 				7C79C91C17650F8F00E71F9D /* earthMask.png in Resources */,
 				7C584D9619FD51F600EB9609 /* moon_normalmap.jpg in Resources */,
 				7C54CD311938665A0049B3FC /* rgb_noise.jpg in Resources */,
+				7C380A931BD08BED00E220DF /* oileffect_frag.glsl in Resources */,
 				7C79C91D17650F8F00E71F9D /* earthNormal.png in Resources */,
 				7C06A8F01853D4ED00D1C8A3 /* infinitefall_frag.glsl in Resources */,
 				7C79C91E17650F8F00E71F9D /* Oculon.icns in Resources */,

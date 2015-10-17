@@ -119,8 +119,18 @@ public:
         
     };
 
+#pragma mark -
+    class OilWater : public FragShader
+    {
+    public:
+        OilWater();
+        void setupInterface( Interface* interface, const std::string& prefix );
+        void setCustomParams( AudioInputHandler& audioInputHandler );
+        
+    private:
+        
+    };
+
 };
-
-
 
 

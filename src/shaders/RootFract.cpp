@@ -86,7 +86,13 @@ void RootFract::setupInterface()
                          .maxValue(10.0f)
                          .oscReceiver(getName()));
     
-    mInterface->addParam(CreateVec2fParam("julia", &mJulia, Vec2f(0.1f,0.1f), Vec2f(10.0f,10.0f)));
+    //mInterface->addParam(CreateVec2fParam("julia", &mJulia, Vec2f(0.1f,0.1f), Vec2f(10.0f,10.0f)));
+    mInterface->addParam(CreateFloatParam("julia-x", &mJulia.x)
+                         .minValue(0.1f)
+                         .maxValue(10.0f));
+    mInterface->addParam(CreateFloatParam("julia-y", &mJulia.y)
+                         .minValue(0.1f)
+                         .maxValue(10.0f));
     mInterface->addParam(CreateVec3fParam("traps", &mOrbitTraps, Vec3f::zero(), Vec3f::one()));
     mInterface->addParam(CreateVec3fParam("freq", &mFrequency, Vec3f::zero(), Vec3f::one()*20.0f));
     mInterface->addEnum(CreateEnumParam( "audio-freq", &mFreqResponseBand )

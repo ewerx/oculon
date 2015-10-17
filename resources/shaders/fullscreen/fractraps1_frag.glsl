@@ -1,5 +1,5 @@
 #version 120
-uniform vec2 iResolution;     // viewport resolution (in pixels)
+uniform vec2      iResolution;     // viewport resolution (in pixels)
 uniform float     iGlobalTime;     // shader playback time (in seconds)
 uniform vec3      iColor1;
 uniform vec3      iColor2;

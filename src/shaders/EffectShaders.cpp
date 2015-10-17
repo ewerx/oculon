@@ -37,6 +37,7 @@ void EffectShaders::setup()
     mEffects.push_back( new CathodeRay() );
 //    mEffects.push_back( new Television() );
 //    mEffects.push_back( new VideoTape() );
+    mEffects.push_back( new OilWater() );
     
     // inputs
 //    vector<Scene*> scenes;
@@ -331,5 +332,25 @@ void EffectShaders::VideoTape::setupInterface( Interface* interface, const std::
 }
 
 void EffectShaders::VideoTape::setCustomParams( AudioInputHandler& audioInputHandler )
+{
+}
+
+#pragma mark -
+
+EffectShaders::OilWater::OilWater()
+: FragShader("oik", "oileffect_frag.glsl")
+{
+    
+}
+
+void EffectShaders::OilWater::setupInterface( Interface* interface, const std::string& prefix )
+{
+    string oscName = prefix + "/" + getName();
+    vector<string> bandNames = AudioInputHandler::getBandNames();
+    
+    interface->gui()->addLabel(getName());
+}
+
+void EffectShaders::OilWater::setCustomParams( AudioInputHandler& audioInputHandler )
 {
 }
