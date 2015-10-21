@@ -61,6 +61,12 @@ void Lines::setup()
     mBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
     mBehaviorSelector.addShader("noise", "noise_sim_frag.glsl");
     mBehaviorSelector.addShader("follow-nodes", "follownodes_sim_frag.glsl");
+    mBehaviorSelector.addShader("harmonic", "harmonic_sim_frag.glsl");
+    mBehaviorSelector.addShader("gravity", "graviton_simulation_frag.glsl" );
+    
+    mHarmonicX = 0.5f;
+    mHarmonicY = 1.0f;
+    mHarmonicRate = 0.2f;
     
     // rendering
     mParticleController.addRenderer( new LinesRenderer() );
@@ -384,140 +390,220 @@ void Lines::setupParticles(const int bufSize)
 //        positions.clear();
 //    }
     
-    // cube
+    // concentrics
     {
-        int count = 0;
-        const int d = 24;
         positions.clear();
-        //velocities.clear();
         data.clear();
-        float distPer = r / (d*0.5);
+        velocities.clear();
         
-        float x1 = -0.5 * d * distPer;
-        float y1 = -0.5 * d * distPer;
-        float z1 = -0.5 * d * distPer;
+        const int NUM_CONCENTRIC = 4;
+        const float multiplier = 1.0f / NUM_CONCENTRIC;
+        float radii[NUM_CONCENTRIC];
         
-        float x2 = 0.5 * d * distPer;
-        float y2 = 0.5 * d * distPer;
-        float z2 = 0.5 * d * distPer;
-        
-        // lines
-        for (int i = 0; i < d*0.5; ++i)
+        for (int j = 0; j < NUM_CONCENTRIC; ++j)
         {
-            z1 = -0.5 * d * distPer;
-            x2 = 0.5 * d * distPer;
-            
-            for (int j = 0; j < d*0.5; ++j)
-            {
-                x1 = -0.5 * d * distPer;
-                z2 = 0.5 * d * distPer;
-                
-                for (int k = 0; k < d*0.5; ++k)
-                {
-                    float mass = Rand::randFloat(0.01f,1.0f);
-                    positions.push_back(Vec4f(x1,y1,z1,mass));
-                    
-                    // velocity + age
-                    //float age = Rand::randFloat(.000001f,0.00005f);
-                    //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
-                    
-                    // extra info
-                    float decay = Rand::randFloat(.01f,10.00f);
-                    data.push_back(Vec4f(x1,y1,z1,decay));
-                    
-                    positions.push_back(Vec4f(x2,y2,z2,mass));
-                    data.push_back(Vec4f(x2,y2,z2,decay));
-                    
-                    x1 += distPer;
-                    z2 -= distPer;
-                    
-                    ++count;
-                }
-                
-                z1 += distPer;
-                x2 -= distPer;
-            }
-            
-            y1 += distPer;
-            y2 -= distPer;
+            radii[j] = r * (1.0f - multiplier * j);
         }
         
-        for (int i = count; i < numParticles; ++i) {
-            positions.push_back(Vec4f::zero());
-            //velocities.push_back(Vec4f::zero());
-            data.push_back(Vec4f::zero());
+        for (int i = 0; i < numParticles; ++i)
+        {
+            const float rho = Rand::randFloat() * (M_PI * 2.0);
+            const float theta = Rand::randFloat() * (M_PI * 2.0);
+            
+            const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
+            
+            // position + mass
+            float x = radii[concentricIndex] * cos(rho) * sin(theta);
+            float y = radii[concentricIndex] * sin(rho) * sin(theta);
+            float z = radii[concentricIndex] * cos(theta);
+            float mass = 0.1f + multiplier * concentricIndex;
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            // velocity + age
+            float age = Rand::randFloat(.000001f,0.00005f);
+            velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+            
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
         }
-        
-        mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
+        mParticleController.addFormation(new ParticleFormation("concentrics4", bufSize, positions, velocities, data));
     }
     
-    // cube
+    // concentrics
     {
-        int count = 0;
-        const int d = 24;
         positions.clear();
-        //velocities.clear();
         data.clear();
-        float distPer = r / (d*0.5);
+        velocities.clear();
         
-        float x1 = -0.5 * d * distPer;
-        float y1 = -0.5 * d * distPer;
-        float z1 = -0.5 * d * distPer;
+        const int NUM_CONCENTRIC = 8;
+        const float multiplier = 1.0f / NUM_CONCENTRIC;
+        float radii[NUM_CONCENTRIC];
         
-        float x2 = 0.5 * d * distPer;
-        float y2 = 0.5 * d * distPer;
-        float z2 = 0.5 * d * distPer;
-        
-        // lines
-        for (int i = 0; i < d*0.5; ++i)
+        for (int j = 0; j < NUM_CONCENTRIC; ++j)
         {
-            z1 = -0.5 * d * distPer;
-            y2 = 0.5 * d * distPer;
-            
-            for (int j = 0; j < d*0.5; ++j)
-            {
-                x1 = -0.5 * d * distPer;
-                z2 = 0.5 * d * distPer;
-                
-                for (int k = 0; k < d*0.5; ++k)
-                {
-                    float mass = Rand::randFloat(0.01f,1.0f);
-                    positions.push_back(Vec4f(x1,y1,z1,mass));
-                    
-                    // velocity + age
-                    //float age = Rand::randFloat(.000001f,0.00005f);
-                    //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
-                    
-                    // extra info
-                    float decay = Rand::randFloat(.01f,10.00f);
-                    data.push_back(Vec4f(x1,y1,z1,decay));
-                    
-                    positions.push_back(Vec4f(x2,y2,z2,mass));
-                    data.push_back(Vec4f(x2,y2,z2,decay));
-                    
-                    x1 += distPer;
-                    z2 -= distPer;
-                    
-                    ++count;
-                }
-                
-                z1 += distPer;
-                
-                y2 -= distPer;
-            }
-            
-            y1 += distPer;
-            x2 -= distPer;
+            radii[j] = r * (1.0f - multiplier * j);
         }
         
-        for (int i = count; i < numParticles; ++i) {
-            positions.push_back(Vec4f::zero());
-            //velocities.push_back(Vec4f::zero());
-            data.push_back(Vec4f::zero());
+        for (int i = 0; i < numParticles; ++i)
+        {
+            const float rho = Rand::randFloat() * (M_PI * 2.0);
+            const float theta = Rand::randFloat() * (M_PI * 2.0);
+            
+            const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
+            
+            // position + mass
+            float x = radii[concentricIndex] * cos(rho) * sin(theta);
+            float y = radii[concentricIndex] * sin(rho) * sin(theta);
+            float z = radii[concentricIndex] * cos(theta);
+            float mass = 0.1f + multiplier * concentricIndex;
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            // velocity + age
+            float age = Rand::randFloat(.000001f,0.00005f);
+            velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+            
+            // extra info
+            float decay = Rand::randFloat(.01f,10.00f);
+            data.push_back(Vec4f(x,y,z,decay));
         }
-        
-        mParticleController.addFormation(new ParticleFormation("cube2", bufSize, positions, velocities, data));
+        mParticleController.addFormation(new ParticleFormation("concentrics8", bufSize, positions, velocities, data));
     }
+    
+//    // cube
+//    {
+//        int count = 0;
+//        const int d = 24;
+//        positions.clear();
+//        //velocities.clear();
+//        data.clear();
+//        float distPer = r / (d*0.5);
+//        
+//        float x1 = -0.5 * d * distPer;
+//        float y1 = -0.5 * d * distPer;
+//        float z1 = -0.5 * d * distPer;
+//        
+//        float x2 = 0.5 * d * distPer;
+//        float y2 = 0.5 * d * distPer;
+//        float z2 = 0.5 * d * distPer;
+//        
+//        // lines
+//        for (int i = 0; i < d*0.5; ++i)
+//        {
+//            z1 = -0.5 * d * distPer;
+//            x2 = 0.5 * d * distPer;
+//            
+//            for (int j = 0; j < d*0.5; ++j)
+//            {
+//                x1 = -0.5 * d * distPer;
+//                z2 = 0.5 * d * distPer;
+//                
+//                for (int k = 0; k < d*0.5; ++k)
+//                {
+//                    float mass = Rand::randFloat(0.01f,1.0f);
+//                    positions.push_back(Vec4f(x1,y1,z1,mass));
+//                    
+//                    // velocity + age
+//                    //float age = Rand::randFloat(.000001f,0.00005f);
+//                    //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+//                    
+//                    // extra info
+//                    float decay = Rand::randFloat(.01f,10.00f);
+//                    data.push_back(Vec4f(x1,y1,z1,decay));
+//                    
+//                    positions.push_back(Vec4f(x2,y2,z2,mass));
+//                    data.push_back(Vec4f(x2,y2,z2,decay));
+//                    
+//                    x1 += distPer;
+//                    z2 -= distPer;
+//                    
+//                    ++count;
+//                }
+//                
+//                z1 += distPer;
+//                x2 -= distPer;
+//            }
+//            
+//            y1 += distPer;
+//            y2 -= distPer;
+//        }
+//        
+//        for (int i = count; i < numParticles; ++i) {
+//            positions.push_back(Vec4f::zero());
+//            //velocities.push_back(Vec4f::zero());
+//            data.push_back(Vec4f::zero());
+//        }
+//        
+//        mParticleController.addFormation(new ParticleFormation("cube", bufSize, positions, velocities, data));
+//    }
+//    
+//    // cube
+//    {
+//        int count = 0;
+//        const int d = 24;
+//        positions.clear();
+//        //velocities.clear();
+//        data.clear();
+//        float distPer = r / (d*0.5);
+//        
+//        float x1 = -0.5 * d * distPer;
+//        float y1 = -0.5 * d * distPer;
+//        float z1 = -0.5 * d * distPer;
+//        
+//        float x2 = 0.5 * d * distPer;
+//        float y2 = 0.5 * d * distPer;
+//        float z2 = 0.5 * d * distPer;
+//        
+//        // lines
+//        for (int i = 0; i < d*0.5; ++i)
+//        {
+//            z1 = -0.5 * d * distPer;
+//            y2 = 0.5 * d * distPer;
+//            
+//            for (int j = 0; j < d*0.5; ++j)
+//            {
+//                x1 = -0.5 * d * distPer;
+//                z2 = 0.5 * d * distPer;
+//                
+//                for (int k = 0; k < d*0.5; ++k)
+//                {
+//                    float mass = Rand::randFloat(0.01f,1.0f);
+//                    positions.push_back(Vec4f(x1,y1,z1,mass));
+//                    
+//                    // velocity + age
+//                    //float age = Rand::randFloat(.000001f,0.00005f);
+//                    //velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+//                    
+//                    // extra info
+//                    float decay = Rand::randFloat(.01f,10.00f);
+//                    data.push_back(Vec4f(x1,y1,z1,decay));
+//                    
+//                    positions.push_back(Vec4f(x2,y2,z2,mass));
+//                    data.push_back(Vec4f(x2,y2,z2,decay));
+//                    
+//                    x1 += distPer;
+//                    z2 -= distPer;
+//                    
+//                    ++count;
+//                }
+//                
+//                z1 += distPer;
+//                
+//                y2 -= distPer;
+//            }
+//            
+//            y1 += distPer;
+//            x2 -= distPer;
+//        }
+//        
+//        for (int i = count; i < numParticles; ++i) {
+//            positions.push_back(Vec4f::zero());
+//            //velocities.push_back(Vec4f::zero());
+//            data.push_back(Vec4f::zero());
+//        }
+//        
+//        mParticleController.addFormation(new ParticleFormation("cube2", bufSize, positions, velocities, data));
+//    }
 
     // TODO: refactor into a ParticleController::completeSetup method... is there a better way? first update?
     mParticleController.resetToFormation(0);
@@ -542,7 +628,15 @@ void Lines::setupInterface()
     mInterface->addEnum(CreateEnumParam("behavior", &mBehaviorSelector.mIndex)
                         .maxValue(mBehaviorSelector.mNames.size())
                         .isVertical()
-                        .sendFeedback(), mBehaviorSelector.mNames)->registerCallback(&mParticleController, &ParticleController::onFormationChanged);
+                        .sendFeedback(), mBehaviorSelector.mNames)->registerCallback(this, &Lines::onBehaviorChange);
+    
+    mInterface->addParam(CreateFloatParam("harmonc-X", &mHarmonicX )
+                         .maxValue(8.0f));
+    mInterface->addParam(CreateFloatParam("harmonc-Y", &mHarmonicY )
+                         .maxValue(8.0f));
+    mInterface->addParam(CreateFloatParam("harmonc-rate", &mHarmonicRate )
+                         .minValue(0.01f)
+                         .maxValue(5.0f));
     
     mDynamicTexture.setupInterface(mInterface, getName());
     
@@ -578,6 +672,16 @@ void Lines::setupInterface()
 //                                          .minValue(0.0f)
 //                                          .maxValue(120.0f)
 //                                          .midiInput(0, 1, 17));
+}
+
+bool Lines::onBehaviorChange()
+{
+    Flock *flock = static_cast<Flock*>(mApp->getScene("flock"));
+    if (flock) {
+        flock->setRunning(mBehaviorSelector.mIndex == 2); // follow-nodes
+    }
+    mParticleController.onFormationChanged();
+    return true;
 }
 
 #pragma mark - Update
@@ -657,6 +761,10 @@ void Lines::updateParticles(double dt)
     shader.uniform( "startAnim", mParticleController.isStartingAnim() );
     shader.uniform( "formationStep", mParticleController.getFormationStep() );
     shader.uniform( "containmentSize", mContainmentRadius );
+    
+    shader.uniform( "harmonicX", mHarmonicX );
+    shader.uniform( "harmonicY", mHarmonicY );
+    shader.uniform( "harmonicRate", mHarmonicRate );
     
     gl::drawSolidRect(fbo.getBounds());
     

@@ -37,6 +37,8 @@ void AudioInputHandler::setup(bool fboEnabled)
     mRandomSignal       = false;
     mRandomize          = false;
     mRandomSeed         = 0;
+    mFramesUntilRandomize = 120;
+    mFramesSinceRandom  = 0;
     
     // FALLOFF
     mFalloffTime        = 0.32f;
@@ -219,10 +221,14 @@ void AudioInputHandler::update(double dt, AudioInput& audioInput)
     }
     else
     {
-        if (mRandomize || mRandomSignal)
+        if (mRandomize || (mRandomSignal && mFramesSinceRandom >= mFramesUntilRandomize))
         {
+            mFramesSinceRandom = 0;
             mRandomSeed = Rand::randInt();
             mRandomize = false;
+        }
+        if (mRandomSignal) {
+            mFramesSinceRandom++;
         }
         Rand randIndex(mRandomSeed);
         for( int index=0; index< magSpectrum.size(); ++index )

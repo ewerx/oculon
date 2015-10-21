@@ -85,7 +85,7 @@ void OculonApp::prepareSettings( Settings *settings )
     
 	settings->setWindowSize( mConfig.getInt("window_width"), mConfig.getInt("window_height") );
 	settings->setFrameRate( 60.0f );
-	settings->setFullScreen( false );
+	settings->setFullScreen( true );
     settings->setTitle("Oculon");
     settings->enableHighDensityDisplay(false);
     
@@ -399,7 +399,7 @@ void OculonApp::setupScenes()
     
     mScenes.clear();
     
-//    if( mConfig.getBool("audio") )              addScene( new AudioSignal() );
+    if( mConfig.getBool("audio") )              addScene( new AudioSignal() );
 //    if( mConfig.getBool("binned") )           addScene( new Binned() );
     if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
     

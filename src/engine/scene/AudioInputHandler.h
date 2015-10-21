@@ -77,6 +77,8 @@ public:
     // Distribution
     bool                mRandomSignal;
     bool                mRandomize;
+    int                 mFramesUntilRandomize;
+    int                 mFramesSinceRandom;
     int                 mRandomSeed;
 
     // FALLOFF

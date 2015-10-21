@@ -50,6 +50,8 @@ private:
     
     void setupNodes(const int bufSize);
     void updateNodes(double dt);
+    
+    bool onBehaviorChange();
 
 private:
     // particle system
@@ -77,6 +79,10 @@ private:
     bool mReset;
     
     float mContainmentRadius;
+    
+    float               mHarmonicX;
+    float               mHarmonicY;
+    float               mHarmonicRate;
     
     // audio
     AudioInputHandler mAudioInputHandler;

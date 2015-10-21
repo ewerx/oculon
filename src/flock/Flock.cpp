@@ -48,7 +48,7 @@ Flock::~Flock()
 void Flock::setup()
 {
     mDrawNebulas = false;
-    mDrawPredators = true;
+    mDrawPredators = false;
     mDrawParticles = true;
     
     ////////------------------------------------------------------
@@ -59,6 +59,8 @@ void Flock::setup()
     mCameraController.addCamera( new SplineCam(mApp->getViewportAspectRatio()) );
     mCameraController.addCamera( new OtherSceneCam(mApp, "graviton") );
     mCameraController.addCamera( new OtherSceneCam(mApp, "lines") );
+    
+    mCameraController.setCamIndex(4);
     
 	// POSITION/VELOCITY FBOS
 	mRgba16Format.setColorInternalFormat( GL_RGBA16F_ARB );
@@ -103,7 +105,7 @@ void Flock::setup()
     // MOUSE
 	mMousePos			= Vec2f::zero();
 	mMouseDownPos		= Vec2f::zero();
-	mMouseOffset		= Vec2f::zero();
+	mMouseOffset        = Vec2f::zero();
 	mMousePressed		= false;
 
 	mInitUpdateCalled	= false;

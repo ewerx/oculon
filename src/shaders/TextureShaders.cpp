@@ -36,12 +36,13 @@ void TextureShaders::setup()
     setupShaders();
     
     // color maps
-    mColorMaps.addTexture("none", "white8.jpg");
+    //mColorMaps.addTexture("none", "white8.jpg");
     mColorMaps.addTexture("colormap1", "colortex1.jpg");
     mColorMaps.addTexture("colormap1", "colortex2.jpg");
     mColorMaps.addTexture("colormap1", "colortex3.jpg");
     mColorMaps.addTexture("colormap1", "colortex4.jpg");
-    mInputTexture = make_shared<gl::Texture>(mColorMaps.getTexture());
+    mInputTexture = NULL;
+    //mInputTexture = make_shared<gl::Texture>(mColorMaps.getTexture());
     
     mColor1 = ColorA::white();
     mColor2 = ColorA::black();
@@ -54,11 +55,11 @@ void TextureShaders::setupShaders()
     mShaderType = 0;
 
     mShaders.push_back( new BezierShader() );
-    mShaders.push_back( new InfiniteFall() );
+//    mShaders.push_back( new InfiniteFall() );
 
 //    mShaders.push_back( new PixelWeaveShader() );
     mShaders.push_back( new SimplicityShader() );
-//    mShaders.push_back( new KifsShader() );
+    mShaders.push_back( new KifsShader() );
     
     mShaders.push_back( new InfiniteVoronoi() );
 }
