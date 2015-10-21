@@ -11,6 +11,7 @@
 #include "ParticleRenderer.h"
 #include "AudioInputHandler.h"
 #include "cinder/gl/Texture.h"
+#include "TextureSelector.h"
 
 class LinesRenderer : public ParticleRenderer
 {
@@ -28,7 +29,6 @@ protected:
     float               mLineWidth;
     bool                mAudioReactive;
     float               mAlphaGain;
-    ci::gl::Texture     mColorMapTex;
     ci::ColorAf         mColor;
-    bool                mUseColorMap;
+    TextureSelector     mColorMaps;
 };

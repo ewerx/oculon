@@ -679,6 +679,7 @@ bool Lines::onBehaviorChange()
     Flock *flock = static_cast<Flock*>(mApp->getScene("flock"));
     if (flock) {
         flock->setRunning(mBehaviorSelector.mIndex == 2); // follow-nodes
+        flock->setVisible(mBehaviorSelector.mIndex == 2);
     }
     mParticleController.onFormationChanged();
     return true;

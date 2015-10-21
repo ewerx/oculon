@@ -20,12 +20,15 @@ LinesRenderer::LinesRenderer()
     // params
     mLineWidth              = 2.0f;
     mColor                  = ColorAf(1.0f,1.0f,1.0f,0.075f);
-    mUseColorMap            = false;
     mAudioReactive          = true;
     mAlphaGain              = 3.0f;
     
     // load textures
-    mColorMapTex = gl::Texture( loadImage( app::loadResource( "colortex1.jpg" ) ) );
+    mColorMaps.addTexture("none", "white8.jpg");
+    mColorMaps.addTexture("colormap1", "colortex1.jpg");
+    mColorMaps.addTexture("colormap1", "colortex2.jpg");
+    mColorMaps.addTexture("colormap1", "colortex3.jpg");
+    mColorMaps.addTexture("colormap1", "colortex4.jpg");
 }
 
 LinesRenderer::~LinesRenderer()
@@ -62,8 +65,7 @@ void LinesRenderer::setupInterface( Interface* interface, const std::string& pre
                         .maxValue(10.0f)
                         .oscReceiver(oscName)
                         .midiInput(0, 1, 16));
-    interface->addParam(CreateBoolParam("lines/colormap", &mUseColorMap)
-                        .oscReceiver(oscName));
+    mColorMaps.setupInterface(interface, getName(), "colormap");
     
     // FIXME: MIDI HACK
     mowa::sgui::PanelControl* hiddenPanel = interface->gui()->addPanel();
@@ -97,7 +99,7 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     particlesFbo.bindTexture(1);//vel
     particlesFbo.bindTexture(2);//info
     
-    mColorMapTex.bind(3);
+    mColorMaps.getTexture().bind(3);
     
     if (audioInputHandler.hasTexture())
     {
@@ -115,7 +117,7 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     mShader.uniform("colorBase", mColor);
     mShader.uniform("gain", audioInputHandler.getGain() * mAlphaGain);
     mShader.uniform("audioReactive", mAudioReactive);
-    mShader.uniform("useColorMap", mUseColorMap);
+    mShader.uniform("useColorMap", true);
     
     // do magic
     gl::draw( mVboMesh );
@@ -123,7 +125,7 @@ void LinesRenderer::draw( PingPongFbo& particlesFbo, const ci::Vec2i& screenSize
     // cleanup
     mShader.unbind();
     particlesFbo.unbindTexture();
-    mColorMapTex.unbind();
+    mColorMaps.getTexture().unbind();
     if (audioInputHandler.hasTexture())
     {
         audioInputHandler.getFbo().unbindTexture();
