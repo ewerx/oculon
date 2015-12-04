@@ -78,9 +78,18 @@ void Graviton::setup()
     const int bufSize = 512;
     setupParticles(bufSize);
     
+    const int nodeBufSize = 4;
+    setupNodes(nodeBufSize);
+    
+    mNodeController.addRenderer( new GravitonRenderer() );
+    
+    mNodeBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
+    mNodeBehaviorSelector.addShader("spin", "graviton_spin_frag.glsl");
+    mNodeBehaviorSelector.addShader("harmonic", "harmonic_sim_frag.glsl");
+    
     // rendering
     mParticleController.addRenderer( new GravitonRenderer() );
-    mParticleController.addRenderer( new LinesRenderer() );
+    //mParticleController.addRenderer( new LinesRenderer() );
     
     mCameraController.setup(mApp);
     mCameraController.addCamera( new SpinCam(mApp->getViewportAspectRatio()) );
@@ -91,15 +100,82 @@ void Graviton::setup()
     
     mAudioInputHandler.setup(true);
     
-    MirrorBounceFormation* formation = new MirrorBounceFormation();
-    formation->mRadius = mFormationRadius * 3.0f;
-    formation->mBounceMultiplier = 50.0f;
-    formation->mSpinRate = 0.3f;
-    mNodeController.addFormation( formation );
-    
-    mNodeController.setFormation(1);
+//    MirrorBounceFormation* formation = new MirrorBounceFormation();
+//    formation->mRadius = mFormationRadius * 3.0f;
+//    formation->mBounceMultiplier = 50.0f;
+//    formation->mSpinRate = 0.3f;
+//    mNodeController.addFormation( formation );
+//    
+//    mNodeController.setFormation(1);
     
     reset();
+}
+
+void Graviton::setupNodes(const int bufSize)
+{
+    int numParticles = bufSize*bufSize;
+    console() << "[graviton] initializing " << numParticles << " nodes, hang on!" << std::endl;
+    
+    mNodeController.setup(bufSize);
+    
+    const float r = mFormationRadius * 0.5f;
+    
+    vector<Vec4f> positions;
+    vector<Vec4f> velocities;
+    vector<Vec4f> data;
+    
+    // random
+    {
+        for (int i = 0; i < numParticles; ++i)
+        {
+            Vec3f pos = Rand::randVec3f() * r;
+            
+            float leadership = Rand::randFloat( 0.7f, 1.0f );	// GENERAL EMOTIONAL STATE.
+            positions.push_back(Vec4f(pos.x,pos.y,pos.z,leadership));
+            
+            // velocity + age
+            Vec3f vel = Rand::randVec3f() * 3.0f;
+            float crowd = 1.0f;//Rand::randFloat(.007f,0.9f);
+            velocities.push_back(Vec4f(vel.x,vel.y,vel.z,crowd));
+            
+            // extra info
+            data.push_back(Vec4f::zero());
+        }
+        mNodeController.addFormation(new ParticleFormation("n-random", bufSize, positions, velocities, data));
+    }
+    
+    positions.clear();
+    velocities.clear();
+    data.clear();
+    
+    // shell
+    for (int i = 0; i < numParticles; ++i)
+    {
+        const float rho = Rand::randFloat() * (M_PI * 2.0);
+        const float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        // position + mass
+        float x = r * cos(rho) * sin(theta);
+        float y = r * sin(rho) * sin(theta);
+        float z = r * cos(theta);
+        float mass = Rand::randFloat(0.01f,1.0f);
+        positions.push_back(Vec4f(x,y,z,mass));
+        
+        //        // velocity + age
+        //        //        float vx = Rand::randFloat(-.005f,.005f);
+        //        //        float vy = Rand::randFloat(-.005f,.005f);
+        //        //        float vz = Rand::randFloat(-.005f,.005f);
+        //        float age = Rand::randFloat(.007f,0.9f);
+        //        velocities.push_back(Vec4f(0.0f, 0.0f, 0.0f, age));
+        
+        float age = Rand::randFloat(.000001f,0.00005f);
+        velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+        //
+        // extra info
+        float decay = Rand::randFloat(.01f,10.00f);
+        data.push_back(Vec4f(x,y,z,decay));
+    }
+    mNodeController.addFormation(new ParticleFormation("n-shell", bufSize, positions, velocities, data));
 }
 
 void Graviton::setupParticles(const int bufSize)
@@ -638,6 +714,11 @@ void Graviton::setupInterface()
                          .maxValue(5.0f));
                          
     mInterface->gui()->addColumn();
+    mInterface->addEnum(CreateEnumParam("node-behavior", &mNodeBehaviorSelector.mIndex)
+                        .maxValue(mNodeBehaviorSelector.mNames.size())
+                        .isVertical()
+                        .sendFeedback(), mNodeBehaviorSelector.mNames)->registerCallback(&mNodeController, &ParticleController::onFormationChanged);
+    mInterface->gui()->addSeparator();
     mNodeController.setupInterface(mInterface, getName());
     
 //    mInterface->addParam(CreateFloatParam( "Formation Radius", &mFormationRadius )
@@ -663,16 +744,16 @@ void Graviton::setupInterface()
                          .oscReceiver(getName()));
     mInterface->addParam(CreateFloatParam( "gravity", &mGravity )
                          .minValue(0.0f)
-                         .maxValue(100.0f)
+                         .maxValue(20.0f)
                          .oscReceiver(getName())
                          .midiInput(0, 1, 25));
-    mInterface->addParam(CreateBoolParam( "sync-gravity", &mGravitySync )
-                         .oscReceiver(getName()));
-    mInterface->addParam(CreateFloatParam( "gravity2", &mGravity2 )
-                         .minValue(0.0f)
-                         .maxValue(10.0f)
-                         .oscReceiver(getName())
-                         .midiInput(0, 2, 25));
+//    mInterface->addParam(CreateBoolParam( "sync-gravity", &mGravitySync )
+//                         .oscReceiver(getName()));
+//    mInterface->addParam(CreateFloatParam( "gravity2", &mGravity2 )
+//                         .minValue(0.0f)
+//                         .maxValue(10.0f)
+//                         .oscReceiver(getName())
+//                         .midiInput(0, 2, 25));
 //    mInterface->addParam(CreateFloatParam( "nodespeed", &mNodeSpeed )
 //                         .minValue(0.0f)
 //                         .maxValue(1000.0f)
@@ -726,12 +807,11 @@ void Graviton::update(double dt)
     
     mCameraController.update(dt);
     
-    mNodeController.update(dt, mAudioInputHandler);
-    
     gl::disableAlphaBlending();
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
     
+    updateNodes(dt);
     updateParticles(dt);
     
     mReset = false;
@@ -752,16 +832,18 @@ void Graviton::updateParticles(double dt)
     mParticleController.getFormation().getPositionTex().bind(3);
     mParticleController.getFormation().getVelocityTex().bind(4);
     
+    mNodeController.getParticleFbo().bindTexture(5, 0);
+    
     float gravity = mGravity;
     float gravity2 = mGravitySync ? mGravity : mGravity2;
     if (mAudioGravity)
     {
-        if (mNodeController.getNodes().size() > 0)
-        {
-            gravity *= mNodeController.getNodes().front().mPosition.length() * 0.25f;
-            gravity2 *= mNodeController.getNodes().back().mPosition.length() * 0.25f;
-        }
-        else
+//        if (mNodeController.getNodes().size() > 0)
+//        {
+//            gravity *= mNodeController.getNodes().front().mPosition.length() * 0.25f;
+//            gravity2 *= mNodeController.getNodes().back().mPosition.length() * 0.25f;
+//        }
+//        else
         {
             gravity *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
             gravity2 *= mAudioInputHandler.getAverageVolumeLowFreq() * 5.0f;
@@ -776,6 +858,8 @@ void Graviton::updateParticles(double dt)
     shader.uniform( "information", 2 );
     shader.uniform( "oPositions", 3);
     shader.uniform( "oVelocities", 4);
+    shader.uniform( "nodePosTex", 5 );
+    shader.uniform( "nodeBufSize", (float)mNodeController.getFboSize() );
     shader.uniform( "reset", mReset );
     shader.uniform( "spin", mSpin );
     shader.uniform( "dt", (float)mTimeController.getDelta() );
@@ -793,17 +877,17 @@ void Graviton::updateParticles(double dt)
     shader.uniform( "harmonicY", mHarmonicY );
     shader.uniform( "harmonicRate", mHarmonicRate );
     
-    NodeFormation::tNodeList& nodes = mNodeController.getNodes();
-    // TODO: glsl array uniform?
-    if (nodes.size() > 0) shader.uniform( "attractorPos1", nodes[0].mPosition );
-    if (nodes.size() > 1) shader.uniform( "attractorPos2", nodes[1].mPosition );
-    if (nodes.size() > 2) shader.uniform( "attractorPos3", nodes[2].mPosition );
-    if (nodes.size() > 3) shader.uniform( "attractorPos4", nodes[3].mPosition );
-    
-    shader.uniform( "attractorMass1", nodes.size() > 0 ? 1.0f : 0.0f );
-    shader.uniform( "attractorMass2", nodes.size() > 1 ? 1.0f : 0.0f );
-    shader.uniform( "attractorMass3", nodes.size() > 2 ? 1.0f : 0.0f );
-    shader.uniform( "attractorMass4", nodes.size() > 3 ? 1.0f : 0.0f );
+//    NodeFormation::tNodeList& nodes = mNodeController.getNodes();
+//    // TODO: glsl array uniform?
+//    if (nodes.size() > 0) shader.uniform( "attractorPos1", nodes[0].mPosition );
+//    if (nodes.size() > 1) shader.uniform( "attractorPos2", nodes[1].mPosition );
+//    if (nodes.size() > 2) shader.uniform( "attractorPos3", nodes[2].mPosition );
+//    if (nodes.size() > 3) shader.uniform( "attractorPos4", nodes[3].mPosition );
+//    
+//    shader.uniform( "attractorMass1", nodes.size() > 0 ? 1.0f : 0.0f );
+//    shader.uniform( "attractorMass2", nodes.size() > 1 ? 1.0f : 0.0f );
+//    shader.uniform( "attractorMass3", nodes.size() > 2 ? 1.0f : 0.0f );
+//    shader.uniform( "attractorMass4", nodes.size() > 3 ? 1.0f : 0.0f );
     
     shader.uniform( "startAnim", mParticleController.isStartingAnim() );
     shader.uniform( "formationStep", mParticleController.getFormationStep() );
@@ -812,8 +896,63 @@ void Graviton::updateParticles(double dt)
     
     shader.unbind();
     
+    mNodeController.getParticleFbo().unbindTexture();
+    
     mParticleController.getFormation().getPositionTex().unbind();
     mParticleController.getFormation().getVelocityTex().unbind();
+    
+    fbo.unbindUpdate();
+    gl::popMatrices();
+}
+
+void Graviton::updateNodes(double dt)
+{
+    // TODO: refactor
+    PingPongFbo& fbo = mNodeController.getParticleFbo();
+    
+    gl::pushMatrices();
+    gl::setMatricesWindow( fbo.getSize(), false ); // false to prevent vertical flipping
+    gl::setViewport( fbo.getBounds() );
+    
+    fbo.bindUpdate();
+    
+    mNodeController.getFormation().getPositionTex().bind(3);
+    mNodeController.getFormation().getVelocityTex().bind(4);
+    
+    //    mDynamicTexture.bindTexture(5);
+    //
+    //    if (mAudioInputHandler.hasTexture())
+    //    {
+    //        mAudioInputHandler.getFbo().bindTexture(6);
+    //    }
+    
+    gl::GlslProg shader = mNodeBehaviorSelector.getSelectedShader();
+    
+    float simdt = mTimeController.getDelta();
+    //if (mAudioTime) simdt *= (1.0 - mAudioInputHandler.getAverageVolumeLowFreq());
+    shader.bind();
+    shader.uniform( "positions", 0 );
+    shader.uniform( "velocities", 1 );
+    shader.uniform( "information", 2);
+    shader.uniform( "oPositions", 3);
+    shader.uniform( "oVelocities", 4);
+    //  	shader.uniform( "noiseTex", 5);
+    //    shader.uniform( "audioData", 6);
+    //    shader.uniform( "gain", mAudioInputHandler.getGain());
+    shader.uniform( "dt", (float)simdt );
+    shader.uniform( "reset", mReset );
+    shader.uniform( "startAnim", mNodeController.isStartingAnim() );
+    shader.uniform( "formationStep", mNodeController.getFormationStep() );
+    //    shader.uniform( "containmentRadius", mContainmentRadius );
+    
+    gl::drawSolidRect(fbo.getBounds());
+    
+    shader.unbind();
+    
+    //mDynamicTexture.unbindTexture();
+    
+    mNodeController.getFormation().getPositionTex().unbind();
+    mNodeController.getFormation().getVelocityTex().unbind();
     
     fbo.unbindUpdate();
     gl::popMatrices();
@@ -879,7 +1018,7 @@ void Graviton::draw()
     else
     {
         mParticleController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
-        
+        mNodeController.draw(mApp->getViewportSize(), getCamera(), mAudioInputHandler);
         
         // draw moon
 //        glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -928,7 +1067,7 @@ void Graviton::drawDebug()
 ////        gl::drawSphere(Vec3f::zero(), mConstraintSphereRadius);
 ////        gl::disableWireframe();
 //    }
-    mNodeController.drawDebug();
+//    mNodeController.drawDebug();
     
     gl::popMatrices();
     

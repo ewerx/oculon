@@ -36,13 +36,13 @@ void Tilings::setupShaders()
     
     mShaders.push_back( new Tessellations() );
     mShaders.push_back( new Voronoi() );
-    mShaders.push_back( new VoronoiPlasma() );
+//    mShaders.push_back( new VoronoiPlasma() );
     mShaders.push_back( new VoronoiFire() );
     mShaders.push_back( new VoronoiCells() );
     
     if (getName().compare("voronoi-fire") == 0)
     {
-        mShaderType = 3;
+        mShaderType = 2;
     }
 }
 
@@ -50,21 +50,16 @@ void Tilings::setupShaders()
 
 Tilings::Tessellations::Tessellations()
 : FragShader("tessellations", "tilings_frag.glsl")
+, mOffset(getName(), 0.0f, 0.0f, 1.0f, true)
+, mAngleP(getName(), 3.0f, 2.0f, 40.0f, true)
+, mAngleQ(getName(), 5.0f, 2.0f, 12.0f, true)
+, mAngleR(getName(), 2.0f, 1.0f, 12.0f, true)
 {
-    mOffset = 0.0f;
     mHOffset = 0.0f;
     mScale = 0.47619f;
     
     mIterations = 20;
-    mAngleP = 3;
-    mAngleQ = 5;
-    mAngleR = 2;
     mThickness = 0.03f;
-    
-    mOffsetResponse = AudioInputHandler::BAND_NONE;
-    mAnglePResponse = AudioInputHandler::BAND_NONE;
-    mAngleQResponse = AudioInputHandler::BAND_NONE;
-    mAngleRResponse = AudioInputHandler::BAND_NONE;
 }
 
 void Tilings::Tessellations::setupInterface( Interface* interface, const std::string& prefix )
@@ -84,39 +79,11 @@ void Tilings::Tessellations::setupInterface( Interface* interface, const std::st
                          .minValue(1)
                          .maxValue(40)
                          .oscReceiver(getName()));
-    interface->addParam(CreateIntParam( "anglep", &mAngleP )
-                         .minValue(2)
-                         .maxValue(40)
-                         .oscReceiver(getName()));
-    interface->addEnum(CreateEnumParam("p-response", &mAnglePResponse)
-                        .maxValue(bandNames.size())
-                        .isVertical()
-                        .oscReceiver(getName())
-                        .sendFeedback(), bandNames);
-    interface->addParam(CreateIntParam( "angleq", &mAngleQ )
-                         .minValue(2)
-                         .maxValue(12)
-                         .oscReceiver(getName()));
-    interface->addEnum(CreateEnumParam("q-response", &mAngleQResponse)
-                        .maxValue(bandNames.size())
-                        .isVertical()
-                        .oscReceiver(getName())
-                        .sendFeedback(), bandNames);
-    interface->addParam(CreateIntParam( "angler", &mAngleR )
-                         .minValue(1)
-                         .maxValue(12)
-                         .oscReceiver(getName()));
-    interface->addEnum(CreateEnumParam("r-response", &mAngleRResponse)
-                        .maxValue(bandNames.size())
-                        .isVertical()
-                        .oscReceiver(getName())
-                        .sendFeedback(), bandNames);
     
-    interface->addEnum(CreateEnumParam("offset-response", &mOffsetResponse)
-                        .maxValue(bandNames.size())
-                        .isVertical()
-                        .oscReceiver(getName())
-                        .sendFeedback(), bandNames);
+    mAngleP.setupInterface(interface, "angle-p");
+    mAngleQ.setupInterface(interface, "angle-q");
+    mAngleR.setupInterface(interface, "angle-r");
+    mOffset.setupInterface(interface, "offset");
     
     interface->addParam(CreateFloatParam( "Thickness", &mThickness )
                          .minValue(0.0f)
@@ -129,16 +96,10 @@ void Tilings::Tessellations::update(double dt)
 
 void Tilings::Tessellations::setCustomParams( AudioInputHandler& audioInputHandler )
 {
-    int angleP = mAngleP * (0.5f + audioInputHandler.getAverageVolumeByBand(mAnglePResponse));
-    angleP = math<int>::clamp( angleP, 1, 40 );
-    
-    int angleQ = mAngleQ * (0.5f + audioInputHandler.getAverageVolumeByBand(mAngleQResponse));
-    angleQ = math<int>::clamp( angleQ, 1, 40 );
-    
-    int angleR = mAngleR * (0.5f + audioInputHandler.getAverageVolumeByBand(mAngleRResponse));
-    angleR = math<int>::clamp( angleR, 1, 40 );
-    
-    float offset = audioInputHandler.getAverageVolumeByBand(mOffsetResponse);
+    int angleP = mAngleP(audioInputHandler);
+    int angleQ = mAngleQ(audioInputHandler);
+    int angleR = mAngleR(audioInputHandler);
+    float offset = mOffset(audioInputHandler);
     
     mShader.uniform( "iIterations", mIterations );
     mShader.uniform( "iAngleP", angleP );

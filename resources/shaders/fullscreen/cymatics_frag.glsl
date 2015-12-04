@@ -19,7 +19,7 @@ void main(void)
 	vec2 uv = (gl_FragCoord.xy - .5*iResolution.xy) / larger;
 	
 	float lum = .5;
-	bool altVersion = false;
+	bool altVersion = true;
     
     if (altVersion)
     {

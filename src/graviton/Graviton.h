@@ -51,6 +51,9 @@ private:
     void setupParticles(const int bufSize);
     void updateParticles(double dt);
 
+    void setupNodes(const int bufSize);
+    void updateNodes(double dt);
+    
 private:
     float mFormationRadius;
     
@@ -67,7 +70,9 @@ private:
     float mEps;
     float mConstraintSphereRadius;
     
-    NodeController mNodeController;
+    //NodeController mNodeController;
+    ParticleController mNodeController;
+    ShaderSelector mNodeBehaviorSelector;
     
     // particle system
     ParticleController  mParticleController;

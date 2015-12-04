@@ -48,21 +48,23 @@ void Lines::setup()
     
     mAudioTime = false;
     
+    mFlockNodes = true;
+    
     // nodes
-    mNodeBufSize = 32;
+    mNodeBufSize = 8;
     setupNodes(mNodeBufSize);
     
     mNodeBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
     
     // particles
-    const int bufSize = 64;
+    const int bufSize = 32;
     setupParticles(bufSize);
     
     mBehaviorSelector.addShader("take-formation", "formation_sim_frag.glsl");
     mBehaviorSelector.addShader("noise", "noise_sim_frag.glsl");
     mBehaviorSelector.addShader("follow-nodes", "follownodes_sim_frag.glsl");
-    mBehaviorSelector.addShader("harmonic", "harmonic_sim_frag.glsl");
-    mBehaviorSelector.addShader("gravity", "graviton_simulation_frag.glsl" );
+//    mBehaviorSelector.addShader("harmonic", "harmonic_sim_frag.glsl");
+//    mBehaviorSelector.addShader("gravity", "graviton_simulation_frag.glsl" );
     
     mHarmonicX = 0.5f;
     mHarmonicY = 1.0f;
@@ -129,11 +131,121 @@ void Lines::setupParticles(const int bufSize)
             data.push_back(Vec4f(x,y,z,(float)nodeIndex));
         }
         mParticleController.addFormation(new ParticleFormation("random", bufSize, positions, velocities, data));
-        positions.clear();
-        data.clear();
+    }
+    
+    positions.clear();
+    data.clear();
+    
+    // straight lines
+    {
+        bool pair = false;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            if (pair)
+            {
+                int axis = Rand::randInt(3); // x=0,y=1,z=2
+                switch(axis)
+                {
+                    case 0:
+                        x = -x;
+                        break;
+                    case 1:
+                        y = -y;
+                        break;
+                    case 2:
+                        z = -z;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                x = r * Rand::randFloat(-1.0f,1.0f);
+                y = r * Rand::randFloat(-1.0f,1.0f);
+                z = r * Rand::randFloat(-1.0f,1.0f);
+            }
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            
+            data.push_back(Vec4f(x,y,z,0.0f));
+            
+            pair = !pair;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("straight", bufSize, positions, velocities, data));
+    }
+    
+    // inverted lines
+    {
+        vector<Vec4f> positionsInv;
+        vector<Vec4f> velocitiesInv;
+        vector<Vec4f> dataInv;
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            Vec4f pos = positions[i];
+            pos.x *= -1.0f;
+            
+            Vec4f d = data[i];
+            d.x *= -1.0f;
+            
+            positionsInv.push_back(pos);
+            dataInv.push_back(d);
+        }
+        mParticleController.addFormation(new ParticleFormation("s-flipX", bufSize, positionsInv, velocities, dataInv));
+    }
+    
+    // inverted lines
+    {
+        vector<Vec4f> positionsInv;
+        vector<Vec4f> velocitiesInv;
+        vector<Vec4f> dataInv;
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            Vec4f pos = positions[i];
+            pos.z *= -1.0f;
+            
+            Vec4f d = data[i];
+            d.z *= -1.0f;
+            
+            positionsInv.push_back(pos);
+            dataInv.push_back(d);
+        }
+        mParticleController.addFormation(new ParticleFormation("s-flipZ", bufSize, positionsInv, velocities, dataInv));
     }
     
     // straight lines
+    {
+        vector<Vec4f> positionsInv;
+        vector<Vec4f> velocitiesInv;
+        vector<Vec4f> dataInv;
+        
+        for (int i = numParticles-1; i >= 0; --i)
+        {
+            positionsInv.push_back(positions[i]);
+            dataInv.push_back(positions[i]);
+//            Vec4f posTemp = positions[i];
+//            Vec4f dataTemp = data[i];
+//            
+//            positions[i] = positions[reverseIndex];
+//            data[i] = data[reverseIndex];
+//            
+//            positions[reverseIndex] = posTemp;
+//            data[reverseIndex] = dataTemp;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("s-swap", bufSize, positionsInv, velocities, dataInv));
+    }
+    
     {
         bool pair = false;
         float x = 0.0f;
@@ -184,6 +296,10 @@ void Lines::setupParticles(const int bufSize)
     
     // inner and outer cirlces
     {
+        vector<Vec4f> positions2;
+        vector<Vec4f> velocities2;
+        vector<Vec4f> data2;
+        
         bool pair = false;
         
         float ratio = 0.5f;
@@ -213,15 +329,73 @@ void Lines::setupParticles(const int bufSize)
             
             // position + mass
             positions.push_back(Vec4f(x,y,z,mass));
-        
             velocities.push_back(Vec4f(Rand::randVec3f(),1.0f));
+            data.push_back(Vec4f(x,y,z,0.0f));
+            
+            radius *= 0.5f;
+            
+            float x2 = radius * sin(rho) * cos(theta);
+            float y2 = radius * cos(rho) * cos(theta);
+            float z2 = radius * sin(theta);
+            
+            positions2.push_back(Vec4f(x2,y2,z2,mass));
+            velocities2.push_back(Vec4f(Rand::randVec3f(),1.0f));
+            data2.push_back(Vec4f(x2,y2,z2,0.0f));
             
             pair = !pair;
         }
         
         mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
-        positions.clear();
+        mParticleController.addFormation(new ParticleFormation("shell2", bufSize, positions2, velocities2, data2));
     }
+    
+    // inner and outer cirlces
+    {
+        vector<Vec4f> positionsInv;
+        vector<Vec4f> velocitiesInv;
+        vector<Vec4f> dataInv;
+        
+        bool pair = false;
+        
+        float ratio = 0.5f;
+        
+        float rho = Rand::randFloat() * (M_PI * 2.0);
+        float theta = Rand::randFloat() * (M_PI * 2.0);
+        
+        for (int i = 0; i < numParticles; ++i)
+        {
+            float radius = r;
+            
+            if (pair)
+            {
+                radius *= ratio;
+            }
+            else
+            {
+                rho = Rand::randFloat() * (M_PI * 2.0);
+                theta = Rand::randFloat() * (M_PI * 2.0);
+            }
+            
+            float x = radius * cos(rho) * sin(theta);
+            float y = radius * sin(rho) * sin(theta);
+            float z = radius * cos(theta);
+            
+            float mass = Rand::randFloat(0.01f,1.0f);
+            
+            // position + mass
+            positions.push_back(Vec4f(x,y,z,mass));
+            velocities.push_back(Vec4f(Rand::randVec3f(),1.0f));
+            data.push_back(Vec4f(x,y,z,0.0f));
+            
+            pair = !pair;
+        }
+        
+        mParticleController.addFormation(new ParticleFormation("shell", bufSize, positions, velocities, data));
+    }
+    
+    positions.clear();
+//    velocities.clear();
+    data.clear();
     
     // cone
 //    {
@@ -264,6 +438,7 @@ void Lines::setupParticles(const int bufSize)
     // connected
     {
         positions.clear();
+        velocities.clear();
         data.clear();
         
         // connecting points on a sphere
@@ -431,44 +606,44 @@ void Lines::setupParticles(const int bufSize)
     }
     
     // concentrics
-    {
-        positions.clear();
-        data.clear();
-        velocities.clear();
-        
-        const int NUM_CONCENTRIC = 8;
-        const float multiplier = 1.0f / NUM_CONCENTRIC;
-        float radii[NUM_CONCENTRIC];
-        
-        for (int j = 0; j < NUM_CONCENTRIC; ++j)
-        {
-            radii[j] = r * (1.0f - multiplier * j);
-        }
-        
-        for (int i = 0; i < numParticles; ++i)
-        {
-            const float rho = Rand::randFloat() * (M_PI * 2.0);
-            const float theta = Rand::randFloat() * (M_PI * 2.0);
-            
-            const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
-            
-            // position + mass
-            float x = radii[concentricIndex] * cos(rho) * sin(theta);
-            float y = radii[concentricIndex] * sin(rho) * sin(theta);
-            float z = radii[concentricIndex] * cos(theta);
-            float mass = 0.1f + multiplier * concentricIndex;
-            positions.push_back(Vec4f(x,y,z,mass));
-            
-            // velocity + age
-            float age = Rand::randFloat(.000001f,0.00005f);
-            velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
-            
-            // extra info
-            float decay = Rand::randFloat(.01f,10.00f);
-            data.push_back(Vec4f(x,y,z,decay));
-        }
-        mParticleController.addFormation(new ParticleFormation("concentrics8", bufSize, positions, velocities, data));
-    }
+//    {
+//        positions.clear();
+//        data.clear();
+//        velocities.clear();
+//        
+//        const int NUM_CONCENTRIC = 8;
+//        const float multiplier = 1.0f / NUM_CONCENTRIC;
+//        float radii[NUM_CONCENTRIC];
+//        
+//        for (int j = 0; j < NUM_CONCENTRIC; ++j)
+//        {
+//            radii[j] = r * (1.0f - multiplier * j);
+//        }
+//        
+//        for (int i = 0; i < numParticles; ++i)
+//        {
+//            const float rho = Rand::randFloat() * (M_PI * 2.0);
+//            const float theta = Rand::randFloat() * (M_PI * 2.0);
+//            
+//            const int concentricIndex = i % NUM_CONCENTRIC;//Rand::randInt(NUM_CONCENTRIC);
+//            
+//            // position + mass
+//            float x = radii[concentricIndex] * cos(rho) * sin(theta);
+//            float y = radii[concentricIndex] * sin(rho) * sin(theta);
+//            float z = radii[concentricIndex] * cos(theta);
+//            float mass = 0.1f + multiplier * concentricIndex;
+//            positions.push_back(Vec4f(x,y,z,mass));
+//            
+//            // velocity + age
+//            float age = Rand::randFloat(.000001f,0.00005f);
+//            velocities.push_back(Vec4f(rho, theta, Rand::randFloat(-1.0f,1.0f), age));
+//            
+//            // extra info
+//            float decay = Rand::randFloat(.01f,10.00f);
+//            data.push_back(Vec4f(x,y,z,decay));
+//        }
+//        mParticleController.addFormation(new ParticleFormation("concentrics8", bufSize, positions, velocities, data));
+//    }
     
 //    // cube
 //    {
@@ -625,6 +800,7 @@ void Lines::setupInterface()
     mTimeController.setupInterface(mInterface, getName(), 1, 18);
     
     // particles
+    mInterface->addParam(CreateBoolParam("flock-nodes", &mFlockNodes));
     mInterface->addEnum(CreateEnumParam("behavior", &mBehaviorSelector.mIndex)
                         .maxValue(mBehaviorSelector.mNames.size())
                         .isVertical()
@@ -655,6 +831,7 @@ void Lines::setupInterface()
                         .maxValue(mNodeBehaviorSelector.mNames.size())
                         .isVertical()
                         .sendFeedback(), mNodeBehaviorSelector.mNames)->registerCallback(&mNodeController, &ParticleController::onFormationChanged);
+    mInterface->gui()->addSeparator();
     mNodeController.setupInterface(mInterface, getName());
     
     // misc
@@ -678,8 +855,8 @@ bool Lines::onBehaviorChange()
 {
     Flock *flock = static_cast<Flock*>(mApp->getScene("flock"));
     if (flock) {
-        flock->setRunning(mBehaviorSelector.mIndex == 2); // follow-nodes
-        flock->setVisible(mBehaviorSelector.mIndex == 2);
+        flock->setRunning(mFlockNodes && mBehaviorSelector.mIndex == 2); // follow-nodes
+        flock->setVisible(mFlockNodes && mBehaviorSelector.mIndex == 2);
     }
     mParticleController.onFormationChanged();
     return true;
@@ -730,10 +907,8 @@ void Lines::updateParticles(double dt)
     }
     
     // bind node position tex
-    bool flockPredatorNodes = true;
-    
     Flock *flock = static_cast<Flock*>(mApp->getScene("flock"));
-    if (flockPredatorNodes && flock && flock->isRunning())
+    if (mFlockNodes && flock && flock->isRunning())
     {
         flock->mPositionFbos[ flock->mThisFbo ].bindTexture(6, 0);
     }
@@ -771,7 +946,8 @@ void Lines::updateParticles(double dt)
     
     shader.unbind();
     
-    mNodeController.getFormation().getPositionTex().unbind();
+    mNodeController.getParticleFbo().unbindTexture();
+    flock->mPositionFbos[ flock->mThisFbo ].unbindTexture();
     
     mDynamicTexture.unbindTexture();
     

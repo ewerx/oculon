@@ -87,6 +87,8 @@ private:
     // audio
     AudioInputHandler mAudioInputHandler;
     bool mAudioTime;
+    
+    bool mFlockNodes;
 };
 
 

@@ -39,20 +39,25 @@ private:
         virtual void setCustomParams( AudioInputHandler& audioInputHandler );
         
     private:
-        int                 mOffsetResponse;
-        int                 mAnglePResponse;
-        int                 mAngleQResponse;
-        int                 mAngleRResponse;
+//        int                 mOffsetResponse;
+//        int                 mAnglePResponse;
+//        int                 mAngleQResponse;
+//        int                 mAngleRResponse;
         
         int                 mIterations;
-        int                 mAngleP;
-        int                 mAngleQ;
-        int                 mAngleR;
+//        int                 mAngleP;
+//        int                 mAngleQ;
+//        int                 mAngleR;
         ci::Vec3f           mCenter;
         float               mThickness;
-        float               mOffset;
+//        float               mOffset;
         float               mHOffset;
         float               mScale;
+        
+        AudioFloatParam mAngleP;
+        AudioFloatParam mAngleQ;
+        AudioFloatParam mAngleR;
+        AudioFloatParam mOffset;
     };
     
 #pragma mark -

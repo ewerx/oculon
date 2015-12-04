@@ -51,13 +51,13 @@ void Flock2::setup()
     
     // Predators
     mPredatorSimShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_predator_sim_frag.glsl");
-    setupPredators(8);
+    setupPredators(2);
     
     // simulation
     mSimulationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "flock_prey_sim_frag.glsl");
     mFormationShader = loadVertAndFragShaders("lines_simulation_vert.glsl", "formation_sim_frag.glsl");
     
-    const int bufSize = 64;
+    const int bufSize = 128;
     setupParticles(bufSize);
     
     // behavior

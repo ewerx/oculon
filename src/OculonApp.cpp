@@ -403,8 +403,8 @@ void OculonApp::setupScenes()
 //    if( mConfig.getBool("binned") )           addScene( new Binned() );
     if( mConfig.getBool("tectonic") )         addScene( new Tectonic() );
     
-    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("spark") );
-//    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
+    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("circlewave") );
+    if( mConfig.getBool("circlewave") )         addScene( new CircleWave("trapz") );
     if( mConfig.getBool("tilings") )            addScene( new Tilings("tilings") );
     if( mConfig.getBool("tilings") )            addScene( new Tilings("voronoi-fire") );
     if( mConfig.getBool("rings") )              addScene( new Rings() );

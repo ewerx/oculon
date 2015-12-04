@@ -16,14 +16,14 @@ using namespace std;
 
 EaseCurveSelector::EaseCurveSelector()
 : mSelectedCurve(EASE_LINEAR)
-, mMaxDuration(120.0f)
+, mMaxDuration(60.0f)
 , mDuration(0.0f)
 , mReverseEase(false)
 {
 }
 
 EaseCurveSelector::EaseCurveSelector(float maxDuration)
-: mSelectedCurve(EASE_LINEAR)
+: mSelectedCurve(EASE_OUTQUAD)
 , mMaxDuration(maxDuration)
 , mDuration(0.0f)
 , mReverseEase(false)
